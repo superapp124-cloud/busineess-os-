@@ -114,15 +114,25 @@ const isWebSubdomain = () => {
 // Component to handle subdomain redirect
 const SubdomainRedirect = () => {
   const navigate = useNavigate();
+  const platform = usePlatform();
   const [redirected, setRedirected] = React.useState(false);
 
   React.useEffect(() => {
-    if (Capacitor.isNativePlatform() && window.location.pathname === '/') {
+    // Desktop platform always goes to the desktop layout
+    if (platform === "desktop") {
+      navigate('/desktop/chat', { replace: true });
+      setRedirected(true);
+      return;
+    }
+
+    // Mobile platform always goes to the mobile home
+    if (platform === "mobile") {
       navigate('/home', { replace: true });
       setRedirected(true);
       return;
     }
 
+    // Web platform: check subdomains
     const hostname = window.location.hostname;
     if (hostname.startsWith('seller.') && window.location.pathname === '/') {
       navigate('/seller/portal', { replace: true });
@@ -135,7 +145,7 @@ const SubdomainRedirect = () => {
       return;
     }
     setRedirected(true);
-  }, [navigate]);
+  }, [navigate, platform]);
 
   if (!redirected) return <PageLoader />;
 
