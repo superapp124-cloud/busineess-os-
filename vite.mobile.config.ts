@@ -8,15 +8,20 @@ function mobileEntryPlugin() {
   return {
     name: 'mobile-entry',
     configureServer(server: any) {
-      server.middlewares.use((req: any, res: any, next: any) => {
+      server.middlewares.use(async (req: any, res: any, next: any) => {
         if (req.url === '/' || req.url === '/index.html') {
-          const html = fs.readFileSync(
-            path.resolve(__dirname, 'index.mobile.html'),
-            'utf-8'
-          );
-          res.setHeader('Content-Type', 'text/html');
-          res.end(html);
-          return;
+          try {
+            let html = fs.readFileSync(
+              path.resolve(__dirname, 'index.mobile.html'),
+              'utf-8'
+            );
+            html = await server.transformIndexHtml(req.url, html);
+            res.setHeader('Content-Type', 'text/html');
+            res.end(html);
+            return;
+          } catch (e) {
+            return next(e);
+          }
         }
         next();
       });
