@@ -1,11 +1,28 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import fs from "fs";
 
-// Desktop-specific Vite config
-// - Always runs on port 8085 (matched by electron/main.cjs)
-// - Loads index.desktop.html as entry point
-// - Does NOT load componentTagger (desktop-only bundle)
+// Plugin: serve index.desktop.html instead of index.html in dev server
+function desktopEntryPlugin() {
+  return {
+    name: 'desktop-entry',
+    configureServer(server: any) {
+      server.middlewares.use((req: any, res: any, next: any) => {
+        if (req.url === '/' || req.url === '/index.html') {
+          const html = fs.readFileSync(
+            path.resolve(__dirname, 'index.desktop.html'),
+            'utf-8'
+          );
+          res.setHeader('Content-Type', 'text/html');
+          res.end(html);
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
 
 export default defineConfig({
   base: '/',
@@ -20,7 +37,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react()],
+  plugins: [react(), desktopEntryPlugin()],
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: {

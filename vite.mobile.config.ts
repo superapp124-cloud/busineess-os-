@@ -1,11 +1,28 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import fs from "fs";
 
-// Mobile-specific Vite config
-// - Always runs on port 8080 (matched by Capacitor live reload URL)
-// - Loads index.mobile.html as entry point
-// - host 0.0.0.0 required for Capacitor to connect from Android device
+// Plugin: serve index.mobile.html instead of index.html in dev server
+function mobileEntryPlugin() {
+  return {
+    name: 'mobile-entry',
+    configureServer(server: any) {
+      server.middlewares.use((req: any, res: any, next: any) => {
+        if (req.url === '/' || req.url === '/index.html') {
+          const html = fs.readFileSync(
+            path.resolve(__dirname, 'index.mobile.html'),
+            'utf-8'
+          );
+          res.setHeader('Content-Type', 'text/html');
+          res.end(html);
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
 
 export default defineConfig({
   base: '/',
@@ -20,7 +37,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react()],
+  plugins: [react(), mobileEntryPlugin()],
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: {
