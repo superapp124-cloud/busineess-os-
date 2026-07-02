@@ -1,8 +1,19 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, createContext, useContext } from "react";
 import { Capacitor } from "@capacitor/core";
+
+// ============================================
+// PLATFORM CONTEXT
+// Decided once at startup by the entry point.
+// Never guessed at runtime.
+// ============================================
+export type Platform = "web" | "desktop" | "mobile";
+
+const PlatformContext = createContext<Platform>("web");
+
+export const usePlatform = (): Platform => useContext(PlatformContext);
 import { SplashScreen } from "@capacitor/splash-screen";
 import { HelmetProvider } from 'react-helmet-async';
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -225,8 +236,11 @@ const DeferredGlobalServices = () => {
   );
 };
 
-const App = () => {
-  console.log("🚀 [App] Component rendering...");
+const App = ({ platform = "web" }: { platform?: Platform }) => {
+  console.log(`🚀 [App] Component rendering... platform=${platform}`);
+
+  // Derive native flag from platform prop — no guessing
+  const isNative = platform === "mobile";
   
   useEffect(() => {
     initPerformanceOptimizations();
@@ -245,8 +259,8 @@ const App = () => {
     });
   }, []);
 
-  ensureNativeHashRoute();
-  const Router = Capacitor.isNativePlatform() ? HashRouter : BrowserRouter;
+  if (isNative) ensureNativeHashRoute();
+  const Router = isNative ? HashRouter : BrowserRouter;
 
   // UI Speed Budget - warn when interactions exceed 100ms (Nielsen "instant" threshold)
   useUISpeedBudget({ budgetMs: 100 });
@@ -363,6 +377,7 @@ const App = () => {
   }, []);
 
   return (
+    <PlatformContext.Provider value={platform}>
     <div className="app-container antialiased selection:bg-[#5c22ff]/30 text-slate-800 dark:text-slate-200">
       <CrashlyticsErrorBoundary>
       <GlobalErrorBoundary>
@@ -734,6 +749,7 @@ const App = () => {
       </GlobalErrorBoundary>
       </CrashlyticsErrorBoundary>
     </div>
+    </PlatformContext.Provider>
   );
 };
 

@@ -479,11 +479,13 @@ function createWindow() {
   });
 
   if (isDev) {
-    log.info('Loading Vite Dev Server');
-    mainWindow.loadURL('http://localhost:8085/#/desktop/connect');
+    log.info('Loading Desktop Vite Dev Server (port 8085)');
+    // Always load the desktop pipeline — never the mobile one.
+    // vite.desktop.config.ts guarantees port 8085 with strictPort=true.
+    mainWindow.loadURL('http://localhost:8085');
   } else {
     log.info('Loading Production Bundle');
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.html'));
   }
 
   // Setup the Context Engine endpoints for this window
