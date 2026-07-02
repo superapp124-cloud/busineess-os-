@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-05-17T17:51:01.290Z",
+  "note": "Incremental lint baseline. Reduce counts over time; new or increased violations fail npm run lint.",
+  "targets": [
+    "src",
+    "supabase/functions",
+    "scripts",
+    "eslint.config.js",
+    "vite.config.ts",
+    "tailwind.config.ts"
+  ],
+  "totals": {
+    "errors": 1724,
+    "warnings": 289
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": {
+      "errors": 1610,
+      "warnings": 0
+    },
+    "react-hooks/exhaustive-deps": {
+      "errors": 0,
+      "warnings": 249
+    },
+    "react-refresh/only-export-components": {
+      "errors": 0,
+      "warnings": 40
+    },
+    "no-case-declarations": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "@typescript-eslint/ban-ts-comment": {
+      "errors": 20,
+      "warnings": 0
+    },
+    "prefer-const": {
+      "errors": 31,
+      "warnings": 0
+    },
+    "no-useless-catch": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-useless-escape": {
+      "errors": 12,
+      "warnings": 0
+    },
+    "no-empty": {
+      "errors": 31,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-unused-expressions": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "react-hooks/rules-of-hooks": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-require-imports": {
+      "errors": 2,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-empty-object-type": {
+      "errors": 2,
+      "warnings": 0
+    },
+    "no-async-promise-executor": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-constant-condition": {
+      "errors": 1,
+      "warnings": 0
+    }
+  }
+}
