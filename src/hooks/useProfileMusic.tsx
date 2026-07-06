@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { features } from '@/config/features';
 
 interface ProfileMusic {
   trackName: string;
@@ -17,6 +18,8 @@ export const useProfileMusic = () => {
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
 
   const fetchProfileMusic = useCallback(async (userId: string): Promise<ProfileMusic | null> => {
+    if (!features.profileMusic) return null;
+    
     setLoading(true);
     try {
       const { data, error } = await supabase

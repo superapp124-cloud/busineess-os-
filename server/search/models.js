@@ -90,7 +90,7 @@ async function streamGemini({ systemInstruction, userPayload, onToken, signal })
 async function streamOllama({ systemInstruction, userPayload, onToken, signal }) {
   if (!config.ollamaEnabled) throw new Error("Ollama is disabled.");
 
-  const response = await fetch(`${config.ollamaBaseUrl.replace(/\/+$/, "")}/api/chat`, {
+  const response = await fetch(`${config.ollamaBaseUrl.replace(/\/+$/, "")}/api/generate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -98,10 +98,7 @@ async function streamOllama({ systemInstruction, userPayload, onToken, signal })
     body: JSON.stringify({
       model: config.ollamaModel,
       stream: true,
-      messages: [
-        { role: "system", content: systemInstruction },
-        { role: "user", content: userPayload },
-      ],
+      prompt: `${systemInstruction}\n\n${userPayload}`,
       options: {
         temperature: 0.15,
         num_predict: 900,

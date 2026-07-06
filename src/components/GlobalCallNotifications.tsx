@@ -35,7 +35,7 @@ export const GlobalCallNotifications = ({ userId, username }: GlobalCallNotifica
   const [isTranslating, setIsTranslating] = useState(false);
 
   // AI Voice Interceptor
-  const processedStream = useAudioInterceptor(isTranslating ? rawLocalStream : null, myLanguage, callerLanguage);
+  const { processedStream } = useAudioInterceptor(isTranslating, rawLocalStream, myLanguage, callerLanguage);
 
   // Update peer connection when processed stream changes
   useEffect(() => {

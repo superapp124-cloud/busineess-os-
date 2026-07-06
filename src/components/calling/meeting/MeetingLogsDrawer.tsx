@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MeetingPolls } from './MeetingPolls';
 
 interface LogEvent {
   time: string;
@@ -90,6 +91,7 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
   const [sharedFiles, setSharedFiles] = useState<SharedFile[]>([]);
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; avatar: string } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [chatDisabled, setChatDisabled] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,6 +105,27 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
     };
     load();
   }, []);
+
+  // Sync chat disabled status
+  useEffect(() => {
+    if (!roomId) return;
+    const fetchSettings = async () => {
+      const { data } = await supabase.from('session_rooms').select('chat_disabled').eq('id', roomId).single();
+      if (data) setChatDisabled(data.chat_disabled || false);
+    };
+    fetchSettings();
+
+    const channel = supabase.channel(`room-settings-drawer-${roomId}`)
+      .on('broadcast', { event: 'host_control' }, (payload) => {
+        const { key, value } = payload.payload || {};
+        if (key === 'chat_disabled') {
+          setChatDisabled(!!value);
+        }
+      })
+      .subscribe();
+    
+    return () => { supabase.removeChannel(channel); };
+  }, [roomId]);
 
   // Subscribe to live chat channel when room is active
   useEffect(() => {
@@ -263,22 +286,31 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
                 </div>
               </ScrollArea>
               <div className="px-4 py-2 border-t border-white/[0.05] flex gap-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) sendChat(); }}
-                  placeholder={roomId ? 'Message everyone...' : 'Join a call to chat...'}
-                  disabled={!roomId}
-                  className="flex-1 bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/40 disabled:opacity-40"
-                />
-                <button
-                  onClick={sendChat}
-                  disabled={!chatInput.trim() || !roomId}
-                  className="w-8 h-8 rounded-xl bg-purple-600/80 hover:bg-purple-500 disabled:opacity-40 flex items-center justify-center transition-all"
-                >
-                  <Send className="w-3.5 h-3.5 text-white" />
-                </button>
+                {chatDisabled ? (
+                  <div className="flex-1 bg-white/[0.02] border border-white/[0.04] rounded-xl px-3 py-2 text-xs text-white/40 flex items-center justify-center gap-2">
+                    <UserX className="w-3.5 h-3.5" />
+                    Chat is disabled by the host
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) sendChat(); }}
+                      placeholder={roomId ? 'Message everyone...' : 'Join a call to chat...'}
+                      disabled={!roomId}
+                      className="flex-1 bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/40 disabled:opacity-40"
+                    />
+                    <button
+                      onClick={sendChat}
+                      disabled={!chatInput.trim() || !roomId}
+                      className="w-8 h-8 rounded-xl bg-purple-600/80 hover:bg-purple-500 disabled:opacity-40 flex items-center justify-center transition-all"
+                    >
+                      <Send className="w-3.5 h-3.5 text-white" />
+                    </button>
+                  </>
+                )}
               </div>
             </>
           )}
@@ -345,16 +377,7 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
 
           {/* Polls Tab */}
           {activeTab === 3 && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <BarChart2 className="w-5 h-5 text-purple-400" />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-semibold text-white/80">Polls & Q&A</div>
-                <div className="text-xs text-white/40 mt-1">Coming soon for webinars and town halls</div>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-purple-600/20 border border-purple-500/30 text-xs text-purple-400 font-bold">Coming Soon</div>
-            </div>
+            <MeetingPolls />
           )}
 
           {/* Apps Tab */}
@@ -363,12 +386,26 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
               <div className="px-4 py-3">
                 <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-3">Meeting Apps</h4>
                 <div className="grid grid-cols-4 gap-2">
-                  {['Jira', 'Notion', 'Salesforce', 'ServiceNow', 'GitHub', 'Google Docs', 'Power BI', 'Outlook'].map((app, i) => (
-                    <button key={i} onClick={() => toast.info(`${app} integration — coming soon!`)} className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] transition-all">
+                  {[
+                    { name: 'Jira', icon: '🎯', url: 'https://jira.atlassian.com' },
+                    { name: 'Notion', icon: '📝', url: 'https://notion.so' },
+                    { name: 'Salesforce', icon: '💼', url: 'https://login.salesforce.com' },
+                    { name: 'ServiceNow', icon: '🔧', url: 'https://servicenow.com' },
+                    { name: 'GitHub', icon: '🐙', url: 'https://github.com' },
+                    { name: 'Google Docs', icon: '📄', url: 'https://docs.google.com' },
+                    { name: 'Power BI', icon: '📊', url: 'https://powerbi.microsoft.com' },
+                    { name: 'Outlook', icon: '📅', url: 'https://outlook.office.com' }
+                  ].map((app, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => window.open(app.url, '_blank')} 
+                      className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] transition-all"
+                      title={`Open ${app.name} in browser`}
+                    >
                       <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center text-base">
-                        {['🎯', '📝', '💼', '🔧', '🐙', '📄', '📊', '📅'][i]}
+                        {app.icon}
                       </div>
-                      <span className="text-[8px] text-white/50 truncate w-full text-center">{app}</span>
+                      <span className="text-[8px] text-white/50 truncate w-full text-center">{app.name}</span>
                     </button>
                   ))}
                 </div>

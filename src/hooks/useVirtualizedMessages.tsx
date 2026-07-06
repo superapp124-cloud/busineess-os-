@@ -41,7 +41,7 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
       // Use only essential columns for faster query
       const { data, error } = await supabase
         .from('messages')
-        .select('id, conversation_id, sender_id, content, message_type, media_url, media_attachments, created_at, read_at, status, reactions, is_starred')
+        .select('id, conversation_id, sender_id, content, type, media_attachments, created_at, reactions, reply_to_id, is_edited, is_deleted')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: false })
         .limit(MESSAGES_PER_PAGE);
@@ -73,7 +73,7 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
       const cursor = oldestMessageTimestamp.current;
       const { data, error } = await supabase
         .from('messages')
-        .select('id, conversation_id, sender_id, content, message_type, media_url, media_attachments, created_at, read_at, status, reactions, is_starred')
+        .select('id, conversation_id, sender_id, content, message_type:type, media_attachments, created_at, reactions')
         .eq('conversation_id', conversationId)
         .lt('created_at', cursor)
         .order('created_at', { ascending: false })

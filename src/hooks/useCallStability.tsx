@@ -88,7 +88,7 @@ export const useCallStability = (options: UseCallStabilityOptions = {}) => {
         }
         break;
     }
-  }, [reconnectAttempts, maxReconnectAttempts, onConnectionLost, onConnectionRestored, toast]);
+  }, [reconnectAttempts, maxReconnectAttempts, onConnectionLost, onConnectionRestored]);
 
   // Monitor connection quality
   const monitorConnectionQuality = useCallback(async (peerConnection: RTCPeerConnection) => {

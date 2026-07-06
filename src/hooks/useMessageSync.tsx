@@ -137,7 +137,7 @@ export const useMessageSync = (conversationId: string | null, userId: string | n
     } finally {
       setIsLoading(false);
     }
-  }, [conversationId, userId, toast]);
+  }, [conversationId, userId]);
 
   // Send message with retry logic
   const sendMessage = useCallback(async (messageData: Partial<Message>) => {
@@ -219,7 +219,7 @@ export const useMessageSync = (conversationId: string | null, userId: string | n
 
       return null;
     }
-  }, [conversationId, userId, toast]);
+  }, [conversationId, userId]);
 
   // Retry failed message
   const retryMessage = useCallback(async (tempId: string) => {
@@ -243,7 +243,7 @@ export const useMessageSync = (conversationId: string | null, userId: string | n
     ));
 
     await sendMessage(pending.message);
-  }, [pendingMessages, sendMessage, toast]);
+  }, [pendingMessages, sendMessage]);
 
   // Mark message as read
   const markAsRead = useCallback(async (messageId: string) => {

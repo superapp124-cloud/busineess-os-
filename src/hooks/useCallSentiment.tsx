@@ -3,7 +3,7 @@
  * Real-time emotion detection during calls
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { generate } from '@/services/ai';
 
 export type Sentiment = 'positive' | 'negative' | 'neutral' | 'frustrated' | 'happy' | 'confused';
 export type Urgency = 'low' | 'medium' | 'high';
@@ -41,12 +41,14 @@ export const useCallSentiment = ({
 
     try {
       setIsAnalyzing(true);
-      
-      const { data, error } = await supabase.functions.invoke('call-sentiment', {
-        body: { text, callId }
-      });
 
-      if (error) throw error;
+      const prompt = `Analyze this call text locally for sentiment. Return only JSON with keys: sentiment, score, emotions, keywords, urgency, suggestions.
+
+Call ID: ${callId}
+Text:
+${text}`;
+      const raw = await generate({ prompt, preferLocal: true });
+      const data = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
       const result: SentimentResult = {
         sentiment: data.sentiment || 'neutral',

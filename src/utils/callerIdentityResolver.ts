@@ -366,15 +366,7 @@ export async function resolveCallerIdentities(
               contact_name,
               contact_phone,
               contact_user_id,
-              is_registered,
-              profiles:contact_user_id (
-                id,
-                full_name,
-                username,
-                avatar_url,
-                phone_number,
-                email
-              )
+              is_registered
             `)
             .eq('user_id', userId)
             .in('contact_phone', allVariants) as any

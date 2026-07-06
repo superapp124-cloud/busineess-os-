@@ -9,6 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCallKeepAlive } from '@/hooks/useCallKeepAlive';
+import { useAppearanceStore } from '@/stores/appearanceStore';
+import { EventBus, CommunicationEvent } from '@/packages/communication-engine/core/EventBus';
 import { Capacitor } from '@capacitor/core';
 import { setNativeAudioRoute, syncCallStateToNative } from '@/utils/androidBridge';
 import CallMoreMenu from './CallMoreMenu';
@@ -245,10 +247,10 @@ export default function UnifiedCallScreen({
   useEffect(() => {
     const handleAIAudio = (e: Event) => {
       const customEvent = e as CustomEvent;
-      console.log(`[DEBUG] Received ${customEvent.detail} samples of audio from Gemini!`);
+      console.log(`[DEBUG] Received ${customEvent.detail} samples of local AI audio.`);
       // Only show the toast once per session to avoid spam
       if (!(window as any)._hasShownAIToast) {
-        toast.success(`⚡ SUCCESS: Received translated audio from Gemini! Sending to phone...`);
+        toast.success('Local AI audio ready. Sending to phone...');
         (window as any)._hasShownAIToast = true;
       }
     };
@@ -671,6 +673,7 @@ export default function UnifiedCallScreen({
     call.on('localStream', (stream: MediaStream) => {
       console.log('📹 [UnifiedCall] Local stream received/updated');
       setLocalStream(stream);
+      EventBus.getInstance().emit(CommunicationEvent.LOCAL_STREAM_READY, { stream });
       if (localVideoRef.current) {
         const videoTracks = stream.getVideoTracks();
         if (videoTracks.length > 0) {
@@ -1829,7 +1832,7 @@ export default function UnifiedCallScreen({
               ) : !isConnected ? (
                 <>
                   <div className="w-2 h-2 rounded-full bg-white animate-ping" />
-                  Connecting to Gemini AI...
+                  Local AI translation unavailable...
                 </>
               ) : !isReady ? (
                 <>

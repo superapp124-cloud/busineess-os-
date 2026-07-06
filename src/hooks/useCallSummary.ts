@@ -24,7 +24,7 @@ Do not apologize, do not say "Here is the summary", just output the summary dire
 
 /**
  * Call generateSummary() when the call ends (e.g. Leave button handler).
- * Uses the same generate() entry point — local on Electron, cloud otherwise.
+ * Uses the same generate() entry point. In strict privacy mode this is local Ollama only.
  */
 export function useCallSummary({ meetingTitle, transcript }: UseCallSummaryArgs) {
   const [summary, setSummary] = useState('');
@@ -40,7 +40,8 @@ export function useCallSummary({ meetingTitle, transcript }: UseCallSummaryArgs)
       setSummary(raw);
     } catch (err: any) {
       console.error('[useCallSummary] generation failed', err);
-      setSummary(`❌ AI generation failed. \n\nIf you are using 100% Local AI, Ollama might still be downloading the 2GB model in the background, or the background process hasn't started yet.\n\nError details: ${err.message}`);
+      // Show the user-friendly message directly (ai.ts now formats these well)
+      setSummary(`❌ AI generation failed.\n\n${err.message}`);
     } finally {
       setLoading(false);
     }

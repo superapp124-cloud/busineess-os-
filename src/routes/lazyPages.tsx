@@ -240,6 +240,8 @@ export const SellerPayouts = lazy(() => import('@/pages/SellerPayouts'));
 export const SellerSubscription = lazy(() => import('@/pages/SellerSubscription'));
 export const SellerSettlements = lazy(() => import('@/pages/seller/SellerSettlements'));
 
+export const BetaCommandCenter = lazy(() => import('@/pages/desktop/BetaCommandCenter').then(m => ({ default: m.BetaCommandCenter })));
+
 // Business Portal
 export const BusinessDashboard = lazy(() => import('@/pages/business/Dashboard'));
 export const BusinessOnboarding = lazy(() => import('@/pages/business/Onboarding'));
@@ -372,9 +374,4 @@ export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWo
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
 export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio').then(m => ({ default: m.WorkflowStudio })));
 export const AgentWorkspace = lazy(() => import('@/pages/desktop/AgentWorkspace').then(m => ({ default: m.AgentWorkspace })));
-export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));
-
-// Care Components
-export const CarePathDetail = lazy(() => import('@/components/care/CarePathDetail'));
-export const AdminJobHealth = lazy(() => import('@/pages/admin/JobHealth'));
-export const ProUpgrade = lazy(() => import('@/pages/desktop/ProUpgrade'));
+export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));

@@ -24,6 +24,8 @@ interface UserLocation {
   lng: number;
 }
 
+import { features } from '@/config/features';
+
 /**
  * Geofencing hook - monitors user location and triggers notifications
  * when entering or exiting geofence zones
@@ -33,6 +35,17 @@ export const useGeofencing = (userId?: string) => {
   const [activeZones, setActiveZones] = useState<Set<string>>(new Set());
   const [isMonitoring, setIsMonitoring] = useState(false);
   const watchIdRef = useRef<string | null>(null);
+
+  // Early return if feature is disabled
+  if (!features.geofencing) {
+    return {
+      activeZones: new Set(),
+      isMonitoring: false,
+      startMonitoring: async () => {},
+      stopMonitoring: () => {},
+      refreshGeofences: async () => {},
+    };
+  }
 
   // Calculate distance between two points (Haversine formula)
   const calculateDistance = (
@@ -246,7 +259,14 @@ export const useGeofencing = (userId?: string) => {
         .select('*')
         .eq('active', true);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+          console.log('ℹ️ geofences table not found — skipping load');
+        } else {
+          console.error('Failed to fetch geofences:', error);
+        }
+        return;
+      }
 
       setGeofences(data || []);
       console.log(`📍 Loaded ${data?.length || 0} active geofences`);

@@ -32,6 +32,7 @@ interface WhatsAppStyleInputProps {
   onAIAction?: (action: AIAction) => void;
   replyToMessage?: any;
   onCancelReply?: () => void;
+  onTyping?: (text: string) => void;
 }
 
 export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({ 
@@ -43,7 +44,8 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
   conversationContext = [],
   onAIAction,
   replyToMessage,
-  onCancelReply
+  onCancelReply,
+  onTyping,
 }) => {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
@@ -541,7 +543,11 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
             <div className="flex-1 flex items-end bg-[#FFFFFF] rounded-[24px] min-h-[48px] relative pl-[16px] pr-[40px] shadow-sm">
               <Textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setMessage(val);
+                  onTyping?.(val);
+                }}
                 onKeyDown={handleKeyPress}
                 placeholder="Message"
                 className="w-full resize-none border-0 bg-transparent py-[13px] text-[15px] leading-relaxed text-[#1A1A2E] shadow-none focus-visible:ring-0 px-0 placeholder:text-[#9898B3]"

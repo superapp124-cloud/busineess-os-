@@ -10,130 +10,8 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useKnowledgeGraph, KnowledgeNode, KnowledgeEdge, NodeType, EdgeLabel } from '@/hooks/useKnowledgeGraph';
+import { useKnowledgeGraph, KnowledgeNode, KnowledgeEdge, NodeType, EdgeLabel, JourneyStep, WorkLogItem, TeamMember } from '@/hooks/useKnowledgeGraph';
 import { DocumentLockBadge } from '@/platform/Domain/Collaboration/DocumentLockBadge';
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type ViewMode = 'graph' | 'timeline' | 'board' | 'list' | 'calendar';
-
-interface JourneyStep {
-  icon: React.ReactNode;
-  label: string;
-  time: string;
-  actor?: string;
-  detail?: string;
-}
-
-interface WorkLogItem {
-  time: string;
-  actor: string;
-  action: string;
-  target: string;
-  type: NodeType;
-}
-
-interface TeamMember {
-  name: string;
-  initials: string;
-  color: string;
-  status: 'online' | 'idle' | 'busy';
-  activity: string;
-}
-
-// ─── Mock Data ───────────────────────────────────────────────────────────────
-
-const mockNodes: KnowledgeNode[] = [
-  {
-    id: 'n1', type: 'meeting', title: 'Q3 Marketing Sync',
-    x: 380, y: 240,
-    subtitle: 'Discussed new budget allocations · 3 action items',
-    status: 'recent',
-    people: ['Rahul', 'Isha', 'Finance'],
-    health: 72,
-  },
-  {
-    id: 'n2', type: 'document', title: 'Q3_Budget.pdf',
-    x: 680, y: 140,
-    subtitle: 'PDF · 1.2 MB · Edited 2 min ago',
-    status: 'recent',
-    people: ['Isha'],
-  },
-  {
-    id: 'n3', type: 'meeting', title: 'Client Pitch Prep',
-    x: 660, y: 380,
-    subtitle: 'Today, 2:00 PM · Zoom',
-    status: 'live',
-    people: ['Rahul', 'Isha'],
-    health: 90,
-  },
-  {
-    id: 'n4', type: 'ai', title: 'Memory Cluster',
-    x: 120, y: 300,
-    subtitle: 'AI found 3 related proposals',
-    status: 'summarizing',
-  },
-  {
-    id: 'n5', type: 'person', title: 'Rahul Sharma',
-    x: 200, y: 120,
-    subtitle: 'Senior Manager · Online',
-    status: 'typing',
-  },
-  {
-    id: 'n6', type: 'person', title: 'Isha Kapoor',
-    x: 840, y: 260,
-    subtitle: 'Finance Lead · Reviewed Budget.pdf',
-    status: 'idle',
-  },
-  {
-    id: 'n7', type: 'task', title: 'Finalize Invoice',
-    x: 500, y: 480,
-    subtitle: 'Due Tomorrow · Assigned to Rahul',
-    status: 'idle',
-  },
-  {
-    id: 'n8', type: 'document', title: 'Project Phoenix Brief',
-    x: 920, y: 120,
-    subtitle: 'DOCX · 842 KB · 3 contributors',
-    status: 'idle',
-  },
-];
-
-const mockEdges: KnowledgeEdge[] = [
-  { from: 'n1', to: 'n2', label: 'discussed', color: '#6366f1' },
-  { from: 'n1', to: 'n3', label: 'referenced', color: '#6366f1' },
-  { from: 'n4', to: 'n1', label: 'assigned', color: '#a855f7' },
-  { from: 'n5', to: 'n1', label: 'reviewed', color: '#10b981' },
-  { from: 'n6', to: 'n2', label: 'approved', color: '#10b981' },
-  { from: 'n2', to: 'n7', label: 'created', color: '#f59e0b' },
-  { from: 'n3', to: 'n8', label: 'referenced', color: '#0ea5e9' },
-];
-
-const journeySteps: JourneyStep[] = [
-  { icon: <FilePlus className="w-4 h-4" />, label: 'Created', time: 'Jan 15', actor: 'Isha', detail: 'Q3_Budget.pdf uploaded' },
-  { icon: <MessageSquare className="w-4 h-4" />, label: 'Discussed', time: 'Feb 3', actor: 'Rahul + Isha', detail: 'Q3 Marketing Sync meeting' },
-  { icon: <Brain className="w-4 h-4" />, label: 'AI Summarized', time: 'Feb 3', actor: 'CHATR AI', detail: 'Generated action items' },
-  { icon: <CheckCircle className="w-4 h-4" />, label: 'Approved', time: 'Feb 10', actor: 'Finance', detail: 'Budget approved ₹2.4Cr' },
-  { icon: <FileText className="w-4 h-4" />, label: 'Invoice Created', time: 'Feb 12', actor: 'Rahul', detail: 'Finalize Invoice task' },
-  { icon: <Star className="w-4 h-4" />, label: 'Payment', time: 'Mar 1', actor: 'Finance', detail: 'Processed' },
-];
-
-const workLog: WorkLogItem[] = [
-  { time: '09:12', actor: 'Rahul', action: 'edited', target: 'Q3_Budget.pdf', type: 'document' },
-  { time: '09:18', actor: 'System', action: 'started', target: 'Q3 Marketing Sync', type: 'meeting' },
-  { time: '09:22', actor: 'CHATR AI', action: 'generated notes for', target: 'Q3 Marketing Sync', type: 'ai' },
-  { time: '09:30', actor: 'Isha', action: 'approved', target: 'Q3_Budget.pdf', type: 'document' },
-  { time: '09:42', actor: 'Rahul', action: 'created task', target: 'Finalize Invoice', type: 'task' },
-  { time: '10:05', actor: 'Finance', action: 'joined', target: 'Client Pitch Prep', type: 'meeting' },
-];
-
-const teamMembers: TeamMember[] = [
-  { name: 'Rahul Sharma', initials: 'RS', color: '#6366f1', status: 'online', activity: 'Viewing Budget.pdf' },
-  { name: 'Isha Kapoor', initials: 'IK', color: '#10b981', status: 'busy', activity: 'Editing Proposal' },
-  { name: 'Finance Team', initials: 'FT', color: '#f59e0b', status: 'online', activity: 'Reviewing Invoice' },
-  { name: 'CHATR AI', initials: 'AI', color: '#a855f7', status: 'busy', activity: 'Summarizing Meeting' },
-];
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const nodeColors: Record<NodeType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -386,7 +264,7 @@ const CanvasEdges: React.FC<{ nodes: KnowledgeNode[]; edges: KnowledgeEdge[] }> 
 
 // ─── View Panels ──────────────────────────────────────────────────────────────
 
-const TimelineView: React.FC = () => (
+const TimelineView: React.FC<{ journeySteps: JourneyStep[] }> = ({ journeySteps }) => (
   <div className="p-6 overflow-y-auto h-full">
     <h3 className="text-white font-bold text-lg mb-6">Project Timeline</h3>
     <div className="relative">
@@ -395,7 +273,7 @@ const TimelineView: React.FC = () => (
         <div key={i} className="flex gap-4 mb-8 relative group">
           <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 transition-transform group-hover:scale-110"
             style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)' }}>
-            {step.icon}
+            {step.iconType === 'meeting' ? <Calendar className="w-4 h-4" /> : step.iconType === 'document' ? <FileText className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
           </div>
           <div className="flex-1 pt-1.5 pb-4 px-4 rounded-xl"
             style={{ background: '#ffffff08', border: '1px solid #ffffff0d' }}>
@@ -514,7 +392,7 @@ const ListView: React.FC<{ nodes: KnowledgeNode[] }> = ({ nodes }) => (
 
 // ─── Journey Panel ────────────────────────────────────────────────────────────
 
-const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void }> = ({ node, onClose }) => {
+const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMembers: TeamMember[]; journeySteps: JourneyStep[] }> = ({ node, onClose, teamMembers, journeySteps }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'journey' | 'chat' | 'files'>('overview');
   const colors = nodeColors[node.type];
   const tabs: { id: typeof activeTab; label: string }[] = [
@@ -639,7 +517,7 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void }> = ({ 
                 <div key={i} className="flex gap-3 mb-6 group cursor-pointer">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10 transition-transform group-hover:scale-110"
                     style={{ background: colors.border + '33', color: colors.icon }}>
-                    {step.icon}
+                    {step.iconType === 'meeting' ? <Calendar className="w-4 h-4" /> : step.iconType === 'document' ? <FileText className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 pt-0.5">
                     <div className="flex items-center justify-between">
@@ -712,7 +590,7 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void }> = ({ 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export const InfiniteCanvas: React.FC = () => {
-  const { nodes, edges, updateNodePosition } = useKnowledgeGraph();
+  const { nodes, edges, updateNodePosition, teamMembers, journeySteps, workLog } = useKnowledgeGraph();
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -950,7 +828,7 @@ export const InfiniteCanvas: React.FC = () => {
 
           {viewMode === 'timeline' && (
             <div className="flex-1 overflow-y-auto" style={{ color: '#fff' }}>
-              <TimelineView />
+              <TimelineView journeySteps={journeySteps} />
             </div>
           )}
 
@@ -1072,7 +950,7 @@ export const InfiniteCanvas: React.FC = () => {
           style={{ width: selectedNode ? 320 : 280, background: '#0d0f1a', borderLeft: '1px solid #ffffff0d', transition: 'width 0.25s ease' }}>
 
           {selectedNode ? (
-            <JourneyPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
+            <JourneyPanel node={selectedNode} onClose={() => setSelectedNode(null)} teamMembers={teamMembers} journeySteps={journeySteps} />
           ) : (
             <div className="flex flex-col h-full overflow-hidden">
               {/* AI Header */}

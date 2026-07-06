@@ -22,24 +22,26 @@ const os = require('os');
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const OLLAMA_PORT = 3717;
-const OLLAMA_BASE = `http://127.0.0.1:${OLLAMA_PORT}`;
+const OLLAMA_PREFERRED_PORT = 3717;
+const OLLAMA_FALLBACK_PORT = 11434;
+let OLLAMA_PORT = OLLAMA_PREFERRED_PORT;
+let OLLAMA_BASE = `http://127.0.0.1:${OLLAMA_PORT}`;
 
 // Models in priority order — smallest first for fastest first-boot
 const MODELS = [
   {
-    name: 'llama3.2:3b',
-    sizeGB: 2.0,
-    description: 'Fast general AI',
-    priority: 1,
-    useCases: ['smart_reply', 'summarize', 'intent']
-  },
-  {
     name: 'phi3:mini',
     sizeGB: 2.3,
     description: 'Lightweight reasoning',
-    priority: 2,
+    priority: 1,
     useCases: ['routing', 'classification']
+  },
+  {
+    name: 'llama3.2:3b',
+    sizeGB: 2.0,
+    description: 'Fast general AI',
+    priority: 2,
+    useCases: ['smart_reply', 'summarize', 'intent']
   }
 ];
 
@@ -148,15 +150,22 @@ async function waitForOllama(maxAttempts = 30, intervalMs = 1000) {
 // ─── Step 1: Check if Ollama is already running ───────────────────────────────
 
 async function checkOllamaRunning() {
-  try {
-    const res = await fetchWithTimeout(`${OLLAMA_BASE}/api/tags`, {}, 2000);
-    if (!res.ok) return false;
-    const data = await res.json();
-    state.readyModels = (data.models || []).map(m => m.name);
-    return true;
-  } catch {
-    return false;
+  // Try preferred port first, then fall back to standard Ollama port 11434
+  for (const port of [OLLAMA_PREFERRED_PORT, OLLAMA_FALLBACK_PORT]) {
+    try {
+      const base = `http://127.0.0.1:${port}`;
+      const res = await fetchWithTimeout(`${base}/api/tags`, {}, 2000);
+      if (!res.ok) continue;
+      const data = await res.json();
+      state.readyModels = (data.models || []).map(m => m.name);
+      // Lock onto this port for all future requests
+      OLLAMA_PORT = port;
+      OLLAMA_BASE = base;
+      log.info(`[Ollama] Found running on port ${port}`);
+      return true;
+    } catch {}
   }
+  return false;
 }
 
 // ─── Step 2: Check if binary exists on PATH or in our dir ────────────────────
@@ -217,11 +226,12 @@ try {
 }`;
 
     execFile('powershell.exe', [
+      '-WindowStyle', 'Hidden',
       '-NoProfile',
       '-NonInteractive',
       '-ExecutionPolicy', 'Bypass',
       '-Command', ps
-    ], { timeout: 5 * 60 * 1000 }, (err, stdout, stderr) => {
+    ], { timeout: 5 * 60 * 1000, windowsHide: true }, (err, stdout, stderr) => {
       if (err || (stderr && stderr.includes('Error'))) {
         reject(new Error(`Download failed: ${stderr || err?.message}`));
       } else {
@@ -463,45 +473,44 @@ function registerIpcHandlers() {
   /** Stream a prompt through local Ollama */
   ipcMain.handle('ai:ask', async (event, { prompt, model, systemPrompt, stream = false }) => {
     if (state.phase !== 'ready' || state.readyModels.length === 0) {
-      return { error: 'local_unavailable', message: 'Local AI is not ready. Cloud AI is disabled for privacy.' };
+      const warmingPhases = ['checking', 'downloading', 'installing', 'starting', 'pulling'];
+      if (warmingPhases.includes(state.phase)) {
+        return { error: 'warming_up', message: `Chatr AI is still starting up (${state.phase}). Please wait 20–30 seconds and try again.` };
+      }
+      return { error: 'local_unavailable', message: 'Local AI is not ready. Please check the AI status indicator in the top bar.' };
     }
 
     const targetModel = model || state.readyModels[0];
 
     try {
-      if (currentAskController) {
-        currentAskController.abort();
-      }
-      currentAskController = new AbortController();
-      const timeoutId = setTimeout(() => currentAskController.abort(), 300000);
-
-      const messages = [];
-      if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
-      messages.push({ role: 'user', content: prompt });
+      const askController = new AbortController();
+      const timeoutId = setTimeout(() => askController.abort(), 600000); // 10 min for large summaries
 
       let res;
       try {
-        res = await fetch(`${OLLAMA_BASE}/api/chat`, {
+        res = await fetch(`${OLLAMA_BASE}/api/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: targetModel,
-            messages,
-            stream: false,  // For IPC, simpler to return full response
+            system: systemPrompt || undefined,
+            prompt: prompt,
+            stream: false,
             options: {
               temperature: 0.7,
-              num_predict: 512  // Limit token count for fast response
+              num_predict: 1024  // Enough for meeting summaries and action items
             }
           }),
-          signal: currentAskController.signal
+          signal: askController.signal
         });
       } finally {
         clearTimeout(timeoutId);
       }
 
-      if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
+      if (!res || !res.ok) throw new Error(`Ollama /api/generate error: ${res?.status || 'no response'}`);
       const data = await res.json();
-      return { text: data.message?.content || data.response || '' };
+      return { text: data.response || '' };
+
 
     } catch (err) {
       log.error('[Ollama] Ask failed:', err.message);

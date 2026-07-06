@@ -9,6 +9,7 @@ import {
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { useCallContext } from '@/contexts/CallContext';
 import { useCallTranscription } from '@/hooks/useCallTranscription';
 import { AIInsightsPanel } from '@/components/calling/meeting/AIInsightsPanel';
 import { supabase } from '@/integrations/supabase/client';
@@ -62,13 +63,15 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
   const [isAiReady, setIsAiReady] = useState(true);
   const [localTranscript, setLocalTranscript] = useState<string>('');
 
-  const handleTranscriptUpdate = (text: string) => {
+  const { localStream } = useCallContext();
+
+  const handleTranscriptUpdate = React.useCallback((text: string) => {
     setLocalTranscript(prev => prev + (prev ? ' ' : '') + text);
     if (onTranscriptUpdate) onTranscriptUpdate(text);
-  };
+  }, [onTranscriptUpdate]);
 
   // Start background transcription
-  const { isListening, error: transcriptError } = useCallTranscription(true, handleTranscriptUpdate);
+  const { isListening, error: transcriptError, downloadProgress } = useCallTranscription(true, handleTranscriptUpdate, localStream);
 
   const renderContent = () => {
     switch (goal) {
@@ -89,6 +92,7 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
             callId={callId}
             callDuration={callDuration}
             onSaveTranscript={onSaveTranscript}
+            downloadProgress={downloadProgress}
             participants={[]}
           />
         );
@@ -124,15 +128,6 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
             <span className="text-[10px] uppercase tracking-wider text-red-400 font-bold">Offline</span>
           </div>
         )}
-        
-        {/* DEBUG: Mock Speech Injector for Electron Testing */}
-        <button 
-          onClick={() => handleTranscriptUpdate("Host: Hey Sanobar, great to connect today. Thanks for making the time.\nSanobar: Hi, thanks for having me. I'm looking forward to discussing the enterprise pricing plan.\nHost: Excellent. Let's figure out what the timeline for deployment looks like on your end. We need to nail down the SLA requirements today.\nSanobar: We are aiming for a Q3 rollout. For the SLA, we need 99.9% uptime guaranteed, with 24/7 priority support.\nHost: We can definitely accommodate that within the Enterprise tier. I'll send over the updated contract this afternoon for your legal team to review.")}
-          className="ml-2 px-2 py-1 bg-white/10 hover:bg-white/20 text-[10px] rounded border border-white/20 transition-colors"
-          title="Inject mock speech (Electron testing)"
-        >
-          Inject Speech
-        </button>
       </div>
       
       {/* Scrollable Content Area */}
@@ -740,6 +735,7 @@ const GeneralAssistant = ({
   remoteUserAvatar,
   participants,
   onSaveTranscript,
+  downloadProgress,
 }: any) => {
   const tabs = ['Agenda', 'Transcript', 'Summary', 'Tasks', 'Files', 'Chat', 'Insights'];
   
@@ -916,7 +912,11 @@ const GeneralAssistant = ({
           </div>
           <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
             <div className="text-sm text-white/80 p-2 leading-relaxed">
-              {transcript || <span className="text-white/30 italic">No transcript recorded yet... Start speaking!</span>}
+              {transcript || (
+                downloadProgress !== null 
+                  ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>Downloading AI Transcription Model... {downloadProgress}%</span>
+                  : <span className="text-white/30 italic">No transcript recorded yet... Start speaking!</span>
+              )}
             </div>
             <div ref={transcriptEndRef} />
           </div>

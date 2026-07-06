@@ -239,6 +239,20 @@ export default {
             opacity: "0"
           }
         },
+        // CHATR Signature Animations (Experience Alpha)
+        "fade-rise": {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "glow-pulse": {
+          "0%": { backgroundColor: "transparent", color: "inherit" },
+          "20%": { backgroundColor: "#7BCBFF", color: "#000" },
+          "100%": { backgroundColor: "transparent", color: "inherit" }
+        },
+        "expand-panel": {
+          "0%": { opacity: "0", transform: "scale(0.95) translateY(10px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -257,6 +271,15 @@ export default {
         "float-in": "float-in 0.2s ease-out",
         "button-press": "button-press 0.15s ease-out",
         "ripple": "ripple 0.6s ease-out",
+        
+        // CHATR Signature Animations (Experience Alpha)
+        "fade-rise": "fade-rise 120ms cubic-bezier(0, 0, 0.2, 1) forwards",
+        "fade": "fade-in 80ms cubic-bezier(0, 0, 0.2, 1) forwards",
+        "scale": "button-press 100ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+        "expand": "expand-panel 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+        "collapse": "accordion-up 140ms cubic-bezier(0.4, 0, 1, 1) forwards",
+        "glow": "glow-pulse 220ms ease-in-out forwards",
+        "slide": "slide-in 160ms cubic-bezier(0, 0, 0.2, 1) forwards",
       },
     },
   },

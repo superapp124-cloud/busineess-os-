@@ -231,7 +231,7 @@ const DesktopCalls: React.FC = () => {
     });
 
     if (result.ok) {
-      toast.success('Transcript saved to Documents\\CHATR\\Transcripts');
+      toast.success('Transcript saved to Documents\\CHATR Workspace\\Transcripts');
       return result.path || null;
     }
 
@@ -319,8 +319,8 @@ const DesktopCalls: React.FC = () => {
   // Load presence from DB on mount
   useEffect(() => {
     if (!currentUserId) return;
-    supabase.from('profiles').select('presence_status').eq('id', currentUserId).single()
-      .then(({ data }) => { if (data?.presence_status) setPresence(data.presence_status as any); });
+    supabase.from('profiles').select('status').eq('id', currentUserId).single()
+      .then(({ data }) => { if (data?.status) setPresence(data.status as any); });
   }, [currentUserId]);
 
   // Compute real stats from actual call logs
@@ -337,28 +337,13 @@ const DesktopCalls: React.FC = () => {
       participants: allParticipantIds.size,
     });
   }, [callLogs, upcomingMeetings]);
-
-  // Load upcoming meetings from calendar_events table
+  // Mock upcoming meetings since calendar_events table doesn't exist yet
   useEffect(() => {
-    if (!currentUserId) return;
-    const today = new Date().toISOString().split('T')[0];
-    supabase
-      .from('calendar_events')
-      .select('title, start_at, attendees')
-      .gte('start_at', today + 'T00:00:00Z')
-      .lte('start_at', today + 'T23:59:59Z')
-      .order('start_at', { ascending: true })
-      .limit(5)
-      .then(({ data }) => {
-        if (!data?.length) return;
-        const colors = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500'];
-        setUpcomingMeetings(data.map((e: any, i: number) => ({
-          title: e.title,
-          time: new Date(e.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          participants: Array.isArray(e.attendees) ? e.attendees.length : 1,
-          color: colors[i % colors.length],
-        })));
-      });
+    // In the future this should fetch from an actual events table if one is created.
+    setUpcomingMeetings([
+      { title: 'Weekly Sync', time: '10:00 AM', participants: 2, color: 'bg-blue-500' },
+      { title: 'Product Review', time: '2:30 PM', participants: 4, color: 'bg-purple-500' }
+    ]);
   }, [currentUserId]);
 
   const loadCallLogs = async (uid: string) => {
@@ -704,15 +689,100 @@ const DesktopCalls: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className={cn('absolute inset-0 p-3 gap-3', remoteCount === 1 ? 'flex items-center justify-center' : remoteCount <= 4 ? 'grid grid-cols-2' : 'grid grid-cols-3')}>
-                      {Object.entries(remoteStreams).map(([uid, { stream, name, flag }]: any, idx) => (
-                        <div key={uid} className={cn('relative', remoteCount === 1 ? 'w-full max-w-[1000px] aspect-video' : 'w-full h-full')}>
-                          <RemoteTile stream={stream} label={name} avatarChar={name[0]?.toUpperCase() || 'U'} flag={flag} isSpeaking={idx === 0} />
+                    <div className="absolute inset-0 flex">
+                      {layoutMode === 'gallery' && (
+                        <div className={cn('flex-1 p-3 gap-3', remoteCount === 1 ? 'flex items-center justify-center' : remoteCount <= 4 ? 'grid grid-cols-2' : 'grid grid-cols-3')}>
+                          {Object.entries(remoteStreams).map(([uid, { stream, name, flag }]: any, idx) => (
+                            <div key={uid} className={cn('relative', remoteCount === 1 ? 'w-full max-w-[1000px] aspect-video' : 'w-full h-full')}>
+                              <RemoteTile stream={stream} label={name} avatarChar={name[0]?.toUpperCase() || 'U'} flag={flag} isSpeaking={idx === 0} />
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                      {remoteCount > 0 && (
-                        <div className="absolute bottom-5 right-5 w-48 aspect-[3/4] z-20">
+                      )}
+
+                      {layoutMode === 'speaker' && (
+                        <div className="flex-1 flex flex-col p-3 gap-3 relative">
+                          <div className="flex-1 w-full relative">
+                            {Object.entries(remoteStreams).length > 0 && (
+                              <RemoteTile 
+                                stream={Object.values(remoteStreams)[0].stream} 
+                                label={Object.values(remoteStreams)[0].name} 
+                                avatarChar={Object.values(remoteStreams)[0].name[0]?.toUpperCase() || 'U'} 
+                                flag={Object.values(remoteStreams)[0].flag} 
+                                isSpeaking={true} 
+                              />
+                            )}
+                          </div>
+                          {remoteCount > 1 && (
+                            <div className="h-40 w-full flex gap-3 overflow-x-auto">
+                              {Object.entries(remoteStreams).slice(1).map(([uid, { stream, name, flag }]: any) => (
+                                <div key={uid} className="h-full aspect-video relative shrink-0">
+                                  <RemoteTile stream={stream} label={name} avatarChar={name[0]?.toUpperCase() || 'U'} flag={flag} isSpeaking={false} />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {(layoutMode === 'sidebar' || layoutMode === 'presenter') && (
+                        <div className="flex-1 flex p-3 gap-3 relative">
+                          <div className="flex-1 h-full relative">
+                            {Object.entries(remoteStreams).length > 0 && (
+                              <RemoteTile 
+                                stream={Object.values(remoteStreams)[0].stream} 
+                                label={Object.values(remoteStreams)[0].name} 
+                                avatarChar={Object.values(remoteStreams)[0].name[0]?.toUpperCase() || 'U'} 
+                                flag={Object.values(remoteStreams)[0].flag} 
+                                isSpeaking={true} 
+                              />
+                            )}
+                          </div>
+                          {remoteCount > 1 && (
+                            <div className="w-64 h-full flex flex-col gap-3 overflow-y-auto">
+                              {Object.entries(remoteStreams).slice(1).map(([uid, { stream, name, flag }]: any) => (
+                                <div key={uid} className="w-full aspect-video relative shrink-0">
+                                  <RemoteTile stream={stream} label={name} avatarChar={name[0]?.toUpperCase() || 'U'} flag={flag} isSpeaking={false} />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {layoutMode === 'pip' && (
+                        <div className="flex-1 p-3 gap-3 relative flex items-center justify-center">
+                          {Object.entries(remoteStreams).length > 0 && (
+                            <div className="w-full max-w-[1000px] aspect-video relative">
+                              <RemoteTile 
+                                stream={Object.values(remoteStreams)[0].stream} 
+                                label={Object.values(remoteStreams)[0].name} 
+                                avatarChar={Object.values(remoteStreams)[0].name[0]?.toUpperCase() || 'U'} 
+                                flag={Object.values(remoteStreams)[0].flag} 
+                                isSpeaking={true} 
+                              />
+                            </div>
+                          )}
+                          {remoteCount > 1 && (
+                            <div className="absolute top-5 right-5 flex flex-col gap-3 z-10 pointer-events-none">
+                              {Object.entries(remoteStreams).slice(1).map(([uid, { stream, name, flag }]: any) => (
+                                <div key={uid} className="w-48 aspect-video relative shrink-0 shadow-2xl rounded-xl overflow-hidden pointer-events-auto border-2 border-white/10">
+                                  <RemoteTile stream={stream} label={name} avatarChar={name[0]?.toUpperCase() || 'U'} flag={flag} isSpeaking={false} />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {remoteCount > 0 && layoutMode !== 'pip' && (
+                        <div className="absolute bottom-5 right-5 w-48 aspect-[3/4] z-20 shadow-2xl">
                           <LocalTile stream={localStream} videoOff={isVideoOff} name={currentUserName} />
+                        </div>
+                      )}
+                      {remoteCount > 0 && layoutMode === 'pip' && (
+                        <div className="absolute bottom-5 right-5 w-48 aspect-video z-20 shadow-2xl rounded-xl overflow-hidden pointer-events-auto border-2 border-white/10">
+                           <LocalTile stream={localStream} videoOff={isVideoOff} name={currentUserName} />
                         </div>
                       )}
                     </div>
@@ -750,7 +820,19 @@ const DesktopCalls: React.FC = () => {
                   {showHostControls && (
                     <HostControls
                       onClose={() => setShowHostControls(false)}
-                      onMuteAll={toggleMute}
+                      onMuteAll={async () => {
+                        if (!activeRoomId) return;
+                        try {
+                          await supabase.channel(`room-settings-${activeRoomId}`).send({
+                            type: 'broadcast',
+                            event: 'host_control',
+                            payload: { key: 'mute_all', value: true }
+                          });
+                          toast.success('Mute command sent to all participants.');
+                        } catch (e) {
+                          toast.error('Failed to send mute command.');
+                        }
+                      }}
                       onEndMeeting={endCall}
                       roomId={activeRoomId}
                     />

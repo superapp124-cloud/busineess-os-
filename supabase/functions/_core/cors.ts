@@ -3,6 +3,8 @@ const DEFAULT_ALLOWED_ORIGINS = [
   "https://www.chatr.chat",
   "http://localhost:5173",
   "http://localhost:8080",
+  "http://localhost:8085",
+  "http://127.0.0.1:8085",
   "capacitor://localhost",
   "ionic://localhost",
 ];
@@ -14,8 +16,13 @@ function configuredOrigins() {
 }
 
 function isPreviewOrigin(origin: string) {
-  return Deno.env.get("ALLOW_VERCEL_PREVIEW_ORIGINS") === "true" &&
+  const isVercel = Deno.env.get("ALLOW_VERCEL_PREVIEW_ORIGINS") === "true" &&
     /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+    
+  // Allow local network IP addresses for testing on mobile devices
+  const isLocalNetwork = /^http:\/\/(192\.168\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+|10\.\d+\.\d+\.\d+):\d+$/.test(origin);
+  
+  return isVercel || isLocalNetwork;
 }
 
 export function resolveOrigin(req: Request) {

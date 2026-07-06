@@ -1,4 +1,6 @@
+import { features } from '../../config/features';
 import { ServiceRegistry } from '../Infrastructure/ServiceRegistry';
+import { EventBus } from '../Infrastructure/EventBus';
 import { ConfigurationManager } from '../Infrastructure/Configuration';
 import { OfflineManager } from '../Services/OfflineManager';
 import { SyncManager } from '../Services/SyncManager';
@@ -21,23 +23,35 @@ class CHATRRuntime {
   async start(): Promise<void> {
     Logger.info('[CHATR Runtime] Starting core services...');
     
-    // Register all services
+    // Core Infrastructure (Always enabled)
+    ServiceRegistry.register(EventBus);
     ServiceRegistry.register(ConfigurationManager);
     ServiceRegistry.register(Metrics);
     ServiceRegistry.register(HealthMonitor);
     ServiceRegistry.register(OfflineManager);
     ServiceRegistry.register(SyncManager);
     ServiceRegistry.register(NotificationManager);
-    ServiceRegistry.register(CollaborationBus);
-    ServiceRegistry.register(AIPlatform);
-    ServiceRegistry.register(KnowledgeManager);
-    ServiceRegistry.register(MessagingService);
-    ServiceRegistry.register(TaskService);
-    ServiceRegistry.register(CalendarService);
-    ServiceRegistry.register(SearchService);
-    ServiceRegistry.register(NotificationService);
-    ServiceRegistry.register(PresenceService);
     ServiceRegistry.register(ActivityService);
+    ServiceRegistry.register(PresenceService);
+
+    // Core Messaging & Calls (Enabled via features)
+    if (features.messaging) {
+      ServiceRegistry.register(MessagingService);
+      ServiceRegistry.register(NotificationService);
+    }
+    
+    // Optional / Experimental Features (Gated)
+    if (features.ai) {
+      ServiceRegistry.register(AIPlatform);
+      ServiceRegistry.register(KnowledgeManager);
+      ServiceRegistry.register(SearchService);
+    }
+
+    if (features.workspace) {
+      ServiceRegistry.register(CollaborationBus);
+      ServiceRegistry.register(TaskService);
+      ServiceRegistry.register(CalendarService);
+    }
 
     // Initialize all (ServiceRegistry handles dependency ordering)
     await ServiceRegistry.initializeAll();

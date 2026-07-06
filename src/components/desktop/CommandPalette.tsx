@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useService } from '@/platform/Infrastructure/PlatformContext';
+import { useOptionalService } from '@/platform/Infrastructure/PlatformContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -42,7 +42,7 @@ const addRecent = (label: string) => {
 // ─── Component ─────────────────────────────────────────────────────────────────
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, userId }) => {
   const navigate = useNavigate();
-  const searchService = useService<any>('SearchService');
+  const searchService = useOptionalService<any>('SearchService');
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);

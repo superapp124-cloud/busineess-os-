@@ -30,10 +30,10 @@ function desktopEntryPlugin() {
 }
 
 export default defineConfig({
-  base: '/',
+  base: './',
   server: {
     host: "::",
-    port: 8085,
+    port: 8086,
     strictPort: true,
     proxy: {
       "/api": {

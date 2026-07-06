@@ -160,12 +160,14 @@ function IntelligenceCard({
         </div>
       )}
       {card.dismissible && (
-        <button
+        <div
           onClick={(e) => { e.stopPropagation(); onDismiss(card.id); }}
-          className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
+          className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer z-10"
+          role="button"
+          tabIndex={0}
         >
           <X className="w-3.5 h-3.5 text-slate-400" />
-        </button>
+        </div>
       )}
       <div className="px-4 py-4 flex items-center gap-3">
         <span className={cn('flex h-11 w-11 items-center justify-center rounded-2xl shrink-0', card.accentBg)}>

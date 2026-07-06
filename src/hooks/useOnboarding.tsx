@@ -16,16 +16,23 @@ export const useOnboarding = (userId: string | undefined) => {
     const checkOnboardingStatus = async () => {
       console.log('[ONBOARDING HOOK] Checking for userId:', userId);
       
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', userId)
-        .single();
+      const [{ data: userRecord, error }, { data: profileRecord }] = await Promise.all([
+        supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', userId)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', userId)
+          .maybeSingle(),
+      ]);
 
-      console.log('[ONBOARDING HOOK] Profile check:', { profile, error });
+      console.log('[ONBOARDING HOOK] User check:', { userRecord, profileRecord, error });
 
-      // Show onboarding for new users who haven't completed it OR if profile doesn't exist
-      if (!profile || (profile && !profile.onboarding_completed)) {
+      const onboardingCompleted = userRecord?.onboarding_completed || profileRecord?.onboarding_completed;
+      if (!onboardingCompleted) {
         console.log('[ONBOARDING HOOK] Opening onboarding dialog');
         setIsOpen(true);
       } else {
@@ -51,21 +58,36 @@ export const useOnboarding = (userId: string | undefined) => {
   const completeOnboarding = async () => {
     if (!userId) return;
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        onboarding_completed: true,
-        profile_completed_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
+    const completedAt = new Date().toISOString();
+    const [{ error }, { error: profileError }] = await Promise.all([
+      supabase
+        .from('users')
+        .update({
+          onboarding_completed: true,
+          profile_completed_at: completedAt,
+          updated_at: completedAt,
+        } as any)
+        .eq('id', userId),
+      supabase
+        .from('profiles')
+        .update({
+          onboarding_completed: true,
+          profile_completed_at: completedAt,
+        } as any)
+        .eq('id', userId),
+    ]);
 
     if (error) {
       toast({
         title: "Error",
-        description: "Failed to complete onboarding",
+        description: error.message || "Failed to complete onboarding",
         variant: "destructive",
       });
       return false;
+    }
+
+    if (profileError) {
+      console.warn('[ONBOARDING HOOK] Legacy profile completion sync skipped:', profileError);
     }
 
     setIsOpen(false);

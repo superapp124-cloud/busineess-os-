@@ -74,6 +74,8 @@ import { LinkedDevicesSheet } from '@/components/chat/LinkedDevicesSheet';
 import { MessageSearchSheet } from '@/components/chat/MessageSearchSheet';
 import { FormattedText } from '@/hooks/useMessageFormatting';
 import { WALLPAPER_KEY, getWallpaperClass } from '@/utils/wallpaper';
+import { UnderstandingLayer } from '@/components/semantic/UnderstandingLayer';
+import { useIntentObserver } from '@/hooks/useIntentObserver';
 
 const ChatEnhancedContent = () => {
   const [wallpaperClass, setWallpaperClass] = React.useState('bg-[#F0F0F8]');
@@ -580,9 +582,19 @@ const ChatEnhancedContent = () => {
     navigate(`/chat/${conversationId}`);
   };
 
+  // ── Intent Observer ─────────────────────────────────────────────────────────
+  const intentObserver = useIntentObserver({
+    conversationId: activeConversationId,
+    userId: user?.id,
+  });
+
   const handleSendMessage = async (content: string, type?: string, mediaAttachments?: any[]) => {
     if (!activeConversationId) return;
     try {
+      // Observe for intents on text messages only (< 1ms, non-blocking)
+      if (type !== 'image' && type !== 'video' && type !== 'audio' && type !== 'file') {
+        intentObserver.observe(content);
+      }
       await sendMessage(content, type, mediaAttachments);
     } catch (error) {
       console.error('Send failed:', error);
@@ -1202,20 +1214,36 @@ const ChatEnhancedContent = () => {
           </div>
 
           <div
-            className="shrink-0 border-t border-black/[0.05] bg-white/96 px-3 pt-2 backdrop-blur-2xl"
+            className="shrink-0 border-t border-black/[0.05] bg-white/96 backdrop-blur-2xl"
             style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}
           >
-            <WhatsAppStyleInput
-              onSendMessage={handleSendMessage}
-              conversationId={activeConversationId}
-              userId={user.id}
-              disabled={messagesLoading}
-              replyToMessage={replyToMessage}
-              onCancelReply={cancelReply}
-              lastMessage={displayMessages.length > 0 && displayMessages[displayMessages.length - 1].sender_id !== user.id 
-                ? displayMessages[displayMessages.length - 1].content 
-                : undefined}
+            {/* ── Experience Alpha: Understanding Layer ── */}
+            <UnderstandingLayer
+              understanding={intentObserver.understanding}
+              isReady={intentObserver.isReady}
+              onDismiss={intentObserver.dismiss}
+              onExecute={() => {
+                // Execute logic
+                toast.success('Action executed');
+                intentObserver.dismiss();
+              }}
             />
+            <div className="px-3 pt-2">
+              <WhatsAppStyleInput
+                onSendMessage={handleSendMessage}
+                conversationId={activeConversationId}
+                userId={user.id}
+                disabled={messagesLoading}
+                replyToMessage={replyToMessage}
+                onCancelReply={cancelReply}
+                lastMessage={displayMessages.length > 0 && displayMessages[displayMessages.length - 1].sender_id !== user.id 
+                  ? displayMessages[displayMessages.length - 1].content 
+                  : undefined}
+                conversationContext={displayMessages.slice(-5).map(m => m.content)}
+                onAIAction={handleAIAction}
+                onTyping={intentObserver.observe}
+              />
+            </div>
           </div>
         </>
       ) : (

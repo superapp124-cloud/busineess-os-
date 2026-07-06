@@ -262,7 +262,7 @@ const Auth = () => {
           onSkip={async () => {
             toast({
               title: "Complete Your Profile",
-              description: "Please fill in your email and phone number to continue",
+              description: "Please provide your name to continue",
               variant: "destructive",
             });
           }}

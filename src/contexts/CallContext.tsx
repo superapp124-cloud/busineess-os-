@@ -106,6 +106,36 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!activeRoomId || !currentUserId) return;
+
+    // Listen for host commands like Mute All and Host Transfer
+    const settingsChannel = supabase.channel(`room-settings-${activeRoomId}`)
+      .on('broadcast', { event: 'host_control' }, (payload) => {
+        const { key, value } = payload.payload || {};
+        if (key === 'mute_all') {
+          supabase.from('session_rooms').select('host_id').eq('id', activeRoomId).single().then(({ data }) => {
+            if (data && data.host_id !== currentUserId) {
+              localStreamRef.current?.getAudioTracks().forEach(t => { t.enabled = false; });
+              setIsMuted(true);
+              toast.info('The host has muted your microphone.');
+            }
+          });
+        } else if (key === 'host_transferred') {
+          if (value === currentUserId) {
+            toast.success('You are now the host of this meeting.');
+          } else {
+            toast.info('The host role has been transferred.');
+          }
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(settingsChannel);
+    };
+  }, [activeRoomId, currentUserId]);
+
   const init = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -196,13 +226,13 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
           setIncomingRoom({
             roomId: callRow.id,
             callId: callRow.id,
-            callerName: callerProf?.full_name || callerProf?.username || 'Unknown',
-            callerAvatar: callerProf?.avatar_url || '',
-            callerFlag: getFlagFromPhone(callerProf?.phone_number || '') || '',
+            callerName: callRow.caller_name || callerProf?.full_name || callerProf?.username || 'Unknown',
+            callerAvatar: callRow.caller_avatar || callerProf?.avatar_url || '',
+            callerFlag: getFlagFromPhone(callRow.caller_phone || callerProf?.phone_number || '') || '',
             goal: 'quick',
             callerId: callRow.caller_id,
           });
-        } else if (payload.eventType === 'UPDATE' && (callRow.status === 'ended' || callRow.status === 'rejected')) {
+        } else if (payload.eventType === 'UPDATE' && (callRow.status === 'ended' || callRow.status === 'rejected' || callRow.status === 'missed')) {
           setIncomingRoom(prev => prev?.callId === callRow.id ? null : prev);
         }
       })
@@ -275,11 +305,12 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         .eq('id', currentUserId)
         .single();
 
+      // Ensure a shared DM conversation exists
       const { data: convId } = await supabase
         .rpc('create_direct_conversation', { other_user_id: target.id });
 
-      const { data: insertedCallRow } = await supabase.from('calls').insert([{
-        id: room.id,
+      const { data: insertedCallRow, error: callInsertError } = await supabase.from('calls').insert([{
+        id: room.id, // use room.id as call id for correlation
         conversation_id: convId,
         caller_id: currentUserId,
         caller_name: callerProfile?.full_name || callerProfile?.username || 'Caller',
@@ -294,20 +325,36 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         started_at: new Date().toISOString(),
       }]).select('id').single();
 
+      if (callInsertError) console.warn('[CallContext] call insert error:', callInsertError);
       callRow = insertedCallRow;
       if (callRow?.id) setActiveCallId(callRow.id);
     } catch (callInsertErr) {
-      console.warn('[DesktopCalls] Could not insert calls row:', callInsertErr);
+      console.warn('[CallContext] Could not insert calls row:', callInsertErr);
     }
 
     const stream = await getStream(video);
     if (!stream) { endCall(); return; }
     await gcm.joinRoom(room.id, [target.id], stream, { video, audio: true }, true, callRow ? { [target.id]: callRow.id } : undefined);
+    navigate('/desktop/calls');
   };
 
   const answerCall = async () => {
     if (!gcm || !incomingRoom || !currentUserId) return;
     const { roomId, callerName, callerAvatar, callerFlag, goal, callId: incomingCallId, callerId } = incomingRoom;
+
+    // Security Check: Is the room locked?
+    const { data: roomData } = await supabase.from('session_rooms').select('is_locked, waiting_room_enabled').eq('id', roomId).single();
+    if (roomData?.is_locked) {
+      toast.error('The host has locked this meeting. You cannot join.');
+      setIncomingRoom(null);
+      return;
+    }
+    if (roomData?.waiting_room_enabled) {
+      toast.info('The host has enabled the waiting room. (Approval flow coming soon, joining blocked for now)');
+      setIncomingRoom(null);
+      return;
+    }
+
     setIncomingRoom(null);
     setSessionGoal(goal);
     setRemoteUserName(callerName);

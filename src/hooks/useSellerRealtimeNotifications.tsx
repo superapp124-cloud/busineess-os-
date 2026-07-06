@@ -131,7 +131,7 @@ export const useSellerRealtimeNotifications = (sellerId: string | undefined) => 
     return () => {
       supabase.removeChannel(bookingsChannel);
     };
-  }, [sellerId, toast]);
+  }, [sellerId]);
 
   const clearNotifications = () => {
     setNotifications([]);

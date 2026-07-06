@@ -53,6 +53,14 @@ class ServiceRegistryService {
     }
     return service as unknown as T;
   }
+
+  getOptional<T = any>(name: string): T | undefined {
+    const service = this.services.get(name);
+    if (!service) {
+      return undefined;
+    }
+    return service as unknown as T;
+  }
 }
 
 export const ServiceRegistry = new ServiceRegistryService();

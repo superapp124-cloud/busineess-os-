@@ -67,7 +67,7 @@ export function GlobalCallListener() {
   // doing so creates a SECOND competing WebRTC call (from the legacy
   // SimpleWebRTCCall stack) that blocks media flow from GroupCallManager.
   // Subscriptions still run so mobile-side call notifications work correctly.
-  const isDesktopCallsRoute = location.pathname.startsWith('/desktop/');
+  const isDesktopCallsRoute = location.pathname.startsWith('/desktop');
   // ──────────────────────────────────────────────────────────────────────────
 
   const MAX_RINGING_RECOVERY_AGE_MS = 45_000; // Increased to 45s to prevent premature expiry during cold boots/user reaction times
@@ -1701,7 +1701,7 @@ export function GlobalCallListener() {
       supabase.removeChannel(outgoingUpdatesChannel);
       supabase.removeChannel(videoUpgradeChannel);
     };
-  }, [userId, toast, hasNativeUI]);
+  }, [userId, hasNativeUI]);
 
   // GUARD: Block web accept if native already accepted
   const handleAnswer = async () => {

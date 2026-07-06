@@ -55,10 +55,10 @@ import * as LazyPages from "./routes/lazyPages";
 import { preloadCriticalRoutes } from "./routes/lazyPages";
 
 // Layout components (small, keep eager)
-import { AdminLayout } from "./components/AdminLayout";
+const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m => ({ default: m.AdminLayout })));
 import DesktopLayout from "./layouts/DesktopLayout";
-import { WorkspaceSetup } from "./pages/desktop/WorkspaceSetup";
-import { BusinessLayout } from "./layouts/BusinessLayout";
+const WorkspaceSetup = React.lazy(() => import("./pages/desktop/WorkspaceSetup").then(m => ({ default: m.WorkspaceSetup })));
+const BusinessLayout = React.lazy(() => import("./layouts/BusinessLayout").then(m => ({ default: m.BusinessLayout })));
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
   import("./components/FeatureEngagementTracker").then((module) => ({
@@ -270,7 +270,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   }, []);
 
   if (isNative) ensureNativeHashRoute();
-  const Router = isNative ? HashRouter : BrowserRouter;
+  const Router = (isNative || platform === 'desktop') ? HashRouter : BrowserRouter;
 
   // UI Speed Budget - warn when interactions exceed 100ms (Nielsen "instant" threshold)
   useUISpeedBudget({ budgetMs: 100 });
@@ -410,7 +410,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 {/* Desktop Layout Routes (web.chatr.chat) */}
                 <Route path="/desktop" element={<DesktopLayout />}>
                   <Route index element={<Navigate to="/desktop/chat" replace />} />
-                  <Route path="setup" element={<WorkspaceSetup />} />
+                  <Route path="setup" element={<Suspense fallback={<PageLoader />}><WorkspaceSetup /></Suspense>} />
+                  <Route path="kernel" element={<LazyRoute component={LazyPages.KernelConsole} />} />
+                  <Route path="beta-command-center" element={<LazyRoute component={LazyPages.BetaCommandCenter} />} />
                   <Route path="connect" element={<LazyRoute component={LazyPages.DesktopConnectPairing} />} />
                   <Route path="chat" element={<LazyRoute component={LazyPages.DesktopChat} />} />
                   <Route path="contacts" element={<LazyRoute component={LazyPages.DesktopContacts} />} />
@@ -429,7 +431,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                   <Route path="smart-inbox" element={<LazyRoute component={LazyPages.SmartInbox} />} />
                   <Route path="pro" element={<LazyRoute component={LazyPages.ProUpgrade} />} />
                   {/* Business Platform Routes Nested in Desktop */}
-                  <Route path="pro/business" element={<BusinessLayout />}>
+                  <Route path="pro/business" element={<Suspense fallback={<PageLoader />}><BusinessLayout /></Suspense>}>
                     <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<LazyRoute component={LazyPages.BusinessDashboard} />} />
                     <Route path="onboard" element={<LazyRoute component={LazyPages.BusinessOnboarding} />} />
@@ -451,7 +453,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 </Route>
                 
                 {/* Admin Platform Routes */}
-                <Route path="/admin" element={<AdminLayout />}>
+                <Route path="/admin" element={<Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>}>
                   <Route index element={<LazyRoute component={LazyPages.AdminDashboard} />} />
                   <Route path="feature-builder" element={<LazyRoute component={LazyPages.FeatureBuilder} />} />
                   <Route path="schema-manager" element={<LazyRoute component={LazyPages.SchemaManager} />} />

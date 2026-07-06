@@ -3,7 +3,6 @@
  * Real-time voice-to-text during calls
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface TranscriptionSegment {
   id: string;
@@ -30,26 +29,8 @@ export const useLiveTranscription = ({ callId, enabled = true, language = 'en' }
 
   const processAudioChunk = useCallback(async (audioBlob: Blob) => {
     try {
-      // Convert blob to base64
-      const buffer = await audioBlob.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-
-      const { data, error: fnError } = await supabase.functions.invoke('live-transcription', {
-        body: { audioBase64: base64, callId, language }
-      });
-
-      if (fnError) throw fnError;
-
-      if (data?.transcription && data.transcription.length > 5) {
-        const segment: TranscriptionSegment = {
-          id: crypto.randomUUID(),
-          text: data.transcription,
-          speaker: 'local',
-          timestamp: Date.now(),
-          confidence: data.confidence || 0.9,
-        };
-        setTranscripts(prev => [...prev, segment]);
-      }
+      if (audioBlob.size === 0) return;
+      setError('Local-only live transcription is not available yet. Cloud transcription is disabled for privacy.');
     } catch (err) {
       console.error('[useLiveTranscription] Processing error:', err);
     }

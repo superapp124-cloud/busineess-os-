@@ -119,7 +119,7 @@ export const useMessageRetry = () => {
         description: 'Your message was delivered',
       });
     }
-  }, [failedMessages, sendMessageWithRetry, toast]);
+  }, [failedMessages, sendMessageWithRetry]);
 
   const syncOfflineMessages = useCallback(async () => {
     if (!navigator.onLine) {
@@ -145,7 +145,7 @@ export const useMessageRetry = () => {
         description: `Sent ${queuedMessages.length} offline messages`,
       });
     }
-  }, [sendMessageWithRetry, toast]);
+  }, [sendMessageWithRetry]);
 
   return {
     sendMessageWithRetry,

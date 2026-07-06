@@ -723,9 +723,9 @@ const Index = () => {
             />
             <div>
               <div className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-cyan-500 bg-clip-text text-transparent">
-                Chatr+
+                Chatr
               </div>
-              <div className="text-xs font-medium text-muted-foreground">The AI Superapp for India</div>
+              <div className="text-xs font-medium text-muted-foreground">The Communication OS</div>
             </div>
           </div>
         </div>
@@ -736,14 +736,14 @@ const Index = () => {
   return (
     <>
       <SEOHead
-        title="Chatr+ - The AI Superapp for India | Chat, Healthcare, Jobs & More"
-        description="Chatr+ is India's all-in-one AI superapp. Chat with friends, find healthcare providers, discover local jobs, order food, and access 100+ services - all in one app."
+        title="Chatr — Communication OS | Chat, Healthcare, Jobs & More"
+        description="Chatr is the universal Communication OS. Chat with friends, find healthcare providers, discover local jobs, order food, and access 100+ services - all in one app."
         keywords="chatr, superapp, india, messaging app, healthcare app, job search, food delivery, AI assistant, local services, telemedicine"
         schemaData={{
           "@context": "https://schema.org",
           "@type": "MobileApplication",
-          "name": "Chatr+",
-          "description": "India's AI Superapp - Chat, Healthcare, Jobs & More",
+          "name": "Chatr",
+          "description": "Communication OS - Chat, Healthcare, Jobs & More",
           "applicationCategory": "LifestyleApplication",
           "operatingSystem": "Android, iOS, Web",
           "offers": {
@@ -772,7 +772,7 @@ const Index = () => {
             <img src={chatrIconLogo} alt="Chatr Logo" className="h-10 w-10" loading="eager" />
             <div>
               <div className="text-xl font-bold bg-gradient-to-r from-primary via-primary to-cyan-500 bg-clip-text text-transparent">
-                Chatr+
+                Chatr
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground group-hover:text-primary transition-colors">
                 {mode && (() => {
@@ -785,7 +785,7 @@ const Index = () => {
                     </>
                   );
                 })()}
-                {!mode && <span>The AI Superapp for India</span>}
+                {!mode && <span>The Communication OS</span>}
               </div>
             </div>
           </div>

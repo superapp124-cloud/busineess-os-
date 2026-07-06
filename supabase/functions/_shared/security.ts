@@ -7,7 +7,10 @@ const DEFAULT_ALLOWED_ORIGINS = [
   "https://www.chatr.chat",
   "http://localhost:5173",
   "http://localhost:8080",
+  "http://localhost:8085",
+  "http://127.0.0.1:8085",
   "capacitor://localhost",
+  "ionic://localhost",
 ];
 
 const rateLimitState = new Map<string, { count: number; resetAt: number }>();
@@ -29,10 +32,14 @@ function allowedOrigins() {
   return configured.split(",").map((origin) => origin.trim()).filter(Boolean);
 }
 
+function isLocalNetwork(origin: string): boolean {
+  return /^http:\/\/(192\.168\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+|10\.\d+\.\d+\.\d+):\d+$/.test(origin);
+}
+
 export function corsHeaders(req: Request): HeadersInit {
   const origin = req.headers.get("Origin");
   const allowed = allowedOrigins();
-  const allowOrigin = origin && allowed.includes(origin) ? origin : allowed[0];
+  const allowOrigin = origin && (allowed.includes(origin) || isLocalNetwork(origin)) ? origin : allowed[0];
 
   return {
     "Access-Control-Allow-Origin": allowOrigin,
@@ -102,8 +109,9 @@ export async function requireUser(req: Request) {
     global: { headers: { Authorization: authHeader } },
   });
 
-  const { data, error } = await authClient.auth.getUser();
-  if (error || !data.user) {
+  const { data: { user }, error: authError } = await authClient.auth.getUser();
+
+  if (authError || !user) {
     throw new HttpError(401, "invalid_token", "Invalid or expired session");
   }
 
@@ -111,7 +119,7 @@ export async function requireUser(req: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  return { user: data.user, authClient, serviceClient, authHeader };
+  return { user, authClient, serviceClient, authHeader };
 }
 
 export function requireSameUser(authenticatedUserId: string, requestedUserId?: unknown) {

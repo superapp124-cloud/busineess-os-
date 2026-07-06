@@ -11,6 +11,7 @@ import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 import { useService } from '@/platform/Infrastructure/PlatformContext';
+import { generate } from '@/services/ai';
 
 interface CalendarEvent {
   title: string;
@@ -195,14 +196,7 @@ const DesktopIntelligence: React.FC = () => {
 
       const prompt = `You are CHATR AI Intelligence. Analyze these real call records and generate a JSON array of call summaries. For each call, infer realistic context from the data available.\n\nCall Records:\n${callSummaryText}\n\nGenerate a JSON array where each item has: id (string), phone_number, contact_name (infer or use 'Contact'), duration_seconds (number), summary (2-3 sentences), sentiment (positive/neutral/negative), key_points (array of 3 strings), action_items (array of 2 strings), calendar_events (empty array), generated_at (ISO string).\n\nReturn ONLY the JSON array, no markdown.`;
 
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      });
-      const json = await res.json();
-      const text = json?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+      const text = await generate({ prompt, preferLocal: true });
       // Clean potential markdown fences
       const clean = text.replace(/```json|```/g, '').trim();
       const parsed = JSON.parse(clean);
@@ -210,7 +204,7 @@ const DesktopIntelligence: React.FC = () => {
       toast.success('AI analysis complete!');
     } catch (err) {
       console.error('AI analysis failed:', err);
-      toast.error('AI analysis failed. Check your Gemini API key.');
+      toast.error('AI analysis failed. Start local Ollama and try again.');
     } finally {
       setIsGeneratingAI(false);
     }
@@ -286,7 +280,7 @@ const DesktopIntelligence: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">No Call Summaries Yet</h3>
               <p className="text-muted-foreground max-w-md mb-6">
-                Complete calls on CHATR to generate AI-powered summaries. Click below to analyze your call history with Gemini AI.
+                Complete calls on CHATR to generate AI-powered summaries. Click below to analyze your call history with local Ollama.
               </p>
               <Button onClick={generateRealAISummary} disabled={isGeneratingAI} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20">
                 <BrainCircuit className="w-4 h-4 mr-2" />

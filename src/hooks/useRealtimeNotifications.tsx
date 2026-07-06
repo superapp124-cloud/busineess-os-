@@ -169,5 +169,5 @@ export const useRealtimeNotifications = (userId: string | undefined) => {
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(appointmentsChannel);
     };
-  }, [userId, toast]);
+  }, [userId]);
 };

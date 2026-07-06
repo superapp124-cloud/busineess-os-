@@ -3,7 +3,7 @@
  * Auto-generated call summaries with action items
  */
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { generate } from '@/services/ai';
 
 interface ActionItem {
   task: string;
@@ -37,11 +37,21 @@ export const useCallSummary = () => {
       setIsGenerating(true);
       setError(null);
 
-      const { data, error: fnError } = await supabase.functions.invoke('call-summary', {
-        body: { callId, transcript, duration, participants }
-      });
+      const prompt = `You are CHATR's local call assistant running on Ollama only. Summarize this call as strict JSON.
 
-      if (fnError) throw fnError;
+Call ID: ${callId}
+Duration seconds: ${duration ?? 0}
+Participants: ${(participants || []).join(', ') || 'Unknown'}
+
+Transcript:
+${transcript || '(no transcript captured)'}
+
+Return only JSON with these keys:
+summary string, keyPoints string[], actionItems {task:string, assignee?:string, dueDate?:string}[], topics string[], sentiment string, followUpRequired boolean, nextSteps string[], generatedAt ISO string.`;
+
+      const raw = await generate({ prompt, preferLocal: true });
+      const clean = raw.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
 
       const result: CallSummaryResult = {
         summary: data.summary || '',

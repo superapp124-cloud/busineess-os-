@@ -170,7 +170,7 @@ export default function ProUpgrade() {
                 <div className="space-y-4 mb-8 flex-1">
                   {[
                     "Everything in Free",
-                    "Unlimited Gemini/Ollama usage",
+                    "Unlimited local Ollama usage",
                     "Voice Clone setup & hosting",
                     "5 Burner Numbers per month",
                     "Priority support queue"

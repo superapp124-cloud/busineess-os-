@@ -5,6 +5,7 @@ const log = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const { execFile } = require('child_process');
 const ollamaEngine = require('./ollama.cjs');
+const chatrKernel  = require('./chatr-core/index.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 let localRecordsIpcRegistered = false;
@@ -23,13 +24,16 @@ function timestampForFile(value = new Date()) {
 }
 
 function ensureLocalRecordsDirs() {
-  const root = path.join(app.getPath('documents'), 'CHATR');
+  const root = path.join(app.getPath('documents'), 'CHATR Workspace');
   const transcripts = path.join(root, 'Transcripts');
   const recordings = path.join(root, 'Call Recordings');
+  const summaries = path.join(root, 'AI Summaries');
   fs.mkdirSync(transcripts, { recursive: true });
   fs.mkdirSync(recordings, { recursive: true });
-  return { root, transcripts, recordings };
+  fs.mkdirSync(summaries, { recursive: true });
+  return { root, transcripts, recordings, summaries };
 }
+
 
 function recordingExtension(mimeType = '') {
   if (mimeType.includes('mp4')) return 'mp4';
@@ -345,6 +349,13 @@ JSON Output:
   // Fails closed when local AI is not available
   ollamaEngine.bootstrap(mainWindow);
 
+  // ── CHATR Kernel Boot ────────────────────────────────────────────────────
+  // Boot after Ollama so OllamaProvider can resolve the active port.
+  // Runs on port 8087. Zero user interaction required.
+  chatrKernel.boot().catch(err => {
+    log.error('[CHATR Kernel] Failed to boot:', err.message);
+  });
+
   // Auto Updater IPC Hooks
   ipcMain.handle('updater:check', () => {
     if (!isDev) {
@@ -419,6 +430,8 @@ function createWindow() {
     height: state.height || 800,
     x: state.x,
     y: state.y,
+    show: false, // Wait until ready-to-show to prevent white flash
+    backgroundColor: '#09090b', // zinc-950
     titleBarStyle: 'hidden',
     titleBarOverlay: {
       color: '#ffffff',
@@ -441,6 +454,10 @@ function createWindow() {
     },
   });
 
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   // Strict Content Security Policy (CSP)
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
@@ -448,13 +465,13 @@ function createWindow() {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self';" +
-          "script-src 'self' 'unsafe-inline';" +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://cdn.jsdelivr.net;" +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
           "font-src 'self' https://fonts.gstatic.com data:;" +
-          "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com blob:;" +
-          // Supabase remains for app data/signaling. AI inference is local Ollama only.
-          "connect-src 'self' ws://localhost:8085 http://localhost:8085 http://127.0.0.1:3717 http://localhost:3717 http://127.0.0.1:11434 http://localhost:11434 https://*.supabase.co wss://*.supabase.co;" +
-          "frame-src 'none';" +
+          "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat blob:;" +
+          "connect-src 'self' ws://localhost:8086 http://localhost:8086 http://127.0.0.1:3717 http://localhost:3717 http://127.0.0.1:11434 http://localhost:11434 https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net;" +
+          "worker-src 'self' blob:;" +
+          "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.net/;" +
           "object-src 'none';"
         ]
       }
@@ -479,13 +496,13 @@ function createWindow() {
   });
 
   if (isDev) {
-    log.info('Loading Desktop Vite Dev Server (port 8085)');
+    log.info('Loading Desktop Vite Dev Server (port 8086)');
     // Always load the desktop pipeline — never the mobile one.
-    // vite.desktop.config.ts guarantees port 8085 with strictPort=true.
-    mainWindow.loadURL('http://localhost:8085');
+    // vite.desktop.config.ts guarantees port 8086 with strictPort=true.
+    mainWindow.loadURL('http://localhost:8086');
   } else {
     log.info('Loading Production Bundle');
-    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html'));
   }
 
   // Setup the Context Engine endpoints for this window
@@ -520,14 +537,24 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  // ── FIRST BOOT: Guarantee Documents/CHATR/Transcripts and Call Recordings exist ──
+  // This runs before the window opens so the folders are always there on install.
+  try {
+    const dirs = ensureLocalRecordsDirs();
+    log.info('[LocalRecords] Folders guaranteed:', dirs.root);
+  } catch (err) {
+    log.error('[LocalRecords] Could not create Documents folders:', err.message);
+  }
+
   createWindow();
+
 
   // ---------------------------------------------------------
   // PHASE 4: SYSTEM TRAY & GLOBAL SHORTCUTS
   // ---------------------------------------------------------
   
   // 1. System Tray
-  const iconPath = path.join(__dirname, '../public/favicon.ico');
+  const iconPath = path.join(__dirname, '../public/favicon.png');
   try {
     if (fs.existsSync(iconPath)) {
       tray = new Tray(iconPath);
@@ -601,6 +628,7 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
+  chatrKernel.shutdown().catch(() => {});
 });
 
 process.on('uncaughtException', (error) => {

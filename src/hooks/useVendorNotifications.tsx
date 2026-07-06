@@ -87,7 +87,7 @@ export const useFoodVendorNotifications = (vendorId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [vendorId, toast, playOrderSound]);
+  }, [vendorId, playOrderSound]);
 };
 
 // Hook for Service Provider (Home Services) notifications
@@ -152,7 +152,7 @@ export const useServiceVendorNotifications = (vendorId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [vendorId, toast]);
+  }, [vendorId]);
 };
 
 // Hook for Healthcare Provider (Doctor) notifications
@@ -217,7 +217,7 @@ export const useHealthcareVendorNotifications = (doctorId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [doctorId, toast]);
+  }, [doctorId]);
 };
 
 // Hook for Chatr+ Seller notifications
@@ -261,7 +261,7 @@ export const useChatrPlusSellerNotifications = (sellerId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sellerId, toast]);
+  }, [sellerId]);
 };
 
 // Combined vendor notification hook

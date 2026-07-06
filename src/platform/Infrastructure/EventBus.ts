@@ -1,10 +1,17 @@
-import { IEvent } from '../Shared/Types';
+import { IEvent, IService } from '../Shared/Types';
 import { Logger } from './Logger';
 
 type EventHandler = (event: IEvent) => Promise<void> | void;
 
-class EventBusService {
+class EventBusService implements IService {
+  name = 'EventBus';
+  dependencies: string[] = [];
+
   private handlers: Map<string, Set<EventHandler>> = new Map();
+
+  async initialize(): Promise<void> {
+    Logger.info('[EventBus] Initialized.');
+  }
 
   subscribe(eventType: string, handler: EventHandler): () => void {
     if (!this.handlers.has(eventType)) {
@@ -49,3 +56,4 @@ class EventBusService {
 }
 
 export const EventBus = new EventBusService();
+

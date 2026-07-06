@@ -20,7 +20,8 @@ create table if not exists public.users (
   avatar_url text,
   status text default 'offline',
   last_seen timestamp with time zone default now(),
-  created_at timestamp with time zone default now()
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
 );
 alter table public.users enable row level security;
 create policy "Public active users are viewable by everyone" on public.users for select using (true);
@@ -28,7 +29,7 @@ create policy "Users can update own profile" on public.users for update using (a
 
 -- ORGANIZATIONS
 create table if not exists public.organizations (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   name text not null,
   slug text unique not null,
   logo_url text,
@@ -41,7 +42,7 @@ alter table public.organizations enable row level security;
 -- ORGANIZATION MEMBERS
 create type org_role as enum ('owner', 'admin', 'member', 'guest');
 create table if not exists public.organization_members (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   organization_id uuid references public.organizations(id) on delete cascade not null,
   user_id uuid references public.users(id) on delete cascade not null,
   role org_role default 'member' not null,
@@ -66,7 +67,7 @@ create policy "Org members can view members" on public.organization_members for 
 -- CONVERSATIONS
 create type conversation_type as enum ('direct', 'group', 'channel');
 create table if not exists public.conversations (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   organization_id uuid references public.organizations(id) on delete cascade,
   type conversation_type not null,
   name text,
@@ -78,7 +79,7 @@ alter table public.conversations enable row level security;
 
 -- CONVERSATION PARTICIPANTS
 create table if not exists public.conversation_participants (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   conversation_id uuid references public.conversations(id) on delete cascade not null,
   user_id uuid references public.users(id) on delete cascade not null,
   role text default 'member',
@@ -96,7 +97,7 @@ create policy "Participants can view other participants" on public.conversation_
 -- MESSAGES
 create type message_type as enum ('text', 'system', 'ai');
 create table if not exists public.messages (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   conversation_id uuid references public.conversations(id) on delete cascade not null,
   sender_id uuid references public.users(id) on delete set null,
   content text not null,
@@ -111,7 +112,7 @@ create policy "Participants can insert messages" on public.messages for insert
 
 -- ATTACHMENTS
 create table if not exists public.attachments (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   message_id uuid references public.messages(id) on delete cascade not null,
   file_url text not null,
   file_type text not null,
@@ -134,7 +135,7 @@ create policy "Readers can view attachments" on public.attachments for select
 -- CALLS
 create type call_status as enum ('ringing', 'active', 'ended', 'missed');
 create table if not exists public.calls (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   conversation_id uuid references public.conversations(id) on delete cascade not null,
   caller_id uuid references public.users(id) on delete cascade not null,
   status call_status default 'ringing',
@@ -147,7 +148,7 @@ create policy "Participants can view calls" on public.calls for select
 
 -- MEETINGS
 create table if not exists public.meetings (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   organization_id uuid references public.organizations(id) on delete cascade not null,
   host_id uuid references public.users(id) on delete cascade not null,
   title text not null,
@@ -162,7 +163,7 @@ create policy "Org members can view meetings" on public.meetings for select
 
 -- MEETING PARTICIPANTS
 create table if not exists public.meeting_participants (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   meeting_id uuid references public.meetings(id) on delete cascade not null,
   user_id uuid references public.users(id) on delete cascade not null,
   joined_at timestamp with time zone default now(),
@@ -175,7 +176,7 @@ alter table public.meeting_participants enable row level security;
 -- ==============================================================================
 
 create table if not exists public.ai_sessions (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references public.users(id) on delete cascade not null,
   agent_role text not null,
   context_window jsonb default '{}'::jsonb,
@@ -186,7 +187,7 @@ alter table public.ai_sessions enable row level security;
 create policy "Users manage own AI sessions" on public.ai_sessions for all using (user_id = auth.uid());
 
 create table if not exists public.ai_memory (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references public.users(id) on delete cascade,
   organization_id uuid references public.organizations(id) on delete cascade,
   fact text not null,
@@ -200,7 +201,7 @@ alter table public.ai_memory enable row level security;
 -- ==============================================================================
 
 create table if not exists public.notifications (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references public.users(id) on delete cascade not null,
   type text not null,
   title text not null,
@@ -213,7 +214,7 @@ alter table public.notifications enable row level security;
 create policy "Users manage own notifications" on public.notifications for all using (user_id = auth.uid());
 
 create table if not exists public.storage_metadata (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   bucket_name text not null,
   path text not null,
   owner_id uuid references public.users(id) on delete set null,
@@ -224,7 +225,7 @@ create table if not exists public.storage_metadata (
 alter table public.storage_metadata enable row level security;
 
 create table if not exists public.audit_logs (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   organization_id uuid references public.organizations(id) on delete cascade not null,
   actor_id uuid references public.users(id) on delete set null,
   action text not null,

@@ -89,12 +89,12 @@ const ollamaProvider: AIProvider = {
     }
 
     const model = options?.model ?? 'llama3.2:3b';
-    const res = await fetchWithTimeout(`${base}/api/chat`, {
+    const res = await fetchWithTimeout(`${base}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model,
-        messages,
+        prompt: messagesToPrompt(messages),
         stream: false,
         options: {
           temperature: options?.temperature,
@@ -108,7 +108,7 @@ const ollamaProvider: AIProvider = {
     }
 
     const data = (await res.json()) as { message?: { content?: string }; response?: string };
-    return data.message?.content ?? data.response ?? '';
+    return data.response ?? data.message?.content ?? '';
   },
 
   async chatStream(
@@ -127,12 +127,12 @@ const ollamaProvider: AIProvider = {
     }
 
     const model = options?.model ?? 'llama3.2:3b';
-    const res = await fetchWithTimeout(`${base}/api/chat`, {
+    const res = await fetchWithTimeout(`${base}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model,
-        messages,
+        prompt: messagesToPrompt(messages),
         stream: true,
         options: {
           temperature: options?.temperature,
@@ -156,8 +156,9 @@ const ollamaProvider: AIProvider = {
       for (const line of text.split('\n')) {
         if (!line.trim()) continue;
         try {
-          const parsed = JSON.parse(line) as { message?: { content?: string } };
-          if (parsed.message?.content) onChunk(parsed.message.content);
+          const parsed = JSON.parse(line) as { response?: string; message?: { content?: string } };
+          if (parsed.response) onChunk(parsed.response);
+          else if (parsed.message?.content) onChunk(parsed.message.content);
         } catch {
           // Skip partial JSON fragments until the next chunk arrives.
         }

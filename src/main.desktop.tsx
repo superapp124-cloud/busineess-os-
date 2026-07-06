@@ -9,4 +9,11 @@ import "./index.css";
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Root element not found");
 
-createRoot(rootElement).render(<App platform="desktop" />);
+try {
+  console.log("🚀 [Main Desktop] Starting React mount...");
+  createRoot(rootElement).render(<App platform="desktop" />);
+  console.log("🚀 [Main Desktop] Render call completed");
+} catch (e: any) {
+  console.error("❌ React Mount Error:", e);
+  rootElement.innerHTML = `<div style="color:red;font-size:24px;padding:20px;z-index:999999;position:relative;">CRITICAL ERROR: ${e.message}<br/>${e.stack}</div>`;
+}

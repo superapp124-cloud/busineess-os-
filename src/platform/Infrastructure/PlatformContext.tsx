@@ -45,6 +45,14 @@ export const useService = <T = any>(serviceName: string): T => {
   return context.services.get<T>(serviceName);
 };
 
+export const useOptionalService = <T = any>(serviceName: string): T | undefined => {
+  const context = useContext(PlatformContext);
+  if (!context) {
+    return undefined;
+  }
+  return context.services.getOptional<T>(serviceName);
+};
+
 export const usePlatformReady = () => {
   return useContext(PlatformContext).isReady;
 };

@@ -9,12 +9,17 @@ import { toast } from 'sonner';
  * (Event Timing API) which measures the time from input → next paint.
  *
  * Usage: mount once near the app root.
+ *
+ * FIX: onViolation, showToast, logToConsole are stored in refs so the
+ * PerformanceObserver is created only ONCE (when budgetMs changes),
+ * preventing an infinite re-render loop caused by inline callback identity changes.
  */
 
 interface SpeedBudgetOptions {
   /** Max acceptable interaction latency in ms. Default 100ms. */
   budgetMs?: number;
-  /** Show a toast when exceeded. Default: only in dev. */
+  /** Show a toast when exceeded. Disabled by default — toasts themselves
+   *  trigger re-renders and inflate INP measurements. */
   showToast?: boolean;
   /** Log to console.warn. Default true in dev. */
   logToConsole?: boolean;
@@ -31,25 +36,31 @@ const isDev = import.meta.env.DEV;
 export function useUISpeedBudget(options: SpeedBudgetOptions = {}) {
   const {
     budgetMs = 100,
-    showToast = isDev,
+    showToast = false, // disabled by default — toasts cause re-renders
     logToConsole = isDev,
     onViolation,
   } = options;
 
   const lastWarnRef = useRef<number>(0);
 
+  // Store mutable callbacks/flags in refs so we don't recreate the observer
+  // every time an inline function reference changes.
+  const logRef = useRef(logToConsole);
+  const toastRef = useRef(showToast);
+  const cbRef = useRef(onViolation);
+  logRef.current = logToConsole;
+  toastRef.current = showToast;
+  cbRef.current = onViolation;
+
   useEffect(() => {
     if (typeof PerformanceObserver === 'undefined') return;
 
-    // Avoid flooding: throttle warnings to once per 2s
     const WARN_INTERVAL_MS = 2000;
 
     let observer: PerformanceObserver | null = null;
-
     try {
       observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          // Event Timing API entries
           const duration = entry.duration;
           if (duration <= budgetMs) continue;
 
@@ -57,65 +68,56 @@ export function useUISpeedBudget(options: SpeedBudgetOptions = {}) {
             (entry as unknown as { target?: Element }).target?.tagName?.toLowerCase() ||
             'unknown';
 
-          const violation = {
-            name: entry.name,
-            duration: Math.round(duration),
-            target,
-          };
+          const violation = { name: entry.name, duration: Math.round(duration), target };
 
-          onViolation?.(violation);
+          cbRef.current?.(violation);
 
-          if (logToConsole) {
+          if (logRef.current) {
             console.warn(
               `⚡ UI Speed Budget exceeded: ${violation.name} on <${target}> took ${violation.duration}ms (budget: ${budgetMs}ms)`
             );
           }
 
           const now = Date.now();
-          if (showToast && now - lastWarnRef.current > WARN_INTERVAL_MS) {
+          if (toastRef.current && now - lastWarnRef.current > WARN_INTERVAL_MS) {
             lastWarnRef.current = now;
-            toast.warning(
-              `Slow interaction: ${violation.duration}ms (budget ${budgetMs}ms)`,
-              {
-                description: `${violation.name} on <${target}>`,
-                duration: 3500,
-              }
-            );
+            toast.warning(`Slow interaction: ${violation.duration}ms (budget ${budgetMs}ms)`, {
+              description: `${violation.name} on <${target}>`,
+              duration: 3500,
+            });
           }
         }
       });
 
-      // `event` covers click/keydown/pointer interactions (INP-style)
       observer.observe({
         type: 'event',
         buffered: true,
-        // @ts-expect-error - durationThreshold is supported in modern browsers
+        // @ts-expect-error - durationThreshold is in the spec but not all TS defs have it
         durationThreshold: budgetMs,
       });
     } catch {
-      // Older browsers may reject the type — silently no-op.
+      // Older browsers may not support the 'event' type — silently no-op.
     }
 
-    // Long-task observer for blocking JS (>50ms tasks)
     let longTaskObserver: PerformanceObserver | null = null;
     try {
       longTaskObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.duration > budgetMs && logToConsole) {
-            console.warn(
-              `⚠️ Long task blocking UI: ${Math.round(entry.duration)}ms`
-            );
+          if (entry.duration > budgetMs && logRef.current) {
+            console.warn(`⚠️ Long task blocking UI: ${Math.round(entry.duration)}ms`);
           }
         }
       });
       longTaskObserver.observe({ type: 'longtask', buffered: true });
     } catch {
-      // longtask not supported — ignore
+      // longtask API not supported — ignore.
     }
 
     return () => {
       observer?.disconnect();
       longTaskObserver?.disconnect();
     };
-  }, [budgetMs, showToast, logToConsole, onViolation]);
+  // Only re-create observers if the numeric budget threshold changes.
+  // All callbacks/flags are read from refs inside the observer closure.
+  }, [budgetMs]);
 }

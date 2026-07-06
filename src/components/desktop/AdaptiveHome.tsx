@@ -585,14 +585,14 @@ export const AdaptiveHome: React.FC = () => {
               {/* Top row: Agenda + Workspace Health */}
               <div className="grid grid-cols-5 gap-4">
 
-                {/* Today's Agenda */}
+                {/* Daily Timeline */}
                 <Card elevated className="col-span-3">
                   <div className="p-4">
-                    <SectionLabel icon={Calendar} label="Today's Agenda" action={{ label: 'Schedule', onClick: () => navigate('/desktop/workspace') }} />
-                    <div className="space-y-2">
+                    <SectionLabel icon={Calendar} label="Daily Timeline" action={{ label: 'Schedule', onClick: () => navigate('/desktop/workspace') }} />
+                    <div className="space-y-2 border-l-2 border-white/5 pl-4 ml-2 relative">
                       {TODAYS_AGENDA.map((event, i) => (
-                        <div key={i} className={cn('flex items-center gap-3 p-2.5 rounded-xl border transition-all', event.done ? 'opacity-50 border-white/[0.04] bg-white/[0.01]' : event.soon ? 'border-amber-500/25 bg-amber-500/5' : 'border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06]')}>
-                          <div className={cn('w-1 h-8 rounded-full shrink-0', event.color)} />
+                        <div key={i} className={cn('flex items-center gap-3 p-2.5 rounded-xl border transition-all relative', event.done ? 'opacity-50 border-white/[0.04] bg-white/[0.01]' : event.soon ? 'border-amber-500/25 bg-amber-500/5' : 'border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06]')}>
+                          <div className={cn('absolute -left-[23px] w-3 h-3 rounded-full border-2 border-zinc-950', event.color)} />
                           <div className="flex-1 min-w-0">
                             <div className="text-[11px] font-bold text-white/85 truncate">{event.title}</div>
                             <div className="text-[9px] text-white/35 mt-0.5">{event.time} · {event.participants} participants</div>

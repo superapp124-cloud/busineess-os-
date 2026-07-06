@@ -9,8 +9,9 @@
     "dev:desktop": "vite -c vite.desktop.config.ts --mode desktop",
     "dev:android": "vite -c vite.mobile.config.ts --mode mobile",
     "android:live": "node scripts/android-live.cjs",
-    "electron:dev": "cross-env NODE_ENV=development concurrently \"npm run dev:desktop\" \"wait-on http://localhost:8085 && electron .\"",
+    "electron:dev": "cross-env NODE_ENV=development concurrently \"npm run dev:desktop\" \"wait-on http://localhost:8086 && electron .\"",
     "electron:build": "npm run build:desktop && electron-builder",
+    "start:desktop": "cross-env NODE_ENV=production electron .",
     "build": "vite build",
     "build:desktop": "vite build -c vite.desktop.config.ts --mode desktop",
     "build:mobile": "vite build -c vite.mobile.config.ts --mode mobile",
@@ -22,7 +23,8 @@
     "signaling:validate": "node scripts/validate-signaling-config.cjs",
     "edge:functions:audit": "node scripts/edge-function-governance.cjs",
     "edge:functions:update-baseline": "node scripts/edge-function-governance.cjs --update-baseline",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/download-whisper.js"
   },
   "dependencies": {
     "@capacitor-community/barcode-scanner": "^4.0.1",
@@ -96,6 +98,7 @@
     "@xyflow/react": "^12.11.1",
     "axios": "^1.16.1",
     "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.11.1",
     "canvas-confetti": "^1.9.4",
     "capacitor-native-biometric": "^4.2.2",
     "capacitor-secure-storage-plugin": "^0.12.0",
@@ -164,6 +167,7 @@
     "lovable-tagger": "^1.1.10",
     "playwright": "^1.60.0",
     "postcss": "^8.5.6",
+    "supertest": "^7.2.2",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3",
@@ -186,9 +190,10 @@
     ],
     "nsis": {
       "oneClick": false,
-      "perMachine": true,
+      "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "allowElevation": true
+      "allowElevation": true,
+      "include": "electron/installer.nsh"
     },
     "protocols": {
       "name": "chatr-deep-link",

@@ -190,7 +190,7 @@ export function GlobalNotificationListener() {
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(appointmentsChannel);
     };
-  }, [userId, toast, isCallActive]);
+  }, [userId, isCallActive]);
 
   return null;
 }

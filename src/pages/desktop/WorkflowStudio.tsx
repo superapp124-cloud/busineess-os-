@@ -129,7 +129,7 @@ const TEAM: TeamMember[] = [
 
 const WORKFLOW_NODES: WorkflowNode[] = [
   { id: 'n1', type: 'trigger',     label: 'Candidate Applies',         description: 'Triggered via job portal or form submission', status: 'running', runs: 1245, success_rate: 100, avg_time: '0.1s' },
-  { id: 'n2', type: 'ai_screen',   label: 'AI Resume Screening',       description: 'Gemini AI scores resume against JD criteria',  status: 'running', runs: 1245, success_rate: 98,  avg_time: '3.2s', errors: 2 },
+  { id: 'n2', type: 'ai_screen',   label: 'AI Resume Screening',       description: 'Local Ollama scores resume against JD criteria',  status: 'running', runs: 1245, success_rate: 98,  avg_time: '3.2s', errors: 2 },
   { id: 'n3', type: 'approval',    label: 'Recruiter Review',          description: 'Recruiter validates AI score and shortlists',  status: 'waiting', waiting: 23, runs: 890, success_rate: 94, avg_time: '2h' },
   { id: 'n4', type: 'approval',    label: 'Manager Approval',          description: 'Hiring manager approves candidate for interview', status: 'waiting', waiting: 12, runs: 845, success_rate: 96, avg_time: '18h' },
   { id: 'n5', type: 'ai_action',   label: 'Interview Scheduling',      description: 'AI books slot using Google Calendar + Zoom',   status: 'running', runs: 720, success_rate: 99, avg_time: '8s' },
@@ -181,7 +181,7 @@ const INTEGRATIONS = [
   { name: 'WhatsApp', icon: <MessageSquare />, color: '#25d366' },
   { name: 'Calendar', icon: <Calendar />, color: '#6366f1' },
   { name: 'Database', icon: <Database />, color: '#f59e0b' },
-  { name: 'Gemini AI', icon: <Cpu />, color: '#a855f7' },
+  { name: 'Ollama AI', icon: <Cpu />, color: '#a855f7' },
   { name: 'Webhook', icon: <Webhook />, color: '#ef4444' },
   { name: 'Razorpay', icon: <Hash />, color: '#3395ff' },
   { name: 'REST API', icon: <Code2 />, color: '#10b981' },
@@ -468,7 +468,7 @@ const NodeWorkspace: React.FC<{ node: WorkflowNode; team: TeamMember[]; comments
                   <>
                     <div className="flex items-center justify-between p-2.5 rounded-lg" style={{ background: '#ffffff06' }}>
                       <span className="text-slate-400 text-xs">AI Model</span>
-                      <span className="text-white text-xs font-medium">Gemini 1.5 Pro</span>
+                      <span className="text-white text-xs font-medium">Ollama local model</span>
                     </div>
                     <div className="flex items-center justify-between p-2.5 rounded-lg" style={{ background: '#ffffff06' }}>
                       <span className="text-slate-400 text-xs">Pass Threshold</span>

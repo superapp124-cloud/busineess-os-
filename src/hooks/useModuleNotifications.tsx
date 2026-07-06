@@ -149,7 +149,7 @@ export const useModuleNotifications = (userId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, toast, playNotificationSound, handleNotificationAction, showBrowserNotification, isCallActive]);
+  }, [userId, playNotificationSound, handleNotificationAction, showBrowserNotification, isCallActive]);
 
 
   return {
@@ -229,7 +229,7 @@ export const useFoodOrderNotifications = (userId?: string, orderId?: string) => 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, orderId, toast, navigate, isCallActive]);
+  }, [userId, orderId, navigate, isCallActive]);
 };
 
 export const useAppointmentNotifications = (userId?: string) => {
@@ -278,7 +278,7 @@ export const useAppointmentNotifications = (userId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, toast, isCallActive]);
+  }, [userId, isCallActive]);
 };
 
 export const usePaymentNotifications = (userId?: string) => {
@@ -328,7 +328,7 @@ export const usePaymentNotifications = (userId?: string) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, toast, isCallActive]);
+  }, [userId, isCallActive]);
 };
 
 
@@ -374,5 +374,5 @@ export const useHealthNotifications = (userId?: string) => {
     return () => {
       clearInterval(interval);
     };
-  }, [userId, toast]);
+  }, [userId]);
 };

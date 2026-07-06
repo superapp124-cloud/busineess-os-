@@ -107,7 +107,7 @@ export const useCallRecording = () => {
           };
 
           setRecordings((prev) => [...prev, recording]);
-          toast.success(`Recording saved to Documents\\CHATR\\Call Recordings`);
+          toast.success(`Recording saved to Documents\\CHATR Workspace\\Call Recordings`);
           resolve(recording);
         } catch (error) {
           console.error('Failed to save recording:', error);

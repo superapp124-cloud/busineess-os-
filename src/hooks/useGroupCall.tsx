@@ -53,7 +53,7 @@ export const useGroupCall = ({ callId, currentUserId, isVideo, onEnd }: UseGroup
       });
       throw error;
     }
-  }, [isVideo, toast]);
+  }, [isVideo]);
 
   // Create peer connection for a participant with ultra-HD settings
   const createPeerConnection = useCallback(async (participantId: string): Promise<RTCPeerConnection> => {

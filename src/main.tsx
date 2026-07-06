@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { AuthProvider } from "./services/AuthProvider";
 
 console.log("🚀 [Main] Starting React mount...");
 const rootElement = document.getElementById("root");
@@ -11,5 +12,6 @@ if (!rootElement) {
 }
 
 console.log("🚀 [Main] Root element found, rendering App...");
+AuthProvider.setupSessionSync();
 createRoot(rootElement).render(<App />);
 console.log("🚀 [Main] Render call completed");

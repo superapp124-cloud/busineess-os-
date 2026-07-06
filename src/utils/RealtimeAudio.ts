@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 export class AudioRecorder {
   private stream: MediaStream | null = null;
   private audioContext: AudioContext | null = null;
@@ -72,66 +70,9 @@ export class RealtimeChat {
   }
 
   async init() {
-    try {
-      const { data, error } = await supabase.functions.invoke("realtime-token");
-      
-      if (error) throw error;
-      if (!data.client_secret?.value) {
-        throw new Error("Failed to get ephemeral token");
-      }
-
-      const EPHEMERAL_KEY = data.client_secret.value;
-
-      this.pc = new RTCPeerConnection();
-
-      this.pc.ontrack = e => this.audioEl.srcObject = e.streams[0];
-
-      const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.pc.addTrack(ms.getTracks()[0]);
-
-      this.dc = this.pc.createDataChannel("oai-events");
-      this.dc.addEventListener("message", (e) => {
-        const event = JSON.parse(e.data);
-        console.log("Received event:", event);
-        this.onMessage(event);
-      });
-
-      const offer = await this.pc.createOffer();
-      await this.pc.setLocalDescription(offer);
-
-      const baseUrl = "https://api.openai.com/v1/realtime";
-      const model = "gpt-4o-realtime-preview-2024-10-01";
-      const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
-        method: "POST",
-        body: offer.sdp,
-        headers: {
-          Authorization: `Bearer ${EPHEMERAL_KEY}`,
-          "Content-Type": "application/sdp"
-        },
-      });
-
-      const answer = {
-        type: "answer" as RTCSdpType,
-        sdp: await sdpResponse.text(),
-      };
-      
-      await this.pc.setRemoteDescription(answer);
-      console.log("WebRTC connection established");
-
-      this.recorder = new AudioRecorder((audioData) => {
-        if (this.dc?.readyState === 'open') {
-          this.dc.send(JSON.stringify({
-            type: 'input_audio_buffer.append',
-            audio: this.encodeAudioData(audioData)
-          }));
-        }
-      });
-      await this.recorder.start();
-
-    } catch (error) {
-      console.error("Error initializing chat:", error);
-      throw error;
-    }
+    throw new Error(
+      'Realtime cloud voice is disabled for privacy. Connect this feature to a local Ollama audio bridge before enabling it.'
+    );
   }
 
   private encodeAudioData(float32Array: Float32Array): string {

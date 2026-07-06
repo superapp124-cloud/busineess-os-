@@ -1,6 +1,8 @@
 import express from "express";
 import { config } from "./server/search/config.js";
 import { createSearchRouter } from "./server/search/routes.js";
+import { createConversationRouter } from "./server/conversation/routes.js";
+import { startWorker } from "./server/jobs/worker.js";
 
 const app = express();
 
@@ -13,6 +15,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/search", createSearchRouter());
+app.use("/api/v1/conversation", createConversationRouter());
 
 app.get("/api/search/health", (_req, res) => {
   res.json({
@@ -28,5 +31,8 @@ app.get("/api/search/health", (_req, res) => {
 });
 
 app.listen(config.port, () => {
-  console.log(`Chatr AI Search pipeline active on port ${config.port}`);
+  console.log(`Chatr AI pipeline active on port ${config.port}`);
+  
+  // Start the background job processor
+  startWorker();
 });

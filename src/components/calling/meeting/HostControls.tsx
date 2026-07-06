@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, MicOff, Lock, LogOut, UserCog, MessageSquareOff, Shield, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -15,6 +15,23 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
   const [locked, setLocked] = useState(false);
   const [chatDisabled, setChatDisabled] = useState(false);
   const [waitingRoomEnabled, setWaitingRoomEnabled] = useState(false);
+  
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [participants, setParticipants] = useState<{user_id: string, name: string}[]>([]);
+
+  useEffect(() => {
+    if (!roomId) return;
+    
+    const fetchState = async () => {
+      const { data } = await supabase.from('session_rooms').select('is_locked, chat_disabled, waiting_room_enabled').eq('id', roomId).single();
+      if (data) {
+        setLocked(data.is_locked || false);
+        setChatDisabled(data.chat_disabled || false);
+        setWaitingRoomEnabled(data.waiting_room_enabled || false);
+      }
+    };
+    fetchState();
+  }, [roomId]);
 
   const updateRoomSetting = async (key: string, value: boolean) => {
     if (!roomId) {
@@ -22,16 +39,14 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
       return;
     }
     try {
-      // Broadcast the setting change to all peers via a Realtime channel
       await supabase.channel(`room-settings-${roomId}`).send({
         type: 'broadcast',
         event: 'host_control',
         payload: { key, value },
       });
-      // Also persist in the session_rooms table if the column exists
       await supabase.from('session_rooms').update({ [key]: value }).eq('id', roomId);
     } catch {
-      // Non-critical — real-time broadcast is the primary mechanism
+      // Non-critical
     }
   };
 
@@ -40,7 +55,6 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
     setLocked(next);
     await updateRoomSetting('is_locked', next);
     toast.success(next ? 'Meeting locked — no new participants can join.' : 'Meeting unlocked.');
-    onClose();
   };
 
   const handleDisableChat = async () => {
@@ -48,7 +62,6 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
     setChatDisabled(next);
     await updateRoomSetting('chat_disabled', next);
     toast.success(next ? 'Chat disabled for all participants.' : 'Chat re-enabled.');
-    onClose();
   };
 
   const handleWaitingRoom = async () => {
@@ -56,18 +69,40 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
     setWaitingRoomEnabled(next);
     await updateRoomSetting('waiting_room_enabled', next);
     toast.success(next ? 'Waiting room enabled. New joiners need approval.' : 'Waiting room disabled.');
-    onClose();
   };
 
   const handleMuteAll = () => {
     onMuteAll();
-    toast.success('All participants muted.');
-    onClose();
   };
 
-  const handleTransferHost = () => {
-    toast.info('Select a participant to transfer host role — coming soon!');
-    onClose();
+  const handleTransferHostClick = async () => {
+    if (!roomId) return;
+    const { data: srp } = await supabase.from('session_room_participants').select('user_id, users(raw_user_meta_data)').eq('room_id', roomId);
+    if (srp) {
+      const parts = srp.map((p: any) => ({
+        user_id: p.user_id,
+        name: p.users?.raw_user_meta_data?.full_name || p.users?.raw_user_meta_data?.username || 'Participant'
+      }));
+      const { data: { user } } = await supabase.auth.getUser();
+      setParticipants(parts.filter(p => p.user_id !== user?.id));
+      setShowTransfer(true);
+    }
+  };
+
+  const submitTransfer = async (newHostId: string) => {
+    if (!roomId) return;
+    try {
+      await supabase.from('session_rooms').update({ host_id: newHostId }).eq('id', roomId);
+      await supabase.channel(`room-settings-${roomId}`).send({
+        type: 'broadcast',
+        event: 'host_control',
+        payload: { key: 'host_transferred', value: newHostId },
+      });
+      toast.success('Host transferred successfully.');
+      onClose();
+    } catch (e) {
+      toast.error('Failed to transfer host.');
+    }
   };
 
   const handleEndMeeting = () => {
@@ -103,64 +138,89 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
     {
       icon: Shield,
       label: waitingRoomEnabled ? 'Disable Waiting Room' : 'Enable Waiting Room',
-      desc: waitingRoomEnabled ? 'Let participants join directly' : 'New joiners must be admitted',
-      color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', hoverBg: 'hover:bg-purple-500/15',
+      desc: waitingRoomEnabled ? 'New joiners enter immediately' : 'Approve new joiners before they enter',
+      color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', hoverBg: 'hover:bg-emerald-500/15',
       action: handleWaitingRoom,
       active: waitingRoomEnabled,
     },
     {
       icon: UserCog,
-      label: 'Transfer Host',
-      desc: 'Assign host role to another participant',
-      color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', hoverBg: 'hover:bg-cyan-500/15',
-      action: handleTransferHost,
+      label: 'Transfer Host Role',
+      desc: 'Give another participant host controls',
+      color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', hoverBg: 'hover:bg-purple-500/15',
+      action: handleTransferHostClick,
       active: false,
     },
     {
       icon: LogOut,
       label: 'End Meeting for All',
-      desc: 'Disconnect all participants',
+      desc: 'Close the meeting and disconnect everyone',
       color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', hoverBg: 'hover:bg-red-500/15',
       action: handleEndMeeting,
       active: false,
-    },
+      danger: true,
+    }
   ];
 
   return (
-    <div className="absolute bottom-full right-4 mb-3 w-72 bg-zinc-900 border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/80 overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-200 z-50">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.07]">
-        <div>
-          <h3 className="text-sm font-bold text-white">Host Controls</h3>
-          <p className="text-[9px] text-white/40 mt-0.5">You are the host of this meeting</p>
-        </div>
-        <button onClick={onClose} className="w-6 h-6 rounded-md bg-white/[0.05] hover:bg-white/[0.1] flex items-center justify-center transition-colors">
-          <X className="w-3.5 h-3.5 text-white/60" />
+    <div className="absolute bottom-24 right-4 w-80 bg-[#1A1A1D] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in slide-in-from-bottom-5">
+      <div className="px-4 py-3 border-b border-white/[0.05] flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-white/90">Host Controls</h3>
+        <button onClick={onClose} className="text-white/40 hover:text-white/80 transition-colors p-1 rounded-lg hover:bg-white/5">
+          <X className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="p-2 space-y-1">
-        {ACTIONS.map((action, i) => (
-          <button
-            key={i}
-            onClick={action.action}
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all text-left',
-              action.active
-                ? `${action.bg} ${action.border} ring-1 ${action.border}`
-                : `${action.bg} ${action.border} ${action.hoverBg}`
+      <div className="p-3 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        {showTransfer ? (
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-white/70">Select New Host</h4>
+            {participants.length === 0 ? (
+              <p className="text-xs text-white/40">No other participants.</p>
+            ) : (
+              participants.map(p => (
+                <button 
+                  key={p.user_id} 
+                  onClick={() => submitTransfer(p.user_id)}
+                  className="w-full flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <span className="text-sm text-white/90">{p.name}</span>
+                </button>
+              ))
             )}
-          >
-            <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', action.bg, 'border', action.border)}>
-              <action.icon className={cn('w-4 h-4', action.color)} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className={cn('text-xs font-semibold', action.color)}>{action.label}</div>
-              <div className="text-[10px] text-white/30 mt-0.5">{action.desc}</div>
-            </div>
-            {action.active && <CheckCircle className={cn('w-3.5 h-3.5 shrink-0', action.color)} />}
-          </button>
-        ))}
+            <button onClick={() => setShowTransfer(false)} className="w-full mt-2 py-1.5 text-xs text-white/50 hover:text-white/90 transition-colors">Back</button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {ACTIONS.map((action, idx) => (
+              <button
+                key={idx}
+                onClick={action.action}
+                className={cn(
+                  "w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left group",
+                  action.bg, action.border, action.hoverBg
+                )}
+              >
+                <div className={cn("p-2 rounded-lg shrink-0 mt-0.5 relative", action.bg, action.color)}>
+                  <action.icon className="w-4 h-4" />
+                  {action.active && (
+                    <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#1A1A1D] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-3 h-3 text-emerald-400" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <div className={cn("text-sm font-semibold mb-0.5", action.danger ? 'text-red-400' : 'text-white/90')}>
+                    {action.label}
+                  </div>
+                  <div className="text-[11px] text-white/40 leading-tight">
+                    {action.desc}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { PlatformError } from "./errors.ts";
+import { getJwtSigningSecret } from "./jwtSecret.ts";
 
 export type Role = "user" | "admin" | "owner" | "provider" | "business" | "service";
 
@@ -43,7 +44,7 @@ function extractRoles(user: { app_metadata?: Record<string, unknown>; user_metad
 }
 
 export async function getOptionalUser(req: Request): Promise<AuthContext> {
-  const { url, anonKey } = supabaseConfig();
+  const { url, anonKey, serviceRoleKey } = supabaseConfig();
   const serviceClient = createServiceClient();
   const authHeader = req.headers.get("Authorization") ?? undefined;
 
@@ -52,7 +53,7 @@ export async function getOptionalUser(req: Request): Promise<AuthContext> {
   }
 
   const bearer = authHeader.replace(/^Bearer\s+/i, "");
-  if (bearer === anonKey) {
+  if (bearer === anonKey || bearer.startsWith("sb_publishable_")) {
     return { authHeader, serviceClient };
   }
   if (bearer === serviceRoleKey) {
@@ -68,25 +69,45 @@ export async function getOptionalUser(req: Request): Promise<AuthContext> {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await authClient.auth.getUser();
-  if (error || !data.user) {
-    throw new PlatformError(401, "invalid_token", "Invalid or expired session");
+  try {
+    const SECRET = getJwtSigningSecret();
+    
+    // Convert string secret to CryptoKey for djwt
+    const encoder = new TextEncoder();
+    const keyBuf = encoder.encode(SECRET);
+    const cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      keyBuf,
+      { name: "HMAC", hash: "SHA-256" },
+      true,
+      ["verify"]
+    );
+    
+    // We must dynamically import djwt here or add it to imports
+    const jwt = await import("https://deno.land/x/djwt@v2.9.1/mod.ts");
+    const payload = await jwt.verify(bearer, cryptoKey);
+    
+    if (!payload.sub) throw new Error("Missing sub claim");
+    
+    const appMetadata = (payload.app_metadata as Record<string, unknown>) ?? {};
+    const userMetadata = (payload.user_metadata as Record<string, unknown>) ?? {};
+    
+    return {
+      authHeader,
+      authClient,
+      serviceClient,
+      user: {
+        id: payload.sub as string,
+        email: (payload.email as string) || undefined,
+        roles: extractRoles({ app_metadata: appMetadata, user_metadata: userMetadata }),
+        tenantId: String(appMetadata.tenant_id || userMetadata.tenant_id || userMetadata.organization_id || ""),
+        raw: payload,
+      },
+    };
+  } catch (error: any) {
+    console.warn(`[getOptionalUser] Token invalid or expired, falling back to anonymous. Error: ${error?.message}`);
+    return { authHeader, serviceClient };
   }
-
-  const metadata = data.user.user_metadata ?? {};
-  const appMetadata = data.user.app_metadata ?? {};
-  return {
-    authHeader,
-    authClient,
-    serviceClient,
-    user: {
-      id: data.user.id,
-      email: data.user.email,
-      roles: extractRoles({ app_metadata: appMetadata, user_metadata: metadata }),
-      tenantId: String(appMetadata.tenant_id || metadata.tenant_id || metadata.organization_id || ""),
-      raw: data.user,
-    },
-  };
 }
 
 export async function requireUser(req: Request) {

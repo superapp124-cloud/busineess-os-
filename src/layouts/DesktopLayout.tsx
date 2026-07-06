@@ -215,10 +215,28 @@ const DesktopLayoutInner = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <img src={chatrLogo} alt="CHATR" className="h-16 w-16 opacity-60" />
-          <p className="text-zinc-500 text-sm">Loading CHATR OS...</p>
+      <div className="flex h-screen w-full bg-[#09090b] overflow-hidden">
+        {/* Sidebar Skeleton */}
+        <div className="w-[72px] shrink-0 border-r border-white/10 bg-[#09090b] flex flex-col items-center py-6 gap-6">
+          <div className="w-10 h-10 rounded-xl bg-white/10 animate-pulse" />
+          <div className="flex-1 flex flex-col items-center gap-6 mt-4 w-full">
+            {[1,2,3,4,5].map(i => <div key={i} className="w-10 h-10 rounded-xl bg-white/5 animate-pulse" />)}
+          </div>
+          <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse mt-auto" />
+        </div>
+        {/* Main Content Skeleton */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0a0a12]">
+          {/* Header */}
+          <div className="h-14 border-b border-white/5 flex items-center px-6">
+            <div className="w-48 h-5 rounded-lg bg-white/10 animate-pulse" />
+          </div>
+          {/* Body */}
+          <div className="flex-1 p-8 flex flex-col gap-6">
+            <div className="w-1/3 h-16 rounded-2xl bg-white/5 animate-pulse" />
+            <div className="w-1/2 h-24 rounded-2xl bg-white/5 animate-pulse self-end" />
+            <div className="w-2/3 h-20 rounded-2xl bg-white/5 animate-pulse" />
+            <div className="w-1/4 h-12 rounded-2xl bg-white/5 animate-pulse self-end mt-4" />
+          </div>
         </div>
       </div>
     );
@@ -292,7 +310,7 @@ const DesktopLayoutInner = () => {
                     {section.items.map(item => {
                       const isActive = location.pathname.startsWith(item.path);
                       return (
-                        <Tooltip key={item.path} delayDuration={0}>
+                        <Tooltip key={item.label} delayDuration={0}>
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => navigate(item.path)}
@@ -433,7 +451,6 @@ const DesktopLayoutInner = () => {
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
 
           <ChatrConsole />
-          <GlobalCallOverlay />
 
           {/* Top header */}
           <header className={cn(
@@ -508,6 +525,9 @@ const DesktopLayoutInner = () => {
             <Outlet />
           </main>
         </div>
+
+        {/* ── Global Call Overlay (Top Right Notification) ── */}
+        <GlobalCallOverlay />
 
         {/* ── Command Palette ──────────────────────────────────────────────── */}
         <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} userId={user?.id} />

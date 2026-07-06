@@ -9,6 +9,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { Capacitor } from '@capacitor/core';
+import { features } from '@/config/features';
 
 export type AppLifecycleState = 'installed' | 'running' | 'paused' | 'suspended' | 'terminated';
 
@@ -78,13 +79,23 @@ class AppLifecycleManager {
    * Load all installed apps for the current user
    */
   private async loadInstalledApps() {
+    if (!features.chatrOS) return;
+
     try {
       const { data: apps, error } = await supabase
         .from('chatr_os_apps')
         .select('*')
         .order('last_opened_at', { ascending: false, nullsFirst: false });
 
-      if (error) throw error;
+      // Gracefully handle the case where chatr_os_apps table doesn't exist yet
+      if (error) {
+        if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+          console.log('ℹ️ chatr_os_apps table not found — skipping installed apps load');
+        } else {
+          console.warn('Failed to load installed apps:', error);
+        }
+        return;
+      }
 
       if (apps) {
         apps.forEach(app => {
@@ -107,7 +118,7 @@ class AppLifecycleManager {
         console.log(`📱 Loaded ${apps.length} installed apps`);
       }
     } catch (error) {
-      console.error('Failed to load installed apps:', error);
+      console.warn('Failed to load installed apps:', error);
     }
   }
 

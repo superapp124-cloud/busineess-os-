@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Search, UserPlus, Phone, Video, MessageCircle, FileText, Clock, Activity, Sparkles, PhoneCall, PhoneMissed } from 'lucide-react';
+import { Users, Search, UserPlus, Phone, Video, MessageCircle, X, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useCall } from '@/contexts/CallContext';
 
 interface Contact {
-  id: string; // contact table id
-  profile_id?: string; // the linked user profile ID (if registered)
+  id: string;
+  profile_id?: string;
+  username?: string;
   display_name: string;
   avatar_url: string | null;
   phone_number: string | null;
@@ -24,10 +23,15 @@ interface Contact {
 
 export const DesktopContacts: React.FC = () => {
   const { startCall } = useCall();
+  const navigate = useNavigate();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addSearch, setAddSearch] = useState('');
+  const [addResults, setAddResults] = useState<any[]>([]);
+  const [addLoading, setAddLoading] = useState(false);
 
   useEffect(() => {
     fetchContacts();
@@ -44,7 +48,6 @@ export const DesktopContacts: React.FC = () => {
           id, 
           name, 
           phone_number, 
-          email, 
           contact_id,
           profiles!contact_id(id, username, full_name, avatar_url)
         `)
@@ -57,11 +60,12 @@ export const DesktopContacts: React.FC = () => {
         return {
           id: d.id,
           profile_id: profile?.id,
+          username: profile?.username,
           display_name: profile?.full_name || profile?.username || d.name || 'Unknown',
           avatar_url: profile?.avatar_url || null,
-          phone_number: d.phone_number,
-          email: d.email,
-          is_online: !!profile, // Just a placeholder indicator if they are a registered user
+          phone_number: d.phone_number || null,
+          email: null,
+          is_online: !!profile,
         };
       }).sort((a, b) => a.display_name.localeCompare(b.display_name));
 
@@ -73,19 +77,118 @@ export const DesktopContacts: React.FC = () => {
     }
   };
 
+  // Open a DM with this contact
+  const openChat = useCallback(async (contact: Contact) => {
+    if (!contact.profile_id) {
+      toast.error('This contact is not a registered CHATR user yet.');
+      return;
+    }
+    try {
+      const { data: convId, error } = await supabase
+        .rpc('create_direct_conversation', { other_user_id: contact.profile_id });
+      if (error) throw error;
+      navigate(`/desktop/chat?conv=${convId}`);
+    } catch (e) {
+      toast.error('Could not open conversation.');
+    }
+  }, [navigate]);
+
+  // Search for users to add
+  const searchUsers = useCallback(async (q: string) => {
+    if (!q.trim()) { setAddResults([]); return; }
+    setAddLoading(true);
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .or(`username.ilike.%${q}%,full_name.ilike.%${q}%`)
+      .limit(10);
+    setAddResults(data || []);
+    setAddLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => searchUsers(addSearch), 300);
+    return () => clearTimeout(t);
+  }, [addSearch, searchUsers]);
+
+  const addContact = async (profile: any) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.from('contacts').insert({
+      user_id: user.id,
+      contact_id: profile.id,
+      name: profile.full_name || profile.username,
+      phone_number: profile.phone_number || null,
+    });
+    if (error && error.code !== '23505') {
+      toast.error('Failed to add contact');
+    } else {
+      toast.success(`${profile.full_name || profile.username} added!`);
+      fetchContacts();
+      setShowAddModal(false);
+      setAddSearch('');
+    }
+  };
+
   const filteredContacts = contacts.filter(c =>
     c.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (c.phone_number && c.phone_number.includes(searchQuery))
   );
 
+
   return (
     <div className="flex h-full bg-background overflow-hidden">
+      {/* Add Contact Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <h2 className="text-sm font-bold text-white">Find People</h2>
+              <button onClick={() => { setShowAddModal(false); setAddSearch(''); setAddResults([]); }} className="p-1 rounded-md hover:bg-white/10 text-white/50">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                <input
+                  autoFocus
+                  value={addSearch}
+                  onChange={e => setAddSearch(e.target.value)}
+                  placeholder="Search by name or username..."
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-violet-500/60"
+                />
+              </div>
+              <ScrollArea className="max-h-60">
+                {addLoading && <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-white/30" /></div>}
+                {addResults.map(p => (
+                  <div key={p.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer" onClick={() => addContact(p)}>
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={p.avatar_url} />
+                      <AvatarFallback className="bg-violet-600/30 text-violet-300 text-xs">{(p.full_name || p.username || '?')[0].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{p.full_name || p.username}</p>
+                      <p className="text-xs text-white/40 truncate">@{p.username}</p>
+                    </div>
+                    <button className="px-3 py-1 rounded-lg bg-violet-600/30 text-violet-300 text-xs font-medium hover:bg-violet-600/50">Add</button>
+                  </div>
+                ))}
+                {!addLoading && addSearch.trim() && addResults.length === 0 && (
+                  <p className="text-center text-sm text-white/30 py-4">No users found</p>
+                )}
+              </ScrollArea>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Contacts List */}
       <div className="w-80 border-r border-border flex flex-col bg-card/30">
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Contacts</h2>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowAddModal(true)}>
               <UserPlus className="h-4 w-4" />
             </Button>
           </div>
@@ -119,19 +222,24 @@ export const DesktopContacts: React.FC = () => {
               <p className="text-sm font-medium text-muted-foreground">
                 {searchQuery ? 'No contacts found' : 'Your address book is empty'}
               </p>
+              {!searchQuery && (
+                <button onClick={() => setShowAddModal(true)} className="mt-3 text-xs text-violet-400 hover:text-violet-300 underline">
+                  Find people to add
+                </button>
+              )}
             </div>
           ) : (
             <div className="py-2">
               {filteredContacts.map((contact) => (
-                <button
+                <div
                   key={contact.id}
                   onClick={() => setSelectedContact(contact)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left",
+                    "group flex items-center gap-3 px-4 py-2.5 transition-colors cursor-pointer",
                     selectedContact?.id === contact.id ? "bg-muted" : "hover:bg-muted/50"
                   )}
                 >
-                  <div className="relative">
+                  <div className="relative shrink-0">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={contact.avatar_url || undefined} />
                       <AvatarFallback className="bg-primary/10 text-primary font-medium">
@@ -145,10 +253,34 @@ export const DesktopContacts: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{contact.display_name}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {contact.phone_number || contact.email || 'No phone'}
+                      {contact.phone_number || contact.email || (contact.username ? `@${contact.username}` : 'No contact info')}
                     </p>
                   </div>
-                </button>
+                  {/* Action buttons appear on hover */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <button
+                      onClick={e => { e.stopPropagation(); openChat(contact); }}
+                      className="p-1.5 rounded-lg hover:bg-violet-500/20 text-muted-foreground hover:text-violet-400 transition-colors"
+                      title="Message"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={e => { e.stopPropagation(); if (contact.username) startCall(contact.username, false); else toast.error('No username to call'); }}
+                      className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-muted-foreground hover:text-emerald-400 transition-colors"
+                      title="Audio Call"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={e => { e.stopPropagation(); if (contact.username) startCall(contact.username, true); else toast.error('No username to call'); }}
+                      className="p-1.5 rounded-lg hover:bg-blue-500/20 text-muted-foreground hover:text-blue-400 transition-colors"
+                      title="Video Call"
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -158,17 +290,20 @@ export const DesktopContacts: React.FC = () => {
       {/* Relationship Workspace */}
       <div className="flex-1 flex flex-col min-w-0 bg-background">
         {selectedContact ? (
-          <RelationshipWorkspace contact={selectedContact} />
+          <RelationshipWorkspace contact={selectedContact} onChat={openChat} onCall={(c, video) => c.username ? startCall(c.username, video) : toast.error('No username')} />
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center flex flex-col items-center animate-in fade-in zoom-in duration-500">
               <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mb-6">
                 <Users className="h-10 w-10 text-muted-foreground/40" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Relationship Workspace</h3>
+              <h3 className="text-xl font-bold text-foreground">Contact Workspace</h3>
               <p className="text-sm text-muted-foreground mt-2 max-w-[250px]">
-                Select a contact to view your complete history, shared documents, and AI insights.
+                Select a contact to message, call, or view shared history.
               </p>
+              <button onClick={() => setShowAddModal(true)} className="mt-4 px-4 py-2 rounded-xl bg-violet-600/20 text-violet-400 text-sm font-medium hover:bg-violet-600/30 transition-colors">
+                Find & Add People
+              </button>
             </div>
           </div>
         )}
@@ -181,7 +316,7 @@ export const DesktopContacts: React.FC = () => {
 // Relationship Workspace Sub-Component
 // ============================================
 
-const RelationshipWorkspace: React.FC<{ contact: Contact }> = ({ contact }) => {
+const RelationshipWorkspace: React.FC<{ contact: Contact; onChat: (c: Contact) => void; onCall: (c: Contact, video: boolean) => void }> = ({ contact, onChat, onCall }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -199,6 +334,7 @@ const RelationshipWorkspace: React.FC<{ contact: Contact }> = ({ contact }) => {
     setAiSummary(null);
     fetchRelationshipData();
   }, [contact.id]);
+
 
   const fetchRelationshipData = async () => {
     if (!contact.profile_id) {
@@ -274,13 +410,39 @@ const RelationshipWorkspace: React.FC<{ contact: Contact }> = ({ contact }) => {
     if (!conversationId) return toast.info("No conversation history to summarize.");
     setAiSummary('Generating...');
     try {
-      const { data, error } = await supabase.functions.invoke('summarize-chat', {
-        body: { conversation_id: conversationId, max_messages: 50 }
-      });
-      if (data?.summary) setAiSummary(data.summary);
-      else throw new Error("Failed");
-    } catch {
-      setAiSummary("Could not generate summary.");
+      const messageDigest = messages
+        .slice(-50)
+        .map((message: any) => `${message.sender_id || 'unknown'}: ${message.content || message.message || ''}`)
+        .join('\n');
+      const callDigest = calls
+        .slice(0, 10)
+        .map((call: any) => `${call.call_type || 'call'} ${call.status || ''} ${call.duration || 0}s ${call.started_at || ''}`)
+        .join('\n');
+      const fileDigest = files
+        .slice(0, 10)
+        .map((file: any) => file.file_name || file.content || 'Shared file')
+        .join('\n');
+
+      const prompt = `Create a concise relationship summary using only this local CHATR data.
+
+Contact: ${contact.display_name}
+
+Recent messages:
+${messageDigest || '(no recent messages)'}
+
+Recent calls:
+${callDigest || '(no recent calls)'}
+
+Shared files:
+${fileDigest || '(no shared files)'}
+
+Return 2 short paragraphs with context, open action items, and any follow-up suggestions.`;
+
+      const summary = await generate({ prompt, preferLocal: true });
+      setAiSummary(summary);
+    } catch (err) {
+      console.error('[DesktopContacts] local summary failed:', err);
+      setAiSummary("Could not generate summary with local Ollama.");
     }
   };
 
@@ -334,13 +496,13 @@ const RelationshipWorkspace: React.FC<{ contact: Contact }> = ({ contact }) => {
           </div>
           
           <div className="flex items-center gap-3 mt-6">
-            <Button onClick={() => quickAction('message')} className="rounded-full shadow-sm">
+            <Button onClick={() => onChat(contact)} className="rounded-full shadow-sm">
               <MessageCircle className="w-4 h-4 mr-2" /> Message
             </Button>
-            <Button onClick={() => quickAction('audio call')} variant="outline" className="rounded-full">
+            <Button onClick={() => onCall(contact, false)} variant="outline" className="rounded-full">
               <Phone className="w-4 h-4 mr-2" /> Call
             </Button>
-            <Button onClick={() => quickAction('video call')} variant="outline" className="rounded-full">
+            <Button onClick={() => onCall(contact, true)} variant="outline" className="rounded-full">
               <Video className="w-4 h-4 mr-2" /> Video
             </Button>
           </div>
