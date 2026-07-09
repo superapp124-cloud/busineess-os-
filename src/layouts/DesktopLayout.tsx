@@ -48,6 +48,8 @@ import { QuickActionsBar } from '@/components/desktop/QuickActionsBar';
 import { usePresence, PresenceStatus } from '@/hooks/usePresence';
 import { ProductivityDock } from '@/components/desktop/ProductivityDock';
 import { TinyAIIndicator } from '@/components/desktop/TinyAIIndicator';
+import { GlobalIntentProvider } from '@/core/os/GlobalIntentProvider';
+import { KernelErrorBoundary } from '@/components/desktop/KernelErrorBoundary';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
@@ -142,7 +144,13 @@ const GlobalCallOverlay = () => {
 
 // ─── Main Layout ──────────────────────────────────────────────────────────────
 
-const DesktopLayout: React.FC = () => <DesktopLayoutInner />;
+const DesktopLayout: React.FC = () => (
+  <KernelErrorBoundary>
+    <GlobalIntentProvider>
+      <DesktopLayoutInner />
+    </GlobalIntentProvider>
+  </KernelErrorBoundary>
+);
 
 const DesktopLayoutInner = () => {
   const [user, setUser] = useState<User | null>(null);

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useCall } from '@/contexts/CallContext';
+import { RelationshipPanel } from '@/components/contacts/RelationshipPanel';
 
 interface Contact {
   id: string;
@@ -669,6 +670,13 @@ Return 2 short paragraphs with context, open action items, and any follow-up sug
           </div>
         </ScrollArea>
       </Tabs>
+
+      {/* Relationship OS — right sidebar */}
+      <RelationshipPanel
+        contact={selectedContact}
+        onCall={(c) => onCall(c, false)}
+        onMessage={(c) => onChat(c)}
+      />
     </div>
   );
 };

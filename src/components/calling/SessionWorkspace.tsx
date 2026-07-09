@@ -47,6 +47,7 @@ interface SessionWorkspaceProps {
   callId?: string | null;
   callDuration?: number;
   onSaveTranscript?: (text?: string) => Promise<string | null>;
+  onSaveSummary?: (summary: string, transcript?: string) => Promise<string | null>;
   onTranscriptUpdate?: (text: string) => void;
 }
 
@@ -57,21 +58,32 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
   callId,
   callDuration = 0,
   onSaveTranscript,
+  onSaveSummary,
   onTranscriptUpdate,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [isAiReady, setIsAiReady] = useState(true);
   const [localTranscript, setLocalTranscript] = useState<string>('');
 
-  const { localStream } = useCallContext();
+  const { localStream, remoteStreams } = useCallContext();
+  const callAudioStreams = React.useMemo(
+    () => [
+      localStream,
+      ...Object.values(remoteStreams).map(({ stream }) => stream),
+    ].filter((stream): stream is MediaStream => !!stream),
+    [localStream, remoteStreams]
+  );
 
   const handleTranscriptUpdate = React.useCallback((text: string) => {
-    setLocalTranscript(prev => prev + (prev ? ' ' : '') + text);
-    if (onTranscriptUpdate) onTranscriptUpdate(text);
+    const cleanedText = text.trim();
+    if (!cleanedText) return;
+
+    setLocalTranscript(prev => prev ? `${prev.trimEnd()}\n${cleanedText}` : cleanedText);
+    if (onTranscriptUpdate) onTranscriptUpdate(cleanedText);
   }, [onTranscriptUpdate]);
 
   // Start background transcription
-  const { isListening, error: transcriptError, downloadProgress } = useCallTranscription(true, handleTranscriptUpdate, localStream);
+  const { isListening, error: transcriptError, downloadProgress } = useCallTranscription(true, handleTranscriptUpdate, callAudioStreams);
 
   const renderContent = () => {
     switch (goal) {
@@ -92,6 +104,7 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
             callId={callId}
             callDuration={callDuration}
             onSaveTranscript={onSaveTranscript}
+            onSaveSummary={onSaveSummary}
             downloadProgress={downloadProgress}
             participants={[]}
           />
@@ -735,6 +748,7 @@ const GeneralAssistant = ({
   remoteUserAvatar,
   participants,
   onSaveTranscript,
+  onSaveSummary,
   downloadProgress,
 }: any) => {
   const tabs = ['Agenda', 'Transcript', 'Summary', 'Tasks', 'Files', 'Chat', 'Insights'];
@@ -763,11 +777,19 @@ const GeneralAssistant = ({
   const { summary, loading: generatingSummary, generateSummary } =
     useCallSummary({ meetingTitle, transcript });
 
+  const handleGenerateSummary = async () => {
+    const generated = await generateSummary();
+    if (generated) {
+      await onSaveSummary?.(generated, transcript);
+    }
+    setActiveTab(2);
+  };
+
   useEffect(() => {
     if (activeTab === 1 && transcriptEndRef.current) {
       transcriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [activeTab]);
+  }, [activeTab, transcript]);
 
   React.useEffect(() => {
     if ((window as any).electronAPI) {
@@ -911,7 +933,7 @@ const GeneralAssistant = ({
             <span className="text-[10px] text-white/30">Auto-saved</span>
           </div>
           <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-            <div className="text-sm text-white/80 p-2 leading-relaxed">
+            <div className="text-sm text-white/80 p-2 leading-relaxed whitespace-pre-line">
               {transcript || (
                 downloadProgress !== null 
                   ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>Downloading AI Transcription Model... {downloadProgress}%</span>
@@ -929,7 +951,7 @@ const GeneralAssistant = ({
               <Download className="w-3 h-3" /> Export
             </button>
             <button 
-              onClick={() => { generateSummary(); setActiveTab(2); }}
+              onClick={handleGenerateSummary}
               disabled={generatingSummary}
               className="flex-1 py-2 rounded-lg bg-indigo-600/80 hover:bg-indigo-500 text-[10px] text-white font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
             >
@@ -980,7 +1002,7 @@ const GeneralAssistant = ({
           )}
           <Button
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-900/20 disabled:opacity-50"
-            onClick={generateSummary}
+            onClick={handleGenerateSummary}
             disabled={generatingSummary}
           >
             {generatingSummary

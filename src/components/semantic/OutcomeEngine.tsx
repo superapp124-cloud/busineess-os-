@@ -16,7 +16,7 @@ export function OutcomeEngine() {
 
   useEffect(() => {
     return projectionStore.subscribe(state => {
-      setState(state);
+      setState({ ...state });
       
       const incoming = state.activeSuggestion?.candidates || (state.activeSuggestion ? [state.activeSuggestion] : []);
       
@@ -38,6 +38,7 @@ export function OutcomeEngine() {
       setEditTitle(suggestion.title);
       setIsEditing(false);
       setSuggestionRenderedAt(Date.now());
+      toast.success('7. Engine: Rendered suggestion: ' + suggestion.title);
     }
   }, [suggestion]);
 
@@ -56,7 +57,7 @@ export function OutcomeEngine() {
         correlationId: state.activeCorrelationId
       };
 
-      const response = await fetch('http://localhost:3141/kernel/action', {
+      const response = await fetch('http://localhost:8087/kernel/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -69,7 +70,7 @@ export function OutcomeEngine() {
       toast.success(`${editTitle} confirmed`);
       
       // Inject success summary back into conversation UI via a custom event, or handled by the parent
-      window.dispatchEvent(new CustomEvent('chatr:outcome-executed', { detail: { text: `✓ ${editTitle} (${suggestion.type.toLowerCase()})` }}));
+      window.dispatchEvent(new CustomEvent('chatr:outcome-executed', { detail: { text: `✓ ${editTitle} (${suggestion.type.toLowerCase()})`, type: suggestion.type, raw: suggestion }}));
 
       popQueue();
     } catch (err) {
@@ -82,7 +83,7 @@ export function OutcomeEngine() {
     const timeToDismiss = suggestionRenderedAt ? (Date.now() - suggestionRenderedAt) / 1000 : 0;
     
     try {
-      await fetch('http://localhost:3141/kernel/action', {
+      await fetch('http://localhost:8087/kernel/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

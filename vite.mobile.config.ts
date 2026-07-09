@@ -49,6 +49,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ['capacitor-native-biometric'],
+  },
   esbuild: {
     drop: process.env.NODE_ENV === 'production' ? ['debugger'] : [],
   },

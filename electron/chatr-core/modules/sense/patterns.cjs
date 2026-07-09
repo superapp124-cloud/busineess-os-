@@ -6,9 +6,7 @@
  * Uses real deterministic classifiers to identify intents and resolve continuity references.
  */
 
-const taskClassifier = require('./classifiers/TaskIntentClassifier.cjs');
-const meetingClassifier = require('./classifiers/MeetingIntentClassifier.cjs');
-const documentClassifier = require('./classifiers/DocumentIntentClassifier.cjs');
+const genericClassifier = require('./classifiers/GenericIntentClassifier.cjs');
 
 /**
  * Detect intents in a user message.
@@ -22,25 +20,13 @@ function detectIntents(messageText) {
   if (text.length < 8) return [];
 
   const detections = [];
+  const outcome = genericClassifier.classify(text);
 
-  // Run classifiers
-  const classifiers = [taskClassifier, meetingClassifier, documentClassifier];
-
-  for (const classifier of classifiers) {
-    const result = classifier.classify(text);
-    if (result) {
-      detections.push({
-        type: result.type,         
-        confidence: result.confidence,
-        reference: result.reference,
-        evidence: [result.raw],
-        detectedAt: Date.now(),
-      });
-    }
+  if (outcome) {
+    detections.push(outcome);
   }
 
-  // Sort by confidence descending
-  return detections.sort((a, b) => b.confidence - a.confidence);
+  return detections;
 }
 
 module.exports = { detectIntents };

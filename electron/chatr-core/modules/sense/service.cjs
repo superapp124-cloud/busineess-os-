@@ -32,8 +32,8 @@ class SenseModule extends ChatrModule {
     const { messageText, conversationId, requestId, workspaceId = 'default' } = payload;
     
     // Publish INPUT.RECEIVED and OBSERVATION.CREATED
-    bus.publish('KERNEL.INPUT.RECEIVED', { requestId, conversationId, messageText });
-    bus.publish('KERNEL.OBSERVATION.CREATED', { requestId, conversationId, messageText });
+    bus.publish('KERNEL.INPUT.RECEIVED', { requestId, conversationId, messageText, correlationId: requestId });
+    bus.publish('KERNEL.OBSERVATION.CREATED', { requestId, conversationId, messageText, correlationId: requestId });
     
     // Immediately classify (regex runs in <5ms)
     return this.classify({ messageText, conversationId, requestId, workspaceId });
@@ -95,10 +95,21 @@ class SenseModule extends ChatrModule {
       return await policyEngine.evaluate(u, activeContext);
     }));
 
+    // Emit standard Understanding for legacy
     bus.publish('KERNEL.UNDERSTANDING.CREATED', {
       requestId,
       conversationId,
-      classifications: understandings
+      classifications: understandings,
+      correlationId: requestId
+    });
+
+    // Emit Canonical Outcome for Outcome Engine (v1.0)
+    bus.publish('KERNEL.OUTCOME.DETECTED', {
+      requestId,
+      conversationId,
+      outcomes: intents, // The raw canonical Outcome objects from the classifier
+      correlationId: requestId,
+      scope: 'global'
     });
 
     // Store in memory for diagnostic/history purposes
@@ -110,7 +121,8 @@ class SenseModule extends ChatrModule {
     bus.publish(INTELLIGENCE.CLASSIFICATION_CREATED, {
       requestId,
       conversationId,
-      classifications: understandings
+      classifications: understandings,
+      correlationId: requestId
     });
 
     log.info(`[SenseModule] Created ${understandings.length} classification(s) for ${conversationId}`);

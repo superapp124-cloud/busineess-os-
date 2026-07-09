@@ -72,6 +72,9 @@ export const Index = lazy(() => import('@/pages/Index'));
 export const Auth = lazy(() => import('@/pages/Auth'));
 export const Home = lazy(() => import('@/pages/Home'));
 export const WorkspaceSelector = lazy(() => import('@/pages/auth/WorkspaceSelector').then(m => ({ default: m.WorkspaceSelector })));
+export const ProUpgrade = lazy(() => import('@/pages/ProUpgrade'));
+export const AdminJobHealth = lazy(() => import('@/pages/AdminJobHealth'));
+export const CarePathDetail = lazy(() => import('@/pages/CarePathDetail'));
 
 // ============================================
 // LAZY LOADED PAGES
@@ -374,4 +377,11 @@ export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWo
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
 export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio').then(m => ({ default: m.WorkflowStudio })));
 export const AgentWorkspace = lazy(() => import('@/pages/desktop/AgentWorkspace').then(m => ({ default: m.AgentWorkspace })));
-export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));
+export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));
+export const DesktopProfile = lazy(() => import('@/pages/desktop/DesktopProfile').then(m => ({ default: m.DesktopProfile ?? m.default })));
+export const DesktopPrivacy = lazy(() => import('@/pages/desktop/DesktopPrivacy').then(m => ({ default: m.DesktopPrivacy ?? m.default })));
+export const DesktopAccount = lazy(() => import('@/pages/desktop/DesktopAccount').then(m => ({ default: m.DesktopAccount ?? m.default })));
+export const DesktopAppearance = lazy(() => import('@/pages/desktop/DesktopAppearance').then(m => ({ default: m.DesktopAppearance ?? m.default })));
+export const DesktopWallpaper = lazy(() => import('@/pages/desktop/DesktopWallpaper').then(m => ({ default: m.DesktopWallpaper ?? m.default })));
+export const DesktopCalendar = lazy(() => import('@/pages/desktop/DesktopCalendar').then(m => ({ default: m.DesktopCalendar ?? m.default })));
+

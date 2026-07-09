@@ -48,6 +48,15 @@ interface Window {
         transcript: string;
         createdAt?: string;
       }) => Promise<{ ok: boolean; path?: string; error?: string }>;
+      saveSummary: (payload: {
+        callId?: string | null;
+        meetingTitle?: string;
+        participantName?: string;
+        durationSeconds?: number;
+        summary: string;
+        transcript?: string;
+        createdAt?: string;
+      }) => Promise<{ ok: boolean; path?: string; error?: string }>;
       saveRecording: (payload: {
         callId?: string | null;
         participantName?: string;

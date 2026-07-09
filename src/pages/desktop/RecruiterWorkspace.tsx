@@ -10,6 +10,7 @@ import {
   markRecruitmentCallInterviewScheduled,
   simulatePositiveRecruitmentResponse,
 } from '@/services/orchestrationService';
+import { IntelligencePanel } from '@/components/desktop/IntelligencePanel';
 
 interface Requisition {
   id: string;
@@ -549,6 +550,9 @@ export const RecruiterWorkspace: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Universal Intelligence Panel */}
+      <IntelligencePanel />
     </div>
   );
 };

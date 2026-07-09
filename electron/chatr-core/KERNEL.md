@@ -263,3 +263,6 @@ CI/CD pipeline MUST reject PRs that:
 ---
 
 *This contract is version-controlled. Any amendment requires explicit CTO approval and a KERNEL.md version bump.*
+
+4. **Bypass capability boundaries:** The runtime may know capabilities. Capabilities may never know each other. If a capability (e.g. Meeting) requires another (e.g. Reminder), it must be orchestrated by the Outcome Runtime, never by direct coupling.
+5. **Update UI directly:** No capability may directly update the UI. Capabilities must only emit outcome events, and the UI only renders outcome state.

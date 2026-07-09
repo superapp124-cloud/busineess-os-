@@ -41,12 +41,11 @@ export const useUserLocation = (): UseUserLocationReturn => {
 
       // Try to get city name via reverse geocoding
       try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+        const geoResponse = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
         );
-        const data = await response.json();
-        const cityName = data.address?.city || data.address?.town || data.address?.village || data.address?.state;
-        setCity(cityName || 'Unknown');
+        const geoData = await geoResponse.json();
+        setCity(geoData.city || geoData.locality || 'Unknown');
       } catch {
         setCity('Unknown');
       }

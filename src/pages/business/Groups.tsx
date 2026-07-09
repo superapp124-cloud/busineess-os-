@@ -6,16 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Users, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Users, Loader2, CheckCircle2, UserPlus, PlayCircle, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { formatDistanceToNow } from 'date-fns';
 
 interface CommunityGroup {
   id: string;
-  group_name: string;
-  community_description: string | null;
+  name: string;
+  description: string | null;
   member_count: number;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -25,209 +27,156 @@ export default function BusinessGroups() {
   const [loading, setLoading] = useState(true);
   const [groups, setGroups] = useState<CommunityGroup[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [businessId, setBusinessId] = useState<string | null>(null);
   
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    loadGroups();
+    init();
   }, []);
 
-  const loadGroups = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate('/auth');
-        return;
-      }
+  useEffect(() => {
+    if (businessId) loadGroups();
+  }, [businessId]);
 
+  const init = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from('business_profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    if (data) setBusinessId(data.id);
+  };
+
+  const loadGroups = async () => {
+    if (!businessId) return;
+    try {
       const { data, error } = await supabase
-        .from('conversations')
+        .from('business_groups')
         .select('*')
-        .eq('is_community', true)
-        .eq('created_by', user.id)
+        .eq('business_id', businessId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setGroups(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading groups:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load groups',
-        variant: 'destructive'
-      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleCreate = async () => {
-    if (!groupName) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a group name',
-        variant: 'destructive'
-      });
-      return;
-    }
+    if (!businessId || !groupName) return;
+    setSaving(true);
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('conversations')
+      
+      const { error } = await supabase
+        .from('business_groups')
         .insert([{
-          group_name: groupName,
-          community_description: description,
-          is_group: true,
-          is_community: true,
-          created_by: user.id,
-          member_count: 1
-        }])
-        .select()
-        .single();
+          business_id: businessId,
+          name: groupName,
+          description: description,
+          member_count: 1, // Admin starting as 1 member
+          created_by: user?.id
+        }]);
 
       if (error) throw error;
 
-      // Add creator as participant
-      await supabase
-        .from('conversation_participants')
-        .insert([{
-          conversation_id: data.id,
-          user_id: user.id,
-          role: 'admin'
-        }]);
-
-      toast({
-        title: 'Success',
-        description: 'Group created successfully'
-      });
-
+      toast({ title: 'Group created successfully' });
       setDialogOpen(false);
       setGroupName('');
       setDescription('');
       loadGroups();
-    } catch (error) {
-      console.error('Error creating group:', error);
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to create group',
+        description: error.message || 'Failed to create group',
         variant: 'destructive'
       });
+    } finally {
+      setSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="sticky top-0 z-10 border-b glass-card">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+    <div className="min-h-screen bg-background">
+      <div className="border-b glass-card relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-hero opacity-5" />
+        <div className="max-w-7xl mx-auto px-4 py-6 relative">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="icon" onClick={() => navigate('/desktop/pro/business')}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold">Business Groups</h1>
-                <p className="text-sm text-muted-foreground">Create and manage customer communities</p>
+                <h1 className="text-3xl font-bold">Community Groups</h1>
+                <p className="text-muted-foreground mt-1">Manage private groups and broadcast to segments</p>
               </div>
             </div>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-hero">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Group
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Business Group</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Group Name *</Label>
-                    <Input
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
-                      placeholder="e.g., VIP Customers, Product Updates"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Textarea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="What is this group about?"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="flex gap-2 pt-4">
-                    <Button onClick={handleCreate} className="flex-1 bg-gradient-hero">
-                      <Users className="h-4 w-4 mr-2" />
-                      Create Group
-                    </Button>
-                    <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => setDialogOpen(true)}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              New Group
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {groups.length === 0 ? (
-          <Card className="glass-card">
-            <CardContent className="text-center py-12">
-              <Users className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No groups yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Create groups to engage with your customers and build communities
-              </p>
-              <Button onClick={() => setDialogOpen(true)} className="bg-gradient-hero">
-                <Plus className="h-4 w-4 mr-2" />
-                Create First Group
-              </Button>
-            </CardContent>
-          </Card>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : groups.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground glass-card rounded-xl">
+            <Users className="h-16 w-16 mx-auto mb-4 opacity-30 text-primary" />
+            <p className="text-xl font-medium text-foreground">No groups found</p>
+            <p className="text-sm mt-2 max-w-sm mx-auto">Create community groups to segment your audience and send targeted broadcasts.</p>
+            <Button className="mt-6" onClick={() => setDialogOpen(true)}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Create First Group
+            </Button>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groups.map((group) => (
-              <Card
-                key={group.id}
-                className="glass-card hover:shadow-glow transition-all cursor-pointer"
-                onClick={() => navigate(`/chat/${group.id}`)}
-              >
+              <Card key={group.id} className="glass-card hover:border-primary/20 transition-all group overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-4">
+                  <Badge variant={group.is_active ? 'default' : 'secondary'} className="text-[10px]">
+                    {group.is_active ? 'ACTIVE' : 'ARCHIVED'}
+                  </Badge>
+                </div>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
-                    {group.group_name}
-                  </CardTitle>
+                  <CardTitle className="text-lg pr-16">{group.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {group.community_description || 'No description'}
+                <CardContent>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-6 h-10">
+                    {group.description || 'No description provided.'}
                   </p>
                   
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary">
-                      <MessageSquare className="h-3 w-3 mr-1" />
-                      {group.member_count || 0} members
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(group.created_at).toLocaleDateString()}
-                    </span>
+                  <div className="flex items-center justify-between text-sm pt-4 border-t border-border/50">
+                    <div className="flex items-center gap-1.5 text-foreground font-medium">
+                      <Users className="h-4 w-4 text-primary" />
+                      {group.member_count} members
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      {formatDistanceToNow(new Date(group.created_at), { addSuffix: true })}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" className="w-full text-xs" size="sm">
+                      <Users className="w-3 h-3 mr-1.5" /> Manage
+                    </Button>
+                    <Button variant="outline" className="w-full text-xs" size="sm">
+                      <PlayCircle className="w-3 h-3 mr-1.5" /> Broadcast
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -235,6 +184,47 @@ export default function BusinessGroups() {
           </div>
         )}
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Community Group</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Group Name</Label>
+              <Input
+                placeholder="e.g. VIP Customers"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea
+                placeholder="What is this group for?"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+            <div className="rounded-lg bg-primary/5 p-3 flex items-start gap-3 border border-primary/10">
+              <Lock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Groups are private to your business. Only invited members and admins can view or participate in community broadcasts.
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={saving || !groupName}>
+              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+              Create Group
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

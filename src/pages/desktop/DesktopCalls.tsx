@@ -31,6 +31,7 @@ import { MeetingControls } from '@/components/calling/meeting/MeetingControls';
 import { ReactionsBar } from '@/components/calling/meeting/ReactionsBar';
 import { LayoutSwitcher, LayoutMode } from '@/components/calling/meeting/LayoutSwitcher';
 import { HostControls } from '@/components/calling/meeting/HostControls';
+import { MeetingCopilotPanel } from '@/components/calling/MeetingCopilotPanel';
 
 /* ─── Real unique meeting ID ─────────────────────────────────────── */
 function generateMeetingId(): string {
@@ -41,14 +42,14 @@ function generateMeetingId(): string {
 /* ─── Session types/goals ─────────────────────────────────────────── */
 
 const GOALS = [
-  { id: 'sales', label: 'Meet Customer', desc: 'Connect with customers, discuss needs and close deals', icon: Briefcase, bg: 'bg-gradient-to-br from-blue-500 to-cyan-400 text-white shadow-blue-500/20', border: 'border-blue-400/50', tag: 'Sales & CRM' },
-  { id: 'recruitment', label: 'Hire Someone', desc: 'Conduct interviews and evaluate candidates', icon: Users, bg: 'bg-gradient-to-br from-purple-500 to-fuchsia-400 text-white shadow-purple-500/20', border: 'border-purple-400/50', tag: 'HR & Recruitment' },
-  { id: 'presentation', label: 'Present Proposal', desc: 'Present ideas, proposals and get approvals', icon: Presentation, bg: 'bg-gradient-to-br from-orange-500 to-amber-400 text-white shadow-orange-500/20', border: 'border-orange-400/50', tag: 'Business' },
-  { id: 'education', label: 'Teach Class', desc: 'Deliver engaging classes and track progress', icon: GraduationCap, bg: 'bg-gradient-to-br from-rose-500 to-pink-400 text-white shadow-rose-500/20', border: 'border-rose-400/50', tag: 'Education' },
-  { id: 'clinic', label: 'Consult Patient', desc: 'Provide consultations and patient care remotely', icon: Stethoscope, bg: 'bg-gradient-to-br from-emerald-500 to-teal-400 text-white shadow-emerald-500/20', border: 'border-emerald-400/50', tag: 'Healthcare' },
-  { id: 'internal', label: 'Internal Meeting', desc: 'Collaborate with your team and share updates', icon: Users, bg: 'bg-gradient-to-br from-indigo-500 to-blue-500 text-white shadow-indigo-500/20', border: 'border-indigo-400/50', tag: 'Teamwork' },
-  { id: 'audit', label: 'Internal Audit', desc: 'Review processes, check compliance and documents', icon: Shield, bg: 'bg-gradient-to-br from-slate-700 to-zinc-600 text-white shadow-slate-900/20', border: 'border-slate-500/50', tag: 'Compliance' },
-  { id: 'quick', label: 'Quick Call', desc: 'Start an instant voice or video conversation', icon: Phone, bg: 'bg-gradient-to-br from-violet-600 to-purple-500 text-white shadow-violet-500/20', border: 'border-violet-400/50', tag: 'Personal' },
+  { id: 'sales', label: 'Meet Customer', desc: 'Connect with customers, discuss needs and close deals', icon: Briefcase, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-blue-500/50', tag: 'Sales & CRM', accent: 'text-blue-400 bg-blue-500/10' },
+  { id: 'recruitment', label: 'Hire Someone', desc: 'Conduct interviews and evaluate candidates', icon: Users, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-purple-500/50', tag: 'HR & Recruitment', accent: 'text-purple-400 bg-purple-500/10' },
+  { id: 'presentation', label: 'Present Proposal', desc: 'Present ideas, proposals and get approvals', icon: Presentation, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-orange-500/50', tag: 'Business', accent: 'text-orange-400 bg-orange-500/10' },
+  { id: 'education', label: 'Teach Class', desc: 'Deliver engaging classes and track progress', icon: GraduationCap, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-rose-500/50', tag: 'Education', accent: 'text-rose-400 bg-rose-500/10' },
+  { id: 'clinic', label: 'Consult Patient', desc: 'Provide consultations and patient care remotely', icon: Stethoscope, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-emerald-500/50', tag: 'Healthcare', accent: 'text-emerald-400 bg-emerald-500/10' },
+  { id: 'internal', label: 'Internal Meeting', desc: 'Collaborate with your team and share updates', icon: Users, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-indigo-500/50', tag: 'Teamwork', accent: 'text-indigo-400 bg-indigo-500/10' },
+  { id: 'audit', label: 'Internal Audit', desc: 'Review processes, check compliance and documents', icon: Shield, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-slate-500/50', tag: 'Compliance', accent: 'text-slate-400 bg-slate-500/10' },
+  { id: 'quick', label: 'Quick Call', desc: 'Start an instant voice or video conversation', icon: Phone, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-violet-500/50', tag: 'Personal', accent: 'text-violet-400 bg-violet-500/10' },
 ];
 
 
@@ -239,6 +240,43 @@ const DesktopCalls: React.FC = () => {
     return null;
   };
 
+  const saveSummaryToDocuments = async (
+    summaryText: string,
+    transcriptOverride?: string,
+    metadata?: {
+      callId?: string | null;
+      meetingTitle?: string;
+      participantName?: string;
+      durationSeconds?: number;
+    }
+  ) => {
+    const summaryValue = summaryText.trim();
+    if (!summaryValue) return null;
+
+    if (!window.electronAPI?.localFiles?.saveSummary) {
+      toast.error('Local summary saving is available in the CHATR desktop app.');
+      return null;
+    }
+
+    const result = await window.electronAPI.localFiles.saveSummary({
+      callId: metadata?.callId ?? getLocalCallId(),
+      meetingTitle: metadata?.meetingTitle || sessionGoal || 'CHATR Call',
+      participantName: metadata?.participantName || remoteUserName || 'Unknown',
+      durationSeconds: metadata?.durationSeconds ?? callDuration,
+      summary: summaryValue,
+      transcript: (transcriptOverride ?? transcriptRef.current).trim(),
+      createdAt: new Date().toISOString(),
+    });
+
+    if (result.ok) {
+      toast.success('Summary saved to Documents\\CHATR Workspace\\AI Summaries');
+      return result.path || null;
+    }
+
+    toast.error(result.error || 'Failed to save summary locally');
+    return null;
+  };
+
   const handleToggleRecording = async () => {
     const callId = getLocalCallId();
 
@@ -262,6 +300,12 @@ const DesktopCalls: React.FC = () => {
   const handleEndCall = async () => {
     const finalTranscript = transcriptRef.current;
     const finalCallId = getLocalCallId();
+    const finalMetadata = {
+      callId: finalCallId,
+      meetingTitle: sessionGoal || 'CHATR Call',
+      participantName: remoteUserName || 'Unknown',
+      durationSeconds: callDuration,
+    };
 
     if (isRecording) {
       await stopRecording(finalCallId);
@@ -271,11 +315,15 @@ const DesktopCalls: React.FC = () => {
       await saveTranscriptToDocuments(finalTranscript);
     }
 
-    if (finalTranscript && finalTranscript.length > 50) {
-      setShowSummaryModal(true);
-      await generateSummary(finalTranscript);
-    }
     endCall();
+
+    if (finalTranscript.trim()) {
+      setShowSummaryModal(true);
+      const generatedSummary = await generateSummary(finalTranscript);
+      if (generatedSummary) {
+        await saveSummaryToDocuments(generatedSummary, finalTranscript, finalMetadata);
+      }
+    }
   };
 
   // Real computed stats from actual call history
@@ -610,14 +658,14 @@ const DesktopCalls: React.FC = () => {
                       )}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                          <g.icon className="w-4 h-4 text-white" />
+                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", (g as any).accent)}>
+                          <g.icon className="w-4 h-4" />
                         </div>
-                        <span className="text-[10px] font-semibold opacity-90 px-2 py-0.5 rounded-full bg-black/20 text-white uppercase tracking-wider">{g.tag}</span>
+                        <span className="text-[10px] font-semibold opacity-90 px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.05] text-white/70 uppercase tracking-wider">{g.tag}</span>
                       </div>
                       <div>
                         <h4 className="font-bold text-sm text-white">{g.label}</h4>
-                        <p className="text-[10px] line-clamp-1 mt-0.5 text-white/80">{g.desc}</p>
+                        <p className="text-[10px] line-clamp-1 mt-0.5 text-white/50">{g.desc}</p>
                       </div>
                     </button>
                   ))}
@@ -879,7 +927,14 @@ const DesktopCalls: React.FC = () => {
                 callId={getLocalCallId()}
                 callDuration={callDuration}
                 onSaveTranscript={saveTranscriptToDocuments}
-                onTranscriptUpdate={(text) => { transcriptRef.current = transcriptRef.current + ' ' + text; }}
+                onSaveSummary={saveSummaryToDocuments}
+                onTranscriptUpdate={(text) => {
+                  const cleanedText = text.trim();
+                  if (!cleanedText) return;
+                  transcriptRef.current = transcriptRef.current
+                    ? `${transcriptRef.current.trimEnd()}\n${cleanedText}`
+                    : cleanedText;
+                }}
               />
             </div>
           </div>
@@ -932,6 +987,12 @@ const DesktopCalls: React.FC = () => {
           </div>
         </div>
       )}
+      {/* ── Meeting Copilot Panel (right side) ── */}
+      <MeetingCopilotPanel
+        callState={callState}
+        callerName={Object.keys(remoteStreams)[0]}
+        meetingGoal={sessionGoal || undefined}
+      />
     </div>
   );
 };

@@ -1,9 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bot, Sparkles, BrainCircuit, MessageSquare, X, Globe, CloudOff, Radio, ShieldAlert, HeartPulse, Mic, ShieldCheck } from 'lucide-react';
+import { Bot, Sparkles, BrainCircuit, MessageSquare, X, Globe, CloudOff, Radio, ShieldAlert, HeartPulse, Mic, ShieldCheck, Users, Calendar, Search, Briefcase, LayoutDashboard, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useCHATROS } from '@/core/os/GlobalIntentProvider';
+
+// Context-aware AI menu configurations — different per page
+const PAGE_AI_MENUS: Record<string, { label: string; description: string; icon: React.ReactNode; route: string; color: string }[]> = {
+  '/desktop/chat': [
+    { label: 'Conversation AI', description: 'Detect intents, create commitments', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/chatr-ai', color: 'bg-violet-600' },
+    { label: 'Intelligence Panel', description: 'See extracted people, dates, intents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/chat', color: 'bg-indigo-600' },
+    { label: 'AI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
+  ],
+  '/desktop/calls': [
+    { label: 'Meeting Copilot', description: 'Live notes, decisions, action items', icon: <Mic className="w-5 h-5 text-white" />, route: '/desktop/calls', color: 'bg-blue-600' },
+    { label: 'Pre-Call Brief', description: 'AI summary before your next call', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/calls', color: 'bg-indigo-600' },
+    { label: 'Schedule Meeting', description: 'Book time with participants', icon: <Calendar className="w-5 h-5 text-white" />, route: '/desktop/workspace', color: 'bg-teal-600' },
+  ],
+  '/desktop/contacts': [
+    { label: 'Relationship AI', description: 'Full history with this person', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/contacts', color: 'bg-emerald-600' },
+    { label: 'Find Contact', description: 'Search across all people', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/contacts', color: 'bg-cyan-600' },
+    { label: 'Action Agents', description: 'Run reusable work agents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/ai-agents', color: 'bg-pink-600' },
+  ],
+  '/desktop/canvas': [
+    { label: 'Knowledge AI', description: 'Connect people, docs, meetings', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/canvas', color: 'bg-purple-600' },
+    { label: 'Search Knowledge', description: 'Find anything across your work', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/canvas', color: 'bg-violet-600' },
+    { label: 'AI Browser', description: 'Research with AI', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
+  ],
+  '/desktop/smart-inbox': [
+    { label: 'Command Center', description: 'Search across all channels', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', color: 'bg-cyan-600' },
+    { label: 'AI Triage', description: 'What needs your attention now', icon: <Sparkles className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', color: 'bg-indigo-600' },
+    { label: 'Summarize Inbox', description: 'AI summary of unread messages', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/chatr-ai', color: 'bg-violet-600' },
+  ],
+  '/desktop/workspace': [
+    { label: 'Workspace AI', description: 'Set up and manage workspaces', icon: <LayoutDashboard className="w-5 h-5 text-white" />, route: '/desktop/workspace', color: 'bg-orange-600' },
+    { label: 'Create Workspace', description: 'Sales, HR, Healthcare, and more', icon: <Briefcase className="w-5 h-5 text-white" />, route: '/desktop/workspace', color: 'bg-amber-600' },
+    { label: 'Action Agents', description: 'Automate workspace tasks', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/ai-agents', color: 'bg-pink-600' },
+  ],
+  '/desktop/recruitment': [
+    { label: 'Recruitment AI', description: 'Track candidates, schedule interviews', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-pink-600' },
+    { label: 'Screen Candidate', description: 'AI-powered resume analysis', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-rose-600' },
+    { label: 'Schedule Interview', description: 'Book interview slots automatically', icon: <Calendar className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-indigo-600' },
+  ],
+};
+
+const DEFAULT_AI_MENU = [
+  { label: 'ChatrAI', description: 'Ask, summarize, plan, detect risk', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/chatr-ai', color: 'bg-blue-500' },
+  { label: 'AI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-purple-500' },
+  { label: 'Action Agents', description: 'Run reusable work agents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/ai-agents', color: 'bg-pink-500' },
+];
 
 export const ChatrAIFab = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,111 +57,36 @@ export const ChatrAIFab = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Context-aware via GlobalIntentProvider (has built-in graceful fallback)
+  const { pageContext } = useCHATROS();
+  const contextLabel = pageContext?.aiLabel || 'CHATR AI';
+  const contextEmoji = pageContext?.aiEmoji || '⚡';
+
   const orbStates = [
-    {
-      label: 'Calm',
-      icon: Bot,
-      coreClass: 'from-indigo-600 via-purple-600 to-pink-500',
-      ringClass: 'border-violet-500/35',
-      dotClass: 'bg-sky-300',
-      speed: 2.4,
-    },
-    {
-      label: 'Listening',
-      icon: Mic,
-      coreClass: 'from-sky-500 via-indigo-600 to-violet-600',
-      ringClass: 'border-sky-500/35',
-      dotClass: 'bg-sky-300',
-      speed: 1.45,
-    },
-    {
-      label: 'Shield',
-      icon: ShieldAlert,
-      coreClass: 'from-red-600 via-rose-600 to-fuchsia-600',
-      ringClass: 'border-red-500/40',
-      dotClass: 'bg-red-300',
-      speed: 0.95,
-    },
-    {
-      label: 'Family',
-      icon: HeartPulse,
-      coreClass: 'from-amber-500 via-orange-500 to-rose-500',
-      ringClass: 'border-orange-500/40',
-      dotClass: 'bg-orange-300',
-      speed: 1.6,
-    },
-    {
-      label: 'Safe',
-      icon: ShieldCheck,
-      coreClass: 'from-emerald-500 via-teal-500 to-indigo-600',
-      ringClass: 'border-emerald-500/40',
-      dotClass: 'bg-emerald-300',
-      speed: 2.8,
-    },
+    { label: 'Calm', coreClass: 'from-indigo-600 via-purple-600 to-pink-500', ringClass: 'border-violet-500/35', dotClass: 'bg-sky-300', speed: 2.4 },
+    { label: 'Listening', coreClass: 'from-sky-500 via-indigo-600 to-violet-600', ringClass: 'border-sky-500/35', dotClass: 'bg-sky-300', speed: 1.45 },
+    { label: 'Active', coreClass: 'from-emerald-500 via-teal-500 to-indigo-600', ringClass: 'border-emerald-500/40', dotClass: 'bg-emerald-300', speed: 2.8 },
   ];
   const activeOrb = orbStates[orbIndex % orbStates.length];
-  const ActiveOrbIcon = activeOrb.icon;
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setOrbIndex((current) => current + 1);
-    }, 4200);
-
+    const interval = window.setInterval(() => setOrbIndex(c => c + 1), 4200);
     return () => window.clearInterval(interval);
   }, []);
 
-  // Hide on full-screen and call routes so ChatrAI never interferes with media controls.
-  const hiddenRoutes = [
-    '/chat/',
-    '/chat-ai',
-    '/chatr-ai',
-    '/calls',
-    '/call-history',
-    '/desktop/calls',
-    '/desktop/intelligence',
-    '/camera',
-    '/capture',
-    '/standalone-dialer',
-    '/standalone-messenger',
-    '/status/create',
-    '/stories/create',
-    '/auth',
-    '/launcher',
-    '/onboarding',
-    '/ai-browser-home',
-    '/ai-search',
-    '/ai-browser'
-  ];
-  
-  if (hiddenRoutes.some(route => location.pathname.startsWith(route))) {
-    return null;
-  }
+  // Hide on full-screen routes
+  const hiddenRoutes = ['/chat/', '/chat-ai', '/chatr-ai', '/calls', '/call-history', '/camera', '/capture', '/standalone-dialer', '/standalone-messenger', '/status/create', '/stories/create', '/auth', '/launcher', '/onboarding', '/ai-browser-home', '/ai-search', '/ai-browser'];
+  if (hiddenRoutes.some(route => location.pathname.startsWith(route))) return null;
 
   const isDesktop = location.pathname.startsWith('/desktop');
 
-  const aiOptions = [
-    {
-      label: 'ChatrAI',
-      description: 'Ask, summarize, plan, detect risk',
-      icon: <MessageSquare className="w-5 h-5 text-white" />,
-      route: '/chatr-ai',
-      color: 'bg-blue-500'
-    },
-    {
-      label: 'AI Browser',
-      description: 'Search and verify with context',
-      icon: <Globe className="w-5 h-5 text-white" />,
-      route: '/ai-browser-home',
-      color: 'bg-purple-500'
-    },
-    {
-      label: 'Action Agents',
-      description: 'Run reusable work agents',
-      icon: <BrainCircuit className="w-5 h-5 text-white" />,
-      route: '/ai-agents',
-      color: 'bg-pink-500'
-    }
-  ];
+  // Get context-aware menu
+  const getMenu = () => {
+    const pathKey = Object.keys(PAGE_AI_MENUS).find(k => location.pathname.startsWith(k));
+    return pathKey ? PAGE_AI_MENUS[pathKey] : DEFAULT_AI_MENU;
+  };
+
+  const aiOptions = getMenu();
 
   return (
     <div className={cn('fixed z-[9999] flex flex-col items-end', isDesktop ? 'bottom-6 right-6' : 'bottom-24 right-4')}>
@@ -128,18 +99,19 @@ export const ChatrAIFab = () => {
             transition={{ duration: 0.2 }}
             className="mb-4 flex flex-col gap-3"
           >
+            {/* Context label badge */}
             <motion.div
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
               className="mr-1 rounded-lg border border-emerald-500/25 bg-white/95 px-3 py-2 text-right text-xs font-medium text-zinc-700 shadow-lg dark:bg-zinc-900/95 dark:text-zinc-100"
             >
               <div className="flex items-center justify-end gap-1.5">
-                <CloudOff className="h-3.5 w-3.5 text-emerald-600" />
-                ChatrAI local-first
+                <span className="text-sm">{contextEmoji}</span>
+                <span className="font-bold">{contextLabel}</span>
               </div>
               <div className="mt-1 flex items-center justify-end gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
                 <Radio className="h-3 w-3 text-violet-500" />
-                {activeOrb.label} mode active
+                Context-aware · {activeOrb.label} mode
               </div>
             </motion.div>
 
@@ -150,19 +122,13 @@ export const ChatrAIFab = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.05 }}
                 className="flex items-center gap-3 justify-end group cursor-pointer"
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate(option.route);
-                }}
+                onClick={() => { setIsOpen(false); navigate(option.route); }}
               >
                 <div className="max-w-[220px] rounded-lg bg-white px-3 py-2 text-right shadow-lg dark:bg-zinc-800">
                   <div className="text-sm font-semibold text-zinc-800 dark:text-white">{option.label}</div>
                   <div className="mt-0.5 text-[11px] leading-tight text-zinc-500 dark:text-zinc-400">{option.description}</div>
                 </div>
-                <div className={cn(
-                  "w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform",
-                  option.color
-                )}>
+                <div className={cn('w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform', option.color)}>
                   {option.icon}
                 </div>
               </motion.div>
@@ -190,8 +156,8 @@ export const ChatrAIFab = () => {
         <Button
           onClick={() => setIsOpen(!isOpen)}
           size="icon"
-          aria-label="Open ChatrAI"
-          title="Open ChatrAI"
+          aria-label={`Open ${contextLabel}`}
+          title={contextLabel}
           className={cn(
             'relative h-16 w-16 overflow-visible rounded-full border-2 border-white/25 bg-gradient-to-tr shadow-2xl shadow-purple-500/30 transition-all duration-300 hover:scale-105 hover:shadow-purple-500/50',
             activeOrb.coreClass
@@ -199,28 +165,19 @@ export const ChatrAIFab = () => {
         >
           <AnimatePresence mode="wait">
             {isOpen ? (
-              <motion.div
-                key="close"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-              >
+              <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
                 <X className="w-8 h-8 text-white" />
               </motion.div>
             ) : (
               <motion.div
                 key="open"
                 initial={{ rotate: 90, opacity: 0 }}
-                animate={{
-                  rotate: 0,
-                  opacity: 1,
-                  scale: [1, 1.08, 1],
-                }}
+                animate={{ rotate: 0, opacity: 1, scale: [1, 1.08, 1] }}
                 exit={{ rotate: -90, opacity: 0 }}
                 transition={{ scale: { duration: activeOrb.speed, repeat: Infinity, ease: 'easeInOut' } }}
                 className="flex items-center justify-center"
               >
-                <ActiveOrbIcon className="w-8 h-8 text-white" />
+                <Bot className="w-8 h-8 text-white" />
                 <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-yellow-300" />
               </motion.div>
             )}

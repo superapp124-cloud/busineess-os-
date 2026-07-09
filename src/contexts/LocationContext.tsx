@@ -78,14 +78,13 @@ export function LocationProvider({ children }: { children: ReactNode }) {
       // Reverse geocode to get city
       try {
         const geoResponse = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${result.latitude}&lon=${result.longitude}&zoom=10`,
-          { headers: { 'User-Agent': 'Chatr.Chat/1.0' } }
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${result.latitude}&longitude=${result.longitude}&localityLanguage=en`
         );
         const geoData = await geoResponse.json();
-        const address = geoData.address || {};
-        result.city = address.city || address.town || address.village;
-        result.region = address.state;
-        result.country = address.country;
+        const address = geoData.localityInfo?.administrative || [];
+        result.city = geoData.city || geoData.locality || '';
+        result.region = geoData.principalSubdivision || '';
+        result.country = geoData.countryName || '';
       } catch (err) {
         console.error('Reverse geocoding failed:', err);
       }

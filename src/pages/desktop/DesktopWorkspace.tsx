@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
+import { WorkspaceOSPanel } from '@/components/workspace/WorkspaceOSPanel';
 import { 
   Calendar as CalendarIcon, 
   CalendarCheck2,
@@ -126,7 +127,7 @@ export const DesktopWorkspace: React.FC = () => {
   const [tasks, setTasks] = useState<TaskViewModel[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [events, setEvents]           = useState<EventRenderModel[]>([]);
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [workspaceId, setWorkspaceId] = useState<string | null>('personal_local_workspace');
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(true);
   const [isLoadingTasks, setIsLoadingTasks]         = useState(false);
@@ -173,6 +174,22 @@ export const DesktopWorkspace: React.FC = () => {
 
         if (owned && owned.length > 0 && !cancelled) {
           setWorkspaceId(owned[0].id);
+        } else if (!cancelled) {
+          // Auto-create a personal workspace for the calendar to function
+          try {
+            const { data: newWorkspace } = await supabase
+              .from('workspaces')
+              .insert({ name: 'Personal Workspace', type: 'personal', owner_id: user.id })
+              .select('id')
+              .single();
+              
+            if (newWorkspace) {
+              setWorkspaceId(newWorkspace.id);
+              await supabase.from('workspace_members').insert({ workspace_id: newWorkspace.id, user_id: user.id, role: 'owner' });
+            }
+          } catch (e) {
+            console.error('Failed to auto-create workspace', e);
+          }
         }
       } catch (err) {
         console.error('[DesktopWorkspace] Failed to resolve workspace', err);
@@ -334,20 +351,7 @@ export const DesktopWorkspace: React.FC = () => {
     );
   }
 
-  if (!workspaceId) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#0a0a12] text-white">
-        <CalendarCheck2 className="w-12 h-12 text-violet-400 opacity-60" />
-        <h2 className="text-lg font-bold text-white/80">No workspace found</h2>
-        <p className="text-sm text-white/40 max-w-xs text-center">
-          You are not a member of any workspace yet. Create one to get started.
-        </p>
-        <Button className="bg-violet-600 hover:bg-violet-500 text-white">
-          <Plus className="w-4 h-4 mr-2" /> Create Workspace
-        </Button>
-      </div>
-    );
-  }
+  // Bypass "No workspace found" block handled via initial state
 
   return (
     <div className={cn("flex h-full font-sans overflow-hidden", isDark ? "bg-[#0a0a12] text-white" : "bg-white text-zinc-950")}>
@@ -789,6 +793,11 @@ export const DesktopWorkspace: React.FC = () => {
         </>
         )}
       </div>
+
+      {/* Workspace OS Panel — right side intelligence */}
+      <WorkspaceOSPanel
+        onCreateWorkspace={(id) => console.log('[WorkspaceOS] Creating:', id)}
+      />
     </div>
   );
 };

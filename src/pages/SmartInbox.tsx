@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CommandCenterPanel } from '@/components/inbox/CommandCenterPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Shield, ShieldAlert, KeyRound, MessageSquareText, RefreshCw, ChevronDown, CheckCircle2, 
@@ -372,7 +373,9 @@ export default function SmartInbox() {
   }
 
   return (
-    <div className={cn("min-h-screen overflow-hidden relative flex flex-col transition-colors duration-500", themeStyles[theme])}>
+    <div className="flex h-full overflow-hidden">
+      {/* Main Inbox Content */}
+      <div className={cn("flex-1 min-h-screen overflow-y-auto overflow-x-hidden relative flex flex-col transition-colors duration-500", themeStyles[theme])}>
       {/* Dynamic Background Effects */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[120px]" />
@@ -497,24 +500,24 @@ export default function SmartInbox() {
         {/* Compact Summary Strip & Daily Brief */}
         <div className="mb-8">
           <h2 className="text-lg font-bold text-white mb-2">{greeting}, {userName}.</h2>
-          <p className="text-sm text-slate-300 leading-relaxed mb-4 bg-white/5 p-4 rounded-xl border border-white/10">
+          <p className="text-sm text-white/70 leading-relaxed mb-6 bg-white/[0.02] backdrop-blur-md p-5 rounded-2xl border border-white/[0.05] shadow-lg">
             {briefingText}
           </p>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            <div className="bg-transparent border border-white/10 rounded-xl px-4 py-2 min-w-[max-content] flex items-center">
-              <Star className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.priority || 0}</span> <span className="text-xs text-slate-400 ml-1">Priority</span>
+            <div className="bg-white/[0.02] hover:bg-white/[0.04] transition-all border border-white/[0.05] rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
+              <Star className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.priority || 0}</span> <span className="text-xs text-white/50 ml-1">Priority</span>
             </div>
-            <div className="bg-transparent border border-indigo-500/30 rounded-xl px-4 py-2 min-w-[max-content] flex items-center">
-              <CornerUpLeft className="w-4 h-4 text-indigo-400" /> <span className="font-bold text-indigo-400 ml-2">{dailyStats?.repliesNeeded || 0}</span> <span className="text-xs text-indigo-400/80 ml-1">Replies Needed</span>
+            <div className="bg-indigo-500/[0.02] hover:bg-indigo-500/[0.05] transition-all border border-indigo-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
+              <CornerUpLeft className="w-4 h-4 text-indigo-400" /> <span className="font-bold text-indigo-400 ml-2">{dailyStats?.repliesNeeded || 0}</span> <span className="text-xs text-indigo-400/70 ml-1">Replies Needed</span>
             </div>
-            <div className="bg-transparent border border-amber-500/30 rounded-xl px-4 py-2 min-w-[max-content] flex items-center">
-              <CircleDollarSign className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.billsDue || 0}</span> <span className="text-xs text-amber-400/80 ml-1">Bills Due</span>
+            <div className="bg-amber-500/[0.02] hover:bg-amber-500/[0.05] transition-all border border-amber-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
+              <CircleDollarSign className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.billsDue || 0}</span> <span className="text-xs text-amber-400/70 ml-1">Bills Due</span>
             </div>
-            <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center">
-              <span className="text-xl">⚠️</span> <span className="font-bold text-rose-400 ml-2">{dailyStats?.threatsBlocked || 0}</span> <span className="text-xs text-rose-400/80 ml-1">Threats</span>
+            <div className="bg-rose-500/[0.02] hover:bg-rose-500/[0.05] transition-all border border-rose-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
+              <span className="text-xl">⚠️</span> <span className="font-bold text-rose-400 ml-2">{dailyStats?.threatsBlocked || 0}</span> <span className="text-xs text-rose-400/70 ml-1">Threats</span>
             </div>
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center">
-              <span className="text-xl">📅</span> <span className="font-bold text-blue-400 ml-2">{dailyStats?.meetings || 0}</span> <span className="text-xs text-blue-400/80 ml-1">Meetings</span>
+            <div className="bg-blue-500/[0.02] hover:bg-blue-500/[0.05] transition-all border border-blue-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
+              <span className="text-xl">📅</span> <span className="font-bold text-blue-400 ml-2">{dailyStats?.meetings || 0}</span> <span className="text-xs text-blue-400/70 ml-1">Meetings</span>
             </div>
           </div>
         </div>
@@ -919,11 +922,17 @@ export default function SmartInbox() {
             </div>
             
             {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-center space-y-4 mt-10">
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                  <Inbox className="w-8 h-8 text-slate-500" />
+              <div className="flex flex-col items-center justify-center h-64 text-center space-y-5 mt-10 animate-in fade-in duration-500">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-indigo-500/20 blur-2xl rounded-full" />
+                  <div className="relative w-20 h-20 rounded-full bg-white/[0.03] backdrop-blur-md flex items-center justify-center border border-white/[0.08] shadow-[0_0_30px_rgba(255,255,255,0.02)]">
+                    <Inbox className="w-8 h-8 text-white/50" />
+                  </div>
                 </div>
-                <p className="text-slate-400 font-medium">You're all caught up!</p>
+                <div className="space-y-1">
+                  <h3 className="text-white/80 font-bold text-lg">You're all caught up</h3>
+                  <p className="text-white/40 text-sm max-w-[250px] mx-auto leading-relaxed">Your inbox is clear and fully secure. No pending actions today.</p>
+                </div>
               </div>
             ) : (
               <div className="space-y-3">
@@ -1002,6 +1011,17 @@ export default function SmartInbox() {
           <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-xs font-semibold text-slate-300 whitespace-nowrap"><CornerUpLeft className="w-3.5 h-3.5" /> Reply Priority</button>
         </div>
       </div>
+      </div>
+
+      {/* Command Center Panel — right side AI sidebar */}
+      <CommandCenterPanel
+        stats={{
+          unread: localMessages.length,
+          tasks: 0,
+          meetings: 0,
+        }}
+        onSearch={(q) => setSearchQuery(q)}
+      />
     </div>
   );
 }

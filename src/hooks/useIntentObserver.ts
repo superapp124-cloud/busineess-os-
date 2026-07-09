@@ -2,10 +2,11 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { detectIntents } from '@/core/intent/patterns';
 import type { Understanding } from '@/core/intent/types';
 import { projectionStore, ProjectionState } from '@/core/intent/projectionStore';
+import { toast } from 'sonner';
 
 const CHATR_CORE_URL = 'http://127.0.0.1:8087';
 const DEBOUNCE_MS = 300;
-const MIN_CONFIDENCE = 0.85;
+const MIN_CONFIDENCE = 0.50;
 
 interface UseIntentObserverOptions {
   conversationId: string | null;
@@ -54,15 +55,19 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
       'KERNEL.POLICY.VERIFIED',
       'KERNEL.ACTION.REVEALED',
       'KERNEL.ACTION.EXECUTED',
-      'KERNEL.JOURNAL.APPENDED'
+      'KERNEL.JOURNAL.APPENDED',
+      'KERNEL.SUGGESTION.PROPOSED',
+      'KERNEL.OUTCOME.DETECTED'
     ];
 
     events.forEach(eventName => {
       es.addEventListener(eventName, (e: MessageEvent) => {
         try {
           const envelope = JSON.parse(e.data);
+          toast.info('4. SSE: Received ' + envelope.eventName);
           projectionStore.handleEvent({
             id: envelope.id,
+            eventName: eventName,
             timestamp: envelope.timestamp,
             stage: envelope.stage,
             correlationId: envelope.correlationId,
@@ -79,13 +84,28 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
     };
   }, [conversationId, workspaceId]);
 
-  const triggerBackendObservation = useCallback((messageText: string, requestId: string) => {
+  const triggerBackendObservation = useCallback((messageText: string) => {
     if (!conversationId) return;
-    fetch(`${CHATR_CORE_URL}/sense/observe`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messageText, conversationId, userId, workspaceId, requestId }),
-    }).catch(() => { /* silent */ });
+    toast.info('2. Observer: Mocking backend offline planner...');
+    
+    // FALLBACK MOCK for local testing without backend
+    import('../core/intent/patterns').then(({ detectIntents }) => {
+      const detected = detectIntents(messageText);
+      if (detected.length > 0) {
+        // Boot up runtime so it listens to planner
+        import('../core/capabilities/CommitmentRuntime').then(() => {
+          import('../core/services/CommitmentPlanner').then(({ CommitmentPlannerImpl }) => {
+            const planner = CommitmentPlannerImpl.getInstance();
+            planner.plan({
+              id: crypto.randomUUID(),
+              action: detected[0].type || 'UNKNOWN',
+              entities: { title: messageText },
+              confidence: detected[0].confidence?.observation || 0.8
+            });
+          });
+        });
+      }
+    });
   }, [conversationId, userId, workspaceId]);
 
   const observe = useCallback((messageText: string) => {
@@ -101,15 +121,14 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
       const text = latestTextRef.current;
       if (!text || text.trim().length < 8) return;
 
+      toast.info('1. Observer: Checking pattern');
       const detected = detectIntents(text).filter(d => (d.confidence?.observation || 0) >= MIN_CONFIDENCE);
       if (detected.length > 0) {
         const primary = detected[0];
-        const requestId = crypto.randomUUID();
-        
         // Optimistic UI update could go here by directly mutating projectionStore if we wanted, 
         // but we rely entirely on the backend KERNEL events via the stream now for true Event Sourcing.
         
-        triggerBackendObservation(text, requestId);
+        triggerBackendObservation(text);
       } else {
         dismiss();
       }

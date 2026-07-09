@@ -19,6 +19,10 @@ import { HelmetProvider } from 'react-helmet-async';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { NativeAppProvider } from "./components/NativeAppProvider";
 import { LocationProvider } from "./contexts/LocationContext";
+import { initializeCapabilities } from "./core/capabilities/init";
+
+// Initialize the Outcome Engine Capabilities
+initializeCapabilities();
 import { registerServiceWorker, resetServiceWorkerState } from "./utils/serviceWorkerRegistration";
 import { setupNativeCallUI } from "./utils/nativeCallUI";
 import { CrashlyticsErrorBoundary } from "./utils/crashlyticsErrorBoundary";
@@ -58,7 +62,10 @@ import { preloadCriticalRoutes } from "./routes/lazyPages";
 const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m => ({ default: m.AdminLayout })));
 import DesktopLayout from "./layouts/DesktopLayout";
 const WorkspaceSetup = React.lazy(() => import("./pages/desktop/WorkspaceSetup").then(m => ({ default: m.WorkspaceSetup })));
+const KernelDashboard = React.lazy(() => import("./pages/desktop/KernelDashboard").then(m => ({ default: m.KernelDashboard })));
 const BusinessLayout = React.lazy(() => import("./layouts/BusinessLayout").then(m => ({ default: m.BusinessLayout })));
+const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalendarCallback").then(m => ({ default: m.GoogleCalendarCallback })));
+const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
   import("./components/FeatureEngagementTracker").then((module) => ({
@@ -410,8 +417,12 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 {/* Desktop Layout Routes (web.chatr.chat) */}
                 <Route path="/desktop" element={<DesktopLayout />}>
                   <Route index element={<Navigate to="/desktop/chat" replace />} />
+                  <Route path="kernel" element={
+                    <Suspense fallback={<PageLoader message="Loading Kernel Dashboard..." />}>
+                      <KernelDashboard />
+                    </Suspense>
+                  } />
                   <Route path="setup" element={<Suspense fallback={<PageLoader />}><WorkspaceSetup /></Suspense>} />
-                  <Route path="kernel" element={<LazyRoute component={LazyPages.KernelConsole} />} />
                   <Route path="beta-command-center" element={<LazyRoute component={LazyPages.BetaCommandCenter} />} />
                   <Route path="connect" element={<LazyRoute component={LazyPages.DesktopConnectPairing} />} />
                   <Route path="chat" element={<LazyRoute component={LazyPages.DesktopChat} />} />
@@ -419,9 +430,17 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                   <Route path="canvas" element={<LazyRoute component={LazyPages.InfiniteCanvas} />} />
                   <Route path="calls" element={<LazyRoute component={LazyPages.DesktopCalls} />} />
                   <Route path="workspace" element={<LazyRoute component={LazyPages.DesktopWorkspace} />} />
+                  <Route path="calendar" element={<LazyRoute component={LazyPages.DesktopCalendar} />} />
                   <Route path="intelligence" element={<LazyRoute component={LazyPages.DesktopIntelligence} />} />
                   <Route path="notifications" element={<LazyRoute component={LazyPages.DesktopNotifications} />} />
                   <Route path="settings" element={<LazyRoute component={LazyPages.DesktopSettings} />} />
+                  <Route path="settings/notifications" element={<LazyRoute component={LazyPages.DesktopNotifications} />} />
+                  <Route path="settings/appearance" element={<LazyRoute component={LazyPages.DesktopAppearance} />} />
+                  <Route path="settings/wallpaper" element={<LazyRoute component={LazyPages.DesktopWallpaper} />} />
+                  <Route path="profile" element={<LazyRoute component={LazyPages.DesktopProfile} />} />
+                  <Route path="privacy" element={<LazyRoute component={LazyPages.DesktopPrivacy} />} />
+                  <Route path="account" element={<LazyRoute component={LazyPages.DesktopAccount} />} />
+                  <Route path="device-management" element={<LazyRoute component={LazyPages.DesktopConnectPairing} />} />
                   <Route path="recruitment" element={<LazyRoute component={LazyPages.RecruiterWorkspace} />} />
                   <Route path="candidate" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
                   <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
@@ -451,6 +470,10 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                     <Route path="developer" element={<LazyRoute component={LazyPages.DeveloperHub} />} />
                   </Route>
                 </Route>
+
+                {/* Calendar OAuth2 Callback Routes */}
+                <Route path="/auth/google/callback" element={<React.Suspense fallback={<PageLoader />}><GoogleCalendarCallback /></React.Suspense>} />
+                <Route path="/auth/outlook/callback" element={<React.Suspense fallback={<PageLoader />}><OutlookCalendarCallback /></React.Suspense>} />
                 
                 {/* Admin Platform Routes */}
                 <Route path="/admin" element={<Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>}>

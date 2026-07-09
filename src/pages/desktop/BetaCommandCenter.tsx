@@ -13,7 +13,7 @@ export function BetaCommandCenter() {
 
   const fetchTelemetry = async () => {
     try {
-      const res = await fetch('http://localhost:3141/kernel/telemetry');
+      const res = await fetch('http://localhost:8087/kernel/telemetry');
       if (res.ok) {
         const data = await res.json();
         setTraces(data.traces);
@@ -43,6 +43,40 @@ export function BetaCommandCenter() {
   const acceptanceRate = suggestionsShown ? ((suggestionsAccepted / suggestionsShown) * 100).toFixed(1) : 0;
   const dismissRate = suggestionsShown ? ((suggestionsDismissed / suggestionsShown) * 100).toFixed(1) : 0;
 
+  // Manual Edit Rate: traces where payload has isEdited=true
+  const editedCount = traces.filter(t =>
+    t.events.some(e => (e as any).payload?.isEdited === true)
+  ).length;
+  const manualEditRate = suggestionsAccepted > 0
+    ? ((editedCount / suggestionsAccepted) * 100).toFixed(1)
+    : '0.0';
+
+  // Avg Confirm Time: ms between PROPOSED and CONFIRMED events
+  const confirmTimes = traces
+    .map(t => {
+      const proposed = t.events.find(e => e.stage === 'KERNEL.SUGGESTION.PROPOSED');
+      const confirmed = t.events.find(e => e.stage === 'KERNEL.ACTION.CONFIRMED');
+      return proposed && confirmed ? confirmed.timestamp - proposed.timestamp : null;
+    })
+    .filter((v): v is number => v !== null && v > 0);
+  const avgConfirmMs = confirmTimes.length
+    ? (confirmTimes.reduce((a, b) => a + b, 0) / confirmTimes.length)
+    : 0;
+  const avgConfirmDisplay = avgConfirmMs
+    ? avgConfirmMs < 1000 ? `${Math.round(avgConfirmMs)}ms` : `${(avgConfirmMs / 1000).toFixed(1)}s`
+    : '—';
+
+  // Habit Formation: ratio of INTENT_DETECTED that weren't triggered by user text (voluntary)
+  const voluntaryIntents = traces.filter(t =>
+    t.events.some(e => e.stage === 'INTENT_DETECTED' && (e as any).payload?.voluntary === true)
+  ).length;
+  const habitRate = suggestionsShown ? ((voluntaryIntents / suggestionsShown) * 100).toFixed(1) : '0.0';
+
+  // Replay trace: re-dispatch via CommandBus if available
+  const replayTrace = (trace: Trace) => {
+    window.dispatchEvent(new CustomEvent('chatr:replay-trace', { detail: { correlationId: trace.correlationId } }));
+  };
+
   return (
     <div className="flex-1 bg-zinc-950 text-white flex flex-col h-full overflow-hidden">
       <div className="p-6 border-b border-white/10 flex justify-between items-center bg-zinc-900/50">
@@ -66,11 +100,12 @@ export function BetaCommandCenter() {
             <Shield className="w-5 h-5 text-blue-400" />
             Trust Metrics
           </h2>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-5 gap-4">
             <MetricCard title="Acceptance Rate" value={`${acceptanceRate}%`} subtitle={`${suggestionsAccepted} of ${suggestionsShown}`} icon={<CheckCircle className="text-emerald-400" />} />
             <MetricCard title="Dismiss Rate" value={`${dismissRate}%`} subtitle={`${suggestionsDismissed} of ${suggestionsShown}`} icon={<AlertTriangle className="text-amber-400" />} />
-            <MetricCard title="Manual Edit Rate" value="0.0%" subtitle="Under implementation" icon={<BarChart3 className="text-violet-400" />} />
-            <MetricCard title="Avg Confirm Time" value="1.2s" subtitle="Rolling 24h" icon={<Clock className="text-blue-400" />} />
+            <MetricCard title="Manual Edit Rate" value={`${manualEditRate}%`} subtitle={`${editedCount} edited before confirm`} icon={<BarChart3 className="text-violet-400" />} />
+            <MetricCard title="Avg Confirm Time" value={avgConfirmDisplay} subtitle={`Over ${confirmTimes.length} confirmations`} icon={<Clock className="text-blue-400" />} />
+            <MetricCard title="Habit Formation" value={`${habitRate}%`} subtitle={`${voluntaryIntents} voluntary intents`} icon={<Activity className="text-pink-400" />} />
           </div>
         </section>
 
@@ -111,7 +146,10 @@ export function BetaCommandCenter() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <button className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300">
+                        <button
+                          onClick={() => replayTrace(trace)}
+                          className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                        >
                           <Play className="w-3 h-3" /> Replay
                         </button>
                       </td>

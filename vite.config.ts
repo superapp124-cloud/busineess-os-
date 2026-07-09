@@ -28,6 +28,9 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ['capacitor-native-biometric'],
+  },
   esbuild: {
     // Strip debugger statements in production builds
     drop: mode === 'production' ? ['debugger'] : [],

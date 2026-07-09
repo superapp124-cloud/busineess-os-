@@ -31,6 +31,7 @@ const validInvokeChannels = [
   // Local privacy-first call records
   'privacy:ensure-local-folders',
   'calls:save-transcript',
+  'calls:save-summary',
   'calls:save-recording',
   // Agent tasks
   'agent:execute-task',
@@ -128,6 +129,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     saveTranscript: (payload) =>
       ipcRenderer.invoke('calls:save-transcript', payload),
+
+    saveSummary: (payload) =>
+      ipcRenderer.invoke('calls:save-summary', payload),
 
     saveRecording: (payload) =>
       ipcRenderer.invoke('calls:save-recording', payload),

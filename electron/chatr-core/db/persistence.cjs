@@ -25,9 +25,13 @@ class PersistenceInterface {
       this.db.pragma('journal_mode = WAL');
       this._initializeSchema();
     } catch (err) {
-      console.warn('[Persistence] Database corrupted, resetting:', err.message);
-      if (this.db) this.db.close();
-      fs.unlinkSync(this.dbPath);
+      console.warn('[Persistence] Database init failed, resetting:', err.message, err.stack);
+      if (this.db) {
+        try { this.db.close(); } catch (e) {}
+      }
+      if (fs.existsSync(this.dbPath)) {
+        fs.unlinkSync(this.dbPath);
+      }
       this.db = new Database(this.dbPath);
       this.db.pragma('journal_mode = WAL');
       this._initializeSchema();

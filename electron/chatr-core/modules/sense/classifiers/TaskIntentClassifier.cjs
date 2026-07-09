@@ -10,7 +10,8 @@ class TaskIntentClassifier {
     this.patterns = [
       /\bfinish (.*?)( (by|on|this|next|friday|monday|tuesday|wednesday|thursday|saturday|sunday))\b/i,
       /\bcreate a task from that\b/i,
-      /\bremind me (after the meeting|about that|tomorrow|later)\b/i,
+      /\bremind me\b/i,
+      /\bset (a |an )?(reminder|alarm|alert)\b/i,
       /\bi (need to|have to|must|got to|gotta|should) \w+/i,
       /\bwe (need to|have to|must|should) \w+/i,
     ];

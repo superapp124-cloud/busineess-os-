@@ -80,17 +80,12 @@ export async function getCurrentLocation(): Promise<{ latitude: number; longitud
 }
 
 /**
- * Reverse geocode coordinates to city/country using Nominatim (free, no API key)
+ * Reverse geocode coordinates to city/country using BigDataCloud
  */
 export async function reverseGeocode(latitude: number, longitude: number): Promise<LocationData> {
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
-      {
-        headers: {
-          'User-Agent': 'Chatr.Chat/1.0'
-        }
-      }
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
     );
 
     if (!response.ok) {
@@ -98,14 +93,12 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
     }
 
     const data = await response.json();
-    const address = data.address || {};
-
     return {
       latitude,
       longitude,
-      city: address.city || address.town || address.village || address.suburb || 'Unknown',
-      country: address.country || 'Unknown',
-      countryCode: address.country_code?.toUpperCase() || ''
+      city: data.city || data.locality || 'Unknown',
+      country: data.countryName || 'Unknown',
+      countryCode: data.countryCode?.toUpperCase() || ''
     };
   } catch (error) {
     console.error('Reverse geocoding error:', error);

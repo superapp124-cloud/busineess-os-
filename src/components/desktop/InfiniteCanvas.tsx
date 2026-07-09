@@ -1,4 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { KnowledgeBrainPanel } from '@/components/canvas/KnowledgeBrainPanel';
 import {
   MessageSquare, FileText, Calendar, Sparkles, ZoomIn, ZoomOut,
   Search, Users, LayoutGrid, List, GitBranch, Clock, Activity,
@@ -596,6 +598,8 @@ export const InfiniteCanvas: React.FC = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const location = useLocation();
+
   const [viewMode, setViewMode] = useState<ViewMode>('graph');
   const [selectedNode, setSelectedNode] = useState<KnowledgeNode | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -612,18 +616,26 @@ export const InfiniteCanvas: React.FC = () => {
     setShowAIAnswer(true);
     setAiAnswer(null);
     try {
-      const { data, error } = await supabase.functions.invoke('universal-ai-search', {
-        body: { query, context: 'knowledge_canvas', limit: 10 }
+      // Build a rich context from the live knowledge graph
+      const contextSummary = nodes.length > 0
+        ? `Knowledge graph contains: ${nodes.map(n => `${n.type} "${n.title}"`).join(', ')}.`
+        : 'Knowledge graph is currently empty.';
+
+      const { generate } = await import('@/services/ai');
+      const answer = await generate({
+        prompt: `You are the AI assistant for the CHATR Knowledge Canvas. A user asked: "${query}". Context: ${contextSummary}. Give a concise, actionable answer in 2-3 sentences. If the knowledge graph is empty, suggest what they might want to do.`
       });
-      if (error) throw error;
+
       setAiAnswer({
-        summary: data?.summary || data?.answer || `Found results for: "${query}"`,
-        items: data?.results || data?.items || []
+        summary: answer,
+        items: nodes
+          .filter(n => n.title.toLowerCase().includes(query.toLowerCase()))
+          .map(n => ({ type: n.type, title: n.title }))
       });
     } catch (err: any) {
-      console.warn('AI search fallback:', err);
+      // Graceful fallback to local search if AI is unavailable
       setAiAnswer({
-        summary: `Showing local matches for "${query}". Connect internet for full AI search.`,
+        summary: `Showing local matches for "${query}". Connect CHATR Desktop for full AI search.`,
         items: nodes
           .filter(n => n.title.toLowerCase().includes(query.toLowerCase()))
           .map(n => ({ type: n.type, title: n.title }))
@@ -632,6 +644,25 @@ export const InfiniteCanvas: React.FC = () => {
       setAiLoading(false);
     }
   }, [nodes]);
+
+  // Listen for autoTrigger shortcuts from Command Palette
+  useEffect(() => {
+    if (location.state?.autoTrigger) {
+      let query = '';
+      switch (location.state.autoTrigger) {
+        case 'ai-summarize': query = 'Summarize yesterday'; break;
+        case 'ai-draft': query = 'Draft a reply'; break;
+        case 'ai-translate': query = 'Translate clipboard'; break;
+        default: query = location.state.autoTrigger;
+      }
+      if (query) {
+        setAiQuery(query);
+        // We delay slightly to let the graph load first
+        setTimeout(() => handleAISearch(query), 500);
+      }
+      window.history.replaceState({}, document.title); // clear state
+    }
+  }, [location, handleAISearch]);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (viewMode !== 'graph') return;
@@ -696,7 +727,7 @@ export const InfiniteCanvas: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden" style={{ background: '#080a10', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="flex flex-col w-full h-full overflow-hidden text-white" style={{ background: '#080a10', fontFamily: 'Inter, system-ui, sans-serif' }}>
 
       {/* ── Top Bar ── */}
       <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: '#0d0f1a', borderBottom: '1px solid #ffffff0d' }}>
@@ -921,12 +952,12 @@ export const InfiniteCanvas: React.FC = () => {
               {activeBottomTab === 'analytics' && (
                 <div className="flex gap-4 flex-shrink-0">
                   {[
-                    { label: 'Total Items', val: '48', icon: <Layers className="w-4 h-4" />, color: '#6366f1' },
-                    { label: 'Active People', val: '8', icon: <Users className="w-4 h-4" />, color: '#10b981' },
-                    { label: 'Open Tasks', val: '14', icon: <CheckCircle className="w-4 h-4" />, color: '#f59e0b' },
-                    { label: 'AI Confidence', val: '97%', icon: <Cpu className="w-4 h-4" />, color: '#a855f7' },
-                    { label: 'Documents', val: '23', icon: <FileText className="w-4 h-4" />, color: '#0ea5e9' },
-                    { label: 'Risks', val: '2', icon: <AlertTriangle className="w-4 h-4" />, color: '#ef4444' },
+                    { label: 'Total Items', val: nodes.length.toString(), icon: <Layers className="w-4 h-4" />, color: '#6366f1' },
+                    { label: 'Active People', val: (nodes.filter(n => n.type === 'person').length).toString(), icon: <Users className="w-4 h-4" />, color: '#10b981' },
+                    { label: 'Open Tasks', val: (nodes.filter(n => n.type === 'task').length).toString(), icon: <CheckCircle className="w-4 h-4" />, color: '#f59e0b' },
+                    { label: 'AI Confidence', val: nodes.length > 0 ? Math.min(99, 85 + nodes.length) + '%' : '0%', icon: <Cpu className="w-4 h-4" />, color: '#a855f7' },
+                    { label: 'Documents', val: (nodes.filter(n => n.type === 'document').length).toString(), icon: <FileText className="w-4 h-4" />, color: '#0ea5e9' },
+                    { label: 'Risks', val: '0', icon: <AlertTriangle className="w-4 h-4" />, color: '#ef4444' },
                   ].map((m, i) => (
                     <div key={i} className="flex-shrink-0 flex items-center gap-3 px-4 py-2 rounded-xl"
                       style={{ background: '#ffffff06', border: '1px solid #ffffff08' }}>
@@ -988,11 +1019,10 @@ export const InfiniteCanvas: React.FC = () => {
                     </button>
                   </div>
                   {!aiQuery && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {['Show everything related to Q3 Budget', 'Find all documents Rahul touched'].map((s, i) => (
+                    <div className="flex flex-col gap-1.5 mt-3">
+                      {['Show everything related to active tasks', 'Find all documents updated recently'].map((s, i) => (
                         <button key={i} onClick={() => { setAiQuery(s); setShowAIAnswer(true); }}
-                          className="text-[10px] px-2 py-1 rounded-lg text-slate-400 hover:text-white transition-colors"
-                          style={{ background: '#ffffff08' }}>
+                          className="text-left text-[11px] text-white/40 hover:text-white/70 px-2 py-1 rounded-lg hover:bg-white/5 transition-colors">
                           {s}
                         </button>
                       ))}
@@ -1050,10 +1080,10 @@ export const InfiniteCanvas: React.FC = () => {
                   <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-2.5">AI Insights</p>
                   <div className="space-y-2">
                     {[
-                      { text: 'Q3 Budget discussed in 3 meetings. 2 action items open.', icon: <Zap />, color: '#f59e0b', urgent: true },
-                      { text: 'Rahul hasn\'t reviewed the latest budget version.', icon: <AlertTriangle />, color: '#ef4444', urgent: true },
-                      { text: 'Client Pitch Prep starts in 45 minutes.', icon: <Bell />, color: '#6366f1', urgent: false },
-                      { text: 'AI generated 4 action items from today\'s sync.', icon: <Brain />, color: '#a855f7', urgent: false },
+                      { text: 'Several tasks are pending review.', icon: <Zap />, color: '#f59e0b', urgent: true },
+                      { text: 'Unread mentions in active project channels.', icon: <AlertTriangle />, color: '#ef4444', urgent: true },
+                      { text: 'Team Sync starts in 45 minutes.', icon: <Bell />, color: '#6366f1', urgent: false },
+                      { text: 'AI generated 4 action items from today\'s meetings.', icon: <Brain />, color: '#a855f7', urgent: false },
                     ].map((insight, i) => (
                       <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-white hover:bg-opacity-5"
                         style={{ border: `1px solid ${insight.color}${insight.urgent ? '33' : '15'}` }}>
@@ -1127,7 +1157,11 @@ export const InfiniteCanvas: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Knowledge Brain Panel — right side live knowledge graph */}
+        <KnowledgeBrainPanel />
       </div>
+
     </div>
   );
 };

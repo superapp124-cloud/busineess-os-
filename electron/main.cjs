@@ -78,6 +78,39 @@ function registerLocalRecordsIpc() {
     }
   });
 
+  ipcMain.handle('calls:save-summary', async (event, payload = {}) => {
+    try {
+      const { summaries } = ensureLocalRecordsDirs();
+      const summary = typeof payload.summary === 'string' ? payload.summary.trim() : '';
+      if (!summary) return { ok: false, error: 'Summary is empty.' };
+
+      const createdAt = payload.createdAt || new Date().toISOString();
+      const title = sanitizeFileSegment(payload.meetingTitle || payload.participantName || 'CHATR Call');
+      const callId = sanitizeFileSegment(payload.callId || 'local-call');
+      const filePath = path.join(summaries, `${timestampForFile(createdAt)}-${title}-${callId}.txt`);
+      const lines = [
+        `CHATR Call Summary`,
+        `Title: ${payload.meetingTitle || 'CHATR Call'}`,
+        `Participant: ${payload.participantName || 'Unknown'}`,
+        `Call ID: ${payload.callId || 'local-call'}`,
+        `Created: ${createdAt}`,
+        `Duration seconds: ${Number.isFinite(payload.durationSeconds) ? payload.durationSeconds : 0}`,
+        '',
+        summary,
+        '',
+        payload.transcript ? 'Transcript excerpt:' : '',
+        payload.transcript ? String(payload.transcript).trim().slice(0, 4000) : '',
+        '',
+      ].filter((line, index, all) => line || all[index - 1]);
+
+      fs.writeFileSync(filePath, lines.join('\n'), 'utf8');
+      return { ok: true, path: filePath };
+    } catch (err) {
+      log.error('[LocalRecords] Failed to save summary:', err.message);
+      return { ok: false, error: err.message };
+    }
+  });
+
   ipcMain.handle('calls:save-recording', async (event, payload = {}) => {
     try {
       const { recordings } = ensureLocalRecordsDirs();
@@ -469,7 +502,7 @@ function createWindow() {
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
           "font-src 'self' https://fonts.gstatic.com data:;" +
           "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat blob:;" +
-          "connect-src 'self' ws://localhost:8086 http://localhost:8086 http://127.0.0.1:3717 http://localhost:3717 http://127.0.0.1:11434 http://localhost:11434 https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net;" +
+          "connect-src 'self' ws://localhost:8086 http://localhost:8086 http://127.0.0.1:3717 http://localhost:3717 http://127.0.0.1:11434 http://localhost:11434 http://127.0.0.1:8087 http://localhost:8087 https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net;" +
           "worker-src 'self' blob:;" +
           "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.net/;" +
           "object-src 'none';"

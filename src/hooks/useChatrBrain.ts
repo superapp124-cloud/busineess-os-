@@ -109,16 +109,16 @@ export function useChatrBrain(): UseChatrBrainReturn {
             }
 
             try {
-              const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+              const geoResponse = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
               );
-              const data = await response.json();
+              const geoData = await geoResponse.json();
               const loc: SharedContext['location'] = {
                 lat: latitude,
                 lon: longitude,
-                city: data.address?.city || data.address?.town || data.address?.village,
-                state: data.address?.state,
-                country: data.address?.country,
+                city: geoData.city || geoData.locality,
+                state: geoData.principalSubdivision,
+                country: geoData.countryName,
               };
               setLocation(loc);
               chatrBrain.updateLocation(loc);

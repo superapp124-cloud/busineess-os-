@@ -100,3 +100,6 @@ Each vertical module must declare its capabilities in a `manifest.json` file. It
   "journal_events": ["Meeting Created", "Meeting Updated", "Meeting Cancelled"]
 }
 ```
+
+4. **Bypass capability boundaries:** The runtime may know capabilities. Capabilities may never know each other. If a capability (e.g. Meeting) requires another (e.g. Reminder), it must be orchestrated by the Outcome Runtime, never by direct coupling.
+5. **Update UI directly:** No capability may directly update the UI. Capabilities must only emit outcome events, and the UI only renders outcome state.

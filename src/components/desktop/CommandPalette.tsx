@@ -51,9 +51,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const go = useCallback((path: string, label: string) => {
+  const go = useCallback((path: string, label: string, state?: any) => {
     addRecent(label);
-    navigate(path);
+    navigate(path, { state });
     onClose();
   }, [navigate, onClose]);
 
@@ -124,9 +124,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
     { id: 'act-ticket',   category: 'Actions',    icon: Hash,          label: 'Create Ticket',    description: 'Open a support ticket', action: () => go('/desktop/workspace', 'Create Ticket'), keywords: ['ticket', 'support', 'issue'] },
     { id: 'act-files',    category: 'Files',      icon: FolderOpen,    label: 'Browse Files',     action: () => go('/desktop/workspace', 'Browse Files'), keywords: ['files', 'documents'] },
     // AI Actions
-    { id: 'ai-summarize', category: 'AI',         icon: BrainCircuit,  label: 'Summarize yesterday', description: 'AI summary of yesterday\'s activity', action: () => go('/desktop/canvas', 'Summarize yesterday'), keywords: ['summarize', 'summary', 'yesterday'] },
-    { id: 'ai-draft',     category: 'AI',         icon: Sparkles,      label: 'Draft a reply',    description: 'AI drafts a response for you', action: () => go('/desktop/canvas', 'Draft a reply'), keywords: ['draft', 'write', 'reply'] },
-    { id: 'ai-translate', category: 'AI',         icon: Zap,           label: 'Translate clipboard', description: 'Translate clipboard content', action: () => go('/desktop/canvas', 'Translate clipboard'), keywords: ['translate', 'language', 'clipboard'] },
+    { id: 'ai-summarize', category: 'AI',         icon: BrainCircuit,  label: 'Summarize yesterday', description: 'AI summary of yesterday\'s activity', action: () => go('/desktop/canvas', 'Summarize yesterday', { autoTrigger: 'ai-summarize' }), keywords: ['summarize', 'summary', 'yesterday'] },
+    { id: 'ai-draft',     category: 'AI',         icon: Sparkles,      label: 'Draft a reply',    description: 'AI drafts a response for you', action: () => go('/desktop/canvas', 'Draft a reply', { autoTrigger: 'ai-draft' }), keywords: ['draft', 'write', 'reply'] },
+    { id: 'ai-translate', category: 'AI',         icon: Zap,           label: 'Translate clipboard', description: 'Translate clipboard content', action: () => go('/desktop/canvas', 'Translate clipboard', { autoTrigger: 'ai-translate' }), keywords: ['translate', 'language', 'clipboard'] },
+    
+    // Automation OS
+    { id: 'os-studio',    category: 'Automation OS', icon: Command,    label: 'Open Workflow Studio', description: 'Enter the Automation OS', shortcut: 'W', action: () => go('/desktop/studio', 'Open Workflow Studio'), keywords: ['workflow', 'automation', 'os', 'studio'] },
+    { id: 'os-run',       category: 'Automation OS', icon: Zap,        label: 'Run Workflow',       description: 'Navigate to studio and run active workflow', action: () => go('/desktop/studio', 'Run Workflow', { autoTrigger: 'RUN_WORKFLOW' }), keywords: ['run', 'execute', 'workflow'] },
+    { id: 'os-compile',   category: 'Automation OS', icon: CheckSquare,label: 'Compile Workflow',   description: 'Navigate to studio and compile workflow', action: () => go('/desktop/studio', 'Compile Workflow', { autoTrigger: 'COMPILE_WORKFLOW' }), keywords: ['compile', 'build', 'workflow'] },
   ];
 
   // ─── Filter logic ─────────────────────────────────────────────────────────

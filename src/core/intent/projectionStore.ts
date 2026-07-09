@@ -1,7 +1,9 @@
 import { Understanding } from './types';
+import { toast } from 'sonner';
 
 export interface KernelEvent {
   id: string;
+  eventName: string;
   timestamp: number;
   stage: string;
   correlationId: string;
@@ -69,10 +71,10 @@ class ProjectionStore {
   }
 
   private applyEvent(event: KernelEvent, updateMetrics: boolean) {
-    const { stage, correlationId, payload } = event;
+    const { stage, eventName, correlationId, payload } = event;
 
     if (this.state.activeCorrelationId && correlationId !== this.state.activeCorrelationId) {
-      if (stage === 'OBSERVATION.CREATED') {
+      if (eventName === 'KERNEL.OBSERVATION.CREATED') {
         this.resetStateForNewIntent(correlationId);
       } else {
         return; // Ignore stale events
@@ -89,12 +91,21 @@ class ProjectionStore {
       this.state.latencyMetrics = { ...this.state.latencyMetrics, [stage]: latency };
     }
 
-    if (stage === 'UNDERSTANDING.CREATED') {
+    if (eventName === 'KERNEL.UNDERSTANDING.CREATED') {
       const classifications = payload.classifications;
       if (classifications?.length > 0) {
         this.state.understanding = classifications[0] as Understanding;
       }
-    } else if (stage === 'ACTION.REVEALED') {
+    } else if (eventName === 'KERNEL.OUTCOME.DETECTED') {
+      // New v1.0 Outcome Engine
+      const outcomes = payload.outcomes || [];
+      if (outcomes.length > 0) {
+        // We import outcomeRuntime dynamically or rely on global/window events 
+        // to avoid circular deps if needed, but since we are in src/ it's fine.
+        // Actually, we can just trigger a custom event that DesktopChat or OutcomeRuntime listens to.
+        window.dispatchEvent(new CustomEvent('chatr:outcomes-detected', { detail: outcomes }));
+      }
+    } else if (eventName === 'KERNEL.ACTION.REVEALED') {
       if (this.state.understanding) {
         this.state.understanding = {
           ...this.state.understanding,
@@ -102,11 +113,26 @@ class ProjectionStore {
           readyForSuggestion: true
         };
       }
+      
+      // Auto-promote primary actions to the active suggestion so the Outcome Engine renders them
+      if (!this.state.activeSuggestion && payload.action) {
+        this.state.activeSuggestion = {
+          type: payload.action.type.replace('CREATE_', ''),
+          title: payload.action.summary || payload.action.type,
+          action: payload.action.type,
+          context: 'Primary Intent',
+          payload: payload,
+          entities: payload.action.entities || {}
+        };
+        toast.info('5. Store: Created active suggestion: ' + this.state.activeSuggestion.title);
+      }
+      
       this.state.isReady = true;
-    } else if (stage === 'CONTEXT.RESOLVED') {
+      toast.success('6. Store: state.isReady = true');
+    } else if (eventName === 'KERNEL.CONTEXT.RESOLVED') {
        // Typically context resolution comes bundled before ACTION.REVEALED, 
        // but we could explicitly update UI state here if needed
-    } else if (stage === 'SUGGESTION.PROPOSED') {
+    } else if (eventName === 'KERNEL.SUGGESTION.PROPOSED') {
       this.state.activeSuggestion = payload;
       this.state.isReady = true;
     }

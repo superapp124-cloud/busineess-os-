@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrainCircuit, Check, Settings, Cpu, AlertCircle } from 'lucide-react';
+import { BrainCircuit, Check, Settings, Cpu, AlertCircle, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { ServiceRegistry } from '@/platform/Infrastructure/ServiceRegistry';
+import { useCHATROS } from '@/core/os/GlobalIntentProvider';
 
 type AIStatus = 'healthy' | 'degraded' | 'offline';
 type AIMode = 'local' | 'unavailable' | 'unknown';
@@ -24,7 +25,12 @@ export const TinyAIIndicator = () => {
   const [status, setStatus] = useState<AIStatus>('offline');
   const [aiMode, setAIMode] = useState<AIMode>('unknown');
   const [latency, setLatency] = useState<number | null>(null);
-  const [ollamaModels, setOllamaModels] = useState<string[]>([]);
+  const [ollamaModels, setOllamaMod] = useState<string[]>([]);
+
+  // Page-aware AI mode from GlobalIntentProvider
+  const { pageContext } = useCHATROS();
+  const pageAILabel = pageContext?.aiLabel || 'CHATR AI';
+  const pageAIEmoji = pageContext?.aiEmoji || '⚡';
 
   const statusLabel =
     status === 'healthy'
@@ -59,7 +65,7 @@ export const TinyAIIndicator = () => {
         if (res.ok) {
           const json = await res.json();
           const models: string[] = (json.models ?? []).map((m: any) => m.name as string);
-          setOllamaModels(models);
+          setOllamaMod(models);
           setAIMode('local');
           setLatency(elapsed);
           setStatus((prev) => (prev === 'offline' ? 'healthy' : prev));
@@ -70,7 +76,7 @@ export const TinyAIIndicator = () => {
       }
     }
 
-    setOllamaModels([]);
+    setOllamaMod([]);
     setAIMode('unavailable');
     setLatency(null);
     setStatus((prev) => (prev === 'healthy' ? 'offline' : prev));
@@ -100,7 +106,8 @@ export const TinyAIIndicator = () => {
             status === 'degraded' && 'animate-pulse'
           )}
         />
-        {statusLabel}
+        <span>{pageAIEmoji} {pageAILabel}</span>
+        {status === 'healthy' && <Radio className="w-3 h-3 text-emerald-400 ml-0.5" />}
       </button>
 
       {isOpen && (
