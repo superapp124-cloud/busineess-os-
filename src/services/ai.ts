@@ -62,6 +62,13 @@ async function tryOllama(prompt: string): Promise<string | null> {
       const json = await ollamaResponse.json();
       if (json?.response) return json.response as string;
     } else if (ollamaResponse.status === 404) {
+      // Model not found, let's trigger a pull in the background so it works later
+      fetch('http://localhost:11434/api/pull', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ name: 'llama3.2' })
+      }).catch(() => {});
+      
       const fallback = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,9 +78,17 @@ async function tryOllama(prompt: string): Promise<string | null> {
       if (fallback.ok) {
         const json2 = await fallback.json();
         if (json2?.response) return json2.response as string;
+      } else if (fallback.status === 404) {
+         fetch('http://localhost:11434/api/pull', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ name: 'mistral' })
+         }).catch(() => {});
+         throw new Error('Ollama AI engine is warming up in the background. Please wait a moment and try again.');
       }
     }
-  } catch {
+  } catch (err: any) {
+    if (err.message?.includes('downloading')) throw err;
     // Ollama not running — fall through
   }
   return null;

@@ -903,6 +903,7 @@ export const WorkflowStudio: React.FC = () => {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
   const [nodes, setNodes] = useState<WorkflowNode[]>([]);
+  const [executions, setExecutions] = useState<any[]>([]); // Phase 3.3 dynamic executions
   const [workflowName, setWorkflowName] = useState('Recruitment Automation');
   const [showPublishMenu, setShowPublishMenu] = useState(false);
   const [bottomExpanded, setBottomExpanded] = useState(false);
@@ -959,13 +960,27 @@ export const WorkflowStudio: React.FC = () => {
     const handleEvent = (e: OSEvent) => {
       if (e.type === 'EXECUTION_STARTED') {
         setNodes(ns => ns.map(n => ({ ...n, status: 'idle' })));
+        setExecutions(prev => [{
+            id: `#run-${Date.now().toString().slice(-4)}`,
+            workflowId: e.payload.workflowId,
+            candidate: 'Test Run',
+            step: 'Starting',
+            duration: '0s',
+            status: 'running',
+            timeline: [{ time: new Date().toLocaleTimeString(), action: 'Timeline started' }]
+        }, ...prev]);
       } else if (e.type === 'NODE_STARTED') {
         setNodes(ns => ns.map(n => n.id === e.payload.nodeId ? { ...n, status: 'running' } : n));
+        setExecutions(prev => prev.map((ex, i) => i === 0 ? { ...ex, step: e.payload.nodeId, timeline: [...ex.timeline, { time: new Date().toLocaleTimeString(), action: `Node ${e.payload.nodeId} started` }] } : ex));
       } else if (e.type === 'NODE_COMPLETED') {
         setNodes(ns => ns.map(n => n.id === e.payload.nodeId ? { ...n, status: 'success' } : n));
+        setExecutions(prev => prev.map((ex, i) => i === 0 ? { ...ex, timeline: [...ex.timeline, { time: new Date().toLocaleTimeString(), action: `Node ${e.payload.nodeId} completed` }] } : ex));
       } else if (e.type === 'NODE_FAILED') {
         setNodes(ns => ns.map(n => n.id === e.payload.nodeId ? { ...n, status: 'error' } : n));
+        setExecutions(prev => prev.map((ex, i) => i === 0 ? { ...ex, status: 'error', timeline: [...ex.timeline, { time: new Date().toLocaleTimeString(), action: `Node ${e.payload.nodeId} failed` }] } : ex));
         toast.error(`Node ${e.payload.nodeId} failed: ${e.payload.error}`);
+      } else if (e.type === 'EXECUTION_COMPLETED') {
+        setExecutions(prev => prev.map((ex, i) => i === 0 ? { ...ex, status: 'success', step: 'Completed', timeline: [...ex.timeline, { time: new Date().toLocaleTimeString(), action: `Execution completed` }] } : ex));
       } else if (e.type === 'NODE_CREATED') {
         const newNode: WorkflowNode = {
           id: `node-${Date.now()}`,
@@ -1531,25 +1546,30 @@ export const WorkflowStudio: React.FC = () => {
 
               {bottomTab === 'executions' && (
                 <div className="flex gap-3">
-                  {[
-                    { id: '#1246', candidate: 'Priya Mehta', step: 'AI Screening', duration: '4s', status: 'running' as NodeStatus },
-                    { id: '#1245', candidate: 'Amit Singh', step: 'Completed', duration: '19.3m', status: 'success' as NodeStatus },
-                    { id: '#1244', candidate: 'Riya Shah', step: 'Approval', duration: '2h', status: 'waiting' as NodeStatus },
-                    { id: '#1243', candidate: 'Dev Patel', step: 'Interview', duration: '45m', status: 'idle' as NodeStatus },
-                    { id: '#1241', candidate: 'Neha Joshi', step: 'Completed', duration: '21m', status: 'success' as NodeStatus },
-                  ].map((ex, i) => {
-                    const sc = statusConfig[ex.status];
+                  {executions.length === 0 ? (
+                    <div className="text-slate-500 text-sm px-4 py-8 w-full text-center">No executions recorded yet. Run the workflow to trace timeline.</div>
+                  ) : executions.map((ex, i) => {
+                    const sc = statusConfig[ex.status as NodeStatus] || statusConfig['idle'];
                     return (
-                      <div key={i} className="flex-shrink-0 px-3 py-2.5 rounded-xl" style={{ background: '#ffffff05', border: '1px solid #ffffff08', minWidth: 200 }}>
-                        <div className="flex items-center gap-2 mb-1">
+                      <div key={i} className="flex-shrink-0 flex flex-col px-3 py-2.5 rounded-xl" style={{ background: '#ffffff05', border: '1px solid #ffffff08', minWidth: 260 }}>
+                        <div className="flex items-center gap-2 mb-2">
                           <span className="text-indigo-400 text-xs font-mono font-bold">{ex.id}</span>
                           <div className="flex items-center gap-1 ml-auto">
                             {sc.pulse ? <PulseDot color={sc.color} /> : <div className="w-1.5 h-1.5 rounded-full" style={{ background: sc.color }} />}
                             <span className="text-[9px] font-bold" style={{ color: sc.color }}>{sc.label}</span>
                           </div>
                         </div>
-                        <p className="text-white text-xs font-semibold">{ex.candidate}</p>
-                        <p className="text-slate-500 text-[10px]">At: {ex.step} · {ex.duration}</p>
+                        <p className="text-white text-xs font-semibold mb-2">{ex.candidate} - {ex.step}</p>
+                        
+                        <div className="flex-1 mt-2 space-y-1 overflow-y-auto max-h-32" style={{ borderTop: '1px solid #ffffff0a', paddingTop: '8px' }}>
+                          <span className="text-[9px] text-slate-500 uppercase tracking-wider mb-1 block">Execution Timeline</span>
+                          {ex.timeline?.map((t: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 text-[10px]">
+                              <span className="text-slate-500 font-mono">{t.time}</span>
+                              <span className="text-slate-300">→ {t.action}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     );
                   })}

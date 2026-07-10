@@ -63,6 +63,8 @@ const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m =
 import DesktopLayout from "./layouts/DesktopLayout";
 const WorkspaceSetup = React.lazy(() => import("./pages/desktop/WorkspaceSetup").then(m => ({ default: m.WorkspaceSetup })));
 const KernelDashboard = React.lazy(() => import("./pages/desktop/KernelDashboard").then(m => ({ default: m.KernelDashboard })));
+const WorkflowInspectorPage = React.lazy(() => import("./pages/desktop/WorkflowInspector").then(m => ({ default: m.WorkflowInspector })));
+const EngineHealthDashboardPage = React.lazy(() => import("./pages/desktop/EngineHealthDashboard").then(m => ({ default: m.EngineHealthDashboard })));
 const BusinessLayout = React.lazy(() => import("./layouts/BusinessLayout").then(m => ({ default: m.BusinessLayout })));
 const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalendarCallback").then(m => ({ default: m.GoogleCalendarCallback })));
 const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
@@ -422,6 +424,16 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                       <KernelDashboard />
                     </Suspense>
                   } />
+                  <Route path="inspector" element={
+                    <Suspense fallback={<PageLoader message="Loading Workflow Inspector..." />}>
+                      <WorkflowInspectorPage />
+                    </Suspense>
+                  } />
+                  <Route path="health" element={
+                    <Suspense fallback={<PageLoader message="Loading Engine Health..." />}>
+                      <EngineHealthDashboardPage />
+                    </Suspense>
+                  } />
                   <Route path="setup" element={<Suspense fallback={<PageLoader />}><WorkspaceSetup /></Suspense>} />
                   <Route path="beta-command-center" element={<LazyRoute component={LazyPages.BetaCommandCenter} />} />
                   <Route path="connect" element={<LazyRoute component={LazyPages.DesktopConnectPairing} />} />
@@ -429,6 +441,10 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                   <Route path="contacts" element={<LazyRoute component={LazyPages.DesktopContacts} />} />
                   <Route path="canvas" element={<LazyRoute component={LazyPages.InfiniteCanvas} />} />
                   <Route path="calls" element={<LazyRoute component={LazyPages.DesktopCalls} />} />
+                  <Route path="ai-agents" element={<LazyRoute component={LazyPages.AIAgentsHub} />} />
+                  <Route path="ai-agents/create" element={<LazyRoute component={LazyPages.AIAgentCreate} />} />
+                  <Route path="ai-agents/chat/:agentId" element={<LazyRoute component={LazyPages.AIAgentChatNew} />} />
+                  <Route path="ai-agents/settings/:agentId" element={<LazyRoute component={LazyPages.AIAgents} />} />
                   <Route path="workspace" element={<LazyRoute component={LazyPages.DesktopWorkspace} />} />
                   <Route path="calendar" element={<LazyRoute component={LazyPages.DesktopCalendar} />} />
                   <Route path="intelligence" element={<LazyRoute component={LazyPages.DesktopIntelligence} />} />

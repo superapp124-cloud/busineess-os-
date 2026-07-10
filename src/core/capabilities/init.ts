@@ -4,6 +4,10 @@ import '../services/OSSchedulerService'; // Boot up OS Scheduler (hydrates from 
 import '../providers/StorageProvider'; // Register StorageProvider
 import '../providers/SchedulerProvider'; // Register SchedulerProvider (legacy)
 import '../providers/CalendarProvider'; // Register CalendarProvider
+import '../ai/providers/OllamaProvider'; // Register OllamaProvider
+
+import { PerformanceMonitor } from '../services/PerformanceMonitor';
+import '../services/OfflineSyncPipeline'; // Instantiates singleton
 
 import { capability as task } from './task';
 import { capability as note } from './note';
@@ -40,4 +44,8 @@ export function initializeCapabilities() {
 
   console.log('[CapabilityRegistry] All 15 capabilities initialized.');
   console.log('[OSSchedulerService] Scheduler boot complete.');
+  
+  PerformanceMonitor.start();
+  console.log('[PerformanceMonitor] Started tracking FPS, Memory, and Latency.');
+  console.log('[OfflineSyncPipeline] Initialized queue and network listeners.');
 }

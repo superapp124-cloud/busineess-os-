@@ -283,6 +283,12 @@ export const useCallTranscription = (
     };
 
     const startNativeSpeechRecognition = () => {
+      // Electron's built-in speech recognition usually fails silently without API keys.
+      // Force Whisper fallback in Electron for reliable transcription.
+      if (typeof window !== 'undefined' && (window as any).electronAPI) {
+        return false;
+      }
+
       recognition = getNativeSpeechRecognition();
       if (!recognition) return false;
 

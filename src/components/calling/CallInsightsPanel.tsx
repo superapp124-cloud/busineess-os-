@@ -118,7 +118,7 @@ export function CallInsightsPanel({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">AI Call Insights</h2>
+              <h2 className="text-lg font-bold">ChatrAI Call Insights</h2>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
@@ -142,13 +142,13 @@ export function CallInsightsPanel({
           {aiLoading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
               <Sparkles className="h-4 w-4" />
-              Running AI analysis...
+              Running ChatrAI analysis...
             </div>
           ) : summary ? (
             <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4">
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <p className="text-xs font-semibold text-primary uppercase tracking-wide">AI Summary</p>
+                <p className="text-xs font-semibold text-primary uppercase tracking-wide">ChatrAI Summary</p>
               </div>
               <p className="text-sm text-foreground">{summary}</p>
               {suggestedAction && (

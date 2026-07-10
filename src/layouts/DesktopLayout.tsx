@@ -21,6 +21,7 @@ import {
   Inbox,
   Building2,
   Layers,
+  Server,
   Shield,
   Sparkles,
   CheckSquare,
@@ -84,6 +85,8 @@ const NAV_SECTIONS = [
     items: [
       { icon: Bell,          label: 'Activity',   subtitle: 'Notifications & Alerts',   path: '/desktop/notifications' },
       { icon: Workflow,      label: 'Studio',     subtitle: 'Automations & Workflows',   path: '/desktop/studio' },
+      { icon: Activity,      label: 'Inspector',  subtitle: 'Pipeline Observability',    path: '/desktop/inspector' },
+      { icon: Server,        label: 'Health',     subtitle: 'Engine & Provider Health',  path: '/desktop/health' },
       { icon: Settings,      label: 'Settings',   subtitle: 'Preferences & Account',     path: '/desktop/settings' },
     ],
   },
@@ -349,7 +352,7 @@ const DesktopLayoutInner = () => {
                             </button>
                           </TooltipTrigger>
                           {/* Tooltip only shows when sidebar is collapsed */}
-                          <TooltipContent side="right" className="flex flex-col gap-0.5">
+                          <TooltipContent side="right" className="flex flex-col gap-0.5 hidden group-hover:hidden lg:group-hover:hidden z-[100]">
                             <span className="font-semibold">{item.label}</span>
                             <span className="text-xs text-muted-foreground">{item.subtitle}</span>
                           </TooltipContent>

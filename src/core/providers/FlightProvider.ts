@@ -1,4 +1,5 @@
 import { IProvider, ProviderCapabilities, ProviderState, providerRegistry, ProviderRole } from './ProviderRegistry';
+import { searchRuntime } from '../runtime/SearchRuntime';
 
 export class FlightProviderStub implements IProvider {
   id = 'sys.flight.amadeus.stub';
@@ -58,3 +59,9 @@ export class FlightProviderStub implements IProvider {
 // Auto-register
 const flightProvider = new FlightProviderStub();
 providerRegistry.register(flightProvider);
+searchRuntime.registerProvider('flight', {
+  search: async (query) => {
+    const results = await flightProvider.search(query.filters);
+    return { results: results.map(r => ({ ...r, title: `${r.airline} - ${r.departureTime}`, subtitle: `${r.from} to ${r.to}`, price: r.price })) };
+  }
+});

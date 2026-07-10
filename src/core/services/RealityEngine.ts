@@ -1,6 +1,6 @@
 import { Commitment, RealityVerificationResult } from '../capabilities/types';
 import { capabilityRegistry } from '../capabilities/CapabilityRegistry';
-import { eventBus } from './EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 import { Provider } from '../capabilities/types'; // Using dummy provider logic elsewhere or injecting it.
 import { dummyProvider } from '../providers/DummyProvider'; // We'll create this
 

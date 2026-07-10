@@ -300,7 +300,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
                         <p className="text-xs text-white/90 leading-tight mb-1">{t.title}</p>
                         <div className="flex items-center gap-2 text-[10px] text-white/40">
                           {t.assignee && <span className="text-emerald-400/80">@{t.assignee}</span>}
-                          {t.dueDate && <span>Due: {t.dueDate}</span>}
+                          {t.scheduledFor && <span>Scheduled: {new Date(t.scheduledFor).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>}
                         </div>
                       </div>
                     </div>

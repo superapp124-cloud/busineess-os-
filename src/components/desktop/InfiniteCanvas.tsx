@@ -739,8 +739,8 @@ export const InfiniteCanvas: React.FC = () => {
           <span className="text-white font-bold text-sm">Knowledge Canvas</span>
         </div>
 
-        <div className="flex-1 relative max-w-xl">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <div className="flex-1 relative max-w-xl flex items-center">
+          <Search className="absolute left-3 w-4 h-4 text-slate-500 pointer-events-none" />
           <input
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -827,7 +827,7 @@ export const InfiniteCanvas: React.FC = () => {
               </div>
 
               {/* Zoom Controls */}
-              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-2xl"
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-2xl z-50"
                 style={{ background: '#0d0f1a', border: '1px solid #ffffff10', boxShadow: '0 8px 32px #00000040' }}>
                 <button onClick={() => setScale(s => Math.max(0.2, s - 0.2))}
                   className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all">
@@ -880,7 +880,7 @@ export const InfiniteCanvas: React.FC = () => {
               <div className="text-center">
                 <Calendar className="w-16 h-16 text-slate-700 mx-auto mb-4" />
                 <p className="text-slate-400 font-semibold">Calendar View</p>
-                <p className="text-slate-600 text-sm mt-1">Showing 4 meetings this week</p>
+                <p className="text-slate-600 text-sm mt-1">Showing 2 meetings this week</p>
                 <div className="mt-6 grid grid-cols-7 gap-1 text-xs">
                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
                     <div key={d} className="text-center py-2 text-slate-500">{d}</div>

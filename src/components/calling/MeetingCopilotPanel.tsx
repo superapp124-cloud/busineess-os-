@@ -92,9 +92,9 @@ export const MeetingCopilotPanel: React.FC<MeetingCopilotPanelProps> = ({
   const generateCallBrief = async () => {
     setAiLoading(true);
     try {
-      const prompt = `Generate a concise AI pre-call brief (3-4 sentences) for a ${meetingGoal || 'business'} call with ${callerName || 'a contact'}. Include: suggested topics to cover, what to clarify, and one key question to ask. Be direct and practical.`;
+      const prompt = `Generate a concise ChatrAI pre-call brief (3-4 sentences) for a ${meetingGoal || 'business'} call with ${callerName || 'a contact'}. Include: suggested topics to cover, what to clarify, and one key question to ask. Be direct and practical.`;
       const brief = await generate({ prompt });
-      setAiSummary(brief || 'AI brief unavailable — proceeding with standard agenda.');
+      setAiSummary(brief || 'ChatrAI brief unavailable — proceeding with standard agenda.');
     } catch {
       setAiSummary('Focus on agenda items, clarify next steps, and confirm follow-up dates before ending the call.');
     } finally {
@@ -172,7 +172,7 @@ export const MeetingCopilotPanel: React.FC<MeetingCopilotPanelProps> = ({
               <div className="p-3 rounded-xl bg-violet-500/[0.07] border border-violet-500/20 mb-3">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-                  <span className="text-[10px] font-bold text-violet-400 uppercase tracking-wider">AI Brief</span>
+                  <span className="text-[10px] font-bold text-violet-400 uppercase tracking-wider">ChatrAI Brief</span>
                 </div>
                 {aiLoading ? (
                   <div className="flex items-center gap-2 text-[11px] text-white/40">
@@ -327,7 +327,7 @@ export const MeetingCopilotPanel: React.FC<MeetingCopilotPanelProps> = ({
               <div className="p-3 rounded-xl bg-emerald-500/[0.07] border border-emerald-500/20 mb-3">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">AI Summary</span>
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">ChatrAI Summary</span>
                 </div>
                 {aiLoading ? (
                   <div className="flex items-center gap-2 text-[11px] text-white/40">

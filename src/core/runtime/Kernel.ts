@@ -14,6 +14,7 @@
 import { IEngine } from './types';
 import { kernelAPI } from './KernelAPI';
 import { runtimeSupervisor } from './RuntimeSupervisor';
+import { telemetry } from '../services/TelemetryService';
 
 // Import all engine singletons directly for the boot registry
 import { memoryEngine } from '../engines/MemoryEngine';
@@ -64,6 +65,10 @@ export class CHATRKernelImpl {
 
       // 2. Init Feature Flags
       kernelAPI.flags.init(manifest.runtimeMode, manifest.featureFlags);
+      
+      // 2.5 Init Telemetry
+      console.log('[Kernel] Initializing telemetry...');
+      telemetry.init();
       
       // 3. Init Security/Session
       kernelAPI.security.initSession('local-user'); // Hardcoded for now

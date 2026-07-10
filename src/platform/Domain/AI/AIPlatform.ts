@@ -2,7 +2,7 @@ import { IService } from '../../Shared/Types';
 import { Logger } from '../../Infrastructure/Logger';
 import { EventBus } from '../../Infrastructure/EventBus';
 import { providerManager, ChatMessage, ChatOptions } from './ProviderManager';
-import { memoryManager } from './MemoryManager';
+import { semanticMemory } from '@/core/services/SemanticMemory';
 import { streamingManager } from './StreamingManager';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -31,14 +31,14 @@ class AIPlatformService implements IService {
     Logger.debug(`[AIPlatform] chat contextId=${contextId} userId=${userId}`);
 
     // Build message array: system context + history + new user turn
-    const messages = memoryManager.buildSystemContext(userId, contextId);
+    const messages = await semanticMemory.buildSystemContext(userId, contextId);
     messages.push({ role: 'user', content: prompt });
 
     const response = await providerManager.chat(messages);
 
     // Persist both turns
-    memoryManager.addTurn(userId, contextId, 'user', prompt);
-    memoryManager.addTurn(userId, contextId, 'assistant', response);
+    await semanticMemory.store('chat', prompt, { role: 'user', contextId });
+    await semanticMemory.store('chat', response, { role: 'assistant', contextId });
 
     await EventBus.publish('ai.chat.completed', { userId, contextId, prompt, response });
     return response;
@@ -58,16 +58,16 @@ class AIPlatformService implements IService {
   ): Promise<void> {
     Logger.debug(`[AIPlatform] chatStream contextId=${contextId} userId=${userId}`);
 
-    const messages = memoryManager.buildSystemContext(userId, contextId);
+    const messages = await semanticMemory.buildSystemContext(userId, contextId);
     messages.push({ role: 'user', content: prompt });
 
-    memoryManager.addTurn(userId, contextId, 'user', prompt);
+    await semanticMemory.store('chat', prompt, { role: 'user', contextId });
 
     await streamingManager.streamToState(
       messages,
       onChunk,
-      (full) => {
-        memoryManager.addTurn(userId, contextId, 'assistant', full);
+      async (full) => {
+        await semanticMemory.store('chat', full, { role: 'assistant', contextId });
         EventBus.publish('ai.stream.completed', { userId, contextId, prompt, full });
         onComplete(full);
       },
@@ -94,8 +94,8 @@ class AIPlatformService implements IService {
   // History management helpers
   // ────────────────────────────────────────────────────────────────────────────
 
-  clearHistory(userId: string, contextId = 'default'): void {
-    memoryManager.clearHistory(userId, contextId);
+  async clearHistory(userId: string, contextId = 'default'): Promise<void> {
+    await semanticMemory.clearHistory(userId, contextId);
   }
 }
 

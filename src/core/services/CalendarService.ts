@@ -51,11 +51,23 @@ export interface CalendarConnection {
 
 // ─── Google Calendar Provider ─────────────────────────────────────────────────
 
+// Helper to safely get environment variables in both Vite and Node.js
+const getEnv = (key: string) => {
+  if (typeof process !== 'undefined' && process.env && process.env[key]) return process.env[key];
+  if (typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env[key]) return (import.meta as any).env[key];
+  return '';
+};
+
+const getOrigin = () => {
+  if (typeof window !== 'undefined' && window.location) return window.location.origin;
+  return 'http://localhost:8080';
+};
+
 class GoogleCalendarProvider {
   private readonly BASE_URL = 'https://www.googleapis.com/calendar/v3';
-  private readonly CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+  private readonly CLIENT_ID = getEnv('VITE_GOOGLE_CLIENT_ID');
   private readonly SCOPES = 'https://www.googleapis.com/auth/calendar.events';
-  private readonly REDIRECT_URI = window.location.origin + '/auth/google/callback';
+  private readonly REDIRECT_URI = getOrigin() + '/auth/google/callback';
 
   isConfigured(): boolean {
     return !!this.CLIENT_ID;
@@ -246,11 +258,11 @@ class GoogleCalendarProvider {
 // ─── Microsoft Outlook / Graph Provider ──────────────────────────────────────
 
 class OutlookCalendarProvider {
-  private readonly BASE_URL = 'https://graph.microsoft.com/v1.0/me';
-  private readonly CLIENT_ID = import.meta.env.VITE_OUTLOOK_CLIENT_ID || '';
-  private readonly TENANT_ID = import.meta.env.VITE_OUTLOOK_TENANT_ID || 'common';
-  private readonly SCOPES = 'Calendars.ReadWrite User.Read offline_access';
-  private readonly REDIRECT_URI = window.location.origin + '/auth/outlook/callback';
+  private readonly BASE_URL = 'https://graph.microsoft.com/v1.0';
+  private readonly CLIENT_ID = getEnv('VITE_OUTLOOK_CLIENT_ID');
+  private readonly TENANT_ID = getEnv('VITE_OUTLOOK_TENANT_ID') || 'common';
+  private readonly SCOPES = 'Calendars.ReadWrite offline_access';
+  private readonly REDIRECT_URI = getOrigin() + '/auth/outlook/callback';
 
   isConfigured(): boolean {
     return !!this.CLIENT_ID;

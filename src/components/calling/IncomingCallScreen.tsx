@@ -226,7 +226,7 @@ export function IncomingCallScreen({
               <ShieldCheck className="w-3.5 h-3.5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[#9496a8] text-[11px]">AI Confidence</span>
+              <span className="text-[#9496a8] text-[11px]">ChatrAI Confidence</span>
               <span className="text-[#10b981] font-bold text-[13px]">High</span>
             </div>
           </div>
@@ -244,7 +244,7 @@ export function IncomingCallScreen({
               <ShieldCheck className="w-3.5 h-3.5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[#9496a8] text-[11px]">AI Assistant</span>
+              <span className="text-[#9496a8] text-[11px]">ChatrAI Assistant</span>
               <span className="text-white text-[13px] leading-tight">Insights active</span>
             </div>
           </div>
@@ -297,7 +297,7 @@ export function IncomingCallScreen({
           </button>
           <div className="flex items-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-[#6b7280]" />
-            <span className="text-[#6b7280] text-[12px]">Secured by CHATR AI</span>
+            <span className="text-[#6b7280] text-[12px]">Secured by ChatrAI</span>
           </div>
           <button
             onClick={handleReject}

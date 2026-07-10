@@ -842,6 +842,28 @@ const ChatEnhancedContent = () => {
     await startCall(type, peer);
   };
 
+  const handleAIAction = (action: any) => {
+    switch (action) {
+      case 'smart_reply':
+        setShowSmartReplies(true);
+        break;
+      case 'summarize':
+        setShowSummary(true);
+        break;
+      case 'translate':
+        toast.info('Translation feature coming soon!');
+        break;
+      case 'extract_action':
+        toast.info('Action extraction coming soon!');
+        break;
+      case 'improve_tone':
+        toast.info('Tone improvement coming soon!');
+        break;
+      default:
+        console.warn('Unknown AI action:', action);
+    }
+  };
+
   // Show loading only during initial check
     if (loading || !isAuthReady) {
       return (

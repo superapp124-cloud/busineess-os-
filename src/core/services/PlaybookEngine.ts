@@ -1,5 +1,5 @@
 import { Commitment, Capability } from '../capabilities/types';
-import { eventBus } from './EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 import { genericPlaybook } from '../capabilities/genericPlaybook';
 import { calendarService } from './CalendarService';
 

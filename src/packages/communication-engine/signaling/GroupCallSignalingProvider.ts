@@ -1,6 +1,6 @@
-﻿/**
+/**
  * GroupCallSignalingProvider
- * ──────────────────────────
+ * --------------------------
  * A thin wrapper around DatabaseSignalingProvider that adds two capabilities
  * needed specifically for group (multi-party) calls:
  *
@@ -18,7 +18,7 @@
  *     events from `session_room_participants` table changes).
  *
  * Multi-party correctness note
- * ────────────────────────────
+ * ----------------------------
  * DatabaseSignalingProvider.connect() subscribes ONCE to:
  *   webrtc_signals  WHERE to_user = currentUserId
  * This single channel receives signals from ALL remote peers because every
@@ -45,15 +45,15 @@ export class GroupCallSignalingProvider extends DatabaseSignalingProvider {
     await super.connect(userId);
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // Group-specific extensions
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
 
   /**
    * Send a signal to ALL current participants in a room.
    *
    * Implementation
-   * ──────────────
+   * --------------
    * 1. Query `session_room_participants` for all active rows in `roomId`
    *    (left_at IS NULL, user_id != self).
    * 2. Send the signal to each participant via the base sendSignal().
@@ -105,8 +105,8 @@ export class GroupCallSignalingProvider extends DatabaseSignalingProvider {
    * Supabase Realtime channel filtered by to_user = currentUserId. That
    * single subscription handles ALL peer signals arriving in this room.
    * This method is therefore a thin wrapper that:
-   *   • Verifies connect() has been called.
-   *   • Registers an additional onSignal callback if you want room-scoped
+   *   � Verifies connect() has been called.
+   *   � Registers an additional onSignal callback if you want room-scoped
    *     delivery (e.g. for a dedicated UI component).
    *
    * @param roomId   Room identifier (used for logging/future room-specific channels).
@@ -118,7 +118,7 @@ export class GroupCallSignalingProvider extends DatabaseSignalingProvider {
     callback: (callId: string, message: SignalingMessage) => void
   ): () => void {
     // Wire the callback through the base class onSignal handler.
-    // The base handler is a single slot — for multiple callers we chain.
+    // The base handler is a single slot � for multiple callers we chain.
     this.onSignal(callback);
 
     console.log(

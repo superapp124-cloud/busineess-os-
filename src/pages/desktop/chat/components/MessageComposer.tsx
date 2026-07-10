@@ -97,7 +97,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = React.memo(({
             value={messageInput}
             onChange={e => setMessageInput(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={`Message ${selectedRoomName}...`}
+            placeholder={`Message ${selectedRoomName}... (Type @chatr to ask AI)`}
             className="flex-1 h-10 bg-transparent text-sm px-2 focus:outline-none placeholder:text-white/30 text-white"
           />
           <div className="pr-1">

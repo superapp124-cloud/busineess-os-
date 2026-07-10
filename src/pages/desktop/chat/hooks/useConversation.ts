@@ -89,7 +89,7 @@ export function useConversation(messagingService: any, currentUserId: string | n
   const sendMessage = useCallback(async (content: string, attachments?: any[]) => {
     if (!selectedId || !content.trim() && (!attachments || attachments.length === 0)) return;
     try {
-      await messagingService.sendMessage(selectedId, content, null, attachments);
+      await messagingService.sendMessage(selectedId, content, attachments || []);
     } catch (e: any) {
       toast.error('Failed to send message');
     }

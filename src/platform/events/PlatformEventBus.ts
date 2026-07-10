@@ -1,3 +1,4 @@
+import { eventBus } from '@/core/runtime/EventBus';
 import type {
   PlatformEvent,
   PlatformEventHandler,
@@ -5,37 +6,29 @@ import type {
   PlatformUnsubscribe,
 } from '@/platform/types';
 
-type HandlerSet = Set<PlatformEventHandler<any>>;
-
-const wildcardType = '*';
-
 function createEventId(): string {
   if (globalThis.crypto?.randomUUID) {
     return globalThis.crypto.randomUUID();
   }
-
   return `evt_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
 export class PlatformEventBus {
-  private handlers = new Map<string, HandlerSet>();
-
   subscribe<TPayload = unknown>(
     type: string,
     handler: PlatformEventHandler<TPayload>
   ): PlatformUnsubscribe {
-    const handlers = this.handlers.get(type) ?? new Set();
-    handlers.add(handler as PlatformEventHandler<any>);
-    this.handlers.set(type, handlers);
-
-    return {
-      unsubscribe: () => {
-        handlers.delete(handler as PlatformEventHandler<any>);
-        if (handlers.size === 0) {
-          this.handlers.delete(type);
-        }
-      },
-    };
+    const unsub = eventBus.on(type, (evt) => {
+      handler({
+        id: evt.id,
+        type: evt.type,
+        payload: evt.payload as TPayload,
+        timestamp: new Date(evt.timestamp).toISOString(),
+        version: 1,
+        source: evt.source
+      });
+    });
+    return { unsubscribe: unsub };
   }
 
   async publish<TPayload = unknown>(
@@ -48,30 +41,22 @@ export class PlatformEventBus {
       version: input.version ?? 1,
     };
 
-    const handlers = [
-      ...(this.handlers.get(event.type) ?? []),
-      ...(this.handlers.get(wildcardType) ?? []),
-    ];
-
-    await Promise.all(
-      handlers.map(async (handler) => {
-        try {
-          await handler(event);
-        } catch (error) {
-          console.error('[PlatformEventBus] handler failed', {
-            eventType: event.type,
-            eventId: event.id,
-            error,
-          });
-        }
-      })
-    );
-
+    eventBus.publish(event.type, event.payload, { correlationId: event.id, source: event.source });
     return event;
   }
 
   subscribeAll(handler: PlatformEventHandler): PlatformUnsubscribe {
-    return this.subscribe(wildcardType, handler);
+    const unsub = eventBus.onAny((evt) => {
+      handler({
+        id: evt.id,
+        type: evt.type,
+        payload: evt.payload,
+        timestamp: new Date(evt.timestamp).toISOString(),
+        version: 1,
+        source: evt.source
+      });
+    });
+    return { unsubscribe: unsub };
   }
 }
 

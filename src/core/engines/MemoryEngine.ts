@@ -13,6 +13,7 @@
 
 import { IEngine, EngineHealth, EngineStatus } from '../runtime/types';
 import { KernelAPI } from '../runtime/KernelAPI';
+import { semanticMemory } from '../services/SemanticMemory';
 
 interface MemoryItem {
   id: string;
@@ -30,7 +31,6 @@ export class MemoryEngineImpl implements IEngine {
 
   private _status: EngineStatus = 'stopped';
   private kernel!: KernelAPI;
-  private db!: IDBDatabase;
 
   // Tier 1: Working Memory (in-memory only)
   private workingMemory = new Map<string, unknown>();
@@ -48,10 +48,7 @@ export class MemoryEngineImpl implements IEngine {
     this.kernel = api;
 
     try {
-      await this.initIndexedDB();
-      
       this.kernel.events.on('TRANSCRIPT_CHUNK_RECEIVED', (e) => {
-        // Cache in working memory during the live call
         const payload = e.payload as { sessionId: string; text: string };
         const history = this.workingMemory.get(`call_${payload.sessionId}`) as string[] || [];
         history.push(payload.text);
@@ -64,40 +61,6 @@ export class MemoryEngineImpl implements IEngine {
       this._status = 'crashed';
       throw err;
     }
-  }
-
-  private initIndexedDB(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open('CHATR_MemoryEngine', 1);
-
-      request.onupgradeneeded = (e) => {
-        const db = (e.target as IDBOpenDBRequest).result;
-        // Tier 2: Conversation
-        if (!db.objectStoreNames.contains('conversation')) {
-          db.createObjectStore('conversation', { keyPath: 'id' });
-        }
-        // Tier 3: Relationship
-        if (!db.objectStoreNames.contains('relationship')) {
-          db.createObjectStore('relationship', { keyPath: 'contactId' });
-        }
-        // Tier 4: Long-term
-        if (!db.objectStoreNames.contains('longterm')) {
-          db.createObjectStore('longterm', { keyPath: 'key' });
-        }
-        // Tier 5: Semantic
-        if (!db.objectStoreNames.contains('semantic')) {
-          const store = db.createObjectStore('semantic', { keyPath: 'id' });
-          store.createIndex('by_entity', 'entityId', { unique: false });
-        }
-      };
-
-      request.onsuccess = (e) => {
-        this.db = (e.target as IDBOpenDBRequest).result;
-        resolve();
-      };
-
-      request.onerror = (e) => reject((e.target as IDBOpenDBRequest).error);
-    });
   }
 
   // ── Tier 1: Working Memory ────────────────────────────────────────────────
@@ -118,35 +81,11 @@ export class MemoryEngineImpl implements IEngine {
     this.kernel.state.update('memory', () => ({ workingEntities: {} }));
   }
 
-  // ── Tier 2-5: IndexedDB access (Generic wrapper for simplicity) ──────────
-
-  private async dbPut(storeName: string, item: unknown): Promise<void> {
-    if (!this.db) throw new Error('DB not initialized');
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(storeName, 'readwrite');
-      const store = tx.objectStore(storeName);
-      store.put(item);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  private async dbGet<T>(storeName: string, key: string): Promise<T | null> {
-    if (!this.db) return null;
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(storeName, 'readonly');
-      const store = tx.objectStore(storeName);
-      const req = store.get(key);
-      req.onsuccess = () => resolve(req.result as T | null);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
   // ── High-level Memory API ─────────────────────────────────────────────────
 
   async store(key: string, value: unknown): Promise<void> {
-    // Store in long-term memory
-    await this.dbPut('longterm', { key, value, timestamp: Date.now() });
+    // Store in semantic long-term memory
+    await semanticMemory.store('doc', typeof value === 'string' ? value : JSON.stringify(value), { key });
     this.kernel.cache.delete(`memory:longterm:${key}`);
   }
 
@@ -159,11 +98,13 @@ export class MemoryEngineImpl implements IEngine {
     const working = this.workingMemory.get(query);
     if (working) return working;
 
-    // Check Long-term Memory
-    const ltm = await this.dbGet<{ value: unknown }>('longterm', query);
-    if (ltm) {
-      this.kernel.cache.set(`memory:longterm:${query}`, ltm.value, { ttl: 60000 });
-      return ltm.value;
+    // Check Semantic Memory
+    const results = await semanticMemory.search(query, 'doc', 1);
+    if (results.length > 0) {
+      let val = results[0].content;
+      try { val = JSON.parse(val); } catch (e) {}
+      this.kernel.cache.set(`memory:longterm:${query}`, val, { ttl: 60000 });
+      return val;
     }
 
     return null;
@@ -182,7 +123,6 @@ export class MemoryEngineImpl implements IEngine {
 
   async dispose(): Promise<void> {
     this.workingMemory.clear();
-    if (this.db) this.db.close();
     this._status = 'stopped';
   }
 }

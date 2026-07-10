@@ -1,4 +1,5 @@
 import { IProvider, ProviderCapabilities, ProviderState, providerRegistry, ProviderRole } from './ProviderRegistry';
+import { searchRuntime } from '../runtime/SearchRuntime';
 
 export class HotelProviderStub implements IProvider {
   id = 'sys.hotel.booking.stub';
@@ -46,7 +47,7 @@ export class HotelProviderStub implements IProvider {
     ];
   }
 
-  async book(item: any): Promise<{ confirmationId: string; details: any }> {
+  async create(item: any): Promise<{ confirmationId: string; details: any }> {
     return {
       confirmationId: `HTL-${Date.now()}`,
       details: { ...item, status: 'confirmed', bookedAt: new Date().toISOString() }
@@ -66,3 +67,9 @@ export class HotelProviderStub implements IProvider {
 // Auto-register
 export const hotelProvider = new HotelProviderStub();
 providerRegistry.register(hotelProvider);
+searchRuntime.registerProvider('hotel', {
+  search: async (query) => {
+    const results = await hotelProvider.search(query.filters);
+    return { results: results.map(r => ({ ...r, title: r.name, price: r.pricePerNight })) };
+  }
+});

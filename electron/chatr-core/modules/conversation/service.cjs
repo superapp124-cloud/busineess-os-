@@ -53,7 +53,10 @@ async function persistMessageCallback(conversationId, userId, text) {
     .select('id')
     .single();
 
-  if (error) throw error;
+  if (error) {
+    log.warn('[Conversation] Failed to persist message:', error.message);
+    return null;
+  }
   return data?.id;
 }
 

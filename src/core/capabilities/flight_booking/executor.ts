@@ -4,13 +4,13 @@ import { providerRegistry } from '../../providers/ProviderRegistry';
 export async function execute(commitment: Commitment, provider: Provider): Promise<ExecutionResult> {
   console.log(`[${commitment.capability}] Executing...`);
   
-  // Use the provider registry to get a healthy flight ExecutionProvider
-  const providers = await providerRegistry.getHealthyProviders('flight', 'ExecutionProvider');
+  // Use the provider registry to get a flight provider
+  let providers = providerRegistry.getProvidersByTypeAndRole('flight', 'ExecutionProvider');
   if (providers.length === 0) {
-    // For the demo we fallback to the SearchProvider if they merged them, but properly it should be ExecutionProvider
-    const fallbacks = await providerRegistry.getHealthyProviders('flight', 'SearchProvider');
+    // Fallback to the SearchProvider
+    const fallbacks = providerRegistry.getProvidersByTypeAndRole('flight', 'SearchProvider');
     if (fallbacks.length === 0) throw new Error('No flight providers available');
-    providers.push(fallbacks[0]);
+    providers = [fallbacks[0]];
   }
   
   const flightProvider = providers[0];

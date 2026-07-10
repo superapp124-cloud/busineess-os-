@@ -90,6 +90,11 @@ export interface CHATREvent<T = unknown> {
   readonly source: string;       // engine or service id that emitted it
   readonly persist: boolean;     // should this be written to IndexedDB?
   readonly correlationId?: string; // links back to originating command
+  readonly causationId?: string; // links back to exact triggering event
+  readonly workflowId?: string;  // links back to executing DAG
+  readonly traceId?: string;     // links to distributed trace
+  readonly tenantId?: string;
+  readonly schemaVersion?: string;
 }
 
 export type EventHandler<T = unknown> = (event: CHATREvent<T>) => void | Promise<void>;

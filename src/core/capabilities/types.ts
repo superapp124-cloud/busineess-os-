@@ -2,6 +2,9 @@ export type CommitmentStatus =
   | 'detected' 
   | 'understood' 
   | 'validated' 
+  | 'permission_denied'
+  | 'policy_blocked'
+  | 'approval_required'
   | 'suggested' 
   | 'extracting'
   | 'needs_input'
@@ -22,6 +25,16 @@ export type OutcomeType =
   | 'CREATE' | 'UPDATE' | 'DELETE' | 'SCHEDULE' | 'NOTIFY' 
   | 'COMMUNICATE' | 'ANALYZE' | 'RETRIEVE' | 'APPROVE' | 'PAY';
 
+export interface Attachment {
+  id: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  sizeBytes?: number;
+  source: 'upload' | 'cloud' | 'url';
+  metadata?: any;
+}
+
 export interface Intent {
   action: string;
   confidence: number;
@@ -38,6 +51,7 @@ export interface Commitment {
   confidence: number;
   createdAt?: number;
   participants?: any[];
+  attachments?: Attachment[];
   schedule?: {
     relative?: string;
     resolved?: string;
@@ -210,4 +224,91 @@ export interface RealityEngine {
 
 export interface LearningEngine {
   learn(commitment: Commitment): Promise<void>;
+}
+
+export type NotificationChannel = 'desktop' | 'push' | 'email' | 'sms' | 'slack';
+
+export interface NotificationAction {
+  id: string;
+  label: string;
+  intent: string;
+  style?: 'primary' | 'secondary' | 'destructive';
+}
+
+export interface NotificationPayload {
+  id: string;
+  title: string;
+  body: string;
+  severity?: 'info' | 'warning' | 'urgent';
+  actionUrl?: string;
+  actions?: NotificationAction[];
+  metadata?: Record<string, any>;
+  channels?: NotificationChannel[]; 
+}
+
+export interface ResolvedEntity<T> {
+  entity: T;
+  confidence: number;
+  provider: string; // e.g. "Workday", "LDAP"
+  source: string; // e.g. "HRMS", "Directory"
+  timestamp: Date;
+  resolvedBy: string; // e.g. "ContactResolver"
+}
+
+export interface EnterprisePerson {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  managerId?: string;
+}
+
+export interface EnterprisePolicy {
+  id: string;
+  topic: string;
+  content: string;
+  requiresApproval: boolean;
+  approverRole?: string;
+  maxAmount?: number;
+}
+
+export interface EnterpriseProject {
+  id: string;
+  name: string;
+  leadId: string;
+  members: string[];
+}
+
+export interface ResolvedContext {
+  people: ResolvedEntity<EnterprisePerson>[];
+  organizations: ResolvedEntity<any>[];
+  policies: ResolvedEntity<EnterprisePolicy>[];
+  documents: ResolvedEntity<any>[];
+  calendar: ResolvedEntity<any>[];
+  projects: ResolvedEntity<EnterpriseProject>[];
+  permissions: ResolvedEntity<any>[];
+  preferences: ResolvedEntity<any>[];
+  locations: ResolvedEntity<any>[];
+  knowledge: ResolvedEntity<any>[];
+}
+
+export interface IMemoryProvider {
+  id: string;
+  name: string;
+  resolvePerson?(query: string): Promise<EnterprisePerson[]>;
+  resolvePolicy?(topic: string): Promise<EnterprisePolicy[]>;
+  resolveProject?(query: string): Promise<EnterpriseProject[]>;
+  search?(query: string): Promise<any[]>;
+}
+
+export interface CapabilityContract {
+  initialize(): Promise<void>;
+  plan(intent: any): Promise<any>;
+  execute(context: any): Promise<void>;
+  pause(context: any): Promise<void>;
+  resume(context: any): Promise<void>;
+  cancel(context: any): Promise<void>;
+  rollback(context: any): Promise<void>;
+  exportArtifacts(): any[];
 }

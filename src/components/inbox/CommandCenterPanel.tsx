@@ -145,12 +145,11 @@ export const CommandCenterPanel: React.FC<CommandCenterPanelProps> = ({
   ];
 
   return (
-    <div className="w-[270px] shrink-0 flex flex-col border-l border-white/[0.04] bg-zinc-950/50 backdrop-blur-xl overflow-hidden">
-      {/* Header */}
-      <div className="px-3 py-3 border-b border-white/[0.04] shrink-0">
-        <div className="flex items-center gap-2 mb-2.5">
-          <div className="w-2 h-2 rounded-full bg-cyan-500" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Command Center</span>
+    <div className="flex flex-col h-full bg-black/20 text-slate-300 font-sans backdrop-blur-md">
+      <div className="flex-shrink-0 p-4 border-b border-white/[0.05]">
+        <div className="flex items-center gap-2 mb-4 text-emerald-400">
+          <Sparkles className="w-4 h-4" />
+          <span className="text-xs font-bold tracking-widest uppercase">Command Center</span>
         </div>
 
         {/* Search bar */}

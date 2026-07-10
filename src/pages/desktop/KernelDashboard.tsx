@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { eventBus, ChatrEvent } from '../../core/services/EventBus';
-import { commitmentRuntime } from '../../core/capabilities/CommitmentRuntime';
+import { eventBus, ChatrEvent } from '@/core/runtime/EventBus';
+import { commitmentRuntime } from '@/core/capabilities/CommitmentRuntime';
 import { Check, X, Clock, Play, List, Activity, LayoutTemplate, Zap, RefreshCw, BarChart2 } from 'lucide-react';
-import { Commitment } from '../../core/capabilities/types';
+import { Commitment } from '@/core/capabilities/types';
 
 export const KernelDashboard: React.FC = () => {
   const [history, setHistory] = useState<ChatrEvent[]>([]);

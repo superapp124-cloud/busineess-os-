@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Calendar, CreditCard, ExternalLink, Plus, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 const INTEGRATIONS = [
   {
@@ -35,6 +36,22 @@ const INTEGRATIONS = [
 ];
 
 export const Integrations = () => {
+  const [providers, setProviders] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('identity_providers').select('provider').eq('user_id', user.id);
+        if (data) {
+          setProviders(data.map(p => p.provider.toLowerCase()));
+        }
+      }
+      setLoading(false);
+    };
+    fetchProviders();
+  }, []);
   return (
     <div className="p-8 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-8">
@@ -49,41 +66,48 @@ export const Integrations = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {INTEGRATIONS.map(integration => (
-          <Card key={integration.id} className="border-gray-200 dark:border-gray-800 flex flex-col">
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <div className={`p-3 rounded-xl ${integration.bgColor}`}>
-                  <integration.icon className={`w-6 h-6 ${integration.color}`} />
+        {loading ? (
+          <div className="col-span-full flex justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+          </div>
+        ) : INTEGRATIONS.map(integration => {
+          const isConnected = providers.includes(integration.id) || providers.includes(integration.name.toLowerCase());
+          return (
+            <Card key={integration.id} className="border-gray-200 dark:border-gray-800 flex flex-col">
+              <CardHeader>
+                <div className="flex justify-between items-start mb-2">
+                  <div className={`p-3 rounded-xl ${integration.bgColor}`}>
+                    <integration.icon className={`w-6 h-6 ${integration.color}`} />
+                  </div>
+                  {isConnected ? (
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-900/50 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Connected
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
+                      Not Connected
+                    </Badge>
+                  )}
                 </div>
-                {integration.status === 'connected' ? (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-900/50 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Connected
-                  </Badge>
+                <CardTitle className="text-lg">{integration.name}</CardTitle>
+                <CardDescription className="mt-2 text-sm h-10">
+                  {integration.description}
+                </CardDescription>
+              </CardHeader>
+              <CardFooter className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+                {isConnected ? (
+                  <Button variant="outline" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50 border-gray-200 dark:border-gray-800">
+                    Disconnect
+                  </Button>
                 ) : (
-                  <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
-                    Not Connected
-                  </Badge>
+                  <Button className="w-full flex items-center gap-2">
+                    Connect <ExternalLink className="w-3 h-3" />
+                  </Button>
                 )}
-              </div>
-              <CardTitle className="text-lg">{integration.name}</CardTitle>
-              <CardDescription className="mt-2 text-sm h-10">
-                {integration.description}
-              </CardDescription>
-            </CardHeader>
-            <CardFooter className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-              {integration.status === 'connected' ? (
-                <Button variant="outline" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50 border-gray-200 dark:border-gray-800">
-                  Disconnect
-                </Button>
-              ) : (
-                <Button className="w-full flex items-center gap-2">
-                  Connect <ExternalLink className="w-3 h-3" />
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        ))}
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
       
       <div className="mt-12 bg-blue-50 dark:bg-blue-900/10 p-6 rounded-xl border border-blue-100 dark:border-blue-900/30 flex items-start gap-4">

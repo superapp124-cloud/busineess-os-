@@ -22,6 +22,8 @@ import { cn } from '@/lib/utils';
 import { AdaptiveHome } from '@/components/desktop/AdaptiveHome';
 import { OutcomeCard } from '@/components/outcomes/OutcomeCard';
 import { useIntentObserver } from '@/hooks/useIntentObserver';
+import { eventBus } from '@/core/runtime/EventBus';
+import { commitmentRuntime } from '@/core/capabilities/CommitmentRuntime';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCall } from '@/contexts/CallContext';
 import { toast } from 'sonner';
@@ -108,9 +110,7 @@ export default function DesktopChat() {
     const handleOutcomesDetected = (e: any) => {
       const detectedOutcomes = e.detail;
       // We process them via the runtime
-      import('../../core/capabilities/CommitmentRuntime').then(({ commitmentRuntime }) => {
-        detectedOutcomes.forEach((o: any) => commitmentRuntime.processCommitment(o));
-      });
+      detectedOutcomes.forEach((o: any) => commitmentRuntime.processCommitment(o));
     };
 
     const handleCommitmentSuggested = (e: any) => {
@@ -167,19 +167,15 @@ export default function DesktopChat() {
     window.addEventListener('chatr:outcomes-detected', handleOutcomesDetected);
     
     // Use the new EventBus for the kernel events
-    import('../../core/services/EventBus').then(({ eventBus }) => {
-      eventBus.subscribe('chatr:commitment-suggested', handleCommitmentSuggested);
-      eventBus.subscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
-      eventBus.subscribe('chatr:reality-verified', handleRealityVerified);
-    });
+    eventBus.subscribe('chatr:commitment-suggested', handleCommitmentSuggested);
+    eventBus.subscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
+    eventBus.subscribe('chatr:reality-verified', handleRealityVerified);
     
     return () => {
       window.removeEventListener('chatr:outcomes-detected', handleOutcomesDetected);
-      import('../../core/services/EventBus').then(({ eventBus }) => {
-        eventBus.unsubscribe('chatr:commitment-suggested', handleCommitmentSuggested);
-        eventBus.unsubscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
-        eventBus.unsubscribe('chatr:reality-verified', handleRealityVerified);
-      });
+      eventBus.unsubscribe('chatr:commitment-suggested', handleCommitmentSuggested);
+      eventBus.unsubscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
+      eventBus.unsubscribe('chatr:reality-verified', handleRealityVerified);
     };
   }, [selectedId]);
 
@@ -596,6 +592,7 @@ export default function DesktopChat() {
     setMessageInput('');
 
     intentObserver.observe(content);
+    intentObserver.triggerBackendObservation(content);
     chatrOS.observeText(content); // Feed into Intelligence Panel
 
     const sentMsg = await messagingService.sendMessage(selectedId, content);
@@ -1340,7 +1337,7 @@ export default function DesktopChat() {
                     value={messageInput}
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={handleInputKeyDown}
-                    placeholder={`Message ${selectedRoom.name}...`}
+                    placeholder={`Message ${selectedRoom.name}... (Type @chatr to ask AI)`}
                     className="flex-1 h-10 bg-transparent text-sm px-2 focus:outline-none placeholder:text-white/30 text-white"
                   />
                   <div className="pr-1">

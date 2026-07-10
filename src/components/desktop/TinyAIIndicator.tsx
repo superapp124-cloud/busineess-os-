@@ -148,7 +148,7 @@ export const TinyAIIndicator = () => {
                     </>
                   ) : aiMode === 'unavailable' ? (
                     <>
-                      <AlertCircle className="w-3 h-3 text-amber-400" /> Local only
+                      <AlertCircle className="w-3 h-3 text-red-500" /> Offline
                     </>
                   ) : (
                     'Detecting...'
@@ -156,42 +156,59 @@ export const TinyAIIndicator = () => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-xs">
-                <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Model</span>
-                <span className="font-medium truncate max-w-[130px] text-right">
-                  {ollamaModels.length > 0 ? ollamaModels[0] : 'Not ready'}
-                </span>
-              </div>
+              {aiMode === 'unavailable' ? (
+                <div className="my-3 p-3 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <p className="font-semibold mb-1">AI is currently unavailable.</p>
+                  <p className="opacity-90 leading-relaxed mb-3">CHATR runs AI entirely on your device for absolute privacy. No conversation has been uploaded.</p>
+                  <div className="flex flex-col gap-2">
+                    <button className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 py-1 rounded transition-colors text-[11px] font-medium" onClick={() => window.open('https://ollama.ai', '_blank')}>
+                      Start Ollama
+                    </button>
+                    <button className="w-full bg-slate-500/20 hover:bg-slate-500/30 text-slate-300 py-1 rounded transition-colors text-[11px] font-medium" onClick={pollStatus}>
+                      Retry Connection
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Model</span>
+                    <span className="font-medium truncate max-w-[130px] text-right">
+                      {ollamaModels.length > 0 ? ollamaModels[0] : 'Not ready'}
+                    </span>
+                  </div>
 
-              <div className="flex justify-between items-center text-xs">
-                <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Latency</span>
-                <span
-                  className={cn(
-                    'font-medium',
-                    latency !== null && latency < 500 ? 'text-emerald-500' : 'text-amber-400'
-                  )}
-                >
-                  {latency !== null ? `${latency}ms` : 'Local offline'}
-                </span>
-              </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Latency</span>
+                    <span
+                      className={cn(
+                        'font-medium',
+                        latency !== null && latency < 500 ? 'text-emerald-500' : 'text-amber-400'
+                      )}
+                    >
+                      {latency !== null ? `${latency}ms` : 'Local offline'}
+                    </span>
+                  </div>
 
-              <div className="flex justify-between items-center text-xs">
-                <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
-                  Platform Health
-                </span>
-                <span
-                  className={cn(
-                    'font-medium capitalize',
-                    status === 'healthy'
-                      ? 'text-emerald-500'
-                      : status === 'degraded'
-                        ? 'text-amber-400'
-                        : 'text-red-400'
-                  )}
-                >
-                  {status}
-                </span>
-              </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
+                      Platform Health
+                    </span>
+                    <span
+                      className={cn(
+                        'font-medium capitalize',
+                        status === 'healthy'
+                          ? 'text-emerald-500'
+                          : status === 'degraded'
+                            ? 'text-amber-400'
+                            : 'text-red-400'
+                      )}
+                    >
+                      {status}
+                    </span>
+                  </div>
+                </>
+              )}
 
               {ollamaModels.length > 1 && (
                 <div className="pt-1">

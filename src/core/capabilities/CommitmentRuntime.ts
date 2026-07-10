@@ -1,9 +1,11 @@
 import { Commitment, CommitmentStatus } from './types';
 import { capabilityRegistry } from './CapabilityRegistry';
-import { eventBus } from '../services/EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 import { dummyProvider } from '../providers/DummyProvider';
 import { playbookEngine } from '../services/PlaybookEngine';
 import { telemetry } from '../services/TelemetryService';
+import { securityEngine } from '../services/SecurityEngine';
+import { policyEngine } from '../services/PolicyEngine';
 
 export class CommitmentRuntimeImpl {
   private static instance: CommitmentRuntimeImpl;
@@ -12,6 +14,7 @@ export class CommitmentRuntimeImpl {
     eventBus.subscribe('chatr:commitment-planned', this.handlePlannedCommitment.bind(this));
     eventBus.subscribe('chatr:commitment-observed', this.handleCommitmentObserved.bind(this));
     eventBus.subscribe('chatr:reality-verified', this.handleRealityVerified.bind(this));
+    eventBus.subscribe('chatr:approval-granted', this.handleApprovalGranted.bind(this));
   }
 
   public static getInstance(): CommitmentRuntimeImpl {
@@ -19,6 +22,29 @@ export class CommitmentRuntimeImpl {
       CommitmentRuntimeImpl.instance = new CommitmentRuntimeImpl();
     }
     return CommitmentRuntimeImpl.instance;
+  }
+
+  private async handleApprovalGranted(event: any): Promise<void> {
+    const { commitmentId } = event.payload;
+    console.log(`[CommitmentRuntime] Approval granted for ${commitmentId}`);
+    
+    // In a real system, we would fetch the commitment from a store.
+    // For the demo, we publish an event to let the UI know to update, 
+    // but we can also just let the UI handle calling a resume method.
+    // Wait, the UI has the full commitment object, we can have it send it!
+    const commitment = event.payload.commitment;
+    if (commitment) {
+      const updated = await this.transitionState(commitment, 'suggested');
+      
+      const capability = capabilityRegistry.getCapability(updated.capability);
+      const policy = capability?.manifest.executionPolicy || 'confirmation_required';
+      
+      if (policy === 'immediate') {
+        await this.executeCommitment(updated);
+      } else {
+        eventBus.publish('chatr:commitment-suggested', { commitment: updated }, 'CommitmentRuntime');
+      }
+    }
   }
 
   private async handlePlannedCommitment(event: any): Promise<void> {
@@ -84,18 +110,49 @@ export class CommitmentRuntimeImpl {
       return;
     }
 
-    // Transition: validated → suggested
-    commitment = await this.transitionState(commitment, 'suggested');
+    // 2. Identity & Permission (Security Engine)
+    // We assume the user is 'user-123' for the purpose of the demo
+    const currentUser = await securityEngine.authenticate('user-123');
+    if (!currentUser) {
+       commitment = await this.transitionState(commitment, 'permission_denied');
+       commitment.error = 'User not authenticated.';
+       eventBus.publish('chatr:commitment-permission-denied', { commitment }, 'CommitmentRuntime');
+       return;
+    }
 
+    const authResult = await securityEngine.authorize(currentUser, capability.manifest.id);
+    if (!authResult.authorized) {
+      commitment = await this.transitionState(commitment, 'permission_denied');
+      commitment.error = authResult.reason || 'Permission denied.';
+      eventBus.publish('chatr:commitment-permission-denied', { commitment }, 'CommitmentRuntime');
+      return;
+    }
+
+    // 3. Enterprise Policy Engine
+    const policyResult = await policyEngine.evaluatePolicy(commitment, currentUser);
+    if (policyResult.action === 'block') {
+      commitment = await this.transitionState(commitment, 'policy_blocked');
+      commitment.error = policyResult.reason;
+      eventBus.publish('chatr:commitment-policy-blocked', { commitment }, 'CommitmentRuntime');
+      return;
+    } else if (policyResult.action === 'require_approval') {
+      commitment = await this.transitionState(commitment, 'approval_required');
+      commitment.error = policyResult.reason; // Reusing error field for the reason temporarily
+      // TODO: Track approverRole
+      eventBus.publish('chatr:commitment-approval-required', { commitment }, 'CommitmentRuntime');
+      return;
+    }
+
+    // 4. Proceed to Suggestion
+    commitment = await this.transitionState(commitment, 'suggested');
+    
     telemetry.track({
       commitmentId: commitment.id,
       capability: commitment.capability,
       event: 'suggested',
     });
-
-    // 2. Execution Policy evaluation
+    
     const policy = capability.manifest.executionPolicy;
-
     if (policy === 'immediate') {
       await this.executeCommitment(commitment);
     } else {
@@ -143,6 +200,8 @@ export class CommitmentRuntimeImpl {
       if (result.success) {
         console.log(`[CommitmentRuntime] Execution successful: ${commitment.id}`);
         commitment = await this.transitionState(commitment, 'waiting');
+        // Notify UI to refresh the schedule immediately
+        window.dispatchEvent(new CustomEvent('chatr:schedule-updated', { detail: { commitment } }));
       } else {
         throw new Error(result.message || 'Execution failed');
       }

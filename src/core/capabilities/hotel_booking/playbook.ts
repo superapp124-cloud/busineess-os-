@@ -1,4 +1,5 @@
 import { CapabilityPlaybook, ExtractedEntities, ResolvedEntities, MissingField, CommitmentPreview } from '../types';
+import { searchRuntime } from '../../runtime/SearchRuntime';
 
 export const playbook: CapabilityPlaybook = {
   extract(rawText: string): ExtractedEntities {
@@ -16,6 +17,13 @@ export const playbook: CapabilityPlaybook = {
   },
 
   async resolve(entities: ExtractedEntities, context: any): Promise<ResolvedEntities> {
+    if (entities.city && !entities.searchResults) {
+      const results = await searchRuntime.runSearch({
+        intent: 'hotel',
+        filters: { location: entities.city, checkIn: entities.checkIn || new Date().toISOString(), checkOut: entities.checkOut }
+      });
+      return { ...entities, searchResults: results, _resolved: true };
+    }
     return { ...entities, _resolved: true };
   },
 
@@ -35,14 +43,16 @@ export const playbook: CapabilityPlaybook = {
   },
 
   buildPreview(entities: ResolvedEntities): CommitmentPreview {
+    const hotel = entities.searchResults?.[0] || { name: 'Taj Mahal Palace (Estimated)', pricePerNight: '₹12,500 (Estimated)' };
+
     return {
       icon: '🏨',
       title: `Hotel in ${entities.city}`,
       lines: [
         { label: 'Stay', value: `${entities.nights} Night(s)` },
         { label: 'Guests', value: `${entities.guests} Adults` },
-        { label: 'Hotel', value: 'Taj Mahal Palace (Estimated)' },
-        { label: 'Price', value: '₹12,500 (Estimated)' }
+        { label: 'Hotel', value: hotel.name || hotel.title || 'Unknown Hotel' },
+        { label: 'Price', value: hotel.pricePerNight || hotel.price || 'Unknown Price' }
       ],
       cta: 'Book Hotel'
     };

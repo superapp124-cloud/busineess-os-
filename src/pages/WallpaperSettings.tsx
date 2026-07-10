@@ -3,7 +3,8 @@ import { ArrowLeft, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { wallpapers as initialWallpapers, WALLPAPER_KEY } from '@/utils/wallpaper';
+import { wallpapers as initialWallpapers } from '@/utils/wallpaper';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function WallpaperSettings() {
   const navigate = useNavigate();
@@ -13,17 +14,30 @@ export default function WallpaperSettings() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem(WALLPAPER_KEY);
-    if (saved) {
-      setSelected(saved);
-    }
+    const fetchWallpaper = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('metadata').eq('id', user.id).single();
+        if (data?.metadata?.wallpaper) {
+          setSelected(data.metadata.wallpaper);
+        }
+      }
+    };
+    fetchWallpaper();
   }, []);
 
-  const handleSelect = (id: string) => {
+  const handleSelect = async (id: string) => {
     setSelected(id);
-    localStorage.setItem(WALLPAPER_KEY, id);
     window.dispatchEvent(new Event('chatr-wallpaper-changed'));
     toast.success('Chat wallpaper updated!');
+    
+    // Persist to Supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from('profiles').update({
+        metadata: { wallpaper: id }
+      }).eq('id', user.id);
+    }
   };
 
   const handleGenerate = () => {

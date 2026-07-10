@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Commitment } from '../../core/capabilities/types';
 import { osScheduler, ScheduleEntry } from '../../core/services/OSSchedulerService';
-import { eventBus } from '../../core/services/EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 import { telemetry } from '../../core/services/TelemetryService';
 import {
   AlertTriangle, Activity, Clock, Calendar, CheckCircle2,

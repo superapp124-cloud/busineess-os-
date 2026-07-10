@@ -17,9 +17,10 @@ import { pageContextEngine, PageContext, PageAIMode } from './PageContextEngine'
 import { knowledgeEngine, ExtractedKnowledge, KnowledgeEngine } from './KnowledgeEngine';
 import { osScheduler, ScheduleEntry } from '../services/OSSchedulerService';
 import { Commitment } from '../capabilities/types';
-import { eventBus } from '../services/EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 import { kernelAPI } from '@/core/runtime/KernelAPI';
 import { kernel } from '../runtime/Kernel';
+import { conversationStateEngine } from '../services/ConversationStateEngine';
 
 const EMPTY_KNOWLEDGE: ExtractedKnowledge = {
   people: [], dates: [], dateLabels: [], topics: [],
@@ -83,9 +84,11 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
     load();
     window.addEventListener('chatr:outcome-executed', load);
     window.addEventListener('chatr:notification-delivered', load);
+    window.addEventListener('chatr:schedule-updated', load);
     return () => {
       window.removeEventListener('chatr:outcome-executed', load);
       window.removeEventListener('chatr:notification-delivered', load);
+      window.removeEventListener('chatr:schedule-updated', load);
     };
   }, []);
 
@@ -112,8 +115,17 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
     setKnowledge(EMPTY_KNOWLEDGE);
   }, []);
 
-  const submitIntent = useCallback((text: string) => {
+  const submitIntent = useCallback(async (text: string) => {
     setLastIntent(text);
+    
+    // SPRINT 1: Conversation State Engine
+    // Intercept input if we have an active commitment waiting for missing fields
+    const handledInline = await conversationStateEngine.processInput(text);
+    if (handledInline) {
+      console.log(`[CHATR OS] Input absorbed by ConversationStateEngine.`);
+      return;
+    }
+
     observeText(text);
     onIntentSubmit?.(text);
   }, [observeText, onIntentSubmit]);

@@ -1,5 +1,5 @@
 import { IProvider, ProviderCapabilities, ProviderState, providerRegistry, ProviderRole } from './ProviderRegistry';
-import { eventBus } from '../services/EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 
 export class SchedulerProviderImpl implements IProvider {
   id = 'sys.scheduler.local';

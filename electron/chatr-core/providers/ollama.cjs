@@ -85,7 +85,13 @@ class OllamaProvider {
         signal: controller.signal,
       });
 
-      if (!res.ok) throw new Error(`Ollama /api/generate error: ${res.status}`);
+      if (!res.ok) {
+        if (res.status === 404) {
+          fetch(`${base}/api/pull`, { method: 'POST', body: JSON.stringify({ name: model }) }).catch(() => {});
+          throw new Error(`Model '${model}' not found locally. Downloading in background...`);
+        }
+        throw new Error(`Ollama /api/generate error: ${res.status}`);
+      }
       const data = await res.json();
       const text = data.response ?? data.message?.content ?? '';
       log.info(`[OllamaProvider] generate() completed in ${Date.now() - startMs}ms`);
@@ -120,7 +126,13 @@ class OllamaProvider {
         signal: controller.signal,
       });
 
-      if (!res.ok) throw new Error(`Ollama /api/generate stream error: ${res.status}`);
+      if (!res.ok) {
+        if (res.status === 404) {
+          fetch(`${base}/api/pull`, { method: 'POST', body: JSON.stringify({ name: model }) }).catch(() => {});
+          throw new Error(`Model '${model}' not found locally. Downloading in background...`);
+        }
+        throw new Error(`Ollama /api/generate stream error: ${res.status}`);
+      }
       if (!res.body) throw new Error('Ollama response has no body');
 
       const reader  = res.body.getReader();

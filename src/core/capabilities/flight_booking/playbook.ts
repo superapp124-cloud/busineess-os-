@@ -94,8 +94,12 @@ export const playbook: CapabilityPlaybook = {
     if (selectedResult) {
       return {
         title: `Book ${selectedResult.airline} to ${entities.to}`,
-        subtitle: `${selectedResult.departureTime} - ${selectedResult.arrivalTime} • ${selectedResult.price}`,
-        actions: ['Confirm Booking', 'Cancel'],
+        lines: [
+          { label: 'Departure', value: selectedResult.departureTime },
+          { label: 'Arrival', value: selectedResult.arrivalTime },
+          { label: 'Price', value: selectedResult.price }
+        ],
+        cta: 'Confirm Booking',
         icon: '✈️'
       };
     }
@@ -104,8 +108,7 @@ export const playbook: CapabilityPlaybook = {
     return {
       icon: '✈️',
       title: `Flight to ${entities.to}`,
-      lines: [
-      ],
+      lines: [],
       cta: 'Confirm'
     };
   },

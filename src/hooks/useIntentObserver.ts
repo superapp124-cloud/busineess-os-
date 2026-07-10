@@ -3,6 +3,8 @@ import { detectIntents } from '@/core/intent/patterns';
 import type { Understanding } from '@/core/intent/types';
 import { projectionStore, ProjectionState } from '@/core/intent/projectionStore';
 import { toast } from 'sonner';
+import { CommitmentPlannerImpl } from '@/core/services/CommitmentPlanner';
+import '@/core/capabilities/CommitmentRuntime'; // ensure runtime boots up
 
 const CHATR_CORE_URL = 'http://127.0.0.1:8087';
 const DEBOUNCE_MS = 300;
@@ -84,54 +86,56 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
     };
   }, [conversationId, workspaceId]);
 
-  const triggerBackendObservation = useCallback((messageText: string) => {
+  const triggerBackendObservation = useCallback((messageText: string, attachments: any[] = []) => {
     if (!conversationId) return;
     toast.info('2. Observer: Mocking backend offline planner...');
     
     // FALLBACK MOCK for local testing without backend
-    import('../core/intent/patterns').then(({ detectIntents }) => {
-      const detected = detectIntents(messageText);
-      if (detected.length > 0) {
-        // Boot up runtime so it listens to planner
-        import('../core/capabilities/CommitmentRuntime').then(() => {
-          import('../core/services/CommitmentPlanner').then(({ CommitmentPlannerImpl }) => {
-            const planner = CommitmentPlannerImpl.getInstance();
-            planner.plan({
-              id: crypto.randomUUID(),
-              action: detected[0].type || 'UNKNOWN',
-              entities: { title: messageText },
-              confidence: detected[0].confidence?.observation || 0.8
-            });
-          });
-        });
-      }
-    });
+    let detected = detectIntents(messageText);
+    
+    // If no text but there are attachments, fallback to document capability
+    if (detected.length === 0 && attachments.length > 0) {
+      detected = [{ type: 'DOCUMENT' as any, confidence: { observation: 0.9, parsing: 0, extraction: 0 } }];
+    }
+
+    if (detected.length > 0) {
+      const planner = CommitmentPlannerImpl.getInstance();
+      planner.plan({
+        id: crypto.randomUUID(),
+        action: messageText || `Analyze ${attachments.length} attachment(s)`,
+        entities: { title: messageText || `Analyze ${attachments.length} attachment(s)` },
+        attachments: attachments,
+        confidence: detected[0].confidence?.observation || 0.8
+      });
+    }
   }, [conversationId, userId, workspaceId]);
 
-  const observe = useCallback((messageText: string) => {
+  const latestAttachmentsRef = useRef<any[]>([]);
+
+  const observe = useCallback((messageText: string, attachments: any[] = []) => {
     latestTextRef.current = messageText;
+    latestAttachmentsRef.current = attachments;
+
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
 
-    if (!messageText || messageText.trim().length < 8) {
+    const hasText = messageText && messageText.trim().length >= 8;
+    const hasAttachments = attachments && attachments.length > 0;
+
+    if (!hasText && !hasAttachments) {
       dismiss();
       return;
     }
 
     debounceTimerRef.current = setTimeout(() => {
       const text = latestTextRef.current;
-      if (!text || text.trim().length < 8) return;
+      const atts = latestAttachmentsRef.current;
+      const validText = text && text.trim().length >= 8;
+      const validAtts = atts && atts.length > 0;
+
+      if (!validText && !validAtts) return;
 
       toast.info('1. Observer: Checking pattern');
-      const detected = detectIntents(text).filter(d => (d.confidence?.observation || 0) >= MIN_CONFIDENCE);
-      if (detected.length > 0) {
-        const primary = detected[0];
-        // Optimistic UI update could go here by directly mutating projectionStore if we wanted, 
-        // but we rely entirely on the backend KERNEL events via the stream now for true Event Sourcing.
-        
-        triggerBackendObservation(text);
-      } else {
-        dismiss();
-      }
+      triggerBackendObservation(text, atts);
     }, DEBOUNCE_MS);
   }, [triggerBackendObservation, dismiss]);
 

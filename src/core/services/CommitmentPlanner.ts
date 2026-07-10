@@ -1,6 +1,7 @@
 import { Intent, Commitment } from '../capabilities/types';
 import { capabilityRegistry } from '../capabilities/CapabilityRegistry';
-import { eventBus } from './EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
+import { contextResolutionPipeline } from './ContextResolutionPipeline';
 
 /**
  * CHATR Commitment Planner
@@ -281,10 +282,19 @@ export class CommitmentPlannerImpl {
 
   /**
    * Routes an Intent to the best Capability using scored matching.
+  /**
+   * Routes an Intent to the best Capability using scored matching.
    * Each routing rule accumulates a score from keyword and pattern hits.
-   * The rule with the highest (score × priority) wins.
+   * The rule with the highest (score * priority) wins.
    */
-  public async plan(intent: Intent): Promise<Commitment | null> {
+  public async plan(rawIntent: Intent): Promise<Commitment | null> {
+    // Phase 1: Context Resolution Pipeline Hydration
+    const { hydratedIntent, trace } = await contextResolutionPipeline.hydrate(rawIntent);
+    const intent = hydratedIntent;
+    
+    // In production, we can log the `trace` to the Kernel Dashboard here.
+    console.log(`[CommitmentPlanner] Hydration complete. Trace steps: ${trace.length}`);
+
     const text = (intent.action || '').toLowerCase();
     console.log(`[CommitmentPlanner] Planning intent: "${intent.action}"`);
 

@@ -12,6 +12,18 @@ export const DesktopAccount: React.FC = () => {
   const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' });
   const [saving, setSaving] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [loading2FA, setLoading2FA] = useState(true);
+
+  React.useEffect(() => {
+    const fetchMfa = async () => {
+      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (!error && data) {
+        setTwoFactorEnabled(data.currentLevel === 'aal2' || data.nextLevel === 'aal2');
+      }
+      setLoading2FA(false);
+    };
+    fetchMfa();
+  }, []);
 
   const bg = isDark ? 'bg-[#0d0f1a]' : 'bg-slate-50';
   const cardBg = isDark ? 'bg-white/[0.03] border-white/[0.08]' : 'bg-white border-slate-200';
@@ -119,12 +131,29 @@ export const DesktopAccount: React.FC = () => {
                 <p className={cn('text-xs mt-0.5', labelColor)}>Add an extra layer of security</p>
               </div>
             </div>
-            <button
-              onClick={() => { setTwoFactorEnabled(v => !v); toast.success(twoFactorEnabled ? '2FA disabled' : '2FA enabled'); }}
-              className={cn('relative w-11 h-6 rounded-full transition-colors', twoFactorEnabled ? 'bg-emerald-500' : isDark ? 'bg-white/10' : 'bg-slate-200')}
-            >
-              <div className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all', twoFactorEnabled ? 'left-5' : 'left-0.5')} />
-            </button>
+            {loading2FA ? (
+              <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+            ) : (
+              <button
+                onClick={async () => { 
+                  if (!twoFactorEnabled) {
+                    toast.info('Starting 2FA enrollment...');
+                    try {
+                      const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
+                      if (error) throw error;
+                      toast.success('2FA enrollment started. Please scan the QR code (UI not fully implemented here yet).');
+                    } catch (e: any) {
+                      toast.error('Failed to enroll: ' + e.message);
+                    }
+                  } else {
+                    toast.info('2FA disable flow not fully implemented in demo.');
+                  }
+                }}
+                className={cn('relative w-11 h-6 rounded-full transition-colors', twoFactorEnabled ? 'bg-emerald-500' : isDark ? 'bg-white/10' : 'bg-slate-200')}
+              >
+                <div className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all', twoFactorEnabled ? 'left-5' : 'left-0.5')} />
+              </button>
+            )}
           </div>
         </div>
 

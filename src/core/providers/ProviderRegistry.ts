@@ -10,7 +10,7 @@ export interface ProviderState {
   lastChecked: number;
 }
 
-export type ProviderRole = 'SearchProvider' | 'ExecutionProvider' | 'VerificationProvider' | 'NotificationProvider' | 'StorageProvider' | 'SchedulerProvider' | 'PaymentProvider';
+export type ProviderRole = 'SearchProvider' | 'ExecutionProvider' | 'VerificationProvider' | 'NotificationProvider' | 'StorageProvider' | 'SchedulerProvider' | 'PaymentProvider' | 'AIProvider' | 'EnterpriseMemoryProvider';
 
 export interface IProvider {
   id: string;
@@ -46,6 +46,10 @@ export class ProviderRegistryImpl {
 
   public getProvidersByTypeAndRole(type: string, role: ProviderRole): IProvider[] {
     return Array.from(this.providers.values()).filter(p => p.type === type && p.role === role);
+  }
+
+  public getProvidersByType(type: string): IProvider[] {
+    return Array.from(this.providers.values()).filter(p => p.type === type);
   }
 
   public async getHealthyProviders(type: string, role: ProviderRole): Promise<IProvider[]> {

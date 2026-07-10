@@ -168,11 +168,21 @@ class RuntimeManifestLoader {
     } catch { /* SSR guard */ }
 
     // 2. Environment variable
-    const envMode = import.meta.env.VITE_RUNTIME_MODE;
+    let envMode: string | undefined = undefined;
+    let isDev = false;
+    
+    if (typeof process !== 'undefined' && process.env) {
+      envMode = process.env.VITE_RUNTIME_MODE;
+      isDev = process.env.NODE_ENV !== 'production';
+    } else if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+      envMode = (import.meta as any).env.VITE_RUNTIME_MODE;
+      isDev = (import.meta as any).env.DEV;
+    }
+
     if (envMode && envMode in MANIFESTS) return envMode as RuntimeMode;
 
     // 3. Default
-    return import.meta.env.DEV ? 'developer' : 'production';
+    return isDev ? 'developer' : 'production';
   }
 }
 

@@ -85,7 +85,7 @@ const ollamaProvider: AIProvider = {
 
     const base = await getReachableOllamaBase();
     if (!base) {
-      throw new Error('[OllamaProvider] Local Ollama is unavailable. Cloud fallback is disabled.');
+      throw new Error('ProviderUnavailable: Local Ollama is not running.');
     }
 
     const model = options?.model ?? 'llama3.2:3b';
@@ -123,7 +123,7 @@ const ollamaProvider: AIProvider = {
 
     const base = await getReachableOllamaBase();
     if (!base) {
-      throw new Error('[OllamaProvider] Local Ollama is unavailable. Cloud fallback is disabled.');
+      throw new Error('ProviderUnavailable: Local Ollama is not running.');
     }
 
     const model = options?.model ?? 'llama3.2:3b';
@@ -178,7 +178,7 @@ export class ProviderManager {
         return provider;
       }
     }
-    throw new Error('[ProviderManager] Local Ollama is unavailable. Cloud fallback is disabled.');
+    throw new Error('ProviderUnavailable: Local Ollama is not running.');
   }
 
   async chat(messages: ChatMessage[], options?: ChatOptions): Promise<string> {

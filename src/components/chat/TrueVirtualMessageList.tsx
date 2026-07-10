@@ -5,6 +5,7 @@ import { MessageListSkeleton } from './MessageListSkeleton';
 import { SwipeableMessage } from '../SwipeableMessage';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ConversationReceipt } from './ConversationReceipt';
 
 const VIRTUAL_LIST_START_INDEX = 100000;
 
@@ -20,6 +21,10 @@ interface Message {
   is_edited?: boolean;
   reactions?: any[];
   status?: string;
+  isReceipt?: boolean;
+  receiptType?: string;
+  receiptTitle?: string;
+  receiptDetails?: { label: string; value: string }[];
 }
 
 interface TrueVirtualMessageListProps {
@@ -72,31 +77,77 @@ export const TrueVirtualMessageList = React.memo(({
   const previousWindowRef = useRef<{ firstId?: string; lastId?: string; length: number }>({ length: 0 });
   const [firstItemIndex, setFirstItemIndex] = useState(VIRTUAL_LIST_START_INDEX);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [receipts, setReceipts] = useState<Message[]>([]);
 
   useEffect(() => {
-    const firstId = messages[0]?.id;
-    const lastId = messages[messages.length - 1]?.id;
-    const previous = previousWindowRef.current;
-    const addedCount = messages.length - previous.length;
+    const handleOutcome = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { type, text, raw } = customEvent.detail;
+      
+      const details: {label: string, value: string}[] = [];
+      if (raw?.entities) {
+        Object.entries(raw.entities).forEach(([k, v]) => {
+          if (v && typeof v === 'string' && !k.startsWith('_')) {
+            details.push({ label: k.charAt(0).toUpperCase() + k.slice(1), value: v });
+          } else if (v && typeof v === 'number') {
+             details.push({ label: k.charAt(0).toUpperCase() + k.slice(1), value: v.toString() });
+          }
+        });
+      }
+      
+      if (raw?.verifiedAt) {
+         const d = new Date(raw.verifiedAt);
+         details.push({ label: 'Scheduled For', value: d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+      }
 
-    if (messages.length === 0 || (previous.length > 0 && previous.lastId !== lastId && previous.firstId !== firstId)) {
+      const newReceipt: Message = {
+        id: `receipt-${Date.now()}-${Math.random()}`,
+        content: '',
+        sender_id: 'system',
+        created_at: new Date().toISOString(),
+        isReceipt: true,
+        receiptType: type,
+        receiptTitle: text.replace('✅ ', ''),
+        receiptDetails: details
+      };
+      
+      setReceipts(prev => [...prev, newReceipt]);
+    };
+
+    window.addEventListener('chatr:outcome-executed', handleOutcome);
+    return () => window.removeEventListener('chatr:outcome-executed', handleOutcome);
+  }, []);
+
+  const combinedMessages = React.useMemo(() => {
+    const all = [...messages, ...receipts];
+    all.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    return all;
+  }, [messages, receipts]);
+
+  useEffect(() => {
+    const firstId = combinedMessages[0]?.id;
+    const lastId = combinedMessages[combinedMessages.length - 1]?.id;
+    const previous = previousWindowRef.current;
+    const addedCount = combinedMessages.length - previous.length;
+
+    if (combinedMessages.length === 0 || (previous.length > 0 && previous.lastId !== lastId && previous.firstId !== firstId)) {
       setFirstItemIndex(VIRTUAL_LIST_START_INDEX);
     } else if (addedCount > 0 && previous.firstId && previous.firstId !== firstId && previous.lastId === lastId) {
       setFirstItemIndex((current) => Math.max(0, current - addedCount));
     }
 
-    previousWindowRef.current = { firstId, lastId, length: messages.length };
-  }, [messages]);
+    previousWindowRef.current = { firstId, lastId, length: combinedMessages.length };
+  }, [combinedMessages]);
 
   // Auto-scroll to bottom on new messages (like WhatsApp)
   useEffect(() => {
-    if (wasAtBottom.current && messages.length > 0) {
+    if (wasAtBottom.current && combinedMessages.length > 0) {
       virtuosoRef.current?.scrollToIndex({
-        index: messages.length - 1,
+        index: combinedMessages.length - 1,
         behavior: 'smooth'
       });
     }
-  }, [messages.length]);
+  }, [combinedMessages.length]);
 
   const handleAtBottomStateChange = useCallback((atBottom: boolean) => {
     wasAtBottom.current = atBottom;
@@ -105,7 +156,7 @@ export const TrueVirtualMessageList = React.memo(({
 
   const scrollToBottom = () => {
     virtuosoRef.current?.scrollToIndex({
-      index: messages.length - 1,
+      index: combinedMessages.length - 1,
       behavior: 'smooth'
     });
   };
@@ -131,11 +182,11 @@ export const TrueVirtualMessageList = React.memo(({
     return <div className="h-2" />;
   }, []);
 
-  if (isLoading && messages.length === 0) {
+  if (isLoading && combinedMessages.length === 0) {
     return <MessageListSkeleton />;
   }
 
-  if (messages.length === 0) {
+  if (combinedMessages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <p className="text-muted-foreground bg-background/80 px-4 py-2 rounded-full text-sm shadow-sm backdrop-blur-sm">
@@ -150,9 +201,9 @@ export const TrueVirtualMessageList = React.memo(({
     <div className="flex-1 h-full bg-transparent relative">
       <Virtuoso
         ref={virtuosoRef}
-        data={messages}
+        data={combinedMessages}
         firstItemIndex={firstItemIndex}
-        initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
+        initialTopMostItemIndex={combinedMessages.length > 0 ? combinedMessages.length - 1 : 0}
         atBottomStateChange={handleAtBottomStateChange}
         startReached={handleStartReached}
         overscan={200}
@@ -161,8 +212,20 @@ export const TrueVirtualMessageList = React.memo(({
           Footer
         }}
         itemContent={(index, message) => {
+          if (message.isReceipt) {
+             return (
+               <div className="px-2">
+                 <ConversationReceipt 
+                   type={message.receiptType || 'COMMITMENT'}
+                   title={message.receiptTitle || ''}
+                   details={message.receiptDetails || []}
+                 />
+               </div>
+             );
+          }
+          
           const isOwn = message.sender_id === userId;
-          const prevMessage = index > 0 ? messages[index - 1] : null;
+          const prevMessage = index > 0 ? combinedMessages[index - 1] : null;
           
           const msgDate = new Date(message.created_at);
           const prevDate = prevMessage ? new Date(prevMessage.created_at) : null;

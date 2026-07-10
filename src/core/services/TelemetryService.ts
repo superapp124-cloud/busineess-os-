@@ -63,12 +63,26 @@ class TelemetryServiceImpl {
 
   private save(): void {
     try {
-      // Rolling window — keep last N records
       if (this.records.length > MAX_EVENTS) {
         this.records = this.records.slice(-MAX_EVENTS);
       }
       localStorage.setItem(TELEMETRY_KEY, JSON.stringify(this.records));
     } catch { /* ignore */ }
+  }
+
+  public init() {
+    // Dynamically import EventBus to avoid circular dependencies if any
+    import('../runtime/EventBus').then(({ eventBus }) => {
+      eventBus.onAny((evt) => {
+        this.track({
+          commitmentId: evt.correlationId || evt.id,
+          capability: evt.source,
+          event: evt.type as TelemetryEvent,
+          metadata: evt.payload as any,
+          provider: 'eventBus'
+        });
+      });
+    });
   }
 
   public track(params: {

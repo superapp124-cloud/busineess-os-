@@ -82,6 +82,11 @@ class NetworkMonitorClass {
   }
 
   currentType(): NetworkType | null { return this.current; }
+
+  isOnline(): boolean {
+    if (this.current === null) return navigator.onLine;
+    return this.current !== 'offline';
+  }
 }
 
 export const networkMonitor = new NetworkMonitorClass();

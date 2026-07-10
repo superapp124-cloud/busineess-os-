@@ -5,7 +5,7 @@ import {
   Shield, ShieldAlert, KeyRound, MessageSquareText, RefreshCw, ChevronDown, CheckCircle2, 
   AlertTriangle, Fingerprint, Mail, Inbox, Globe, Lock, ArrowRight, Search, Phone, CheckSquare, 
   Sparkles, Calendar, Clock, CreditCard, Tag, Bot, Palette, Star, CornerUpLeft, CircleDollarSign, List,
-  Settings
+  Settings, ListChecks, CornerUpRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -373,129 +373,132 @@ export default function SmartInbox() {
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex-1 h-full min-h-0 w-full flex bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed overflow-hidden text-slate-300 font-sans relative">
+      <div className="absolute inset-0 bg-zinc-950/95 pointer-events-none z-0" />
+      
       {/* Main Inbox Content */}
-      <div className={cn("flex-1 min-h-screen overflow-y-auto overflow-x-hidden relative flex flex-col transition-colors duration-500", themeStyles[theme])}>
-      {/* Dynamic Background Effects */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-rose-600/10 blur-[120px]" />
-      </div>
+      <div className="flex-1 h-full min-h-0 overflow-hidden relative flex flex-col transition-colors duration-500 z-10">
 
-      {/* Header & Trust Center */}
-      <div className={cn("sticky top-0 z-20 backdrop-blur-3xl border-b border-white/5 pt-10 pb-4 px-4 flex flex-col gap-4 transition-colors duration-500", headerThemeStyles[theme])}>
-        
-        {/* Trust Center Strip */}
-        <div className="flex items-center justify-between text-[10px] font-semibold tracking-wider uppercase">
-          <div className="flex gap-3 text-emerald-400">
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> ChatrAI</span>
-            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Encrypted</span>
-            {dailyStats && (
-              <span className="flex items-center gap-1 ml-2 text-indigo-400">
-                100% of {dailyStats.totalEmails} synced emails processed on-device
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-slate-500 flex items-center gap-1"><Globe className="w-3 h-3" /> Local AI Only</span>
-            <button onClick={cycleTheme} className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-               <Palette className="w-3 h-3 text-indigo-400" />
-            </button>
-          </div>
+        {/* Dynamic Background Effects */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-rose-500/20 blur-[120px]" />
         </div>
 
-        {/* AI Search Bar */}
-        <div className="relative group z-50">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur group-focus-within:blur-md transition-all" />
-          <div className="relative bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center gap-3 backdrop-blur-xl">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <input 
-              type="text" 
-              placeholder={searchPlaceholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-              className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-400 transition-all duration-500"
-            />
-          </div>
+        {/* Header & Trust Center */}
+        <div className={cn("sticky top-0 z-20 backdrop-blur-3xl border-b border-white/5 pt-10 pb-4 px-4 flex flex-col gap-4 transition-colors duration-500", headerThemeStyles[theme])}>
           
-          <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide pb-1">
-            {['Find invoices', 'Show suspicious emails', 'Summarize unread', 'Bills due', 'Meeting invites'].map(prompt => (
-              <button 
-                key={prompt}
-                onClick={() => setSearchQuery(prompt)}
-                className="whitespace-nowrap bg-white/5 hover:bg-white/10 text-slate-300 text-xs px-3 py-1.5 rounded-full transition-colors border border-white/5"
-              >
-                {prompt}
+          {/* Trust Center Strip */}
+          <div className="flex items-center justify-between text-[10px] font-semibold tracking-wider uppercase">
+            <div className="flex gap-3 text-emerald-400">
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> ChatrAI</span>
+              <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Encrypted</span>
+              {dailyStats && (
+                <span className="flex items-center gap-1 ml-2 text-indigo-400">
+                  100% of {dailyStats.totalEmails} synced emails processed on-device
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-slate-500 flex items-center gap-1"><Globe className="w-3 h-3" /> Local AI Only</span>
+              <button onClick={cycleTheme} className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+                 <Palette className="w-3 h-3 text-indigo-400" />
               </button>
-            ))}
+            </div>
           </div>
-          {/* Unified Search Mock Dropdown */}
-          <AnimatePresence>
-            {isSearchFocused && searchQuery.length >= 2 && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full left-0 right-0 mt-2 bg-[#1A1A1A] border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-3xl overflow-hidden"
-              >
-                <div className="px-3 py-2 text-xs font-bold tracking-wider text-slate-500 uppercase">Unified Search Results</div>
-                <div className="space-y-1">
-                  {searchResults.length === 0 ? (
-                    <div className="px-3 py-4 text-center text-sm text-slate-400">No results found across Mail, SMS, and Calls.</div>
-                  ) : (
-                    searchResults.map(result => (
-                      <div key={`${result.source}-${result.id}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-                        {result.source === 'mail' && <Mail className="w-4 h-4 text-emerald-400" />}
-                        {result.source === 'sms' && <MessageSquareText className="w-4 h-4 text-blue-400" />}
-                        {result.source === 'call' && <Phone className="w-4 h-4 text-purple-400" />}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-white truncate">
-                            {result.title} <span className="text-slate-400 font-normal capitalize">· {result.source}</span>
-                          </p>
-                          <p className="text-xs text-slate-400 truncate">{result.subtitle}</p>
+
+          {/* AI Search Bar */}
+          <div className="relative group z-50">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur group-focus-within:blur-md transition-all" />
+            <div className="relative bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center gap-3 backdrop-blur-xl">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
+              <input 
+                type="text" 
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-400 transition-all duration-500"
+              />
+            </div>
+            
+            <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide pb-1">
+              {['Find invoices', 'Show suspicious emails', 'Summarize unread', 'Bills due', 'Meeting invites'].map(prompt => (
+                <button 
+                  key={prompt}
+                  onClick={() => setSearchQuery(prompt)}
+                  className="whitespace-nowrap bg-white/5 hover:bg-white/10 text-slate-300 text-xs px-3 py-1.5 rounded-full transition-colors border border-white/5"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+            {/* Unified Search Mock Dropdown */}
+            <AnimatePresence>
+              {isSearchFocused && searchQuery.length >= 2 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-[#1A1A1A] border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-3xl overflow-hidden"
+                >
+                  <div className="px-3 py-2 text-xs font-bold tracking-wider text-slate-500 uppercase">Unified Search Results</div>
+                  <div className="space-y-1">
+                    {searchResults.length === 0 ? (
+                      <div className="px-3 py-4 text-center text-sm text-slate-400">No results found across Mail, SMS, and Calls.</div>
+                    ) : (
+                      searchResults.map(result => (
+                        <div key={`${result.source}-${result.id}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
+                          {result.source === 'mail' && <Mail className="w-4 h-4 text-emerald-400" />}
+                          {result.source === 'sms' && <MessageSquareText className="w-4 h-4 text-blue-400" />}
+                          {result.source === 'call' && <Phone className="w-4 h-4 text-purple-400" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white truncate">
+                              {result.title} <span className="text-slate-400 font-normal capitalize">· {result.source}</span>
+                            </p>
+                            <p className="text-xs text-slate-400 truncate">{result.subtitle}</p>
+                          </div>
+                          <span className="text-[10px] text-slate-500 flex-shrink-0">
+                            {formatDistanceToNow(new Date(result.timestamp), { addSuffix: true })}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 flex-shrink-0">
-                          {formatDistanceToNow(new Date(result.timestamp), { addSuffix: true })}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-        {/* Tab Switcher */}
-        <div className="w-full overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2">
-            {[
-              { id: 'inbox', label: 'Inbox', icon: Inbox },
-              { id: 'messages', label: 'Messages', icon: MessageSquareText },
-              { id: 'mail', label: 'Mail', icon: Mail },
-              { id: 'calls', label: 'Calls', icon: Phone }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap",
-                  activeTab === tab.id 
-                    ? "bg-white/10 text-white shadow-lg border border-white/10" 
-                    : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-                )}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
+          {/* Tab Switcher */}
+          <div className="w-full overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2">
+              {[
+                { id: 'inbox', label: 'Inbox', icon: Inbox },
+                { id: 'messages', label: 'Messages', icon: MessageSquareText },
+                { id: 'mail', label: 'Mail', icon: Mail },
+                { id: 'calls', label: 'Calls', icon: Phone }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap",
+                    activeTab === tab.id 
+                      ? "bg-white/10 text-white shadow-lg border border-white/10" 
+                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
+                  )}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      <ScrollArea className="flex-1 px-4 py-6 z-10 relative mb-32">
+        <ScrollArea className="flex-1 min-h-0 px-4 py-6 z-10 relative">
         
         {/* Compact Summary Strip & Daily Brief */}
         <div className="mb-8">
@@ -996,32 +999,52 @@ export default function SmartInbox() {
       </ScrollArea>
 
       {/* Docked AI Assistant */}
-      <div className="fixed bottom-0 left-0 w-full bg-black/80 backdrop-blur-3xl border-t border-white/10 p-4 z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.4)]">
-            <Sparkles className="w-6 h-6 text-white" />
+      <div className="sticky bottom-0 left-0 right-0 w-full bg-black/80 backdrop-blur-3xl border-t border-white/10 p-4 z-50">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+             <Sparkles className="w-5 h-5 text-indigo-400" />
           </div>
-          <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center gap-2 text-slate-400">
-            <span className="text-sm font-medium">Ask CHATR Intelligence...</span>
+          <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-2 focus-within:border-indigo-500/50 transition-colors shadow-inner">
+            <input 
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Ask CHATR Intelligence..."
+              className="bg-transparent border-none outline-none text-sm text-white w-full placeholder:text-slate-500"
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  toast.success('Analyzing intelligence query...');
+                  setSearchQuery('');
+                }
+              }}
+            />
           </div>
-        </div>
-        <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide">
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-xs font-semibold text-slate-300 whitespace-nowrap"><List className="w-3.5 h-3.5" /> Summarize Today</button>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-xs font-semibold text-slate-300 whitespace-nowrap"><Shield className="w-3.5 h-3.5" /> Show Threats</button>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-xs font-semibold text-slate-300 whitespace-nowrap"><CornerUpLeft className="w-3.5 h-3.5" /> Reply Priority</button>
+          <div className="flex gap-2 shrink-0">
+             <button onClick={() => setSearchQuery('Summarize Today')} className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 transition-colors flex items-center gap-2 border border-white/5">
+                <ListChecks className="w-3.5 h-3.5" /> Summarize Today
+             </button>
+             <button onClick={() => setSearchQuery('Show Threats')} className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 transition-colors flex items-center gap-2 border border-white/5">
+                <ShieldAlert className="w-3.5 h-3.5 text-red-400" /> Show Threats
+             </button>
+             <button onClick={() => setSearchQuery('Reply Priority')} className="px-3 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-xs font-semibold text-indigo-300 transition-colors flex items-center gap-2 border border-indigo-500/30">
+                <CornerUpRight className="w-3.5 h-3.5" /> Reply Priority
+             </button>
+          </div>
         </div>
       </div>
       </div>
 
       {/* Command Center Panel — right side AI sidebar */}
-      <CommandCenterPanel
-        stats={{
-          unread: localMessages.length,
-          tasks: 0,
-          meetings: 0,
-        }}
-        onSearch={(q) => setSearchQuery(q)}
-      />
+      <div className="w-[380px] border-l border-white/[0.05] bg-black/40 backdrop-blur-3xl relative z-10 flex flex-col">
+        <CommandCenterPanel
+          stats={{
+            unread: localMessages.length,
+            tasks: 0,
+            meetings: 0,
+          }}
+          onSearch={(q) => setSearchQuery(q)}
+        />
+      </div>
     </div>
   );
 }

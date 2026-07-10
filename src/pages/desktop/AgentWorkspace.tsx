@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { generate } from '@/services/ai';
-import { EventBus } from '@/core/runtime/EventBus';
+import { eventBus } from '@/core/runtime/EventBus';
 
 interface Message {
   role: 'user' | 'agent';
@@ -199,7 +199,7 @@ export const AgentWorkspace: React.FC = () => {
       }, { onConflict: 'id' });
 
       // Emit to EventBus
-      EventBus.publish({ type: 'AI_RESPONSE_READY', payload: { agentId: id, sessionId } });
+      eventBus.publish('ui:interaction', { type: 'AI_RESPONSE_READY', payload: { agentId: id, sessionId } });
     } catch (err: any) {
       setMessages(prev => {
         const copy = [...prev];

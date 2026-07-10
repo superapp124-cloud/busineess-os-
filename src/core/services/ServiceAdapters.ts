@@ -44,7 +44,21 @@ export class SupabaseServiceAdapter implements IService {
   readonly version = '2.0.0';
 
   async init(): Promise<void> {
-    return Promise.resolve();
+    const { eventRuntime } = await import('../runtime/EventRuntime');
+    const { SupabaseEventStore } = await import('../runtime/adapters/SupabaseEventStore');
+    const { setWorkflowStateStore } = await import('../runtime/WorkflowStateStore');
+    const { SupabaseStateStore } = await import('../runtime/adapters/SupabaseStateStore');
+    
+    // Inject Event Store
+    const eventStore = new SupabaseEventStore();
+    eventRuntime.setStoreAdapter(eventStore);
+    
+    // Inject State Store
+    const stateStore = new SupabaseStateStore();
+    setWorkflowStateStore(stateStore);
+    
+    // Enable Realtime bindings (Stage 1.3)
+    eventStore.enableRealtimeBroadcast();
   }
 
   async health(): Promise<ServiceHealth> {

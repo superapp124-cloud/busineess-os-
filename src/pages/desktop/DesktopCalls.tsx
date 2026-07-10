@@ -41,15 +41,19 @@ function generateMeetingId(): string {
 
 /* ─── Session types/goals ─────────────────────────────────────────── */
 
-const GOALS = [
-  { id: 'sales', label: 'Meet Customer', desc: 'Connect with customers, discuss needs and close deals', icon: Briefcase, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-blue-500/50', tag: 'Sales & CRM', accent: 'text-blue-400 bg-blue-500/10' },
-  { id: 'recruitment', label: 'Hire Someone', desc: 'Conduct interviews and evaluate candidates', icon: Users, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-purple-500/50', tag: 'HR & Recruitment', accent: 'text-purple-400 bg-purple-500/10' },
-  { id: 'presentation', label: 'Present Proposal', desc: 'Present ideas, proposals and get approvals', icon: Presentation, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-orange-500/50', tag: 'Business', accent: 'text-orange-400 bg-orange-500/10' },
-  { id: 'education', label: 'Teach Class', desc: 'Deliver engaging classes and track progress', icon: GraduationCap, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-rose-500/50', tag: 'Education', accent: 'text-rose-400 bg-rose-500/10' },
-  { id: 'clinic', label: 'Consult Patient', desc: 'Provide consultations and patient care remotely', icon: Stethoscope, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-emerald-500/50', tag: 'Healthcare', accent: 'text-emerald-400 bg-emerald-500/10' },
-  { id: 'internal', label: 'Internal Meeting', desc: 'Collaborate with your team and share updates', icon: Users, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-indigo-500/50', tag: 'Teamwork', accent: 'text-indigo-400 bg-indigo-500/10' },
-  { id: 'audit', label: 'Internal Audit', desc: 'Review processes, check compliance and documents', icon: Shield, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-slate-500/50', tag: 'Compliance', accent: 'text-slate-400 bg-slate-500/10' },
-  { id: 'quick', label: 'Quick Call', desc: 'Start an instant voice or video conversation', icon: Phone, bg: 'bg-[#121421]/80 backdrop-blur-md hover:bg-[#1a1d2e]/80 shadow-md', border: 'border-white/[0.05] hover:border-violet-500/50', tag: 'Personal', accent: 'text-violet-400 bg-violet-500/10' },
+export const IconMap: Record<string, React.FC<any>> = {
+  Users, CalendarClock, Presentation, GraduationCap, Stethoscope, Shield, Phone, Sparkles, Briefcase
+};
+
+const DEFAULT_GOALS = [
+  { id: 'sales', label: 'Meet Customer', desc: 'Connect with customers, discuss needs and close deals.', iconName: 'Users', bg: 'bg-gradient-to-br from-[#7C2BBE] to-[#450C85]', border: 'border-white/10', tag: 'Sales & CRM', accent: 'text-white bg-white/20' },
+  { id: 'recruitment', label: 'Hire Someone', desc: 'Conduct interviews and evaluate potential candidates.', iconName: 'CalendarClock', bg: 'bg-gradient-to-br from-[#129B55] to-[#046132]', border: 'border-white/10', tag: 'HR & Recruitment', accent: 'text-white bg-white/20' },
+  { id: 'presentation', label: 'Present Proposal', desc: 'Present ideas, proposals and get feedback.', iconName: 'Presentation', bg: 'bg-gradient-to-br from-[#D97904] to-[#995100]', border: 'border-white/10', tag: 'Business', accent: 'text-white bg-white/20' },
+  { id: 'education', label: 'Teach Class', desc: 'Deliver engaging classes and share knowledge.', iconName: 'GraduationCap', bg: 'bg-gradient-to-br from-[#0B71C6] to-[#033F76]', border: 'border-white/10', tag: 'Education', accent: 'text-white bg-white/20' },
+  { id: 'clinic', label: 'Consult Patient', desc: 'Provide consultations and patient care online.', iconName: 'Stethoscope', bg: 'bg-gradient-to-br from-[#E22748] to-[#910A22]', border: 'border-white/10', tag: 'Healthcare', accent: 'text-white bg-white/20' },
+  { id: 'internal', label: 'Internal Meeting', desc: 'Collaborate with your team and align on goals.', iconName: 'Users', bg: 'bg-gradient-to-br from-[#0B969E] to-[#04595E]', border: 'border-white/10', tag: 'Teamwork', accent: 'text-white bg-white/20' },
+  { id: 'audit', label: 'Internal Audit', desc: 'Review processes, check compliance and manage risks.', iconName: 'Shield', bg: 'bg-gradient-to-br from-[#681EBF] to-[#390A72]', border: 'border-white/10', tag: 'Compliance', accent: 'text-white bg-white/20' },
+  { id: 'quick', label: 'Quick Call', desc: 'Start an instant voice or video conversation.', iconName: 'Phone', bg: 'bg-gradient-to-br from-[#402BBE] to-[#1F1070]', border: 'border-white/10', tag: 'Personal', accent: 'text-white bg-white/20' },
 ];
 
 
@@ -176,6 +180,43 @@ const DesktopCalls: React.FC = () => {
   const { themeMode } = useAppearanceStore();
   const isDark = themeMode === 'dark';
   const [callLogs, setCallLogs] = useState<CallLog[]>([]);
+  const [logPage, setLogPage] = useState(1);
+  const LOGS_PER_PAGE = 8;
+  const totalLogPages = Math.ceil(callLogs.length / LOGS_PER_PAGE);
+  const paginatedLogs = callLogs.slice((logPage - 1) * LOGS_PER_PAGE, logPage * LOGS_PER_PAGE);
+
+  const [customGoals, setCustomGoals] = useState(() => {
+    try {
+      const saved = localStorage.getItem('chatr_custom_goals');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return DEFAULT_GOALS;
+  });
+  const [showAddGoalModal, setShowAddGoalModal] = useState(false);
+  const [newGoal, setNewGoal] = useState({ label: '', desc: '', tag: '', bg: 'bg-gradient-to-br from-[#402BBE] to-[#1F1070]', iconName: 'Sparkles' });
+
+  const handleSaveGoal = () => {
+    if (!newGoal.label || !newGoal.desc) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    const goal = {
+      id: 'custom-' + Date.now(),
+      label: newGoal.label,
+      desc: newGoal.desc,
+      iconName: newGoal.iconName,
+      bg: newGoal.bg,
+      border: 'border-white/10',
+      tag: newGoal.tag || 'Custom',
+      accent: 'text-white bg-white/20'
+    };
+    const updated = [...customGoals, goal];
+    setCustomGoals(updated);
+    localStorage.setItem('chatr_custom_goals', JSON.stringify(updated));
+    setShowAddGoalModal(false);
+    setNewGoal({ label: '', desc: '', tag: '', bg: 'bg-gradient-to-br from-[#402BBE] to-[#1F1070]', iconName: 'Sparkles' });
+    toast.success('Custom goal added!');
+  };
 
   const {
     callState, activeRoomId, activeCallId, localStream, remoteStreams, currentUserName, currentUserId,
@@ -269,7 +310,7 @@ const DesktopCalls: React.FC = () => {
     });
 
     if (result.ok) {
-      toast.success('Summary saved to Documents\\CHATR Workspace\\AI Summaries');
+      toast.success('Summary saved to Documents\\CHATR Workspace\\ChatrAI Summaries');
       return result.path || null;
     }
 
@@ -358,7 +399,7 @@ const DesktopCalls: React.FC = () => {
     return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   };
 
-  const displayName = currentUserName?.split(' ')[0]?.replace(/\?/g, '') || 'there';
+  const displayName = currentUserName?.replace(/\?/g, '') || 'there';
 
   useEffect(() => {
     if (currentUserId) loadCallLogs(currentUserId);
@@ -443,27 +484,49 @@ const DesktopCalls: React.FC = () => {
 
       {/* ── Idle: Left sidebar ─────────────────────────────────── */}
       {callState === 'idle' && (
-        <div className={cn('w-[240px] shrink-0 flex flex-col border-r overflow-hidden', isDark ? 'bg-[#07080D] border-white/5' : 'bg-white border-zinc-200/50')}>
+        <div className={cn('w-[240px] shrink-0 flex flex-col border-r overflow-hidden', isDark ? 'bg-[#0B0E14] border-white/5' : 'bg-white border-zinc-200/50')}>
           <div className={cn('p-4 border-b', isDark ? 'border-white/5' : 'border-zinc-100')}>
-            <h2 className={cn('text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-1.5', isDark ? 'text-white/50' : 'text-zinc-500')}>
-              <Sparkles className="w-3.5 h-3.5 text-purple-500" /> Start a Session
+            <div className="flex items-center gap-2 mb-6 mt-1">
+              <div className="w-7 h-7 rounded-[8px] bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/40 transform -rotate-[10deg]">
+                <div className="w-3.5 h-3.5 bg-white rounded-sm rotate-[10deg] flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 bg-indigo-600 rounded-sm" />
+                </div>
+              </div>
+              <span className={cn("text-[15px] font-bold tracking-tight", isDark ? 'text-white' : 'text-zinc-900')}>SmartSession</span>
+            </div>
+            <h2 className={cn('text-[9px] uppercase tracking-widest font-bold mb-3 flex items-center gap-1.5', isDark ? 'text-white/50' : 'text-zinc-500')}>
+              <Zap className="w-3.5 h-3.5 text-yellow-500" /> Quick Actions
             </h2>
-            <div className="grid grid-cols-2 gap-2">
-              {GOALS.slice(0, 6).map(g => (
-                <button
-                  key={g.id}
-                  onClick={() => setSessionGoal(prev => prev === g.id ? null : g.id)}
-                  className={cn(
-                    'flex flex-col items-center justify-center py-3 px-1 rounded-xl border text-center gap-1.5 transition-all duration-200',
-                    sessionGoal === g.id
-                      ? (isDark ? 'bg-white/10 border-white/20 shadow-sm' : 'bg-purple-100 border-purple-200 shadow-sm')
-                      : (isDark ? 'bg-[#13141C] border-transparent hover:bg-white/5' : 'bg-zinc-100 border-transparent hover:bg-zinc-200')
-                  )}
-                >
-                  <g.icon className="w-4 h-4 text-purple-400" />
-                  <span className={cn('text-[9px] font-medium leading-tight', isDark ? 'text-white/80' : 'text-zinc-700')}>{g.label}</span>
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-1.5 mt-2">
+              {customGoals.map((g: any) => {
+                const Icon = IconMap[g.iconName] || Sparkles;
+                return (
+                  <button
+                    key={g.id}
+                    onClick={() => setSessionGoal(prev => prev === g.id ? null : g.id)}
+                    className={cn(
+                      'flex items-center py-1.5 px-2 rounded-md border text-left gap-1.5 transition-all duration-200',
+                      sessionGoal === g.id
+                        ? 'ring-1 ring-white/30 scale-[1.02]' : 'hover:scale-[1.02] border-transparent',
+                      isDark ? g.bg : 'bg-zinc-100'
+                    )}
+                  >
+                    <div className={cn("w-5 h-5 rounded flex items-center justify-center shrink-0 bg-white/20")}>
+                      <Icon className={cn("w-2.5 h-2.5", isDark ? 'text-white' : 'text-zinc-700')} />
+                    </div>
+                    <span className={cn('text-[8px] font-medium leading-tight line-clamp-1', isDark ? 'text-white' : 'text-zinc-800')}>{g.label}</span>
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setShowAddGoalModal(true)}
+                className={cn('flex items-center py-1.5 px-2 rounded-md border border-dashed text-left gap-1.5 transition-all duration-200 hover:scale-[1.02]', isDark ? 'border-white/20 hover:bg-white/5 text-white/60' : 'border-zinc-300 hover:bg-zinc-100 text-zinc-500')}
+              >
+                <div className={cn("w-5 h-5 rounded flex items-center justify-center shrink-0 bg-transparent")}>
+                  <Plus className="w-3 h-3" />
+                </div>
+                <span className="text-[8px] font-medium leading-tight line-clamp-1">Add Goal</span>
+              </button>
             </div>
           </div>
 
@@ -517,30 +580,55 @@ const DesktopCalls: React.FC = () => {
           <div className="flex items-center justify-between px-4 pt-3 pb-2 shrink-0">
             <h3 className={cn('text-[10px] uppercase tracking-widest font-bold', isDark ? 'text-white/50' : 'text-zinc-500')}>Recent Sessions</h3>
           </div>
-          <ScrollArea className="flex-1">
-            <div className="px-2 pb-4 space-y-0.5">
-              {callLogs.map(log => (
+          <div className="flex-1 flex flex-col min-h-0">
+            <ScrollArea className="flex-1">
+              <div className="px-2 pb-2 space-y-0.5">
+                {paginatedLogs.length === 0 ? (
+                  <div className={cn('px-4 py-3 text-[9px] text-center', isDark ? 'text-white/30' : 'text-zinc-400')}>
+                    No recent sessions
+                  </div>
+                ) : paginatedLogs.map(log => (
+                  <button
+                    key={log.id}
+                    onClick={() => { setSessionGoal(log.call_type || 'quick'); setDialInput(log.other_user?.username || ''); }}
+                    className={cn('w-full flex items-center gap-2 p-1.5 rounded-md transition-colors text-left', isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-zinc-100')}
+                  >
+                    <Avatar className={cn('w-6 h-6 border shrink-0', isDark ? 'border-white/5' : 'border-zinc-200')}>
+                      <AvatarImage src={log.other_user?.avatar_url} />
+                      <AvatarFallback className={cn('text-[9px]', isDark ? 'bg-zinc-800 text-white/90' : 'bg-zinc-200 text-zinc-700')}>{log.other_user?.full_name?.[0] || '?'}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn('text-[10px] font-bold truncate leading-tight', isDark ? 'text-white/90' : 'text-zinc-900')}>{log.other_user?.full_name || log.other_user?.username || 'Unknown'}</p>
+                      <p className={cn('text-[8px] truncate', isDark ? 'text-white/40' : 'text-zinc-500')}>{log.call_type || 'Session'}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className={cn('text-[7px]', isDark ? 'text-white/30' : 'text-zinc-400')}>{new Date(log.started_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      {log.call_type === 'video' ? <Video className="w-2.5 h-2.5 text-purple-500" /> : <Phone className="w-2.5 h-2.5 text-blue-500" />}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+            {totalLogPages > 1 && (
+              <div className={cn("px-4 py-2 flex items-center justify-between border-t shrink-0", isDark ? 'border-white/5 bg-[#0B0E14]' : 'border-zinc-100 bg-white')}>
                 <button
-                  key={log.id}
-                  onClick={() => { setSessionGoal(log.call_type || 'quick'); setDialInput(log.other_user?.username || ''); }}
-                  className={cn('w-full flex items-center gap-2 p-2 rounded-lg transition-colors text-left', isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-zinc-100')}
+                  onClick={() => setLogPage(p => Math.max(1, p - 1))}
+                  disabled={logPage === 1}
+                  className="px-2 py-1 text-[9px] font-bold rounded-md border disabled:opacity-30 transition-all flex items-center gap-1 hover:bg-white/5"
                 >
-                  <Avatar className={cn('w-7 h-7 border shrink-0', isDark ? 'border-white/5' : 'border-zinc-200')}>
-                    <AvatarImage src={log.other_user?.avatar_url} />
-                    <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-zinc-800 text-white/90' : 'bg-zinc-200 text-zinc-700')}>{log.other_user?.full_name?.[0] || '?'}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn('text-[11px] font-bold truncate leading-tight', isDark ? 'text-white/90' : 'text-zinc-900')}>{log.other_user?.full_name || log.other_user?.username || 'Unknown'}</p>
-                    <p className={cn('text-[9px] truncate', isDark ? 'text-white/40' : 'text-zinc-500')}>{log.call_type || 'Session'}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className={cn('text-[8px]', isDark ? 'text-white/30' : 'text-zinc-400')}>{new Date(log.started_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {log.call_type === 'video' ? <Video className="w-2.5 h-2.5 text-purple-500" /> : <Phone className="w-2.5 h-2.5 text-blue-500" />}
-                  </div>
+                  Prev
                 </button>
-              ))}
-            </div>
-          </ScrollArea>
+                <span className="text-[9px] font-medium opacity-50">{logPage} / {totalLogPages}</span>
+                <button
+                  onClick={() => setLogPage(p => Math.min(totalLogPages, p + 1))}
+                  disabled={logPage === totalLogPages}
+                  className="px-2 py-1 text-[9px] font-bold rounded-md border disabled:opacity-30 transition-all flex items-center gap-1 hover:bg-white/5"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -553,91 +641,101 @@ const DesktopCalls: React.FC = () => {
             <div className="p-8 max-w-[1200px] mx-auto space-y-6">
 
               {/* Hero */}
-              <div className={cn('relative overflow-hidden rounded-[24px] border p-8 flex flex-col justify-between min-h-[200px]', isDark ? 'bg-[#121422] border-white/5' : 'bg-white border-zinc-200 shadow-sm')}>
-                <div className="relative z-10 max-w-lg">
-                  <h1 className={cn('text-3xl font-bold mb-1', isDark ? 'text-white' : 'text-zinc-900')}>{greeting()}, {displayName} 👋</h1>
-                  <p className={cn('text-sm mb-6', isDark ? 'text-white/60' : 'text-zinc-500')}>Ready to start your next conversation?</p>
+              <div className={cn('relative overflow-hidden rounded-2xl flex flex-col md:flex-row items-center justify-between min-h-[160px] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.2)]', isDark ? 'bg-gradient-to-r from-[#2F1D8A] via-[#521996] to-[#8C1381] border-none' : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 border-none')}>
+                <div className="relative z-10 max-w-lg mb-6 md:mb-0">
+                  <h1 className="text-[22px] font-bold mb-1.5 text-white flex items-center gap-2">Good morning, {displayName}! <span className="text-[22px]">👋</span></h1>
+                  <p className="text-[11px] mb-6 text-white/90">Here's what's happening with your sessions today.</p>
 
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2.5">
                     <button
                       onClick={() => setShowInstantMeeting(!showInstantMeeting)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold shadow-lg shadow-purple-900/30 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-purple-800 text-[10px] font-bold shadow-lg transition-all hover:scale-105"
                     >
-                      <VideoIcon className="w-4 h-4" /> New Meeting
+                      <Calendar className="w-3.5 h-3.5" /> Dashboard
                     </button>
                     <button
                       onClick={() => setShowJoinMeeting(!showJoinMeeting)}
-                      className={cn('flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border transition-all', isDark ? 'bg-white/[0.06] border-white/[0.1] text-white hover:bg-white/[0.1]' : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200')}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-bold border border-white/20 text-white hover:bg-white/10 transition-all bg-white/5 backdrop-blur-sm"
                     >
-                      <Hash className="w-4 h-4" /> Join Meeting
+                      <BarChart3 className="w-3.5 h-3.5" /> Analytics
                     </button>
-                    <button
-                      onClick={() => toast.info('Calendar scheduling — coming soon!')}
-                      className={cn('flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border transition-all', isDark ? 'bg-white/[0.04] border-white/[0.07] text-white/70 hover:bg-white/[0.08]' : 'bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-50')}
-                    >
-                      <Calendar className="w-4 h-4" /> Schedule
-                    </button>
+                  </div>
+                  
+                  {/* Instant Meeting ID card */}
+                  {showInstantMeeting && (
+                    <div className="mt-4 p-3 rounded-xl bg-black/30 border border-white/[0.08] max-w-sm animate-in slide-in-from-top-2 duration-200 relative z-10">
+                      <div className="text-[9px] text-white/40 uppercase tracking-widest mb-1.5 font-bold">Your Instant Meeting</div>
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="font-mono text-sm font-bold text-white/90">{instantMeetingId}</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setSessionGoal('quick')} className="flex-1 py-1.5 rounded-md bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition-all flex items-center justify-center gap-1">
+                          <VideoIcon className="w-3 h-3" /> Start Meeting
+                        </button>
+                        <button onClick={() => { navigator.clipboard.writeText(instantMeetingId); toast.success('Meeting ID copied!'); }} className="px-3 py-1.5 rounded-md bg-white/[0.07] hover:bg-white/[0.12] text-white/60 text-[10px] transition-all">
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Join by ID */}
+                  {showJoinMeeting && (
+                    <div className="mt-4 p-3 rounded-xl bg-black/30 border border-white/[0.08] max-w-sm animate-in slide-in-from-top-2 duration-200 relative z-10">
+                      <div className="text-[9px] text-white/40 uppercase tracking-widest mb-1.5 font-bold">Join a Meeting</div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={joinId}
+                          onChange={e => setJoinId(e.target.value)}
+                          placeholder="Meeting ID or link..."
+                          className="flex-1 bg-black/40 border border-white/[0.1] rounded-md px-2.5 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50"
+                        />
+                        <button
+                          onClick={() => { if (joinId.trim()) { setDialInput(joinId.trim()); startCall(joinId.trim(), true); } }}
+                          className="px-3 py-1.5 rounded-md bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition-all"
+                        >
+                          Join
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative z-10 hidden md:flex items-center justify-center mr-12">
+                  <div className="w-[120px] h-[110px] rounded-[24px] bg-white/20 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-center border border-white/30 rotate-[10deg] hover:rotate-0 transition-all duration-500 relative">
+                    <Calendar className="w-14 h-14 text-white drop-shadow-lg" />
+                    <div className="absolute -bottom-3 -right-3 w-[42px] h-[42px] bg-[#9333EA] rounded-full border-[5px] border-[#6D1B9E] flex items-center justify-center shadow-lg">
+                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
+                    </div>
                   </div>
                 </div>
 
-                {/* Instant Meeting ID card */}
-                {showInstantMeeting && (
-                  <div className="mt-5 p-4 rounded-xl bg-black/30 border border-white/[0.08] max-w-sm animate-in slide-in-from-top-2 duration-200 relative z-10">
-                    <div className="text-[10px] text-white/40 uppercase tracking-widest mb-2 font-bold">Your Instant Meeting</div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="font-mono text-lg font-bold text-white/90">{instantMeetingId}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => setSessionGoal('quick')} className="flex-1 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5">
-                        <VideoIcon className="w-3.5 h-3.5" /> Start Meeting
-                      </button>
-                      <button onClick={() => { navigator.clipboard.writeText(instantMeetingId); toast.success('Meeting ID copied!'); }} className="px-3 py-2 rounded-lg bg-white/[0.07] hover:bg-white/[0.12] text-white/60 text-xs transition-all">
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Join by ID */}
-                {showJoinMeeting && (
-                  <div className="mt-5 p-4 rounded-xl bg-black/30 border border-white/[0.08] max-w-sm animate-in slide-in-from-top-2 duration-200 relative z-10">
-                    <div className="text-[10px] text-white/40 uppercase tracking-widest mb-2 font-bold">Join a Meeting</div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={joinId}
-                        onChange={e => setJoinId(e.target.value)}
-                        placeholder="Meeting ID or link..."
-                        className="flex-1 bg-black/40 border border-white/[0.1] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50"
-                      />
-                      <button
-                        onClick={() => { if (joinId.trim()) { setDialInput(joinId.trim()); startCall(joinId.trim(), true); } }}
-                        className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all"
-                      >
-                        Join
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {isDark && <div className="absolute -right-20 -bottom-20 w-[400px] h-[400px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none" />}
+                <div className="absolute top-0 right-0 w-[600px] h-full overflow-hidden opacity-30 pointer-events-none">
+                  <svg viewBox="0 0 800 400" className="absolute right-0 w-full h-full text-white" preserveAspectRatio="none">
+                    <path d="M0 400 C 200 400 200 0 400 0 C 600 0 600 400 800 400 L 800 0 L 0 0 Z" fill="currentColor" />
+                  </svg>
+                  <div className="absolute top-[20%] left-[20%] w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_white]"></div>
+                  <div className="absolute top-[40%] right-[30%] w-2 h-2 bg-white rounded-full shadow-[0_0_15px_white]"></div>
+                  <div className="absolute bottom-[30%] left-[40%] w-1 h-1 bg-white rounded-full shadow-[0_0_5px_white]"></div>
+                </div>
               </div>
 
               {/* Stats row — computed from real call history */}
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { label: "Today's Meetings", val: String(realStats.todayMeetings), icon: VideoIcon, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                  { label: 'Upcoming', val: String(realStats.upcoming), icon: CalendarClock, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                  { label: 'Hours Today', val: realStats.hoursToday, icon: Clock, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                  { label: 'Total Contacts', val: String(realStats.participants), icon: Users, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+                  { label: "Today's Meetings", val: String(realStats.todayMeetings), icon: VideoIcon, color: 'text-purple-400', bg: 'bg-[#5B21B6]/80' },
+                  { label: 'Upcoming', val: String(realStats.upcoming), icon: CalendarClock, color: 'text-blue-400', bg: 'bg-[#1E40AF]/80' },
+                  { label: 'Hours Today', val: realStats.hoursToday, icon: Clock, color: 'text-emerald-400', bg: 'bg-[#065F46]/80' },
+                  { label: 'Total Contacts', val: String(realStats.participants), icon: Users, color: 'text-amber-400', bg: 'bg-[#92400E]/80' },
                 ].map((s, i) => (
-                  <div key={i} className={cn('rounded-2xl border p-4 flex items-center gap-3', isDark ? 'bg-[#121422] border-white/5' : 'bg-white border-zinc-200 shadow-sm')}>
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', s.bg)}>
-                      <s.icon className={cn('w-5 h-5', s.color)} />
+                  <div key={i} className={cn('rounded-xl border p-3 flex items-center gap-3 shadow-md', isDark ? 'bg-[#111623] border-white/5' : 'bg-white border-zinc-200')}>
+                    <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', s.bg)}>
+                      <s.icon className={cn('w-4 h-4', 'text-white')} />
                     </div>
                     <div>
-                      <div className={cn('text-xl font-bold', isDark ? 'text-white' : 'text-zinc-900')}>{s.val}</div>
-                      <div className={cn('text-[10px]', isDark ? 'text-white/40' : 'text-zinc-500')}>{s.label}</div>
+                      <div className={cn('text-[16px] font-bold leading-tight', isDark ? 'text-white' : 'text-zinc-900')}>{s.val}</div>
+                      <div className={cn('text-[9px]', isDark ? 'text-white/60' : 'text-zinc-500')}>{s.label}</div>
                     </div>
                   </div>
                 ))}
@@ -647,28 +745,51 @@ const DesktopCalls: React.FC = () => {
               <div>
                 <h3 className={cn('text-sm font-bold mb-3', isDark ? 'text-white' : 'text-zinc-800')}>Popular Goals</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {GOALS.map(g => (
-                    <button
-                      key={g.id}
-                      onClick={() => setSessionGoal(prev => prev === g.id ? null : g.id)}
-                      className={cn(
-                        'group relative text-left p-4 rounded-[16px] border transition-all duration-300 flex flex-col justify-between h-[120px] shadow-lg',
-                        g.bg, g.border,
-                        sessionGoal === g.id ? 'ring-4 ring-white/40 scale-[1.02]' : 'hover:scale-[1.02] hover:shadow-xl'
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", (g as any).accent)}>
-                          <g.icon className="w-4 h-4" />
+                  {customGoals.map((g: any) => {
+                    const Icon = IconMap[g.iconName] || Sparkles;
+                    return (
+                      <button
+                        key={g.id}
+                        onClick={() => setSessionGoal(prev => prev === g.id ? null : g.id)}
+                        className={cn(
+                          'group relative text-left p-3.5 rounded-[12px] border transition-all duration-300 flex flex-col justify-between h-[105px] shadow-lg',
+                          isDark ? g.bg : 'bg-white', isDark ? g.border : 'border-zinc-200',
+                          sessionGoal === g.id ? 'ring-2 ring-white/40 scale-[1.02]' : 'hover:scale-[1.02] hover:shadow-xl'
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className={cn("w-6 h-6 rounded-md flex items-center justify-center bg-white/20", isDark ? '' : 'bg-zinc-100')}>
+                            <Icon className={cn("w-3.5 h-3.5", isDark ? 'text-white' : 'text-zinc-600')} />
+                          </div>
+                          <span className={cn("text-[8px] font-semibold opacity-90 px-1.5 py-0.5 rounded text-white uppercase tracking-wider bg-white/20 backdrop-blur-sm")}>{g.tag}</span>
                         </div>
-                        <span className="text-[10px] font-semibold opacity-90 px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.05] text-white/70 uppercase tracking-wider">{g.tag}</span>
+                        <div>
+                          <h4 className={cn("font-bold text-[11px]", isDark ? 'text-white' : 'text-zinc-900')}>{g.label}</h4>
+                          <p className={cn("text-[9px] line-clamp-2 mt-0.5 leading-snug", isDark ? 'text-white/80' : 'text-zinc-500')}>{g.desc}</p>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-white absolute bottom-3 right-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                      </button>
+                    );
+                  })}
+                  
+                  {/* Add New Goal Card */}
+                  <button 
+                    onClick={() => setShowAddGoalModal(true)} 
+                    className={cn(
+                      'group relative text-left p-3.5 rounded-[12px] border-2 border-dashed transition-all duration-300 flex flex-col justify-between h-[105px]',
+                      isDark ? 'border-white/20 hover:border-white/40 hover:bg-white/5' : 'border-zinc-300 hover:border-zinc-400 hover:bg-zinc-50'
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="w-6 h-6 rounded-md flex items-center justify-center bg-zinc-500/10">
+                        <Plus className={cn("w-3.5 h-3.5", isDark ? 'text-white/60' : 'text-zinc-500')} />
                       </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-white">{g.label}</h4>
-                        <p className="text-[10px] line-clamp-1 mt-0.5 text-white/50">{g.desc}</p>
-                      </div>
-                    </button>
-                  ))}
+                    </div>
+                    <div>
+                      <h4 className={cn("font-bold text-[11px]", isDark ? 'text-white/60' : 'text-zinc-500')}>Add New Goal</h4>
+                      <p className={cn("text-[9px] line-clamp-2 mt-0.5 leading-snug", isDark ? 'text-white/40' : 'text-zinc-400')}>Create custom action.</p>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -969,7 +1090,7 @@ const DesktopCalls: React.FC = () => {
               {summaryLoading ? (
                 <div className="flex flex-col items-center justify-center py-10 space-y-4">
                   <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-                  <p className="text-sm text-white/60">Chatr AI is analyzing the transcript...</p>
+                  <p className="text-sm text-white/60">ChatrAI is analyzing the transcript...</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -987,6 +1108,94 @@ const DesktopCalls: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Add Custom Goal Modal */}
+      {showAddGoalModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 animate-in fade-in duration-300">
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+              <h3 className="font-semibold text-white/90 flex items-center gap-2">
+                <Plus className="w-4 h-4 text-purple-400" /> Add Custom Goal
+              </h3>
+              <button onClick={() => setShowAddGoalModal(false)} className="text-white/40 hover:text-white/80 p-1">
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Label</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Sales Pitch"
+                  value={newGoal.label}
+                  onChange={(e) => setNewGoal({ ...newGoal, label: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Description</label>
+                <textarea
+                  placeholder="What is this goal for?"
+                  value={newGoal.desc}
+                  onChange={(e) => setNewGoal({ ...newGoal, desc: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500 h-20 resize-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Category / Tag</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Sales"
+                    value={newGoal.tag}
+                    onChange={(e) => setNewGoal({ ...newGoal, tag: e.target.value })}
+                    className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Icon</label>
+                  <select
+                    value={newGoal.iconName}
+                    onChange={(e) => setNewGoal({ ...newGoal, iconName: e.target.value })}
+                    className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                  >
+                    {Object.keys(IconMap).map((k) => (
+                      <option key={k} value={k}>{k}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Color Theme</label>
+                <div className="flex gap-2">
+                  {[
+                    'bg-gradient-to-br from-[#7C2BBE] to-[#450C85]', // Purple
+                    'bg-gradient-to-br from-[#129B55] to-[#046132]', // Green
+                    'bg-gradient-to-br from-[#D97904] to-[#995100]', // Orange
+                    'bg-gradient-to-br from-[#0B71C6] to-[#033F76]', // Blue
+                    'bg-gradient-to-br from-[#E22748] to-[#910A22]', // Red
+                  ].map((c, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setNewGoal({ ...newGoal, bg: c })}
+                      className={cn("w-8 h-8 rounded-full border-2", c, newGoal.bg === c ? "border-white" : "border-transparent")}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-white/10 bg-white/[0.02] flex justify-end gap-3">
+              <button onClick={() => setShowAddGoalModal(false)} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleSaveGoal} className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium transition-colors">
+                Save Goal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Meeting Copilot Panel (right side) ── */}
       <MeetingCopilotPanel
         callState={callState}

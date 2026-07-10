@@ -56,11 +56,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
             </div>
             <div className="space-y-0.5">
               <button onClick={() => {
-                const aiRoom = rooms.find(r => r.name === 'AI Assistant');
+                const aiRoom = rooms.find(r => r.name === 'CHATR AI');
                 if (aiRoom) setSelectedId(aiRoom.id);
               }} className={cn(
                 'w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition-colors group',
-                selectedRoom?.name === 'AI Assistant' ? 'bg-violet-600/20 text-violet-300' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
+                selectedRoom?.name === 'CHATR AI' ? 'bg-violet-600/20 text-violet-300' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
               )}>
                 <div className="flex items-center gap-2 overflow-hidden">
                   <BrainCircuit className="w-3.5 h-3.5 shrink-0 text-violet-400" />

@@ -1,3 +1,4 @@
+import { eventBus } from '@/core/runtime/EventBus';
 import { IEvent, IService } from '../Shared/Types';
 import { Logger } from './Logger';
 
@@ -7,51 +8,30 @@ class EventBusService implements IService {
   name = 'EventBus';
   dependencies: string[] = [];
 
-  private handlers: Map<string, Set<EventHandler>> = new Map();
-
   async initialize(): Promise<void> {
     Logger.info('[EventBus] Initialized.');
   }
 
   subscribe(eventType: string, handler: EventHandler): () => void {
-    if (!this.handlers.has(eventType)) {
-      this.handlers.set(eventType, new Set());
-    }
-    this.handlers.get(eventType)!.add(handler);
-    
-    return () => {
-      this.handlers.get(eventType)?.delete(handler);
-    };
+    return eventBus.on(eventType, (evt) => {
+      handler({
+        id: evt.id,
+        type: evt.type,
+        payload: evt.payload,
+        timestamp: evt.timestamp,
+        priority: (evt.priority === 'background' ? 'low' : evt.priority) as any,
+        persistent: evt.persist
+      });
+    });
   }
 
   async publish(type: string, payload: any, options: { priority?: 'low'|'normal'|'high'|'critical', persistent?: boolean } = {}): Promise<void> {
-    const event: IEvent = {
-      id: crypto.randomUUID(),
-      type,
-      payload,
-      timestamp: Date.now(),
-      priority: options.priority || 'normal',
-      persistent: options.persistent || false
-    };
-
-    Logger.debug(`[EventBus] Publishing ${type}`, { id: event.id, priority: event.priority });
-
-    // In a full implementation, persistent events would be routed to Dexie offline queue here before processing
-
-    const handlers = this.handlers.get(type);
-    if (!handlers || handlers.size === 0) return;
-
-    const executionPromises = Array.from(handlers).map(async (handler) => {
-      try {
-        await handler(event);
-      } catch (err) {
-        Logger.error(`[EventBus] Error in handler for ${type}`, err);
-        // Implement retry logic here based on event priority/persistence
-      }
-    });
-
-    // Fire and forget or await depending on needs. We await to ensure we catch rejections.
-    await Promise.allSettled(executionPromises);
+    Logger.debug(`[EventBus] Publishing ${type}`, { priority: options.priority });
+    
+    let priority: any = options.priority;
+    if (priority === 'low') priority = 'background';
+    
+    eventBus.publish(type, payload, { priority });
   }
 }
 

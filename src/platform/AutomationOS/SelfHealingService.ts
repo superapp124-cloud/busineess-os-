@@ -1,4 +1,4 @@
-﻿import { EventBus } from './EventBus';
+import { EventBus } from './EventBus';
 import { CommandBus } from './CommandBus';
 import { ActiveAIProvider } from './AIProvider';
 import { OSEvent } from './Types';

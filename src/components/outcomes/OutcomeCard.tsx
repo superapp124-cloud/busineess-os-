@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Commitment } from '../../core/capabilities/types';
-import { commitmentRuntime } from '../../core/capabilities/CommitmentRuntime';
+import { commitmentRuntime } from '@/core/capabilities/CommitmentRuntime';
 import { playbookEngine } from '../../core/services/PlaybookEngine';
 import { capabilityRegistry } from '../../core/capabilities/CapabilityRegistry';
 import { Check, X, Clock, Loader2 } from 'lucide-react';
@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MissingFieldsCard } from './MissingFieldsCard';
 import { PreviewCard } from './PreviewCard';
 import { UniversalSearchResultsCard } from './UniversalSearchResultsCard';
+import { PolicyInterventionCard } from './PolicyInterventionCard';
 
 interface OutcomeCardProps {
   outcome: Commitment;
@@ -23,9 +24,7 @@ export const OutcomeCard: React.FC<OutcomeCardProps> = ({ outcome }) => {
   };
 
   const handleCancel = () => {
-    import('../../core/services/EventBus').then(({ eventBus }) => {
-      eventBus.publish('chatr:commitment-state-changed', { ...outcome, status: 'canceled' }, 'OutcomeCard');
-    });
+    eventBus.publish('chatr:commitment-state-changed', { ...outcome, status: 'canceled' }, 'OutcomeCard');
   };
 
   const handleMissingFieldSubmit = async (key: string, value: string) => {
@@ -66,6 +65,18 @@ export const OutcomeCard: React.FC<OutcomeCardProps> = ({ outcome }) => {
       </div>
       
       <AnimatePresence mode="popLayout">
+      {/* Policy & Security Interventions */}
+      {(outcome.status === 'approval_required' || outcome.status === 'policy_blocked' || outcome.status === 'permission_denied') && (
+        <motion.div
+          initial={{ opacity: 0, y: 10, scale: 0.95 }} 
+          animate={{ opacity: 1, y: 0, scale: 1 }} 
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="relative z-10"
+        >
+          <PolicyInterventionCard commitment={outcome} />
+        </motion.div>
+      )}
+
       {/* Stage 1: Detected */}
       {outcome.status === 'suggested' && (
         <motion.div 

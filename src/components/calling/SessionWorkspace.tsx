@@ -120,23 +120,23 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
           <div className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.1] flex items-center justify-center">
             <Bot className="w-4 h-4 text-emerald-400" />
           </div>
-          <h3 className="font-semibold text-white/90">Chatr AI Assistant</h3>
+          <h3 className="font-semibold text-white/90">ChatrAI Assistant</h3>
         </div>
         
         {isListening ? (
           isAiReady ? (
-            <div className="flex items-center gap-2 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full" title="Chatr AI is actively listening and transcribing">
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full" title="ChatrAI is actively listening and transcribing">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">Live Chatr AI</span>
+              <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">Live ChatrAI</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full" title="Local Chatr AI is downloading or starting up...">
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full" title="Local ChatrAI is downloading or starting up...">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Warming Up</span>
             </div>
           )
         ) : (
-          <div className="flex items-center gap-2 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full cursor-help" title={transcriptError || 'Local Chatr AI is offline'}>
+          <div className="flex items-center gap-2 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full cursor-help" title={transcriptError || 'Local ChatrAI is offline'}>
             <AlertCircle className="w-3 h-3 text-red-400" />
             <span className="text-[10px] uppercase tracking-wider text-red-400 font-bold">Offline</span>
           </div>
@@ -205,7 +205,7 @@ const SalesAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }:
       else throw new Error('empty');
     } catch {
       setSuggestedTopics([
-        '❌ AI generation failed. Check your local Ollama or cloud API key.'
+        '❌ ChatrAI generation failed. Check your local Ollama or cloud API key.'
       ]);
     } finally {
       setLoadingTopics(false);
@@ -273,7 +273,7 @@ const SalesAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }:
           {/* AI-Generated Suggested Topics */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">AI Suggested Topics</h4>
+              <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">ChatrAI Suggested Topics</h4>
               <button
                 onClick={generateTopics}
                 disabled={loadingTopics}
@@ -286,7 +286,7 @@ const SalesAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }:
             {loadingTopics && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
                 <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
-                <span className="text-xs text-purple-400">Chatr AI is generating topics...</span>
+                <span className="text-xs text-purple-400">ChatrAI is generating topics...</span>
               </div>
             )}
             <div className="space-y-2">
@@ -388,7 +388,7 @@ const RecruitmentAssistant = ({ remoteUserName, activeTab, setActiveTab, transcr
       else throw new Error('empty');
     } catch {
       setQuestions([
-        '❌ AI generation failed. Check your local Ollama or cloud API key.'
+        '❌ ChatrAI generation failed. Check your local Ollama or cloud API key.'
       ]);
     } finally {
       setLoadingQuestions(false);
@@ -475,7 +475,7 @@ const RecruitmentAssistant = ({ remoteUserName, activeTab, setActiveTab, transcr
           </div>
 
           <div className="flex items-center justify-between">
-            <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">AI Questions</h4>
+            <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">ChatrAI Questions</h4>
             <button
               onClick={generateInterviewQuestions}
               disabled={loadingQuestions}
@@ -489,7 +489,7 @@ const RecruitmentAssistant = ({ remoteUserName, activeTab, setActiveTab, transcr
           {loadingQuestions && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
               <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
-              <span className="text-xs text-purple-400">Chatr AI is generating interview questions...</span>
+              <span className="text-xs text-purple-400">ChatrAI is generating interview questions...</span>
             </div>
           )}
 
@@ -578,7 +578,7 @@ const ClinicAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }
       else throw new Error('empty');
     } catch {
       setNextSteps([
-        '❌ AI generation failed. Check your local Ollama or cloud API key.'
+        '❌ ChatrAI generation failed. Check your local Ollama or cloud API key.'
       ]);
     } finally {
       setLoadingSteps(false);
@@ -696,7 +696,7 @@ const ClinicAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }
       {activeTab === 3 && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center justify-between">
-            <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">AI Next Steps</h4>
+            <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">ChatrAI Next Steps</h4>
             <button
               onClick={generateNextSteps}
               disabled={loadingSteps}
@@ -709,7 +709,7 @@ const ClinicAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }
           {loadingSteps && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
               <Loader2 className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
-              <span className="text-xs text-emerald-400">Chatr AI is generating clinical next steps...</span>
+              <span className="text-xs text-emerald-400">ChatrAI is generating clinical next steps...</span>
             </div>
           )}
           <div className="space-y-2">
@@ -895,7 +895,7 @@ const GeneralAssistant = ({
           <div className="pt-2 space-y-2">
             <div className="flex items-center justify-between">
               <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-indigo-400" /> AI Questions
+                <Sparkles className="w-3 h-3 text-indigo-400" /> ChatrAI Questions
               </h4>
               <button
                 onClick={refreshQuestions}
@@ -909,7 +909,7 @@ const GeneralAssistant = ({
             {questionsLoading && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/10">
                 <Loader2 className="w-3 h-3 text-indigo-400 animate-spin" />
-                <span className="text-xs text-indigo-400">Chatr AI is generating questions…</span>
+                <span className="text-xs text-indigo-400">ChatrAI is generating questions…</span>
               </div>
             )}
             {suggestedQuestions.map((q, i) => (
@@ -936,7 +936,7 @@ const GeneralAssistant = ({
             <div className="text-sm text-white/80 p-2 leading-relaxed whitespace-pre-line">
               {transcript || (
                 downloadProgress !== null 
-                  ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>Downloading AI Transcription Model... {downloadProgress}%</span>
+                  ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>Warming up AI...</span>
                   : <span className="text-white/30 italic">No transcript recorded yet... Start speaking!</span>
               )}
             </div>

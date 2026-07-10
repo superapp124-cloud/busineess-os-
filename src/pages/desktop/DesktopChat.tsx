@@ -7,16 +7,24 @@ import { useService } from '@/platform/Infrastructure/PlatformContext';
 import { generate } from '@/services/ai';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 import { useCall } from '@/contexts/CallContext';
+import { AnimatePresence } from 'framer-motion';
 
 import { ChatHeader } from './chat/components/ChatHeader';
 import { ConversationSidebar } from './chat/components/ConversationSidebar';
-import { EmptyState } from './chat/components/EmptyState';
+import { DashboardCenterPanel } from './chat/components/DashboardCenter/DashboardCenterPanel';
+import { RightContextPanel } from './chat/components/RightContext/RightContextPanel';
 import { MessageViewport } from './chat/components/MessageViewport';
 import { MessageComposer } from './chat/components/MessageComposer';
 import { RightPane } from './chat/components/RightPane';
 import { ForwardModal } from './chat/components/ForwardModal';
 import { CreateNewModal } from './chat/components/CreateNewModal';
 import { UniversalSearch } from '@/components/desktop/UniversalSearch';
+import { NewChatSheet } from '@/components/chatr/NewChatSheet';
+import { AttachmentZone } from '@/components/chatr/AttachmentZone';
+import { attachmentEngine } from '@/core/services/AttachmentEngine';
+import { OutcomeCard } from '@/components/outcomes/OutcomeCard';
+import { useIntentObserver } from '@/hooks/useIntentObserver';
+import { useCHATROS } from '@/core/os/GlobalIntentProvider';
 
 import { useConversation } from './chat/hooks/useConversation';
 import { useCopilot } from './chat/hooks/useCopilot';
@@ -53,12 +61,24 @@ export default function DesktopChat() {
     handleCopilotSubmit 
   } = useCopilot();
 
-  // Local State
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showNewDmModal, setShowNewDmModal] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [rightPaneTab, setRightPaneTab] = useState<RightPaneTab>('copilot');
   const [messageInput, setMessageInput] = useState('');
+  const [attachments, setAttachments] = useState<any[]>([]);
+
+  const { scheduledToday, scheduledUpcoming } = useCHATROS();
+  const allTasks = [...scheduledToday, ...scheduledUpcoming].filter(t => t.type === 'task' || t.type === 'reminder');
+  const allEvents = [...scheduledToday, ...scheduledUpcoming].filter(t => t.type === 'meeting' || t.type === 'calendar_event');
+
+  // Intent Observer — detects commitments as user types
+  const intentObserver = useIntentObserver({ conversationId: selectedId, userId: currentUserId || undefined });
+
+  // Watch messageInput and feed to intent observer
+  useEffect(() => {
+    intentObserver.observe(messageInput, attachments);
+  }, [messageInput, attachments]);
   const [threadInput, setThreadInput] = useState('');
   
   const [isUploading, setIsUploading] = useState(false);
@@ -81,24 +101,57 @@ export default function DesktopChat() {
     });
   }, []);
 
-  // Handle Query Params
+  // Handle Query Params & Global Events
   useEffect(() => {
     const id = searchParams.get('id');
     if (id) {
       setSelectedId(id);
     }
-  }, [searchParams, setSelectedId]);
+    
+    // Global Event Listeners for QuickActionsBar
+    const handleNewChat = () => setShowNewDmModal(true);
+    const handleNewGroup = () => setShowCreateModal(true);
+    const handleNewCall = () => {
+      // If we are in a room, start call, otherwise open new dm modal
+      if (selectedId) startCall(selectedId, rooms.find(r => r.id === selectedId)?.name || 'Unknown', true);
+      else setShowNewDmModal(true);
+    };
+    const handleNewVideo = () => {
+      if (selectedId) startCall(selectedId, rooms.find(r => r.id === selectedId)?.name || 'Unknown', false);
+      else setShowNewDmModal(true);
+    };
+
+    window.addEventListener('open-new-chat', handleNewChat);
+    window.addEventListener('open-new-group', handleNewGroup);
+    window.addEventListener('open-new-call', handleNewCall);
+    window.addEventListener('open-new-video', handleNewVideo);
+
+    // removed — merged into the block below
+    // Listen for event to open outcomes pane
+    const handleOpenOutcomesPane = () => setRightPaneTab('outcomes' as RightPaneTab);
+    window.addEventListener('chatr:open-outcomes-pane', handleOpenOutcomesPane);
+
+    return () => {
+      window.removeEventListener('open-new-chat', handleNewChat);
+      window.removeEventListener('open-new-group', handleNewGroup);
+      window.removeEventListener('open-new-call', handleNewCall);
+      window.removeEventListener('open-new-video', handleNewVideo);
+      window.removeEventListener('chatr:open-outcomes-pane', handleOpenOutcomesPane);
+    };
+  }, [searchParams, setSelectedId, selectedId, rooms, startCall]);
 
   // Derived State
   const selectedRoom = useMemo(() => rooms.find(r => r.id === selectedId) || null, [rooms, selectedId]);
 
   // Handlers
   const handleSendMessage = useCallback(async () => {
-    if (!messageInput.trim()) return;
+    if (!messageInput.trim() && attachments.length === 0) return;
     const content = messageInput;
+    const currentAttachments = [...attachments];
     setMessageInput('');
-    await sendMessage(content);
-  }, [messageInput, sendMessage]);
+    setAttachments([]);
+    await sendMessage(content, currentAttachments);
+  }, [messageInput, attachments, sendMessage]);
 
   const handleInputKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -142,7 +195,7 @@ export default function DesktopChat() {
 
   const handleExtractActions = useCallback(async () => {
     toast.info("Extracting actions via OS Kernel...");
-    import('@/core/services/EventBus').then(({ eventBus }) => {
+    import('@/core/runtime/EventBus').then(({ eventBus }) => {
       eventBus.publish('ui:interaction', { type: 'extract_actions', payload: { roomId: selectedId } });
     });
   }, [selectedId]);
@@ -152,22 +205,43 @@ export default function DesktopChat() {
     input.type = 'file';
     input.accept = accept;
     input.multiple = true;
+    input.style.display = 'none';
+    document.body.appendChild(input);
     input.onchange = async (e: any) => {
-      const files = Array.from(e.target.files || []);
+      const files = Array.from(e.target.files || []) as File[];
       if (files.length > 0 && selectedId) {
         setIsUploading(true);
         try {
-          // Just simulate for now since actual upload logic requires storage bucket interaction
-          // In a real refactor, use the same file upload logic
-          toast.success(`Uploaded ${files.length} file(s)`);
-        } catch {
-          toast.error('Upload failed');
+          const newAttachments = [];
+          for (const file of files) {
+            const attachment = await attachmentEngine.uploadFile(file);
+            newAttachments.push(attachment);
+          }
+          setAttachments(prev => [...prev, ...newAttachments]);
+          toast.success(`Attached ${files.length} file(s)`);
+        } catch (err) {
+          toast.error('Failed to attach file(s)');
         } finally {
           setIsUploading(false);
         }
       }
+      document.body.removeChild(input);
     };
-    input.click();
+    input.click(); // Trigger the native file picker
+    
+    // Clean up if the user cancels the dialog (since onchange won't fire)
+    // We add a slight delay to allow the dialog to open first
+    setTimeout(() => {
+      if (document.body.contains(input)) {
+        // We can't actually detect cancellation perfectly in all browsers,
+        // but adding this ensures it eventually cleans up if not triggered.
+        window.addEventListener('focus', () => {
+          setTimeout(() => {
+            if (document.body.contains(input)) document.body.removeChild(input);
+          }, 1000);
+        }, { once: true });
+      }
+    }, 100);
   }, [selectedId]);
 
   const handleSendThreadReply = useCallback(async () => {
@@ -175,7 +249,7 @@ export default function DesktopChat() {
     const content = threadInput;
     setThreadInput('');
     try {
-      await messagingService.sendMessage(selectedId, content, activeThreadId);
+      await messagingService.sendMessage(selectedId, content, [], activeThreadId);
     } catch {
       toast.error('Failed to reply to thread');
     }
@@ -207,7 +281,7 @@ export default function DesktopChat() {
     setIsForwarding(true);
     try {
       for (const roomId of forwardSelectedRooms) {
-        await messagingService.sendMessage(roomId, forwardMessage.content, null, forwardMessage.attachments);
+        await messagingService.sendMessage(roomId, forwardMessage.content, forwardMessage.attachments || []);
       }
       toast.success(`Forwarded to ${forwardSelectedRooms.size} chat(s)`);
       setForwardMessage(null);
@@ -236,7 +310,10 @@ export default function DesktopChat() {
         <div className="absolute inset-0 bg-zinc-950/95" />
         
         {!selectedRoom ? (
-          <EmptyState setShowCreateModal={setShowCreateModal} />
+          <DashboardCenterPanel 
+            onCreateNew={() => setShowCreateModal(true)}
+            onNewChat={() => setShowNewDmModal(true)}
+          />
         ) : (
           <div className="flex-1 flex flex-col relative z-10 min-h-0">
             <ChatHeader 
@@ -258,48 +335,66 @@ export default function DesktopChat() {
               onAskAI={(msg) => { setRightPaneTab('copilot'); setCopilotInput(`Explain: ${msg.content}`); }}
             />
 
-            <MessageComposer 
-              messageInput={messageInput}
-              setMessageInput={setMessageInput}
-              selectedRoomName={selectedRoom.name}
-              isRewriting={isRewriting}
-              onSendMessage={handleSendMessage}
-              onKeyDown={handleInputKeyDown}
-              onFilePicker={handleFilePicker}
-              onSmartReply={handleSmartReply}
-              onRewrite={handleRewrite}
-              onExtractActions={handleExtractActions}
-            />
+            {/* Intent Outcome Popup — floats above message composer */}
+            <div className="relative">
+              <AnimatePresence>
+                {outcomes.filter(o => ['suggested', 'needs_input', 'searching', 'results_ready', 'preview_ready', 'executing', 'approval_required', 'policy_blocked', 'permission_denied'].includes(o.status)).map(o => (
+                  <div key={o.id} className="absolute bottom-full left-0 w-full mb-2 z-50 flex flex-col justify-end gap-2 px-4 max-w-4xl mx-auto">
+                    <OutcomeCard outcome={o} />
+                  </div>
+                ))}
+              </AnimatePresence>
+
+                <AttachmentZone 
+                  attachments={attachments}
+                  onAttachmentsChange={setAttachments}
+                />
+                <MessageComposer 
+                  messageInput={messageInput}
+                  setMessageInput={setMessageInput}
+                selectedRoomName={selectedRoom.name}
+                isRewriting={isRewriting}
+                onSendMessage={handleSendMessage}
+                onKeyDown={handleInputKeyDown}
+                onFilePicker={handleFilePicker}
+                onSmartReply={handleSmartReply}
+                onRewrite={handleRewrite}
+                onExtractActions={handleExtractActions}
+              />
+            </div>
           </div>
         )}
       </div>
 
-      <RightPane 
-        selectedRoom={selectedRoom}
-        activeThreadId={activeThreadId}
-        setActiveThreadId={setActiveThreadId}
-        rightPaneTab={rightPaneTab}
-        setRightPaneTab={setRightPaneTab}
-        chatMessages={messages}
-        currentUserId={currentUserId}
-        copilotMessages={copilotMessages}
-        copilotInput={copilotInput}
-        setCopilotInput={setCopilotInput}
-        copilotLoading={copilotLoading}
-        copilotEndRef={copilotEndRef}
-        onCopilotSend={handleCopilotSendWrapper}
-        onExtract={handleExtractOS}
-        isExtracting={isExtracting}
-        osTasks={[]}
-        osDecisions={[]}
-        osNotes={[]}
-        osEvents={[]}
-        threadInput={threadInput}
-        setThreadInput={setThreadInput}
-        onSendThreadReply={handleSendThreadReply}
-        onFullscreenImage={setFullscreenImage}
-      />
-
+      {!selectedRoom ? (
+        <RightContextPanel />
+      ) : (
+        <RightPane 
+          selectedRoom={selectedRoom}
+          activeThreadId={activeThreadId}
+          setActiveThreadId={setActiveThreadId}
+          rightPaneTab={rightPaneTab}
+          setRightPaneTab={setRightPaneTab}
+          chatMessages={messages}
+          currentUserId={currentUserId}
+          copilotMessages={copilotMessages}
+          copilotInput={copilotInput}
+          setCopilotInput={setCopilotInput}
+          copilotLoading={copilotLoading}
+          copilotEndRef={copilotEndRef}
+          onCopilotSend={handleCopilotSendWrapper}
+          onExtract={handleExtractOS}
+          isExtracting={isExtracting}
+          osTasks={allTasks}
+          osDecisions={[]}
+          osNotes={[]}
+          osEvents={allEvents}
+          threadInput={threadInput}
+          setThreadInput={setThreadInput}
+          onSendThreadReply={handleSendThreadReply}
+          onFullscreenImage={setFullscreenImage}
+        />
+      )}
       <CreateNewModal 
         isOpen={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
@@ -307,6 +402,16 @@ export default function DesktopChat() {
           setShowCreateModal(false);
           if (id === 'community') navigate('/create-community');
           else navigate('/contacts');
+        }}
+      />
+
+      <NewChatSheet
+        userId={currentUserId || ''}
+        open={showNewDmModal}
+        onOpenChange={setShowNewDmModal}
+        onSelectContact={(contactUserId) => {
+          setShowNewDmModal(false);
+          toast.success('Chat created (mock)');
         }}
       />
 

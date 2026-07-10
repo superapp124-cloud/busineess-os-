@@ -19,7 +19,10 @@
  * Daily Timeline simply reads: OSSchedulerService.getAll()
  */
 
-import { eventBus } from './EventBus';
+import { v4 as uuidv4 } from 'uuid';
+import { telemetry as TelemetryService } from './TelemetryService';
+import { eventBus } from '@/core/runtime/EventBus';
+import { notificationEngine } from './NotificationEngine';
 
 export type ScheduleEntryType =
   | 'reminder'
@@ -224,27 +227,12 @@ export class OSSchedulerServiceImpl {
   }
 
   private deliverNotification(entry: ScheduleEntry): void {
-    // Desktop notification (browser/Electron)
-    if (typeof Notification !== 'undefined') {
-      if (Notification.permission === 'granted') {
-        new Notification(`⏰ ${entry.title}`, {
-          body: `Scheduled for ${new Date(entry.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`,
-          icon: '/favicon.ico',
-          tag: entry.id,
-        });
-      } else if (Notification.permission === 'default') {
-        Notification.requestPermission().then(perm => {
-          if (perm === 'granted') {
-            new Notification(`⏰ ${entry.title}`, { body: 'CHATR Reminder', tag: entry.id });
-          }
-        });
-      }
-    }
-
-    // In-app event (toast rendered by DesktopChat listener)
-    window.dispatchEvent(new CustomEvent('chatr:notification-delivered', {
-      detail: { entry, message: entry.title }
-    }));
+    notificationEngine.deliver({
+      id: entry.id,
+      title: `⏰ ${entry.title}`,
+      body: `Scheduled for ${new Date(entry.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`,
+      channels: ['desktop']
+    });
   }
 
   // ─── Statistics ──────────────────────────────────────────────────────────────

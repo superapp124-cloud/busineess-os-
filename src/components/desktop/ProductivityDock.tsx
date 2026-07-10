@@ -217,7 +217,7 @@ export const ProductivityDock: React.FC = () => {
 
       {/* ── Dock strip ───────────────────────────────────────────────────── */}
       <div className={cn(
-        'flex items-center gap-1 p-2 rounded-2xl border shadow-2xl backdrop-blur-2xl transition-all duration-300',
+        'flex items-center gap-2 p-3 rounded-3xl border shadow-2xl backdrop-blur-2xl transition-all duration-300',
         isDark
           ? 'bg-zinc-900/90 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.8)]'
           : 'bg-white/90 border-zinc-200 shadow-[0_8px_32px_rgba(0,0,0,0.15)]'

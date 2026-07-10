@@ -17,20 +17,40 @@ const PRESET_WALLPAPERS = [
 export const DesktopWallpaper: React.FC = () => {
   const { themeMode } = useAppearanceStore();
   const isDark = themeMode === 'dark';
-  const [selected, setSelected] = useState(() => localStorage.getItem('chatr_wallpaper') || 'none');
+  const [selected, setSelected] = useState('none');
   const [uploading, setUploading] = useState(false);
-  const [customUrl, setCustomUrl] = useState(() => localStorage.getItem('chatr_wallpaper_url') || '');
+  const [customUrl, setCustomUrl] = useState('');
+
+  useEffect(() => {
+    const fetchWallpaper = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('metadata').eq('id', user.id).single();
+        if (data?.metadata?.wallpaper) {
+          setSelected(data.metadata.wallpaper);
+        }
+        if (data?.metadata?.wallpaper_url) {
+          setCustomUrl(data.metadata.wallpaper_url);
+        }
+      }
+    };
+    fetchWallpaper();
+  }, []);
 
   const bg = isDark ? 'bg-[#0d0f1a]' : 'bg-slate-50';
   const cardBg = isDark ? 'bg-white/[0.03] border-white/[0.08]' : 'bg-white border-slate-200';
   const labelColor = isDark ? 'text-white/60' : 'text-slate-500';
   const headingColor = isDark ? 'text-white' : 'text-slate-900';
 
-  const selectWallpaper = (id: string, value: string) => {
+  const selectWallpaper = async (id: string, value: string) => {
     setSelected(id);
-    localStorage.setItem('chatr_wallpaper', id);
-    localStorage.setItem('chatr_wallpaper_url', value);
     toast.success('Wallpaper applied');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from('profiles').update({
+        metadata: { wallpaper: id, wallpaper_url: value }
+      }).eq('id', user.id);
+    }
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +68,10 @@ export const DesktopWallpaper: React.FC = () => {
       const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(path);
       setCustomUrl(publicUrl);
       setSelected('custom');
-      localStorage.setItem('chatr_wallpaper', 'custom');
-      localStorage.setItem('chatr_wallpaper_url', publicUrl);
       toast.success('Custom wallpaper uploaded and applied!');
+      await supabase.from('profiles').update({
+        metadata: { wallpaper: 'custom', wallpaper_url: publicUrl }
+      }).eq('id', user.id);
     } catch (err: any) {
       toast.error(err.message || 'Upload failed');
     } finally {

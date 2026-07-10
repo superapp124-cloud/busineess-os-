@@ -1,4 +1,4 @@
-﻿import { CapabilityManifest } from './Types';
+import { CapabilityManifest } from './Types';
 
 class Registry {
   private capabilities: Map<string, CapabilityManifest> = new Map();

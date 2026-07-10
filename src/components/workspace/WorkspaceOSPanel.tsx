@@ -102,7 +102,7 @@ export const WorkspaceOSPanel: React.FC<WorkspaceOSPanelProps> = ({
   const [aiLoading, setAiLoading] = useState(false);
   const [aiPlan, setAiPlan] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const { knowledge, scheduledToday, observeText } = useCHATROS();
+  const { knowledge, scheduledToday, scheduledUpcoming, observeText } = useCHATROS();
 
   const buildWorkspaceFromAI = async () => {
     if (!builderInput.trim()) return;
@@ -275,22 +275,44 @@ export const WorkspaceOSPanel: React.FC<WorkspaceOSPanelProps> = ({
           )}
 
           {/* Upcoming from OS Scheduler */}
-          {scheduledToday.length > 0 && (
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">Today's Schedule</p>
-              <div className="space-y-1">
-                {scheduledToday.slice(0, 4).map(entry => (
-                  <div key={entry.id} className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-violet-500/[0.05] border border-violet-500/10">
-                    <Calendar className="w-3 h-3 text-violet-400 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-white/70 truncate">{entry.title}</p>
-                      <p className="text-[9px] text-white/30">
-                        {new Date(entry.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                      </p>
-                    </div>
+          {(scheduledToday.length > 0 || scheduledUpcoming.length > 0) && (
+            <div className="space-y-4">
+              {scheduledToday.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">Today's Schedule</p>
+                  <div className="space-y-1">
+                    {scheduledToday.slice(0, 4).map(entry => (
+                      <div key={entry.id} className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-violet-500/[0.05] border border-violet-500/10">
+                        <Calendar className="w-3 h-3 text-violet-400 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white/70 truncate">{entry.title}</p>
+                          <p className="text-[9px] text-white/30">
+                            {new Date(entry.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
+              {scheduledUpcoming.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">Upcoming Schedule</p>
+                  <div className="space-y-1">
+                    {scheduledUpcoming.slice(0, 4).map(entry => (
+                      <div key={entry.id} className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-blue-500/[0.05] border border-blue-500/10">
+                        <Calendar className="w-3 h-3 text-blue-400 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white/70 truncate">{entry.title}</p>
+                          <p className="text-[9px] text-white/30">
+                            {new Date(entry.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

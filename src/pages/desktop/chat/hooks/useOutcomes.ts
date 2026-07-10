@@ -1,35 +1,32 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { eventBus } from '@/core/runtime/EventBus';
+import { commitmentRuntime } from '@/core/capabilities/CommitmentRuntime';
 
 export function useOutcomes(selectedId: string | null, currentUser: any) {
-  const [outcomes, setOutcomes] = useState<any[]>(() => {
-    try {
-      const saved = localStorage.getItem('chatr_outcomes_v1');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem('chatr_outcomes_v1', JSON.stringify(outcomes));
-  }, [outcomes]);
+  const [outcomes, setOutcomes] = useState<any[]>([]);
 
   useEffect(() => {
     const handleOutcomesDetected = (e: any) => {
       const detectedOutcomes = e.detail;
-      import('@/core/capabilities/CommitmentRuntime').then(({ commitmentRuntime }) => {
-        detectedOutcomes.forEach((o: any) => commitmentRuntime.processCommitment(o));
-      });
+      detectedOutcomes.forEach((o: any) => commitmentRuntime.processCommitment(o));
     };
 
-    const handleCommitmentSuggested = (e: any) => {
+    const handleNewCommitmentEvent = (e: any) => {
       const commitment = e.payload.commitment;
       setOutcomes(prev => {
-        const filtered = prev.filter(o => o.status !== 'suggested' && o.status !== 'detected' && o.status !== 'validated');
+        // If it's already there, just update it, else append it
+        const existingIndex = prev.findIndex(o => o.id === commitment.id);
+        if (existingIndex >= 0) {
+           const next = [...prev];
+           next[existingIndex] = commitment;
+           return next;
+        }
+        
+        // Remove old states of any commitment (if necessary) or just append
+        const filtered = prev.filter(o => o.status !== 'detected' && o.status !== 'validated');
         return [...filtered, commitment];
       });
-      // Optionally trigger something to open the outcomes pane
       window.dispatchEvent(new CustomEvent('chatr:open-outcomes-pane'));
     };
 
@@ -73,19 +70,23 @@ export function useOutcomes(selectedId: string | null, currentUser: any) {
 
     window.addEventListener('chatr:outcomes-detected', handleOutcomesDetected);
     
-    import('@/core/services/EventBus').then(({ eventBus }) => {
-      eventBus.subscribe('chatr:commitment-suggested', handleCommitmentSuggested);
-      eventBus.subscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
-      eventBus.subscribe('chatr:reality-verified', handleRealityVerified);
-    });
+    eventBus.subscribe('chatr:commitment-suggested', handleNewCommitmentEvent);
+    eventBus.subscribe('chatr:commitment-policy-blocked', handleNewCommitmentEvent);
+    eventBus.subscribe('chatr:commitment-approval-required', handleNewCommitmentEvent);
+    eventBus.subscribe('chatr:commitment-permission-denied', handleNewCommitmentEvent);
+    
+    eventBus.subscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
+    eventBus.subscribe('chatr:reality-verified', handleRealityVerified);
     
     return () => {
       window.removeEventListener('chatr:outcomes-detected', handleOutcomesDetected);
-      import('@/core/services/EventBus').then(({ eventBus }) => {
-        eventBus.unsubscribe('chatr:commitment-suggested', handleCommitmentSuggested);
-        eventBus.unsubscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
-        eventBus.unsubscribe('chatr:reality-verified', handleRealityVerified);
-      });
+      eventBus.unsubscribe('chatr:commitment-suggested', handleNewCommitmentEvent);
+      eventBus.unsubscribe('chatr:commitment-policy-blocked', handleNewCommitmentEvent);
+      eventBus.unsubscribe('chatr:commitment-approval-required', handleNewCommitmentEvent);
+      eventBus.unsubscribe('chatr:commitment-permission-denied', handleNewCommitmentEvent);
+      
+      eventBus.unsubscribe('chatr:commitment-state-changed', handleCommitmentStateChanged);
+      eventBus.unsubscribe('chatr:reality-verified', handleRealityVerified);
     };
   }, [selectedId, currentUser]);
 
