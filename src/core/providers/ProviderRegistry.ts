@@ -1,31 +1,5 @@
-export interface ProviderCapabilities {
-  canSearch: boolean;
-  canBook: boolean;
-  canCancel: boolean;
-  canVerify: boolean;
-}
-
-export interface ProviderState {
-  isHealthy: boolean;
-  lastChecked: number;
-}
-
-export type ProviderRole = 'SearchProvider' | 'ExecutionProvider' | 'VerificationProvider' | 'NotificationProvider' | 'StorageProvider' | 'SchedulerProvider' | 'PaymentProvider' | 'AIProvider' | 'EnterpriseMemoryProvider';
-
-export interface IProvider {
-  id: string;
-  name: string;
-  type: string; // e.g. 'flight', 'hotel', 'calendar'
-  role: ProviderRole;
-  
-  capabilities(): ProviderCapabilities;
-  health(): Promise<ProviderState>;
-  authenticate(): Promise<boolean>;
-  
-  search?(query: any): Promise<any[]>;
-  create?(payload: any): Promise<any>;
-  verify?(id: string): Promise<any>;
-}
+import { IProvider, ProviderRole } from './types';
+export * from './types'; // Re-export for compatibility with other files
 
 export class ProviderRegistryImpl {
   private static instance: ProviderRegistryImpl;

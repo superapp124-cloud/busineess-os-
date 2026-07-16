@@ -118,6 +118,31 @@ class SearchServiceClass implements IService {
         });
       }
 
+      // Kernel OS Search: Query physical filesystem via Intent Pipeline
+      try {
+        const { KernelClient } = await import('@/core/ipc/KernelClient');
+        const kernel = KernelClient.getInstance();
+        const kernelResponse = await kernel.dispatchIntent({
+          intent: 'memory.search',
+          context: { query: query.trim() }
+        });
+
+        if (kernelResponse.success && kernelResponse.data?.files) {
+          kernelResponse.data.files.forEach((file: any) => {
+            results.push({
+              entityType: 'file',
+              entityId: file.path,
+              title: file.name,
+              preview: file.contentPreview || 'Local File',
+              urlPath: `/desktop/workspace?file=${encodeURIComponent(file.path)}`,
+              rank: 1.0, // High rank for direct physical file matches
+            });
+          });
+        }
+      } catch (kernelErr) {
+        Logger.warn('[SearchService] Kernel OS search failed', kernelErr);
+      }
+
       const bucket = (type: string) => results.filter(r => r.entityType === type);
 
       return {

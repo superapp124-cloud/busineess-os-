@@ -90,5 +90,47 @@ Every module must define behavior for:
 - **AI:** Retry with exponential backoff.
 - **Notifications:** Sync later.
 
+## 9. Intent OS Execution Layer & Local-First Architecture (Kernel ABI v1.0)
+
+CHATR is a Local-First Intent OS. The Cloud provides synchronization, but local execution is mandatory for core functionality (SQLite, Local Vector, Local AI, Browser Automation).
+
+### The Runtime Framework & Manifests
+The OS operates via a strict hierarchy:
+`Capability` → `Runtime` → `Provider`
+
+- **Capabilities** are declared via strict JSON Manifests (version, dependencies, events, permissions).
+- **Runtimes** own execution domains and report their Health dynamically.
+- **Providers** are replaceable implementations bound to capabilities via the `RuntimeManager`.
+
+### Core Runtimes (ABI v1.0)
+1. **Desktop Runtime**: filesystem, windows, clipboard, local OS search.
+2. **Browser Runtime**: sessions, cookies, downloads, DOM execution.
+3. **Intelligence Runtime**: OCR, Speech-to-text, Image understanding, Translation, Classification.
+4. **Memory Runtime**: Vector embeddings, local semantic search.
+5. **Knowledge Runtime**: Knowledge graph, entity linking (People → Companies → Files → Events).
+6. **Communication Runtime**: email, call, sms, meetings.
+7. **Workflow Runtime**: Orchestrates steps.
+8. **Policy Runtime**: Enforces permissions, approvals, safety constraints before execution.
+9. **Cloud Sync Runtime**: Background state syncing.
+10. **Intent Runtime**: Tracks Intent Timeline, History, Replay, and Bookmarks (first-class OS component).
+11. **Session Runtime**: Context preservation across launches/devices.
+
+### Workspaces & The Unified IDE
+The UI is no longer a collection of disjointed apps. It is a **Unified Workspace IDE**.
+- **Shell**: The top-level React router.
+- **WorkspaceManager**: Manages declarative Workspace Manifests (Personal, HR, Sales).
+- **Layout**: 
+  - *Left*: Workspaces Navigation.
+  - *Center*: Active Context / Document / Command Palette.
+  - *Right*: AI Copilot / Memory.
+
+### System Indexer
+A background daemon combining native OS indexing (e.g., Windows Search) with a CHATR-native enriched index (embeddings, custom tags, workflow metadata) for instant semantic resolution.
+
+### Repository Layer
+The UI must NEVER access raw data sources (SQLite, Mocks, or Supabase) directly.
+All data access flows through Repositories, which compose multiple storage backends:
+`UI` → `Repository` → `[Local Database, Filesystem, Cache, Vector Store]`
+
 ---
 *These rules are mandatory. Code reviews must verify compliance against these contracts.*

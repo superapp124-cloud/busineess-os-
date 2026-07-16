@@ -44,6 +44,33 @@ function createServer() {
   const { router: eventRouter } = require('../transport/router.cjs');
   app.use('/kernel', eventRouter);
 
+  // ── Kernel Intent Router (React UI Bridge) ───────────────────────────────
+  app.post('/api/intent', async (req, res) => {
+    try {
+      const { intent, context } = req.body;
+      const { runtimeManager } = require('../kernel/runtime-manager.cjs');
+      
+
+
+      const provider = runtimeManager.getProviderForCapability(intent);
+      let data = null;
+
+      if (intent === 'memory.search' && typeof provider.search === 'function') {
+        data = await provider.search(context);
+      } else if (typeof provider.execute === 'function') {
+        data = await provider.execute(context);
+      } else {
+        throw new Error(`Provider for ${intent} lacks an execution method.`);
+      }
+
+      res.json({ success: true, data });
+    } catch (err) {
+      const log = (() => { try { return require('electron-log'); } catch { return console; } })();
+      log.error(`[CHATR Core] Intent execution failed for ${req.body?.intent}:`, err.message);
+      res.json({ success: false, error: err.message });
+    }
+  });
+
   // ── Capability Modules ─────────────────────────────────────────────────────────────
   require('../modules/meetings/index.cjs');
   require('../modules/tasks/index.cjs');

@@ -347,9 +347,16 @@ export const AdaptiveHome: React.FC = () => {
                 <BrainCircuit className="w-3.5 h-3.5 text-violet-300" />
               </div>
               <div>
-                <span className="text-sm font-bold text-white/90">{greeting}, {firstName}</span>
-                <span className="text-white/35 text-xs mx-1.5">·</span>
-                <span className="text-xs text-white/50">You're on track today</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white/90">{greeting}, {firstName}</span>
+                  <span className="flex items-center gap-1.5 text-xs bg-white/10 px-2 py-0.5 rounded-lg border border-white/20 backdrop-blur-md shadow-sm">
+                    <Clock className="w-3.5 h-3.5 text-violet-300" /> 
+                    <span className="tracking-wide font-medium">{timeStr}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-xs text-white/50">You're on track today</span>
+                </div>
               </div>
             </div>
 

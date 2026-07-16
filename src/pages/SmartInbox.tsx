@@ -1,112 +1,76 @@
-import { useState, useEffect } from 'react';
-import { CommandCenterPanel } from '@/components/inbox/CommandCenterPanel';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect } from 'react';
 import { 
-  Shield, ShieldAlert, KeyRound, MessageSquareText, RefreshCw, ChevronDown, CheckCircle2, 
-  AlertTriangle, Fingerprint, Mail, Inbox, Globe, Lock, ArrowRight, Search, Phone, CheckSquare, 
-  Sparkles, Calendar, Clock, CreditCard, Tag, Bot, Palette, Star, CornerUpLeft, CircleDollarSign, List,
-  Settings, ListChecks, CornerUpRight
+  Bot, Search, Database, Network, Cloud, ChevronRight, Activity, 
+  FolderGit2, CalendarClock, Zap, CheckCircle2, FileText, BrainCircuit,
+  MessageSquare, User, Linkedin, Facebook, Twitter, Building, Layout, Box
 } from 'lucide-react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Capacitor } from '@capacitor/core';
-import '../types/plugins';
-import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { AuthProvider } from '../services/auth/AuthProvider';
-import { TokenManager, ConnectedAccount } from '../services/auth/TokenManager';
-import { MailSyncEngine } from '../services/sync/MailSyncEngine';
-import { GoogleAdapter } from '../services/mail/GoogleAdapter';
-import { MicrosoftAdapter } from '../services/mail/MicrosoftAdapter';
-import { LocalDB, StoredMessage } from '../services/db/LocalDB';
-import { SearchEngine, UnifiedSearchResult } from '../services/search/SearchEngine';
-import { DashboardEngine, DailyStats } from '../services/dashboard/DashboardEngine';
+import { kernelClient } from '@/core/ipc/KernelClient';
 
-interface SmsRisk {
-  isOtp: boolean;
-  otpCode?: string;
-  spamScore: number;
-  riskLevel: string;
-  reasons: string[];
-}
-
-interface SmsConversation {
-  conversationId: string;
-  address: string;
-  displayName: string;
-  lastBody: string;
-  lastTimestamp: number;
-  unreadCount: number;
-  lastRisk: SmsRisk;
-}
-
-interface SmsMessage {
+interface ConnectedProvider {
   id: string;
-  body: string;
-  timestamp: number;
-  direction: string;
-  risk: SmsRisk;
+  name: string;
+  status: string;
+  accounts: number;
+  icon: React.ComponentType<{ className?: string }>;
+  loginUrl: string;
 }
 
-interface AppNotification {
-  id: string;
-  type: string;
-  title: string;
-  content: string | null;
-  is_read: boolean;
-  action_url: string | null;
-  created_at: string;
-}
+const providerLoginUrls: Record<string, string> = {
+  google: 'https://accounts.google.com/',
+  microsoft: 'https://login.microsoftonline.com/',
+  slack: 'https://slack.com/signin',
+  github: 'https://github.com/login',
+  linkedin: 'https://www.linkedin.com/login',
+  facebook: 'https://www.facebook.com/login/',
+  notion: 'https://www.notion.so/login',
+  jira: 'https://id.atlassian.com/login',
+  dropbox: 'https://www.dropbox.com/login',
+  salesforce: 'https://login.salesforce.com/',
+};
 
-export default function SmartInbox() {
-  const [conversations, setConversations] = useState<SmsConversation[]>([]);
-  const [messages, setMessages] = useState<Record<string, SmsMessage[]>>({});
-  const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'inbox' | 'messages' | 'mail' | 'calls'>('inbox'); // Default to inbox
-  const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
-  const [localMessages, setLocalMessages] = useState<StoredMessage[]>([]);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [syncState, setSyncState] = useState<{ step: string, progress: number, max: number } | null>(null);
-  const [theme, setTheme] = useState<'midnight' | 'daylight' | 'ocean'>('midnight');
-  const [searchPlaceholder, setSearchPlaceholder] = useState('What needs my attention today?');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<UnifiedSearchResult[]>([]);
-  const [dailyStats, setDailyStats] = useState<DailyStats | null>(null);
-  const [briefingText, setBriefingText] = useState('Loading intelligence...');
-  const [userName, setUserName] = useState('there');
+const openProviderLogin = async (provider: ConnectedProvider) => {
+  const electronAPI = (window as any).electronAPI;
+
+  if (electronAPI?.smartInbox?.connectProvider) {
+    return electronAPI.smartInbox.connectProvider(provider.id);
+  } else if (electronAPI?.auth?.openProviderLogin) {
+    return electronAPI.auth.openProviderLogin(provider.id);
+  }
+
+  window.open(provider.loginUrl, '_blank', 'noopener,noreferrer');
+  return { ok: true, url: provider.loginUrl };
+};
+
+export default function Workspace() {
   const [greeting, setGreeting] = useState('Good day');
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [userName, setUserName] = useState('Arshid');
+  
+  // Dynamic State
+  const [osStatus, setOsStatus] = useState({
+    model: 'phi3:mini',
+    modelStatus: 'Running',
+    memoryIndexed: '0 B',
+    nodes: 0,
+    syncHealth: 'Checking',
+    jobs: 0
+  });
 
-  // Gated per architecture rules: do not expose Smart Inbox until VoIP/GSM calling is fully stable.
-  const isCallingStable = true;
+  const [connectedProviders, setConnectedProviders] = useState<ConnectedProvider[]>([]);
+
+  const [activeIntents, setActiveIntents] = useState<any[]>([]);
+  const [intentFeed, setIntentFeed] = useState<any[]>([]);
+  const [recentMemory, setRecentMemory] = useState<any[]>([]);
+  const [openingProvider, setOpeningProvider] = useState<string | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [intelligenceBrief, setIntelligenceBrief] = useState<any>({
+    metrics: { emails: 0, contracts: 0, invoices: 0, meetings: 0 },
+    actions: []
+  });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .maybeSingle();
-          if (profile?.full_name) {
-            setUserName(profile.full_name.split(' ')[0]);
-          } else {
-            setUserName(user.email?.split('@')[0] || 'there');
-          }
-        }
-      } catch (e) {
-        console.error("Failed to fetch user:", e);
-      }
-    };
-    fetchUser();
-
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
@@ -115,9 +79,15 @@ export default function SmartInbox() {
 
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (searchQuery.trim().length >= 2) {
-        const results = await SearchEngine.query(searchQuery);
-        setSearchResults(results);
+      if (searchQuery.trim().length > 0) {
+        try {
+          const res = await kernelClient.dispatchIntent({ intent: 'dashboard.search', payload: { query: searchQuery } });
+          if (res.success && res.data) {
+            setSearchResults(res.data);
+          }
+        } catch (err) {
+          console.error('Search failed', err);
+        }
       } else {
         setSearchResults([]);
       }
@@ -126,925 +96,373 @@ export default function SmartInbox() {
   }, [searchQuery]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (data) setNotifications(data);
-    };
+    async function fetchData() {
+      try {
+        // Fetch OS Status
+        const statusRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_status' });
+        if (statusRes.success && statusRes.data) {
+          setOsStatus(prev => ({
+            ...prev,
+            nodes: statusRes.data.nodes,
+            memoryIndexed: `${statusRes.data.nodes} items`,
+            syncHealth: 'Healthy',
+            jobs: statusRes.data.edges
+          }));
+        }
 
-    fetchNotifications();
+        // Fetch Timeline
+        let timelineEvents: any[] = [];
+        const timelineRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_timeline' });
+        if (timelineRes.success && timelineRes.data) {
+          timelineEvents = timelineRes.data;
+        }
 
-    const notifChannel = supabase.channel('schema-db-changes-notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
-        fetchNotifications();
-      })
-      .subscribe();
+        // Fetch Intents
+        const intentsRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_active_intents' });
+        if (intentsRes.success && intentsRes.data) {
+          setActiveIntents(intentsRes.data);
+        }
 
-    return () => {
-      supabase.removeChannel(notifChannel);
-    };
+        // Fetch Memory
+        const memoryRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_recent_memory' });
+        if (memoryRes.success && memoryRes.data) {
+          setRecentMemory(memoryRes.data);
+        }
+
+        // Fetch Intelligence Brief
+        const briefRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_intelligence_brief' });
+        if (briefRes.success && briefRes.data) {
+          setIntelligenceBrief(briefRes.data);
+        }
+        
+        // Fetch Smart Inbox State
+        const electronAPI = (window as any).electronAPI;
+        if (electronAPI?.smartInbox?.getState) {
+          const state = await electronAPI.smartInbox.getState();
+          const icons: Record<string, any> = {
+            google: Cloud,
+            microsoft: Cloud,
+            slack: MessageSquare,
+            github: FolderGit2,
+            linkedin: Linkedin,
+            facebook: Facebook,
+            notion: Layout,
+            jira: Building,
+            dropbox: Box,
+            salesforce: Cloud
+          };
+          setConnectedProviders(state.providers.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            status: p.status === 'authentication_started' ? 'Syncing' : (p.status === 'not_connected' ? 'Offline' : 'Healthy'),
+            accounts: p.accounts || 0,
+            icon: icons[p.id] || Cloud,
+            loginUrl: providerLoginUrls[p.id] || ''
+          })));
+
+          if (state.items && state.items.length > 0) {
+            timelineEvents = [...state.items, ...timelineEvents];
+          }
+        } else {
+           // Fallback for web mode
+           setConnectedProviders([
+            { id: 'google', name: 'Google Workspace', status: 'Offline', accounts: 0, icon: Cloud, loginUrl: providerLoginUrls.google },
+            { id: 'microsoft', name: 'Microsoft 365', status: 'Offline', accounts: 0, icon: Cloud, loginUrl: providerLoginUrls.microsoft },
+            { id: 'slack', name: 'Slack', status: 'Offline', accounts: 0, icon: MessageSquare, loginUrl: providerLoginUrls.slack },
+            { id: 'github', name: 'GitHub', status: 'Offline', accounts: 0, icon: FolderGit2, loginUrl: providerLoginUrls.github },
+            { id: 'linkedin', name: 'LinkedIn', status: 'Offline', accounts: 0, icon: Linkedin, loginUrl: providerLoginUrls.linkedin },
+          ]);
+        }
+
+        setIntentFeed(timelineEvents);
+      } catch (err) {
+        console.error('Failed to fetch real data', err);
+      }
+    }
+    
+    fetchData();
+    // Poll every 5s for demo purposes
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    loadConversations();
-    loadAccounts();
-    
-    // Background sync daemon (Mocked out for multi-stage)
-
-    const handleSyncComplete = () => {
-      setSyncState(null);
-      loadLocalMessages();
-    };
-    
-    const handleSyncProgress = (e: any) => {
-      setSyncState(e.detail);
-    };
-
-    const handleSyncError = (e: any) => {
-      setSyncState(null);
-      toast.error(e.detail.error);
-    };
-
-    window.addEventListener('chatr:sync_progress', handleSyncProgress as EventListener);
-    window.addEventListener('chatr:sync_complete', handleSyncComplete as EventListener);
-    window.addEventListener('chatr:sync_error', handleSyncError as EventListener);
-    
-    loadLocalMessages();
-    
-    setSearchPlaceholder('Ask CHATR Intelligence...');
-    
-    return () => {
-      window.removeEventListener('chatr:sync_progress', handleSyncProgress as EventListener);
-      window.removeEventListener('chatr:sync_complete', handleSyncComplete as EventListener);
-      window.removeEventListener('chatr:sync_error', handleSyncError as EventListener);
-    };
-  }, []);
-
-  const loadLocalMessages = async () => {
-    const msgs = await LocalDB.getAllMessages();
-    setLocalMessages(msgs);
-    
-    const stats = await DashboardEngine.getDailyStats();
-    setDailyStats(stats);
-    setBriefingText(DashboardEngine.generateBriefingText(stats));
-  };
-
-  const loadAccounts = async () => {
-    try {
-      // Check for OAuth redirect first
-      const newAccount = await AuthProvider.handleRedirectCallback();
-      if (newAccount) {
-        toast.success(`Connected to ${newAccount.provider}`);
-        const adapter = newAccount.provider === 'google' ? new GoogleAdapter() : new MicrosoftAdapter();
-        MailSyncEngine.syncAccount(newAccount.id, newAccount.provider, adapter);
-      }
-    } catch (e) {
-      console.error('OAuth callback error', e);
+  const getIcon = (iconName: string) => {
+    switch(iconName) {
+      case 'mail': return FileText;
+      case 'calendar': return CalendarClock;
+      case 'message-square': return MessageSquare;
+      default: return Activity;
     }
-    const accounts = await TokenManager.getAccounts();
-    setConnectedAccounts(accounts);
-  };
-
-  const handleConnect = async (provider: 'google' | 'microsoft') => {
-    setIsConnecting(true);
-    try {
-      const account = await AuthProvider.login(provider);
-      setConnectedAccounts(prev => [...prev, account]);
-      
-      const adapter = provider === 'google' ? new GoogleAdapter() : new MicrosoftAdapter();
-      MailSyncEngine.syncAccount(account.id, provider, adapter);
-      
-      toast.success(`Connected to ${provider}`);
-    } catch (e) {
-      console.error('Failed to connect', e);
-      toast.error(`Failed to connect ${provider}`);
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
-  const disconnectAccounts = async () => {
-    // For MVP, just logs out all
-    for (const acc of connectedAccounts) {
-      await AuthProvider.logout(acc.id);
-    }
-    setConnectedAccounts([]);
-    await LocalDB.clearAll();
-    await loadLocalMessages();
-    toast.success('Disconnected all accounts');
-  };
-
-  const loadConversations = async () => {
-    if (!Capacitor.isNativePlatform() || !Capacitor.Plugins.ChatrSafeSms) {
-      setLoading(false);
-      return;
-    }
-    try {
-      const { conversations: nativeConvos } = await Capacitor.Plugins.ChatrSafeSms.getConversations({ limit: 100 });
-      if (Array.isArray(nativeConvos)) {
-        setConversations(nativeConvos);
-      }
-    } catch (err) {
-      console.warn('Failed to load Safe SMS', err);
-      toast.error('Failed to load Native SMS');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleExpand = async (conversationId: string) => {
-    if (expandedId === conversationId) {
-      setExpandedId(null);
-      return;
-    }
-    setExpandedId(conversationId);
-    if (messages[conversationId]) return;
-
-    try {
-      const { messages: nativeMsgs } = await Capacitor.Plugins.ChatrSafeSms.getMessages({ conversationId, limit: 50 });
-      if (Array.isArray(nativeMsgs)) {
-        setMessages(prev => ({ ...prev, [conversationId]: nativeMsgs }));
-      }
-    } catch (err) {
-      console.warn('Failed to load messages', err);
-    }
-  };
-
-  const handleSync = async () => {
-    if (!Capacitor.isNativePlatform() || !Capacitor.Plugins.ChatrSafeSms) return;
-    setSyncing(true);
-    try {
-      const result = await Capacitor.Plugins.ChatrSafeSms.syncExistingMessages({ limit: 300 });
-      if (result.synced > 0) {
-        toast.success(`Successfully scanned ${result.synced} existing SMS messages.`);
-        await loadConversations();
-      } else {
-        toast.info('No existing SMS messages found to sync.');
-      }
-    } catch (err: any) {
-      console.error('Sync failed', err);
-      toast.error(err.message || 'Failed to sync SMS messages. Permission denied?');
-    } finally {
-      setSyncing(false);
-    }
-  };
-
-  const getRiskBadge = (risk: SmsRisk) => {
-    if (risk.isOtp) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium backdrop-blur-md">
-          <Fingerprint className="w-3.5 h-3.5" />
-          <span>Verified OTP</span>
-        </div>
-      );
-    }
-    if (risk.riskLevel === 'scam' || risk.riskLevel === 'high') {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium backdrop-blur-md shadow-[0_0_10px_rgba(244,63,94,0.2)]">
-          <AlertTriangle className="w-3.5 h-3.5" />
-          <span>Threat Blocked</span>
-        </div>
-      );
-    }
-    if (risk.riskLevel === 'suspicious') {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium backdrop-blur-md">
-          <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Suspicious</span>
-        </div>
-      );
-    }
-    return (
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium backdrop-blur-md">
-        <CheckCircle2 className="w-3.5 h-3.5" />
-        <span>Safe</span>
-      </div>
-    );
-  };
-
-  const getAvatarGradient = (name: string) => {
-    const gradients = [
-      'from-indigo-500 to-purple-500',
-      'from-rose-400 to-orange-400',
-      'from-emerald-400 to-cyan-500',
-      'from-blue-500 to-teal-400',
-      'from-fuchsia-500 to-pink-500',
-    ];
-    const index = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % gradients.length;
-    return gradients[index];
-  };
-
-  const themeStyles = {
-    midnight: "bg-[#0A0A0A] text-slate-100 selection:bg-indigo-500/30",
-    ocean: "bg-[#0B192C] text-slate-100 selection:bg-blue-500/30",
-    daylight: "bg-slate-50 text-slate-900 selection:bg-indigo-500/30"
-  };
-
-  const headerThemeStyles = {
-    midnight: "bg-[#0A0A0A]/80",
-    ocean: "bg-[#0B192C]/80",
-    daylight: "bg-slate-50/80"
-  };
-
-  // Helper to toggle themes
-  const cycleTheme = () => {
-    const themes: ('midnight' | 'ocean' | 'daylight')[] = ['midnight', 'ocean', 'daylight'];
-    const nextIndex = (themes.indexOf(theme) + 1) % themes.length;
-    setTheme(themes[nextIndex]);
-  };
-
-  if (!isCallingStable) {
-    return (
-      <div className={cn("min-h-screen relative flex flex-col items-center justify-center p-6", themeStyles[theme])}>
-        <Lock className="w-12 h-12 text-indigo-500/50 mb-6" />
-        <h2 className="text-xl font-medium mb-3">Smart Inbox Locked</h2>
-        <p className="text-sm text-slate-400 text-center max-w-sm mb-6 leading-relaxed">
-          Per Chatr architecture rules, Smart Inbox is disabled until core VoIP and GSM calling stability gates are fully cleared.
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" className="border-white/10" onClick={() => window.history.back()}>
-            <CornerUpLeft className="w-4 h-4 mr-2" /> Go Back
-          </Button>
-        </div>
-      </div>
-    );
   }
 
+  const getMemoryIcon = (type: string) => {
+    switch(type) {
+      case 'Person': return User;
+      case 'Meeting': return CalendarClock;
+      case 'Company': return Database;
+      default: return FileText;
+    }
+  }
+
+  const startProviderLogin = async (provider: ConnectedProvider) => {
+    setOpeningProvider(provider.id);
+
+    try {
+      await openProviderLogin(provider);
+    } catch (err) {
+      console.error(`Failed to open ${provider.name} login`, err);
+    } finally {
+      setOpeningProvider(null);
+    }
+  };
+
   return (
-    <div className="flex-1 h-full min-h-0 w-full flex bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed overflow-hidden text-slate-300 font-sans relative">
-      <div className="absolute inset-0 bg-zinc-950/95 pointer-events-none z-0" />
+    <div className="flex-1 bg-[#0a0a0c] h-full overflow-hidden flex flex-col font-sans">
       
-      {/* Main Inbox Content */}
-      <div className="flex-1 h-full min-h-0 overflow-hidden relative flex flex-col transition-colors duration-500 z-10">
-
-        {/* Dynamic Background Effects */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 blur-[120px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-rose-500/20 blur-[120px]" />
+      {/* Top Navigation & Omni-Search */}
+      <div className="h-20 border-b border-white/5 flex items-center px-8 justify-between shrink-0 bg-black/20">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-white tracking-tight">{greeting}, {userName}</h1>
+            <p className="text-xs text-indigo-300/70 font-medium tracking-wide uppercase">AI Processed {intentFeed.length} events</p>
+          </div>
         </div>
 
-        {/* Header & Trust Center */}
-        <div className={cn("sticky top-0 z-20 backdrop-blur-3xl border-b border-white/5 pt-10 pb-4 px-4 flex flex-col gap-4 transition-colors duration-500", headerThemeStyles[theme])}>
+        <div className="flex-1 max-w-2xl ml-12 relative group">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <Search className="w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+          </div>
+          <input 
+            type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search everything (People, Projects, Emails, Code) or type an intent..."
+            className="w-full h-12 bg-white/[0.03] border border-white/10 rounded-2xl pl-12 pr-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all shadow-inner"
+          />
+          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none gap-2">
+            <kbd className="px-2 py-1 rounded bg-white/10 text-[10px] font-semibold text-slate-400 border border-white/10">⌘</kbd>
+            <kbd className="px-2 py-1 rounded bg-white/10 text-[10px] font-semibold text-slate-400 border border-white/10">K</kbd>
+          </div>
+        </div>
+      </div>
+
+      {/* Main 5-Panel Grid Layout */}
+      <div className="flex-1 overflow-y-auto p-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 auto-rows-min h-full">
           
-          {/* Trust Center Strip */}
-          <div className="flex items-center justify-between text-[10px] font-semibold tracking-wider uppercase">
-            <div className="flex gap-3 text-emerald-400">
-              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> ChatrAI</span>
-              <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Encrypted</span>
-              {dailyStats && (
-                <span className="flex items-center gap-1 ml-2 text-indigo-400">
-                  100% of {dailyStats.totalEmails} synced emails processed on-device
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-slate-500 flex items-center gap-1"><Globe className="w-3 h-3" /> Local AI Only</span>
-              <button onClick={cycleTheme} className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-                 <Palette className="w-3 h-3 text-indigo-400" />
-              </button>
-            </div>
-          </div>
-
-          {/* AI Search Bar */}
-          <div className="relative group z-50">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur group-focus-within:blur-md transition-all" />
-            <div className="relative bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center gap-3 backdrop-blur-xl">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
-              <input 
-                type="text" 
-                placeholder={searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-400 transition-all duration-500"
-              />
+          {/* Panel 1: AI Command Center (Briefing & Actions) */}
+          <div className="col-span-12 lg:col-span-8 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 rounded-3xl border border-indigo-500/20 p-6 flex flex-col gap-6 shadow-xl relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none"></div>
+            
+            <div className="flex items-center gap-3 text-indigo-300">
+              <SparklesIcon className="w-5 h-5" />
+              <h2 className="text-sm font-bold tracking-widest uppercase">AI Intelligence Brief</h2>
             </div>
             
-            <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide pb-1">
-              {['Find invoices', 'Show suspicious emails', 'Summarize unread', 'Bills due', 'Meeting invites'].map(prompt => (
-                <button 
-                  key={prompt}
-                  onClick={() => setSearchQuery(prompt)}
-                  className="whitespace-nowrap bg-white/5 hover:bg-white/10 text-slate-300 text-xs px-3 py-1.5 rounded-full transition-colors border border-white/5"
-                >
-                  {prompt}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-black/40 rounded-2xl p-4 border border-white/5">
+                <span className="text-3xl font-bold text-white">{intelligenceBrief.metrics.emails}</span>
+                <p className="text-xs text-slate-400 mt-1 font-medium">Important Emails</p>
+              </div>
+              <div className="bg-rose-500/10 rounded-2xl p-4 border border-rose-500/20">
+                <span className="text-3xl font-bold text-rose-400">{intelligenceBrief.metrics.contracts}</span>
+                <p className="text-xs text-rose-300/70 mt-1 font-medium">Contracts to Review</p>
+              </div>
+              <div className="bg-amber-500/10 rounded-2xl p-4 border border-amber-500/20">
+                <span className="text-3xl font-bold text-amber-400">{intelligenceBrief.metrics.invoices}</span>
+                <p className="text-xs text-amber-300/70 mt-1 font-medium">Overdue Invoices</p>
+              </div>
+              <div className="bg-emerald-500/10 rounded-2xl p-4 border border-emerald-500/20">
+                <span className="text-3xl font-bold text-emerald-400">{intelligenceBrief.metrics.meetings}</span>
+                <p className="text-xs text-emerald-300/70 mt-1 font-medium">Meetings Today</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3 mt-2">
+              {intelligenceBrief.actions.map((act: any, i: number) => (
+                <button key={i} className={cn("px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2", i === 0 ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10")}>
+                  {act.label} {i === 0 && <ChevronRight className="w-4 h-4" />}
                 </button>
               ))}
             </div>
-            {/* Unified Search Mock Dropdown */}
-            <AnimatePresence>
-              {isSearchFocused && searchQuery.length >= 2 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-[#1A1A1A] border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-3xl overflow-hidden"
-                >
-                  <div className="px-3 py-2 text-xs font-bold tracking-wider text-slate-500 uppercase">Unified Search Results</div>
-                  <div className="space-y-1">
-                    {searchResults.length === 0 ? (
-                      <div className="px-3 py-4 text-center text-sm text-slate-400">No results found across Mail, SMS, and Calls.</div>
-                    ) : (
-                      searchResults.map(result => (
-                        <div key={`${result.source}-${result.id}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-                          {result.source === 'mail' && <Mail className="w-4 h-4 text-emerald-400" />}
-                          {result.source === 'sms' && <MessageSquareText className="w-4 h-4 text-blue-400" />}
-                          {result.source === 'call' && <Phone className="w-4 h-4 text-purple-400" />}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-white truncate">
-                              {result.title} <span className="text-slate-400 font-normal capitalize">· {result.source}</span>
-                            </p>
-                            <p className="text-xs text-slate-400 truncate">{result.subtitle}</p>
-                          </div>
-                          <span className="text-[10px] text-slate-500 flex-shrink-0">
-                            {formatDistanceToNow(new Date(result.timestamp), { addSuffix: true })}
-                          </span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
-          {/* Tab Switcher */}
-          <div className="w-full overflow-x-auto scrollbar-hide">
-            <div className="flex gap-2">
-              {[
-                { id: 'inbox', label: 'Inbox', icon: Inbox },
-                { id: 'messages', label: 'Messages', icon: MessageSquareText },
-                { id: 'mail', label: 'Mail', icon: Mail },
-                { id: 'calls', label: 'Calls', icon: Phone }
-              ].map(tab => (
+          {/* Panel 2: System Status */}
+          <div className="col-span-12 lg:col-span-4 bg-[#111116] rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
+            <div className="flex items-center gap-3 text-slate-400">
+              <Database className="w-5 h-5" />
+              <h2 className="text-sm font-bold tracking-widest uppercase">Kernel Status</h2>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                    <BrainCircuit className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">AI Model</p>
+                    <p className="text-xs text-slate-500">{osStatus.model}</p>
+                  </div>
+                </div>
+                <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Running</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+                    <Network className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Knowledge Graph</p>
+                    <p className="text-xs text-slate-500">{osStatus.nodes.toLocaleString()} Nodes</p>
+                  </div>
+                </div>
+                <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-wider">{osStatus.memoryIndexed}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                    <Activity className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Sync Engine</p>
+                    <p className="text-xs text-slate-500">{osStatus.jobs} Relationships</p>
+                  </div>
+                </div>
+                <span className="px-2 py-1 rounded bg-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">{osStatus.syncHealth}</span>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {connectedProviders.map(p => (
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap",
-                    activeTab === tab.id 
-                      ? "bg-white/10 text-white shadow-lg border border-white/10" 
-                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-                  )}
+                  key={p.id}
+                  type="button"
+                  onClick={() => startProviderLogin(p)}
+                  disabled={openingProvider !== null}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 disabled:opacity-60 transition-colors cursor-pointer"
+                  title={`Open ${p.name} login`}
                 >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
+                  <p.icon className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-[11px] font-medium text-slate-300">{openingProvider === p.id ? 'Opening...' : p.name}</span>
+                  <div className={cn("w-1.5 h-1.5 rounded-full", p.status === 'Healthy' ? "bg-emerald-500" : (p.status === 'Syncing' ? "bg-amber-500 animate-pulse" : "bg-slate-600"))}></div>
                 </button>
               ))}
             </div>
           </div>
-        </div>
 
-        <ScrollArea className="flex-1 min-h-0 px-4 py-6 z-10 relative">
-        
-        {/* Compact Summary Strip & Daily Brief */}
-        <div className="mb-8">
-          <h2 className="text-lg font-bold text-white mb-2">{greeting}, {userName}.</h2>
-          <p className="text-sm text-white/70 leading-relaxed mb-6 bg-white/[0.02] backdrop-blur-md p-5 rounded-2xl border border-white/[0.05] shadow-lg">
-            {briefingText}
-          </p>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            <div className="bg-white/[0.02] hover:bg-white/[0.04] transition-all border border-white/[0.05] rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
-              <Star className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.priority || 0}</span> <span className="text-xs text-white/50 ml-1">Priority</span>
-            </div>
-            <div className="bg-indigo-500/[0.02] hover:bg-indigo-500/[0.05] transition-all border border-indigo-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
-              <CornerUpLeft className="w-4 h-4 text-indigo-400" /> <span className="font-bold text-indigo-400 ml-2">{dailyStats?.repliesNeeded || 0}</span> <span className="text-xs text-indigo-400/70 ml-1">Replies Needed</span>
-            </div>
-            <div className="bg-amber-500/[0.02] hover:bg-amber-500/[0.05] transition-all border border-amber-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
-              <CircleDollarSign className="w-4 h-4 text-amber-400" /> <span className="font-bold text-amber-400 ml-2">{dailyStats?.billsDue || 0}</span> <span className="text-xs text-amber-400/70 ml-1">Bills Due</span>
-            </div>
-            <div className="bg-rose-500/[0.02] hover:bg-rose-500/[0.05] transition-all border border-rose-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
-              <span className="text-xl">⚠️</span> <span className="font-bold text-rose-400 ml-2">{dailyStats?.threatsBlocked || 0}</span> <span className="text-xs text-rose-400/70 ml-1">Threats</span>
-            </div>
-            <div className="bg-blue-500/[0.02] hover:bg-blue-500/[0.05] transition-all border border-blue-500/20 rounded-xl px-4 py-2 min-w-[max-content] flex items-center shadow-sm">
-              <span className="text-xl">📅</span> <span className="font-bold text-blue-400 ml-2">{dailyStats?.meetings || 0}</span> <span className="text-xs text-blue-400/70 ml-1">Meetings</span>
-            </div>
-          </div>
-        </div>
-
-        {activeTab === 'mail' ? (
-          <div className="space-y-4">
-            
-            {connectedAccounts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                
-                {/* Hero / Value Prop */}
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-2 border border-indigo-500/30 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-                    <Sparkles className="w-8 h-8 text-indigo-400" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Experience CHATR Intelligence</h3>
-                  <p className="text-slate-400 max-w-sm mx-auto text-sm leading-relaxed">
-                    Connect your inbox to automatically categorize emails, block threats, and get concise summaries—all processed 100% locally on your device.
-                  </p>
-                </div>
-
-                {/* Example Cards */}
-                <div className="w-full space-y-3 opacity-60 pointer-events-none">
-                  <div className="flex items-center gap-2 mb-4 justify-center">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Example Intelligence</span>
-                  </div>
-                  
-                  {/* Example 1 */}
-                  <div className="group relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-white/[0.02] p-5">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-l-3xl" />
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/30">
-                          A
-                        </div>
-                        <div>
-                          <h4 className="text-white font-semibold flex items-center gap-1">apple <CheckCircle2 className="w-3 h-3 text-emerald-400" /></h4>
-                          <p className="text-xs text-slate-500">apple@secure.apple.com</p>
-                        </div>
-                      </div>
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2">Your receipt from Apple</h3>
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <div className="flex items-center gap-2 mb-2 text-indigo-400">
-                        <Sparkles className="w-4 h-4" />
-                        <span className="text-xs font-bold tracking-wider uppercase">AI Summary</span>
-                      </div>
-                      <p className="text-slate-300 text-sm">Charged $0.99 for iCloud+ 50GB storage plan.</p>
-                    </div>
-                  </div>
-
-                  {/* Example 2 */}
-                  <div className="group relative overflow-hidden rounded-3xl border border-rose-500/30 bg-rose-500/[0.04] p-5">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500 rounded-l-3xl" />
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-rose-950 flex items-center justify-center text-rose-400 font-bold border border-rose-500/30">
-                          <AlertTriangle className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h4 className="text-rose-400 font-semibold">Account Alert</h4>
-                          <p className="text-xs text-rose-500/70">security@paypaI-update.com</p>
-                        </div>
-                      </div>
-                      <span className="bg-rose-500/20 text-rose-400 text-xs px-3 py-1 rounded-full font-bold border border-rose-500/30 flex items-center gap-1">
-                        <Shield className="w-3 h-3" /> SCAM
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2">Verify your account immediately</h3>
-                    <div className="bg-rose-950/50 border border-rose-500/20 rounded-2xl p-4">
-                      <p className="text-rose-200 text-sm">Threat detected: Sender domain uses a capital 'i' instead of 'l' (paypaI). Contains suspicious login links.</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connection Buttons */}
-                <div className="w-full max-w-sm space-y-3 pt-6 border-t border-white/10">
-                  <div className="flex items-center gap-2 justify-center mb-6 text-emerald-400">
-                    <Shield className="w-4 h-4" />
-                    <span className="text-xs font-semibold">Zero-Knowledge Privacy • On-Device Processing</span>
-                  </div>
-                  
-                  <Button onClick={() => handleConnect('google')} disabled={isConnecting} className="w-full bg-white text-black hover:bg-slate-200 h-14 rounded-2xl font-bold gap-3 text-md transition-transform active:scale-95">
-                    <Globe className="w-5 h-5 text-rose-500" /> {isConnecting ? 'Connecting...' : 'Connect with Gmail'}
-                  </Button>
-                  <Button onClick={() => handleConnect('microsoft')} disabled={isConnecting} className="w-full bg-[#0078D4] text-white hover:bg-[#006cbd] h-14 rounded-2xl font-bold gap-3 text-md transition-transform active:scale-95">
-                    <Globe className="w-5 h-5" /> {isConnecting ? 'Connecting...' : 'Connect with Outlook'}
-                  </Button>
-                </div>
+          {/* Panel 3: Unified Timeline (Intent Feed) */}
+          <div className="col-span-12 lg:col-span-6 bg-[#111116] rounded-3xl border border-white/5 p-6 flex flex-col gap-6 h-[400px]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 text-slate-400">
+                <Activity className="w-5 h-5" />
+                <h2 className="text-sm font-bold tracking-widest uppercase">{searchQuery ? 'Search Results' : 'Intent Timeline'}</h2>
               </div>
-            ) : (
-              <>
-                <div className="flex justify-between items-center mb-4">
-                  <p className="text-sm text-emerald-400 font-semibold">{connectedAccounts.length} Account(s) Synced Locally</p>
-                  <button onClick={disconnectAccounts} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Disconnect</button>
-                </div>
-
-                {syncState && (
-                  <div className="bg-white/5 border border-indigo-500/30 rounded-3xl p-5 mb-4 animate-in fade-in slide-in-from-top-2">
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="flex items-center gap-2">
-                        <RefreshCw className="w-4 h-4 text-indigo-400 animate-spin" />
-                        <span className="text-white font-semibold">Syncing Intelligence...</span>
-                      </div>
-                      <span className="text-xs font-mono text-indigo-300">{Math.round((syncState.progress / syncState.max) * 100)}%</span>
-                    </div>
-                    
-                    <div className="w-full bg-black/40 rounded-full h-2 mb-3 overflow-hidden">
-                      <div 
-                        className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300 ease-out"
-                        style={{ width: `${Math.max(5, (syncState.progress / syncState.max) * 100)}%` }}
-                      />
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-400 animate-pulse">{syncState.step}</span>
-                      <span className="text-xs text-slate-500 font-mono">{syncState.progress} / {syncState.max} items</span>
-                    </div>
-                  </div>
-                )}
-
-                {!syncState && localMessages.length === 0 && (
-                  <div className="text-center py-20 flex flex-col items-center justify-center space-y-4">
-                    <div className="w-16 h-16 rounded-full border border-white/5 flex items-center justify-center bg-white/[0.02]">
-                      <CheckCircle2 className="w-8 h-8 text-emerald-400" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-white font-semibold">Inbox Zero</p>
-                      <p className="text-sm text-slate-400">You're all caught up. No messages to review.</p>
-                    </div>
-                  </div>
-                )}
-
-                {localMessages.map(msg => (
-                  <div key={msg.id} className={cn("group relative overflow-hidden rounded-3xl border backdrop-blur-xl p-5 cursor-pointer hover:bg-white/[0.04] transition-all duration-300",
-                    msg.threatLevel === 'scam' ? "border-red-500/30 bg-red-500/[0.04] hover:bg-red-500/[0.08]" : "border-emerald-500/20 bg-white/[0.02]"
-                  )}>
-                    <div className={cn("absolute top-0 left-0 w-1 h-full bg-gradient-to-b",
-                      msg.threatLevel === 'scam' ? "from-red-500 to-red-600" : "from-emerald-400 to-emerald-600"
-                    )} />
-                    
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border",
-                          msg.threatLevel === 'scam' ? "bg-slate-900 text-slate-300 border-red-500/50" : "bg-gradient-to-br from-slate-700 to-slate-800 text-white shadow-inner border-white/10"
-                        )}>
-                          {msg.sender.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-slate-100 leading-tight flex items-center gap-1">
-                            {msg.sender.split('@')[0]} {msg.threatLevel !== 'scam' && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
-                          </h4>
-                          <p className={cn("text-[11px] font-medium", msg.threatLevel === 'scam' ? "text-red-400 line-through" : "text-slate-500")}>
-                            {msg.sender}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border",
-                          msg.threatLevel === 'scam' ? "bg-red-500/20 text-red-300 border-red-500/20" : "bg-indigo-500/20 text-indigo-300 border-indigo-500/20"
-                        )}>
-                          {msg.category || 'Update'}
-                        </span>
-                        <span className="text-[11px] font-medium text-slate-500">
-                          {formatDistanceToNow(new Date(msg.internalDate), { addSuffix: true })}
-                        </span>
-                      </div>
-                    </div>
-
-                    <h5 className="font-semibold text-white text-base mb-1">{msg.subject}</h5>
-                    
-                    {/* Intelligence Badges */}
-                    <div className="flex flex-wrap gap-2 mt-2 mb-3">
-                      {msg.threatLevel === 'scam' ? (
-                        <span className="px-2 py-1 rounded bg-red-500/20 text-[10px] font-bold text-red-300 flex items-center gap-1 border border-red-500/30">
-                          <AlertTriangle className="w-3 h-3" /> Attention: 🔴 High Risk
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded bg-white/5 text-[10px] font-bold text-slate-300 flex items-center gap-1">
-                          <Tag className="w-3 h-3" /> Attention: 🟢 {msg.attentionScore}
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Relationship Intelligence */}
-                    <div className={cn("flex flex-col gap-2 text-[10px] mb-4 p-3 rounded-xl border",
-                      msg.threatLevel === 'scam' ? "text-slate-400 bg-black/40 border-red-500/20" : "text-slate-400 bg-black/20 border-white/5"
-                    )}>
-                      <div className="flex gap-3">
-                        <span className={cn("flex items-center gap-1", !msg.relationshipStats?.isVerified && "text-red-400")}>
-                          {msg.relationshipStats?.isVerified ? <Globe className="w-3 h-3 text-emerald-400" /> : <ShieldAlert className="w-3 h-3" />} 
-                          {msg.relationshipStats?.isVerified ? 'Verified Sender' : 'Not Verified'}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Inbox className="w-3 h-3" /> {msg.relationshipStats?.previousEmailsCount} prev emails
-                        </span>
-                      </div>
-                      {(msg.category === 'Finance' || msg.category === 'Purchases') && msg.relationshipStats?.isVerified && (
-                        <div className="flex gap-3 text-emerald-400/80 mt-1 pt-2 border-t border-white/5">
-                          <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Normal billing pattern</span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Last payment: 30 days ago</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Structured AI Summary */}
-                    <div className={cn("p-3 rounded-2xl border",
-                      msg.threatLevel === 'scam' ? "bg-red-500/10 border-red-500/30" : "bg-indigo-500/5 border-indigo-500/10"
-                    )}>
-                      <div className="flex items-center gap-2 mb-2">
-                        {msg.threatLevel === 'scam' ? <ShieldAlert className="w-4 h-4 text-red-400" /> : <Sparkles className="w-4 h-4 text-indigo-400" />}
-                        <p className={cn("text-xs font-bold uppercase tracking-wider",
-                          msg.threatLevel === 'scam' ? "text-red-300" : "text-indigo-300"
-                        )}>
-                          {msg.threatLevel === 'scam' ? 'Phishing Attempt Blocked' : 'AI Summary'}
-                        </p>
-                      </div>
-                      
-                      {msg.threatLevel === 'scam' ? (
-                        <p className="text-sm text-red-200/90 leading-relaxed">{msg.snippet}</p>
-                      ) : (
-                        <ul className="text-sm text-slate-300 space-y-1 ml-6 list-disc marker:text-indigo-500/50">
-                          {msg.intelligenceSummary?.map((s, i) => <li key={i}>{s}</li>)}
-                        </ul>
-                      )}
-
-                      {/* Explainable AI Decision */}
-                      <details className="mt-3 group/details" open={msg.threatLevel === 'scam'}>
-                        <summary className={cn("text-[11px] font-medium cursor-pointer list-none flex items-center gap-1 select-none",
-                          msg.threatLevel === 'scam' ? "text-red-300 font-bold uppercase tracking-wider" : "text-indigo-300"
-                        )}>
-                           {msg.threatLevel === 'scam' ? 'Why is this suspicious?' : `Why did CHATR mark this as ${msg.attentionScore}?`} <ChevronDown className="w-3 h-3 group-open/details:rotate-180 transition-transform"/>
-                        </summary>
-                        <div className={cn("mt-2 space-y-1.5 text-[11px] pl-2 border-l",
-                          msg.threatLevel === 'scam' ? "text-red-200/80 border-red-500/30" : "text-slate-400 border-white/10"
-                        )}>
-                          {msg.intelligenceSummary?.map((reason, i) => (
-                             <p key={i} className="flex items-center gap-2">
-                               <CheckCircle2 className={cn("w-3 h-3", msg.threatLevel === 'scam' ? "text-red-400" : "text-emerald-500")}/> {reason}
-                             </p>
-                          ))}
-                        </div>
-                      </details>
-                    </div>
-
-                    {/* AI Recommendation */}
-                    {msg.recommendation && (
-                      <div className={cn("mt-3 flex items-center justify-between p-3 rounded-2xl border",
-                        msg.recommendation.actionStyle === 'danger' ? "bg-red-500/5 border-red-500/10" : "bg-white/5 border-white/5"
-                      )}>
-                        <div className="flex items-center gap-2">
-                          <Bot className={cn("w-4 h-4", msg.recommendation.actionStyle === 'danger' ? "text-red-400" : "text-emerald-400")} />
-                          <span className={cn("text-xs font-medium", msg.recommendation.actionStyle === 'danger' ? "text-red-200" : "text-slate-300")}>
-                            AI Recommendation: {msg.recommendation.text}
-                          </span>
-                        </div>
-                        <button className={cn("px-4 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors",
-                          msg.recommendation.actionStyle === 'danger' ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20" : "bg-white/10 hover:bg-white/20"
-                        )}>
-                          {msg.recommendation.actionLabel}
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Smart Reply Suggestions */}
-                    {msg.smartReplies && msg.smartReplies.length > 0 && (
-                      <div className="mt-4 flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-                        {msg.smartReplies.map((reply, i) => (
-                          <button key={i} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-medium text-slate-300 border border-white/10 whitespace-nowrap transition-colors flex items-center gap-2">
-                            <Sparkles className="w-3 h-3 text-indigo-400"/> {reply}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </>
-            )}
-          </div>
-        ) : activeTab === 'messages' ? (
-          <div className="space-y-4 pb-20">
-            {conversations.length === 0 && !loading && (
-               <div className="flex flex-col items-center justify-center h-64 text-center space-y-6 mt-10">
-                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/30 shadow-[0_0_40px_rgba(99,102,241,0.2)]">
-                   <Shield className="w-10 h-10 text-indigo-400" />
-                 </div>
-                 <div>
-                   <h3 className="text-xl font-bold text-white mb-2">Inbox Secure & Empty</h3>
-                   <p className="text-slate-400">Tap below to scan your device for existing messages.</p>
-                 </div>
-                 <Button onClick={handleSync} disabled={syncing} className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-8 py-6 h-auto text-lg font-semibold shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-1 gap-3">
-                   <RefreshCw className={cn("w-5 h-5", syncing && "animate-spin")} />
-                   {syncing ? 'Scanning...' : 'Initialize AI Scan'}
-                 </Button>
-               </div>
-            )}
+              <button className="text-xs font-semibold text-indigo-400 hover:text-indigo-300">View All</button>
+            </div>
             
-            {conversations.map((convo, index) => (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                key={convo.conversationId}
-              >
-                <motion.div 
-                  onClick={() => toggleExpand(convo.conversationId)}
-                  className={cn(
-                    "group relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-xl transition-all duration-300 hover:bg-white/[0.04] cursor-pointer",
-                    expandedId === convo.conversationId && "bg-white/[0.04] border-white/10 shadow-2xl shadow-black/50"
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4">
+              {searchQuery && searchResults.length === 0 ? (
+                 <div className="text-center text-slate-500 text-sm py-10">No results found for "{searchQuery}"</div>
+              ) : (!searchQuery && intentFeed.length === 0) ? (
+                 <div className="text-center text-slate-500 text-sm py-10">No events yet... waiting for OS Kernel sync.</div>
+              ) : (searchQuery ? searchResults : intentFeed).map((event: any, idx: number, arr: any[]) => {
+                const IconComponent = getIcon(event.icon);
+                return (
+                <div key={event.id || idx} className="flex gap-4 relative group">
+                  {idx !== arr.length - 1 && (
+                    <div className="absolute left-[15px] top-8 bottom-[-16px] w-[2px] bg-white/5 group-hover:bg-white/10 transition-colors"></div>
                   )}
-                >
-                  <div className="p-5">
-                    <div className="flex gap-4 items-start">
-                      {/* Avatar */}
-                      <div className={cn("w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-lg shadow-inner bg-gradient-to-br", getAvatarGradient(convo.displayName || convo.address))}>
-                        {(convo.displayName || convo.address).charAt(0).toUpperCase()}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0 pt-0.5">
-                        <div className="flex justify-between items-start mb-1">
-                          <h3 className="font-bold text-base text-slate-100 truncate pr-4">
-                            {convo.displayName || convo.address}
-                          </h3>
-                          <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap bg-white/5 px-2 py-1 rounded-full">
-                            {formatDistanceToNow(new Date(convo.lastTimestamp), { addSuffix: true })}
-                          </span>
-                        </div>
-                        <p className={cn("text-sm text-slate-400 mb-3", expandedId !== convo.conversationId && "truncate")}>
-                          {convo.lastBody}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          {getRiskBadge(convo.lastRisk)}
-                          <motion.div 
-                            animate={{ rotate: expandedId === convo.conversationId ? 180 : 0 }}
-                            className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:bg-white/10 group-hover:text-white transition-colors"
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </motion.div>
-                        </div>
-                      </div>
+                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 z-10">
+                    <IconComponent className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <div className="flex-1 pb-1">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <p className="text-sm font-medium text-white">{event.title}</p>
+                      <span className="text-xs font-medium text-slate-500">{event.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">{event.detail}</span>
+                      <span className="w-1 h-1 rounded-full bg-white/20"></span>
+                      <span className="text-[11px] text-slate-500">{event.category}</span>
                     </div>
                   </div>
-
-                  {/* Expanded Content */}
-                  <AnimatePresence>
-                    {expandedId === convo.conversationId && (
-                      <motion.div 
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="border-t border-white/5 bg-black/20"
-                      >
-                        <div className="p-5 space-y-4 max-h-[400px] overflow-y-auto">
-                          {messages[convo.conversationId] ? (
-                            messages[convo.conversationId].map(msg => (
-                              <motion.div 
-                                initial={{ opacity: 0, x: msg.direction === 'inbox' ? -10 : 10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                key={msg.id} 
-                                className={cn("flex flex-col max-w-[85%]", msg.direction === 'inbox' ? "self-start" : "self-end items-end ml-auto")}
-                              >
-                                <div className={cn(
-                                  "px-4 py-3 rounded-2xl text-[15px] leading-relaxed shadow-sm",
-                                  msg.direction === 'inbox' 
-                                    ? "bg-white/10 text-slate-200 rounded-tl-sm border border-white/5" 
-                                    : "bg-indigo-600 text-white rounded-tr-sm shadow-[0_4px_20px_rgba(79,70,229,0.3)]",
-                                  msg.risk.riskLevel === 'scam' && msg.direction === 'inbox' && "bg-rose-500/10 border-rose-500/30 text-rose-100"
-                                )}>
-                                  <p className="whitespace-pre-wrap">{msg.body}</p>
-                                  {msg.risk.isOtp && msg.risk.otpCode && (
-                                    <div className="mt-3 p-3 bg-black/30 rounded-xl flex items-center justify-between border border-white/5">
-                                      <div className="flex items-center gap-2 text-indigo-300">
-                                        <Fingerprint className="w-4 h-4" />
-                                        <span className="text-xs font-semibold uppercase tracking-wider">Secure OTP</span>
-                                      </div>
-                                      <span className="font-mono font-bold text-lg tracking-widest text-white">{msg.risk.otpCode}</span>
-                                    </div>
-                                  )}
-                                </div>
-                                <span className="text-[10px] font-medium text-slate-500 mt-1.5 px-2">
-                                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </motion.div>
-                            ))
-                          ) : (
-                            <div className="flex justify-center py-6">
-                              <div className="w-5 h-5 border-2 border-slate-600 border-t-slate-400 rounded-full animate-spin" />
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              </motion.div>
-            ))}
+                </div>
+              )})}
+            </div>
           </div>
-        ) : activeTab === 'inbox' ? (
-          <div className="space-y-4 pb-20">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Unified Notifications</h3>
+
+          {/* Panel 4: Live Workspace (Intents) */}
+          <div className="col-span-12 lg:col-span-3 bg-[#111116] rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
+            <div className="flex items-center gap-3 text-slate-400">
+              <FolderGit2 className="w-5 h-5" />
+              <h2 className="text-sm font-bold tracking-widest uppercase">Active Intents</h2>
             </div>
             
-            {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-center space-y-5 mt-10 animate-in fade-in duration-500">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-indigo-500/20 blur-2xl rounded-full" />
-                  <div className="relative w-20 h-20 rounded-full bg-white/[0.03] backdrop-blur-md flex items-center justify-center border border-white/[0.08] shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-                    <Inbox className="w-8 h-8 text-white/50" />
+            <div className="flex flex-col gap-4">
+              {activeIntents.length === 0 ? (
+                 <div className="text-center text-slate-500 text-sm py-4">No active intents</div>
+              ) : activeIntents.map(intent => (
+                <div key={intent.id} className="group cursor-pointer">
+                  <div className="flex justify-between items-end mb-2">
+                    <p className="text-sm font-medium text-slate-200 group-hover:text-indigo-300 transition-colors">{intent.text}</p>
+                    <span className="text-[10px] font-bold text-slate-500">{intent.progress}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-indigo-500/80 rounded-full"
+                        style={{ width: `${intent.progress}%` }}
+                      ></div>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-white/80 font-bold text-lg">You're all caught up</h3>
-                  <p className="text-white/40 text-sm max-w-[250px] mx-auto leading-relaxed">Your inbox is clear and fully secure. No pending actions today.</p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {notifications.map((notif, idx) => (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    key={notif.id}
-                    className={cn(
-                      "p-4 rounded-2xl border transition-all duration-300",
-                      notif.is_read 
-                        ? "bg-white/5 border-white/10 opacity-70"
-                        : "bg-indigo-900/20 border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
-                    )}
-                  >
-                    <div className="flex gap-4 items-start">
-                      <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                        notif.type === 'message' ? "bg-blue-500/20 text-blue-400" :
-                        notif.type === 'alert' ? "bg-rose-500/20 text-rose-400" :
-                        notif.type === 'call_missed' ? "bg-purple-500/20 text-purple-400" :
-                        "bg-slate-700/50 text-slate-300"
-                      )}>
-                        {notif.type === 'message' && <MessageSquareText className="w-5 h-5" />}
-                        {notif.type === 'alert' && <AlertTriangle className="w-5 h-5" />}
-                        {notif.type === 'call_missed' && <Phone className="w-5 h-5" />}
-                        {notif.type === 'system' && <Settings className="w-5 h-5" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start mb-1">
-                          <h4 className="font-semibold text-white text-sm">{notif.title}</h4>
-                          <span className="text-[10px] text-slate-400">
-                            {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true })}
-                          </span>
-                        </div>
-                        <p className="text-sm text-slate-300">{notif.content}</p>
-                        {notif.action_url && (
-                          <Button variant="link" className="px-0 h-auto text-indigo-400 mt-2 text-xs">
-                            View Details <ArrowRight className="w-3 h-3 ml-1" />
-                          </Button>
-                        )}
-                      </div>
-                      {!notif.is_read && (
-                        <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2" />
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-64 text-center space-y-6 mt-10">
-            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-              <Bot className="w-10 h-10 text-slate-500" />
+              ))}
             </div>
-            <p className="text-slate-400 text-lg font-medium">Select a tab to view AI Intelligence.</p>
           </div>
-        )}
-      </ScrollArea>
 
-      {/* Docked AI Assistant */}
-      <div className="sticky bottom-0 left-0 right-0 w-full bg-black/80 backdrop-blur-3xl border-t border-white/10 p-4 z-50">
-        <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
-             <Sparkles className="w-5 h-5 text-indigo-400" />
+          {/* Panel 5: Knowledge & Memory */}
+          <div className="col-span-12 lg:col-span-3 bg-[#111116] rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
+            <div className="flex items-center gap-3 text-slate-400">
+              <Database className="w-5 h-5" />
+              <h2 className="text-sm font-bold tracking-widest uppercase">Recent Memory</h2>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {recentMemory.length === 0 ? (
+                 <div className="text-center text-slate-500 text-sm py-4">No indexed memory nodes</div>
+              ) : recentMemory.map(mem => {
+                const MemIcon = getMemoryIcon(mem.type);
+                return (
+                <div key={mem.id} className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center gap-3 hover:bg-white/10 cursor-pointer transition-colors">
+                  <MemIcon className="w-4 h-4 text-slate-400" />
+                  <div>
+                    <p className="text-xs font-semibold text-white">{mem.title}</p>
+                    <p className="text-[10px] text-slate-500">{mem.type} indexed at {mem.time}</p>
+                  </div>
+                </div>
+              )})}
+            </div>
           </div>
-          <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-2 focus-within:border-indigo-500/50 transition-colors shadow-inner">
-            <input 
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Ask CHATR Intelligence..."
-              className="bg-transparent border-none outline-none text-sm text-white w-full placeholder:text-slate-500"
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  toast.success('Analyzing intelligence query...');
-                  setSearchQuery('');
-                }
-              }}
-            />
-          </div>
-          <div className="flex gap-2 shrink-0">
-             <button onClick={() => setSearchQuery('Summarize Today')} className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 transition-colors flex items-center gap-2 border border-white/5">
-                <ListChecks className="w-3.5 h-3.5" /> Summarize Today
-             </button>
-             <button onClick={() => setSearchQuery('Show Threats')} className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 transition-colors flex items-center gap-2 border border-white/5">
-                <ShieldAlert className="w-3.5 h-3.5 text-red-400" /> Show Threats
-             </button>
-             <button onClick={() => setSearchQuery('Reply Priority')} className="px-3 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-xs font-semibold text-indigo-300 transition-colors flex items-center gap-2 border border-indigo-500/30">
-                <CornerUpRight className="w-3.5 h-3.5" /> Reply Priority
-             </button>
-          </div>
+
         </div>
-      </div>
-      </div>
-
-      {/* Command Center Panel — right side AI sidebar */}
-      <div className="w-[380px] border-l border-white/[0.05] bg-black/40 backdrop-blur-3xl relative z-10 flex flex-col">
-        <CommandCenterPanel
-          stats={{
-            unread: localMessages.length,
-            tasks: 0,
-            meetings: 0,
-          }}
-          onSearch={(q) => setSearchQuery(q)}
-        />
       </div>
     </div>
+  );
+}
+
+// Inline Sparkles Icon for AI Brief
+function SparklesIcon(props: any) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+      <path d="M5 3v4"/>
+      <path d="M19 17v4"/>
+      <path d="M3 5h4"/>
+      <path d="M17 19h4"/>
+    </svg>
   );
 }

@@ -44,7 +44,8 @@ export const useWorkspaceSync = () => {
           .single();
           
         if (createError) {
-          console.error("Failed to create default workspace", createError);
+          console.warn("[WorkspaceSync] Supabase RLS blocked creation, falling back to local workspace.");
+          setWorkspaceId('local-fallback-workspace');
           setIsSyncing(false);
           return;
         }

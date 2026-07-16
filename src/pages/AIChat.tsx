@@ -23,6 +23,12 @@ import { toast } from 'sonner';
 import chatrIntelligenceIcon from '@/assets/chatr-intelligence-icon.jpeg';
 import { chatrAIToolRegistry } from '@/platform/ai';
 import type { ChatrAIToolDefinition } from '@/platform/ai';
+import { WorkflowRenderer } from '@/components/workflow-ui/WorkflowRenderer';
+import { triggerCabBooking } from '@/core/capabilities/travel/CabBookingWorkflow';
+import { triggerCalendarMeeting } from '@/core/capabilities/calendar/CalendarMeetingWorkflow';
+import { triggerFoodOrdering } from '@/core/capabilities/commerce/FoodOrderingWorkflow';
+import { triggerFlightDeparture } from '@/core/capabilities/travel/FlightDepartureWorkflow';
+import { triggerEnterpriseApproval } from '@/core/capabilities/enterprise/EnterpriseApprovalWorkflow';
 
 interface ChatMessage {
   id: string;
@@ -35,6 +41,8 @@ interface ChatMessage {
   confidence?: number;
   runtimeLabel?: string;
   privacy?: string;
+  /** If set, renders a WorkflowRenderer below this message bubble */
+  workflowId?: string;
 }
 
 interface IntelligenceStat {
@@ -352,6 +360,57 @@ export default function AIChat() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // ─── Intent Detection ────────────────────────────────────────────────────
+  // Simple pattern matching — will move to IntentEngine once it's wired up.
+  const CAB_BOOKING_PATTERNS = [
+    /book.{0,10}cab/i,
+    /book.{0,10}ride/i,
+    /get.{0,10}cab/i,
+    /need.{0,10}cab/i,
+    /ola|uber|rapido/i,
+    /book.{0,10}taxi/i,
+  ];
+
+  const detectCabBookingIntent = (text: string): boolean =>
+    CAB_BOOKING_PATTERNS.some(p => p.test(text));
+
+  const CALENDAR_MEETING_PATTERNS = [
+    /schedule.{0,10}meeting/i,
+    /book.{0,10}meeting/i,
+    /set up.{0,10}meeting/i,
+  ];
+
+  const detectCalendarMeetingIntent = (text: string): boolean =>
+    CALENDAR_MEETING_PATTERNS.some(p => p.test(text));
+
+  const FOOD_ORDERING_PATTERNS = [
+    /hungry/i,
+    /order.{0,10}food/i,
+    /order.{0,10}pizza/i,
+    /get.{0,10}food/i,
+  ];
+
+  const detectFoodOrderingIntent = (text: string): boolean =>
+    FOOD_ORDERING_PATTERNS.some(p => p.test(text));
+
+  const FLIGHT_DEPARTURE_PATTERNS = [
+    /flight.{0,10}tomorrow/i,
+    /get me there on time/i,
+    /catch my flight/i,
+  ];
+
+  const detectFlightDepartureIntent = (text: string): boolean =>
+    FLIGHT_DEPARTURE_PATTERNS.some(p => p.test(text));
+
+  const ENTERPRISE_APPROVAL_PATTERNS = [
+    /access.{0,10}production/i,
+    /request.{0,10}access/i,
+    /need.{0,10}database/i,
+  ];
+
+  const detectEnterpriseApprovalIntent = (text: string): boolean =>
+    ENTERPRISE_APPROVAL_PATTERNS.some(p => p.test(text));
+
   const sendPrompt = async (prompt: string) => {
     if (!prompt.trim() || isProcessing || !isReady) return;
 
@@ -366,6 +425,126 @@ export default function AIChat() {
     const currentInput = prompt.trim();
     setInput('');
 
+    // ── Workflow Intent Interception ───────────────────────────────────────
+    // If the message is a cab booking intent, hand off to the Workflow SDK
+    // instead of passing to the AI model.
+    if (detectCabBookingIntent(currentInput)) {
+      const conversationId = `conv-${Date.now()}`;
+      const workflowId = await triggerCabBooking(conversationId, {
+        rawText: currentInput,
+      });
+
+      const assistantMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "Sure, I'll book a cab for you. Working on it...",
+        timestamp: new Date(),
+        workflowId,
+        runtimeLabel: 'Workflow Runtime',
+        privacy: 'local',
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      return;
+    }
+
+    if (detectCalendarMeetingIntent(currentInput)) {
+      const conversationId = `conv-${Date.now()}`;
+      
+      // Extract rough attendees from input
+      let attendees = 'Team';
+      const match = currentInput.match(/with\s+([a-zA-Z\s]+)(?:for|next|tomorrow|$)/i);
+      if (match) attendees = match[1].trim();
+
+      const workflowId = await triggerCalendarMeeting(conversationId, {
+        rawText: currentInput,
+        attendees,
+      });
+
+      const assistantMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `I'll help you schedule a meeting with ${attendees}. Checking calendars...`,
+        timestamp: new Date(),
+        workflowId,
+        runtimeLabel: 'Workflow Runtime',
+        privacy: 'local',
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      return;
+    }
+
+    if (detectFoodOrderingIntent(currentInput)) {
+      const conversationId = `conv-${Date.now()}`;
+      
+      let foodItem = 'food';
+      if (currentInput.toLowerCase().includes('pizza')) foodItem = 'Pizza';
+      else if (currentInput.toLowerCase().includes('burger')) foodItem = 'Burger';
+      else if (currentInput.toLowerCase().includes('sushi')) foodItem = 'Sushi';
+
+      const workflowId = await triggerFoodOrdering(conversationId, {
+        rawText: currentInput,
+        foodItem,
+      });
+
+      const assistantMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `I'll help you order some ${foodItem.toLowerCase()}. Looking for the best places nearby...`,
+        timestamp: new Date(),
+        workflowId,
+        runtimeLabel: 'Workflow Runtime',
+        privacy: 'local',
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      return;
+    }
+
+    if (detectFlightDepartureIntent(currentInput)) {
+      const conversationId = `conv-${Date.now()}`;
+      
+      const workflowId = await triggerFlightDeparture(conversationId, {
+        rawText: currentInput,
+      });
+
+      const assistantMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `I'll make sure you catch your flight. Let me coordinate everything for you...`,
+        timestamp: new Date(),
+        workflowId,
+        runtimeLabel: 'Workflow Runtime',
+        privacy: 'local',
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      return;
+    }
+
+    if (detectEnterpriseApprovalIntent(currentInput)) {
+      const conversationId = `conv-${Date.now()}`;
+      
+      const workflowId = await triggerEnterpriseApproval(conversationId, {
+        rawText: currentInput,
+      });
+
+      const assistantMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `I'll help you request access. Checking IAM policies...`,
+        timestamp: new Date(),
+        workflowId,
+        runtimeLabel: 'Workflow Runtime',
+        privacy: 'local',
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      return;
+    }
+
+    // ── Default: send to AI model ──────────────────────────────────────────
     // Add streaming placeholder
     const streamingId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, {
@@ -402,6 +581,7 @@ export default function AIChat() {
       ));
     }
   };
+
 
   const handleSend = async () => {
     await sendPrompt(input);
@@ -809,6 +989,12 @@ export default function AIChat() {
               )}
               {copiedId === message.id ? 'Copied' : 'Copy'}
             </button>
+          )}
+          {/* Workflow Widget Stack — rendered below assistant message when active */}
+          {!isUser && message.workflowId && (
+            <div className="mt-3 w-full">
+              <WorkflowRenderer workflowId={message.workflowId} />
+            </div>
           )}
         </div>
       </motion.div>

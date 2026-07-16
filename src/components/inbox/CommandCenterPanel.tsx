@@ -19,7 +19,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useCHATROS } from '@/core/os/GlobalIntentProvider';
-import { generate } from '@/services/ai';
+import { kernelClient } from '@/core/ipc/KernelClient';
 import { osScheduler } from '@/core/services/OSSchedulerService';
 
 interface TriageItem {
@@ -101,9 +101,12 @@ export const CommandCenterPanel: React.FC<CommandCenterPanelProps> = ({
     // Static demo triage if empty
     if (built.length === 0) {
       built.push(
-        { id: 'd1', type: 'email', title: 'Proposal approval needed', sender: 'Client', urgency: 'high', timeAgo: '2h ago', actionLabel: 'Reply' },
-        { id: 'd2', type: 'task', title: 'Update project roadmap', urgency: 'medium', timeAgo: 'Due today', actionLabel: 'Open' },
-        { id: 'd3', type: 'message', title: 'Team: Weekly standup notes', urgency: 'low', timeAgo: '1h ago', actionLabel: 'Read' },
+        { id: 'd1', type: 'call', title: 'Interview starts in 10 minutes', sender: 'Calendar', urgency: 'high', timeAgo: 'now', actionLabel: 'Join' },
+        { id: 'd2', type: 'task', title: 'Invoice overdue', sender: 'Finance', urgency: 'high', timeAgo: '2h ago', actionLabel: 'Pay' },
+        { id: 'd3', type: 'message', title: 'GitHub build failed', sender: 'CI/CD', urgency: 'high', timeAgo: '15m ago', actionLabel: 'View' },
+        { id: 'd4', type: 'message', title: 'Slack incident', sender: 'DevOps', urgency: 'high', timeAgo: '30m ago', actionLabel: 'Acknowledge' },
+        { id: 'd5', type: 'message', title: 'LinkedIn recruiter waiting', sender: 'Recruiting', urgency: 'medium', timeAgo: '1h ago', actionLabel: 'Reply' },
+        { id: 'd6', type: 'reminder', title: 'Calendar conflict', sender: 'Calendar', urgency: 'medium', timeAgo: '3h ago', actionLabel: 'Resolve' }
       );
     }
 
@@ -117,10 +120,22 @@ export const CommandCenterPanel: React.FC<CommandCenterPanelProps> = ({
     try {
       const count = scheduledToday.length;
       const intents = knowledge.intents.join(', ');
-      const prompt = `Generate a 2-sentence AI daily brief. Scheduled items today: ${count}. Detected activity: ${intents || 'general communication'}. Be direct and action-oriented.`;
-      const brief = await generate({ prompt });
-      setAiBrief(brief || 'Stay on top of your inbox. Review high-priority items first.');
-    } catch {
+      
+      const response = await kernelClient.dispatchIntent<{ brief: string }>({
+        intent: 'generate_daily_brief',
+        context: {
+          scheduledCount: count,
+          detectedIntents: intents || 'general communication'
+        }
+      });
+
+      if (response.success && response.data?.brief) {
+        setAiBrief(response.data.brief);
+      } else {
+        throw new Error(response.error || 'Failed to generate brief');
+      }
+    } catch (err) {
+      console.warn('[CommandCenter] Intent failed:', err);
       setAiBrief('Start with high-urgency items. Clear your inbox before 12 PM for best focus.');
     } finally {
       setAiLoading(false);

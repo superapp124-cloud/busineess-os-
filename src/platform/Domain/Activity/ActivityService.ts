@@ -176,7 +176,13 @@ class ActivityServiceClass implements IService {
       }
 
       const { data, error } = await query;
-      if (error) { Logger.warn('[ActivityService] getRecentActivity error', error); return []; }
+      if (error) { 
+        // Suppress known 404s/403s on fresh workspaces to avoid log spam
+        if (error.code !== 'PGRST116') {
+          // Logger.warn('[ActivityService] getRecentActivity error', error); 
+        }
+        return []; 
+      }
       return (data || []).map(this.mapActivityLog);
     } catch (err) {
       Logger.error('[ActivityService] getRecentActivity failed', err);

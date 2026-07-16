@@ -77,6 +77,8 @@ export class OllamaProvider implements IAIProvider {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.TIMEOUT_MS);
 
+    eventBus.publish('AI_INFERENCE_START', { providerId: this.id, model: this.activeModel });
+
     try {
       const res = await fetch(`${this.baseUrl}/api/generate`, {
         method: 'POST',
@@ -151,6 +153,61 @@ export class OllamaProvider implements IAIProvider {
   async generate(prompt: string): Promise<IAIProviderResponse<{ output: string }>> {
     const { response, latencyMs } = await this.generateInternal(prompt);
     return { result: { output: response }, confidence: 0.9, reasoning: 'Generated completion.', providerData: { modelUsed: this.activeModel, latencyMs } };
+  }
+
+  // --- Resource Lifecycle Management ---
+
+  async loadModel(modelId: string): Promise<void> {
+    await this.warmup(modelId);
+  }
+
+  async unloadModel(modelId: string): Promise<void> {
+    try {
+      await fetch(`${this.baseUrl}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: modelId, keep_alive: 0 })
+      });
+    } catch (e) {
+      console.warn(`[OllamaProvider] Failed to unload model ${modelId}:`, e);
+    }
+  }
+
+  isLoaded(modelId: string): boolean {
+    return true; // We defer strict loaded state to ResourceManagerEngine tracking
+  }
+
+  getStatus(modelId: string): 'UNLOADED' | 'LOADING' | 'READY' | 'BUSY' | 'IDLE' | 'UNLOADING' {
+    return 'READY'; // Defer strict status to ResourceManagerEngine
+  }
+
+  async getMemoryUsage(modelId: string): Promise<number> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/ps`);
+      if (res.ok) {
+        const data = await res.json();
+        const model = data.models?.find((m: any) => m.name === modelId);
+        if (model) return model.size_vram || model.size || 0;
+      }
+    } catch (e) {}
+    return 0;
+  }
+
+  async warmup(modelId: string): Promise<void> {
+    try {
+      // Send an empty prompt with keep_alive to load model into VRAM
+      await fetch(`${this.baseUrl}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: modelId, prompt: '', keep_alive: '15m' })
+      });
+    } catch (e) {
+      console.warn(`[OllamaProvider] Failed to warmup model ${modelId}:`, e);
+    }
+  }
+
+  async shutdown(): Promise<void> {
+    await this.unloadModel(this.activeModel);
   }
 }
 

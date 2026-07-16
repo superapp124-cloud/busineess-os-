@@ -28,6 +28,7 @@ import { timelineEngine } from '../engines/TimelineEngine';
 import { workflowEngine } from '../engines/WorkflowEngine';
 import { dataSyncLayer } from '../engines/DataSyncLayer';
 import { callEngine } from '../engines/CallEngine';
+import { resourceManagerEngine } from '../engines/ResourceManagerEngine';
 
 export class CHATRKernelImpl {
   private isBooted = false;
@@ -45,6 +46,7 @@ export class CHATRKernelImpl {
     [workflowEngine.id, workflowEngine],
     [dataSyncLayer.id, dataSyncLayer],
     [callEngine.id, callEngine],
+    [resourceManagerEngine.id, resourceManagerEngine],
   ]);
 
   async boot(): Promise<void> {
@@ -90,12 +92,14 @@ export class CHATRKernelImpl {
         const engine = this.engineRegistry.get(engineId);
         if (engine) {
           console.log(`  → Booting ${engine.id}...`);
+          kernelAPI.events.publish('ENGINE_BOOT_START', { engineId });
           // Register in KernelAPI first so it can be accessed
           kernelAPI.registerEngine(engine.id, engine);
           // Init the engine
           await engine.init(kernelAPI);
           // Register with supervisor
           runtimeSupervisor.registerEngine(engine);
+          kernelAPI.events.publish('ENGINE_BOOT_SUCCESS', { engineId });
         }
       }
 

@@ -93,10 +93,9 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
     // FALLBACK MOCK for local testing without backend
     let detected = detectIntents(messageText);
     
-    // If no text but there are attachments, fallback to document capability
-    if (detected.length === 0 && attachments.length > 0) {
-      detected = [{ type: 'DOCUMENT' as any, confidence: { observation: 0.9, parsing: 0, extraction: 0 } }];
-    }
+    // If no text but there are attachments, we do not force a fallback
+    // to avoid popping up a broken Task widget. Attachments will be
+    // handled natively by the chat input submission.
 
     if (detected.length > 0) {
       const planner = CommitmentPlannerImpl.getInstance();

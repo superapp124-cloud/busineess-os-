@@ -1,7 +1,61 @@
 # KERNEL.md — The CHATR Kernel Contract
 
 > **This document is law. No code may be merged that violates it.**
-> Version: 1.0.0 | Codename: Genesis | Effective from Milestone 1
+> Version: 2.0.0 | Codename: Intent OS | Effective from Phase 5.1
+
+---
+
+## 0. CHATR Intent OS — The 10 Principles
+
+> These are architectural invariants. Every contributor, every PR, every new capability must be measured against them.
+
+```
+1.  Users express outcomes, not commands.
+2.  The Planner never knows providers.
+3.  The Workflow Engine never knows websites.
+4.  Executors never know user intent.
+5.  Connectors are declarative, not procedural.
+6.  Every execution improves the World Model.
+7.  Context is resolved before planning.
+8.  Unknown websites are learnable.
+9.  Execution is always explainable.
+10. Every capability must be independently replaceable.
+```
+
+**Principle 2–4 in one sentence:** Each layer has exactly one responsibility and communicates downward only through its defined interface.
+
+---
+
+## 0.1 The Execution Abstraction Stack
+
+```
+User Intent Text
+      │
+  [ Planner ]                  ← extracts: intent type + explicit constraints only
+      │                           knows NOTHING about providers or websites
+      │
+  [ Intent Intelligence Engine ]
+      │   5 resolvers: Entity / Context / Constraint / Preference / Risk
+      │   emits: needs_clarification OR resolved constraints
+      │
+  [ Trust Engine ]             ← evaluates: safe | confirm | restrict
+      │
+  [ Discovery Engine ]         ← geographic → mode → capability → rank
+      │
+  Capability                   e.g.  transport.book
+      │
+  Execution Strategy           e.g.  BrowserStrategy / APIStrategy / SimulationStrategy
+      │
+  Execution Adapter            e.g.  TransportAdapter (knows selector/form structure)
+      │                              ONLY this layer changes when a provider gets an API
+  Provider (declarative)       e.g.  IRCTC / ixigo / ConfirmTkt (config, no code)
+      │
+  [ World Model ]              ← updated after every execution (preferences, routes, habits)
+```
+
+**Zero Mock Data Law (Genesis Law #12 — elevated to Principle):**
+The Kernel must never fabricate reality. Missing data is acceptable. Incorrect data is not.
+No constraint may be invented to keep a workflow moving.
 
 ---
 

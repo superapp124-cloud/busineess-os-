@@ -1,33 +1,34 @@
-import React from 'react';
-import { Sparkles, Paperclip, Smile, Mic, ArrowUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Sparkles } from 'lucide-react';
+import { useCHATROS } from '@/core/os/GlobalIntentProvider';
 
 export const UniversalCommandBar: React.FC = () => {
+  const [query, setQuery] = useState('');
+  const chatrOS = useCHATROS();
+
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8 mb-4">
-      <div className="bg-[#0f0f16] border border-white/10 rounded-full p-2 pl-4 flex items-center gap-3 shadow-2xl shadow-black/50">
-        <div className="w-8 h-8 rounded-full bg-violet-600/20 flex items-center justify-center shrink-0">
-          <Sparkles className="w-4 h-4 text-violet-400" />
+    <div className="w-full mt-4 mb-2">
+      <div className="bg-[#11111a] border border-white/10 hover:border-violet-500/50 transition-colors rounded-2xl p-4 flex items-center gap-4 shadow-xl group">
+        <div className="w-10 h-10 rounded-xl bg-violet-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+          <Sparkles className="w-5 h-5 text-violet-400" />
         </div>
         
         <input 
           type="text" 
-          placeholder="Ask anything. Type @ to mention or / for commands..." 
-          className="flex-1 bg-transparent border-none outline-none text-sm text-white placeholder-white/30"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && query.trim()) {
+              chatrOS.submitIntent(query.trim());
+              setQuery('');
+            }
+          }}
+          placeholder='Search anything... try "book hotel in Srinagar" or "create payroll"' 
+          className="flex-1 bg-transparent border-none outline-none text-lg text-white placeholder-white/30 font-medium"
         />
 
-        <div className="flex items-center gap-1 pr-2">
-          <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors">
-            <Paperclip className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors">
-            <Smile className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors">
-            <Mic className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 ml-2 rounded-full bg-violet-600 hover:bg-violet-500 flex items-center justify-center transition-colors">
-            <ArrowUp className="w-4 h-4 text-white" />
-          </button>
+        <div className="flex items-center gap-2 pr-2">
+          <span className="text-xs font-bold text-white/30 bg-white/5 px-2 py-1 rounded border border-white/5">⌘ K</span>
         </div>
       </div>
     </div>

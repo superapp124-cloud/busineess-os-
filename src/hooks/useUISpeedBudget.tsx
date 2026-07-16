@@ -37,7 +37,7 @@ export function useUISpeedBudget(options: SpeedBudgetOptions = {}) {
   const {
     budgetMs = 100,
     showToast = false, // disabled by default — toasts cause re-renders
-    logToConsole = isDev,
+    logToConsole = false, // disabled to prevent console spam in dev
     onViolation,
   } = options;
 

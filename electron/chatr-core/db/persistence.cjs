@@ -13,9 +13,18 @@ const Database = require('better-sqlite3');
 
 class PersistenceInterface {
   constructor() {
-    this.baseDir = path.join(process.env.APPDATA || process.env.HOME || '', '.chatr');
+    // 1. Determine safe directory for SQLite
+    const isTest = process.env.NODE_ENV === 'test';
+    this.baseDir = process.env.CHATR_DATA_DIR || 
+      (isTest ? require('os').tmpdir() : path.join(process.env.APPDATA || process.env.HOME || '', '.chatr'));
+      
     if (!fs.existsSync(this.baseDir)) {
-      fs.mkdirSync(this.baseDir, { recursive: true });
+      try {
+        fs.mkdirSync(this.baseDir, { recursive: true });
+      } catch (err) {
+        console.warn(`[Persistence] Failed to create data dir ${this.baseDir}, falling back to temp`, err.message);
+        this.baseDir = require('os').tmpdir();
+      }
     }
 
     this.dbPath = path.join(this.baseDir, 'chatr.db');
@@ -25,14 +34,24 @@ class PersistenceInterface {
       this.db.pragma('journal_mode = WAL');
       this._initializeSchema();
     } catch (err) {
-      console.warn('[Persistence] Database init failed, resetting:', err.message, err.stack);
+      console.warn('[Persistence] Database init failed, attempting recovery:', err.message);
+      
+      // Close corrupted connection if open
       if (this.db) {
         try { this.db.close(); } catch (e) {}
       }
-      if (fs.existsSync(this.dbPath)) {
-        fs.unlinkSync(this.dbPath);
+      
+      // Try to physically delete corrupted DB, but fallback if sandboxed
+      try {
+        if (fs.existsSync(this.dbPath)) {
+          fs.unlinkSync(this.dbPath);
+        }
+        this.db = new Database(this.dbPath);
+      } catch (unlinkErr) {
+        console.error('[Persistence] Failed to delete corrupted db or create new one. Sandboxed? Falling back to in-memory.', unlinkErr.message);
+        this.db = new Database(':memory:');
       }
-      this.db = new Database(this.dbPath);
+      
       this.db.pragma('journal_mode = WAL');
       this._initializeSchema();
     }

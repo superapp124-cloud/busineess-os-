@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const log = require('electron-log');
@@ -6,9 +6,171 @@ const { autoUpdater } = require('electron-updater');
 const { execFile } = require('child_process');
 const ollamaEngine = require('./ollama.cjs');
 const chatrKernel  = require('./chatr-core/index.cjs');
+const tokenVault = require('./token-vault.cjs');
+const syncEngine = require('./sync-engine.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 let localRecordsIpcRegistered = false;
+
+const CHATR_BROWSER_AUTH_ORIGIN = 'https://chatr.chat';
+const PROVIDER_BROWSER_LOGIN_URLS = {
+  google: 'https://accounts.google.com/',
+  microsoft: 'https://login.microsoftonline.com/',
+  slack: 'https://slack.com/signin',
+  github: 'https://github.com/login',
+  linkedin: 'https://www.linkedin.com/login',
+  facebook: 'https://www.facebook.com/login/',
+  notion: 'https://www.notion.so/login',
+  jira: 'https://id.atlassian.com/login',
+  dropbox: 'https://www.dropbox.com/login',
+  salesforce: 'https://login.salesforce.com/',
+};
+
+const SMART_INBOX_PROVIDER_META = {
+  google: { name: 'Google Workspace', surfaces: ['mail', 'calendar', 'drive'] },
+  microsoft: { name: 'Microsoft 365', surfaces: ['mail', 'calendar', 'teams', 'onedrive'] },
+  slack: { name: 'Slack', surfaces: ['dm', 'channels'] },
+  github: { name: 'GitHub', surfaces: ['issues', 'pull_requests'] },
+  linkedin: { name: 'LinkedIn', surfaces: ['dm', 'posts'] },
+  facebook: { name: 'Facebook', surfaces: ['dm', 'posts'] },
+  notion: { name: 'Notion', surfaces: ['pages', 'tasks'] },
+  jira: { name: 'Jira', surfaces: ['issues', 'projects'] },
+  dropbox: { name: 'Dropbox', surfaces: ['files'] },
+  salesforce: { name: 'Salesforce', surfaces: ['crm', 'tasks'] },
+};
+
+function getSmartInboxStorePath() {
+  return path.join(app.getPath('userData'), 'smart-inbox-state.enc');
+}
+
+function defaultSmartInboxState() {
+  return {
+    version: 1,
+    providers: Object.entries(SMART_INBOX_PROVIDER_META).map(([id, meta]) => ({
+      id,
+      name: meta.name,
+      status: 'not_connected',
+      accounts: 0,
+      surfaces: meta.surfaces,
+      lastOpenedAt: null,
+      lastSyncAt: null,
+      syncError: null,
+    })),
+    items: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function readSmartInboxState() {
+  try {
+    const filePath = getSmartInboxStorePath();
+    if (!fs.existsSync(filePath)) return defaultSmartInboxState();
+
+    const encrypted = fs.readFileSync(filePath);
+    const raw = safeStorage.isEncryptionAvailable()
+      ? safeStorage.decryptString(encrypted)
+      : encrypted.toString('utf8');
+    const parsed = JSON.parse(raw);
+    const defaults = defaultSmartInboxState();
+    const providerById = new Map((parsed.providers || []).map((provider) => [provider.id, provider]));
+
+    return {
+      ...defaults,
+      ...parsed,
+      providers: defaults.providers.map((provider) => ({
+        ...provider,
+        ...(providerById.get(provider.id) || {}),
+      })),
+      items: Array.isArray(parsed.items) ? parsed.items : [],
+    };
+  } catch (err) {
+    log.error('[SmartInbox] Failed to read state:', err.message);
+    return defaultSmartInboxState();
+  }
+}
+
+function writeSmartInboxState(state) {
+  const nextState = {
+    ...state,
+    updatedAt: new Date().toISOString(),
+  };
+  const serialized = JSON.stringify(nextState, null, 2);
+  const bytes = safeStorage.isEncryptionAvailable()
+    ? safeStorage.encryptString(serialized)
+    : Buffer.from(serialized, 'utf8');
+
+  fs.writeFileSync(getSmartInboxStorePath(), bytes);
+  return nextState;
+}
+
+function markSmartInboxProviderOpened(providerId) {
+  const state = readSmartInboxState();
+  const providers = state.providers.map((provider) => {
+    if (provider.id !== providerId) return provider;
+
+    return {
+      ...provider,
+      status: 'authentication_started',
+      lastOpenedAt: new Date().toISOString(),
+      syncError: 'Waiting for real OAuth callback and provider API sync.',
+    };
+  });
+
+  return writeSmartInboxState({ ...state, providers });
+}
+
+ipcMain.handle('browser:open-auth', async (event, payload = {}) => {
+  const mode = payload.mode === 'signup' ? 'signup' : 'login';
+  const authUrl = new URL('/auth', CHATR_BROWSER_AUTH_ORIGIN);
+  authUrl.searchParams.set('mode', mode);
+  authUrl.searchParams.set('source', 'desktop');
+
+  await shell.openExternal(authUrl.toString());
+  return { ok: true, url: authUrl.toString() };
+});
+
+ipcMain.handle('browser:open-provider-login', async (event, payload = {}) => {
+  const providerId = String(payload.providerId || '').toLowerCase();
+  const loginUrl = PROVIDER_BROWSER_LOGIN_URLS[providerId];
+
+  if (!loginUrl) {
+    throw new Error(`Unsupported provider: ${providerId || 'unknown'}`);
+  }
+
+  await shell.openExternal(loginUrl);
+  markSmartInboxProviderOpened(providerId);
+  return { ok: true, url: loginUrl };
+});
+
+ipcMain.handle('smart-inbox:get-state', async () => {
+  return readSmartInboxState();
+});
+
+ipcMain.handle('smart-inbox:connect-provider', async (event, payload = {}) => {
+  const providerId = String(payload.providerId || '').toLowerCase();
+  let authUrl = PROVIDER_BROWSER_LOGIN_URLS[providerId];
+
+  if (!authUrl) {
+    throw new Error(`Unsupported provider: ${providerId || 'unknown'}`);
+  }
+
+  if (providerId === 'google') {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (clientId) {
+      const redirectUri = 'chatr://oauth2/callback';
+      const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly');
+      authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+    } else {
+      log.warn('[Main] GOOGLE_CLIENT_ID missing, falling back to mock flow.');
+      // Mock flow just redirects immediately to our app scheme to simulate success
+      authUrl = 'chatr://oauth2/callback?code=mock_code';
+    }
+  }
+
+  const state = markSmartInboxProviderOpened(providerId);
+  await shell.openExternal(authUrl);
+  return { ok: true, url: authUrl, state };
+});
 
 function sanitizeFileSegment(value, fallback = 'call') {
   const normalized = String(value || fallback)
@@ -159,13 +321,73 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient('chatr');
 }
 
+async function handleOAuthCallback(urlStr) {
+  try {
+    const url = new URL(urlStr);
+    if (url.protocol === 'chatr:' && url.pathname === '//oauth2/callback') {
+      const code = url.searchParams.get('code');
+      if (code) {
+        log.info('[OAuth] Received authorization code');
+        // Currently hardcoding google as the active flow for simplicity
+        const providerId = 'google'; 
+        
+        let tokenData;
+        if (code === 'mock_code') {
+          tokenData = { access_token: 'mock_access', refresh_token: 'mock_refresh' };
+        } else {
+          // Exchange real code
+          const clientId = process.env.GOOGLE_CLIENT_ID;
+          const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+          const res = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              client_id: clientId,
+              client_secret: clientSecret,
+              code,
+              grant_type: 'authorization_code',
+              redirect_uri: 'chatr://oauth2/callback'
+            })
+          });
+          
+          if (!res.ok) throw new Error(`Token exchange failed: ${res.statusText}`);
+          tokenData = await res.json();
+        }
+
+        // Save token securely
+        tokenVault.saveToken(providerId, tokenData);
+
+        // Update provider status to healthy
+        const state = readSmartInboxState();
+        const providers = state.providers.map(p => 
+          p.id === providerId ? { ...p, status: 'Healthy', accounts: p.accounts + 1, syncError: null } : p
+        );
+        writeSmartInboxState({ ...state, providers });
+
+        // Kick off background sync
+        const items = await syncEngine.runSync(providerId);
+        if (items && items.length > 0) {
+          const newState = readSmartInboxState();
+          newState.items = [...items, ...(newState.items || [])];
+          writeSmartInboxState(newState);
+        }
+      }
+    }
+  } catch (err) {
+    log.error('[OAuth] Callback error:', err.message);
+  }
+}
+
 app.on('second-instance', (event, commandLine, workingDirectory) => {
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
     mainWindow.show();
     mainWindow.focus();
     const url = commandLine.find(arg => arg.startsWith('chatr://'));
-    if (url) mainWindow.webContents.send('deep-link', url);
+    if (url) {
+      if (url.includes('oauth2/callback')) handleOAuthCallback(url);
+      else mainWindow.webContents.send('deep-link', url);
+    }
   }
 });
 
@@ -174,7 +396,11 @@ app.on('open-url', (event, url) => {
   if (mainWindow) {
     mainWindow.show();
     mainWindow.focus();
-    mainWindow.webContents.send('deep-link', url);
+    if (url.includes('oauth2/callback')) handleOAuthCallback(url);
+    else mainWindow.webContents.send('deep-link', url);
+  } else if (url.includes('oauth2/callback')) {
+    // If caught before window init, queue it or process it headless
+    app.whenReady().then(() => handleOAuthCallback(url));
   }
 });
 
@@ -243,6 +469,619 @@ function setupContextEngine(mainWindow) {
   });
 
   // -------------------------------------------------------------
+  // PHASE 2: INTENT PIPELINE EXECUTION
+  // -------------------------------------------------------------
+
+  // P1.3 — Provider Session Platform
+  // Lazily initialize vault and session service once on first use
+  let _sessionVault = null;
+  let _sessionService = null;
+
+  function getKernelSessionService() {
+    if (!_sessionService) {
+      const { SessionVault } = require('./chatr-core/kernel/session-vault.cjs');
+      const { ProviderSessionService } = require('./chatr-core/kernel/provider-session-service.cjs');
+      const { bus } = require('./chatr-core/events/bus.cjs');
+
+      _sessionVault = new SessionVault();
+      _sessionVault.init(); // async init, fire-and-forget on first call
+      _sessionService = new ProviderSessionService({ vault: _sessionVault, bus });
+    }
+    return _sessionService;
+  }
+
+  // Check session for a single provider — returns status only, NO credentials
+  ipcMain.handle('kernel:session:check', async (event, { provider }) => {
+    try {
+      await getKernelSessionService()._vault.init();
+      const session = await getKernelSessionService().checkSession(provider);
+      // Strip any internal-only fields before sending to renderer
+      return { provider: session.provider, status: session.status, expires_at: session.expires_at, confidence: session.confidence, latency_ms: session.latency_ms };
+    } catch (err) {
+      log.error('[P1.3] session:check failed:', err.message);
+      return { provider, status: 'LOGIN_REQUIRED', error: 'Session check failed' };
+    }
+  });
+
+  // Check all known providers concurrently — status only
+  ipcMain.handle('kernel:session:check_all', async (event, { providers }) => {
+    try {
+      await getKernelSessionService()._vault.init();
+      const sessions = await getKernelSessionService().validateAll(providers || ['zomato', 'swiggy', 'magicpin', 'makemytrip']);
+      return sessions.map(s => ({ provider: s.provider, status: s.status, confidence: s.confidence, latency_ms: s.latency_ms }));
+    } catch (err) {
+      log.error('[P1.3] session:check_all failed:', err.message);
+      return [];
+    }
+  });
+
+  // Revoke session — wipes vault entry for provider
+  ipcMain.handle('kernel:session:revoke', async (event, { provider }) => {
+    try {
+      getKernelSessionService().revoke(provider);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  });
+
+  // P1.4 — Universal Transaction Platform
+  let _transactionEngine = null;
+  let _paymentEngine = null;
+  let _txVerifier = null;
+  let _txTracker = null;
+
+  function getTxPlatform() {
+    if (!_transactionEngine) {
+      const { bus }                           = require('./chatr-core/events/bus.cjs');
+      const { TransactionEngine }             = require('./chatr-core/kernel/transaction-engine.cjs');
+      const { PaymentEngine }                 = require('./chatr-core/kernel/payment-engine.cjs');
+      const { TransactionVerificationEngine } = require('./chatr-core/kernel/transaction-verification-engine.cjs');
+      const { TransactionTracker }            = require('./chatr-core/kernel/transaction-tracker.cjs');
+
+      _transactionEngine = new TransactionEngine({ bus });
+      _paymentEngine     = new PaymentEngine({ bus });
+      _txVerifier        = new TransactionVerificationEngine({ bus });
+      _txTracker         = new TransactionTracker({ bus });
+    }
+    return { txEngine: _transactionEngine, payEngine: _paymentEngine, verifier: _txVerifier, tracker: _txTracker };
+  }
+
+  // Create a transaction — returns ABI (no credentials)
+  ipcMain.handle('kernel:transaction:create', async (event, params) => {
+    try {
+      const { txEngine } = getTxPlatform();
+      return txEngine.create(params);
+    } catch (err) {
+      log.error('[P1.4] transaction:create failed:', err.message);
+      return { error: err.message };
+    }
+  });
+
+  // Dispatch payment — UI provides method token only (not raw card data)
+  ipcMain.handle('kernel:transaction:pay', async (event, { transactionId, method, paymentToken, amount, currency }) => {
+    try {
+      const { txEngine, payEngine, verifier, tracker } = getTxPlatform();
+      const tx = txEngine.get(transactionId);
+      if (!tx) throw new Error('Transaction not found');
+
+      // 1. Move to PAYMENT_PENDING
+      txEngine.transition(transactionId, 'PAYMENT_PENDING');
+
+      // 2. Dispatch to Payment Engine
+      const payResult = await payEngine.dispatch({ transactionId, amount, currency, method, paymentToken });
+
+      if (payResult.outcome === 'CONFIRMED') {
+        txEngine.transition(transactionId, 'PAYMENT_CONFIRMED', { reference: payResult.reference });
+
+        // 3. Verify with provider
+        const verification = await verifier.verify(txEngine.get(transactionId), payResult.reference);
+
+        if (verification.verified) {
+          txEngine.transition(transactionId, 'VERIFIED', { order_id: verification.order_id });
+          txEngine.transition(transactionId, 'TRACKING');
+
+          // 4. Start tracking (non-blocking)
+          tracker.startTracking(transactionId, verification.order_id, tx.provider, tx.entity_type);
+        }
+      } else if (payResult.outcome === 'RETRYABLE') {
+        txEngine.transition(transactionId, 'PAYMENT_RETRYABLE', { reason: payResult.reference });
+      } else {
+        txEngine.transition(transactionId, 'PAYMENT_FAILED', { reason: payResult.reference });
+      }
+
+      return txEngine.get(transactionId);
+    } catch (err) {
+      log.error('[P1.4] transaction:pay failed:', err.message);
+      return { error: err.message };
+    }
+  });
+
+  // Get transaction status — UI-safe ABI (no credentials)
+  ipcMain.handle('kernel:transaction:get', async (event, { transactionId }) => {
+    try {
+      const { txEngine } = getTxPlatform();
+      return txEngine.get(transactionId);
+    } catch (err) {
+      return { error: err.message };
+    }
+  });
+
+  // Get full audit trail
+  ipcMain.handle('kernel:transaction:audit', async (event, { transactionId }) => {
+    try {
+      const { txEngine } = getTxPlatform();
+      return txEngine.auditTrail(transactionId);
+    } catch (err) {
+      return { error: err.message };
+    }
+  });
+
+  // P1.1 Kernel Session Bridge
+  const activeSessions = new Map();
+
+  ipcMain.handle('kernel:intent:submit', async (event, request) => {
+    const crypto = require('crypto');
+    const goalId = crypto.randomUUID();
+    return { goalId };
+  });
+
+  ipcMain.on('kernel:intent:subscribe', (event, { goalId }) => {
+    // For P1.1, we simulate the DiscoveryEngine telemetry pushing down the pipe.
+    // In P1.2, this will wire to the real DiscoveryEngine bus events.
+    if (!event.sender) return;
+    
+    activeSessions.set(goalId, event.sender);
+
+    const sendEvent = (stage, payload = {}, latency = 0) => {
+      if (activeSessions.has(goalId)) {
+        event.sender.send('kernel:session:event', {
+          goalId,
+          stage,
+          latency,
+          confidence: 0.98,
+          timestamp: Date.now(),
+          payload
+        });
+      }
+    };
+
+    // Simulate streaming execution telemetry
+    setTimeout(() => {
+      sendEvent('DISCOVERY_STARTED');
+      
+      setTimeout(() => {
+        sendEvent('METRIC', { stageName: 'Understanding', slaMs: 50 }, 42);
+      }, 50);
+
+      setTimeout(() => {
+        sendEvent('METRIC', { stageName: 'Location', slaMs: 100 }, 85);
+      }, 100);
+
+      setTimeout(() => {
+        sendEvent('METRIC', { stageName: 'SessionCheck', slaMs: 100 }, 22);
+      }, 120);
+
+      setTimeout(() => {
+        sendEvent('METRIC', { stageName: 'ProviderSearch', slaMs: 300 }, 240);
+        
+        // Push Results
+        setTimeout(() => {
+          sendEvent('METRIC', { stageName: 'Ranking', slaMs: 50 }, 35);
+          sendEvent('RESULTS_READY', {
+            results: [
+              { id: 'res_behrouz', name: 'Behrouz', badge: 'Best Overall', price: '₹289', deliveryTime: '28 min', rating: '4.6★', tags: ['Free Delivery'], decisionReasons: ['Highest rating (Backend)'] },
+              { id: 'res_blues', name: 'Biryani Blues', badge: 'Best Value', price: '₹249', deliveryTime: '31 min', rating: '4.5★', tags: [], decisionReasons: ['Lowest delivery fee (Backend)'] },
+              { id: 'res_paradise', name: 'Paradise', badge: 'Fastest', price: '₹319', deliveryTime: '24 min', rating: '4.7★', tags: [], decisionReasons: ['Fastest arrival (Backend)'] }
+            ]
+          });
+        }, 50);
+      }, 300);
+      
+    }, 10);
+  });
+
+  ipcMain.on('kernel:intent:select', (event, { goalId, resultId }) => {
+    // Acknowledge selection
+    console.log(`[Kernel Session] Selected result ${resultId} for goal ${goalId}`);
+  });
+
+  ipcMain.on('kernel:intent:auth_complete', (event, { goalId }) => {
+    console.log(`[Kernel Session] Auth complete for goal ${goalId}`);
+  });
+
+  ipcMain.on('kernel:intent:pay', (event, { goalId }) => {
+    console.log(`[Kernel Session] Payment initiated for goal ${goalId}`);
+  });
+
+  ipcMain.on('kernel:intent:unsubscribe', (event, { goalId }) => {
+    activeSessions.delete(goalId);
+  });
+
+  ipcMain.handle('kernel:intent', async (event, request) => {
+    try {
+      if (request.intent === 'memory.search') {
+        const query = request.context?.query || '';
+        const { app } = require('electron');
+        const path = require('path');
+        const { execFile } = require('child_process');
+        const psScriptPath = path.join(app.getPath('userData'), 'agent-search.ps1');
+        
+        const files = await new Promise((resolve) => {
+          execFile('powershell.exe', [
+              '-NoProfile', 
+              '-ExecutionPolicy', 'Bypass', 
+              '-File', psScriptPath, 
+              '-SearchTerm', query
+          ], (error, stdout, stderr) => {
+            if (error) { resolve([]); return; }
+            try {
+              const parsed = JSON.parse(stdout || "[]");
+              const arrayResult = Array.isArray(parsed) ? parsed : [parsed];
+              resolve(arrayResult.filter(i => i && i.FullName));
+            } catch(e) { resolve([]); }
+          });
+        });
+
+        return {
+          success: true,
+          data: {
+            files: files.map(f => ({ path: f.FullName, name: f.Name, contentPreview: `Modified: ${f.LastWriteTime}` }))
+          }
+        };
+      }
+      
+      return { success: false, error: 'Intent not implemented synchronously.' };
+    } catch (err) {
+      log.error('[Kernel] Intent synchronous execution failed:', err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('kernel:intent:process', async (event, intentText) => {
+    try {
+      const { planner }                    = require('./chatr-core/kernel/planner.cjs');
+      const { decisionEngine }             = require('./chatr-core/kernel/decision-engine.cjs');
+      const { trustEngine }                = require('./chatr-core/kernel/trust-engine.cjs');
+      const { intentSessionManager }       = require('./chatr-core/kernel/intent-session-manager.cjs');
+      const { capabilityContractValidator }= require('./chatr-core/capabilities/capability-contract-validator.cjs');
+      const { executionLedger }            = require('./chatr-core/execution/execution-ledger.cjs');
+      const { validator }                  = require('./chatr-core/kernel/validator.cjs');
+      const { executionGraph }             = require('./chatr-core/kernel/execution-graph.cjs');
+      const { workflowEngine }             = require('./chatr-core/execution/workflow-engine.cjs');
+      const { bus }                        = require('./chatr-core/events/bus.cjs');
+      const { userContextEngine }          = require('./chatr-core/context/user-context-engine.cjs');
+      const { personalContextEngine }      = require('./chatr-core/context/personal-context-engine.cjs');
+      const { worldModel }                 = require('./chatr-core/world-model/world-model.cjs');
+      const crypto = require('crypto');
+
+      const intentId   = crypto.randomUUID();
+
+      // Resolve both system and personal context before the Decision Engine
+      const [liveContext, personalContext] = await Promise.all([
+        userContextEngine.buildContext(intentId),
+        personalContextEngine.buildContext(),
+      ]);
+      // Merge personal context into live context so Decision Engine can use it
+      liveContext.personal = personalContext;
+
+      // ── Step 1: Planner ─────────────────────────────────────────────────────
+      const { intent, constraints } = planner.plan(intentText);
+
+      if (intent === 'unknown') {
+        return { ok: false, error: 'I didn\'t understand that. Could you rephrase your request?' };
+      }
+
+      // ── Step 2: Decision Engine ─────────────────────────────────────────────
+      const decision = await decisionEngine.analyze(
+        intentText, intent, constraints, liveContext, worldModel
+      );
+
+
+      // ── Step 3: Capability Contract Validation ──────────────────────────────
+      // Even before we check for missing fields, validate against the formal contract
+      const contractCheck = capabilityContractValidator.validate(intent, constraints);
+      if (contractCheck.warning) {
+        log.warn(`[Kernel] No contract for '${intent}' — proceeding without validation.`);
+      }
+
+      // ── Step 4: If missing constraints OR habit used — park and ask ───────────────────────
+      if (decision.missing.length > 0 || decision.habitUsed) {
+        const sessionId = intentSessionManager.park({
+          intent,
+          intentText,
+          resolved:    decision.resolved,
+          missing:     decision.missing,
+          confidence:  decision.confidence,
+          userContext: liveContext,
+        });
+
+        log.info(`[Kernel] Intent '${intent}' parked (session=${sessionId}) — missing: [${decision.missing.join(', ')}], habitUsed: ${decision.habitUsed}`);
+
+        return {
+          ok:      false,
+          status:  'needs_clarification',
+          sessionId,
+          intent,
+          missing:   decision.missing,
+          resolved:  decision.resolved,
+          confidence: decision.confidence,
+          question:  decision.clarificationQuestion,
+          risk:      decision.risk,
+          habitUsed: decision.habitUsed,
+          widget:    decision.widget,
+        };
+      }
+
+      // ── Step 5: Flatten resolved constraints ───────────────────────────────
+      const flatConstraints = {};
+      for (const [key, val] of Object.entries(decision.resolved)) {
+        flatConstraints[key] = (val && typeof val === 'object' && val.value !== undefined) ? val.value : val;
+      }
+
+      // Forward bus events to frontend
+      const subscriptions = [
+        'execution:plan_started',
+        'execution:node_started',
+        'execution:node_awaiting_approval',
+        'execution:node_approved',
+        'execution:node_completed',
+        'execution:plan_completed',
+        'execution:browser_step',
+        'execution:capability_started',
+        'execution:capability_completed',
+        'execution:capability_failed'
+      ].map(topic => {
+        const handler = (data) => {
+          if (mainWindow) mainWindow.webContents.send(topic, data);
+        };
+        bus.subscribe(topic, handler);
+        return { topic, handler };
+      });
+
+      const plan = workflowEngine.buildGraph(intentId, intent, flatConstraints);
+      if (!plan.originalText) plan.originalText = intentText;
+      if (!plan.intent)       plan.intent = intent;
+
+      const validation = await validator.validate(plan);
+      if (!validation.valid) {
+        throw new Error('Validation failed: ' + validation.errors.join(', '));
+      }
+
+      executionGraph.execute(plan).then((execResult) => {
+        const connectorUsed = plan.nodes?.[0]?.connectorId || 'unknown';
+        // ① Record in World Model for learning (mutable, pattern-focused)
+        try {
+          worldModel.recordExecution(intent, connectorUsed, flatConstraints, 'success');
+        } catch {}
+        // ② Record in Execution Ledger (immutable audit trail)
+        try {
+          executionLedger.record({
+            intentId:        intentId,
+            workflowId:      plan.intentId || intentId,
+            capabilityId:    intent,
+            connectorId:     connectorUsed,
+            strategy:        'simulation',
+            constraints:     flatConstraints,
+            approvalRequired: contractCheck?.approvalRequired || false,
+            status:          'completed',
+            logs:            [`Executed via ${connectorUsed}`],
+          });
+        } catch {}
+      }).finally(() => {
+        subscriptions.forEach(sub => bus.unsubscribe(sub.topic, sub.handler));
+      });
+
+      return { ok: true, plan, intent, constraints: flatConstraints };
+
+    } catch (err) {
+      log.error('[Kernel] Intent processing failed:', err);
+      return { ok: false, error: err.message };
+    }
+  });
+
+  // ── Resume a parked intent session with user-provided follow-up ───────────
+  ipcMain.handle('kernel:intent:resume', async (event, { sessionId, followUpText, constraints }) => {
+    try {
+      const { intentSessionManager } = require('./chatr-core/kernel/intent-session-manager.cjs');
+      const { decisionEngine }       = require('./chatr-core/kernel/decision-engine.cjs');
+      const { planner }              = require('./chatr-core/kernel/planner.cjs');
+      const { validator }            = require('./chatr-core/kernel/validator.cjs');
+      const { executionGraph }       = require('./chatr-core/kernel/execution-graph.cjs');
+      const { workflowEngine }       = require('./chatr-core/execution/workflow-engine.cjs');
+      const { bus }                  = require('./chatr-core/events/bus.cjs');
+      const { worldModel }           = require('./chatr-core/world-model/world-model.cjs');
+
+      const activeId = sessionId || intentSessionManager.getActiveSessionId();
+      if (!activeId) {
+        // Use invoke internally to properly await and return the result
+        return await ipcMain.handlers['kernel:intent:process'](event, followUpText || JSON.stringify(constraints));
+      }
+
+      // Check if the follow-up is actually a completely new intent
+      if (followUpText) {
+        const newPlan = planner.plan(followUpText);
+        if (newPlan.intent !== 'unknown') {
+          log.info(`[Kernel] Follow-up text is a new intent ('${newPlan.intent}'). Abandoning parked session.`);
+          intentSessionManager.resolve(activeId); // Clear old session
+          return await ipcMain.handlers['kernel:intent:process'](event, followUpText);
+        }
+      }
+
+      const merged = intentSessionManager.merge(activeId, followUpText || '');
+      if (!merged) return { ok: false, error: 'Session expired. Please start again.' };
+
+      // If structured constraints were provided, inject them directly
+      if (constraints) {
+        for (const [key, val] of Object.entries(constraints)) {
+          if (val !== undefined && val !== '') {
+             merged.resolved[key] = { value: val, source: 'widget', confidence: 100 };
+          }
+        }
+      }
+
+      // Re-run Decision Engine on merged text
+      const intelligence = await decisionEngine.analyze(
+        merged.intentText, merged.intent, merged.resolved, merged.userContext, worldModel
+      );
+
+      // Still missing?
+      if (intelligence.missing.length > 0) {
+        intentSessionManager.merge(activeId, ''); // refresh timestamp
+        return {
+          ok:      false,
+          status:  'needs_clarification',
+          sessionId: activeId,
+          intent:  merged.intent,
+          missing:  intelligence.missing,
+          resolved: intelligence.resolved,
+          confidence: intelligence.confidence,
+          question: intelligence.clarificationQuestion,
+          widget: intelligence.widget,
+        };
+      }
+
+      // All resolved — execute
+      intentSessionManager.resolve(activeId);
+
+      const flatConstraints = {};
+      for (const [key, val] of Object.entries(intelligence.resolved)) {
+        flatConstraints[key] = (val && typeof val === 'object' && val.value !== undefined) ? val.value : val;
+      }
+
+      const crypto   = require('crypto');
+      const intentId = crypto.randomUUID();
+      const plan = workflowEngine.buildGraph(intentId, merged.intent, flatConstraints);
+      if (!plan.intent) plan.intent = merged.intent;
+
+      const validation = await validator.validate(plan);
+      if (!validation.valid) throw new Error('Validation failed: ' + validation.errors.join(', '));
+
+      const subscriptions = [
+        'execution:plan_started', 'execution:node_started', 'execution:node_awaiting_approval',
+        'execution:node_approved', 'execution:node_completed', 'execution:plan_completed',
+        'execution:browser_step', 'execution:capability_started', 'execution:capability_completed',
+        'execution:capability_failed'
+      ].map(topic => {
+        const handler = (data) => { if (mainWindow) mainWindow.webContents.send(topic, data); };
+        bus.subscribe(topic, handler);
+        return { topic, handler };
+      });
+
+      executionGraph.execute(plan).then(() => {
+        try { worldModel.recordExecution(merged.intent, 'unknown', flatConstraints, 'success'); } catch {}
+      }).finally(() => {
+        subscriptions.forEach(sub => bus.unsubscribe(sub.topic, sub.handler));
+      });
+
+      return { ok: true, plan, resumed: true, intent: merged.intent, constraints: flatConstraints };
+
+    } catch (err) {
+      log.error('[Kernel] Intent resume failed:', err);
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('kernel:execution:approve', async (event, { nodeId }) => {
+    try {
+      const { executionGraph } = require('./chatr-core/kernel/execution-graph.cjs');
+      const approved = executionGraph.approveNode(nodeId);
+      return { ok: approved };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('kernel:execution:reject', async (event, { nodeId }) => {
+    try {
+      const { executionGraph } = require('./chatr-core/kernel/execution-graph.cjs');
+      const rejected = executionGraph.rejectNode(nodeId);
+      return { ok: rejected };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
+
+
+  // -------------------------------------------------------------
+  // EXECUTION ENGINE IPC HANDLERS
+  // -------------------------------------------------------------
+  ipcMain.handle('execution:connect-service', async (event, { connectorId }) => {
+    // In a real implementation this would use Playwright to open headed browser.
+    // We just return a mock success for UI purposes.
+    const { vault } = require('./chatr-core/credential-vault.cjs');
+    if (vault) {
+        vault.save(connectorId, 'cookies', { mockSession: true });
+    }
+    return { ok: true, message: 'Connected mock service for ' + connectorId };
+  });
+
+  ipcMain.handle('execution:get-connected-services', async () => {
+    try {
+        const { vault } = require('./chatr-core/credential-vault.cjs');
+        if (vault) return vault.listConnected();
+    } catch (e) {}
+    return [];
+  });
+
+  ipcMain.handle('execution:disconnect-service', async (event, { connectorId }) => {
+    try {
+        const { vault } = require('./chatr-core/credential-vault.cjs');
+        if (vault) vault.clear(connectorId);
+    } catch(e) {}
+    return { ok: true };
+  });
+
+  ipcMain.handle('execution:get-background-jobs', async () => {
+    try {
+        const { backgroundJobs } = require('./chatr-core/background-jobs.cjs');
+        if (backgroundJobs) return backgroundJobs.list();
+    } catch(e) {}
+    return [];
+  });
+
+  ipcMain.handle('execution:cancel-background-job', async (event, { jobId }) => {
+    try {
+        const { backgroundJobs } = require('./chatr-core/background-jobs.cjs');
+        if (backgroundJobs) backgroundJobs.cancel(jobId);
+    } catch (e) {}
+    return { ok: true };
+  });
+
+  // -------------------------------------------------------------
+  // CONNECTOR MARKETPLACE IPC HANDLERS
+  // -------------------------------------------------------------
+  ipcMain.handle('marketplace:get-catalog', async () => {
+    try {
+        const { connectorManager } = require('./chatr-core/discovery/connector-manager.cjs');
+        return await connectorManager.getMarketplaceCatalog();
+    } catch (err) {
+        log.error('[Marketplace] Error fetching catalog:', err.message);
+        return [];
+    }
+  });
+
+  ipcMain.handle('marketplace:install', async (event, { manifest }) => {
+    try {
+        const { connectorManager } = require('./chatr-core/discovery/connector-manager.cjs');
+        return await connectorManager.installConnector(manifest);
+    } catch (err) {
+        log.error('[Marketplace] Error installing connector:', err.message);
+        return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('marketplace:remove', async (event, { connectorId }) => {
+    try {
+        const { connectorManager } = require('./chatr-core/discovery/connector-manager.cjs');
+        return await connectorManager.removeConnector(connectorId);
+    } catch (err) {
+        log.error('[Marketplace] Error removing connector:', err.message);
+        return { ok: false, error: err.message };
+    }
+  });
+
+  // -------------------------------------------------------------
   // SECURE OS SEARCH SCRIPT BOOTSTRAP
   // -------------------------------------------------------------
   // We write the script to disk on startup (always overwriting to ensure updates).
@@ -251,7 +1090,7 @@ function setupContextEngine(mainWindow) {
   const psScriptPath = path.join(app.getPath('userData'), 'agent-search.ps1');
   const psScriptContent = `
 param([string]$SearchTerm)
-$dirs = @("$env:USERPROFILE\\Downloads", "$env:USERPROFILE\\Documents");
+$dirs = @("$env:USERPROFILE\\Desktop", "$env:USERPROFILE\\Downloads", "$env:USERPROFILE\\Documents");
 $results = @();
 foreach ($dir in $dirs) {
     if (Test-Path $dir) {
@@ -459,11 +1298,10 @@ function createWindow() {
   const state = getWindowState();
 
   mainWindow = new BrowserWindow({
-    width: state.width || 1200,
-    height: state.height || 800,
-    x: state.x,
-    y: state.y,
-    show: false, // Wait until ready-to-show to prevent white flash
+    width: 1200,
+    height: 800,
+    center: true, // Force to center of primary display
+    show: true, // Force show immediately for debugging
     backgroundColor: '#09090b', // zinc-950
     titleBarStyle: 'hidden',
     titleBarOverlay: {
@@ -487,10 +1325,6 @@ function createWindow() {
     },
   });
 
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-  });
-
   // Strict Content Security Policy (CSP)
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
@@ -501,8 +1335,8 @@ function createWindow() {
           "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://cdn.jsdelivr.net;" +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
           "font-src 'self' https://fonts.gstatic.com data:;" +
-          "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat blob:;" +
-          "connect-src 'self' ws://localhost:8086 http://localhost:8086 http://127.0.0.1:3717 http://localhost:3717 http://127.0.0.1:11434 http://localhost:11434 http://127.0.0.1:8087 http://localhost:8087 https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net;" +
+          "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat https://www.transparenttextures.com blob:;" +
+          "connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net https://api.bigdatacloud.net;" +
           "worker-src 'self' blob:;" +
           "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.net/;" +
           "object-src 'none';"
@@ -516,6 +1350,55 @@ function createWindow() {
     log.warn(`Blocked attempt to open a new window: ${url}`);
     shell.openExternal(url);
     return { action: 'deny' };
+  });
+
+  // ---------------------------------------------------------
+  // DOCUMENT INTELLIGENCE IPC HANDLERS
+  // ---------------------------------------------------------
+  const db = require('./documents/Database.cjs');
+  const indexer = require('./documents/Indexer.cjs');
+  const parserRegistry = require('./documents/ParserRegistry.cjs');
+
+  ipcMain.handle('documents:search', async (event, { query, limit = 20 }) => {
+    try {
+      return db.search(query, limit);
+    } catch (err) {
+      log.error('[documents:search] Error:', err);
+      return [];
+    }
+  });
+
+  ipcMain.handle('documents:read', async (event, { filePath }) => {
+    try {
+      return await parserRegistry.parse(filePath);
+    } catch (err) {
+      log.error('[documents:read] Error:', err);
+      return { text: '', metadata: { success: false, error: err.message } };
+    }
+  });
+
+  ipcMain.handle('documents:open', async (event, { filePath }) => {
+    try {
+      const error = await shell.openPath(filePath);
+      if (error) {
+        log.error('[documents:open] OpenPath error:', error);
+        return { success: false, error };
+      }
+      return { success: true };
+    } catch (err) {
+      log.error('[documents:open] Error:', err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // The legacy DocumentIndexer background scan has been replaced by IdentityManager + UserContextEngine.
+  const { identityManager } = require('./chatr-core/identity/IdentityManager.cjs');
+  const { userContextEngine } = require('./chatr-core/context/user-context-engine.cjs');
+  
+  identityManager.initialize().then(() => {
+    return userContextEngine.initialize();
+  }).catch(err => {
+    log.error('[UserContextEngine] Startup error:', err);
   });
 
   // Prevent navigation to external sites

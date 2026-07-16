@@ -41,16 +41,10 @@ class OllamaProvider {
     throw new Error('[OllamaProvider] Ollama is not reachable on any configured port.');
   }
 
+  // AI Runtime Model Selection is now handled externally.
+  // The Provider is purely an execution driver.
   async _bestModel() {
-    const base  = await this._resolveBaseUrl();
-    const res   = await fetch(`${base}/api/tags`, { signal: AbortSignal.timeout(2000) });
-    if (!res.ok) return providerConfig.ollama.defaultModel;
-    const data  = await res.json();
-    const names = (data.models || []).map(m => m.name);
-    for (const preferred of providerConfig.ollama.models) {
-      if (names.some(n => n.startsWith(preferred.split(':')[0]))) return preferred;
-    }
-    return names[0] || providerConfig.ollama.defaultModel;
+    return providerConfig.ollama.defaultModel;
   }
 
   _buildMessages(messages) {
@@ -74,9 +68,9 @@ class OllamaProvider {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model,
+          model: opts.model || await this._bestModel(),
           prompt: this._buildMessages(messages).map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n\n'),
-          stream: false,
+          stream: opts.stream || false,
           options: {
             temperature:  opts.temperature  ?? providerConfig.ollama.temperature,
             num_predict:  opts.numPredict   ?? providerConfig.ollama.numPredict,

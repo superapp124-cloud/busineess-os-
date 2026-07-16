@@ -30,6 +30,9 @@ import {
   Command,
   Activity,
   Hash,
+  Globe,
+  Zap,
+  Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -68,22 +71,25 @@ const NAV_SECTIONS = [
     label: 'Intelligence',
     items: [
       { icon: BrainCircuit,  label: 'AI',         subtitle: 'AI Assistant & Memory',    path: '/desktop/canvas' },
-
+      { icon: Zap,           label: 'Execution',  subtitle: 'Intent OS Engine',         path: '/desktop/intelligence' },
+      { icon: Package,       label: 'Ecosystem',  subtitle: 'Connector Marketplace',    path: '/desktop/intelligence?domain=ecosystem' },
     ],
   },
   {
     label: 'Productivity',
     items: [
+      { icon: Sparkles,      label: 'Workspace',  subtitle: 'Unified IDE & OS',          path: '/desktop/workspace-ide' },
       { icon: CheckSquare,   label: 'Tasks',      subtitle: 'Tasks & Workflows',         path: '/desktop/workspace' },
       { icon: Building2,     label: 'CRM',        subtitle: 'Customers & Deals',         path: '/desktop/pro/business' },
-      { icon: Hash,          label: 'Tickets',    subtitle: 'Service Desk',              path: '/desktop/smart-inbox' },
-      { icon: FolderOpen,    label: 'Files',      subtitle: 'Documents & Media',         path: '/desktop/workspace' },
+      { icon: Hash,          label: 'Tickets',    subtitle: 'Service Desk',              path: '/desktop/tickets' },
+      { icon: FolderOpen,    label: 'Files',      subtitle: 'Documents & Media',         path: '/desktop/files' },
     ],
   },
   {
     label: 'System',
     items: [
       { icon: Bell,          label: 'Activity',   subtitle: 'Notifications & Alerts',   path: '/desktop/notifications' },
+      { icon: Globe,         label: 'Accounts',   subtitle: 'Connected Providers',       path: '/desktop/connected-accounts' },
       { icon: Workflow,      label: 'Studio',     subtitle: 'Automations & Workflows',   path: '/desktop/studio' },
       { icon: Activity,      label: 'Inspector',  subtitle: 'Pipeline Observability',    path: '/desktop/inspector' },
       { icon: Server,        label: 'Health',     subtitle: 'Engine & Provider Health',  path: '/desktop/health' },
@@ -277,6 +283,11 @@ const DesktopLayoutInner = () => {
 
   const displayName = profile?.full_name || profile?.display_name || profile?.username || 'User';
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+  const currentPath = `${location.pathname}${location.search}`;
+  const isNavItemActive = (path: string) => {
+    if (path.includes('?')) return currentPath === path;
+    return location.pathname.startsWith(path) && !navItems.some(item => item.path.includes('?') && currentPath === item.path);
+  };
 
   return (
     <TooltipProvider>
@@ -319,7 +330,7 @@ const DesktopLayoutInner = () => {
                   </p>
                   <div className="space-y-0.5">
                     {section.items.map(item => {
-                      const isActive = location.pathname.startsWith(item.path);
+                      const isActive = isNavItemActive(item.path);
                       return (
                         <Tooltip key={item.label} delayDuration={0}>
                           <TooltipTrigger asChild>

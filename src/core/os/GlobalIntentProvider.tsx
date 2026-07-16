@@ -21,6 +21,12 @@ import { eventBus } from '@/core/runtime/EventBus';
 import { kernelAPI } from '@/core/runtime/KernelAPI';
 import { kernel } from '../runtime/Kernel';
 import { conversationStateEngine } from '../services/ConversationStateEngine';
+import { usePlatform } from '@/App';
+import { BootScreen } from './startup/BootScreen';
+import { AvatarEngine } from './startup/AvatarEngine';
+import { greetingEngine } from './startup/GreetingEngine';
+import { voiceRuntime } from './startup/VoiceRuntime';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const EMPTY_KNOWLEDGE: ExtractedKnowledge = {
   people: [], dates: [], dateLabels: [], topics: [],
@@ -118,8 +124,6 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
   const submitIntent = useCallback(async (text: string) => {
     setLastIntent(text);
     
-    // SPRINT 1: Conversation State Engine
-    // Intercept input if we have an active commitment waiting for missing fields
     const handledInline = await conversationStateEngine.processInput(text);
     if (handledInline) {
       console.log(`[CHATR OS] Input absorbed by ConversationStateEngine.`);
@@ -128,6 +132,30 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
 
     observeText(text);
     onIntentSubmit?.(text);
+
+    // [INTENT OS KERNEL] Dispatch a mock outcome to show the UI
+    let capability = 'core.task';
+    const textLower = text.toLowerCase();
+    if (textLower.includes('payroll') || textLower.includes('invoice') || textLower.includes('sales') || textLower.includes('vendor')) {
+      capability = 'core.expense';
+    } else if (textLower.includes('meeting') || textLower.includes('hire')) {
+      capability = 'core.meeting';
+    } else if (textLower.includes('flight') || textLower.includes('trip')) {
+      capability = 'core.flight_booking';
+    }
+
+    const mockCommitment = {
+      id: crypto.randomUUID(),
+      title: text,
+      capability: capability,
+      status: 'suggested',
+      entities: {},
+      confidence: 0.95
+    };
+
+    window.dispatchEvent(new CustomEvent('chatr:outcomes-detected', { 
+      detail: [mockCommitment] 
+    }));
   }, [observeText, onIntentSubmit]);
 
   // Derived schedule views
@@ -155,10 +183,14 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
     lastIntent,
   };
 
-  // ─── 5. Handle Kernel Boot Blocking ───────────────────────────────────────
+  // ─── 5. Handle Kernel Boot Blocking & Startup Flow ───────────────────────────────────────
   
   const [isKernelReady, setIsKernelReady] = useState(false);
   const [kernelFailed, setKernelFailed] = useState(false);
+  const [startupState, setStartupState] = useState<'BOOT' | 'GREETING' | 'READY'>('BOOT');
+  const [greetingText, setGreetingText] = useState('');
+
+  // Inline require removed, replaced with top-level imports to fix Vite crash.
 
   useEffect(() => {
     setIsKernelReady(kernelAPI.state.get('runtime').kernelStatus === 'ready');
@@ -168,6 +200,30 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
       setKernelFailed(state.kernelStatus === 'crashed');
     });
   }, []);
+
+  useEffect(() => {
+    if (startupState === 'BOOT') {
+      // 1. Show Boot Screen for exactly 50ms to feel fast
+      const bootTimer = setTimeout(async () => {
+        setStartupState('GREETING');
+        
+        // 2. Prepare greeting and set text IMMEDIATELY
+        const greetingPayload = await greetingEngine.generateGreeting();
+        setGreetingText(greetingPayload.text);
+        
+        // 3. Play greeting audio in the background with voice modulation
+        voiceRuntime.speak(greetingPayload.text, { 
+          pitch: greetingPayload.pitch, 
+          rate: greetingPayload.rate 
+        });
+        
+        // 4. Force app open after max 150ms (Total startup = 200ms!)
+        setTimeout(() => setStartupState('READY'), 150);
+      }, 50);
+
+      return () => clearTimeout(bootTimer);
+    }
+  }, [startupState]);
 
   if (kernelFailed) {
     return (
@@ -186,19 +242,47 @@ export const GlobalIntentProvider: React.FC<GlobalIntentProviderProps> = ({
     );
   }
 
-  if (!isKernelReady) {
+  if (startupState === 'BOOT') {
+    return <BootScreen />;
+  }
+
+  if (startupState === 'GREETING') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-slate-200">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <h1 className="text-xl font-bold tracking-tight">Booting CHATR Kernel...</h1>
-        <p className="text-slate-400 text-sm mt-2">Loading OS Runtime Modules</p>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="greeting"
+          className="flex flex-col items-center justify-center h-screen w-full bg-slate-900 text-slate-200"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="w-48 h-48 mb-8">
+            <AvatarEngine state="speaking" />
+          </div>
+          <motion.h1 
+            className="text-3xl font-light text-center px-8"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+          >
+            {greetingText}
+          </motion.h1>
+        </motion.div>
+      </AnimatePresence>
     );
   }
 
   return (
     <CHATROSContext.Provider value={value}>
-      {children}
+      <AnimatePresence mode="wait">
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ duration: 1 }}
+          className="w-full h-full"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </CHATROSContext.Provider>
   );
 };

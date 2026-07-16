@@ -20,74 +20,33 @@ export class SearchEngine {
       return [];
     }
 
-    const lowerTerm = term.toLowerCase();
-    const results: UnifiedSearchResult[] = [];
-
-    // 1. Search Local Emails
     try {
-      const allEmails = await LocalDB.getAllMessages();
-      const matchedEmails = allEmails.filter(msg => 
-        msg.subject.toLowerCase().includes(lowerTerm) || 
-        msg.sender.toLowerCase().includes(lowerTerm) ||
-        msg.snippet.toLowerCase().includes(lowerTerm)
-      );
+      // 1. Dispatch intent to the real Node.js Kernel
+      const { kernelClient } = await import('../ipc/KernelClient');
+      const response = await kernelClient.dispatchIntent({
+        intent: 'memory.search',
+        context: { query: term }
+      });
 
-      for (const msg of matchedEmails) {
-        results.push({
-          id: msg.id,
-          source: 'mail',
-          title: msg.sender.split('@')[0] || msg.sender,
-          subtitle: msg.subject,
-          timestamp: msg.internalDate
-        });
+      if (!response.success) {
+        console.warn('[SearchEngine] Kernel search failed:', response.error);
+        return [];
       }
+
+      // 2. The Kernel's LocalSearchProvider returns raw files, map them to UI
+      const files = response.data?.files || [];
+      const results: UnifiedSearchResult[] = files.map((file: any) => ({
+        id: file.path,
+        source: 'mail', // Mapped to 'mail' temporarily for UI icon purposes
+        title: file.name,
+        subtitle: file.contentPreview || 'Local File',
+        timestamp: new Date(file.timestamp).getTime() || Date.now()
+      }));
+
+      return results;
     } catch (e) {
-      console.warn('[SearchEngine] Failed to search emails', e);
+      console.warn('[SearchEngine] Failed to dispatch search intent', e);
+      return [];
     }
-
-    // 2. Search Native SMS (If running natively)
-    try {
-      if (Capacitor.isNativePlatform() && Capacitor.Plugins.ChatrSafeSms) {
-        // Since the mock ChatrSafeSms plugin may not implement a full text search method yet,
-        // we fallback to getting recent conversations and filtering them locally for MVP.
-        const { conversations } = await Capacitor.Plugins.ChatrSafeSms.getConversations({ limit: 100 });
-        if (Array.isArray(conversations)) {
-          const matchedSms = conversations.filter(conv => 
-            (conv.displayName && conv.displayName.toLowerCase().includes(lowerTerm)) ||
-            (conv.address && conv.address.toLowerCase().includes(lowerTerm)) ||
-            (conv.lastBody && conv.lastBody.toLowerCase().includes(lowerTerm))
-          );
-
-          for (const sms of matchedSms) {
-            results.push({
-              id: sms.conversationId,
-              source: 'sms',
-              title: sms.displayName || sms.address,
-              subtitle: sms.lastBody,
-              timestamp: sms.lastTimestamp
-            });
-          }
-        }
-      } else {
-        // Mock SMS Search for Web UI testing
-        if ("apple".includes(lowerTerm) || "support".includes(lowerTerm)) {
-          results.push({
-            id: 'mock-sms-1',
-            source: 'sms',
-            title: 'Apple Support',
-            subtitle: 'Your support case #19234 has been updated.',
-            timestamp: Date.now() - 3600000
-          });
-        }
-      }
-    } catch (e) {
-      console.warn('[SearchEngine] Failed to search SMS', e);
-    }
-
-    // Sort descending by timestamp
-    results.sort((a, b) => b.timestamp - a.timestamp);
-
-    // Limit to top 10 results for the quick dropdown
-    return results.slice(0, 10);
   }
 }

@@ -29,13 +29,6 @@ export const ChatrConsole: React.FC = () => {
         e.preventDefault();
         setIsOpen((prev) => !prev);
       }
-      if (e.key === ' ' && !isOpen) {
-        const activeTag = document.activeElement?.tagName.toLowerCase();
-        if (activeTag !== 'input' && activeTag !== 'textarea') {
-          e.preventDefault();
-          setIsOpen(true);
-        }
-      }
       if (e.key === 'Escape') {
         setIsOpen(false);
         setTimeout(() => setActivePlan(null), 300);

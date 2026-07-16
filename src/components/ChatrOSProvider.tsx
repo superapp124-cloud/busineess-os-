@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { initializeChatrOS, shutdownChatrOS, appLifecycleManager, interAppCommunication, permissionManager } from '@/chatr-os';
+import { workflowUIRuntime } from '@/core/workflow-ui';
+// Side-effect import: auto-registers all built-in widgets into WidgetRegistry
+import '@/components/workflow-ui';
 import type { AppInfo } from '@/chatr-os/kernel/AppLifecycleManager';
 import type { Permission } from '@/chatr-os/kernel/PermissionManager';
 
@@ -48,6 +51,9 @@ export const ChatrOSProvider: React.FC<ChatrOSProviderProps> = ({ children }) =>
       setIsInitialized(success);
       
       if (success) {
+        // Boot the Workflow UI Runtime — listens for WORKFLOW_UI_EVENT on eventBus
+        workflowUIRuntime.boot();
+
         // Update running apps list every 2 seconds
         const interval = setInterval(() => {
           const apps = appLifecycleManager.getRunningApps();

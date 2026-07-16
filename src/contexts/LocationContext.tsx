@@ -80,13 +80,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         const geoResponse = await fetch(
           `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${result.latitude}&longitude=${result.longitude}&localityLanguage=en`
         );
-        const geoData = await geoResponse.json();
-        const address = geoData.localityInfo?.administrative || [];
-        result.city = geoData.city || geoData.locality || '';
-        result.region = geoData.principalSubdivision || '';
-        result.country = geoData.countryName || '';
+        if (geoResponse.ok) {
+          const geoData = await geoResponse.json();
+          result.city = geoData.city || geoData.locality || '';
+          result.region = geoData.principalSubdivision || '';
+          result.country = geoData.countryName || '';
+        }
       } catch (err) {
-        console.error('Reverse geocoding failed:', err);
+        // Silently fail reverse geocoding if offline or blocked by CSP
       }
 
       return result;

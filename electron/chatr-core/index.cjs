@@ -43,12 +43,60 @@ async function boot() {
 
   log.info(`[CHATR Kernel] Booting — ${runtimeConfig.codename} v${runtimeConfig.version}`);
 
-  // ── Step 1: Register Providers ─────────────────────────────────────────────
-  const ollamaProvider = new OllamaProvider();
-  validateProvider('ollama', ollamaProvider);
-  providerRegistry.register('ollama', ollamaProvider);
-  providerRegistry.setActive('ollama');
-  log.info('[CHATR Kernel] OllamaProvider registered and set as active.');
+  const { runtimeManager } = require('./kernel/runtime-manager.cjs');
+  const { MemoryRuntime, CommunicationRuntime, IntelligenceRuntime, WorkflowRuntime, ResourceRuntime, DashboardRuntime, IdentityRuntime } = require('./runtimes/interfaces.cjs');
+  const { LocalSearchProvider } = require('./providers/local-search.cjs');
+  const { LocalEmailProvider } = require('./providers/local-email.cjs');
+  const { AdaptiveIntelligenceProvider } = require('./providers/adaptive-intelligence.cjs');
+  const { OSReminderProvider } = require('./providers/os-reminder.cjs');
+  const { OSCalendarProvider } = require('./providers/os-calendar.cjs');
+  const { LocalResourceProvider } = require('./providers/local-resource.cjs');
+  const { LocalTelemetryProvider } = require('./providers/local-telemetry.cjs');
+  const { LocalDashboardProvider } = require('./providers/local-dashboard.cjs');
+  const { LocalIdentityProvider } = require('./providers/local-identity.cjs');
+
+  // 1a. Register Runtimes
+  runtimeManager.registerRuntime('MemoryRuntime', new MemoryRuntime());
+  runtimeManager.registerRuntime('CommunicationRuntime', new CommunicationRuntime());
+  
+  // IntelligenceRuntime is already in interfaces.cjs from our previous edit!
+  runtimeManager.registerRuntime('IntelligenceRuntime', new IntelligenceRuntime());
+  runtimeManager.registerRuntime('WorkflowRuntime', new WorkflowRuntime());
+  runtimeManager.registerRuntime('ResourceRuntime', new ResourceRuntime());
+  runtimeManager.registerRuntime('DashboardRuntime', new DashboardRuntime());
+  runtimeManager.registerRuntime('IdentityRuntime', new IdentityRuntime());
+
+  // 1b. Register Capabilities & Providers
+  runtimeManager.registerCapability({ id: 'memory.search', name: 'Local Search', version: '1.0', runtime: 'MemoryRuntime', provider: 'LocalSearchProvider' }, new LocalSearchProvider());
+  runtimeManager.registerCapability({ id: 'communication.email', name: 'Draft Email', version: '1.0', runtime: 'CommunicationRuntime', provider: 'LocalEmailProvider', approval: 'always' }, new LocalEmailProvider());
+  
+  // Replace LocalIntelligenceProvider with AdaptiveIntelligenceProvider
+  runtimeManager.registerCapability({ id: 'intelligence.summarize', name: 'Summarize', version: '2.0', runtime: 'IntelligenceRuntime', provider: 'AdaptiveIntelligenceProvider' }, new AdaptiveIntelligenceProvider());
+  
+  runtimeManager.registerCapability({ id: 'workflow.start', name: 'OS Reminder', version: '1.0', runtime: 'WorkflowRuntime', provider: 'OSReminderProvider' }, new OSReminderProvider());
+  runtimeManager.registerCapability({ id: 'workflow.read_calendar', name: 'OS Calendar', version: '1.0', runtime: 'WorkflowRuntime', provider: 'OSCalendarProvider' }, new OSCalendarProvider());
+
+  // Telemetry isn't an executed capability in the same way, but we instantiate it so it hooks into the bus
+  const telemetry = new LocalTelemetryProvider();
+  
+  const resourceProvider = new LocalResourceProvider();
+  runtimeManager.registerCapability({ id: 'system.resource', name: 'Local Resources', version: '1.0', runtime: 'ResourceRuntime', provider: 'LocalResourceProvider' }, resourceProvider);
+  resourceProvider.startMonitoring();
+
+  // Dashboard provider
+  const dashboardProvider = new LocalDashboardProvider();
+  runtimeManager.registerCapability({ id: 'dashboard.get_status', name: 'Dashboard Status', version: '1.0', runtime: 'DashboardRuntime', provider: 'LocalDashboardProvider' }, dashboardProvider);
+  runtimeManager.registerCapability({ id: 'dashboard.get_timeline', name: 'Dashboard Timeline', version: '1.0', runtime: 'DashboardRuntime', provider: 'LocalDashboardProvider' }, dashboardProvider);
+  runtimeManager.registerCapability({ id: 'dashboard.get_intelligence_brief', name: 'Intelligence Brief', version: '1.0', runtime: 'DashboardRuntime', provider: 'LocalDashboardProvider' }, dashboardProvider);
+  runtimeManager.registerCapability({ id: 'dashboard.search', name: 'Dashboard Search', version: '1.0', runtime: 'DashboardRuntime', provider: 'LocalDashboardProvider' }, dashboardProvider);
+
+  // Identity provider
+  const identityProvider = new LocalIdentityProvider();
+  runtimeManager.registerCapability({ id: 'identity.connect', name: 'Connect Account', version: '1.0', runtime: 'IdentityRuntime', provider: 'LocalIdentityProvider' }, identityProvider);
+  runtimeManager.registerCapability({ id: 'identity.get_accounts', name: 'Get Connected Accounts', version: '1.0', runtime: 'IdentityRuntime', provider: 'LocalIdentityProvider' }, identityProvider);
+  runtimeManager.registerCapability({ id: 'identity.revoke', name: 'Revoke Account', version: '1.0', runtime: 'IdentityRuntime', provider: 'LocalIdentityProvider' }, identityProvider);
+
+  log.info('[CHATR Kernel] Execution Loop Runtimes & Providers registered.');
 
   // ── Step 2: Register Modules ───────────────────────────────────────────────
   await moduleLoader.loadAll();
@@ -83,8 +131,45 @@ async function boot() {
   // ── Step 4: Recover Interrupted Requests ─────────────────────────────────
   await recoveryManager.recover();
 
-  // ── Step 4.5: Initialize Recommendation Engine ───────────────────────────
-  recommendationEngine.initialize();
+  const { getGoalRuntime } = require('./kernel/goal-runtime.cjs');
+  const recoveredGoals = getGoalRuntime().recoverActiveGoals();
+  log.info(`[CHATR Kernel] Goal Runtime recovered ${recoveredGoals.length} active goals.`);
+
+  // ── Step 4.5: Start Health Watchdog ──────────────────────────────────────
+  const { watchdog } = require('./health/watchdog.cjs');
+  watchdog.start(30000);
+
+  // ── Step 4.6: Boot Universal Execution Layer v2.0 ─────────────────────────
+  const { ExecutionRuntime } = require('./execution/execution-runtime.cjs');
+  const executionRuntime = new ExecutionRuntime();
+  runtimeManager.registerRuntime('ExecutionRuntime', executionRuntime);
+
+  // Register all universal capability IDs so the validator doesn't warn
+  const { capabilityRegistry } = require('./capabilities/registry.cjs');
+  for (const cap of capabilityRegistry.getAllCapabilities()) {
+    try {
+      runtimeManager.registerCapability(
+        {
+          id:       cap.id,
+          name:     cap.description,
+          version:  '2.0',
+          runtime:  'ExecutionRuntime',
+          provider: 'ExecutionRuntime',
+          category: cap.domain,
+          approval: cap.approval
+        },
+        executionRuntime
+      );
+    } catch (e) {
+      log.warn(`[CHATR Kernel] Could not register capability ${cap.id}: ${e.message}`);
+    }
+  }
+
+  // Start background jobs manager (restores persisted jobs from disk)
+  const { backgroundJobs } = require('./background-jobs.cjs');
+  backgroundJobs.restore();
+
+  log.info('[CHATR Kernel] Universal Execution Layer v2.0 ready.');
 
   // ── Step 5: Publish KERNEL_READY ──────────────────────────────────────────
   _isRunning = true;

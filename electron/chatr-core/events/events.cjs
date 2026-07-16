@@ -71,8 +71,100 @@ const INTELLIGENCE = {
   LEARNING_UPDATED:       'INTELLIGENCE.LEARNING_UPDATED',
 };
 
+const JOB = {
+  CREATED:         'JOB.CREATED',
+  PLANNED:         'JOB.PLANNED',
+  WAITING:         'JOB.WAITING',
+  RUNNING:         'JOB.RUNNING',
+  APPROVAL_NEEDED: 'JOB.APPROVAL_NEEDED',
+  COMPLETED:       'JOB.COMPLETED',
+  FAILED:          'JOB.FAILED',
+  CANCELLED:       'JOB.CANCELLED',
+  REPLAY:          'JOB.REPLAY',
+};
+
+const GOAL = {
+  CREATED:      'goal.created',
+  PLANNING:     'goal.planning',
+  PLANNED:      'goal.planned',
+  TRANSITIONED: 'goal.transitioned',
+  SUSPENDED:    'goal.suspended',
+  RESUMED:      'goal.resumed',
+  COMPLETED:    'goal.completed',
+  CANCELLED:    'goal.cancelled',
+  BLOCKED:      'goal.blocked',
+  FAILED:       'goal.failed',
+};
+
+const CONTEXT = {
+  COLLECTING:    'context.collecting',
+  SOURCE_LOADED: 'context.source.loaded',
+  READY:         'context.ready',
+  FAILED:        'context.failed',
+};
+
+const ENTITY = {
+  RESOLVING: 'entity.resolving',
+  RESOLVED:  'entity.resolved',
+};
+
+const CAPABILITY = {
+  RESOLVING:     'capability.resolving',
+  GRAPH_CREATED: 'capability.graph.created', // graph allocated, validated, not yet persisted or published
+  RESOLVED:      'capability.resolved',      // graph persisted, immutable, published
+  FAILED:        'capability.failed',
+};
+
+// ── Strategy Resolver Events (Milestone C) ────────────────────────────────────
+const STRATEGY = {
+  RESOLVING: 'strategy.resolving',
+  SELECTED:  'strategy.selected',
+  FAILED:    'strategy.failed',
+};
+
+// ── Policy Service Events (Milestone C) ──────────────────────────────────────
+const POLICY = {
+  EVALUATING: 'policy.evaluating',
+  DECIDED:    'policy.decided',
+  BLOCKED:    'policy.blocked',
+  FAILED:     'policy.failed',
+};
+
+// ── Trust Service Events (Milestone C) ───────────────────────────────────────
+const TRUST = {
+  COMPUTING: 'trust.computing',
+  ASSESSED:  'trust.assessed',
+  FAILED:    'trust.failed',
+};
+
+// ── Resource Manager Events (Milestone C) ────────────────────────────────────
+const RESOURCE = {
+  LEASING:  'resource.leasing',
+  LEASED:   'resource.leased',
+  RELEASED: 'resource.released',
+  EXPIRED:  'resource.expired',
+  FAILED:   'resource.failed',
+};
+
+// ── Provider Intelligence Events (Milestone C) ───────────────────────────────
+const PROVIDER = {
+  RANKING:  'provider.ranking',
+  SELECTED: 'provider.selected',
+  FAILED:   'provider.failed',
+};
+
 module.exports = {
+  CAPABILITY,
   CORE,
+  CONTEXT,
+  ENTITY,
   INTENT,
   INTELLIGENCE,
+  JOB,
+  GOAL,
+  POLICY,
+  PROVIDER,
+  RESOURCE,
+  STRATEGY,
+  TRUST,
 };

@@ -14,6 +14,7 @@
 
 const { bus }  = require('../events/bus.cjs');
 const { CORE } = require('../events/events.cjs');
+const { SqliteIntentProvider } = require('../providers/sqlite-intent.cjs');
 
 const log = (() => {
   try { return require('electron-log'); } catch { return console; }
@@ -50,18 +51,30 @@ class RecoveryManager {
   async recover() {
     log.info('[RecoveryManager] Scanning for interrupted requests...');
 
-    const interrupted = [...this._store.entries()];
-    if (interrupted.length === 0) {
-      log.info('[RecoveryManager] No interrupted requests found.');
-    } else {
-      log.warn(`[RecoveryManager] Found ${interrupted.length} interrupted request(s). Marking as failed.`);
-      for (const [requestId] of interrupted) {
-        bus.publish(CORE.REQUEST_FAILED, {
-          requestId,
-          error: 'Interrupted by kernel restart.',
-        });
-        this._store.delete(requestId);
+    try {
+      const intentProvider = new SqliteIntentProvider();
+      const interrupted = await intentProvider.getIncompleteJobs();
+
+      if (interrupted.length === 0) {
+        log.info('[RecoveryManager] No interrupted requests found.');
+      } else {
+        log.warn(`[RecoveryManager] Found ${interrupted.length} interrupted job(s) from previous session.`);
+        for (const job of interrupted) {
+          // Mark as failed in DB
+          job.state = 'Failed';
+          job.metrics = job.metrics || {};
+          job.metrics.error = 'Interrupted by kernel crash / restart.';
+          await intentProvider.recordActivity(job.id, { job });
+          
+          bus.publish(CORE.REQUEST_FAILED, {
+            requestId: job.id,
+            error: 'Interrupted by kernel restart.',
+          });
+          log.info(`[RecoveryManager] Job ${job.id} marked as Failed.`);
+        }
       }
+    } catch (err) {
+      log.error(`[RecoveryManager] Failed to run crash recovery:`, err.message);
     }
 
     this._isReady = true;

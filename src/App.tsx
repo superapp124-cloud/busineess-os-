@@ -58,6 +58,8 @@ bootstrapPlatform();
 import * as LazyPages from "./routes/lazyPages";
 import { preloadCriticalRoutes } from "./routes/lazyPages";
 
+import ExecutionDashboard from "./components/dev/ExecutionDashboard";
+
 // Layout components (small, keep eager)
 const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m => ({ default: m.AdminLayout })));
 import DesktopLayout from "./layouts/DesktopLayout";
@@ -127,9 +129,9 @@ const SubdomainRedirect = () => {
   const [redirected, setRedirected] = React.useState(false);
 
   React.useEffect(() => {
-    // Desktop platform always goes to the desktop layout
+    // Desktop platform always goes to the Workspace IDE
     if (platform === "desktop") {
-      navigate('/desktop/chat', { replace: true });
+      navigate('/desktop/workspace-ide', { replace: true });
       setRedirected(true);
       return;
     }
@@ -407,7 +409,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
             <ThemeCustomizationProvider>
             <LocationProvider>
             <PlatformProvider>
-            <Router>
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <CallProvider>
                 <NativeStartupRouteGate>
                 <NativeAppProvider>
@@ -415,10 +417,16 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 <DeferredGlobalServices />
                 <ChatrAIFab />
                 <Routes>
-                
-                {/* Desktop Layout Routes (web.chatr.chat) */}
-                <Route path="/desktop" element={<DesktopLayout />}>
-                  <Route index element={<Navigate to="/desktop/chat" replace />} />
+                {/* Developer Routes */}
+                <Route path="/dev" element={<ExecutionDashboard />} />
+                {/* Desktop Platform Routes */}
+                <Route path="/desktop">
+                  {/* Legacy Desktop Platform Routes (now housing the IDE too) */}
+                  <Route element={<DesktopLayout />}>
+                    <Route index element={<Navigate to="workspace-ide" replace />} />
+                    {/* Next Generation Workspace IDE */}
+                    <Route path="workspace-ide" element={<LazyRoute component={LazyPages.WorkspaceIDE} />} />
+                    <Route path="chat" element={<LazyRoute component={LazyPages.DesktopChat} />} />
                   <Route path="kernel" element={
                     <Suspense fallback={<PageLoader message="Loading Kernel Dashboard..." />}>
                       <KernelDashboard />
@@ -460,10 +468,14 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                   <Route path="recruitment" element={<LazyRoute component={LazyPages.RecruiterWorkspace} />} />
                   <Route path="candidate" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
                   <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
+                  <Route path="connector-store" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
                   <Route path="agent/:id" element={<LazyRoute component={LazyPages.AgentWorkspace} />} />
                   <Route path="studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
 
                   <Route path="smart-inbox" element={<LazyRoute component={LazyPages.SmartInbox} />} />
+                  <Route path="tickets" element={<LazyRoute component={LazyPages.DesktopTickets} />} />
+                  <Route path="files" element={<LazyRoute component={LazyPages.DesktopFiles} />} />
+                  <Route path="connected-accounts" element={<LazyRoute component={LazyPages.ConnectedAccounts} />} />
                   <Route path="pro" element={<LazyRoute component={LazyPages.ProUpgrade} />} />
                   {/* Business Platform Routes Nested in Desktop */}
                   <Route path="pro/business" element={<Suspense fallback={<PageLoader />}><BusinessLayout /></Suspense>}>
@@ -485,6 +497,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                     <Route path="app-store" element={<LazyRoute component={LazyPages.AppStore} />} />
                     <Route path="developer" element={<LazyRoute component={LazyPages.DeveloperHub} />} />
                   </Route>
+                </Route>
                 </Route>
 
                 {/* Calendar OAuth2 Callback Routes */}
@@ -580,6 +593,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 <Route path="/standalone-messenger" element={<LazyRoute component={LazyPages.Chat} />} />
                 <Route path="/standalone-messenger/:conversationId" element={<LazyRoute component={LazyPages.Chat} />} />
                 <Route path="/smart-inbox" element={<LazyRoute component={LazyPages.SmartInbox} />} />
+                <Route path="/connected-accounts" element={<LazyRoute component={LazyPages.ConnectedAccounts} />} />
 
                 <Route path="/communities" element={<LazyRoute component={LazyPages.Communities} />} />
                 <Route path="/create-community" element={<LazyRoute component={LazyPages.CreateCommunity} />} />
@@ -717,6 +731,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
                 
                 {/* AI Command Center (CEO portal) */}
                 <Route path="/command-center" element={<LazyRoute component={LazyPages.CommandCenter} />} />
+                <Route path="/dev/execution-dashboard" element={<ExecutionDashboard />} />
 
                 {/* Call Quality Benchmark Dashboard */}
                 <Route path="/call-benchmark" element={<Suspense fallback={<PageLoader />}>{React.createElement(React.lazy(() => import('./pages/CallBenchmarkDashboard')))}</Suspense>} />

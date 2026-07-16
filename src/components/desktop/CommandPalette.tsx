@@ -72,13 +72,31 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
     
     let active = true;
     setIsSearching(true);
-    searchService.search(debouncedQuery, '').then((res: any) => {
+    
+    // We will collect results from both remote and local sources
+    const promises: Promise<any>[] = [];
+    
+    if (searchService) {
+      promises.push(searchService.search(debouncedQuery, '').catch(() => ({ all: [] })));
+    } else {
+      promises.push(Promise.resolve({ all: [] }));
+    }
+
+    // Add local documents search if available
+    const electronAPI = (window as any).electronAPI;
+    if (electronAPI && electronAPI.documents) {
+      promises.push(electronAPI.documents.search(debouncedQuery, 5).catch(() => []));
+    } else {
+      promises.push(Promise.resolve([]));
+    }
+
+    Promise.all(promises).then(([remoteRes, localRes]) => {
       if (!active) return;
       const mapped: CommandItem[] = [];
       
-      // Map global results to CommandItems
-      if (res.all) {
-        res.all.forEach((item: any) => {
+      // Map global cloud results to CommandItems
+      if (remoteRes.all) {
+        remoteRes.all.forEach((item: any) => {
           let icon = Globe;
           if (item.entityType === 'message') icon = MessageSquare;
           else if (item.entityType === 'task') icon = CheckSquare;
@@ -87,7 +105,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
           
           mapped.push({
             id: `search-${item.entityId}`,
-            category: 'Search Results',
+            category: 'Cloud Search',
             icon,
             label: item.title,
             description: item.preview || `Found in ${item.entityType}`,
@@ -95,6 +113,30 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
           });
         });
       }
+
+      // Map local document results to CommandItems
+      if (Array.isArray(localRes)) {
+        localRes.forEach((file: any) => {
+          mapped.push({
+            id: `local-doc-${file.path}`,
+            category: 'Local Documents',
+            icon: FileText,
+            label: file.name,
+            description: file.path,
+            // Clicking a local file in command palette opens it natively using the OS default application
+            action: async () => {
+              const electron = (window as any).electronAPI;
+              if (electron?.documents?.open) {
+                await electron.documents.open(file.path);
+                onClose();
+              } else {
+                go(`/desktop/workspace-ide?file=${encodeURIComponent(file.path)}`);
+              }
+            }
+          });
+        });
+      }
+
       setRemoteResults(mapped);
       setIsSearching(false);
     }).catch(() => {
@@ -282,7 +324,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
             </div>
           ))}
 
-          {filtered.length === 0 && (
+          {allResults.length === 0 && !isSearching && (
             <div className="px-4 py-12 text-center">
               <Sparkles className="w-8 h-8 text-white/20 mx-auto mb-3" />
               <p className="text-white/40 text-sm">No results for "{query}"</p>

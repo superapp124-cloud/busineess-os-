@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrainCircuit, CheckCheck, Zap, FileText, Calendar, X, Loader2, Sparkles, CornerUpRight, Forward } from 'lucide-react';
+import { BrainCircuit, CheckCheck, Zap, FileText, Calendar, X, Loader2, Sparkles, CornerUpRight, Forward, Paperclip } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { WorkflowRenderer } from '@/components/workflow-ui';
 import type { Message, Room, CopilotMessage, RightPaneTab } from '../types';
 
 interface RightPaneProps {
@@ -15,6 +16,8 @@ interface RightPaneProps {
   copilotMessages: CopilotMessage[];
   copilotInput: string;
   setCopilotInput: (v: string) => void;
+  copilotAttachments?: File[];
+  setCopilotAttachments?: React.Dispatch<React.SetStateAction<File[]>>;
   copilotLoading: boolean;
   copilotEndRef: React.RefObject<HTMLDivElement>;
   onCopilotSend: (msg?: string) => void;
@@ -41,6 +44,8 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
   copilotMessages,
   copilotInput,
   setCopilotInput,
+  copilotAttachments = [],
+  setCopilotAttachments,
   copilotLoading,
   copilotEndRef,
   onCopilotSend,
@@ -58,7 +63,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
   if (!selectedRoom) return null;
 
   return (
-    <div className="w-80 shrink-0 border-l border-white/[0.06] bg-[#0b0b14] flex flex-col relative z-20">
+    <div className="w-[420px] shrink-0 border-l border-white/[0.06] bg-[#0b0b14] flex flex-col relative z-20">
       
       {/* State 1: Active Thread */}
       {activeThreadId ? (
@@ -238,7 +243,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
                     </div>
                   )}
                   {copilotMessages.map((m, i) => (
-                    <div key={i} className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}>
+                    <div key={i} className={cn('flex flex-col gap-2', m.role === 'user' ? 'items-end' : 'items-start')}>
                       <div className={cn(
                         'max-w-[90%] px-3 py-2 rounded-xl text-[11px] leading-relaxed',
                         m.role === 'user'
@@ -247,6 +252,13 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
                       )}>
                         {m.content}
                       </div>
+
+                      {/* Workflow Widget Stack */}
+                      {m.role === 'assistant' && (m as any).workflowId && (
+                        <div className="w-full">
+                          <WorkflowRenderer workflowId={(m as any).workflowId} />
+                        </div>
+                      )}
                     </div>
                   ))}
                   {copilotLoading && (
@@ -260,8 +272,37 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
                 </div>
               </ScrollArea>
 
-              <div className="p-3 pb-24 border-t border-white/[0.04]">
+              <div className="p-3 pb-24 border-t border-white/[0.04] flex flex-col gap-2">
+                {copilotAttachments && copilotAttachments.length > 0 && (
+                  <div className="flex gap-2 flex-wrap mb-1">
+                    {copilotAttachments.map((f, i) => (
+                      <div key={i} className="flex items-center gap-1.5 bg-white/10 rounded-md px-2 py-1">
+                        <FileText className="w-3 h-3 text-violet-400" />
+                        <span className="text-[10px] text-white/80 max-w-[100px] truncate">{f.name}</span>
+                        <button onClick={() => setCopilotAttachments?.(prev => prev.filter((_, idx) => idx !== i))} className="text-white/40 hover:text-white/80">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.multiple = true;
+                      input.onchange = (e: any) => {
+                        const files = Array.from(e.target.files) as File[];
+                        setCopilotAttachments?.(prev => [...prev, ...files]);
+                      };
+                      input.click();
+                    }}
+                    className="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 flex items-center justify-center transition-colors shrink-0 border border-white/[0.06]"
+                    title="Attach Files"
+                  >
+                    <Paperclip className="w-4 h-4 text-white/60" />
+                  </button>
                   <input
                     value={copilotInput}
                     onChange={e => setCopilotInput(e.target.value)}
@@ -271,7 +312,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
                   />
                   <button
                     onClick={() => onCopilotSend()}
-                    disabled={copilotLoading || !copilotInput.trim()}
+                    disabled={copilotLoading || (!copilotInput.trim() && copilotAttachments.length === 0)}
                     className="w-8 h-8 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 flex items-center justify-center transition-colors"
                   >
                     <CornerUpRight className="w-3.5 h-3.5 text-white" />

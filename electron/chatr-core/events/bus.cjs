@@ -11,6 +11,7 @@
  */
 
 const { EventEmitter } = require('events');
+const { createEventEnvelope } = require('./schema.cjs');
 
 class KernelEventBus extends EventEmitter {
   constructor() {
@@ -32,21 +33,9 @@ class KernelEventBus extends EventEmitter {
     this._metrics.published++;
     this._metrics.byEvent[eventName] = (this._metrics.byEvent[eventName] || 0) + 1;
     
-    // Strict Kernel Event Envelope
-    const correlationId = payload.correlationId || require('crypto').randomUUID();
-    const stage = eventName.split('.')[1] || 'UNKNOWN';
-    const timestamp = Date.now();
-
-    const envelope = {
-      id: require('crypto').randomUUID(),
-      timestamp,
-      kernelVersion: '1.0',
-      stage,
-      scope: payload.scope || 'global',
-      capability: payload.capability || 'core',
-      correlationId,
-      payload
-    };
+    const envelope = createEventEnvelope(eventName, payload);
+    const correlationId = envelope.correlationId;
+    const timestamp = envelope.timestamp_ms;
 
     // --- OBSERVABILITY TRACING ---
     if (!this._traces.has(correlationId)) {
@@ -60,7 +49,7 @@ class KernelEventBus extends EventEmitter {
     if (trace) {
       const prevEvent = trace.events.length > 0 ? trace.events[trace.events.length - 1] : null;
       const duration = prevEvent ? (timestamp - prevEvent.time) : 0;
-      trace.events.push({ stage, time: timestamp, duration, eventName });
+      trace.events.push({ stage: envelope.stage, time: timestamp, duration, eventName: envelope.event_type });
       
       if (eventName === 'KERNEL.ACTION.EXECUTED' || eventName === 'KERNEL.SUGGESTION.DISMISSED' || eventName === 'KERNEL.ACTION.CONFIRMED') {
         const path = trace.events.map(e => `${e.stage}(${e.duration}ms)`).join(' -> ');
@@ -76,8 +65,8 @@ class KernelEventBus extends EventEmitter {
           end: timestamp,
           duration: timestamp - trace.start,
           events: trace.events,
-          finalEvent: eventName,
-          payload: payload // Can contain metrics like timeToConfirm from UI
+          finalEvent: envelope.event_type,
+          payload: envelope.payload // Can contain metrics like timeToConfirm from UI
         };
         try {
           fs.appendFileSync(traceFile, JSON.stringify(traceRecord) + '\n');
@@ -88,9 +77,12 @@ class KernelEventBus extends EventEmitter {
     }
 
     this.emit(eventName, envelope);
+    if (eventName !== envelope.event_type) {
+      this.emit(envelope.event_type, envelope);
+    }
     
     // Also emit to a global wildcard for the Event Router
-    this.emit('*', { eventName, envelope });
+    this.emit('*', { eventName, eventType: envelope.event_type, envelope });
   }
 
   /**
@@ -120,4 +112,4 @@ class KernelEventBus extends EventEmitter {
 // Singleton — one bus for the entire Kernel
 const bus = new KernelEventBus();
 
-module.exports = { bus };
+module.exports = { KernelEventBus, bus };

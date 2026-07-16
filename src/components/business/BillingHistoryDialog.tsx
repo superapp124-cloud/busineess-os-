@@ -55,17 +55,7 @@ export function BillingHistoryDialog({
 
       if (subscription) {
         // Generate mock billing history
-        const mockHistory: BillingRecord[] = [
-          {
-            id: '1',
-            created_at: new Date().toISOString(),
-            amount: subscription.monthly_price,
-            status: 'paid',
-            plan_name: subscription.plan_type,
-            period_start: new Date().toISOString(),
-            period_end: subscription.next_billing_date || new Date().toISOString(),
-          },
-        ];
+        const mockHistory: BillingRecord[] = [];
         setBillingHistory(mockHistory);
       }
     } catch (error) {

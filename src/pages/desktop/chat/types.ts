@@ -26,6 +26,7 @@ export type Message = {
 export type CopilotMessage = {
   role: 'user' | 'assistant';
   content: string;
+  workflowId?: string;
 };
 
 export type RightPaneTab = 'copilot' | 'tasks' | 'decisions' | 'notes' | 'calendar';

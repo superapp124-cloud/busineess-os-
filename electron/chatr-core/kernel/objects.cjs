@@ -71,4 +71,58 @@ class Understanding {
   }
 }
 
-module.exports = { Understanding };
+class Job {
+  /**
+   * @param {object} params
+   * @param {string} params.id - Unique job identifier
+   * @param {string} params.goal - High level description of the job
+   */
+  constructor({ id, goal }) {
+    this.id = id;
+    this.goal = goal;
+    this.intent = null;
+    this.executionGraph = null;
+    
+    // Lifecycle: Created -> Planned -> Waiting -> Running -> Approval Needed -> Completed -> Failed -> Cancelled -> Replay
+    this.state = 'Created';
+    
+    this.outputs = {};
+    this.memories = [];
+    this.entities = [];
+    this.metrics = {
+      startTime: Date.now(),
+      endTime: null,
+      durationMs: 0,
+      retryCount: 0
+    };
+  }
+
+  transitionTo(newState) {
+    const validStates = ['Created', 'Planned', 'Waiting', 'Running', 'Approval Needed', 'Completed', 'Failed', 'Cancelled', 'Replay'];
+    if (validStates.includes(newState)) {
+      this.state = newState;
+      if (['Completed', 'Failed', 'Cancelled'].includes(newState)) {
+        this.metrics.endTime = Date.now();
+        this.metrics.durationMs = this.metrics.endTime - this.metrics.startTime;
+      }
+    } else {
+      throw new Error(`Invalid Job state transition: ${newState}`);
+    }
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      goal: this.goal,
+      intent: this.intent,
+      executionGraph: this.executionGraph,
+      state: this.state,
+      outputs: this.outputs,
+      memories: this.memories,
+      entities: this.entities,
+      metrics: this.metrics
+    };
+  }
+}
+
+module.exports = { Understanding, Job };

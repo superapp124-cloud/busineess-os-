@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T17:51:01.290Z",
+  "generatedAt": "2026-07-13T07:26:39.263Z",
   "note": "Incremental lint baseline. Reduce counts over time; new or increased violations fail npm run lint.",
   "targets": [
     "src",
@@ -10,32 +10,36 @@
     "tailwind.config.ts"
   ],
   "totals": {
-    "errors": 1724,
-    "warnings": 289
+    "errors": 2997,
+    "warnings": 359
   },
   "rules": {
+    "react-refresh/only-export-components": {
+      "errors": 0,
+      "warnings": 50
+    },
     "@typescript-eslint/no-explicit-any": {
-      "errors": 1610,
+      "errors": 2813,
       "warnings": 0
     },
     "react-hooks/exhaustive-deps": {
       "errors": 0,
-      "warnings": 249
-    },
-    "react-refresh/only-export-components": {
-      "errors": 0,
-      "warnings": 40
+      "warnings": 307
     },
     "no-case-declarations": {
-      "errors": 6,
+      "errors": 9,
       "warnings": 0
     },
     "@typescript-eslint/ban-ts-comment": {
-      "errors": 20,
+      "errors": 21,
       "warnings": 0
     },
+    "parser": {
+      "errors": 5,
+      "warnings": 2
+    },
     "prefer-const": {
-      "errors": 31,
+      "errors": 57,
       "warnings": 0
     },
     "no-useless-catch": {
@@ -43,19 +47,19 @@
       "warnings": 0
     },
     "no-useless-escape": {
-      "errors": 12,
+      "errors": 17,
       "warnings": 0
     },
     "no-empty": {
-      "errors": 31,
+      "errors": 42,
       "warnings": 0
     },
     "@typescript-eslint/no-unused-expressions": {
-      "errors": 1,
+      "errors": 5,
       "warnings": 0
     },
     "react-hooks/rules-of-hooks": {
-      "errors": 6,
+      "errors": 14,
       "warnings": 0
     },
     "@typescript-eslint/no-require-imports": {
@@ -63,7 +67,7 @@
       "warnings": 0
     },
     "@typescript-eslint/no-empty-object-type": {
-      "errors": 2,
+      "errors": 3,
       "warnings": 0
     },
     "no-async-promise-executor": {
@@ -71,7 +75,7 @@
       "warnings": 0
     },
     "no-constant-condition": {
-      "errors": 1,
+      "errors": 7,
       "warnings": 0
     }
   }

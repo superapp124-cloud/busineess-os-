@@ -25,6 +25,7 @@ import { attachmentEngine } from '@/core/services/AttachmentEngine';
 import { OutcomeCard } from '@/components/outcomes/OutcomeCard';
 import { useIntentObserver } from '@/hooks/useIntentObserver';
 import { useCHATROS } from '@/core/os/GlobalIntentProvider';
+import { ExperienceProvider } from '@/providers/ExperienceProvider';
 
 import { useConversation } from './chat/hooks/useConversation';
 import { useCopilot } from './chat/hooks/useCopilot';
@@ -55,6 +56,8 @@ export default function DesktopChat() {
   const { 
     copilotInput, 
     setCopilotInput, 
+    copilotAttachments,
+    setCopilotAttachments,
     copilotMessages, 
     copilotLoading, 
     copilotEndRef, 
@@ -294,7 +297,8 @@ export default function DesktopChat() {
   }, [forwardMessage, forwardSelectedRooms]);
 
   return (
-    <div className={`h-screen w-full flex bg-[#0b0b14] overflow-hidden ${themeMode === 'light' ? 'theme-light' : ''}`}>
+    <ExperienceProvider>
+      <div className={`h-screen w-full flex bg-[#0b0b14] overflow-hidden ${themeMode === 'light' ? 'theme-light' : ''}`}>
       
       <ConversationSidebar 
         rooms={rooms}
@@ -310,40 +314,52 @@ export default function DesktopChat() {
         <div className="absolute inset-0 bg-zinc-950/95" />
         
         {!selectedRoom ? (
-          <DashboardCenterPanel 
-            onCreateNew={() => setShowCreateModal(true)}
-            onNewChat={() => setShowNewDmModal(true)}
-          />
-        ) : (
           <div className="flex-1 flex flex-col relative z-10 min-h-0">
-            <ChatHeader 
-              selectedRoom={selectedRoom as any} 
-              onCall={() => startCall(selectedRoom.id, selectedRoom.name, true)}
-              onVideoCall={() => startCall(selectedRoom.id, selectedRoom.name, false)}
+            <DashboardCenterPanel 
+              onCreateNew={() => setShowCreateModal(true)}
+              onNewChat={() => setShowNewDmModal(true)}
             />
-            
-            <MessageViewport 
-              messages={messages}
-              currentUserId={currentUserId}
-              isUploading={isUploading}
-              isAiLoading={isAiLoading}
-              typingUsers={typingUsers}
-              onFullscreenImage={setFullscreenImage}
-              onReact={(msg) => toast.success('Reacted')}
-              onReply={(msg) => { setActiveThreadId(msg.id); setRightPaneTab('copilot'); }}
-              onForward={(msg) => setForwardMessage(msg)}
-              onAskAI={(msg) => { setRightPaneTab('copilot'); setCopilotInput(`Explain: ${msg.content}`); }}
-            />
-
-            {/* Intent Outcome Popup — floats above message composer */}
-            <div className="relative">
+            {/* Intent Outcome Popup — floats at the bottom of the dashboard */}
+            <div className="absolute bottom-6 left-0 w-full z-50 flex flex-col justify-end gap-2 px-8 max-w-5xl mx-auto pointer-events-none">
               <AnimatePresence>
                 {outcomes.filter(o => ['suggested', 'needs_input', 'searching', 'results_ready', 'preview_ready', 'executing', 'approval_required', 'policy_blocked', 'permission_denied'].includes(o.status)).map(o => (
-                  <div key={o.id} className="absolute bottom-full left-0 w-full mb-2 z-50 flex flex-col justify-end gap-2 px-4 max-w-4xl mx-auto">
+                  <div key={o.id} className="pointer-events-auto">
                     <OutcomeCard outcome={o} />
                   </div>
                 ))}
               </AnimatePresence>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col relative z-10 min-h-0">
+            <ChatHeader 
+              selectedRoom={selectedRoom as any} 
+                onCall={() => startCall(selectedRoom.id, selectedRoom.name, true)}
+                onVideoCall={() => startCall(selectedRoom.id, selectedRoom.name, false)}
+              />
+              
+              <MessageViewport 
+                messages={messages}
+                currentUserId={currentUserId}
+                isUploading={isUploading}
+                isAiLoading={isAiLoading}
+                typingUsers={typingUsers}
+                onFullscreenImage={setFullscreenImage}
+                onReact={(msg) => toast.success('Reacted')}
+                onReply={(msg) => { setActiveThreadId(msg.id); setRightPaneTab('copilot'); }}
+                onForward={(msg) => setForwardMessage(msg)}
+                onAskAI={(msg) => { setRightPaneTab('copilot'); setCopilotInput(`Explain: ${msg.content}`); }}
+              />
+
+              {/* Intent Outcome Popup — floats above message composer */}
+              <div className="relative">
+                <AnimatePresence>
+                  {outcomes.filter(o => ['suggested', 'needs_input', 'searching', 'results_ready', 'preview_ready', 'executing', 'approval_required', 'policy_blocked', 'permission_denied'].includes(o.status)).map(o => (
+                    <div key={o.id} className="absolute bottom-full left-0 w-full mb-2 z-50 flex flex-col justify-end gap-2 px-4 max-w-4xl mx-auto">
+                      <OutcomeCard outcome={o} />
+                    </div>
+                  ))}
+                </AnimatePresence>
 
                 <AttachmentZone 
                   attachments={attachments}
@@ -352,19 +368,19 @@ export default function DesktopChat() {
                 <MessageComposer 
                   messageInput={messageInput}
                   setMessageInput={setMessageInput}
-                selectedRoomName={selectedRoom.name}
-                isRewriting={isRewriting}
-                onSendMessage={handleSendMessage}
-                onKeyDown={handleInputKeyDown}
-                onFilePicker={handleFilePicker}
-                onSmartReply={handleSmartReply}
-                onRewrite={handleRewrite}
-                onExtractActions={handleExtractActions}
-              />
+                  selectedRoomName={selectedRoom.name}
+                  isRewriting={isRewriting}
+                  onSendMessage={handleSendMessage}
+                  onKeyDown={handleInputKeyDown}
+                  onFilePicker={handleFilePicker}
+                  onSmartReply={handleSmartReply}
+                  onRewrite={handleRewrite}
+                  onExtractActions={handleExtractActions}
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
       {!selectedRoom ? (
         <RightContextPanel />
@@ -380,6 +396,8 @@ export default function DesktopChat() {
           copilotMessages={copilotMessages}
           copilotInput={copilotInput}
           setCopilotInput={setCopilotInput}
+          copilotAttachments={copilotAttachments}
+          setCopilotAttachments={setCopilotAttachments}
           copilotLoading={copilotLoading}
           copilotEndRef={copilotEndRef}
           onCopilotSend={handleCopilotSendWrapper}
@@ -438,6 +456,7 @@ export default function DesktopChat() {
       )}
 
       <UniversalSearch />
-    </div>
+      </div>
+    </ExperienceProvider>
   );
 }

@@ -72,7 +72,7 @@ export const DesktopContacts: React.FC = () => {
 
       setContacts(formattedContacts);
     } catch (error) {
-      console.error('Error fetching contacts:', error);
+      // console.warn('Error fetching contacts:', error); // Suppressed to avoid UI spam on fresh accounts
     } finally {
       setLoading(false);
     }

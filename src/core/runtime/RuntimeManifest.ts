@@ -27,6 +27,7 @@ const PRODUCTION_MANIFEST: RuntimeManifest = {
     'SearchRankingEngine',
     'AIContextManager',
     'AIEngine',
+    'ResourceManagerEngine',
     'WorkflowEngine',
     'DataSyncLayer',
   ],

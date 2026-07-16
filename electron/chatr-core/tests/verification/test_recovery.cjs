@@ -1,5 +1,8 @@
 'use strict';
 // Test: Recovery
+process.env.CHATR_DATA_DIR = require('os').tmpdir();
+process.env.NODE_ENV = 'test';
+
 const persistence = require('../../db/persistence.cjs');
 const contextRuntime = require('../../context/runtime.cjs');
 
@@ -33,5 +36,11 @@ async function run() {
     console.error('Context entries:', Array.from(contextRuntime.activeContext.entries()));
     process.exit(1);
   }
+  
+  console.log('Recovery test passed successfully.');
+  process.exit(0);
 }
-run().catch(() => process.exit(1));
+run().catch((e) => {
+  console.error('Test failed with exception:', e);
+  process.exit(1);
+});

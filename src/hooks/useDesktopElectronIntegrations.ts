@@ -8,14 +8,18 @@ export function useDesktopElectronIntegrations(userId: string | undefined) {
 
     // 1. Initialize Badge Count
     const fetchUnreadCount = async () => {
-      const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('is_read', false);
-      
-      if (count !== null && window.electronAPI) {
-        window.electronAPI.setBadgeCount(count);
+      try {
+        const { count, error } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('is_read', false);
+        
+        if (!error && count !== null && window.electronAPI) {
+          window.electronAPI.setBadgeCount(count);
+        }
+      } catch (err) {
+        // Silently ignore schema mismatch errors if table not migrated
       }
     };
 

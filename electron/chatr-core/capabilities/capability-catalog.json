@@ -1,0 +1,36 @@
+{
+  "abi": "chatr.capability_catalog.v0_9_rc",
+  "description": "Universal Capability Catalog — CHATR Kernel v0.9 RC. No capability ID may encode an industry. Capabilities are universal runtime primitives. Industry concepts are ontology data, not capability names.",
+  "generated_at": "2026-07-15T00:00:00Z",
+  "capabilities": [
+    { "id": "DISCOVER",     "purpose": "Find possible providers, merchants, resources, records, or options." },
+    { "id": "FETCH",        "purpose": "Retrieve a known object or state." },
+    { "id": "COMPARE",      "purpose": "Rank or compare options." },
+    { "id": "SELECT",       "purpose": "Capture user or system selection." },
+    { "id": "AUTHENTICATE", "purpose": "Establish identity, session, or authorization." },
+    { "id": "AUTHORIZE",    "purpose": "Obtain explicit user or policy approval." },
+    { "id": "COLLECT_INPUT","purpose": "Gather structured user or provider fields through schema." },
+    { "id": "PAY",          "purpose": "Move money or initiate payment." },
+    { "id": "TRANSFER",     "purpose": "Move value between accounts or stores." },
+    { "id": "EXECUTE",      "purpose": "Commit the selected provider action." },
+    { "id": "OBSERVE",      "purpose": "Read external state after or during execution." },
+    { "id": "RECONCILE",    "purpose": "Compare observed world state against the goal and choose the next action." },
+    { "id": "RECOVER",      "purpose": "Execute a recovery strategy after partial failure." },
+    { "id": "TRACK",        "purpose": "Monitor progress after execution." },
+    { "id": "VERIFY",       "purpose": "Confirm real-world completion." },
+    { "id": "SUSPEND",      "purpose": "Pause a goal until time, event, provider state, or user action." },
+    { "id": "RESUME",       "purpose": "Continue a suspended goal." },
+    { "id": "CANCEL",       "purpose": "Reverse or stop a pending action." },
+    { "id": "COMMUNICATE",  "purpose": "Send or receive messages." },
+    { "id": "SCHEDULE",     "purpose": "Create or modify time-bound commitments." },
+    { "id": "STORE",        "purpose": "Persist artifacts or records." },
+    { "id": "NOTIFY",       "purpose": "Inform the user or another actor." },
+    { "id": "LEARN",        "purpose": "Record validated improvement signals." }
+  ],
+  "lint_rules": {
+    "reject_namespaced_ids": true,
+    "reject_industry_prefix": ["food", "transport", "travel", "hotel", "flight", "healthcare", "shopping", "banking", "government", "jobs"],
+    "require_uppercase": true,
+    "enforce_universal_catalog": true
+  }
+}

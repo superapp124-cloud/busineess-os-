@@ -24,6 +24,8 @@ import { capability as expense } from './expense';
 import { capability as flight_booking } from './flight_booking';
 import { capability as hotel_booking } from './hotel_booking';
 import { capability as reminder } from './reminder';
+import { capability as documents_search } from './documents_search';
+import { capability as documents_read } from './documents_read';
 
 export function initializeCapabilities() {
   capabilityRegistry.register(reminder);
@@ -41,8 +43,10 @@ export function initializeCapabilities() {
   capabilityRegistry.register(expense);
   capabilityRegistry.register(flight_booking);
   capabilityRegistry.register(hotel_booking);
+  capabilityRegistry.register(documents_search);
+  capabilityRegistry.register(documents_read);
 
-  console.log('[CapabilityRegistry] All 15 capabilities initialized.');
+  console.log('[CapabilityRegistry] All 17 capabilities initialized.');
   console.log('[OSSchedulerService] Scheduler boot complete.');
   
   PerformanceMonitor.start();

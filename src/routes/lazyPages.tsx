@@ -72,6 +72,7 @@ export const Index = lazy(() => import('@/pages/Index'));
 export const Auth = lazy(() => import('@/pages/Auth'));
 export const Home = lazy(() => import('@/pages/Home'));
 export const WorkspaceSelector = lazy(() => import('@/pages/auth/WorkspaceSelector').then(m => ({ default: m.WorkspaceSelector })));
+export const WorkspaceIDE = lazy(() => import('@/pages/desktop/WorkspaceIDE').then(m => ({ default: m.WorkspaceIDE })));
 export const ProUpgrade = lazy(() => import('@/pages/ProUpgrade'));
 export const AdminJobHealth = lazy(() => import('@/pages/AdminJobHealth'));
 export const CarePathDetail = lazy(() => import('@/pages/CarePathDetail'));
@@ -89,6 +90,7 @@ export const Contacts = lazy(() => import('@/pages/Contacts'));
 export const GlobalContacts = lazy(() => import('@/pages/GlobalContacts'));
 export const ContactsPage = lazy(() => import('@/pages/ContactsPage'));
 export const SmartInbox = lazy(() => import('@/pages/SmartInbox'));
+export const ConnectedAccounts = lazy(() => import('@/pages/ConnectedAccounts'));
 
 export const Stories = lazy(() => import('@/pages/Stories'));
 export const StatusComposer = lazy(() => import('@/pages/StatusComposer'));
@@ -262,6 +264,7 @@ export const BusinessAutomations = lazy(() => import('@/pages/business/Automatio
 export const PhoneSystem = lazy(() => import('@/pages/business/PhoneSystem'));
 export const AppStore = lazy(() => import('@/pages/business/AppStore'));
 export const DeveloperHub = lazy(() => import('@/pages/business/DeveloperHub'));
+export const WorkHub = lazy(() => import('@/pages/business/WorkHub').then(m => ({ default: m.WorkHub })));
 
 // Vendor Portal
 export const VendorLogin = lazy(() => import('@/pages/vendor/VendorLogin'));
@@ -370,11 +373,14 @@ export const DesktopContacts = lazy(() => import('@/pages/desktop/DesktopContact
 export const InfiniteCanvas = lazy(() => import('@/components/desktop/InfiniteCanvas').then(module => ({ default: module.InfiniteCanvas })));
 export const DesktopCalls = lazy(() => import('@/pages/desktop/DesktopCalls'));
 export const DesktopWorkspace = lazy(() => import('@/pages/desktop/DesktopWorkspace').then(m => ({ default: m.DesktopWorkspace })));
+export const DesktopTickets = lazy(() => import('@/pages/desktop/Tickets').then(m => ({ default: m.Tickets })));
+export const DesktopFiles = lazy(() => import('@/pages/desktop/Files').then(m => ({ default: m.Files })));
 export const DesktopIntelligence = lazy(() => import('@/pages/desktop/DesktopIntelligence'));
 export const DesktopSettings = lazy(() => import('@/pages/desktop/DesktopSettings').then(m => ({ default: m.DesktopSettings })));
 export const RecruiterWorkspace = lazy(() => import('@/pages/desktop/RecruiterWorkspace').then(m => ({ default: m.RecruiterWorkspace })));
 export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWorkspace').then(m => ({ default: m.CandidateWorkspace })));
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
+export const DesktopConnectorStore = lazy(() => import('@/pages/desktop/DesktopConnectorStore').then(m => ({ default: m.default })));
 export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio').then(m => ({ default: m.WorkflowStudio })));
 export const AgentWorkspace = lazy(() => import('@/pages/desktop/AgentWorkspace').then(m => ({ default: m.AgentWorkspace })));
 export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));

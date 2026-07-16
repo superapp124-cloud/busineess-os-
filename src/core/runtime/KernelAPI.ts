@@ -25,6 +25,7 @@ import { permissionManager, PermissionManagerImpl } from './PermissionManager';
 import { serviceRegistry, ServiceRegistryImpl } from './ServiceRegistry';
 import { featureFlags, FeatureFlagsManager } from './FeatureFlags';
 import { securityManager, SecurityManagerImpl } from './SecurityManager';
+import { identityManager, IdentityManagerImpl } from '../auth/IdentityManager';
 import { workerPool, BackgroundWorkerPoolImpl } from './BackgroundWorkerPool';
 import { runtimeManifest, RuntimeManifestLoader } from './RuntimeManifest';
 
@@ -42,6 +43,7 @@ export class KernelAPI {
   readonly services: ServiceRegistryImpl = serviceRegistry;
   readonly flags: FeatureFlagsManager = featureFlags;
   readonly security: SecurityManagerImpl = securityManager;
+  readonly identity: IdentityManagerImpl = identityManager;
   readonly workers: BackgroundWorkerPoolImpl = workerPool;
   readonly manifest: RuntimeManifestLoader = runtimeManifest;
 

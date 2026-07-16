@@ -196,6 +196,10 @@ const NodeCard: React.FC<NodeCardProps> = ({ node, isSelected, onClick }) => {
           {actions.map((a, i) => (
             <button
               key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                toast.success(`Action "${a.label}" triggered for ${node.title}`);
+              }}
               className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all duration-150"
               style={{ color: colors.icon }}
               onMouseEnter={e => (e.currentTarget.style.background = colors.border + '22')}
@@ -394,14 +398,47 @@ const ListView: React.FC<{ nodes: KnowledgeNode[] }> = ({ nodes }) => (
 
 // ─── Journey Panel ────────────────────────────────────────────────────────────
 
-const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMembers: TeamMember[]; journeySteps: JourneyStep[] }> = ({ node, onClose, teamMembers, journeySteps }) => {
+const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMembers: TeamMember[]; journeySteps: JourneyStep[]; nodes: KnowledgeNode[]; edges: KnowledgeEdge[] }> = ({ node, onClose, teamMembers, journeySteps, nodes, edges }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'journey' | 'chat' | 'files'>('overview');
+  const [aiInsight, setAiInsight] = useState<string>('Analyzing node connections...');
   const colors = nodeColors[node.type];
+  
+  const connectedNodeIds = useMemo(() => {
+    return edges
+      .filter(e => e.from === node.id || e.to === node.id)
+      .map(e => e.from === node.id ? e.to : e.from);
+  }, [edges, node.id]);
+
+  const connectedNodes = useMemo(() => {
+    return nodes.filter(n => connectedNodeIds.includes(n.id));
+  }, [nodes, connectedNodeIds]);
+
+  const connectedTasks = connectedNodes.filter(n => n.type === 'task');
+  const connectedPeople = connectedNodes.filter(n => n.type === 'person');
+  const connectedDocs = connectedNodes.filter(n => n.type === 'document');
+  const connectedChats = connectedNodes.filter(n => n.type === 'chat');
+
+  useEffect(() => {
+    async function fetchInsight() {
+      setAiInsight('Analyzing node connections...');
+      try {
+        const { generate } = await import('@/services/ai');
+        const connectedSummary = connectedNodes.map(n => n.title).join(', ');
+        const prompt = `Analyze this ${node.type} node titled "${node.title}". It is connected to: ${connectedSummary || 'nothing'}. Generate a concise 2-sentence insight about its status and relationships.`;
+        const answer = await generate({ prompt });
+        setAiInsight(answer);
+      } catch (err) {
+        setAiInsight('Failed to generate AI insight.');
+      }
+    }
+    fetchInsight();
+  }, [node.id, connectedNodes]);
+
   const tabs: { id: typeof activeTab; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'journey', label: 'Journey' },
-    { id: 'files', label: 'Files' },
-    { id: 'chat', label: 'Chat' },
+    { id: 'files', label: `Files (${connectedDocs.length})` },
+    { id: 'chat', label: `Chat (${connectedChats.length})` },
   ];
   return (
     <div className="h-full flex flex-col" style={{ background: '#0d0f1a', borderLeft: '1px solid #ffffff0d' }}>
@@ -425,19 +462,17 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
       </div>
 
       {/* Health & Stats */}
-      {node.health !== undefined && (
-        <div className="px-5 py-4 flex items-center gap-4" style={{ borderBottom: '1px solid #ffffff0a' }}>
-          <ProjectHealth score={node.health} />
-          <div className="grid grid-cols-3 gap-3 flex-1">
-            {[{ label: 'Tasks', val: '7/12' }, { label: 'Risks', val: '2' }, { label: 'People', val: '4' }].map(m => (
-              <div key={m.label} className="text-center p-2 rounded-lg" style={{ background: '#ffffff06' }}>
-                <p className="text-white font-bold text-sm">{m.val}</p>
-                <p className="text-slate-500 text-[10px]">{m.label}</p>
-              </div>
-            ))}
-          </div>
+      <div className="px-5 py-4 flex items-center gap-4" style={{ borderBottom: '1px solid #ffffff0a' }}>
+        <ProjectHealth score={node.health || 100} />
+        <div className="grid grid-cols-3 gap-3 flex-1">
+          {[{ label: 'Tasks', val: connectedTasks.length.toString() }, { label: 'People', val: connectedPeople.length.toString() }, { label: 'Files', val: connectedDocs.length.toString() }].map(m => (
+            <div key={m.label} className="text-center p-2 rounded-lg" style={{ background: '#ffffff06' }}>
+              <p className="text-white font-bold text-sm">{m.val}</p>
+              <p className="text-slate-500 text-[10px]">{m.label}</p>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-1 px-4 pt-3 pb-0" style={{ borderBottom: '1px solid #ffffff0a' }}>
@@ -465,11 +500,10 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
                 <span className="text-purple-300 text-xs font-bold uppercase tracking-wider">AI Insight</span>
               </div>
               <p className="text-slate-300 text-sm leading-relaxed">
-                This {node.type} has been discussed in <strong className="text-white">3 meetings</strong>.
-                Two action items remain open. <strong className="text-white">Rahul</strong> hasn't reviewed the latest version.
+                {aiInsight}
               </p>
-              <button className="mt-3 text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors">
-                <Send className="w-3 h-3" /> Remind Rahul <ArrowRight className="w-3 h-3" />
+              <button onClick={() => toast.info('Action triggered')} className="mt-3 text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors">
+                <Send className="w-3 h-3" /> Take Action <ArrowRight className="w-3 h-3" />
               </button>
             </div>
 
@@ -500,6 +534,7 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
               <div className="grid grid-cols-2 gap-2">
                 {nodeHoverActions[node.type].map((a, i) => (
                   <button key={i}
+                    onClick={() => toast.success(`Triggered ${a.label}`)}
                     className="flex items-center gap-2 p-2.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5"
                     style={{ background: colors.border + '15', color: colors.icon, border: `1px solid ${colors.border}22` }}>
                     {a.icon} {a.label}
@@ -537,14 +572,16 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
 
         {activeTab === 'files' && (
           <div className="p-5 space-y-2">
-            {['Q3_Budget.pdf', 'Meeting_Agenda.docx', 'Proposal_v3.pptx', 'Invoice_Draft.xlsx'].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white hover:bg-opacity-5 transition-colors group"
+            {connectedDocs.length === 0 ? (
+              <p className="text-slate-500 text-sm">No connected documents.</p>
+            ) : connectedDocs.map((f, i) => (
+              <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white hover:bg-opacity-5 transition-colors group"
                 style={{ border: '1px solid #ffffff08' }}>
                 <FileText className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <p className="text-white text-xs flex-1">{f}</p>
+                <p className="text-white text-xs flex-1">{f.title}</p>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-1 text-slate-400 hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
-                  <button className="p-1 text-slate-400 hover:text-white"><Download className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => toast.info(`Viewing ${f.title}`)} className="p-1 text-slate-400 hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => toast.info(`Downloading ${f.title}`)} className="p-1 text-slate-400 hover:text-white"><Download className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             ))}
@@ -553,21 +590,15 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
 
         {activeTab === 'chat' && (
           <div className="flex flex-col h-full p-4">
-            <div className="flex-1 space-y-3 mb-4">
-              {[
-                { name: 'Rahul', msg: 'Has the budget been finalized?', time: '09:12', mine: false },
-                { name: 'Isha', msg: 'Yes, Finance approved it. ₹2.4Cr total.', time: '09:15', mine: false },
-                { name: 'You', msg: 'Great! I\'ll update the proposal accordingly.', time: '09:18', mine: true },
-              ].map((m, i) => (
-                <div key={i} className={`flex ${m.mine ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] px-3 py-2 rounded-2xl ${m.mine ? 'rounded-br-sm' : 'rounded-bl-sm'} text-xs`}
-                    style={{
-                      background: m.mine ? colors.border + '33' : '#ffffff0d',
-                      color: '#e2e8f0',
-                    }}>
-                    {!m.mine && <p className="text-[10px] font-bold mb-0.5" style={{ color: colors.icon }}>{m.name}</p>}
-                    <p>{m.msg}</p>
-                    <p className="text-slate-600 text-[10px] mt-1 text-right">{m.time}</p>
+            <div className="flex-1 space-y-3 mb-4 overflow-y-auto">
+              {connectedChats.length === 0 ? (
+                <p className="text-slate-500 text-sm text-center pt-10">No chats related to this item.</p>
+              ) : connectedChats.map((c, i) => (
+                <div key={c.id} className="flex justify-start">
+                  <div className="max-w-[80%] px-3 py-2 rounded-2xl rounded-bl-sm text-xs"
+                    style={{ background: '#ffffff0d', color: '#e2e8f0' }}>
+                    <p className="text-[10px] font-bold mb-0.5" style={{ color: colors.icon }}>{c.title}</p>
+                    <p>{c.subtitle || 'Recent message in chat...'}</p>
                   </div>
                 </div>
               ))}
@@ -576,9 +607,9 @@ const JourneyPanel: React.FC<{ node: KnowledgeNode; onClose: () => void; teamMem
               <input
                 className="flex-1 rounded-xl px-3 py-2 text-xs text-white outline-none"
                 style={{ background: '#ffffff0d', border: '1px solid #ffffff15' }}
-                placeholder="Reply…"
+                placeholder="Start a discussion…"
               />
-              <button className="p-2 rounded-xl" style={{ background: colors.border + '33' }}>
+              <button onClick={() => toast.success('Message sent')} className="p-2 rounded-xl hover:opacity-80 transition-opacity" style={{ background: colors.border + '33' }}>
                 <Send className="w-4 h-4" style={{ color: colors.icon }} />
               </button>
             </div>
@@ -981,7 +1012,7 @@ export const InfiniteCanvas: React.FC = () => {
           style={{ width: selectedNode ? 320 : 280, background: '#0d0f1a', borderLeft: '1px solid #ffffff0d', transition: 'width 0.25s ease' }}>
 
           {selectedNode ? (
-            <JourneyPanel node={selectedNode} onClose={() => setSelectedNode(null)} teamMembers={teamMembers} journeySteps={journeySteps} />
+            <JourneyPanel node={selectedNode} onClose={() => setSelectedNode(null)} teamMembers={teamMembers} journeySteps={journeySteps} nodes={nodes} edges={edges} />
           ) : (
             <div className="flex flex-col h-full overflow-hidden">
               {/* AI Header */}

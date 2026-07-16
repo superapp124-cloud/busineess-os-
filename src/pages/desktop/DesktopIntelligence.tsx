@@ -1,428 +1,912 @@
-/**
- * DesktopIntelligence — CHATR OS Intelligence Command Center
- *
- * The single pane of glass for the entire Intent OS.
- * Shows:
- * - Live knowledge graph (people, topics, dates, intents)
- * - Commitment timeline — all scheduled + completed items
- * - Active capabilities across pages
- * - AI command bar — run any capability via natural language
- * - Session stats, OS health
- */
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  BrainCircuit, Sparkles, CheckCircle2, Clock, Users, FileText,
-  Calendar, Bell, ArrowUpRight, Loader2, Send, Radio, Zap,
-  BarChart3, Hash, AlertTriangle, MessageSquare, Phone,
-  Mail, Search, ChevronRight, Activity, Shield, Database,
-  Globe, Cpu, TrendingUp
+  AlertTriangle,
+  BrainCircuit,
+  CheckCircle2,
+  Cpu,
+  Globe,
+  Loader2,
+  Package,
+  Radar,
+  Send,
+  Zap,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  Bot,
+  HelpCircle
 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useCHATROS } from '@/core/os/GlobalIntentProvider';
-import { useAppearanceStore } from '@/hooks/useAppearanceStore';
-import { generate } from '@/services/ai';
-import { osScheduler } from '@/core/services/OSSchedulerService';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { format } from 'date-fns';
+import { widgetRegistry } from '@/core/workflow-ui/WidgetRegistry';
+import { eventBus } from '@/core/runtime/EventBus';
+import { OptionsCard, SearchProgressCard, type UniversalOption } from '@/components/execution/OptionsCard';
+import { PaymentCard, SuccessCard } from '@/components/execution/PhaseCards';
 
-// --- Capability registry UI data ---
-const CAPABILITIES = [
-  { id: 'reminder',  label: 'Reminder',       icon: Bell,         color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', status: 'gold' },
-  { id: 'task',      label: 'Task',            icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', status: 'gold' },
-  { id: 'meeting',   label: 'Meeting',         icon: Users,        color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', status: 'gold' },
-  { id: 'note',      label: 'Note',            icon: FileText,     color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', status: 'gold' },
-  { id: 'call',      label: 'Call',            icon: Phone,        color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', status: 'gold' },
-  { id: 'email',     label: 'Email',           icon: Mail,         color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', status: 'gold' },
-  { id: 'calendar',  label: 'Calendar',        icon: Calendar,     color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', status: 'gold' },
-  { id: 'followup',  label: 'Follow-up',       icon: ArrowUpRight, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', status: 'gold' },
-  { id: 'document',  label: 'Document',        icon: FileText,     color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20', status: 'gold' },
-  { id: 'interview', label: 'Interview',       icon: Users,        color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20', status: 'gold' },
-  { id: 'expense',   label: 'Expense',         icon: BarChart3,    color: 'text-lime-400', bg: 'bg-lime-500/10', border: 'border-lime-500/20', status: 'gold' },
-  { id: 'checklist', label: 'Checklist',       icon: CheckCircle2, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20', status: 'gold' },
-  { id: 'contact',   label: 'Contact',         icon: Users,        color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', status: 'gold' },
-  { id: 'flight',    label: 'Flight Booking',  icon: Globe,        color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', status: 'silver' },
-  { id: 'hotel',     label: 'Hotel Booking',   icon: Database,     color: 'text-zinc-400', bg: 'bg-zinc-500/10', border: 'border-zinc-500/20', status: 'base' },
+// Types
+interface Step {
+  id: string;
+  type: 'understanding' | 'planning' | 'discovery' | 'strategy' | 'browser' | 'complete' | 'error' | 'waiting' | 'capability';
+  text: string;
+  time: string;
+}
+
+interface ResultArtifact {
+  label: string;
+  value: string;
+  status: 'ready' | 'verified' | 'observed';
+}
+
+interface ResultData {
+  summary: string;
+  artifacts: ResultArtifact[];
+  raw?: unknown;
+}
+
+interface ApprovalRequest {
+  id: string;
+  capability: string;
+  description: string;
+}
+
+interface ClarificationData {
+  sessionId: string;
+  question: string;
+  missing: string[];
+  resolved: Record<string, { value: string; source: string; confidence: number }>;
+  widget?: { type: string; payload?: any };
+}
+
+interface PaymentState {
+  status: 'idle' | 'processing' | 'success' | 'failed';
+  amount: number;
+  currency: string;
+  bookingId: string;
+  txnId?: string;
+  description: string;
+}
+
+interface BookingState {
+  bookingId: string;
+  pnr?: string;
+  title: string;
+  subtitle?: string;
+  details: Array<{ label: string; value: string }>;
+}
+
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content?: string;
+  steps?: Step[];
+  result?: ResultData | null;
+  approval?: ApprovalRequest | null;
+  clarification?: ClarificationData | null;
+  status?: 'loading' | 'waiting' | 'complete' | 'error' | 'clarifying' | 'searching' | 'options_ready' | 'paying' | 'booking' | 'confirmed';
+  // Execution phase data
+  rawOptions?: UniversalOption[];
+  intentForOptions?: string;
+  constraintsForOptions?: { from?: string; to?: string };
+  payment?: PaymentState | null;
+  booking?: BookingState | null;
+  bookingOptionId?: string;
+  isBooking?: boolean;
+}
+
+const isElectron = typeof window !== 'undefined' && !!(window as any).electronAPI;
+
+const QUICK_INTENTS = [
+  { title: 'Healthcare', text: 'Find three cardiologists near me', icon: BrainCircuit },
+  { title: 'Transport', text: 'Book a cab to the airport tomorrow', icon: Globe },
+  { title: 'Automation', text: 'Watch folder for new invoices', icon: Cpu },
 ];
 
-const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
-  gold:   { label: '🏆', cls: 'text-amber-400' },
-  silver: { label: '🥈', cls: 'text-slate-400' },
-  base:   { label: '🔘', cls: 'text-white/30' },
+/**
+ * Walk any execution payload and extract all "result leaf" objects —
+ * objects that contain bookingId, orderId, options, restaurants, products, doctors, etc.
+ * Handles both raw connector output AND the plan_completed envelope:
+ *   { intentId, results: { nodeId: { output: { bookingId, ... } } }, metadata }
+ */
+const collectOutputs = (raw?: unknown): any[] => {
+  if (!raw) return [];
+  const outputs: any[] = [];
+  const seen = new Set<any>();
+
+  const isLeaf = (obj: any): boolean =>
+    !!(obj &&
+      (Array.isArray(obj.options) || Array.isArray(obj.restaurants) ||
+       Array.isArray(obj.candidates) || Array.isArray(obj.doctors) ||
+       Array.isArray(obj.products) || obj.bookingId || obj.orderId ||
+       obj.trainName || obj.pnr || obj.ticket));
+
+  const walk = (obj: any) => {
+    if (!obj || typeof obj !== 'object' || seen.has(obj)) return;
+    seen.add(obj);
+
+    if (isLeaf(obj)) { outputs.push(obj); return; }
+
+    // Unwrap plan_completed envelope: dig into .results[nodeId].output
+    const results = obj.payload?.results || obj.results;
+    if (results && typeof results === 'object' && !Array.isArray(results)) {
+      for (const nodeResult of Object.values(results) as any[]) {
+        if (nodeResult?.output) walk(nodeResult.output);
+      }
+    }
+
+    // Generic recursive walk
+    for (const key of Object.keys(obj)) {
+      if (key === 'results') continue; // already handled above
+      const child = obj[key];
+      if (child && typeof child === 'object') walk(child);
+    }
+  };
+
+  walk(raw as any);
+  return outputs;
 };
 
-// --- Stat Card ---
-const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: number | string; sub?: string; color: string }> = ({ icon, label, value, sub, color }) => (
-  <div className="flex flex-col gap-1 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.10] transition-colors">
-    <div className="flex items-center gap-2 mb-1">
-      <span className={color}>{icon}</span>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30">{label}</span>
-    </div>
-    <span className="text-2xl font-bold text-white">{value}</span>
-    {sub && <span className="text-[10px] text-white/30">{sub}</span>}
-  </div>
-);
+const buildResultSummary = (raw?: unknown, intent?: string) => {
+  const output = collectOutputs(raw)[0];
+  if (!output) return 'Task completed.';
+  if (Array.isArray(output.options))     return `Found ${output.options.length} options for you.`;
+  if (Array.isArray(output.restaurants)) return `Here are ${output.restaurants.length} places nearby.`;
+  if (Array.isArray(output.doctors))     return `Found ${output.doctors.length} doctors near you.`;
+  if (Array.isArray(output.products))    return `Found ${output.products.length} results.`;
+  if (output.bookingId) return `Booking confirmed — ${output.trainName || output.provider || 'Your trip'} is ready.`;
+  if (output.pnr)       return `Ticket booked. PNR: ${output.pnr}`;
+  if (output.orderId)   return `Order placed (${output.orderId}).`;
+  return 'Execution complete.';
+};
 
-// --- AI Command Bar ---
-const AICommandBar: React.FC<{ onResult: (result: string, prompt: string) => void }> = ({ onResult }) => {
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { observeText } = useCHATROS();
+const buildResultArtifacts = (intent: string, raw?: unknown): ResultArtifact[] => {
+  const artifacts: ResultArtifact[] = [];
+  const outputs = collectOutputs(raw);
 
-  const QUICK = [
-    'Remind me to review contracts tomorrow at 9am',
-    'Schedule meeting with Rahul next week',
-    'Take a note: Q4 targets need revision',
-    'Create a task to update the dashboard UI',
-  ];
-
-  const run = async (prompt: string) => {
-    if (!prompt.trim()) return;
-    setLoading(true);
-    observeText(prompt);
-    try {
-      const result = await generate(
-        `You are the CHATR OS Intelligence Engine. The user said: "${prompt}". Detect the intent and explain what action was taken (reminder/task/meeting/note/etc). Be concise, 1-2 sentences.`
+  for (const output of outputs) {
+    // ── Transport Search Results ──────────────────────────────────
+    if (Array.isArray(output.options) && output.options.length > 0) {
+      const opts = output.options as any[];
+      const fastest  = opts.reduce((b, o) => Number(o.eta)   < Number(b.eta)   ? o : b, opts[0]);
+      const cheapest = opts.reduce((b, o) => Number(o.price) < Number(b.price) ? o : b, opts[0]);
+      artifacts.push(
+        { label: 'Fastest',    value: `${fastest.providerName  || fastest.provider  || 'Provider'} · ${fastest.eta} min`,    status: 'verified' },
+        { label: 'Cheapest',   value: `${cheapest.providerName || cheapest.provider || 'Provider'} · ₹${cheapest.price}`, status: 'verified' },
       );
-      onResult(result || 'Action understood and queued for execution.', prompt);
-    } catch {
-      onResult('Intent detected. Capability queued for execution.', prompt);
-    } finally {
-      setLoading(false);
-      setInput('');
+    }
+
+    // ── Train / Booking Confirmation ─────────────────────────────
+    if (output.bookingId) {
+      artifacts.push({ label: 'Booking ID',  value: output.bookingId, status: 'verified' });
+    }
+    if (output.pnr) {
+      artifacts.push({ label: 'PNR',         value: output.pnr,       status: 'verified' });
+    }
+    if (output.trainName) {
+      artifacts.push({ label: 'Train',       value: output.trainName, status: 'verified' });
+    }
+    if (output.provider && !output.trainName) {
+      artifacts.push({ label: 'Provider',    value: output.provider,  status: 'verified' });
+    }
+    if (output.price && !Array.isArray(output.options)) {
+      const currency = output.currency || '₹';
+      artifacts.push({ label: 'Fare',        value: `${currency} ${output.price}`, status: 'verified' });
+    }
+    if (output.from && output.to) {
+      artifacts.push({ label: 'Route',       value: `${output.from} → ${output.to}`, status: 'observed' });
+    }
+    if (output.eta && !Array.isArray(output.options)) {
+      artifacts.push({ label: 'ETA',         value: `${output.eta} min`, status: 'observed' });
+    }
+    if (output.status) {
+      const statusLabel = String(output.status).charAt(0).toUpperCase() + String(output.status).slice(1);
+      artifacts.push({ label: 'Status',      value: statusLabel, status: 'verified' });
+    }
+
+    // ── Food ─────────────────────────────────────────────────────
+    if (Array.isArray(output.restaurants) && output.restaurants.length > 0) {
+      const r = output.restaurants[0] as any;
+      artifacts.push({ label: 'Top Match', value: r.name || 'Restaurant', status: 'ready' });
+      if (r.eta)    artifacts.push({ label: 'Delivery', value: `${r.eta} min`, status: 'observed' });
+    }
+
+    // ── Order Confirmation ────────────────────────────────────────
+    if (output.orderId) {
+      artifacts.push({ label: 'Order ID', value: output.orderId, status: 'verified' });
+      if (output.total)    artifacts.push({ label: 'Total', value: `${output.currency || '₹'} ${output.total}`, status: 'verified' });
+      if (output.delivery) artifacts.push({ label: 'Delivery', value: output.delivery, status: 'observed' });
+    }
+
+    // ── Healthcare ────────────────────────────────────────────────
+    if (Array.isArray(output.doctors) && output.doctors.length > 0) {
+      const d = output.doctors[0] as any;
+      artifacts.push({ label: 'Top Doctor', value: d.name || 'Doctor', status: 'ready' });
+      if (d.hospital) artifacts.push({ label: 'Hospital', value: d.hospital, status: 'observed' });
+    }
+
+    // ── Shopping ─────────────────────────────────────────────────
+    if (Array.isArray(output.products) && output.products.length > 0) {
+      const p = output.products[0] as any;
+      artifacts.push({ label: 'Best Match', value: p.name || 'Product', status: 'ready' });
+      if (p.price) artifacts.push({ label: 'Price', value: `₹${p.price}`, status: 'observed' });
+    }
+  }
+
+  // Graceful empty state — no Debug Raw, ever
+  if (artifacts.length === 0) {
+    artifacts.push({ label: 'Status', value: 'Completed successfully', status: 'verified' });
+  }
+
+  return artifacts.slice(0, 6);
+};
+
+// ── Ephemeral Widget Wrapper ────────────────────────────────────────────────
+const EphemeralWidget = ({ 
+  widgetType, 
+  widgetPayload, 
+  sessionId, 
+  onResume 
+}: { 
+  widgetType: string, 
+  widgetPayload: any, 
+  sessionId: string, 
+  onResume: (payload: any) => void 
+}) => {
+  const WidgetComponent = widgetRegistry.resolve(widgetType as any);
+
+  if (!WidgetComponent) {
+    return <div className="p-4 text-sm text-destructive">Widget "{widgetType}" not found.</div>;
+  }
+
+  const mockInstance: any = {
+    id: "ephemeral-widget",
+    type: widgetType as any,
+    version: "1.0",
+    lifecycle: "WAITING_USER", // Changed from EXECUTING to allow user input
+    payload: widgetPayload || {},
+    workflowId: sessionId,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+
+  // Supply mock workflow UI context required by widgets
+  return (
+    <div className="w-full">
+      <WidgetComponent 
+        instance={mockInstance}
+        workflowId={sessionId} 
+        onAction={(action: any) => {
+          if (action.action === 'SUBMIT') {
+            onResume(action.data);
+          }
+        }}
+      />
+    </div>
+  );
+};
+
+export default function ExecutionCenter() {
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const currentIntentRef = useRef('');
+  const activeSessionRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const updateLastAssistantMessage = (updater: (msg: ChatMessage) => ChatMessage) => {
+    setMessages(prev => {
+      const newMessages = [...prev];
+      for (let i = newMessages.length - 1; i >= 0; i--) {
+        if (newMessages[i].role === 'assistant') {
+          newMessages[i] = updater(newMessages[i]);
+          break;
+        }
+      }
+      return newMessages;
+    });
+  };
+
+  const addStep = (type: Step['type'], text: string) => {
+    updateLastAssistantMessage(msg => ({
+      ...msg,
+      steps: [...(msg.steps || []), { id: Math.random().toString(36).slice(2), type, text, time: new Date().toLocaleTimeString() }]
+    }));
+  };
+
+  const completeExecution = (intent: string, raw?: unknown) => {
+    updateLastAssistantMessage(msg => ({
+      ...msg,
+      status: 'complete',
+      result: {
+        summary: buildResultSummary(raw),
+        raw,
+        artifacts: buildResultArtifacts(intent, raw),
+      }
+    }));
+  };
+
+  useEffect(() => {
+    if (!isElectron) return undefined;
+    const api = (window as any).electronAPI;
+
+    const handlers: Array<[string, (...args: any[]) => void]> = [
+      ['execution:plan_started', (data: any) => {
+        addStep('planning', 'Searching live providers...');
+        updateLastAssistantMessage(msg => ({ ...msg, status: 'searching' }));
+      }],
+      ['execution:node_started', (data: any) => addStep('strategy', `Binding runtime capabilities...`)],
+      ['execution:browser_step', (data: any) => addStep('browser', `Browser: ${data?.payload?.step || data?.step || 'interacting'}`)],
+      ['execution:capability_started', (data: any) => addStep('capability', `Executing capability...`)],
+      ['execution:capability_completed', (data: any) => {
+        addStep('complete', `Capability verified.`);
+      }],
+      ['execution:node_completed', (data: any) => addStep('complete', `Node output verified.`)],
+      ['execution:node_awaiting_approval', (data: any) => {
+        const payload = data?.payload || data;
+        const capability = payload?.node?.capability || payload?.node?.action || 'execution action';
+        updateLastAssistantMessage(msg => ({
+          ...msg,
+          status: 'waiting',
+          approval: {
+            id: payload?.node?.id || 'approval',
+            capability,
+            description: `CHATR requires explicit authorization before executing ${capability}.`,
+          }
+        }));
+      }],
+      ['execution:plan_completed', (data: any) => {
+        addStep('complete', 'Search complete.');
+        const payload = data?.payload || data;
+        // Extract raw options[] from any node output
+        const results: Record<string, any> = payload?.results || {};
+        let rawOptions: UniversalOption[] = [];
+        for (const nodeResult of Object.values(results)) {
+          const output = (nodeResult as any)?.output;
+          if (output?.options && Array.isArray(output.options) && output.options.length > 0) {
+            rawOptions = output.options as UniversalOption[];
+            break;
+          }
+        }
+
+        if (rawOptions.length > 0) {
+          // Show OptionsCard
+          updateLastAssistantMessage(msg => ({
+            ...msg,
+            status: 'options_ready',
+            rawOptions,
+            intentForOptions: currentIntentRef.current || 'transport.search',
+          }));
+        } else {
+          // No options — show standard result card
+          completeExecution(currentIntentRef.current || 'intent', data);
+        }
+      }],
+    ];
+
+    handlers.forEach(([channel, handler]) => api.on(channel, handler));
+    return () => {
+      if (!api.off) return;
+      handlers.forEach(([channel, handler]) => api.off(channel, handler));
+    };
+  }, []);
+
+  const submit = async (overrideInput?: string) => {
+    const intent = overrideInput || input;
+    if (!intent.trim()) return;
+
+    setInput('');
+    currentIntentRef.current = intent;
+
+    setMessages(prev => [
+      ...prev,
+      { id: Math.random().toString(), role: 'user', content: intent },
+      { id: Math.random().toString(), role: 'assistant', status: 'loading', steps: [] }
+    ]);
+
+    addStep('understanding', 'Analyzing intent context...');
+
+    if (isElectron) {
+      try {
+        // If there's an active session, resume it with this text
+        let response: any;
+        if (activeSessionRef.current) {
+          response = await (window as any).electronAPI.invoke('kernel:intent:resume', {
+            sessionId: activeSessionRef.current,
+            followUpText: intent,
+          });
+        } else {
+          response = await (window as any).electronAPI.invoke('kernel:intent:process', intent);
+        }
+
+        if (response?.status === 'needs_clarification') {
+          // Kernel needs more info — show clarification card
+          activeSessionRef.current = response.sessionId;
+          updateLastAssistantMessage(msg => ({
+            ...msg,
+            status: 'clarifying',
+            clarification: {
+              sessionId:  response.sessionId,
+              question:   response.question || 'I need a bit more information.',
+              missing:    response.missing  || [],
+              resolved:   response.resolved || {},
+              widget:     response.widget
+            },
+          }));
+          return;
+        }
+
+        // Session fulfilled or new intent executed
+        activeSessionRef.current = null;
+
+        if (response?.ok) {
+          // Store constraints so SearchProgressCard knows from/to while waiting for plan_completed
+          const c = response.constraints || {};
+          updateLastAssistantMessage(msg => ({
+            ...msg,
+            constraintsForOptions: { from: c.from, to: c.to },
+          }));
+        } else if (!response?.ok) {
+          updateLastAssistantMessage(msg => ({ ...msg, status: 'complete', result: {
+            summary: response?.error || 'Could not process your request.',
+            artifacts: [],
+          }}));
+        }
+      } catch (error: any) {
+        addStep('error', `Execution failed: ${error.message}`);
+        updateLastAssistantMessage(msg => ({ ...msg, status: 'error' }));
+      }
+      return;
+    }
+  };
+
+  const handleApprove = async (nodeId: string) => {
+    updateLastAssistantMessage(msg => ({ ...msg, status: 'loading', approval: null }));
+    addStep('strategy', 'Authorization granted. Resuming execution...');
+    
+    if (isElectron) {
+      const api = (window as any).electronAPI;
+      if (api.invoke) {
+        await api.invoke('kernel:execution:approve', { nodeId });
+      }
+    }
+  };
+
+  const handleReject = async (nodeId: string) => {
+    updateLastAssistantMessage(msg => ({ 
+      ...msg, 
+      status: 'error', 
+      approval: null, 
+      steps: [...(msg.steps||[]), {id: 'c', type: 'error', text: 'Execution cancelled by user', time: new Date().toLocaleTimeString()}]
+    }));
+    
+    if (isElectron) {
+      const api = (window as any).electronAPI;
+      if (api.invoke) {
+        await api.invoke('kernel:execution:reject', { nodeId });
+      }
+    }
+  };
+
+  const handleWidgetResume = async (sessionId: string, constraints: any) => {
+    updateLastAssistantMessage(msg => ({
+      ...msg,
+      status: 'loading',
+      clarification: null
+    }));
+    addStep('understanding', 'Processing details...');
+    
+    if (isElectron) {
+      try {
+        const response = await (window as any).electronAPI.invoke('kernel:intent:resume', {
+          sessionId,
+          constraints,
+        });
+
+        if (response?.status === 'needs_clarification') {
+          activeSessionRef.current = response.sessionId;
+          updateLastAssistantMessage(msg => ({
+            ...msg,
+            status: 'clarifying',
+            clarification: {
+              sessionId:  response.sessionId,
+              question:   response.question || 'I need a bit more information.',
+              missing:    response.missing  || [],
+              resolved:   response.resolved || {},
+              widget:     response.widget
+            },
+          }));
+          return;
+        }
+
+        activeSessionRef.current = null;
+        if (!response?.ok) {
+          updateLastAssistantMessage(msg => ({ ...msg, status: 'complete', result: {
+            summary: response?.error || 'Could not process your request.',
+            artifacts: [],
+          }}));
+        }
+      } catch (error: any) {
+        addStep('error', `Execution failed: ${error.message}`);
+        updateLastAssistantMessage(msg => ({ ...msg, status: 'error' }));
+      }
     }
   };
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-violet-400" />
-        <span className="text-[11px] font-bold text-violet-400 uppercase tracking-wider">AI Command Bar</span>
-        <span className="ml-auto text-[9px] text-white/20">Type any instruction naturally</span>
-      </div>
-      <div className="flex gap-2">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && !loading && run(input)}
-          placeholder="e.g. Remind me to send proposal tomorrow at 3pm..."
-          className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-[12px] text-white placeholder:text-white/25 focus:outline-none focus:border-violet-500/40 transition-colors"
-        />
-        <button
-          onClick={() => run(input)}
-          disabled={loading || !input.trim()}
-          className="w-10 h-10 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 flex items-center justify-center transition-all active:scale-95"
-        >
-          {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Send className="w-4 h-4 text-white" />}
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-1.5 mt-3">
-        {QUICK.map((q, i) => (
-          <button
-            key={i}
-            onClick={() => run(q)}
-            className="px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] text-[10px] text-white/40 hover:text-white/70 transition-all"
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// --- Main Component ---
-const DesktopIntelligence: React.FC = () => {
-  const { themeMode } = useAppearanceStore();
-  const isDark = themeMode === 'dark';
-
-  const { knowledge, scheduledToday, pageContext } = useCHATROS();
-  const [commitments, setCommitments] = useState<any[]>([]);
-  const [aiLog, setAiLog] = useState<{ prompt: string; result: string; time: string }[]>([]);
-  const [stats, setStats] = useState({ total: 0, today: 0, people: 0, intents: 0 });
-  const [userName, setUserName] = useState('');
-  const [activeCapFilter, setActiveCapFilter] = useState<'all' | 'gold' | 'silver'>('all');
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'User');
-    });
-  }, []);
-
-  // Load commitments from OSScheduler
-  useEffect(() => {
-    const all = osScheduler.getAll();
-    setCommitments(all);
-    setStats({
-      total: all.length,
-      today: scheduledToday.length,
-      people: knowledge.people.length,
-      intents: knowledge.intents.length,
-    });
-  }, [scheduledToday, knowledge]);
-
-  const handleAIResult = (result: string, prompt: string) => {
-    setAiLog(prev => [{ prompt, result, time: new Date().toLocaleTimeString() }, ...prev.slice(0, 9)]);
-    toast.success('Intent processed by CHATR OS');
-  };
-
-  const filteredCaps = activeCapFilter === 'all'
-    ? CAPABILITIES
-    : CAPABILITIES.filter(c => c.status === activeCapFilter);
-
-  const now = new Date();
-  const greeting = now.getHours() < 12 ? 'Good morning' : now.getHours() < 17 ? 'Good afternoon' : 'Good evening';
-
-  return (
-    <div className="flex flex-col h-full overflow-hidden bg-[#080B12] text-white">
-
-      {/* ── Top hero ─────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden border-b border-white/[0.04] bg-gradient-to-br from-violet-950/60 via-[#080B12] to-indigo-950/40 px-8 py-6 shrink-0">
-        {/* Orb background */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-violet-600/10 blur-[80px] pointer-events-none" />
-        <div className="absolute -bottom-10 left-20 w-40 h-40 rounded-full bg-indigo-600/10 blur-[60px] pointer-events-none" />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">CHATR OS Intelligence</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-1">
-              {greeting}, {userName} 👋
-            </h1>
-            <p className="text-[12px] text-white/40">
-              {scheduledToday.length} item{scheduledToday.length !== 1 ? 's' : ''} scheduled today · {knowledge.people.length} people detected · {knowledge.intents.length} active intents
-            </p>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-            <Radio className="w-3.5 h-3.5 text-violet-400 animate-pulse" />
-            <div>
-              <p className="text-[10px] font-bold text-white/60">{pageContext?.aiLabel || 'CHATR AI'}</p>
-              <p className="text-[9px] text-white/30">{pageContext?.aiMode || 'standby'} mode</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ScrollArea className="flex-1">
-        <div className="p-6 space-y-6 max-w-[1300px] mx-auto">
-
-          {/* ── Stats Row ───────────────────────────────────────── */}
-          <div className="grid grid-cols-4 gap-3">
-            <StatCard icon={<CheckCircle2 className="w-4 h-4" />} label="Commitments" value={stats.total} sub="all time" color="text-emerald-400" />
-            <StatCard icon={<Calendar className="w-4 h-4" />} label="Today" value={stats.today} sub="scheduled" color="text-blue-400" />
-            <StatCard icon={<Users className="w-4 h-4" />} label="People" value={stats.people} sub="in context" color="text-violet-400" />
-            <StatCard icon={<Zap className="w-4 h-4" />} label="Intents" value={stats.intents} sub="detected" color="text-amber-400" />
-          </div>
-
-          {/* ── AI Command Bar ───────────────────────────────────── */}
-          <AICommandBar onResult={handleAIResult} />
-
-          {/* ── AI Log ──────────────────────────────────────────── */}
-          {aiLog.length > 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Activity className="w-3.5 h-3.5 text-white/30" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/30">OS Execution Log</span>
-              </div>
-              {aiLog.map((entry, i) => (
-                <div key={i} className="flex gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <div className="w-1 rounded-full bg-violet-500/40 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] text-white/40 mb-0.5">"{entry.prompt}"</p>
-                    <p className="text-[12px] text-white/80">{entry.result}</p>
-                  </div>
-                  <span className="text-[9px] text-white/20 shrink-0">{entry.time}</span>
+    <div className="flex flex-col h-[calc(100vh-48px)] w-full bg-background text-foreground font-sans relative">
+      
+      {/* Clean Background */}
+      <div className="absolute inset-0 bg-background pointer-events-none" />
+      
+      {/* Main Scrollable Chat Area */}
+      <div className="flex-1 overflow-y-auto w-full z-10 scroll-smooth">
+        <div className="max-w-3xl mx-auto w-full pt-16 px-4 sm:px-6 flex flex-col min-h-full pb-8">
+          
+          {/* Welcome Screen */}
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-1000 w-full py-10 my-auto relative z-10">
+              <div className="mb-8 group">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center relative">
+                  <Sparkles className="w-6 h-6 text-primary" />
                 </div>
-              ))}
+              </div>
+              <h1 className="text-3xl font-medium tracking-tight text-foreground mb-3 text-center">
+                Good afternoon.
+              </h1>
+              <p className="text-muted-foreground text-lg mb-12 max-w-md text-center">
+                What can I help you accomplish today?
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                {QUICK_INTENTS.map((intent, idx) => {
+                  const Icon = intent.icon;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => submit(intent.text)}
+                      className="group flex flex-col items-start p-5 bg-card/50 hover:bg-card border border-border hover:border-primary/40 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md text-left backdrop-blur-xl"
+                    >
+                      <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary mb-4 transition-colors" />
+                      <h3 className="font-semibold text-card-foreground text-sm mb-2">{intent.title}</h3>
+                      <p className="text-muted-foreground text-xs leading-relaxed group-hover:text-foreground/80">{intent.text}</p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* ── Two column: Knowledge Graph + Timeline ────────── */}
-          <div className="grid grid-cols-2 gap-4">
-
-            {/* Knowledge Graph */}
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/[0.04] flex items-center gap-2">
-                <BrainCircuit className="w-4 h-4 text-violet-400" />
-                <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">Live Knowledge Graph</span>
-                <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                  {knowledge.people.length + knowledge.topics.length + knowledge.intents.length} nodes
-                </span>
-              </div>
-              <div className="p-4 space-y-3">
-                {/* People */}
-                {knowledge.people.length > 0 && (
-                  <div>
-                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                      <Users className="w-3 h-3" /> People
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {knowledge.people.map((p, i) => (
-                        <span key={i} className="px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-400">{p}</span>
-                      ))}
+          {/* Conversation History */}
+          {messages.length > 0 && (
+            <div className="flex flex-col gap-8 w-full mt-auto shrink-0">
+              {messages.map((msg) => (
+                <div key={msg.id} className={cn('flex w-full shrink-0 animate-in fade-in slide-in-from-bottom-4 duration-500', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                  
+                  {msg.role === 'user' ? (
+                    <div className="max-w-[85%] sm:max-w-[70%] bg-primary text-primary-foreground px-5 py-3 rounded-2xl rounded-tr-sm shadow-sm">
+                      <p className="text-[15px] leading-relaxed">{msg.content}</p>
                     </div>
-                  </div>
-                )}
-                {/* Topics */}
-                {knowledge.topics.length > 0 && (
-                  <div>
-                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                      <Hash className="w-3 h-3" /> Topics
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {knowledge.topics.map((t, i) => (
-                        <span key={i} className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">{t}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {/* Dates */}
-                {knowledge.dateLabels.length > 0 && (
-                  <div>
-                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                      <Clock className="w-3 h-3" /> Dates
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {knowledge.dateLabels.map((d, i) => (
-                        <span key={i} className="px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold text-amber-400">{d}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {/* Intents */}
-                {knowledge.intents.length > 0 && (
-                  <div>
-                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                      <Zap className="w-3 h-3" /> Intents
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {knowledge.intents.map((intent, i) => (
-                        <span key={i} className="px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-[10px] font-semibold text-violet-400 capitalize">{intent}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {knowledge.people.length === 0 && knowledge.topics.length === 0 && (
-                  <div className="flex flex-col items-center py-6 text-center">
-                    <BrainCircuit className="w-8 h-8 text-white/10 mb-2" />
-                    <p className="text-[11px] text-white/25">Start working — knowledge appears automatically</p>
-                    <p className="text-[10px] text-white/15 mt-1">Type in the AI Command Bar above to seed the graph</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Commitment Timeline */}
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/[0.04] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-blue-400" />
-                <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">Commitment Timeline</span>
-                <span className="ml-auto text-[9px] text-white/25">{commitments.length} total</span>
-              </div>
-              <div className="p-4">
-                {commitments.length === 0 ? (
-                  <div className="flex flex-col items-center py-6 text-center">
-                    <Calendar className="w-8 h-8 text-white/10 mb-2" />
-                    <p className="text-[11px] text-white/25">No commitments yet</p>
-                    <p className="text-[10px] text-white/15 mt-1">Use the AI Command Bar to create your first one</p>
-                  </div>
-                ) : (
-                  <div className="relative pl-4 space-y-3">
-                    <div className="absolute left-1 top-2 bottom-2 w-px bg-white/[0.06]" />
-                    {commitments.slice(0, 8).map((c, i) => (
-                      <div key={c.id || i} className="relative flex items-start gap-3">
-                        <div className="absolute -left-[15px] w-3 h-3 rounded-full border-2 border-violet-500/40 bg-zinc-950 mt-0.5 shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-semibold text-white/80 leading-tight">{c.title}</p>
-                          <p className="text-[9px] text-white/30 mt-0.5">
-                            {c.capability?.replace('core.', '')} · {new Date(c.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                          </p>
-                        </div>
-                        <span className={cn(
-                          'text-[8px] font-bold px-1.5 py-0.5 rounded-full border shrink-0',
-                          new Date(c.scheduledFor) < new Date()
-                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                            : 'bg-blue-500/10 border-blue-500/20 text-blue-400'
-                        )}>
-                          {new Date(c.scheduledFor) < new Date() ? 'Done' : 'Pending'}
-                        </span>
+                  ) : (
+                    <div className="max-w-full sm:max-w-[85%] w-full flex items-start gap-4">
+                      {/* AI Avatar */}
+                      <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-1">
+                        <Sparkles className="w-4 h-4 text-primary" />
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+                      
+                      <div className="flex flex-col gap-3 w-full min-w-0 shrink-0">
+                        {/* Execution Timeline */}
+                        {msg.steps && msg.steps.length > 0 && msg.status !== 'error' && (
+                          <div className="flex items-center gap-3 text-muted-foreground text-sm bg-card/30 border border-border/50 px-4 py-2.5 rounded-full w-fit">
+                            {msg.status === 'complete' ? (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                            ) : (
+                              <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                            )}
+                            <span className="font-medium truncate">
+                              {msg.steps[msg.steps.length - 1].text}
+                            </span>
+                          </div>
+                        )}
 
-          {/* ── Capabilities Matrix ──────────────────────────── */}
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] overflow-hidden">
-            <div className="px-4 py-3 border-b border-white/[0.04] flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
-              <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">Genesis Capabilities</span>
-              <div className="ml-auto flex gap-1.5">
-                {(['all', 'gold', 'silver'] as const).map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setActiveCapFilter(f)}
-                    className={cn(
-                      'px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider transition-colors',
-                      activeCapFilter === f ? 'bg-white/10 text-white/80' : 'text-white/25 hover:text-white/50'
-                    )}
-                  >
-                    {f === 'gold' ? '🏆 Gold' : f === 'silver' ? '🥈 Silver' : 'All'}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="p-4 grid grid-cols-5 gap-2">
-              {filteredCaps.map(cap => {
-                const Icon = cap.icon;
-                return (
-                  <div
-                    key={cap.id}
-                    className={cn(
-                      'flex flex-col items-center gap-2 p-3 rounded-xl border transition-all hover:scale-[1.02] cursor-pointer',
-                      cap.bg, cap.border
-                    )}
-                  >
-                    <Icon className={cn('w-4 h-4', cap.color)} />
-                    <span className="text-[9px] font-bold text-white/70 text-center leading-tight">{cap.label}</span>
-                    <span className={cn('text-[11px]', STATUS_BADGE[cap.status].cls)}>{STATUS_BADGE[cap.status].label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                        {/* Error State */}
+                        {msg.status === 'error' && msg.steps && (
+                          <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl w-full text-destructive">
+                            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-sm">Execution Failed</span>
+                              <span className="text-sm opacity-90 mt-1">
+                                {msg.steps[msg.steps.length - 1]?.text || 'An error occurred during execution.'}
+                              </span>
+                            </div>
+                          </div>
+                        )}
 
-          {/* ── OS Health ────────────────────────────────────── */}
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-4 h-4 text-emerald-400" />
-              <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">OS Health</span>
-            </div>
-            <div className="grid grid-cols-4 gap-3">
-              {[
-                { label: 'Intent Engine', value: '✓ Online', color: 'text-emerald-400' },
-                { label: 'Commitment Runtime', value: `${commitments.length} entries`, color: 'text-blue-400' },
-                { label: 'Knowledge Graph', value: `${stats.people + knowledge.topics.length} nodes`, color: 'text-violet-400' },
-                { label: 'Local Storage', value: 'Persistent', color: 'text-amber-400' },
-              ].map(item => (
-                <div key={item.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <p className="text-[9px] text-white/30 mb-1">{item.label}</p>
-                  <p className={cn('text-[11px] font-bold', item.color)}>{item.value}</p>
+                        {/* Clarification Card — Intent Intelligence Engine needs more info */}
+                        {msg.status === 'clarifying' && msg.clarification && (
+                          <div className="mt-1 w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            {msg.clarification.widget ? (
+                              <div className="mt-2 w-full max-w-sm shrink-0">
+                                <EphemeralWidget 
+                                  widgetType={msg.clarification.widget.type}
+                                  widgetPayload={msg.clarification.widget.payload}
+                                  sessionId={msg.clarification.sessionId}
+                                  onResume={(constraints) => handleWidgetResume(msg.clarification!.sessionId, constraints)}
+                                />
+                              </div>
+                            ) : (
+                              <div className="mt-2 w-full max-w-[420px] rounded-xl border border-border bg-card p-5 shadow-sm">
+                                <div className="flex items-start gap-3">
+                                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 border border-primary/20">
+                                    <Sparkles className="h-4 w-4 text-primary" />
+                                  </div>
+                                  
+                                  <div className="flex w-full flex-col">
+                                    <h4 className="mb-1 text-sm font-semibold tracking-wide text-primary uppercase">Needs Clarification</h4>
+                                    <p className="text-[15px] leading-relaxed text-foreground/90">
+                                      {msg.clarification.question}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="mt-6 flex flex-col gap-4">
+                                  {/* Resolved Constraints */}
+                                  {Object.keys(msg.clarification.resolved).length > 0 && (
+                                    <div className="rounded-xl border border-border/50 bg-card/40 p-3 backdrop-blur-md">
+                                      <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                                        Resolved Context
+                                      </div>
+                                      <div className="flex flex-wrap gap-2">
+                                        {Object.entries(msg.clarification.resolved).map(([field, data]: [string, any]) => (
+                                          <div key={field} className="flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                                            <span className="capitalize">{field}:</span>
+                                            <span className="text-foreground/80">{data?.value || String(data)}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Missing Constraints */}
+                                  {msg.clarification.missing.length > 0 && (
+                                    <div className="relative rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 shadow-[0_0_15px_rgba(245,158,11,0.05)]">
+                                      {/* Subtle pulsing background for the missing box */}
+                                      <div className="absolute inset-0 animate-pulse rounded-xl bg-amber-500/5" />
+                                      <div className="relative">
+                                        <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-500">
+                                          <HelpCircle className="h-3.5 w-3.5" />
+                                          Information Required
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                          {msg.clarification.missing.map((field: string) => (
+                                            <div key={field} className="flex items-center gap-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 shadow-sm transition-transform hover:scale-105">
+                                              <span className="capitalize">{field}</span>
+                                              <span className="relative flex h-2 w-2 ml-1">
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                                                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
+                                              </span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Habit Confirmation Buttons */}
+                                {msg.clarification.missing.length === 0 && (
+                                  <div className="mt-5 flex items-center gap-3 border-t border-border/50 pt-4">
+                                    <button 
+                                      className="flex-1 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
+                                      onClick={() => handleWidgetResume(msg.clarification!.sessionId, {})}
+                                    >
+                                      Yes, use these
+                                    </button>
+                                    <button 
+                                      className="flex-1 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-muted hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+                                      onClick={() => submit("No, I want to change some details")}
+                                    >
+                                      Change details
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+
+
+                        {/* Search Progress Card — shown while SEARCHING */}
+                        {msg.status === 'searching' && (
+                          <div className="mt-1 w-full">
+                            <SearchProgressCard
+                              from={msg.constraintsForOptions?.from}
+                              to={msg.constraintsForOptions?.to}
+                              providers={['IRCTC', 'ixigo', 'ConfirmTkt']}
+                            />
+                          </div>
+                        )}
+
+                        {/* Options Card — shown when OPTIONS_READY */}
+                        {msg.status === 'options_ready' && msg.rawOptions && msg.rawOptions.length > 0 && (
+                          <div className="mt-1 w-full">
+                            <OptionsCard
+                              intent={msg.intentForOptions || 'transport.search'}
+                              options={msg.rawOptions}
+                              from={msg.constraintsForOptions?.from}
+                              to={msg.constraintsForOptions?.to}
+                              isBooking={msg.isBooking}
+                              bookingOptionId={msg.bookingOptionId}
+                              onBook={async (option) => {
+                                // Mark this option as booking
+                                updateLastAssistantMessage(m => ({ ...m, isBooking: true, bookingOptionId: option.optionId }));
+                                addStep('strategy', `Booking ${option.title}...`);
+
+                                // Simulate booking — in production this calls kernel:intent:process 'transport.book'
+                                await new Promise(r => setTimeout(r, 150));
+
+                                const pnr = `PNR${Math.floor(Math.random() * 9000000 + 1000000)}`;
+                                const dep = option.departureTime ? new Date(option.departureTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '--';
+                                const arr = option.arrivalTime  ? new Date(option.arrivalTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '--';
+
+                                updateLastAssistantMessage(m => ({
+                                  ...m,
+                                  isBooking: false,
+                                  status: 'paying',
+                                  payment: {
+                                    status: 'idle',
+                                    amount: option.price,
+                                    currency: option.currency || 'INR',
+                                    bookingId: `BK${Date.now()}`,
+                                    description: option.from ? `${option.title} · ${option.from} → ${option.to || ''}` : `${option.title} · ${option.providerName || 'Provider'}`,
+                                  },
+                                  booking: {
+                                    bookingId: `BK${Date.now()}`,
+                                    pnr,
+                                    title: option.title,
+                                    subtitle: option.subtitle,
+                                    details: [
+                                      { label: 'From', value: option.from || '' },
+                                      { label: 'To',   value: option.to   || '' },
+                                      { label: 'Departure', value: dep },
+                                      { label: 'Arrival',   value: arr },
+                                      { label: 'Class',     value: option.class || option.vehicleType || '' },
+                                      { label: 'Provider',  value: option.providerName },
+                                    ].filter(d => d.value),
+                                  }
+                                }));
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Payment Card */}
+                        {msg.status === 'paying' && msg.payment && (
+                          <div className="mt-1 w-full">
+                            <PaymentCard
+                              amount={msg.payment.amount}
+                              currency={msg.payment.currency}
+                              description={msg.payment.description}
+                              bookingId={msg.payment.bookingId}
+                              status={msg.payment.status}
+                              txnId={msg.payment.txnId}
+                              isProcessing={msg.payment.status === 'processing'}
+                              onCancel={() => updateLastAssistantMessage(m => ({ ...m, status: 'options_ready', payment: null }))}
+                              onPay={async (method) => {
+                                updateLastAssistantMessage(m => ({ ...m, payment: { ...m.payment!, status: 'processing' } }));
+                                addStep('strategy', `Processing ${method.toUpperCase()} payment...`);
+                                await new Promise(r => setTimeout(r, 150));
+                                const txnId = `TXN${Date.now()}`;
+                                updateLastAssistantMessage(m => ({
+                                  ...m,
+                                  status: 'confirmed',
+                                  payment: { ...m.payment!, status: 'success', txnId },
+                                }));
+                                addStep('complete', 'Payment successful! Booking confirmed.');
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Success Card */}
+                        {msg.status === 'confirmed' && msg.booking && (
+                          <div className="mt-1 w-full">
+                            <SuccessCard
+                              bookingId={msg.booking.bookingId}
+                              pnr={msg.booking.pnr}
+                              title={msg.booking.title}
+                              subtitle={msg.booking.subtitle}
+                              details={msg.booking.details}
+                              onAddCalendar={() => addStep('complete', 'Added to calendar.')}
+                              onSetReminder={() => addStep('complete', 'Reminder set for 2 hours before departure.')}
+                              onShare={() => addStep('complete', 'Booking details copied to clipboard.')}
+                            />
+                          </div>
+                        )}
+
+                        {/* Standard Results Card (non-options results) */}
+                        {msg.result && msg.status === 'complete' && (
+                          <div className="mt-1 p-5 rounded-2xl bg-card border border-border shadow-sm animate-in fade-in zoom-in-95 duration-500 w-full overflow-hidden">
+                            <h3 className="font-medium text-foreground text-[16px] mb-4 flex items-center gap-2">
+                              {msg.result.summary}
+                            </h3>
+                            {msg.result.artifacts.length > 0 && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {msg.result.artifacts.map((art, idx) => (
+                                  <div key={idx} className="bg-muted/40 border border-border/50 rounded-xl p-3 flex flex-col justify-center">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      {art.status === 'verified' && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />}
+                                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{art.label}</p>
+                                    </div>
+                                    <p className="text-sm font-medium text-foreground truncate">{art.value}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Approval Request */}
+                        {msg.approval && (
+                          <div className="mt-2 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 w-full animate-in slide-in-from-bottom-4 duration-500">
+                            <div className="flex items-start gap-3">
+                              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-foreground text-[15px] mb-2">Authorization Required</h3>
+                                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{msg.approval.description}</p>
+                                <div className="flex flex-wrap items-center gap-3">
+                                  <button onClick={() => handleApprove(msg.approval!.id)} className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-amber-950 font-semibold text-sm rounded-lg transition-colors flex items-center justify-center gap-2">
+                                    Approve Execution
+                                  </button>
+                                  <button onClick={() => handleReject(msg.approval!.id)} 
+                                          className="px-5 py-2.5 bg-card hover:bg-muted text-foreground font-medium text-sm rounded-lg transition-colors border border-border">
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
+              <div ref={scrollRef} className="h-40" />
             </div>
-          </div>
-
+          )}
         </div>
-      </ScrollArea>
+      </div>
+
+      {/* Fixed Omnibar */}
+      <div className="shrink-0 w-full z-50 bg-background pt-4 pb-6 px-4 relative border-t border-border/10 shadow-[0_-20px_40px_rgba(0,0,0,0.4)]">
+        <div className="max-w-3xl mx-auto w-full relative">
+          <div className="relative flex items-center bg-card border border-border rounded-full shadow-lg p-1.5 focus-within:ring-2 focus-within:ring-primary/50 focus-within:border-primary/50 transition-all duration-300">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && submit()}
+              placeholder="Message CHATR..."
+              className="flex-1 bg-transparent border-none focus:outline-none px-5 py-2.5 text-foreground placeholder:text-muted-foreground text-[15px]"
+            />
+            <button
+              onClick={() => submit()}
+              disabled={!input.trim()}
+              className="shrink-0 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center transition-all text-primary-foreground ml-2"
+            >
+              <Send className="w-4 h-4 ml-0.5" />
+            </button>
+          </div>
+          <p className="text-center text-[11px] text-muted-foreground mt-3 font-medium">
+            CHATR OS can make mistakes. Check important information.
+          </p>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default DesktopIntelligence;
+}

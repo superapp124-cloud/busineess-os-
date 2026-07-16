@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 import { SessionWorkspace } from '@/components/calling/SessionWorkspace';
+import { WorldClockWidget } from '@/components/desktop/WorldClockWidget';
 import { useCallContext } from '@/contexts/CallContext';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -643,7 +644,10 @@ const DesktopCalls: React.FC = () => {
               {/* Hero */}
               <div className={cn('relative overflow-hidden rounded-2xl flex flex-col md:flex-row items-center justify-between min-h-[160px] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.2)]', isDark ? 'bg-gradient-to-r from-[#2F1D8A] via-[#521996] to-[#8C1381] border-none' : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 border-none')}>
                 <div className="relative z-10 max-w-lg mb-6 md:mb-0">
-                  <h1 className="text-[22px] font-bold mb-1.5 text-white flex items-center gap-2">Good morning, {displayName}! <span className="text-[22px]">👋</span></h1>
+                  <h1 className="text-[22px] font-bold mb-1.5 text-white flex items-center gap-2">
+                    {greeting()}, {displayName}! <span className="text-[22px]">👋</span>
+                    <WorldClockWidget />
+                  </h1>
                   <p className="text-[11px] mb-6 text-white/90">Here's what's happening with your sessions today.</p>
 
                   <div className="flex flex-wrap gap-2.5">
@@ -1035,8 +1039,8 @@ const DesktopCalls: React.FC = () => {
                   isHost={true}
                   onClose={() => setShowParticipants(false)}
                   onInvite={() => { setShowParticipants(false); setShowInviteModal(true); }}
-                  onMuteParticipant={(id) => { setParticipants(prev => prev.map(p => p.id === id ? { ...p, status: 'muted' as const } : p)); toast.info('Participant muted'); }}
-                  onRemoveParticipant={(id) => { setParticipants(prev => prev.filter(p => p.id !== id)); toast.info('Participant removed'); }}
+                  onMuteParticipant={(id) => { console.log('Mute', id); toast.info('Participant muted'); }}
+                  onRemoveParticipant={(id) => { console.log('Remove', id); toast.info('Participant removed'); }}
                 />
               )}
 

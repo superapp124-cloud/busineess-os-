@@ -179,6 +179,8 @@ async function trySupabaseEdge(prompt: string, systemPrompt?: string): Promise<s
 }
 
 /**
+ * @deprecated For OS-level intents, use KernelClient.dispatchIntent() instead.
+ * 
  * Generate an AI response.
  *
  * Routing priority:
@@ -197,7 +199,7 @@ export async function generate({
   preferLocal = true,
 }: GenerateOptions): Promise<string> {
   // ── Path 1: CHATR Kernel ─────────────────────────────────────────────────
-  if (await isKernelAvailable()) {
+  if (preferLocal && await isKernelAvailable()) {
     try {
       return await conversation.send({ conversationId, message: prompt, userId });
     } catch (err) {
@@ -207,7 +209,7 @@ export async function generate({
 
   // ── Path 2: Electron IPC fallback ────────────────────────────────────────
   const isElectron = typeof window !== 'undefined' && !!window.electronAPI?.ai;
-  if (isElectron) {
+  if (preferLocal && isElectron) {
     try {
       const status = await window.electronAPI!.ai!.status();
       const warmingPhases = ['checking', 'downloading', 'installing', 'starting', 'pulling'];
@@ -231,8 +233,25 @@ export async function generate({
   }
 
   // ── Path 3: Local Ollama REST ─────────────────────────────────────────────
-  const ollamaResult = await tryOllama(prompt);
-  if (ollamaResult) return ollamaResult;
+  if (preferLocal) {
+    const ollamaResult = await tryOllama(prompt);
+    if (ollamaResult) return ollamaResult;
+  }
+
+  // ── Privacy Gate ──────────────────────────────────────────────────────────
+  // If we reach here, local execution failed. 
+  // By default, CHATR is a desktop-first privacy product.
+  // We do NOT silently send data to the cloud unless explicitly allowed.
+  const strictPrivacyMode = true; // In the future, read this from user settings via Kernel
+
+  if (strictPrivacyMode) {
+    throw new Error(
+      '[CHATR AI Policy] Strict Privacy Mode is enabled. Local AI is currently unavailable or warming up, and cloud fallback is blocked. \n' +
+      'Options:\n' +
+      '• Wait for local Ollama to finish starting.\n' +
+      '• Disable Strict Privacy Mode in Settings to allow cloud fallback.'
+    );
+  }
 
   // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
   const geminiResult = await tryGemini(prompt, systemPrompt);

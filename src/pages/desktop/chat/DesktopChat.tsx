@@ -34,6 +34,12 @@ import { format, isToday, isYesterday } from 'date-fns';
 import { PresenceIndicator } from './chat/components/PresenceIndicator';
 import { TypingIndicator } from './chat/components/TypingIndicator';
 import { CreateNewModal } from './chat/components/CreateNewModal';
+import { triggerCabBooking } from '@/core/capabilities/travel/CabBookingWorkflow';
+import { triggerCalendarMeeting } from '@/core/capabilities/calendar/CalendarMeetingWorkflow';
+import { triggerFoodOrdering } from '@/core/capabilities/commerce/FoodOrderingWorkflow';
+import { triggerFlightDeparture } from '@/core/capabilities/travel/FlightDepartureWorkflow';
+import { triggerEnterpriseApproval } from '@/core/capabilities/enterprise/EnterpriseApprovalWorkflow';
+import { triggerDocumentUnderstanding } from '@/core/capabilities/document/DocumentUnderstandingWorkflow';
 
 // ─── UTILS ──────────────────────────────────────────────────────────────────
 
@@ -83,9 +89,10 @@ export default function DesktopChat() {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [forwardSelectedRooms, setForwardSelectedRooms] = useState<Set<string>>(new Set());
   const [isForwarding, setIsForwarding] = useState(false);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const [copilotInput, setCopilotInput] = useState('');
-  const [copilotMessages, setCopilotMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
+  const [copilotMessages, setCopilotMessages] = useState<{ role: 'user' | 'assistant'; content: string; workflowId?: string }[]>([]);
   const [copilotLoading, setCopilotLoading] = useState(false);
   const copilotEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -522,38 +529,174 @@ export default function DesktopChat() {
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0 || !selectedId || !messagingService) return;
-
-    setIsUploading(true);
-    try {
-      const uploadedMetadata = await messagingService.uploadAttachment(selectedId, files[0]);
-      if (uploadedMetadata) {
-        const sentMsg = await messagingService.sendMessage(selectedId, `Shared a file: ${uploadedMetadata.name}`, [uploadedMetadata]);
-        if (sentMsg) {
-          setMessages(prev => [...prev, sentMsg]);
-          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-        } else {
-          toast.error('Failed to send message with attachment');
-        }
-      } else {
-        toast.error('Failed to upload file');
-      }
-    } catch (err: any) {
-      toast.error('Failed to process file upload');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    if (!files || files.length === 0) return;
+    setAttachments(prev => [...prev, ...Array.from(files)]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
+
+  // ─── Intent Detection ────────────────────────────────────────────────────
+  const CAB_BOOKING_PATTERNS = [
+    /book.{0,10}cab/i,
+    /book.{0,10}ride/i,
+    /get.{0,10}cab/i,
+    /need.{0,10}cab/i,
+    /ola|uber|rapido/i,
+    /book.{0,10}taxi/i,
+  ];
+
+  const detectCabBookingIntent = (text: string): boolean =>
+    CAB_BOOKING_PATTERNS.some(p => p.test(text));
+
+  const CALENDAR_MEETING_PATTERNS = [
+    /schedule.{0,10}meeting/i,
+    /book.{0,10}meeting/i,
+    /set up.{0,10}meeting/i,
+  ];
+
+  const detectCalendarMeetingIntent = (text: string): boolean =>
+    CALENDAR_MEETING_PATTERNS.some(p => p.test(text));
+
+  const FOOD_ORDERING_PATTERNS = [
+    /hungry/i,
+    /order.{0,10}food/i,
+    /order.{0,10}pizza/i,
+    /get.{0,10}food/i,
+  ];
+
+  const detectFoodOrderingIntent = (text: string): boolean =>
+    FOOD_ORDERING_PATTERNS.some(p => p.test(text));
+
+  const FLIGHT_DEPARTURE_PATTERNS = [
+    /flight.{0,10}tomorrow/i,
+    /get me there on time/i,
+    /catch my flight/i,
+  ];
+
+  const detectFlightDepartureIntent = (text: string): boolean =>
+    FLIGHT_DEPARTURE_PATTERNS.some(p => p.test(text));
+
+  const ENTERPRISE_APPROVAL_PATTERNS = [
+    /access.{0,10}production/i,
+    /request.{0,10}access/i,
+    /need.{0,10}database/i,
+  ];
+
+  const detectEnterpriseApprovalIntent = (text: string): boolean =>
+    ENTERPRISE_APPROVAL_PATTERNS.some(p => p.test(text));
 
   const handleCopilotSend = useCallback(async (textOverride?: string) => {
     const textToSend = textOverride || copilotInput.trim();
-    if (!textToSend || copilotLoading) return;
+    if ((!textToSend && attachments.length === 0) || copilotLoading) return;
     
     setCopilotInput('');
-    setCopilotMessages(prev => [...prev, { role: 'user', content: textToSend }]);
+    const currentAttachments = [...attachments];
+    setAttachments([]);
+
+    setCopilotMessages(prev => [...prev, { role: 'user', content: textToSend + (currentAttachments.length > 0 ? ` [Attached ${currentAttachments.length} file(s)]` : '') }]);
+
+    // Route to DocumentEngine if attachments are present
+    if (currentAttachments.length > 0) {
+      setCopilotMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: `I'll analyze those ${currentAttachments.length} document(s) for you.` }
+      ]);
+      triggerDocumentUnderstanding(currentAttachments, textToSend);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
+    if (detectCabBookingIntent(textToSend)) {
+      const conversationId = `conv-${Date.now()}`;
+      // Clear previous messages so old zombie workflows don't confuse the user
+      setCopilotMessages([{ role: 'user', content: textToSend }]);
+      const workflowId = await triggerCabBooking(conversationId, {
+        rawText: textToSend,
+      });
+      setCopilotMessages([
+        { role: 'user', content: textToSend },
+        { role: 'assistant', content: "Sure, I'll book a cab for you. Working on it...", workflowId }
+      ]);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
+    if (detectCalendarMeetingIntent(textToSend)) {
+      const conversationId = `conv-${Date.now()}`;
+      setCopilotMessages([{ role: 'user', content: textToSend }]);
+      
+      let attendees = 'Team';
+      const match = textToSend.match(/with\s+([a-zA-Z\s]+)(?:for|next|tomorrow|$)/i);
+      if (match) attendees = match[1].trim();
+
+      const workflowId = await triggerCalendarMeeting(conversationId, {
+        rawText: textToSend,
+        attendees,
+      });
+
+      setCopilotMessages([
+        { role: 'user', content: textToSend },
+        { role: 'assistant', content: `I'll help you schedule a meeting with ${attendees}. Checking calendars...`, workflowId }
+      ]);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
+    if (detectFoodOrderingIntent(textToSend)) {
+      const conversationId = `conv-${Date.now()}`;
+      setCopilotMessages([{ role: 'user', content: textToSend }]);
+      
+      let foodItem = 'food';
+      if (textToSend.toLowerCase().includes('pizza')) foodItem = 'Pizza';
+      else if (textToSend.toLowerCase().includes('burger')) foodItem = 'Burger';
+      else if (textToSend.toLowerCase().includes('sushi')) foodItem = 'Sushi';
+
+      const workflowId = await triggerFoodOrdering(conversationId, {
+        rawText: textToSend,
+        foodItem,
+      });
+
+      setCopilotMessages([
+        { role: 'user', content: textToSend },
+        { role: 'assistant', content: `I'll help you order some ${foodItem.toLowerCase()}. Looking for the best places nearby...`, workflowId }
+      ]);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
+    if (detectFlightDepartureIntent(textToSend)) {
+      const conversationId = `conv-${Date.now()}`;
+      setCopilotMessages([{ role: 'user', content: textToSend }]);
+      
+      const workflowId = await triggerFlightDeparture(conversationId, {
+        rawText: textToSend,
+      });
+
+      setCopilotMessages([
+        { role: 'user', content: textToSend },
+        { role: 'assistant', content: `I'll make sure you catch your flight. Let me coordinate everything for you...`, workflowId }
+      ]);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
+    if (detectEnterpriseApprovalIntent(textToSend)) {
+      const conversationId = `conv-${Date.now()}`;
+      setCopilotMessages([{ role: 'user', content: textToSend }]);
+      
+      const workflowId = await triggerEnterpriseApproval(conversationId, {
+        rawText: textToSend,
+      });
+
+      setCopilotMessages([
+        { role: 'user', content: textToSend },
+        { role: 'assistant', content: `I'll help you request access. Checking IAM policies...`, workflowId }
+      ]);
+      setTimeout(() => copilotEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
+    }
+
     setCopilotLoading(true);
     
     try {
@@ -587,15 +730,72 @@ export default function DesktopChat() {
   };
 
   const handleSendMessage = useCallback(async () => {
-    if (!messageInput.trim() || !selectedId || !messagingService) return;
+    if ((!messageInput.trim() && attachments.length === 0) || !selectedId || !messagingService) return;
+    
     const content = messageInput.trim();
+    const currentAttachments = [...attachments];
     setMessageInput('');
+    setAttachments([]);
 
+    // 1. If it's explicitly directed at CHATR AI via inline @chatr or we are in the CHATR AI room
+    const isAiRoom = selectedRoom?.name === 'CHATR AI';
+    if (isAiRoom || content.toLowerCase().startsWith('@chatr ') || (currentAttachments.length > 0 && content.toLowerCase().includes('@chatr'))) {
+      const question = isAiRoom ? content : content.replace(/@chatr/i, '').trim();
+      
+      // Optimistically show the user's message
+      const tempUserMsg: Message = {
+        id: crypto.randomUUID(),
+        senderId: 'local-user',
+        senderName: 'You',
+        roomId: selectedId,
+        content: content || `[Attached ${currentAttachments.length} file(s)]`,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, tempUserMsg]);
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+
+      // Trigger the Document Understanding Workflow directly in the chat if there are attachments
+      if (currentAttachments.length > 0) {
+        triggerDocumentUnderstanding(currentAttachments, question);
+      } else {
+        // Normal text-based @chatr response
+        const recentMessages = messages.slice(-10).map(m => `${m.senderName || 'User'}: ${m.content}`).join('\n');
+        const prompt = `You are CHATR AI, an AI assistant embedded in this conversation. Answer the following question concisely based on recent context:\n\nRecent messages:\n${recentMessages}\n\nQuestion: ${question}\nCHATR AI:`;
+        try {
+          const reply = await generate({ prompt, preferLocal: true });
+          const aiMsg = await messagingService.sendAiMessage(selectedId, reply);
+          if (aiMsg) {
+            setMessages(prev => [...prev, aiMsg]);
+            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+          }
+        } catch {
+          const errAiMsg = await messagingService.sendAiMessage(selectedId, 'I could not generate a response right now.');
+          if (errAiMsg) {
+            setMessages(prev => [...prev, errAiMsg]);
+            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+          }
+        }
+      }
+      return; // Stop here, we don't send the raw message to the human room if it's meant for @chatr
+    }
+
+    // 2. Otherwise, send as a normal human-to-human message
     intentObserver.observe(content);
     intentObserver.triggerBackendObservation(content);
     chatrOS.observeText(content); // Feed into Intelligence Panel
 
-    const sentMsg = await messagingService.sendMessage(selectedId, content);
+    // Convert File objects to metadata for the mock messaging service
+    const uploadedMetadata = currentAttachments.map(f => ({
+      id: crypto.randomUUID(),
+      name: f.name,
+      size: f.size,
+      url: URL.createObjectURL(f),
+      type: f.type
+    }));
+
+    // If they only attached files with no text, provide a default text
+    const finalContent = content || `Shared ${currentAttachments.length} file(s)`;
+    const sentMsg = await messagingService.sendMessage(selectedId, finalContent, uploadedMetadata);
     
     if (!sentMsg) {
       toast.error('Failed to send message');
@@ -608,28 +808,7 @@ export default function DesktopChat() {
       return [...prev, sentMsg];
     });
     setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-
-    // @chatr AI response — if message starts with @chatr, trigger AI inline
-    if (content.toLowerCase().startsWith('@chatr ')) {
-      const question = content.slice(7).trim();
-      const recentMessages = messages.slice(-10).map(m => `${m.senderName || 'User'}: ${m.content}`).join('\n');
-      const prompt = `You are CHATR AI, an AI assistant embedded in this conversation. Answer the following question concisely based on recent context:\n\nRecent messages:\n${recentMessages}\n\nQuestion: ${question}\nCHATR AI:`;
-      try {
-        const reply = await generate({ prompt, preferLocal: true });
-        const aiMsg = await messagingService.sendAiMessage(selectedId, reply);
-        if (aiMsg) {
-          setMessages(prev => [...prev, aiMsg]);
-          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-        }
-      } catch {
-        const errAiMsg = await messagingService.sendAiMessage(selectedId, 'I could not generate a response right now.');
-        if (errAiMsg) {
-          setMessages(prev => [...prev, errAiMsg]);
-          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-        }
-      }
-    }
-  }, [messageInput, selectedId, messagingService, messages]);
+  }, [messageInput, attachments, selectedId, messagingService, messages]);
 
   const handleSendThreadReply = async () => {
     if (!threadInput.trim() || !selectedId || !activeThreadId || !messagingService) return;
@@ -1331,6 +1510,25 @@ export default function DesktopChat() {
                     {outcomes.filter(o => ['suggested', 'extracting', 'needs_input', 'searching', 'results_ready', 'preview_ready'].includes(o.status)).map(o => (
                       <OutcomeCard key={o.id} outcome={o} />
                     ))}
+                    {attachments.length > 0 && (
+                      <div className="flex gap-2 overflow-x-auto px-2 pb-1">
+                        {attachments.map((file, idx) => (
+                          <div key={idx} className="relative group bg-white/10 border border-white/20 rounded-lg p-2 flex items-center gap-2 pr-6 shrink-0 backdrop-blur-md">
+                            <FileText className="w-4 h-4 text-violet-300" />
+                            <div className="flex flex-col max-w-[120px]">
+                              <span className="text-xs text-white truncate font-medium">{file.name}</span>
+                              <span className="text-[10px] text-white/50">{(file.size / 1024).toFixed(0)} KB</span>
+                            </div>
+                            <button 
+                              onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                              className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <input 

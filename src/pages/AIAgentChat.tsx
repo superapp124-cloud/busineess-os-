@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Send, Bot, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { IntentFlowCard } from '@/components/intent/IntentFlowCard';
 
 interface Message {
   id: string;
@@ -103,6 +104,21 @@ export default function AIAgentChat() {
       created_at: new Date().toISOString()
     };
     setMessages(prev => [...prev, newUserMessage]);
+
+    // Check for Biryani Intent Hero Experience
+    if (userMessage.toLowerCase().includes('biryani')) {
+      setTimeout(() => {
+        const intentMessage: Message = {
+          id: `ai-${Date.now()}`,
+          role: 'assistant',
+          content: '__INTENT_BIRYANI__',
+          created_at: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, intentMessage]);
+        setSending(false);
+      }, 100);
+      return;
+    }
 
     try {
       // Call AI agent edge function
@@ -210,13 +226,13 @@ export default function AIAgentChat() {
               </Avatar>
 
               <Card
-                className={`max-w-[80%] p-3 ${
-                  message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
-                }`}
+                className={`max-w-[80%] ${message.content === '__INTENT_BIRYANI__' ? 'bg-transparent border-none p-0 max-w-full w-full shadow-none' : (message.role === 'user' ? 'bg-primary text-primary-foreground p-3' : 'bg-muted p-3')} `}
               >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {message.content === '__INTENT_BIRYANI__' ? (
+                  <IntentFlowCard intent="Order a Chicken Biryani" />
+                ) : (
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                )}
               </Card>
             </div>
           ))}

@@ -35,6 +35,47 @@ const validInvokeChannels = [
   'calls:save-recording',
   // Agent tasks
   'agent:execute-task',
+  // Browser auth handoff
+  'browser:open-auth',
+  'browser:open-provider-login',
+  // Smart Inbox
+  'smart-inbox:get-state',
+  'smart-inbox:connect-provider',
+  // Kernel Intent Flow (P1.1)
+  'kernel:intent:submit',
+  'kernel:intent:subscribe',
+  'kernel:intent:select',
+  'kernel:intent:auth_complete',
+  'kernel:intent:pay',
+  'kernel:intent:unsubscribe',
+  'kernel:intent',
+  'kernel:intent:process',
+  'kernel:intent:resume',
+  'kernel:execution:approve',
+  'kernel:execution:reject',
+  // Provider Session Platform (P1.3) — status only, never credentials
+  'kernel:session:check',
+  'kernel:session:check_all',
+  'kernel:session:revoke',
+  // Universal Transaction Platform (P1.4) — ABI objects only, no credentials
+  'kernel:transaction:create',
+  'kernel:transaction:pay',
+  'kernel:transaction:get',
+  'kernel:transaction:audit',
+  // Document Intelligence
+  'documents:search',
+  'documents:read',
+  'documents:open',
+  // Execution Engine v2.0
+  'execution:connect-service',
+  'execution:get-connected-services',
+  'execution:disconnect-service',
+  'execution:get-background-jobs',
+  'execution:cancel-background-job',
+  // Connector Marketplace
+  'marketplace:get-catalog',
+  'marketplace:install',
+  'marketplace:remove'
 ];
 
 const validListenChannels = [
@@ -50,6 +91,17 @@ const validListenChannels = [
   'agenda-update',
   // System
   'global-shortcut',
+  // Kernel Execution & Sessions
+  'kernel:session:event',
+  'execution:plan_started',
+  'execution:node_started',
+  'execution:node_awaiting_approval',
+  'execution:node_completed',
+  'execution:plan_completed',
+  'execution:browser_step',
+  'execution:capability_started',
+  'execution:capability_completed',
+  'background:job_completed'
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -135,5 +187,31 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     saveRecording: (payload) =>
       ipcRenderer.invoke('calls:save-recording', payload),
+  },
+
+  auth: {
+    openLogin: () =>
+      ipcRenderer.invoke('browser:open-auth', { mode: 'login' }),
+
+    openSignup: () =>
+      ipcRenderer.invoke('browser:open-auth', { mode: 'signup' }),
+
+    openProviderLogin: (providerId) =>
+      ipcRenderer.invoke('browser:open-provider-login', { providerId }),
+  },
+
+  smartInbox: {
+    getState: () => ipcRenderer.invoke('smart-inbox:get-state'),
+    connectProvider: (providerId) => ipcRenderer.invoke('smart-inbox:connect-provider', { providerId }),
+  },
+
+  documents: {
+    search: (query, limit) => ipcRenderer.invoke('documents:search', { query, limit }),
+    read: (filePath) => ipcRenderer.invoke('documents:read', { filePath }),
+    open: (filePath) => ipcRenderer.invoke('documents:open', { filePath }),
+  },
+
+  kernel: {
+    invoke: (action, request) => ipcRenderer.invoke(`kernel:${action}`, request),
   },
 });

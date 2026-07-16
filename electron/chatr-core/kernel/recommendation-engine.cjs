@@ -1,115 +1,66 @@
 'use strict';
 
 /**
- * Recommendation Engine (Wave 2)
- * 
- * Sits at the heart of the Outcome Engine architecture.
- * Listens to all facts emitted by modules (e.g. MEETING.CREATED)
- * and determines the next best action to suggest to the user.
- * 
- * Rules:
- * 1. Modules are completely decoupled and emit facts only.
- * 2. Surfaces ONLY the single highest-value action at a time.
- * 3. Uses a Hybrid Strategy: Deterministic Rules first, Semantic fallback later.
+ * CHATR Kernel - Recommendation Engine
+ * Scores viable models based on capability alignment.
  */
 
-const bus = require('../events/bus.cjs');
+const { modelRegistry } = require('../registry/model-registry.cjs');
+const { capabilityRegistry } = require('../registry/capability-registry.cjs');
+const { policyEngine } = require('./policy-engine.cjs');
+const { runtimeHealth } = require('./runtime-health.cjs');
 
 class RecommendationEngine {
   constructor() {
-    this.activeSuggestion = null;
+    this.name = 'RecommendationEngine';
   }
 
-  initialize() {
-    // Note: use the imported bus reference 'bus', wait, where is bus imported?
-    // Oh, I see const bus = require('../events/bus.cjs'). Wait, earlier in this file: const { bus } = require('../events/bus.cjs'); No, it was const bus = require('../events/bus.cjs'); 
-    // Wait, bus.cjs exports { bus, ... } or is it the bus instance directly?
-    // Let me check. The file had `const bus = require('../events/bus.cjs');` and later `bus.subscribe(...)`. But in other files it's `const { bus } = require('../events/bus.cjs');`.
-    // Let me use `const { bus } = require('../events/bus.cjs');` just to be safe if that is how it's actually exported.
-    console.log('[RecommendationEngine] Initializing...');
-    
-    // Listen to ALL module events
-    const { bus } = require('../events/bus.cjs');
-    bus.subscribe('*', (payload) => {
-      // payload structure: { eventName, envelope }
-      if (payload && payload.envelope) {
-        this.evaluateEvent(payload.envelope);
-      } else {
-        // legacy
-        this.evaluateEvent(payload);
-      }
-    });
-  }
+  scoreModels(capabilityId, requestPolicy = {}) {
+    const requirements = capabilityRegistry.getRequirements(capabilityId);
+    const effectivePolicy = policyEngine.computeEffectivePolicy(requestPolicy);
+    const resources = runtimeHealth.getSystemResources();
 
-  evaluateEvent(envelope) {
-    const { stage, correlationId, payload } = envelope;
+    const candidates = [];
+    const models = modelRegistry.getAll();
 
-    if (!stage || (!stage.includes('.CREATED') && !stage.includes('.CONFIRMED') && !stage.includes('.ATTACHED'))) return;
+    for (const model of models) {
+      // 1. Policy Filter
+      const policyCheck = policyEngine.evaluateModel(model, effectivePolicy);
+      if (!policyCheck.allowed) continue;
 
-    let candidates = [];
+      // 2. Health Filter
+      const healthCheck = runtimeHealth.canRunModel(model, resources);
+      if (!healthCheck.capable) continue;
 
-    // LEVEL 1: Deterministic Rules scoring
-    // We score multiple possibilities based on context
-    
-    if (stage === 'MEETING.CREATED' || stage === 'MEETING.CONFIRMED') {
+      // 3. Score against Capability
+      let score = 0;
+      
+      // Match specific capability skills
+      if (capabilityId === 'coding') score += (model.coding || 0) * 40;
+      if (capabilityId === 'summarization') score += (model.summarization || 0) * 40;
+      if (capabilityId === 'routing') score += (model.reasoning || 0) * 20 + (model.estimatedTokensPerSecond > 40 ? 20 : 0);
+      
+      // Feature requirements
+      if (requirements.json && model.json) score += 10;
+      if (requirements.toolCalling && model.toolCalling) score += 15;
+      
+      // Base priority from registry
+      score += (model.priority || 0) * 5;
+
       candidates.push({
-        type: 'TASK',
-        action: 'CREATE_TASK',
-        title: 'Prepare Proposal',
-        context: payload.title || 'Meeting',
-        score: 0.96
-      });
-      candidates.push({
-        type: 'REMINDER',
-        action: 'CREATE_REMINDER',
-        title: '30 minutes before meeting?',
-        context: payload.title || 'Meeting',
-        score: 0.72
-      });
-      candidates.push({
-        type: 'DOCUMENT',
-        action: 'ATTACH_DOCUMENT',
-        title: 'Attach Proposal',
-        context: payload.title || 'Meeting',
-        score: 0.41
-      });
-    } else if (stage === 'TASK.CREATED' || stage === 'TASK.CONFIRMED') {
-      candidates.push({
-        type: 'DOCUMENT',
-        action: 'ATTACH_DOCUMENT',
-        title: 'Attach Proposal',
-        context: payload.title || 'Task',
-        score: 0.92
-      });
-      candidates.push({
-        type: 'REMINDER',
-        action: 'CREATE_REMINDER',
-        title: 'Remind me tomorrow',
-        context: payload.title || 'Task',
-        score: 0.65
-      });
-    } else if (stage === 'DOCUMENT.ATTACHED' || stage === 'DOCUMENT.CONFIRMED') {
-      candidates.push({
-        type: 'REMINDER',
-        action: 'CREATE_REMINDER',
-        title: 'Review Reminder',
-        context: 'Document',
-        score: 0.88
+        model,
+        score,
+        reason: `${model.family} matched policy and scored ${score.toFixed(1)} on capability alignment.`
       });
     }
 
-    if (candidates.length > 0) {
-      // Sort candidates by score descending
-      candidates.sort((a, b) => b.score - a.score);
-      this.proposeSuggestion(correlationId, candidates);
-    }
-  }
-
-  proposeSuggestion(correlationId, candidates) {
-    const { bus } = require('../events/bus.cjs');
-    // Publish the array of scored candidates
-    bus.publish('KERNEL.SUGGESTION.PROPOSED', correlationId, { candidates });
+    // Sort descending by score
+    candidates.sort((a, b) => b.score - a.score);
+    
+    // Return Top 5
+    return candidates.slice(0, 5);
   }
 }
 
-module.exports = new RecommendationEngine();
+const recommendationEngine = new RecommendationEngine();
+module.exports = { recommendationEngine, RecommendationEngine };
