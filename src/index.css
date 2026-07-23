@@ -4,81 +4,174 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Premium Native Theme — Unified Teal (#1D9E75) */
-    --background: 0 0% 100%;
-    --foreground: 220 13% 10%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 10%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 10%;
-    
-    /* Primary - Chatr Teal (#1D9E75) → HSL 161 68% 37% */
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 262 83% 95%;
-    --primary-glow: 262 83% 70%;
-    
-    /* Secondary - Light gray */
-    --secondary: 220 13% 96%;
-    --secondary-foreground: 220 13% 10%;
-    
-    /* Muted */
-    --muted: 220 13% 96%;
-    --muted-foreground: 220 9% 46%;
-    
-    /* Accent - Subtle teal */
-    --accent: 262 83% 95%;
-    --accent-foreground: 262 83% 45%;
-    
-    /* Success, Warning, Error */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+  html {
+    font-size: 13px; /* 15% reduction for compact Apple/Linear-grade enterprise density */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  @media (max-width: 1280px) {
+    html {
+      font-size: 12px;
+    }
+  }
 
+  :root {
+    /* CHATR Design System v2.0 — Base Typography Tokens */
+    --font-heading: 'Geist', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'Geist Mono', monospace;
+
+    /* Spacing System Tokens: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96 */
+    --space-4: 0.25rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-20: 1.25rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+    --space-40: 2.5rem;
+    --space-48: 3rem;
+
+    /* Strictly Standardized Border Radius Tokens */
+    --radius-card: 16px;
+    --radius-button: 12px;
+    --radius-input: 14px;
+    --radius-modal: 20px;
+    --radius-widget: 24px;
+    --radius-full: 9999px;
+
+    /* Theme: CHATR Dark (Default Premium) */
+    --background: 226 25% 6%; /* #090A0F */
+    --foreground: 0 0% 100%;
     
-    /* Borders & Inputs */
-    --border: 220 13% 91%;
-    --input: 220 13% 96%;
-    --ring: 262 83% 58%;
+    --card: 223 15% 10%; /* #181B23 */
+    --card-foreground: 0 0% 100%;
     
-    /* Corner radius - Apple Squircle style */
-    --radius: 1.5rem;
-    --nav-bg: #ffffff;
+    --popover: 223 17% 8%; /* #111318 */
+    --popover-foreground: 0 0% 100%;
     
-    /* Chat-specific colors */
-    --chat-background: 262 20% 97%;
+    --primary: 246 89% 66%; /* #6D5DF6 Primary Brand */
+    --primary-foreground: 0 0% 100%;
     
-    /* Sidebar */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 10%;
-    --sidebar-primary: 262 83% 58%;
+    --secondary: 223 15% 10%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 223 15% 10%;
+    --muted-foreground: 215 14% 65%;
+    
+    --accent: 222 100% 68%;
+    --accent-foreground: 0 0% 100%;
+    
+    --success: 142 71% 45%; /* #22C55E */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%; /* #F59E0B */
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%; /* #EF4444 Danger */
+    --destructive-foreground: 0 0% 100%;
+    --info: 217 91% 60%; /* #3B82F6 Information */
+
+    --border: 223 15% 15%;
+    --input: 223 15% 15%;
+    --ring: 246 89% 66%;
+
+    /* 3-Level Strict Shadow System */
+    --shadow-level-1: 0 4px 16px rgba(0, 0, 0, 0.25); /* Cards */
+    --shadow-level-2: 0 8px 32px rgba(0, 0, 0, 0.40); /* Floating Panels */
+    --shadow-level-3: 0 16px 48px rgba(0, 0, 0, 0.60); /* Dialogs & Modals */
+
+    --chat-background: 226 25% 6%;
+    
+    --sidebar-background: 226 25% 6%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 246 89% 66%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 262 83% 95%;
-    --sidebar-accent-foreground: 262 83% 45%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 262 83% 58%;
+    --sidebar-accent: 223 15% 10%;
+    --sidebar-accent-foreground: 222 100% 68%;
+    --sidebar-border: 223 15% 15%;
+    --sidebar-ring: 246 89% 66%;
+
+    --radius: 1rem;
     
     /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262, 83%, 50%) 0%, hsl(262, 83%, 66%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(142, 76%, 46%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(246, 89%, 66%) 0%, hsl(222, 100%, 68%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142, 71%, 45%) 0%, hsl(142, 71%, 55%) 100%);
     --gradient-warning: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 60%) 100%);
-    --gradient-card: linear-gradient(135deg, hsla(0, 0%, 100%, 1) 0%, hsla(262, 10%, 99%, 1) 100%);
-    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.95) 0%, hsla(262, 10%, 98%, 0.95) 100%);
+    --gradient-card: linear-gradient(135deg, hsla(223, 15%, 12%, 1) 0%, hsla(223, 15%, 8%, 1) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(223, 15%, 10%, 0.8) 0%, hsla(223, 15%, 6%, 0.9) 100%);
+  }
+
+  [data-theme="enterprise"] {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+    --card: 217 33% 12%;
+    --card-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --border: 217 33% 18%;
+  }
+
+  [data-theme="neon"] {
+    --background: 260 50% 4%;
+    --foreground: 180 100% 90%;
+    --card: 260 40% 8%;
+    --card-foreground: 180 100% 90%;
+    --primary: 310 100% 60%;
+    --accent: 180 100% 50%;
+    --border: 260 40% 16%;
+  }
+
+  [data-theme="midnight"] {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 60% 8%;
+    --card-foreground: 213 31% 91%;
+    --primary: 199 89% 48%;
+    --border: 224 60% 14%;
+  }
+
+  [data-theme="light"] {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 252 100% 60%;
+    --border: 214 32% 91%;
+  }
+
     
     /* Premium Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
-    --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.1);
-    --shadow-glow: 0 0 24px hsla(262, 83%, 58%, 0.22);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 24px hsla(252, 100%, 68%, 0.22);
+  }
+
+  [data-theme="neon"] {
+    --background: 0 0% 10%;
+    --card: 0 0% 14%;
+    --popover: 0 0% 14%;
+    --primary: 262 83% 58%;
+    --secondary: 0 0% 18%;
+    --accent: 300 100% 50%;
+    --border: 0 0% 20%;
+    --ring: 262 83% 58%;
+    --shadow-glow: 0 0 24px hsla(262, 83%, 58%, 0.4);
+  }
+
+  [data-theme="enterprise"] {
+    --primary: 215 100% 50%; /* Classic Blue */
+    --accent: 210 100% 60%;
+    --shadow-glow: 0 0 24px hsla(215, 100%, 50%, 0.2);
+  }
+
+  [data-theme="midnight"] {
+    --background: 0 0% 0%; /* Pure OLED Black */
+    --card: 0 0% 5%;
+    --popover: 0 0% 5%;
+    --border: 0 0% 10%;
   }
 
   @keyframes fade-in {
@@ -184,7 +277,6 @@
     --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.4);
     --shadow-glow: 0 0 32px hsla(262, 83%, 66%, 0.32);
   }
-}
 
 @layer base {
   * {

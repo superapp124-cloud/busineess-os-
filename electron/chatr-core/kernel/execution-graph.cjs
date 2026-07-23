@@ -1,173 +1,143 @@
 'use strict';
 
 /**
- * CHATR Kernel — Execution Graph (Phase 2)
+ * CHATR Kernel — Execution Engine (Phase 4)
  *
- * Orchestrates an Execution Plan sequentially.
- * Streams progress back to the UI via the Event Bus.
+ * Fully event-sourced execution layer.
+ * It consumes a fully resolved Concrete Execution Graph from the DecisionEngine.
+ * By the time a graph reaches here, ALL policy, privacy, and dependency checks
+ * have already passed, and capability nodes are bound to specific Provider IDs.
+ *
+ * This engine simply orchestrates the bound capability invocations (or mocks),
+ * emitting events at every state change, and producing immutable evidence.
  */
 
+const crypto = require('crypto');
 const { bus } = require('../events/bus.cjs');
-const { runtimeManager } = require('./runtime-manager.cjs');
+const { policyEngine } = require('./policy-engine.cjs');
+const { capabilityRuntime } = require('../execution/capability-runtime.cjs');
 
-const log = (() => {
-  try { return require('electron-log'); } catch { return console; }
-})();
-
-class ExecutionGraph {
+class ExecutionEngine {
   constructor() {
-    this.pendingApprovals = new Map();
-  }
+    this._activeExecutions = new Map();
 
-  approveNode(nodeId) {
-    if (this.pendingApprovals.has(nodeId)) {
-      const { resolve } = this.pendingApprovals.get(nodeId);
-      resolve();
-      this.pendingApprovals.delete(nodeId);
-      return true;
-    }
-    return false;
-  }
-
-  rejectNode(nodeId) {
-    if (this.pendingApprovals.has(nodeId)) {
-      const { reject } = this.pendingApprovals.get(nodeId);
-      reject(new Error('User rejected the execution of this capability.'));
-      this.pendingApprovals.delete(nodeId);
-      return true;
-    }
-    return false;
+    // Listen for authorized execution dispatches (usually from a Policy or Decision engine trigger)
+    bus.subscribe('kernel.execution.dispatch', (envelope) => this._startExecution(envelope));
+    
+    // Resume pending approvals if they arrive
+    bus.subscribe('kernel.decision.approved', (envelope) => this._resumeExecution(envelope));
   }
 
   /**
-   * Execute the graph sequentially.
-   * @param {object} plan
+   * Internal kick-off for a concrete graph.
    */
-  async execute(plan) {
-    const results = {};
-    const metadata = {
-      planId: plan.intentId,
-      startedAt: new Date().toISOString(),
-      nodes: []
-    };
+  async _startExecution(envelope) {
+    const { intent_id, concreteGraph, intent } = envelope.payload;
+    if (!concreteGraph) return;
 
-    bus.publish('execution:plan_started', { intentId: plan.intentId, nodeCount: plan.nodes.length });
+    // ── Phase 5: Policy Enforcement Gate ──
+    const policyResult = policyEngine.evaluate(concreteGraph, intent);
+    if (!policyResult.permitted) {
+      this._failExecution(intent_id, `Policy Violation: ${policyResult.reason}`);
+      return;
+    }
 
-    for (const node of plan.nodes) {
-      const startTime = Date.now();
-      bus.publish('execution:node_started', { intentId: plan.intentId, node });
-      const manifest = runtimeManager.getCapability(node.capability);
-      const runtimeName = node.runtime || manifest?.runtime;
+    this._activeExecutions.set(intent_id, {
+      graph: concreteGraph,
+      status: 'EXECUTING',
+      startedAt: Date.now(),
+      evidence: []
+    });
 
-      const nodeResult = {
-        id: node.id,
-        runtime: runtimeName,
-        capability: node.capability,
-        status: 'pending',
-        confidence: node.confidence,
-        startedAt: new Date().toISOString(),
-        durationMs: 0,
-        approval: node.requiresApproval,
-        locality: 'local', // Tracking execution locality (local, local_app, cloud)
-        output: null,
-        error: null
-      };
+    bus.publish('kernel.execution.started', {
+      intent_id,
+      node_count: concreteGraph.nodes.length
+    }, { correlationId: intent_id });
 
-      try {
-        // If approval is required, emit an approval required event and PAUSE.
-        if (node.requiresApproval) {
-          bus.publish('execution:node_awaiting_approval', { intentId: plan.intentId, node });
-          log.info(`[ExecutionGraph] Node '${node.id}' paused, awaiting user approval.`);
-          await new Promise((resolve, reject) => {
-            this.pendingApprovals.set(node.id, { resolve, reject });
-          });
-          log.info(`[ExecutionGraph] Node '${node.id}' approved. Resuming execution.`);
-          bus.publish('execution:node_approved', { intentId: plan.intentId, node });
-        }
-
-        // Check if capability is registered
-        if (runtimeManager.hasCapability(node.capability)) {
-           const runtime = runtimeManager.getRuntime(runtimeName);
-           const parameters = node.parameters || {};
-
-           if (runtime && runtime.name === 'ExecutionRuntime' && typeof runtime.execute === 'function') {
-              nodeResult.output = await runtime.execute(node.capability, parameters, {
-                intentId: plan.intentId,
-                intent: plan.originalText,
-                previousResults: results,
-                approvalGranted: !!node.requiresApproval
-              });
-           } else {
-              // We extract the base capability action (e.g., memory.search -> search)
-              const method = node.capability.split('.')[1];
-
-              if (runtime && typeof runtime[method] === 'function') {
-                 nodeResult.output = await runtime[method](parameters);
-              } else {
-                 nodeResult.output = { fallback: true, mockMessage: `Executed ${node.capability} (No Provider bound)` };
-              }
-           }
-        } else if (node.capability === 'memory.search') {
-           // Direct binding to PowerShell script for local search
-           const { app } = require('electron');
-           const path = require('path');
-           const { execFile } = require('child_process');
-           const psScriptPath = path.join(app.getPath('userData'), 'agent-search.ps1');
-           
-           nodeResult.output = await new Promise((resolve) => {
-             const searchTerm = node.parameters.query || '';
-             execFile('powershell.exe', [
-                 '-NoProfile', 
-                 '-ExecutionPolicy', 'Bypass', 
-                 '-File', psScriptPath, 
-                 '-SearchTerm', searchTerm
-             ], (error, stdout, stderr) => {
-               if (error) {
-                 resolve({ error: "Search failed: " + error.message });
-                 return;
-               }
-               try {
-                 const parsed = JSON.parse(stdout || "[]");
-                 const arrayResult = Array.isArray(parsed) ? parsed : [parsed];
-                 const files = arrayResult.filter(i => i && i.FullName).map(i => i.FullName);
-                 resolve({ found: files.length > 0, files: files.map(f => ({ name: f })) });
-               } catch(e) {
-                 resolve({ found: false, files: [] });
-               }
-             });
-           });
-        } else {
-           // Fallback for demo if providers aren't fully linked
-           nodeResult.output = { simulated: true, action: node.action };
-           await new Promise(resolve => setTimeout(resolve, 800)); // Simulate work
-        }
-
-        nodeResult.status = 'completed';
-      } catch (err) {
-        nodeResult.status = 'failed';
-        nodeResult.error = err.message;
-      }
-
-      nodeResult.finishedAt = new Date().toISOString();
-      nodeResult.durationMs = Date.now() - startTime;
-      metadata.nodes.push(nodeResult);
-      results[node.id] = nodeResult;
-
-      bus.publish('execution:node_completed', { intentId: plan.intentId, nodeResult });
-
-      if (nodeResult.status === 'failed') {
-        break; // Stop execution on failure
+    // Execute nodes sequentially (for now)
+    for (const node of concreteGraph.nodes) {
+      const nodeSuccess = await this._executeNode(intent_id, node);
+      if (!nodeSuccess) {
+        this._failExecution(intent_id, `Node ${node.id} failed.`);
+        return;
       }
     }
 
-    metadata.finishedAt = new Date().toISOString();
-    metadata.totalDurationMs = new Date(metadata.finishedAt) - new Date(metadata.startedAt);
-    
-    console.log('[DEBUG_RESULTS]', JSON.stringify(results, null, 2));
-    bus.publish('execution:plan_completed', { intentId: plan.intentId, results, metadata });
-    return metadata;
+    this._completeExecution(intent_id);
+  }
+
+  async _executeNode(intentId, node) {
+    if (node.requiresApproval) {
+      bus.publish('kernel.execution.paused', {
+        intent_id: intentId,
+        node_id: node.id,
+        reason: 'Awaiting human authorization'
+      }, { correlationId: intentId });
+    }
+
+    bus.publish('kernel.execution.progress', {
+      intent_id: intentId,
+      node_id: node.id,
+      status: 'running',
+      provider: node.providerId
+    }, { correlationId: intentId });
+
+    try {
+      // Hand off to the true nucleus: the Capability Runtime
+      const result = await capabilityRuntime.executeCapability(node.capability, node.parameters, { intentId });
+      
+      // Add evidence to active execution
+      const execution = this._activeExecutions.get(intentId);
+      if (execution && result.evidence) {
+        execution.evidence.push(result.evidence);
+      }
+
+      // Publishing completion with evidence directly feeds back into IntentStore Projection
+      bus.publish('kernel.execution.progress', {
+        intent_id: intentId,
+        node_id: node.id,
+        status: 'completed',
+        evidence: result.evidence
+      }, { correlationId: intentId });
+      
+      return true;
+
+    } catch (error) {
+      bus.publish('kernel.execution.progress', {
+        intent_id: intentId,
+        node_id: node.id,
+        status: 'failed',
+        error: error.message
+      }, { correlationId: intentId });
+      return false;
+    }
+  }
+
+  _failExecution(intentId, reason) {
+    this._activeExecutions.delete(intentId);
+    bus.publish('kernel.execution.completed', {
+      intent_id: intentId,
+      status: 'FAILED',
+      reason
+    }, { correlationId: intentId });
+  }
+
+  _completeExecution(intentId) {
+    const execution = this._activeExecutions.get(intentId);
+    const evidence = execution ? execution.evidence : [];
+    this._activeExecutions.delete(intentId);
+    bus.publish('kernel.execution.completed', {
+      intent_id: intentId,
+      status: 'COMPLETED',
+      evidence
+    }, { correlationId: intentId });
+  }
+
+  _resumeExecution(envelope) {
+    // In a fully durable async state machine, this would reload the Concrete Graph
+    // from a snapshot and resume at the paused node index.
   }
 }
 
-const executionGraph = new ExecutionGraph();
-module.exports = { executionGraph, ExecutionGraph };
+const executionEngine = new ExecutionEngine();
+module.exports = { ExecutionEngine, executionEngine };

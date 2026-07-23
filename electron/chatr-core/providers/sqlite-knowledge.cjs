@@ -37,6 +37,19 @@ class SqliteKnowledgeProvider {
     `);
   }
 
+  async execute(capabilityId, parameters, context) {
+    if (capabilityId === 'Knowledge.Store') {
+      if (parameters.artifact && parameters.artifact.id) {
+        return this.addNode(parameters.artifact.id, parameters.artifact.label, parameters.metadata);
+      }
+      return this.addNode(parameters.id, parameters.label, parameters.properties);
+    }
+    if (capabilityId === 'Knowledge.Retrieve') {
+      return this.getNode(parameters.artifact_id || parameters.id);
+    }
+    throw new Error(`Unsupported capability: ${capabilityId}`);
+  }
+
   /**
    * Adds an entity node to the graph.
    */

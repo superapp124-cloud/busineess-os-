@@ -1,73 +1,91 @@
 'use strict';
 
 /**
- * CHATR Kernel - Policy Engine
- * Computes the effective policy stack.
- * System -> Enterprise -> Workspace -> User -> Request
+ * CHATR Kernel — Policy Engine (Phase 5)
+ *
+ * The Policy Engine is the kernel's un-bypassable enforcement layer.
+ * While the Decision Engine makes logical choices (defer, split, require user approval),
+ * the Policy Engine enforces hard OS limits (budget maximums, restricted providers,
+ * banned jurisdictions).
+ *
+ * It intercepts `kernel.execution.dispatch` and can emit a `kernel.policy.violation`
+ * to immediately halt the OS pipeline, overriding any user approval.
  */
 
-const { policyRegistry } = require('../registry/policy-registry.cjs');
+const { bus } = require('../events/bus.cjs');
+
+const GLOBAL_OS_POLICY = {
+  maxTransactionLimit: 1000,    // Hard cap on any single transaction
+  dailySpendLimit: 5000,        // Hard cap on daily spend (mocked evaluation here)
+  blockedProviders: ['provider.banned.mock'],
+  blockedJurisdictions: ['XX'], // E.g., embargoed countries
+};
 
 class PolicyEngine {
   constructor() {
-    this.name = 'PolicyEngine';
-  }
-
-  computeEffectivePolicy(requestPolicy = {}) {
-    // We stack policies from lowest to highest priority
-    const systemPolicy = policyRegistry.getPolicy('system');
-    const enterprisePolicy = policyRegistry.getPolicy('enterprise') || {};
-    const workspacePolicy = policyRegistry.getPolicy('workspace') || {};
-    const userPolicy = policyRegistry.getPolicy('user') || {};
-
-    const effective = {
-      ...systemPolicy,
-      ...enterprisePolicy,
-      ...workspacePolicy,
-      ...userPolicy,
-      ...requestPolicy
-    };
-
-    return effective;
-  }
-
-  evaluateModel(modelProfile, effectivePolicy) {
-    // Returns { allowed: boolean, reason: string }
-    if (effectivePolicy.offlineOnly && !modelProfile.offline) {
-      return { allowed: false, reason: 'Model requires network but effective policy is offlineOnly' };
-    }
+    this._policy = GLOBAL_OS_POLICY;
     
-    if (!effectivePolicy.allowCloud && modelProfile.cloud) {
-      return { allowed: false, reason: 'Cloud models are disabled by policy' };
-    }
-    
-    // Budget checks
-    if (effectivePolicy.budget === 'FREE_ONLY' && (modelProfile.costPer1MInput > 0 || modelProfile.costPer1MOutput > 0)) {
-       return { allowed: false, reason: 'Budget is FREE_ONLY but model incurs cost' };
-    }
-
-    return { allowed: true, reason: 'Passed policy checks' };
+    // The Policy Engine intercepts execution dispatches BEFORE the Execution Engine processes them.
+    // In a mature architecture with middleware, this would be a synchronous interceptor.
+    // For Phase 5, we subscribe and validate. If it fails, we publish a violation that
+    // the ExecutionEngine must respect (or we wrap the dispatch).
   }
 
-  evaluateAction(capabilityId, context = {}) {
-    const { capabilityRegistry } = require('../capabilities/registry.cjs');
+  /**
+   * Evaluates a Concrete Execution Graph against hard OS policies.
+   * @param {object} concreteGraph 
+   * @param {object} intent 
+   * @returns {{ permitted: boolean, reason?: string }}
+   */
+  evaluate(concreteGraph, intent) {
+    if (!concreteGraph || !concreteGraph.nodes) {
+      return { permitted: false, reason: 'Invalid execution graph' };
+    }
+
+    // 1. Transaction Limit (Overriding User Approval)
+    // Even if a user approved a $2000 intent, if the OS hard cap is $1000, block it.
+    if (intent && intent.estimated_cost !== null) {
+      if (intent.estimated_cost > this._policy.maxTransactionLimit) {
+        this._publishViolation(intent.id, `Estimated cost ${intent.estimated_cost} exceeds OS hard transaction limit of ${this._policy.maxTransactionLimit}`);
+        return { permitted: false, reason: 'Exceeds OS transaction limit' };
+      }
+    }
+
+    // 2. Node-level Verification
+    const { providerRegistry } = require('./provider-registry.cjs');
+    
+    for (const node of concreteGraph.nodes) {
+      // 2a. Blocked Providers
+      if (this._policy.blockedProviders.includes(node.providerId)) {
+        this._publishViolation(intent.id, `Provider ${node.providerId} is globally blocked by OS policy.`);
+        return { permitted: false, reason: `Blocked provider: ${node.providerId}` };
+      }
+
+      // 2b. Jurisdiction / Compliance
+      const provider = providerRegistry.getManifest(node.providerId);
+      if (provider && Array.isArray(provider.jurisdiction)) {
+        const hasBlockedJurisdiction = provider.jurisdiction.some(j => this._policy.blockedJurisdictions.includes(j));
+        if (hasBlockedJurisdiction) {
+          this._publishViolation(intent.id, `Provider operates in a blocked jurisdiction.`);
+          return { permitted: false, reason: 'Provider violates jurisdiction compliance' };
+        }
+      }
+    }
+
+    return { permitted: true };
+  }
+
+  _publishViolation(intentId, reason) {
     try {
-      const cap = capabilityRegistry.getCapability(capabilityId);
-      const policyGroup      = cap ? cap.policyGroup : 'safe';
-      const requiresApproval = cap ? cap.approval === 'always' : false;
-      return {
-        allowed: true,
-        requiresApproval,
-        policyGroup,
-        reason: requiresApproval
-          ? `Capability '${capabilityId}' is in policy group '${policyGroup}' and requires user approval`
-          : 'Action permitted'
-      };
-    } catch {
-      return { allowed: true, requiresApproval: false, policyGroup: 'safe', reason: 'Capability not in registry, defaulting to safe' };
+      bus.publish('kernel.policy.violation', {
+        intent_id: intentId,
+        reason
+      }, { correlationId: intentId });
+    } catch (e) {
+      console.warn('[PolicyEngine] Failed to publish violation', e);
     }
   }
 }
 
 const policyEngine = new PolicyEngine();
-module.exports = { policyEngine, PolicyEngine };
+module.exports = { PolicyEngine, policyEngine };

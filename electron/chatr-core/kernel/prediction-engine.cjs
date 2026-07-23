@@ -15,26 +15,17 @@ class PredictionEngine {
 
   handlePartialIntent(partialText, userContext) {
     if (partialText.length < 5) return;
-
     const lowerText = partialText.toLowerCase();
     const predictionId = `pred_${Date.now()}`;
 
-    if (lowerText.includes('order') || lowerText.includes('food') || lowerText.includes('biryani')) {
-      if (!this.activePredictions.has('food_intent')) {
-        this.bus.publish('kernel.prediction.started', { type: 'food_intent', predictionId });
-
+    if (lowerText.includes('order') || lowerText.includes('book')) {
+      if (!this.activePredictions.has('action.book')) {
+        this.bus.publish('kernel.prediction.started', { type: 'action.book', predictionId });
         this._speculativeGpsFetch(userContext);
-        this._speculativeSessionValidation(['zomato', 'swiggy', 'magicpin'], userContext);
-
-        this.activePredictions.set('food_intent', predictionId);
-      }
-    }
-
-    if (lowerText.includes('hotel') || lowerText.includes('book')) {
-      if (!this.activePredictions.has('hotel_intent')) {
-        this.bus.publish('kernel.prediction.started', { type: 'hotel_intent', predictionId });
-        this._speculativeSessionValidation(['makemytrip'], userContext);
-        this.activePredictions.set('hotel_intent', predictionId);
+        // Instead of hardcoding providers, the prediction engine defers to the runtime manager
+        // to pre-warm whatever providers are registered for this intent type.
+        this._speculativeSessionValidation('action.book', userContext);
+        this.activePredictions.set('action.book', predictionId);
       }
     }
   }
@@ -43,10 +34,11 @@ class PredictionEngine {
     this.bus.publish('kernel.prediction.gps_fetched', { location: 'Sector 128, Noida' });
   }
 
-  _speculativeSessionValidation(providers, userContext) {
+  _speculativeSessionValidation(capabilityId, userContext) {
     if (this.sessionService) {
-      // Use the real ProviderSessionService — non-blocking
-      this.sessionService.validateAll(providers).then(sessions => {
+      // In a real implementation, this would look up providers for capabilityId
+      // and validate sessions for them.
+      this.sessionService.validateCapabilityProviders(capabilityId).then(sessions => {
         sessions.forEach(s => {
           this.bus.publish('kernel.prediction.session_validated', {
             provider: s.provider,
@@ -56,10 +48,7 @@ class PredictionEngine {
         });
       }).catch(() => {});
     } else {
-      // Fallback for environments without SessionService
-      providers.forEach(p => {
-        this.bus.publish('kernel.prediction.session_validated', { provider: p, isLoggedIn: p !== 'magicpin' });
-      });
+      this.bus.publish('kernel.prediction.session_validated', { capabilityId, status: 'deferred' });
     }
   }
 

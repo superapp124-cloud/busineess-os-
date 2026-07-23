@@ -1,7 +1,7 @@
 import { BluetoothTester } from '@/components/BluetoothTester';
 
 const BluetoothTest = () => {
-  return <BluetoothTester />;
+ return <BluetoothTester />;
 };
 
 export default BluetoothTest;

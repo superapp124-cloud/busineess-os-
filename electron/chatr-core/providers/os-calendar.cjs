@@ -14,6 +14,23 @@ class OSCalendarProvider {
     this.name = 'OSCalendarProvider';
   }
 
+  async execute(capabilityId, parameters, context) {
+    if (capabilityId === 'Planning.Schedule') {
+      return this._scheduleEvent(parameters);
+    }
+    throw new Error(`Unsupported capability: ${capabilityId}`);
+  }
+
+  async _scheduleEvent(parameters) {
+    log.info(`[OSCalendarProvider] Scheduling local event: ${parameters.title || 'Untitled'} at ${parameters.time_range}`);
+    return {
+      success: true,
+      eventId: `cal_evt_${Date.now()}`,
+      title: parameters.title,
+      timeRange: parameters.time_range
+    };
+  }
+
   async readAgenda(context) {
     const { date } = context;
     log.info(`[OSCalendarProvider] Reading local agenda for ${date || 'today'}`);

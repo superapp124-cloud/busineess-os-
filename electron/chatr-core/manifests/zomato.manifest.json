@@ -13,18 +13,18 @@
       },
       {
         "step": "observe",
-        "selector": ".sc-eqIVtm, [data-testid='restaurant-card'], .res-cell",
+        "selector": ".jumbo-tracker, .sc-eqIVtm, [data-testid='restaurant-card'], .res-cell",
         "timeout_ms": 5000,
         "comment": "Wait for restaurant cards to render"
       },
       {
         "step": "extract",
-        "selector": "[data-testid='restaurant-card'], .sc-eqIVtm",
+        "selector": ".jumbo-tracker",
         "schema": {
-          "name":   ".sc-1hp8d8a-0, [data-testid='res-name']",
-          "rating": ".sc-1q7bklc-1, [data-testid='rating']",
-          "eta":    ".sc-dkzDqf, [data-testid='delivery-time']",
-          "price":  ".sc-jXmbOP, [data-testid='cost-for-two']"
+          "name":   "name",
+          "rating": "rating",
+          "eta":    "eta",
+          "price":  "price"
         },
         "comment": "Extract restaurant data. Schema keys are normalized field names; values are CSS selectors."
       },

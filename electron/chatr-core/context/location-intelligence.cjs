@@ -5,13 +5,7 @@ class LocationIntelligence {
     // In a real implementation, this would use OS location services or IP geolocation.
     // Stubbed for the initial architecture.
     return {
-      current: {
-        city: 'Bangalore',
-        country: 'India',
-        latitude: 12.9716,
-        longitude: 77.5946,
-        accuracyMeters: 50
-      },
+      current: null, // Hardcoded Bangalore stub removed to allow exact GPS or manual fallback
       savedPlaces: [
         { name: 'Home', type: 'residential' },
         { name: 'Office', type: 'work' }

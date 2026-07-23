@@ -31,7 +31,7 @@ class ZomatoConnector extends BaseConnector {
     this._bus     = options.bus;
     this._loader  = new ManifestLoader();
     this._runtime = null; // Created lazily per-execution
-    this._runtimeOptions = options.runtimeOptions || { mode: 'synthetic' };
+    this._runtimeOptions = options.runtimeOptions || { mode: 'live' };
   }
 
   // ─── Metadata ─────────────────────────────────────────────────────────────
@@ -44,7 +44,14 @@ class ZomatoConnector extends BaseConnector {
 
   realityLevel() { return REALITY_LEVEL; }
 
-  maturity() { return MATURITY; }
+  maturity() { 
+    return {
+      DISCOVER: 'L3',
+      FETCH_MENU: 'L2',
+      CHECKOUT: 'L0', // Web unsupported
+      TRACK: 'L0'
+    };
+  }
 
   async health() {
     // Future: ping Zomato's public health endpoint or test a known URL

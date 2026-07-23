@@ -23,6 +23,22 @@ const log = (() => {
   try { return require('electron-log'); } catch { return console; }
 })();
 
+// ── Decision types (Phase 4) ───────────────────────────────────────────────
+
+const DECISION = Object.freeze({
+  DEFER: 'DEFER',
+  SPLIT: 'SPLIT',
+  REQUIRE_APPROVAL: 'REQUIRE_APPROVAL',
+  BIND: 'BIND',
+  REJECT: 'REJECT',
+});
+
+const DEFAULT_POLICY = {
+  maxCostBeforeApproval: 500,
+  maxRisk: 'medium',
+  riskOrder: ['low', 'medium', 'high']
+};
+
 // ── Required constraints per intent ────────────────────────────────────────
 
 const REQUIRED_CONSTRAINTS = {
@@ -43,6 +59,153 @@ const REQUIRED_CONSTRAINTS = {
 const CONFIDENCE_THRESHOLD = 70;
 
 class DecisionEngine {
+  constructor(options = {}) {
+    this._policy = { ...DEFAULT_POLICY, ...(options.policy || {}) };
+  }
+
+  // ── Phase 4: Capability Binding ──────────────────────────────────────────
+
+  /**
+   * Takes an Abstract Execution Graph and full World Model context, then
+   * decides whether to Reject, Defer, Require Approval, or Bind to providers.
+   *
+   * This is the canonical OS Decision pipeline:
+   *   Intent → Policy Gate → Dependency Check → Binding → Concrete Graph
+   *
+   * @param {object} abstractGraph - From PlanningEngine
+   * @param {object} intent - Full rich intent object from IntentStore
+   * @param {object} worldModelContext - Snapshot from WorldModel
+   * @returns {{ decision: string, concreteGraph?: object, reason?: string }}
+   */
+  decide(abstractGraph, intent, worldModelContext = {}) {
+    const { providerRegistry } = require('./provider-registry.cjs');
+    const { bus } = require('../events/bus.cjs');
+    this._bus = bus;
+    this._providerRegistry = providerRegistry;
+
+    // Stage 1: Policy Gate — Risk
+    const riskLevelIdx = this._policy.riskOrder.indexOf(intent.risk || 'low');
+    const maxRiskIdx   = this._policy.riskOrder.indexOf(this._policy.maxRisk);
+    if (riskLevelIdx > maxRiskIdx) {
+      this._publishDecision(intent.id, DECISION.REJECT,
+        `Intent risk '${intent.risk}' exceeds policy limit '${this._policy.maxRisk}'`);
+      return { decision: DECISION.REJECT, reason: `Risk '${intent.risk}' exceeds policy.` };
+    }
+
+    // Stage 1: Policy Gate — Cost
+    if (intent.estimated_cost !== null && intent.estimated_cost > this._policy.maxCostBeforeApproval) {
+      this._publishDecision(intent.id, DECISION.REQUIRE_APPROVAL,
+        `Estimated cost ${intent.estimated_cost} exceeds approval threshold ${this._policy.maxCostBeforeApproval}`);
+      return { decision: DECISION.REQUIRE_APPROVAL, reason: 'Estimated cost exceeds approval threshold.' };
+    }
+
+    // Stage 2: Temporal Gate — Deadline
+    if (intent.deadline) {
+      const deadlineDate = new Date(intent.deadline);
+      const now = new Date();
+      if (deadlineDate < now) {
+        this._publishDecision(intent.id, DECISION.REJECT, `Deadline ${intent.deadline} has already passed.`);
+        return { decision: DECISION.REJECT, reason: 'Deadline has passed.' };
+      }
+    }
+
+    // Stage 2: Temporal Gate — Priority Deferral
+    if (intent.priority === 'low' && intent.deadline) {
+      const deadlineDate = new Date(intent.deadline);
+      const now = new Date();
+      const hoursUntilDeadline = (deadlineDate - now) / (1000 * 60 * 60);
+      // If it's a low priority task and we have more than 24 hours until deadline, defer it
+      if (hoursUntilDeadline > 24) {
+        this._publishDecision(intent.id, DECISION.DEFER, `Low priority task deferred. Deadline is in ${Math.round(hoursUntilDeadline)} hours.`);
+        return { decision: DECISION.DEFER, reason: 'Task is low priority and not urgent.' };
+      }
+    }
+
+    // Stage 3: Dependency Check
+    if (Array.isArray(intent.dependencies) && intent.dependencies.length > 0) {
+      const completedIds = worldModelContext.completedIntentIds || new Set();
+      const unmet = intent.dependencies.filter(d => !completedIds.has(d));
+      if (unmet.length > 0) {
+        this._publishDecision(intent.id, DECISION.DEFER, `Unmet dependencies: ${unmet.join(', ')}`);
+        return { decision: DECISION.DEFER, reason: `Waiting on dependencies: ${unmet.join(', ')}` };
+      }
+    }
+
+    // Stage 3: Capability Binding
+    const concreteGraph = {
+      intentId: abstractGraph.intentId,
+      nodes: [],
+      metadata: { ...abstractGraph.metadata, decidedAt: new Date().toISOString(), decisionEngine: 'v1.rule-based' }
+    };
+
+    for (const node of abstractGraph.nodes) {
+      const concreteNode = { ...node };
+      const candidates = providerRegistry.findProvidersFor(node.capability);
+
+      if (candidates.length === 0) {
+        concreteNode.status = 'failed';
+        concreteNode.error = `No providers found for capability: ${node.capability}`;
+        concreteGraph.nodes.push(concreteNode);
+        continue;
+      }
+
+      // Filter unhealthy providers; fallback to degraded if all down
+      const healthy = candidates.filter(p => !p.health || p.health === 'healthy');
+      const pool = healthy.length > 0 ? healthy : candidates;
+
+      concreteNode.providerId = this._selectProvider(pool, intent, worldModelContext).id;
+      concreteNode.providerName = pool.find(p => p.id === concreteNode.providerId)?.name;
+      concreteGraph.nodes.push(concreteNode);
+    }
+
+    // If any node requires approval, escalate the entire graph
+    if (concreteGraph.nodes.some(n => n.requiresApproval)) {
+      this._publishDecision(intent.id, DECISION.REQUIRE_APPROVAL,
+        'One or more execution nodes require human confirmation');
+      return { decision: DECISION.REQUIRE_APPROVAL, concreteGraph };
+    }
+
+    this._publishDecision(intent.id, DECISION.BIND,
+      `Bound ${concreteGraph.nodes.length} capability nodes`);
+    return { decision: DECISION.BIND, concreteGraph };
+  }
+
+  /**
+   * Multi-dimensional provider selection using full manifest metadata.
+   * Weights: Trust 40%, Cost 30%, Latency 20%, Privacy 10%
+   */
+  _selectProvider(candidates, intent, worldModelContext) {
+    // Honour learnt World Model preference
+    const prefs = worldModelContext.preferences || {};
+    const intentPrefs = prefs[intent.intent_type] || {};
+    const preferredConnector = intentPrefs.preferredConnector?.value;
+    if (preferredConnector) {
+      const preferred = candidates.find(p => p.id === preferredConnector || p.name === preferredConnector);
+      if (preferred) return preferred;
+    }
+
+    const scored = candidates.map(p => {
+      const trustScore = (p.trustScore || 0) * 40;
+      const costScore  = (1 - Math.min((p.baseCost || 0) / 100, 1)) * 30;
+      const latScore   = (1 - Math.min((p.latencyMs || 0) / 2000, 1)) * 20;
+      const privScore  = (p.privacy === 'strict' ? 1 : p.privacy === 'standard' ? 0.5 : 0) * 10;
+      return { provider: p, score: trustScore + costScore + latScore + privScore };
+    });
+
+    return scored.sort((a, b) => b.score - a.score)[0].provider;
+  }
+
+  _publishDecision(intentId, decision, reason) {
+    try {
+      const { bus } = require('../events/bus.cjs');
+      bus.publish('kernel.decision.made', { intent_id: intentId, decision, reason },
+        { correlationId: intentId });
+    } catch (e) {
+      log.warn('[DecisionEngine] Failed to publish decision event:', e.message);
+    }
+  }
+
+  // ── 1. Entity Resolution ────────────────────────────────────────────────
 
   // ── 1. Entity Resolution ────────────────────────────────────────────────
 
@@ -401,4 +564,4 @@ function _nextDayOfWeek(dayName) {
 const decisionEngine = new DecisionEngine();
 // Backward-compat alias so existing requires still work during transition
 const intentIntelligenceEngine = decisionEngine;
-module.exports = { decisionEngine, intentIntelligenceEngine, DecisionEngine };
+module.exports = { decisionEngine, intentIntelligenceEngine, DecisionEngine, DECISION };

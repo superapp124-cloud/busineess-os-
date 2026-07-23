@@ -1,4 +1,6 @@
-# CHATR Platform v0.9.0-rc
+# CHATR OS
+
+> **CHATR succeeds when users stop thinking about apps and start thinking only about goals.**
 
 ![CHATR Architecture](docs/architecture.png)
 
@@ -8,10 +10,13 @@ The architecture is designed to understand user intent, parallelize provider dis
 
 ## Platform Status
 - **Architecture**: COMPLETE
-- **Kernel**: FEATURE COMPLETE
+- **Kernel**: FROZEN
 - **ABI**: FROZEN
-- **Reality Level**: L1 (Mock Connector Validation)
-- **Primary Focus**: Production Provider Integrations
+- **Hero Experience**: COMPLETE (Zomato/Swiggy Live Extraction)
+- **Current Phase**: Product Validation Sprint
+
+## The Signature Experience
+CHATR is designed to make execution feel inevitable. The system pre-warms sessions, detects provider constraints (like web-based checkout blocks), dynamically routes execution through fallback providers, and prepares payments while the user is still reading the recommendations.
 
 ## Frozen ABIs
 The following core ABIs are frozen. Any changes require an Architecture Decision Record (ADR) and explicit approval from the Technical Steering Committee:
@@ -29,17 +34,9 @@ The following core ABIs are frozen. Any changes require an Architecture Decision
 4. **Goal Planner** — Creates the execution goal
 5. **Discovery Engine** — Parallel provider search across the Connector Registry
 6. **Ranking Engine** — Scores and explains results
-7. **Provider Selection** — Picks the best provider
+7. **Provider Intelligence** — Capability routing and fallback handling
 8. **Session Platform** — Authenticates and reuses sessions securely
 9. **Transaction Engine** — Builds idempotent transactions
 10. **Payment Engine** — Dispatches payment
 11. **Verification Engine** — Confirms with the provider
 12. **Tracking** — Live status polling
-
-## Next Steps: Sprint 1
-Engineering effort is now directed toward **Real Provider Integrations** (L3/L4 Reality Level), starting with:
-- Real Zomato Integration
-- Real Swiggy Integration
-- Browser Runtime Automation
-
-*Note: All future Pull Requests must make a real user task more reliable, faster, or easier to complete.*

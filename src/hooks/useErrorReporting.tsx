@@ -2,6 +2,6 @@
 // This hook has been removed but cached JS still references it
 
 export const useErrorReporting = () => {
-  // No-op to prevent errors from cached code
-  return null;
+ // No-op to prevent errors from cached code
+ return null;
 };

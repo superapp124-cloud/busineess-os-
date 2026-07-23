@@ -15,6 +15,7 @@
 const { bus }  = require('../events/bus.cjs');
 const { CORE } = require('../events/events.cjs');
 const { SqliteIntentProvider } = require('../providers/sqlite-intent.cjs');
+const { ledger } = require('../ledger/event-ledger.cjs');
 
 const log = (() => {
   try { return require('electron-log'); } catch { return console; }
@@ -24,7 +25,7 @@ const RECOVERY_STORE_KEY = 'chatr_kernel_recovery_v1';
 
 class RecoveryManager {
   constructor() {
-    this._store    = new Map(); // requestId → { conversationId, userId, startedAt, stage }
+    this._store    = new Set();
     this._isReady  = false;
   }
 
@@ -33,45 +34,68 @@ class RecoveryManager {
    * Called by Orchestrator at EXECUTE stage.
    */
   track(requestId, { conversationId, userId, stage }) {
-    this._store.set(requestId, { conversationId, userId, stage, startedAt: Date.now() });
+    ledger.append({
+      event_type: 'INTENT_TRACKING_STARTED',
+      correlation_id: requestId,
+      payload: { requestId, conversationId, userId, stage, startedAt: Date.now() }
+    });
+    this._store.add(requestId);
   }
 
   /**
    * Unregister a completed or failed request.
    */
   untrack(requestId) {
+    ledger.append({
+      event_type: 'INTENT_TRACKING_COMPLETED',
+      correlation_id: requestId,
+      payload: { requestId, completedAt: Date.now() }
+    });
     this._store.delete(requestId);
   }
 
   /**
    * On kernel boot, scan for interrupted requests from last session.
-   * In Milestone 2: reads from a durable file store.
-   * Currently: clears stale in-memory state and publishes RECOVERY_COMPLETED.
+   * Replays ALL ledger entries, looking for intent tracking starts without corresponding completions.
    */
   async recover() {
     log.info('[RecoveryManager] Scanning for interrupted requests...');
 
     try {
-      const intentProvider = new SqliteIntentProvider();
-      const interrupted = await intentProvider.getIncompleteJobs();
+      const events = ledger.replay();
+      const started = new Map();
+      const completed = new Set();
 
-      if (interrupted.length === 0) {
-        log.info('[RecoveryManager] No interrupted requests found.');
-      } else {
-        log.warn(`[RecoveryManager] Found ${interrupted.length} interrupted job(s) from previous session.`);
-        for (const job of interrupted) {
-          // Mark as failed in DB
-          job.state = 'Failed';
-          job.metrics = job.metrics || {};
-          job.metrics.error = 'Interrupted by kernel crash / restart.';
-          await intentProvider.recordActivity(job.id, { job });
+      for (const e of events) {
+        if (e.event_type === 'INTENT_TRACKING_STARTED') {
+          started.set(e.payload.requestId, e.payload);
+        } else if (e.event_type === 'INTENT_TRACKING_COMPLETED') {
+          completed.add(e.payload.requestId);
+        }
+      }
+
+      let interruptedCount = 0;
+      for (const [requestId, payload] of started.entries()) {
+        if (!completed.has(requestId)) {
+          interruptedCount++;
+          ledger.append({
+            event_type: 'INTENT_RECOVERY_FAILED',
+            correlation_id: requestId,
+            payload: { requestId, reason: 'Interrupted by kernel restart' }
+          });
           
           bus.publish(CORE.REQUEST_FAILED, {
-            requestId: job.id,
+            requestId: requestId,
             error: 'Interrupted by kernel restart.',
           });
-          log.info(`[RecoveryManager] Job ${job.id} marked as Failed.`);
+          log.info(`[RecoveryManager] Job ${requestId} marked as Failed due to interruption.`);
         }
+      }
+
+      if (interruptedCount === 0) {
+        log.info('[RecoveryManager] No interrupted requests found.');
+      } else {
+        log.warn(`[RecoveryManager] Found ${interruptedCount} interrupted job(s) from previous session.`);
       }
     } catch (err) {
       log.error(`[RecoveryManager] Failed to run crash recovery:`, err.message);
@@ -95,4 +119,4 @@ class RecoveryManager {
 
 const recoveryManager = new RecoveryManager();
 
-module.exports = { recoveryManager };
+module.exports = { RecoveryManager, recoveryManager };

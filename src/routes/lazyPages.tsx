@@ -246,6 +246,7 @@ export const SellerSubscription = lazy(() => import('@/pages/SellerSubscription'
 export const SellerSettlements = lazy(() => import('@/pages/seller/SellerSettlements'));
 
 export const BetaCommandCenter = lazy(() => import('@/pages/desktop/BetaCommandCenter').then(m => ({ default: m.BetaCommandCenter })));
+export const ProductionValidationReport = lazy(() => import('@/pages/desktop/ProductionValidationReport').then(m => ({ default: m.ProductionValidationReport })));
 
 // Business Portal
 export const BusinessDashboard = lazy(() => import('@/pages/business/Dashboard'));
@@ -390,4 +391,7 @@ export const DesktopAccount = lazy(() => import('@/pages/desktop/DesktopAccount'
 export const DesktopAppearance = lazy(() => import('@/pages/desktop/DesktopAppearance').then(m => ({ default: m.DesktopAppearance ?? m.default })));
 export const DesktopWallpaper = lazy(() => import('@/pages/desktop/DesktopWallpaper').then(m => ({ default: m.DesktopWallpaper ?? m.default })));
 export const DesktopCalendar = lazy(() => import('@/pages/desktop/DesktopCalendar').then(m => ({ default: m.DesktopCalendar ?? m.default })));
+export const BusinessOS = lazy(() => import('@/pages/desktop/BusinessOS').then(m => ({ default: m.default })));
+export const ProcessMonitor = lazy(() => import('@/pages/desktop/ProcessMonitor').then(m => ({ default: m.ProcessMonitor ?? m.default })));
+export const WorldExplorer = lazy(() => import('@/pages/desktop/WorldExplorer').then(m => ({ default: m.WorldExplorer ?? m.default })));
 

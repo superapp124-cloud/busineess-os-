@@ -14,6 +14,8 @@ const crypto = require('crypto');
 const ABI = 'chatr.execution_slot.v0_9_rc';
 const QUEUE_COLLECTION = 'kernel_scheduler_queue_v0_9_rc';
 
+const { ledger } = require('../ledger/event-ledger.cjs');
+
 class Scheduler {
   constructor(options = {}) {
     this.persistence = options.persistence || this._fallbackPersistence();
@@ -24,7 +26,7 @@ class Scheduler {
     // For fairness (Round Robin or aging)
     this.goalAllocations = new Map();
 
-    this.loadFromDisk();
+    this._rebuildFromLedger();
   }
 
   _fallbackPersistence() {
@@ -35,21 +37,50 @@ class Scheduler {
     };
   }
 
-  loadFromDisk() {
-    try {
-      const records = this.persistence.query ? this.persistence.query(QUEUE_COLLECTION, {}) : [];
-      if (Array.isArray(records)) {
-        this.queue = records;
+  _rebuildFromLedger() {
+    this.queue = [];
+    this.processedRequests.clear();
+
+    const events = ledger.replay();
+    const allocations = new Set();
+    
+    for (const event of events) {
+      if (event.event_type === 'SCHEDULER_SLOT_ALLOCATED') {
+        let payload;
+        try {
+          payload = JSON.parse(event.payload);
+        } catch { continue; }
+        allocations.add(`${payload.goal_id}:${payload.workflow_step}`);
       }
-    } catch (err) {
-      // Ignore
+    }
+
+    for (const event of events) {
+      if (event.event_type === 'SCHEDULER_SLOT_REQUESTED') {
+        let payload;
+        try {
+          payload = JSON.parse(event.payload);
+        } catch { continue; }
+        
+        const reqKey = `${payload.goalId}:${payload.workflowStep}`;
+        if (!allocations.has(reqKey)) {
+          this.queue.push({
+            goal_id: payload.goalId,
+            workflow_step: payload.workflowStep,
+            lease_id: payload.leaseId,
+            priority: payload.priority,
+            queued_at: payload.timestampMs || event.recorded_at,
+            key: reqKey
+          });
+          this.processedRequests.add(reqKey);
+        } else {
+          this.processedRequests.add(reqKey);
+        }
+      }
     }
   }
 
   persistQueue() {
-    if (this.persistence && this.persistence.store) {
-      this.persistence.store(QUEUE_COLLECTION, { id: 'singleton_queue', queue: this.queue });
-    }
+    // Queue is now persisted via ledger, so we do nothing here.
   }
 
   /**
@@ -62,6 +93,14 @@ class Scheduler {
       return; // Idempotent
     }
 
+    ledger.append('SCHEDULER_SLOT_REQUESTED', {
+      goalId,
+      workflowStep,
+      leaseId,
+      priority,
+      timestampMs
+    });
+
     this.queue.push({
       goal_id: goalId,
       workflow_step: workflowStep,
@@ -72,7 +111,6 @@ class Scheduler {
     });
 
     this.processedRequests.add(reqKey);
-    this.persistQueue();
   }
 
   /**
@@ -116,9 +154,7 @@ class Scheduler {
       // Update fairness counter
       this.goalAllocations.set(candidate.goal_id, (this.goalAllocations.get(candidate.goal_id) || 0) + 1);
       
-      this.persistQueue();
-
-      return {
+      const slot = {
         abi: ABI,
         goal_id: candidate.goal_id,
         workflow_step: candidate.workflow_step,
@@ -128,6 +164,10 @@ class Scheduler {
         execution_window: 'immediate',
         sequence: Date.now() // Simple sequence generator
       };
+
+      ledger.append('SCHEDULER_SLOT_ALLOCATED', slot);
+
+      return slot;
     }
 
     return null; // No items had a valid lease

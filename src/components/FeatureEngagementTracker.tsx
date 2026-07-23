@@ -6,6 +6,6 @@ import { useFeatureEngagementTracking } from "@/hooks/useFeatureEngagementTracki
  * recommend features the user hasn't tried yet.
  */
 export function FeatureEngagementTracker() {
-  useFeatureEngagementTracking();
-  return null;
+ useFeatureEngagementTracking();
+ return null;
 }

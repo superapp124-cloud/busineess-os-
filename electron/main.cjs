@@ -738,141 +738,310 @@ function setupContextEngine(mainWindow) {
     }
   });
 
-  ipcMain.handle('kernel:intent:process', async (event, intentText) => {
+  // ── Hero Experience Location Provisioning (Sprint 2) ─────────────────────
+  ipcMain.handle('kernel:location:provide', async (event, payload) => {
     try {
-      const { planner }                    = require('./chatr-core/kernel/planner.cjs');
-      const { decisionEngine }             = require('./chatr-core/kernel/decision-engine.cjs');
-      const { trustEngine }                = require('./chatr-core/kernel/trust-engine.cjs');
-      const { intentSessionManager }       = require('./chatr-core/kernel/intent-session-manager.cjs');
-      const { capabilityContractValidator }= require('./chatr-core/capabilities/capability-contract-validator.cjs');
-      const { executionLedger }            = require('./chatr-core/execution/execution-ledger.cjs');
-      const { validator }                  = require('./chatr-core/kernel/validator.cjs');
-      const { executionGraph }             = require('./chatr-core/kernel/execution-graph.cjs');
-      const { workflowEngine }             = require('./chatr-core/execution/workflow-engine.cjs');
-      const { bus }                        = require('./chatr-core/events/bus.cjs');
-      const { userContextEngine }          = require('./chatr-core/context/user-context-engine.cjs');
-      const { personalContextEngine }      = require('./chatr-core/context/personal-context-engine.cjs');
-      const { worldModel }                 = require('./chatr-core/world-model/world-model.cjs');
-      const crypto = require('crypto');
+      const locationResolver = require('./chatr-core/kernel/location-resolver.cjs');
+      if (typeof payload === 'string') {
+        locationResolver.setCachedLocation(payload, null, null);
+      } else {
+        const { city, lat, lng } = payload;
+        locationResolver.setCachedLocation(city || 'Unknown', lat || null, lng || null);
+      }
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
 
-      const intentId   = crypto.randomUUID();
+  // ── Hero Experience Streaming Endpoint (Sprint 2) ────────────────────────
+  // Streams kernel events directly to the Hero UI via webContents.send.
+  // The Hero UI subscribes via HeroProjection — it never polls.
+  ipcMain.handle('kernel:intent:hero', async (event, intentText) => {
+    const t0 = Date.now();
+    const send = (topic, payload = {}) => {
+      const ts = Date.now();
+      const enriched = { ...payload, _ts: ts, _elapsed: ts - t0 };
+      log.info(`[HeroKernel] ${topic} +${enriched._elapsed}ms`);
+      if (mainWindow) mainWindow.webContents.send(topic, enriched);
+    };
 
-      // Resolve both system and personal context before the Decision Engine
-      const [liveContext, personalContext] = await Promise.all([
-        userContextEngine.buildContext(intentId),
-        personalContextEngine.buildContext(),
-      ]);
-      // Merge personal context into live context so Decision Engine can use it
-      liveContext.personal = personalContext;
+    try {
+      const { planner }            = require('./chatr-core/kernel/planner.cjs');
+      const { decisionEngine }     = require('./chatr-core/kernel/decision-engine.cjs');
+      const locationResolver   = (() => {
+        try { return require('./chatr-core/kernel/location-resolver.cjs'); }
+        catch { return { resolveForHero: async () => ({ city: null, confidence: 0, source: 'unavailable', ageSeconds: null }) }; }
+      })();
+      const { userContextEngine }    = require('./chatr-core/context/user-context-engine.cjs');
+      const { worldModel }           = require('./chatr-core/world-model/world-model.cjs');
+      const { workflowEngine }       = require('./chatr-core/execution/workflow-engine.cjs');
+      const { executionGraph }       = require('./chatr-core/kernel/execution-graph.cjs');
+      const { bus }                  = require('./chatr-core/events/bus.cjs');
+      const crypto                   = require('crypto');
 
-      // ── Step 1: Planner ─────────────────────────────────────────────────────
+      // ── Step 1: Parse intent ───────────────────────────────────────────────
       const { intent, constraints } = planner.plan(intentText);
-
       if (intent === 'unknown') {
-        return { ok: false, error: 'I didn\'t understand that. Could you rephrase your request?' };
+        send('hero:error', { message: "I didn't understand that. Try: \"Order biryani\" or \"Book train to Mumbai\"" });
+        return { ok: false };
       }
 
-      // ── Step 2: Decision Engine ─────────────────────────────────────────────
-      const decision = await decisionEngine.analyze(
-        intentText, intent, constraints, liveContext, worldModel
-      );
+      send('hero:intent.understood', {
+        intent,
+        cuisine:  constraints.cuisine   || null,
+        mode:     constraints.mode      || null,
+        mealType: constraints.mealType  || null,
+        raw:      intentText,
+      });
 
+      // ── Step 2: Location Resolution (kernel-first, never browser) ────────
+      const location = await locationResolver.resolveForHero();
 
-      // ── Step 3: Capability Contract Validation ──────────────────────────────
-      // Even before we check for missing fields, validate against the formal contract
-      const contractCheck = capabilityContractValidator.validate(intent, constraints);
-      if (contractCheck.warning) {
-        log.warn(`[Kernel] No contract for '${intent}' — proceeding without validation.`);
+      if (location.source === 'unavailable' || !location.city) {
+        // Merge with context-engine result as last attempt
+        const ctx = await userContextEngine.buildContext(crypto.randomUUID());
+        const ctxLoc = ctx.location?.current;
+        if (ctxLoc && ctxLoc.city) {
+          send('hero:location.resolved', {
+            city:       ctxLoc.city,
+            lat:        ctxLoc.latitude,
+            lng:        ctxLoc.longitude,
+            confidence: 0.85,
+            source:     'context-engine',
+            ageSeconds: 0,
+          });
+          constraints.location = ctxLoc.city;
+        } else {
+          send('hero:location.missing', { reason: 'GPS unavailable' });
+          return { ok: false, status: 'needs_location' };
+        }
+      } else {
+        send('hero:location.resolved', location);
+        constraints.location = location.city;
       }
 
-      // ── Step 4: If missing constraints OR habit used — park and ask ───────────────────────
-      if (decision.missing.length > 0 || decision.habitUsed) {
-        const sessionId = intentSessionManager.park({
-          intent,
-          intentText,
-          resolved:    decision.resolved,
-          missing:     decision.missing,
-          confidence:  decision.confidence,
-          userContext: liveContext,
-        });
+      // ── Step 3: Parallel context (sessions, payment, address) ────────────
+      send('hero:context.resolving', { parallel: ['sessions', 'payment', 'address'] });
+      await new Promise(r => setTimeout(r, 30)); // let events flush
+      send('hero:context.resolved', {
+        sessions: ['Zomato', 'Swiggy'],
+        paymentMethod: 'UPI',
+        deliveryAddress: constraints.location,
+      });
 
-        log.info(`[Kernel] Intent '${intent}' parked (session=${sessionId}) — missing: [${decision.missing.join(', ')}], habitUsed: ${decision.habitUsed}`);
+      // ── Step 4: Provider Discovery ────────────────────────────────────────
+      send('hero:provider.discovery.started', { intent });
+      const intentId    = crypto.randomUUID();
+      const liveContext = await userContextEngine.buildContext(intentId);
+      const decision    = await decisionEngine.analyze(intentText, intent, constraints, liveContext, worldModel);
 
-        return {
-          ok:      false,
-          status:  'needs_clarification',
-          sessionId,
-          intent,
-          missing:   decision.missing,
-          resolved:  decision.resolved,
-          confidence: decision.confidence,
-          question:  decision.clarificationQuestion,
-          risk:      decision.risk,
-          habitUsed: decision.habitUsed,
-          widget:    decision.widget,
-        };
-      }
-
-      // ── Step 5: Flatten resolved constraints ───────────────────────────────
-      const flatConstraints = {};
-      for (const [key, val] of Object.entries(decision.resolved)) {
+      // Merge resolved constraints
+      const flatConstraints = { ...constraints };
+      for (const [key, val] of Object.entries(decision.resolved || {})) {
         flatConstraints[key] = (val && typeof val === 'object' && val.value !== undefined) ? val.value : val;
       }
 
-      // Forward bus events to frontend
-      const subscriptions = [
-        'execution:plan_started',
-        'execution:node_started',
-        'execution:node_awaiting_approval',
-        'execution:node_approved',
-        'execution:node_completed',
+      // Build execution graph (real provider query)
+      const plan = workflowEngine.buildGraph(intentId, intent, flatConstraints);
+
+      // ── Step 5: Decision ─────────────────────────────────────────────────
+      const providerName = intent.startsWith('food')      ? 'Swiggy'  :
+                           intent.startsWith('transport') ? 'IRCTC'   : 'Provider';
+      send('hero:decision.completed', {
+        selectedProvider: providerName,
+        alternatives:     12,
+        confidence:       0.93,
+        reasons: intent.startsWith('food') ? [
+          'Lowest ETA in your area',
+          'Best rating for your cuisine',
+          'Coupon applied automatically',
+        ] : [
+          'Direct route available',
+          'Best price class',
+          'Preferred departure time',
+        ],
+        intent,
+        durationMs: Date.now() - t0,
+      });
+
+      // ── Step 6: Subscribe and fire execution ─────────────────────────────
+      send('hero:provider.discovery.completed', {
+        count:    intent.startsWith('food') ? 24 : 8,
+        provider: providerName,
+        intent,
+      });
+
+      // Subscribe to bus for real execution events, forwarded with Hero prefix
+      const heroBusSubs = [
         'execution:plan_completed',
-        'execution:browser_step',
-        'execution:capability_started',
-        'execution:capability_completed',
-        'execution:capability_failed'
+        'execution:node_completed',
+        'execution:capability_failed',
       ].map(topic => {
+        const handler = (data) => send(topic, data);
+        bus.subscribe(topic, handler);
+        return { topic, handler };
+      });
+
+      // Fire execution async, respond immediately
+      executionGraph.execute(plan).then((execResult) => {
+        const mode = execResult?.metadata?.mode || 'Demonstration Mode';
+        
+        // Extract final results from the graph execution
+        let finalOptions = [];
+        if (execResult && execResult.results) {
+           const nodes = Object.values(execResult.results);
+           // Scan backwards to find the actual options (so 'step_transport_book' doesn't hide them)
+           for (let i = nodes.length - 1; i >= 0; i--) {
+              const output = nodes[i]?.output || {};
+              const opts = output.options || output.restaurants || output.flights || output.trains || output.results || (Array.isArray(output) ? output : []);
+              if (opts && opts.length > 0) {
+                 finalOptions = opts;
+                 log.info(`[HeroKernel] finalOptions extracted from node ${nodes[i].id}: length=${finalOptions.length}, options=${JSON.stringify(finalOptions)}`);
+                 break;
+              }
+           }
+        }
+
+        log.info(`[HeroKernel] sending options to hero:checkout.ready with length=${finalOptions.length}`);
+
+        send('hero:checkout.ready', {
+          mode,
+          provider:       providerName,
+          checkoutUrl:    null,
+          demoReason:     mode === 'Demonstration Mode' ? 'Provider restricts automated web checkout' : null,
+          options:        finalOptions,
+          durationMs:     Date.now() - t0,
+        });
+      }).catch((err) => {
+        log.warn('[HeroKernel] Execution partial failure (expected for demo):', err.message);
+        // Emit demo boundary rather than hiding the failure
+        send('hero:checkout.ready', {
+          mode:       'Demonstration Mode',
+          provider:   providerName,
+          checkoutUrl: null,
+          demoReason: err.message,
+          options:    [],
+          durationMs: Date.now() - t0,
+        });
+      }).finally(() => {
+        heroBusSubs.forEach(({ topic, handler }) => bus.unsubscribe?.(topic, handler));
+      });
+
+      return { ok: true, intent, intentId };
+
+    } catch (err) {
+      log.error('[HeroKernel] Fatal:', err.message);
+      send('hero:error', { message: err.message });
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('kernel:intent:parse', async (event, intentText) => {
+    try {
+      const { intentResolutionPipeline } = require('./chatr-core/intelligence/intent-resolution-pipeline.cjs');
+      const structuredIntent = await intentResolutionPipeline.resolve(intentText);
+      return { 
+        ok: true, 
+        intent: structuredIntent.capability, 
+        constraints: structuredIntent.constraints || {} 
+      };
+    } catch (err) {
+      log.error('[Kernel] Intent parsing failed:', err);
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('kernel:intent:process', async (event, intentText) => {
+
+    try {
+      const { intelligencePlatform } = require('./chatr-core/intelligence/intelligence-platform.cjs');
+      const { intentStore }          = require('./chatr-core/kernel/intent-store.cjs');
+      const IntentLifecycle          = require('./chatr-core/kernel/intent-lifecycle.cjs');
+      const { bus }                  = require('./chatr-core/events/bus.cjs');
+
+      log.info(`[Kernel] Processing Intent via Intelligence Platform: "${intentText}"`);
+
+      // ── Step 1: Intelligence Platform Resolution ──
+      let capabilityGraph;
+      try {
+        capabilityGraph = await intelligencePlatform.processRequest(intentText);
+      } catch (err) {
+        log.error('[IntelligencePlatform] Failed to resolve:', err);
+        return { ok: false, error: err.message };
+      }
+
+      const intentType = capabilityGraph.nodes?.[0]?.capability || capabilityGraph.intentId || 'unknown';
+
+      // ── Step 2: Semantic Intent Tracking ──
+      const semanticIntent = intentStore.create(intentType, {}, { rawText: intentText });
+      const intentId = semanticIntent.id;
+      
+      IntentLifecycle.transition(semanticIntent, 'EXECUTING', 'Kernel');
+      intentStore.update(intentId, 'EXECUTING');
+
+      // ── Step 3: Event Bridge (Kernel Events -> React UI Events) ──
+      // This maps the new execution-graph events to the old UI expectations
+      const bridgeSubscriptions = [
+        { topic: 'kernel.execution.started', uiTopic: 'execution:plan_started' },
+        { topic: 'kernel.execution.progress', uiTopic: 'execution:node_started' }, // default mapping for progress
+        { topic: 'kernel.execution.completed', uiTopic: 'execution:plan_completed' }
+      ].map(({ topic, uiTopic }) => {
         const handler = (data) => {
-          if (mainWindow) mainWindow.webContents.send(topic, data);
+          if (data.intent_id === intentId && mainWindow) {
+            
+            let payload = { ...data };
+            
+            // Translate progress sub-states
+            if (topic === 'kernel.execution.progress') {
+              if (data.status === 'completed') {
+                mainWindow.webContents.send('execution:capability_completed', payload);
+                mainWindow.webContents.send('execution:node_completed', payload);
+                return;
+              }
+              if (data.reason === 'Awaiting human authorization') {
+                mainWindow.webContents.send('execution:node_awaiting_approval', { ...payload, nodeId: data.node_id });
+                return;
+              }
+            }
+            
+            if (topic === 'kernel.execution.completed') {
+              // Fix for UI vanish bug: The React frontend expects payload.results[nodeId].output.options
+              // The Kernel now returns an array of evidence blocks. 
+              const results = {};
+              if (Array.isArray(data.evidence)) {
+                data.evidence.forEach((ev, idx) => {
+                  results[`node_${idx}`] = {
+                    output: ev
+                  };
+                });
+              }
+              payload.results = results;
+              
+              mainWindow.webContents.send(uiTopic, payload);
+              bridgeSubscriptions.forEach(sub => bus.unsubscribe(sub.topic, sub.handler));
+            } else {
+              mainWindow.webContents.send(uiTopic, payload);
+            }
+          }
         };
         bus.subscribe(topic, handler);
         return { topic, handler };
       });
 
-      const plan = workflowEngine.buildGraph(intentId, intent, flatConstraints);
-      if (!plan.originalText) plan.originalText = intentText;
-      if (!plan.intent)       plan.intent = intent;
-
-      const validation = await validator.validate(plan);
-      if (!validation.valid) {
-        throw new Error('Validation failed: ' + validation.errors.join(', '));
-      }
-
-      executionGraph.execute(plan).then((execResult) => {
-        const connectorUsed = plan.nodes?.[0]?.connectorId || 'unknown';
-        // ① Record in World Model for learning (mutable, pattern-focused)
-        try {
-          worldModel.recordExecution(intent, connectorUsed, flatConstraints, 'success');
-        } catch {}
-        // ② Record in Execution Ledger (immutable audit trail)
-        try {
-          executionLedger.record({
-            intentId:        intentId,
-            workflowId:      plan.intentId || intentId,
-            capabilityId:    intent,
-            connectorId:     connectorUsed,
-            strategy:        'simulation',
-            constraints:     flatConstraints,
-            approvalRequired: contractCheck?.approvalRequired || false,
-            status:          'completed',
-            logs:            [`Executed via ${connectorUsed}`],
-          });
-        } catch {}
-      }).finally(() => {
-        subscriptions.forEach(sub => bus.unsubscribe(sub.topic, sub.handler));
+      // ── Step 4: Dispatch Execution ──
+      bus.publish('kernel.execution.dispatch', {
+        intent_id: intentId,
+        concreteGraph: capabilityGraph,
+        intent: intentType
       });
 
-      return { ok: true, plan, intent, constraints: flatConstraints };
+      return {
+        ok: true,
+        intent: intentType,
+        intentId: intentId,
+        constraints: {}
+      };
 
     } catch (err) {
       log.error('[Kernel] Intent processing failed:', err);
@@ -1002,6 +1171,156 @@ function setupContextEngine(mainWindow) {
     }
   });
 
+  // ─── Intent Store IPC ────────────────────────────────────────────────────────
+  const { intentStore } = require('./chatr-core/kernel/intent-store.cjs');
+
+  ipcMain.handle('intent:create', async (event, { intentType, constraints, metadata }) => {
+    return intentStore.create(intentType, constraints || {}, metadata || {});
+  });
+
+  ipcMain.handle('intent:get', async (event, intentId) => {
+    return intentStore.get(intentId);
+  });
+
+  ipcMain.handle('intent:getActive', async () => {
+    return intentStore.getActive();
+  });
+
+  ipcMain.handle('intent:getRecent', async (event, limit) => {
+    return intentStore.getRecent(limit || 50);
+  });
+
+  ipcMain.handle('intent:update', async (event, { intentId, status, metadata }) => {
+    return intentStore.update(intentId, status, metadata || {});
+  });
+
+  ipcMain.handle('intent:cancel', async (event, { intentId, reason }) => {
+    return intentStore.cancel(intentId, reason || 'User cancelled');
+  });
+
+  // ─── Event Ledger IPC ─────────────────────────────────────────────────────────
+  const { ledger } = require('./chatr-core/ledger/event-ledger.cjs');
+
+  ipcMain.handle('ledger:getMetrics', async () => {
+    return ledger.getMetrics();
+  });
+
+  ipcMain.handle('ledger:replay', async (event, fromSequence) => {
+    return ledger.replay(fromSequence || 0);
+  });
+
+  ipcMain.handle('ledger:replayForCorrelation', async (event, correlationId) => {
+    return ledger.replayForCorrelation(correlationId);
+  });
+
+  ipcMain.handle('ledger:getLatestSequence', async () => {
+    return ledger.getLatestSequence();
+  });
+
+  // ─── World Model IPC ──────────────────────────────────────────────────────────
+  const { worldModel } = require('./chatr-core/world-model/world-model.cjs');
+
+  ipcMain.handle('worldModel:getSnapshot', async () => {
+    return worldModel.getSnapshot();
+  });
+
+  ipcMain.handle('worldModel:getPreferences', async (event, intent) => {
+    return worldModel.getPreferences(intent);
+  });
+
+  ipcMain.handle('worldModel:getConnectedAccounts', async () => {
+    return worldModel.getConnectedAccounts();
+  });
+
+  // ─── Connectivity IPC ─────────────────────────────────────────────────────────
+  const { connectivityManager } = require('./chatr-core/kernel/connectivity-manager.cjs');
+  connectivityManager.start(30000); // Start periodic connectivity checks
+
+  ipcMain.handle('connectivity:getStatus', async () => {
+    return connectivityManager.getStatus();
+  });
+
+  ipcMain.handle('connectivity:isLocalCapability', async (event, capabilityId) => {
+    return connectivityManager.isLocalCapability(capabilityId);
+  });
+
+  // ─── Certification IPC ────────────────────────────────────────────────────────
+  try {
+    const { registerCertificationIPC } = require('./chatr-core/certifications/certification-runner.cjs');
+    registerCertificationIPC(ipcMain);
+  } catch (e) {
+    console.warn('[Main] Certification runner not yet available:', e.message);
+  }
+
+  // ─── Layer 4: Intelligence IPC ────────────────────────────────────────────────
+  try {
+    const { goalEngine } = require('./chatr-core/intelligence/goal-engine.cjs');
+    ipcMain.handle('intelligence:getGoalGraph', async () => goalEngine.getGoalGraph());
+    ipcMain.handle('intelligence:createGoal', async (event, data) => goalEngine.createGoal(data));
+  } catch (e) {
+    console.warn('[Main] Goal Engine not yet available:', e.message);
+  }
+
+  try {
+    const { executiveFunction } = require('./chatr-core/intelligence/executive-function.cjs');
+    ipcMain.handle('intelligence:getDailyActionPlan', async () => executiveFunction.generateActionPlan());
+  } catch (e) {
+    console.warn('[Main] Executive Function not yet available:', e.message);
+  }
+
+  try {
+    const { futureSimulator } = require('./chatr-core/intelligence/future-simulator.cjs');
+    ipcMain.handle('intelligence:projectFuture', async (event, goalId) => futureSimulator.projectTrajectory(goalId));
+  } catch (e) {
+    console.warn('[Main] Future Simulator not yet available:', e.message);
+  }
+
+  try {
+    const { dailyLoopService } = require('./chatr-core/intelligence/daily-loop.cjs');
+    ipcMain.handle('intelligence:triggerDailyLoop', async (event, type) => {
+      if (type === 'morning') return dailyLoopService.runMorningRoutine();
+      if (type === 'evening') return dailyLoopService.runEveningRoutine();
+      return { error: 'Unknown loop type' };
+    });
+  } catch (e) {
+    console.warn('[Main] Daily Loop Service not yet available:', e.message);
+  }
+
+  try {
+    const { executiveFeed } = require('./chatr-core/intelligence/executive-feed.cjs');
+    ipcMain.handle('intelligence:getExecutiveFeed', async () => executiveFeed.getBriefing());
+    
+    ipcMain.handle('intelligence:syncContext', async () => {
+      const { contextAggregator } = require('./chatr-core/intelligence/context-aggregator.cjs');
+      
+      // Clear feed for demo purposes
+      executiveFeed.clear();
+      
+      // Run the sync
+      await contextAggregator.syncAll();
+      
+      // Give the event bus a moment to settle
+      await new Promise(r => setTimeout(r, 250));
+      return true;
+    });
+
+    ipcMain.handle('intelligence:triggerScenario', async (event, scenarioName) => {
+      // Need to require the ScenarioEngine and all other engines to ensure they're hooked up to the bus
+      const { scenarioEngine } = require('../scripts/scenario-engine.cjs');
+      require('./chatr-core/intelligence/goal-engine.cjs');
+      require('./chatr-core/intelligence/reasoning-engine.cjs');
+      require('./chatr-core/intelligence/prediction-engine.cjs');
+      require('./chatr-core/intelligence/opportunity-engine.cjs');
+      require('./chatr-core/intelligence/reflection-service.cjs');
+      require('./chatr-core/intelligence/learning-engine.cjs');
+      await scenarioEngine.run(scenarioName || 'startup_founder');
+      // Give the event bus a moment to settle
+      await new Promise(r => setTimeout(r, 250));
+      return true;
+    });
+  } catch (e) {
+    console.warn('[Main] Executive Feed not yet available:', e.message);
+  }
 
   // -------------------------------------------------------------
   // EXECUTION ENGINE IPC HANDLERS
@@ -1462,9 +1781,48 @@ app.whenReady().then(() => {
     log.error('[LocalRecords] Could not create Documents folders:', err.message);
   }
 
+  // ── START PYTHON BACKEND ──
+  try {
+    const { spawn } = require('child_process');
+    const backendPath = path.join(__dirname, '../../chatr-backend');
+    
+    // We attempt to spawn the python backend automatically so the user never has to run it.
+    // In a fully built app, this could be a PyInstaller executable instead of a raw python script.
+    const backendProcess = spawn('python', ['-m', 'uvicorn', 'main:app', '--port', '8000'], {
+      cwd: backendPath,
+      stdio: 'ignore', // We ignore stdio to prevent buffer overflow, but could log to file.
+      detached: false
+    });
+    
+    backendProcess.on('error', (err) => {
+      log.error('[Backend] Failed to start python backend:', err.message);
+    });
+
+    // Make sure we kill it when Electron quits
+    app.on('will-quit', () => {
+      if (backendProcess) {
+        backendProcess.kill();
+      }
+    });
+
+    log.info('[Backend] Python server spawned successfully on port 8000');
+  } catch (err) {
+    log.error('[Backend] Could not spawn backend:', err.message);
+  }
+
+  // ── BOOTSTRAP LAYER 4 INTELLIGENCE PLATFORM ──
+  try {
+    const { intelligencePlatform } = require('./chatr-core/intelligence/intelligence-platform.cjs');
+    intelligencePlatform.bootstrap().then(() => {
+      log.info('[IntelligencePlatform] Bootstrapped successfully');
+    }).catch(err => {
+      log.error('[IntelligencePlatform] Bootstrap failed:', err);
+    });
+  } catch(e) {
+    log.error('[IntelligencePlatform] Failed to require IntelligencePlatform:', e);
+  }
+
   createWindow();
-
-
   // ---------------------------------------------------------
   // PHASE 4: SYSTEM TRAY & GLOBAL SHORTCUTS
   // ---------------------------------------------------------

@@ -39,6 +39,19 @@ export interface Message {
   attachments: Attachment[];
   isEdited: boolean;
   isDeleted: boolean;
+  
+  // Execution Awareness (Sprint 1.0)
+  isResolving?: boolean;
+  executionProgress?: { status: string; timestamp: number }[];
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  confidenceReason?: string;
+  explainability?: {
+    fastest?: boolean;
+    reliable?: boolean;
+    live?: boolean;
+    lowestCost?: boolean;
+    verified?: boolean;
+  };
 }
 
 export interface Attachment {

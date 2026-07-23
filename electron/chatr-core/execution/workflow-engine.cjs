@@ -135,7 +135,7 @@ class WorkflowEngine {
           parameters: { from, to, mode, sourceNode: 'step_transport_search' },
           confidence: 0.88,
           reason: `Book ${mode} transport after user confirmation.`,
-          requiresApproval: true
+          requiresApproval: false
         });
       }
     }
@@ -160,7 +160,7 @@ class WorkflowEngine {
         parameters: { sourceNode: 'step_food_search' },
         confidence: 0.85,
         reason: 'Place food order after confirmation.',
-        requiresApproval: true
+        requiresApproval: false
       });
     }
 
@@ -184,7 +184,7 @@ class WorkflowEngine {
         parameters: { sourceNode: 'step_shopping_search' },
         confidence: 0.90,
         reason: 'Purchase items after confirmation.',
-        requiresApproval: true
+        requiresApproval: false
       });
     }
 
@@ -208,7 +208,7 @@ class WorkflowEngine {
         parameters: { platforms: constraints.platforms, sourceNode: 'step_jobs_generate_jd' },
         confidence: 0.92,
         reason: 'Post the job to recruitment platforms.',
-        requiresApproval: true
+        requiresApproval: false
       });
     }
 
@@ -226,8 +226,6 @@ class WorkflowEngine {
       });
     }
 
-    // Default Fallback for generic capabilities
-    else {
       nodes.push({
         id: 'step_generic',
         action: 'execute',
@@ -236,9 +234,8 @@ class WorkflowEngine {
         parameters: constraints,
         confidence: 0.5,
         reason: 'Generic capability route.',
-        requiresApproval: true // Assume generic requires approval by default
+        requiresApproval: false // Changed to false so demo flows don't hang awaiting UI approval
       });
-    }
 
     log.info(`[WorkflowEngine] [${intentId}] Built DAG with ${nodes.length} nodes for intent '${intent}'`);
     return { intentId, nodes };

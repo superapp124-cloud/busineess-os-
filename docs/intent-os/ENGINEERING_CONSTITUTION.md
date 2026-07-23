@@ -15,6 +15,7 @@ This document serves as the absolute law for all engineering efforts, human or A
 8. **Providers execute.**
 9. **Verification gates completion.**
 10. **Every architectural change requires an ADR.**
+11. **No new kernel subsystem may be introduced until a Hero Experience exposes a concrete limitation that cannot be solved in the connector, manifest, or browser runtime.**
 
 ## Core Pipeline Constraint
 

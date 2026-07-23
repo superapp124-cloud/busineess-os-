@@ -8,31 +8,31 @@ import { App } from '@capacitor/app';
  * Makes navigation feel native
  */
 export const useAndroidBackButton = (canGoBack: boolean = true) => {
-  const navigate = useNavigate();
+ const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+ useEffect(() => {
+ if (!Capacitor.isNativePlatform()) return;
 
-    let listener: any;
-    
-    const setupListener = async () => {
-      listener = await App.addListener('backButton', ({ canGoBack: systemCanGoBack }) => {
-        if (canGoBack && systemCanGoBack) {
-          // Go back in app navigation
-          navigate(-1);
-        } else {
-          // Exit app or show exit confirmation
-          App.exitApp();
-        }
-      });
-    };
-    
-    setupListener();
+ let listener: any;
+ 
+ const setupListener = async () => {
+ listener = await App.addListener('backButton', ({ canGoBack: systemCanGoBack }) => {
+ if (canGoBack && systemCanGoBack) {
+ // Go back in app navigation
+ navigate(-1);
+ } else {
+ // Exit app or show exit confirmation
+ App.exitApp();
+ }
+ });
+ };
+ 
+ setupListener();
 
-    return () => {
-      if (listener) {
-        listener.remove();
-      }
-    };
-  }, [canGoBack, navigate]);
+ return () => {
+ if (listener) {
+ listener.remove();
+ }
+ };
+ }, [canGoBack, navigate]);
 };

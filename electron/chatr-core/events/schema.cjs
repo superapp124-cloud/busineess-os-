@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 
-const EVENT_ABI = 'chatr.event.v0_9_rc';
+const EVENT_ABI = 'chatr.event.v1.0';
 const EVENT_VERSION = '1.0';
 
 const FORBIDDEN_EVENT_NAMESPACES = new Set([
@@ -28,8 +28,10 @@ const ALLOWED_EVENT_NAMESPACES = new Set([
   'capability',
   'commitment',
   'connector',
+  'connectivity',
   'context',
   'core',
+  'decision',
   'entity',
   'execution',
   'goal',
@@ -40,6 +42,7 @@ const ALLOWED_EVENT_NAMESPACES = new Set([
   'journal',
   'kernel',
   'learning',
+  'lifecycle',
   'memory',
   'model',
   'module',
@@ -54,6 +57,7 @@ const ALLOWED_EVENT_NAMESPACES = new Set([
   'resource',
   'scheduler',
   'strategy',
+  'stewardship',
   'stream',
   'suggestion',
   'telemetry',
@@ -61,6 +65,7 @@ const ALLOWED_EVENT_NAMESPACES = new Set([
   'trust',
   'ui',
   'verification',
+  'world',
   'world_state',
 ]);
 

@@ -14,83 +14,83 @@ import { Keyboard } from '@capacitor/keyboard';
  * Makes the app feel smooth and responsive like native apps
  */
 export const useNativePerformance = () => {
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+ useEffect(() => {
+ if (!Capacitor.isNativePlatform()) return;
 
-    let cancelled = false;
-    const listeners: PluginListenerHandle[] = [];
+ let cancelled = false;
+ const listeners: PluginListenerHandle[] = [];
 
-    const setupPerformance = async () => {
-      try {
-        // 1. Hide splash as soon as app is ready
-        await SplashScreen.hide();
-        console.log('✅ Splash screen hidden');
+ const setupPerformance = async () => {
+ try {
+ // 1. Hide splash as soon as app is ready
+ await SplashScreen.hide();
+ console.log('✅ Splash screen hidden');
 
-        // 2. Monitor network status
-        listeners.push(await Network.addListener('networkStatusChange', async (status) => {
-          if (!status.connected) {
-            await Toast.show({ 
-              text: 'No internet connection',
-              duration: 'long',
-              position: 'bottom'
-            });
-          } else {
-            await Toast.show({ 
-              text: 'Back online',
-              duration: 'short',
-              position: 'bottom'
-            });
-          }
-        }));
+ // 2. Monitor network status
+ listeners.push(await Network.addListener('networkStatusChange', async (status) => {
+ if (!status.connected) {
+ await Toast.show({ 
+ text: 'No internet connection',
+ duration: 'long',
+ position: 'bottom'
+ });
+ } else {
+ await Toast.show({ 
+ text: 'Back online',
+ duration: 'short',
+ position: 'bottom'
+ });
+ }
+ }));
 
-        // 3. Handle app state (foreground/background)
-        listeners.push(await App.addListener('appStateChange', async ({ isActive }) => {
-          if (!isActive) {
-            await Preferences.set({ 
-              key: 'lastActive', 
-              value: Date.now().toString() 
-            });
-          } else {
-            const { value } = await Preferences.get({ key: 'lastActive' });
-            console.log('App resumed, last active:', value);
-          }
-        }));
+ // 3. Handle app state (foreground/background)
+ listeners.push(await App.addListener('appStateChange', async ({ isActive }) => {
+ if (!isActive) {
+ await Preferences.set({ 
+ key: 'lastActive', 
+ value: Date.now().toString() 
+ });
+ } else {
+ const { value } = await Preferences.get({ key: 'lastActive' });
+ console.log('App resumed, last active:', value);
+ }
+ }));
 
-        // 4. Keyboard optimization
-        listeners.push(await Keyboard.addListener('keyboardWillShow', (info) => {
-          document.body.classList.add('keyboard-visible');
-          document.body.style.setProperty('--keyboard-height', `${info.keyboardHeight}px`);
-        }));
-        
-        listeners.push(await Keyboard.addListener('keyboardWillHide', () => {
-          document.body.classList.remove('keyboard-visible');
-          document.body.style.setProperty('--keyboard-height', '0px');
-        }));
+ // 4. Keyboard optimization
+ listeners.push(await Keyboard.addListener('keyboardWillShow', (info) => {
+ document.body.classList.add('keyboard-visible');
+ document.body.style.setProperty('--keyboard-height', `${info.keyboardHeight}px`);
+ }));
+ 
+ listeners.push(await Keyboard.addListener('keyboardWillHide', () => {
+ document.body.classList.remove('keyboard-visible');
+ document.body.style.setProperty('--keyboard-height', '0px');
+ }));
 
-        if (cancelled) {
-          listeners.splice(0).forEach((listener) => listener.remove());
-          return;
-        }
+ if (cancelled) {
+ listeners.splice(0).forEach((listener) => listener.remove());
+ return;
+ }
 
-        // 5. Native status bar optimization
-        const isAndroid = Capacitor.getPlatform() === 'android';
-        await StatusBar.setOverlaysWebView({ overlay: !isAndroid });
-        await StatusBar.setStyle({ style: isAndroid ? Style.Dark : Style.Light });
-        if (isAndroid) {
-          await StatusBar.setBackgroundColor({ color: '#f4efff' });
-        }
-        
-        console.log('✅ Native performance optimizations applied');
-      } catch (error) {
-        console.error('❌ Error setting up native performance:', error);
-      }
-    };
+ // 5. Native status bar optimization
+ const isAndroid = Capacitor.getPlatform() === 'android';
+ await StatusBar.setOverlaysWebView({ overlay: !isAndroid });
+ await StatusBar.setStyle({ style: isAndroid ? Style.Dark : Style.Light });
+ if (isAndroid) {
+ await StatusBar.setBackgroundColor({ color: '#f4efff' });
+ }
+ 
+ console.log('✅ Native performance optimizations applied');
+ } catch (error) {
+ console.error('❌ Error setting up native performance:', error);
+ }
+ };
 
-    void setupPerformance();
+ void setupPerformance();
 
-    return () => {
-      cancelled = true;
-      listeners.splice(0).forEach((listener) => listener.remove());
-    };
-  }, []);
+ return () => {
+ cancelled = true;
+ listeners.splice(0).forEach((listener) => listener.remove());
+ };
+ }, []);
 };

@@ -1,1 +1,0 @@
-import{j as r}from"./framer-motion-BWofASDg.js";import{g as t}from"./index.desktop-BQKO68YB.js";function n({className:e,shimmer:m=!1,...s}){return r.jsx("div",{className:t("rounded-md bg-muted",m?"shimmer":"animate-pulse",e),...s})}export{n as S};

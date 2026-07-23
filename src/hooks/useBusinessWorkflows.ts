@@ -10,6 +10,7 @@ export interface BusinessWorkflow {
   status: 'draft' | 'active' | 'paused';
   nodes: any;
   edges: any;
+  graph?: any;
   run_count: number;
   created_at: string;
   updated_at: string;

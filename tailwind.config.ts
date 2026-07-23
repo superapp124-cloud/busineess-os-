@@ -18,17 +18,39 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        heading: ['Geist', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'monospace'],
+      },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
-        'sm': ['0.875rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
-        'base': ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],
-        'lg': ['1.125rem', { lineHeight: '1.6', letterSpacing: '0' }],
-        'xl': ['1.25rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
-        '2xl': ['1.5rem', { lineHeight: '1.4', letterSpacing: '-0.02em' }],
-        '3xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.02em' }],
-        '4xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.03em' }],
+        // Display & Headers
+        display:   ['clamp(26px, 2vw, 30px)', { lineHeight: '38px', fontWeight: '700' }],
+        page:      ['clamp(22px, 1.8vw, 24px)', { lineHeight: '32px', fontWeight: '600' }],
+        workspace: ['clamp(18px, 1.5vw, 20px)', { lineHeight: '28px', fontWeight: '600' }],
+        section:   ['clamp(16px, 1.3vw, 18px)', { lineHeight: '26px', fontWeight: '600' }],
+        card:      ['clamp(15px, 1.2vw, 16px)', { lineHeight: '24px', fontWeight: '600' }],
+        
+        // Semantic UI Elements
+        button:    ['clamp(13px, 1vw, 14px)', { lineHeight: '20px', fontWeight: '500' }],
+        input:     ['clamp(13px, 1vw, 14px)', { lineHeight: '20px', fontWeight: '400' }],
+        table:     ['clamp(12px, 0.9vw, 13px)', { lineHeight: '20px', fontWeight: '400' }],
+        nav:       ['clamp(12px, 0.9vw, 13px)', { lineHeight: '20px', fontWeight: '500' }],
+        metric:    ['clamp(28px, 2.2vw, 32px)', { lineHeight: '36px', fontWeight: '700' }],
+      
+        // Body & Supporting Text
+        body:      ['clamp(13px, 1vw, 14px)', { lineHeight: '22px', fontWeight: '400' }],
+        secondary: ['13px', { lineHeight: '20px', fontWeight: '400' }],
+        label:     ['12px', { lineHeight: '18px', fontWeight: '500' }],
+        caption:   ['11px', { lineHeight: '16px', fontWeight: '400' }],
+        tiny:      ['10px', { lineHeight: '14px', fontWeight: '500' }],
       },
       spacing: {
+        'xs': 'var(--space-xs)',
+        'sm': 'var(--space-sm)',
+        'md': 'var(--space-md)',
+        'lg': 'var(--space-lg)',
+        'xl': 'var(--space-xl)',
         '18': '4.5rem',
         '22': '5.5rem',
         '26': '6.5rem',
@@ -255,22 +277,22 @@ export default {
         }
       },
       animation: {
-        "accordion-down": "accordion-down 0.3s ease-out",
-        "accordion-up": "accordion-up 0.3s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "slide-in": "slide-in 0.3s ease-out",
-        "slide-in-bottom": "slide-in-bottom 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
+        "accordion-down": "accordion-down 150ms ease-out",
+        "accordion-up": "accordion-up 150ms ease-out",
+        "fade-in": "fade-in 150ms ease-out",
+        "slide-in": "slide-in 150ms ease-out",
+        "slide-in-bottom": "slide-in-bottom 150ms cubic-bezier(0.32, 0.72, 0, 1)",
         "shimmer": "shimmer 2s infinite",
         // Premium animations
-        "message-in": "message-in 0.25s cubic-bezier(0.32, 0.72, 0, 1)",
-        "message-out": "message-out 0.25s cubic-bezier(0.32, 0.72, 0, 1)",
+        "message-in": "message-in 150ms cubic-bezier(0.32, 0.72, 0, 1)",
+        "message-out": "message-out 150ms cubic-bezier(0.32, 0.72, 0, 1)",
         "typing-dot": "typing-dot 1.4s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "skeleton-wave": "skeleton-wave 1.5s ease-in-out infinite",
-        "checkmark": "checkmark-draw 0.3s ease-out forwards",
-        "float-in": "float-in 0.2s ease-out",
-        "button-press": "button-press 0.15s ease-out",
-        "ripple": "ripple 0.6s ease-out",
+        "checkmark": "checkmark-draw 150ms ease-out forwards",
+        "float-in": "float-in 150ms ease-out",
+        "button-press": "button-press 100ms ease-out",
+        "ripple": "ripple 0.4s ease-out",
         
         // CHATR Signature Animations (Experience Alpha)
         "fade-rise": "fade-rise 120ms cubic-bezier(0, 0, 0.2, 1) forwards",

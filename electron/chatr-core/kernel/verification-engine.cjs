@@ -1,144 +1,98 @@
 'use strict';
 
 /**
- * CHATR Kernel — Verification Engine (v0.9 RC)
- * 
- * Contract:
- * - An evidence evaluation engine.
- * - Answers "Is the user's intent fulfilled?"
- * - Consumes immutable ObservationFrames as evidence.
- * - Emits ONLY declarative, evidence-backed `chatr.verification_result.v0_9_rc` objects.
- * - Idempotent, deterministic, confidence-scored, and pure.
+ * CHATR Kernel — Verification Engine (Phase 5)
+ *
+ * The Verification Engine closes the Execution loop.
+ * It listens to Evidence emitted by the Execution Engine, validates the cryptographic
+ * hash of the payload, and performs logical matching against the Intent's
+ * defined success_criteria.
+ *
+ * If verified, it emits `kernel.intent.verified` (which transitions IntentStore to COMPLETED).
  */
 
 const crypto = require('crypto');
-const ABI = 'chatr.verification_result.v0_9_rc';
+const { bus } = require('../events/bus.cjs');
+const { intentStore } = require('./intent-store.cjs');
 
 class VerificationEngine {
   constructor() {
-    this.verifiedGoals = new Set();
+    // Listen for execution progress that includes evidence
+    bus.subscribe('kernel.execution.progress', (envelope) => this._onExecutionProgress(envelope));
   }
 
-  /**
-   * Evaluates accumulated evidence against the expected outcome to determine fulfillment.
-   * Runs in <5ms.
-   * 
-   * @param {Object} goalState - Immutable GoalRuntimeState (to verify intent)
-   * @param {Array} expectedOutcomes - List of criteria to fulfill intent
-   * @param {Array} evidenceList - Array of immutable ObservationFrames
-   * @returns {Object|null} A VerificationResult, or null if insufficient evidence.
-   */
-  verify(goalState, expectedOutcomes, evidenceList) {
-    if (!goalState || !expectedOutcomes || !evidenceList) {
-      throw new Error('Missing verification inputs');
+  _onExecutionProgress(envelope) {
+    const { intent_id, status, evidence } = envelope.payload;
+
+    if (status === 'completed' && Array.isArray(evidence) && evidence.length > 0) {
+      this._verifyEvidence(intent_id, evidence);
+    }
+  }
+
+  _verifyEvidence(intentId, evidenceList) {
+    const intent = intentStore.get(intentId);
+    if (!intent) {
+      console.warn(`[VerificationEngine] Intent ${intentId} not found for verification.`);
+      return;
     }
 
-    // 1. Idempotency Check (Only verify a goal once unless evidence resets)
-    if (this.verifiedGoals.has(goalState.goal_id)) {
-      return null;
+    // 1. Cryptographic Validation
+    for (const ev of evidenceList) {
+      const calculatedHash = crypto.createHash('sha256').update(JSON.stringify(ev.payload)).digest('hex');
+      if (calculatedHash !== ev.payload_hash) {
+        this._publishResult(intentId, 'FAILED', 'Cryptographic evidence hash mismatch. Possible tampering.', evidenceList);
+        return;
+      }
     }
 
-    let confidence = 0.0;
-    const evidenceRefs = [];
-    const matchedCriteria = new Set();
+    // 2. Logical Validation (Success Criteria)
+    // For Phase 5 mock, we check if the evidence payload mockData includes our success criteria strings
+    let matchedCriteria = 0;
+    const criteriaCount = intent.success_criteria ? intent.success_criteria.length : 0;
 
-    // 2. Evidence Evaluation
-    // We check if the provided evidence satisfies the expected outcomes.
-    // E.g., Expected: ['order_confirmed', 'payment_confirmed']
-    for (const frame of evidenceList) {
-      // Analyze the generic payload for semantic fulfillment signals
-      // Purity constraint: We only parse strings, no provider logic.
-      const payloadStr = JSON.stringify(frame.payload).toLowerCase();
+    if (criteriaCount > 0) {
+      const combinedPayloadStr = JSON.stringify(evidenceList.map(e => e.payload)).toLowerCase();
 
-      for (const criteria of expectedOutcomes) {
-        if (!matchedCriteria.has(criteria)) {
-          // Simplistic semantic match for prototype/kernel purposes
-          const terms = criteria.toLowerCase().split('_');
-          const isMatch = terms.every(term => payloadStr.includes(term));
-          
-          if (isMatch) {
-            matchedCriteria.add(criteria);
-            evidenceRefs.push(frame.observation_id);
-            // Multi-evidence increases confidence
-            if (frame.observation_type === 'api' || frame.observation_type === 'webhook') {
-              confidence += 0.5; // Strong evidence
-            } else if (frame.observation_type === 'dom') {
-              confidence += 0.3; // Weak evidence
-            } else {
-              confidence += 0.2; // Default
-            }
-          }
+      for (const criteria of intent.success_criteria) {
+        if (combinedPayloadStr.includes(criteria.toLowerCase())) {
+          matchedCriteria++;
         }
       }
-    }
 
-    // Cap confidence
-    confidence = Math.min(confidence, 0.99);
-
-    // 3. Decision
-    let resultStatus;
-    let reason;
-
-    if (matchedCriteria.size === expectedOutcomes.length && expectedOutcomes.length > 0) {
-      if (confidence >= 0.8) {
-        resultStatus = 'verified';
-        reason = 'All expected outcomes satisfied with high confidence multi-source evidence';
-      } else {
-        resultStatus = 'likely_verified';
-        reason = 'All expected outcomes observed, but via low confidence single-source evidence';
+      if (matchedCriteria < criteriaCount) {
+        this._publishResult(intentId, 'FAILED', `Only met ${matchedCriteria}/${criteriaCount} success criteria.`, evidenceList);
+        return;
       }
+    }
+
+    // Verified!
+    this._publishResult(intentId, 'VERIFIED', 'Cryptographic and logical criteria met.', evidenceList);
+  }
+
+  _publishResult(intentId, result, reason, evidenceList) {
+    bus.publish('kernel.verification.completed', {
+      intent_id: intentId,
+      result, // 'VERIFIED' or 'FAILED'
+      reason,
+      evidence: evidenceList
+    }, { correlationId: intentId });
+
+    if (result === 'VERIFIED') {
+      bus.publish('kernel.intent.completed', {
+        intent_id: intentId,
+        status: 'COMPLETED',
+        evidence: evidenceList
+      }, { correlationId: intentId });
     } else {
-      // Insufficient evidence, we do not emit a failure result unless there's explicit failure evidence,
-      // but usually, we just wait for more evidence.
-      // If we want to actively say 'not_verified', we can do so, but standard is null to keep evaluating.
-      return null; 
-    }
-
-    const maxSequence = evidenceList.length > 0 
-      ? Math.max(...evidenceList.map(e => e.sequence)) 
-      : goalState.sequence || 0;
-
-    // 4. Emit VerificationResult
-    const result = {
-      abi: ABI,
-      verification_id: crypto.randomUUID(),
-      goal_id: goalState.goal_id,
-      result: resultStatus,
-      confidence: confidence,
-      evidence_refs: evidenceRefs,
-      verification_reason: reason,
-      sequence: maxSequence + 1, // Follows the latest evidence sequence
-      correlation_id: crypto.randomUUID()
-    };
-
-    // Deterministic Hash
-    result.deterministic_hash = this._calculateHash(result);
-
-    // Mark as verified
-    if (resultStatus === 'verified' || resultStatus === 'likely_verified') {
-      this.verifiedGoals.add(goalState.goal_id);
-    }
-
-    return Object.freeze(result);
-  }
-
-  _calculateHash(result) {
-    const hash = crypto.createHash('sha256');
-    const logical = {
-      goal_id: result.goal_id,
-      result: result.result,
-      confidence: result.confidence.toFixed(2),
-      evidence: [...result.evidence_refs].sort()
-    };
-    hash.update(JSON.stringify(logical));
-    return hash.digest('hex');
-  }
-
-  loadFromDisk(persistedRecords = []) {
-    for (const rec of persistedRecords) {
-      this.verifiedGoals.add(rec.goal_id);
+      bus.publish('kernel.intent.failed', {
+        intent_id: intentId,
+        status: 'FAILED',
+        error: reason,
+        evidence: evidenceList
+      }, { correlationId: intentId });
     }
   }
 }
 
-module.exports = { VerificationEngine };
+const verificationEngine = new VerificationEngine();
+module.exports = { VerificationEngine, verificationEngine };

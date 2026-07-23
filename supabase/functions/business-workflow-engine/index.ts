@@ -1,4 +1,22 @@
+/**
+ * business-workflow-engine — Supabase Edge Function
+ *
+ * STATUS: NON-AUTHORITATIVE FOR STUDIO EXECUTION
+ * Phase A decision: ADR-A1 (docs/ADR/ADR-A1-authoritative-runtime-selection.md)
+ *
+ * This Edge Function is NOT the authoritative execution runtime for the Studio route (/desktop/studio).
+ * Studio executions go through AutomationOS/RuntimeAdapter (LocalBrowserRuntime).
+ *
+ * This function is RETAINED for:
+ *   - Future background / scheduled workflow triggers
+ *   - Webhook-based trigger entry points that need a server-side receiver
+ *   - Potential worker-queue execution path (Phase A.5+)
+ *
+ * Do NOT call this function from handleTestRun() or any Studio execution path.
+ * Do NOT add new execution logic here until the authoritative runtime (Phase A.5) is stable.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {

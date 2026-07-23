@@ -44,7 +44,7 @@ async function boot() {
   log.info(`[CHATR Kernel] Booting — ${runtimeConfig.codename} v${runtimeConfig.version}`);
 
   const { runtimeManager } = require('./kernel/runtime-manager.cjs');
-  const { MemoryRuntime, CommunicationRuntime, IntelligenceRuntime, WorkflowRuntime, ResourceRuntime, DashboardRuntime, IdentityRuntime } = require('./runtimes/interfaces.cjs');
+  const { MemoryRuntime, CommunicationRuntime, IntelligenceRuntime, WorkflowRuntime, ResourceRuntime, DashboardRuntime, IdentityRuntime } = require('./services/interfaces.cjs');
   const { LocalSearchProvider } = require('./providers/local-search.cjs');
   const { LocalEmailProvider } = require('./providers/local-email.cjs');
   const { AdaptiveIntelligenceProvider } = require('./providers/adaptive-intelligence.cjs');
@@ -135,9 +135,14 @@ async function boot() {
   const recoveredGoals = getGoalRuntime().recoverActiveGoals();
   log.info(`[CHATR Kernel] Goal Runtime recovered ${recoveredGoals.length} active goals.`);
 
-  // ── Step 4.5: Start Health Watchdog ──────────────────────────────────────
+  // ── Step 4.5: Start Health Watchdog and Connectivity Manager ───────────────
   const { watchdog } = require('./health/watchdog.cjs');
   watchdog.start(30000);
+
+  const { connectivityManager } = require('./kernel/connectivity-manager.cjs');
+  connectivityManager.start(30000);
+  log.info('[CHATR Kernel] Kernel subsystems initialized (Health, Connectivity).');
+
 
   // ── Step 4.6: Boot Universal Execution Layer v2.0 ─────────────────────────
   const { ExecutionRuntime } = require('./execution/execution-runtime.cjs');
@@ -145,17 +150,19 @@ async function boot() {
   runtimeManager.registerRuntime('ExecutionRuntime', executionRuntime);
 
   // Register all universal capability IDs so the validator doesn't warn
-  const { capabilityRegistry } = require('./capabilities/registry.cjs');
-  for (const cap of capabilityRegistry.getAllCapabilities()) {
+  const { CapabilityRegistry } = require('./capabilities/registry.cjs');
+  for (const cap of CapabilityRegistry.getAllCapabilities()) {
     try {
+      const capId = cap.identity?.id || cap.id;
+      if (!capId) continue;
       runtimeManager.registerCapability(
         {
-          id:       cap.id,
-          name:     cap.description,
-          version:  '2.0',
+          id:       capId,
+          name:     cap.identity?.name || cap.name || cap.description || cap.purpose || capId,
+          version:  cap.identity?.version || cap.version || '2.0',
           runtime:  'ExecutionRuntime',
           provider: 'ExecutionRuntime',
-          category: cap.domain,
+          category: cap.domain || cap.category || 'General',
           approval: cap.approval
         },
         executionRuntime

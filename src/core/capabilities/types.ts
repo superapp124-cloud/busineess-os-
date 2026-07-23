@@ -1,3 +1,43 @@
+// CHATR Kernel ABI - Capability Registry (ADR-001)
+
+export type MaturityLevel = 'L0' | 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
+export type AutonomyLevel = 'FullyAutonomous' | 'ApprovalRequired' | 'Restricted';
+
+export interface ICapability {
+  id: string;          // e.g., 'core.communication.send_email'
+  name: string;        // e.g., 'Send Email'
+  version: string;     // e.g., '1.2.0'
+  owner: string;       // Team or subsystem responsible
+  maturity: MaturityLevel;
+  autonomy: AutonomyLevel;
+  
+  description: string;
+  
+  // Data Schema
+  inputsSchema: Record<string, any>; // JSON Schema defining required inputs
+  outputsSchema: Record<string, any>; // JSON Schema defining expected outputs
+  
+  // Dependencies
+  requiredProviders: string[]; // e.g., ['EmailProvider']
+  fallbackProviders: string[]; // e.g., ['NotificationProvider']
+  
+  // Telemetry & Limits
+  metrics: {
+    avgLatencyMs: number;
+    successRate: number;
+  };
+  
+  // For Composition: A capability might be a chain of other capabilities
+  composedOf?: string[]; // Array of capability IDs (e.g., ['Search', 'Email', 'ATS'])
+}
+
+export interface CapabilityExecutionRequest {
+  capabilityId: string;
+  version?: string; // If omitted, use latest
+  inputs: Record<string, any>;
+  contextId: string; // Refers to the IntentContext
+}
+
 export type CommitmentStatus = 
   | 'detected' 
   | 'understood' 

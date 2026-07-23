@@ -47,18 +47,19 @@ function createServer() {
   // ── Kernel Intent Router (React UI Bridge) ───────────────────────────────
   app.post('/api/intent', async (req, res) => {
     try {
-      const { intent, context } = req.body;
+      const { intent, context = {}, payload = {} } = req.body;
       const { runtimeManager } = require('../kernel/runtime-manager.cjs');
       
-
-
       const provider = runtimeManager.getProviderForCapability(intent);
       let data = null;
+      
+      const actionStr = intent.includes('.') ? intent.split('.')[1] : intent;
+      const mergedContext = { action: actionStr, ...context, ...payload };
 
       if (intent === 'memory.search' && typeof provider.search === 'function') {
-        data = await provider.search(context);
+        data = await provider.search(mergedContext);
       } else if (typeof provider.execute === 'function') {
-        data = await provider.execute(context);
+        data = await provider.execute(mergedContext);
       } else {
         throw new Error(`Provider for ${intent} lacks an execution method.`);
       }

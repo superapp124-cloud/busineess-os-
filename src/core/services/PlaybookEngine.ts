@@ -116,27 +116,53 @@ export class PlaybookEngineImpl {
       const capabilityType = CAPABILITY_RETRIEVAL_MAP[commitment.capability];
 
       try {
-        if (capabilityType === 'calendar') {
-          // Use CalendarService for real slot data (Google + Outlook + local)
-          results = await calendarService.getAvailableSlots(72);
-        } else if (capabilityType === 'flight') {
-          await import('../providers/FlightProvider');
+        if ((window as any).electronAPI?.invoke) {
+          const queryStr = playbook.buildSearchQuery ? playbook.buildSearchQuery(commitment.entities) : commitment.title;
+          results = await new Promise<any[]>((resolve) => {
+            const timeout = setTimeout(() => resolve([]), 15000);
+            
+            const handler = (event: any, data: any) => {
+              const payload = data || event; // handle different IPC event structures
+              if (!payload || !payload.results) return;
+              
+              const resMap: Record<string, any> = payload.results;
+              let rawOptions: any[] = [];
+              for (const nodeResult of Object.values(resMap)) {
+                const output = (nodeResult as any)?.output;
+                if (output?.options && Array.isArray(output.options)) {
+                  rawOptions = output.options;
+                  break;
+                } else if (output?.items && Array.isArray(output.items)) {
+                  rawOptions = output.items;
+                  break;
+                } else if (Array.isArray(output)) {
+                  rawOptions = output;
+                  break;
+                } else if (output && typeof output === 'object') {
+                  rawOptions = [output];
+                }
+              }
+              
+              clearTimeout(timeout);
+              if ((window as any).electronAPI.off) {
+                (window as any).electronAPI.off('execution:plan_completed', handler);
+              }
+              resolve(rawOptions);
+            };
+            
+            if ((window as any).electronAPI.on) {
+              (window as any).electronAPI.on('execution:plan_completed', handler);
+            }
+            
+            (window as any).electronAPI.invoke('kernel:intent:process', queryStr).catch((err: any) => {
+              console.error('[PlaybookEngine] Kernel error:', err);
+              resolve([]);
+            });
+          });
+        } else {
+          // Fallback
           const { universalRetrievalEngine } = await import('../providers/UniversalRetrievalEngine');
-          if (playbook.buildSearchQuery) {
-            const query = playbook.buildSearchQuery(commitment.entities);
-            results = await universalRetrievalEngine.retrieve('flight', query);
-          }
-        } else if (capabilityType === 'hotel') {
-          await import('../providers/HotelProvider');
-          const { universalRetrievalEngine } = await import('../providers/UniversalRetrievalEngine');
-          if (playbook.buildSearchQuery) {
-            const query = playbook.buildSearchQuery(commitment.entities);
-            results = await universalRetrievalEngine.retrieve('hotel', query);
-          }
-        } else if (playbook.buildSearchQuery) {
-          // Generic retrieval
-          const { universalRetrievalEngine } = await import('../providers/UniversalRetrievalEngine');
-          const query = playbook.buildSearchQuery(commitment.entities);
+          const query = playbook.buildSearchQuery ? playbook.buildSearchQuery(commitment.entities) : '';
           results = await universalRetrievalEngine.retrieve(capabilityType || 'generic', query);
         }
       } catch (err) {

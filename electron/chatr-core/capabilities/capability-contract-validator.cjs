@@ -33,7 +33,8 @@ class CapabilityContractValidator {
     const contracts = _getContracts();
     // Strip version suffix: "transport.book@2.0" → "transport.book"
     const baseId = capabilityId.split('@')[0];
-    return contracts.capabilities[baseId] || null;
+    const contractList = contracts.contracts || contracts.capabilities || {};
+    return contractList[baseId] || null;
   }
 
   /**

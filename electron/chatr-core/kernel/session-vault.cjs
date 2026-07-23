@@ -34,10 +34,6 @@ class SessionVault {
   async init() {
     if (this._loaded) return;
     // In a full implementation: read from disk, decrypt with safeStorage
-    // For P1.3 POC: in-memory only with mock pre-populated sessions
-    this._store.set('zomato', this._mockEntry('zomato', 'oauth', true));
-    this._store.set('swiggy', this._mockEntry('swiggy', 'oauth', true));
-    this._store.set('magicpin', this._mockEntry('magicpin', 'otp', false)); // Needs login
     this._loaded = true;
   }
 

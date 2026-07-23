@@ -24,7 +24,7 @@ export class SQLiteAdapter implements StorageProvider {
   private initializeSchema() {
     if (!this.db) throw new Error('Database not connected');
     
-    // Core OS Event Log
+    // Core OS Event Log (Legacy)
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS event_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,6 +33,83 @@ export class SQLiteAdapter implements StorageProvider {
         provider_id TEXT,
         created_at INTEGER NOT NULL
       )
+    `);
+
+    // --- Sprint 2: Execution Persistence Foundation ---
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS intents (
+        id TEXT PRIMARY KEY,
+        raw_text TEXT NOT NULL,
+        semantic_payload TEXT,
+        status TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        created_by TEXT,
+        correlation_id TEXT,
+        version INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS workflows (
+        id TEXT PRIMARY KEY,
+        intent_id TEXT NOT NULL,
+        capability_id TEXT NOT NULL,
+        execution_graph TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        created_by TEXT,
+        correlation_id TEXT,
+        version INTEGER NOT NULL,
+        FOREIGN KEY(intent_id) REFERENCES intents(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS executions (
+        id TEXT PRIMARY KEY,
+        workflow_id TEXT NOT NULL,
+        owner_id TEXT NOT NULL,
+        correlation_id TEXT NOT NULL,
+        status TEXT NOT NULL,
+        started_at INTEGER NOT NULL,
+        deadline_at INTEGER,
+        last_heartbeat_at INTEGER NOT NULL,
+        completed_at INTEGER,
+        execution_graph TEXT NOT NULL,
+        current_node_ids TEXT NOT NULL,
+        completed_node_ids TEXT NOT NULL,
+        failed_node_ids TEXT NOT NULL,
+        pending_node_ids TEXT NOT NULL,
+        current_context_version INTEGER NOT NULL,
+        retry_count INTEGER NOT NULL,
+        compensation_stack TEXT NOT NULL,
+        cancellation_token TEXT,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        created_by TEXT,
+        version INTEGER NOT NULL,
+        FOREIGN KEY(workflow_id) REFERENCES workflows(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS execution_contexts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        execution_id TEXT NOT NULL,
+        version INTEGER NOT NULL,
+        payload TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY(execution_id) REFERENCES executions(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS timeline_events (
+        id TEXT PRIMARY KEY,
+        execution_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        correlation_id TEXT NOT NULL,
+        causation_id TEXT,
+        timestamp INTEGER NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        payload TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY(execution_id) REFERENCES executions(id)
+      );
     `);
   }
 

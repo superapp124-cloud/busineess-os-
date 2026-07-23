@@ -1,318 +1,184 @@
 'use strict';
 
+const { Projection, projectionManager } = require('../kernel/projection-manager.cjs');
+const { bus } = require('../events/bus.cjs');
+
 /**
- * CHATR Kernel — World Model (Phase 5.1)
+ * CHATR Intelligence Platform — Unified World Model (UWM)
+ * Phase 1
  *
- * A traversable graph of relationships between the user, places, accounts,
- * executions, preferences, and connectors.
- *
- * Wraps the existing ExecutionMemory SQLite tables with a higher-level
- * graph query interface.
- *
- * Entities:
- *   User → Preferences → intent → connector
- *   User → Places      → home, office, frequent
- *   User → Accounts    → connected services
- *   User → Executions  → history of what ran
+ * The UWM is a comprehensive, multi-dimensional graph database projected 
+ * entirely from the Event Ledger. It replaces the simple WorldModel cache.
+ * 
+ * It maintains distinct semantic projections:
+ * - Personal Twin (identity, habits, preferences, energy, attention)
+ * - Business Twin (organizations, projects, finance constraints)
+ * - Social Graph (relationships, teams, family)
+ * - Goal Graph (long-term goals, milestones, dependencies)
+ * - Spatial/Temporal Graph (places, execution history)
  */
 
-const path = require('path');
-const fs   = require('fs');
+class UnifiedWorldModel extends Projection {
+  constructor() {
+    super('UnifiedWorldModel', '*'); // Listens to the global stream
 
-const log = (() => {
-  try { return require('electron-log'); } catch { return console; }
-})();
+    // Initialize the multiple semantic graphs
+    this._graphs = {
+      personal: new Map(),   // id -> person (identity, energy, attention)
+      business: new Map(),   // id -> company, project, constraint
+      social: new Map(),     // id -> relationship edge
+      spatial: new Map(),    // id -> place
+      preferences: new Map(),// id -> preference
+      executions: []         // temporal history of intents/actions
+    };
 
-let Database;
-try { Database = require('better-sqlite3'); } catch (e) { Database = null; }
-
-// ── DB Setup ─────────────────────────────────────────────────────────────────
-
-let db;
-function _getDb() {
-  if (db) return db;
-  if (!Database) return null;
-
-  let dbPath;
-  try {
-    const { app } = require('electron');
-    dbPath = path.join(app.getPath('userData'), 'world-model.sqlite');
-  } catch (e) {
-    const dir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    dbPath = path.join(dir, 'world-model.sqlite');
+    // Subscriptions
+    bus.subscribe('kernel.observation.created', (e) => this.applyEvent(e));
+    bus.subscribe('kernel.preference.updated', (e) => this.applyEvent(e));
+    bus.subscribe('kernel.execution.completed', (e) => this.applyEvent(e));
   }
 
-  db = new Database(dbPath);
+  // --- Projection Interface ---
 
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS wm_places (
-      id TEXT PRIMARY KEY,
-      label TEXT,        -- 'home', 'office', 'frequent'
-      name TEXT,
-      city TEXT,
-      country TEXT,
-      visit_count INTEGER DEFAULT 1,
-      last_visited DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+  applyEvent(envelope) {
+    const payload = envelope.payload || {};
 
-    CREATE TABLE IF NOT EXISTS wm_preferences (
-      intent TEXT,
-      field TEXT,
-      value TEXT,
-      score REAL DEFAULT 50,
-      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (intent, field)
-    );
+    if (envelope.event_type === 'kernel.observation.created') {
+      const type = payload.entity_type;
+      const id = payload.entity_id;
+      const data = payload.data || {};
 
-    CREATE TABLE IF NOT EXISTS wm_executions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      intent TEXT,
-      connector_id TEXT,
-      constraints_json TEXT,
-      result_summary TEXT,
-      executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_accounts (
-      service TEXT PRIMARY KEY,
-      connected INTEGER DEFAULT 0,
-      last_used DATETIME
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_people (
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      relation TEXT,
-      frequency INTEGER DEFAULT 1,
-      last_contacted DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_companies (
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      relation TEXT,       -- 'employer', 'client', 'vendor'
-      status TEXT DEFAULT 'active'
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_projects (
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      status TEXT,         -- 'active', 'archived'
-      deadline DATETIME,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_meetings (
-      id TEXT PRIMARY KEY,
-      title TEXT,
-      time DATETIME,
-      location TEXT,
-      participants TEXT    -- JSON array of participant IDs
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_documents (
-      id TEXT PRIMARY KEY,
-      title TEXT,
-      type TEXT,           -- 'invoice', 'contract', 'report'
-      path TEXT,
-      indexed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_goals (
-      id TEXT PRIMARY KEY,
-      description TEXT,
-      status TEXT DEFAULT 'in_progress',
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS wm_habits (
-      id TEXT PRIMARY KEY,
-      intent TEXT,
-      constraints_template TEXT,  -- JSON string with pre-filled constraints
-      trigger_condition TEXT,     -- e.g. "day_of_week=5"
-      confidence REAL DEFAULT 50,
-      executions INTEGER DEFAULT 0,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-
-  return db;
-}
-
-// ── World Model ───────────────────────────────────────────────────────────────
-
-class WorldModel {
-
-  // ── Habits (Adaptive Intelligence) ────────────────────────────────────────
-
-  /**
-   * Detects if there's a strong habit for a given intent.
-   * Simple baseline: queries recent executions of this intent.
-   * If the last 3 executions had the exact same constraints, consider it a habit.
-   */
-  detectHabit(intent) {
-    const db = _getDb();
-    if (!db) return null;
-
-    const rows = db.prepare(`
-      SELECT constraints_json
-      FROM wm_executions
-      WHERE intent = ?
-      ORDER BY executed_at DESC
-      LIMIT 3
-    `).all(intent);
-
-    if (rows.length < 3) return null;
-
-    // Check if all 3 are identical
-    const first = rows[0].constraints_json;
-    if (rows[1].constraints_json === first && rows[2].constraints_json === first) {
-      try {
-        return JSON.parse(first);
-      } catch { return null; }
+      if (type === 'person') {
+        const existing = this._graphs.personal.get(id) || {};
+        this._graphs.personal.set(id, { ...existing, ...data, last_observed: envelope.timestamp });
+      } 
+      else if (type === 'company' || type === 'constraint') {
+        const existing = this._graphs.business.get(id) || { entity_type: type };
+        this._graphs.business.set(id, { ...existing, ...data, entity_type: type, last_observed: envelope.timestamp });
+      }
+      else if (type === 'relationship') {
+        const existing = this._graphs.social.get(id) || {};
+        this._graphs.social.set(id, { ...existing, ...data, last_observed: envelope.timestamp });
+      }
+      else if (type === 'place') {
+        const place = this._graphs.spatial.get(id) || { visit_count: 0 };
+        this._graphs.spatial.set(id, {
+          ...place,
+          ...data,
+          visit_count: place.visit_count + 1,
+          last_visited: envelope.timestamp
+        });
+      }
+    } 
+    else if (envelope.event_type === 'kernel.preference.updated') {
+      const { intent, field, value, delta } = payload;
+      const key = `${intent}_${field}`;
+      const pref = this._graphs.preferences.get(key) || { score: 50 };
+      this._graphs.preferences.set(key, {
+        intent,
+        field,
+        value,
+        score: Math.min(100, pref.score + (delta || 5)),
+        last_updated: envelope.timestamp
+      });
     }
-    return null;
-  }
-
-  // ── Places ────────────────────────────────────────────────────────────────
-
-  savePlace(label, name, city, country = 'IN') {
-    const db = _getDb();
-    if (!db) return;
-    db.prepare(`
-      INSERT INTO wm_places (id, label, name, city, country)
-      VALUES (?, ?, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET visit_count = visit_count + 1, last_visited = CURRENT_TIMESTAMP
-    `).run(`${label}_${city}`, label, name, city, country);
-  }
-
-  getPlaces() {
-    const db = _getDb();
-    if (!db) return {};
-    const rows = db.prepare('SELECT * FROM wm_places ORDER BY visit_count DESC').all();
-    const result = {};
-    for (const r of rows) {
-      if (!result[r.label]) result[r.label] = [];
-      result[r.label].push(r);
+    else if (envelope.event_type === 'kernel.execution.completed') {
+      this._graphs.executions.push({
+        intent: payload.intent,
+        connector_id: payload.connectorId,
+        constraints: payload.constraints,
+        result_summary: payload.resultSummary,
+        executed_at: envelope.timestamp
+      });
     }
-    return result;
+  }
+
+  // --- Core Graph Query Interface ---
+
+  getPerson(id = 'user_1') {
+    return this._graphs.personal.get(id) || null;
+  }
+
+  getRelationships(personId = 'user_1') {
+    const relationships = [];
+    for (const rel of this._graphs.social.values()) {
+      if (rel.from === personId || rel.to === personId) {
+        relationships.push(rel);
+      }
+    }
+    return relationships;
+  }
+
+  getBusinessContext() {
+    return Array.from(this._graphs.business.values());
+  }
+
+  getConstraints(category) {
+    const constraints = [];
+    for (const item of this._graphs.business.values()) {
+      if (item.entity_type === 'constraint' && (!category || item.category === category)) {
+        constraints.push(item);
+      }
+    }
+    return constraints;
+  }
+
+  getPreferences(intent) {
+    const prefs = {};
+    for (const pref of this._graphs.preferences.values()) {
+      if (pref.intent === intent) {
+        prefs[pref.field] = { value: pref.value, score: pref.score };
+      }
+    }
+    return Object.keys(prefs).length > 0 ? prefs : null;
   }
 
   getFrequentRoutes(intent = 'transport.book') {
-    const db = _getDb();
-    if (!db) return [];
-    try {
-      const rows = db.prepare(`
-        SELECT constraints_json FROM wm_executions
-        WHERE intent = ?
-        ORDER BY executed_at DESC
-        LIMIT 10
-      `).all(intent);
-
-      return rows.map(r => {
-        try { return JSON.parse(r.constraints_json); } catch { return null; }
-      }).filter(Boolean);
-    } catch { return []; }
+    return this._graphs.executions
+      .filter(e => e.intent === intent)
+      .slice(-10)
+      .reverse()
+      .map(e => e.constraints)
+      .filter(Boolean);
   }
 
-  // ── Preferences ───────────────────────────────────────────────────────────
+  // --- Snapshot / Rebuild ---
 
-  /**
-   * Get learned preferences for an intent.
-   * Returns { preferredConnector, preferredMode, preferredFrom, ... }
-   */
-  getPreferences(intent) {
-    const db = _getDb();
-    if (!db) return null;
-    try {
-      const rows = db.prepare('SELECT field, value, score FROM wm_preferences WHERE intent = ? ORDER BY score DESC').all(intent);
-      if (rows.length === 0) return null;
-      const prefs = {};
-      for (const r of rows) prefs[r.field] = { value: r.value, score: r.score };
-      return prefs;
-    } catch { return null; }
+  getState() {
+    return {
+      personal: Array.from(this._graphs.personal.entries()),
+      business: Array.from(this._graphs.business.entries()),
+      social: Array.from(this._graphs.social.entries()),
+      spatial: Array.from(this._graphs.spatial.entries()),
+      preferences: Array.from(this._graphs.preferences.entries()),
+      executions: this._graphs.executions
+    };
   }
 
-  updatePreference(intent, field, value, delta = 5) {
-    const db = _getDb();
-    if (!db) return;
-    db.prepare(`
-      INSERT INTO wm_preferences (intent, field, value, score)
-      VALUES (?, ?, ?, 50)
-      ON CONFLICT(intent, field) DO UPDATE SET
-        value = excluded.value,
-        score = MIN(100, score + ?),
-        last_updated = CURRENT_TIMESTAMP
-    `).run(intent, field, value, delta);
-  }
-
-  // ── Executions ────────────────────────────────────────────────────────────
-
-  recordExecution(intent, connectorId, constraints, resultSummary) {
-    const db = _getDb();
-    if (!db) return;
-    try {
-      db.prepare(`
-        INSERT INTO wm_executions (intent, connector_id, constraints_json, result_summary)
-        VALUES (?, ?, ?, ?)
-      `).run(intent, connectorId, JSON.stringify(constraints), resultSummary || '');
-
-      // Update connector preference
-      this.updatePreference(intent, 'preferredConnector', connectorId, 3);
-
-      // Update route preference for transport
-      if (constraints.from?.value && constraints.to?.value) {
-        this.updatePreference(intent, 'preferredFrom', constraints.from.value, 2);
-      }
-
-      // Update place memory
-      if (constraints.from?.value) this.savePlace('frequent', constraints.from.value, constraints.from.value);
-      if (constraints.to?.value)   this.savePlace('frequent', constraints.to.value,   constraints.to.value);
-
-    } catch (e) {
-      log.warn('[WorldModel] recordExecution failed:', e.message);
+  loadState(state) {
+    if (state) {
+      this._graphs.personal = new Map(state.personal || []);
+      this._graphs.business = new Map(state.business || []);
+      this._graphs.social = new Map(state.social || []);
+      this._graphs.spatial = new Map(state.spatial || []);
+      this._graphs.preferences = new Map(state.preferences || []);
+      this._graphs.executions = state.executions || [];
     }
   }
 
-  // ── Accounts ──────────────────────────────────────────────────────────────
-
-  markAccountConnected(service) {
-    const db = _getDb();
-    if (!db) return;
-    db.prepare(`
-      INSERT INTO wm_accounts (service, connected) VALUES (?, 1)
-      ON CONFLICT(service) DO UPDATE SET connected = 1, last_used = CURRENT_TIMESTAMP
-    `).run(service);
-  }
-
-  getConnectedAccounts() {
-    const db = _getDb();
-    if (!db) return [];
-    try { return db.prepare('SELECT service FROM wm_accounts WHERE connected = 1').all().map(r => r.service); }
-    catch { return []; }
-  }
-
-  // ── Graph Query ───────────────────────────────────────────────────────────
-
-  /**
-   * Attempt to resolve a natural-language reference to a past execution.
-   * e.g. "the same train as last month" → { from, to, connector, ... }
-   */
-  queryPastExecution(hint, intent) {
-    const routes = this.getFrequentRoutes(intent);
-    if (routes.length === 0) return null;
-
-    const lower = hint.toLowerCase();
-
-    // "last month" → most recent execution
-    if (/last\s+month|last\s+time|same\s+as/i.test(lower)) {
-      return routes[0];
-    }
-
-    return null;
+  clear() {
+    this._graphs.personal.clear();
+    this._graphs.business.clear();
+    this._graphs.social.clear();
+    this._graphs.spatial.clear();
+    this._graphs.preferences.clear();
+    this._graphs.executions = [];
   }
 }
 
-const worldModel = new WorldModel();
-module.exports = { worldModel, WorldModel };
+// Singleton instantiation
+const worldModel = new UnifiedWorldModel();
+// Register and rebuild on boot
+projectionManager.rebuild(worldModel);
+
+module.exports = { worldModel, UnifiedWorldModel };

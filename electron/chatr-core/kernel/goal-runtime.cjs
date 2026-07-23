@@ -232,9 +232,28 @@ class GoalRuntime {
     const goal = this.goals.get(goalId);
     return goal ? JSON.parse(JSON.stringify(goal)) : null;
   }
+
+  recoverActiveGoals() {
+    const active = [];
+    for (const [id, goal] of this.goals.entries()) {
+      if (!TERMINAL_STATUSES.has(goal.status)) {
+        active.push(goal);
+      }
+    }
+    return active;
+  }
+}
+
+let _instance = null;
+function getGoalRuntime() {
+  if (!_instance) {
+    _instance = new GoalRuntime();
+  }
+  return _instance;
 }
 
 module.exports = {
   GoalRuntime,
-  GoalStatus
+  GoalStatus,
+  getGoalRuntime
 };

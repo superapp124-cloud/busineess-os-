@@ -5,9 +5,9 @@ import { CommunitiesHome } from './CommunitiesHome';
 import { useNavigate } from 'react-router-dom';
 
 interface CommunitiesTabProps {
-  userId: string;
+ userId: string;
 }
 
 export function CommunitiesTab({ userId }: CommunitiesTabProps) {
-  return <CommunitiesHome userId={userId} />;
+ return <CommunitiesHome userId={userId} />;
 }

@@ -5,15 +5,15 @@ import { useOfflineUploadQueue } from '@/hooks/useOfflineUploadQueue';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 interface NativeBackgroundServicesProps {
-  userId?: string;
+ userId?: string;
 }
 
 export const NativeBackgroundServices = ({ userId }: NativeBackgroundServicesProps) => {
-  useAutoContactSync(userId);
-  usePushNotifications(userId);
-  useBatteryOptimization();
-  useOfflineUploadQueue();
-  useGeofencing(userId);
+ useAutoContactSync(userId);
+ usePushNotifications(userId);
+ useBatteryOptimization();
+ useOfflineUploadQueue();
+ useGeofencing(userId);
 
-  return null;
+ return null;
 };

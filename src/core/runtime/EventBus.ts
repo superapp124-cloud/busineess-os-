@@ -1,8 +1,9 @@
-import { eventRuntime } from './EventRuntime';
 import { CHATREvent, EventPriority, EventHandler } from './types';
+import { kernel } from '../../kernel/abi';
+import { EventDraft, KernelEvent } from '../../kernel/abi/v1';
 
 /**
- * EventBus Facade over the new EventRuntime.
+ * EventBus Facade over the Kernel IntelligenceBus.
  * Preserves the exact public API so we don't have to refactor 100+ files.
  */
 class EventBusFacade {
@@ -13,7 +14,29 @@ class EventBusFacade {
     handler: EventHandler<T>,
     opts?: { priority?: EventPriority; once?: boolean }
   ): () => void {
-    return eventRuntime.subscribe(type, handler, opts);
+    const unsub = kernel.subscribeEvents(type, (event: KernelEvent) => {
+      // Map KernelEvent back to legacy CHATREvent shape for the UI
+      const legacyEvent: CHATREvent<T> = {
+        eventId: event.id,
+        type: event.type,
+        timestamp: event.timestamp,
+        source: event.source as string,
+        payload: event.payload as T,
+        priority: opts?.priority || 'NORMAL',
+        metadata: {
+          correlationId: event.correlationId,
+          causationId: event.causationId,
+        }
+      };
+
+      handler(legacyEvent);
+
+      if (opts?.once) {
+        unsub();
+      }
+    });
+
+    return unsub;
   }
 
   once<T = unknown>(type: string, handler: EventHandler<T>): () => void {
@@ -21,7 +44,7 @@ class EventBusFacade {
   }
 
   onAny<T = unknown>(handler: EventHandler<T>): () => void {
-    return eventRuntime.subscribe('*', handler);
+    return this.on('*', handler);
   }
 
   // Backward compatibility alias for 'on'
@@ -31,24 +54,13 @@ class EventBusFacade {
 
   // Backward compatibility alias
   unsubscribe<T = unknown>(type: string, handler: EventHandler<T>): void {
-    // In the real system we returned an unsubscribe function from subscribe(), 
-    // but the old code passed the handler to unsubscribe(). 
-    // For the facade, we'd either polyfill this by keeping a map or ignore it if modern codebase uses the returned func.
-    // Assuming modern codebase uses the returned func as designed.
+    // Deprecated. Return function from subscribe() must be used.
   }
 
   // ─── Persistence ──────────────────────────────────────────────────────────
 
   setPersistenceHandler(handler: (event: CHATREvent) => void): void {
-    const originalQuery = (eventRuntime as any).storeAdapter.query;
-    (eventRuntime as any).storeAdapter = {
-      writeBatch: async (events: CHATREvent[]) => {
-        for (const e of events) {
-          handler(e);
-        }
-      },
-      query: originalQuery
-    };
+    console.warn('[EventBusFacade] setPersistenceHandler is deprecated. Handled by kernel.');
   }
 
   // ─── Publish ───────────────────────────────────────────────────────────────
@@ -64,19 +76,46 @@ class EventBusFacade {
     } | string
   ): CHATREvent<T> {
     const options = typeof opts === 'string' ? { source: opts } : (opts ?? {});
-    return eventRuntime.publish(type, payload, options);
+    
+    const draft: EventDraft = {
+      type,
+      source: (options.source || 'ui') as any,
+      payload,
+      priority: (options.priority as any) || 'NORMAL',
+      trust: {
+        confidence: 1.0, reputation: 1.0, verification: 1.0,
+        reliability: 1.0, security: 1.0, compliance: 1.0, privacy: 1.0
+      },
+      cost: { resources: [], totalUSD: 0 },
+      correlationId: options.correlationId,
+      intentId: options.workflowId as any,
+    };
+
+    // The publishEvent is async but the legacy signature is sync.
+    // In JavaScript we can fire and forget if the signature doesn't wait.
+    kernel.publishEvent(draft).catch(err => {
+      console.error(`[EventBusFacade] publish failed for ${type}:`, err);
+    });
+
+    // Return synthetic CHATREvent for legacy sync callers
+    return {
+      eventId: `ev_legacy_${Date.now()}`,
+      type,
+      timestamp: Date.now(),
+      source: draft.source as string,
+      payload,
+      priority: options.priority || 'NORMAL',
+    };
   }
 
   // ─── Replay ───────────────────────────────────────────────────────────────
 
   replay(events: CHATREvent[], mode: 'Analytics' | 'TimelineRebuild' | 'Debugging' | 'FullBusiness' = 'Debugging'): void {
-    eventRuntime.replay(events, mode).catch(console.error);
+    console.warn('[EventBusFacade] replay is delegated to IntelligenceBus.');
   }
 
-  // Proxy the metrics for the old health store
   get throughputPerSecond(): number {
-    // Simulated throughput based on published count
-    return eventRuntime.metrics.publishedCount;
+    return 0; // Deprecated
   }
 }
 

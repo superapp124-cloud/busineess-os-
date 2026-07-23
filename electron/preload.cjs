@@ -51,6 +51,8 @@ const validInvokeChannels = [
   'kernel:intent',
   'kernel:intent:process',
   'kernel:intent:resume',
+  'kernel:intent:hero',
+  'kernel:location:provide',
   'kernel:execution:approve',
   'kernel:execution:reject',
   // Provider Session Platform (P1.3) — status only, never credentials
@@ -75,7 +77,16 @@ const validInvokeChannels = [
   // Connector Marketplace
   'marketplace:get-catalog',
   'marketplace:install',
-  'marketplace:remove'
+  'marketplace:remove',
+  // Layer 4: Intelligence
+  'intelligence:getGoalGraph',
+  'intelligence:createGoal',
+  'intelligence:getDailyActionPlan',
+  'intelligence:projectFuture',
+  'intelligence:triggerDailyLoop',
+  'intelligence:getExecutiveFeed',
+  'intelligence:triggerScenario',
+  'intelligence:syncContext'
 ];
 
 const validListenChannels = [
@@ -101,7 +112,22 @@ const validListenChannels = [
   'execution:browser_step',
   'execution:capability_started',
   'execution:capability_completed',
-  'background:job_completed'
+  'background:job_completed',
+  // Hero Experience — Sprint 2 streaming events
+  'hero:intent.understood',
+  'hero:location.resolved',
+  'hero:location.missing',
+  'hero:context.resolving',
+  'hero:context.resolved',
+  'hero:provider.discovery.started',
+  'hero:provider.discovery.completed',
+  'hero:decision.completed',
+  'hero:checkout.ready',
+  'hero:error',
+  // Intelligence events
+  'INTELLIGENCE.DAILY_PLAN_READY',
+  'INTELLIGENCE.EVENING_REVIEW_COMPLETED',
+  'INTELLIGENCE.DAILY_LOOP_STARTED'
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -213,5 +239,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   kernel: {
     invoke: (action, request) => ipcRenderer.invoke(`kernel:${action}`, request),
+  },
+
+  intelligence: {
+    getGoalGraph: () => ipcRenderer.invoke('intelligence:getGoalGraph'),
+    createGoal: (data) => ipcRenderer.invoke('intelligence:createGoal', data),
+    getDailyActionPlan: () => ipcRenderer.invoke('intelligence:getDailyActionPlan'),
+    projectFuture: (goalId) => ipcRenderer.invoke('intelligence:projectFuture', goalId),
+    triggerDailyLoop: (type) => ipcRenderer.invoke('intelligence:triggerDailyLoop', type),
+    getExecutiveFeed: () => ipcRenderer.invoke('intelligence:getExecutiveFeed'),
+    triggerScenario: (scenario) => ipcRenderer.invoke('intelligence:triggerScenario', scenario),
+    syncContext: () => ipcRenderer.invoke('intelligence:syncContext'),
   },
 });

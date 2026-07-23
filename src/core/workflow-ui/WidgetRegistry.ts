@@ -6,7 +6,8 @@
  * It always asks the registry, making the system fully extensible.
  *
  * Usage:
- *   widgetRegistry.register('progress', ProgressWidget);
+ *   widgetRegistry.register('approval', ApprovalWidget);
+ *   widgetRegistry.register('weather', WeatherWidget);
  *   widgetRegistry.register('selection', SelectionWidget, '2.0');
  *   const Component = widgetRegistry.resolve('progress'); // → ProgressWidget
  */
@@ -18,6 +19,7 @@ import { ReminderWidget } from './widgets/ReminderWidget';
 import { MeetingWidget } from './widgets/MeetingWidget';
 import { FlightBookingWidget } from './widgets/FlightBookingWidget';
 import { FoodOrderingWidget } from './widgets/FoodOrderingWidget';
+import { WeatherWidget } from './widgets/WeatherWidget';
 import { LoadingWidget } from './widgets/LoadingWidget';
 import { ApprovalWidget } from './widgets/ApprovalWidget';
 import { ResultWidget } from './widgets/ResultWidget';

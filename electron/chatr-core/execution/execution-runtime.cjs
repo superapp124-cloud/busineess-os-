@@ -16,7 +16,7 @@
  */
 
 const crypto = require('crypto');
-const { BaseRuntime } = require('../runtimes/interfaces.cjs');
+const { BaseRuntime } = require('../services/interfaces.cjs');
 
 const log = (() => {
   try { return require('electron-log'); } catch { return console; }
@@ -79,6 +79,47 @@ function _simulateCapability(capabilityId, parameters) {
         text:     'Document content placeholder.',
         entities: [],
         summary:  'Document analyzed successfully (simulation mode).'
+      };
+
+    case 'transport.search':
+      return {
+        options: [
+          { optionId: `trn_${Date.now()}_1`, provider: 'irctc', providerName: 'IRCTC', title: `Train to ${parameters.to || 'Destination'}`, subtitle: 'Departs at 08:30 AM', price: 1250, currency: 'INR', availability: 'available', confidence: 95, badges: ['FASTEST'] },
+          { optionId: `trn_${Date.now()}_2`, provider: 'irctc', providerName: 'IRCTC', title: `Train to ${parameters.to || 'Destination'}`, subtitle: 'Departs at 10:15 AM', price: 950, currency: 'INR', availability: 'available', confidence: 92, badges: ['RECOMMENDED'] },
+          { optionId: `trn_${Date.now()}_3`, provider: 'irctc', providerName: 'IRCTC', title: `Train to ${parameters.to || 'Destination'}`, subtitle: 'Departs at 02:45 PM', price: 650, currency: 'INR', availability: 'available', confidence: 85, badges: ['BUDGET'] }
+        ]
+      };
+
+    case 'transport.book':
+      return {
+        orderId: `TKT${Date.now()}`,
+        status: 'confirmed',
+        message: 'Tickets booked successfully'
+      };
+
+    case 'travel.hotel_search':
+      return {
+        options: [
+          { optionId: `htl_${Date.now()}_1`, provider: 'agoda', providerName: 'Agoda', title: `Taj Resort & Spa, ${parameters.location || 'City'}`, subtitle: '5-Star Luxury · Beachfront', price: 14500, currency: 'INR', availability: 'available', confidence: 98, badges: ['LUXURY', 'TOP RATED'] },
+          { optionId: `htl_${Date.now()}_2`, provider: 'booking', providerName: 'Booking.com', title: `Lemon Tree Hotel, ${parameters.location || 'City'}`, subtitle: '4-Star · Near Airport', price: 4200, currency: 'INR', availability: 'available', confidence: 92, badges: ['RECOMMENDED'] },
+          { optionId: `htl_${Date.now()}_3`, provider: 'makemytrip', providerName: 'MakeMyTrip', title: `Backpacker's Hostel, ${parameters.location || 'City'}`, subtitle: 'Budget Stay · Free WiFi', price: 899, currency: 'INR', availability: 'available', confidence: 88, badges: ['BUDGET'] }
+        ]
+      };
+
+    case 'utility.bill_pay':
+      return {
+        options: [
+          { optionId: `bill_${Date.now()}_1`, provider: 'paytm', providerName: 'Paytm', title: `${parameters.billType ? parameters.billType.charAt(0).toUpperCase() + parameters.billType.slice(1) : 'Electricity'} Bill`, subtitle: 'Instant Payment · Zero Fees', price: 1250, currency: 'INR', availability: 'available', confidence: 99, badges: ['FASTEST'] },
+          { optionId: `bill_${Date.now()}_2`, provider: 'phonepe', providerName: 'PhonePe', title: `${parameters.billType ? parameters.billType.charAt(0).toUpperCase() + parameters.billType.slice(1) : 'Electricity'} Bill`, subtitle: 'Assured Cashback', price: 1250, currency: 'INR', availability: 'available', confidence: 95, badges: ['RECOMMENDED'] }
+        ]
+      };
+
+    case 'government.passport_renew':
+      return {
+        options: [
+          { optionId: `pspt_${Date.now()}_1`, provider: 'passportseva', providerName: 'Passport Seva', title: 'Normal Renewal', subtitle: 'Processing time: 30 days', price: 1500, currency: 'INR', availability: 'available', confidence: 99, badges: ['RECOMMENDED'] },
+          { optionId: `pspt_${Date.now()}_2`, provider: 'passportseva', providerName: 'Passport Seva', title: 'Tatkaal Renewal', subtitle: 'Processing time: 3 days', price: 3500, currency: 'INR', availability: 'available', confidence: 95, badges: ['FASTEST'] }
+        ]
       };
 
     case 'background.schedule':

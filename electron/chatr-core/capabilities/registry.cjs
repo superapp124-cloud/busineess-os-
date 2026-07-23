@@ -1,114 +1,162 @@
-'use strict';
-
 /**
- * CHATR Kernel v2.0 — Capability Registry
+ * Capability Registry (Capability Intelligence)
  *
- * Loads capability-catalog.json at startup and provides lookup methods
- * for the rest of the kernel to resolve capabilities by ID, domain, or policy group.
+ * Provides intelligent discovery and version negotiation for capabilities.
+ * It only returns Capabilities that have an authentic CapabilityCertificate.
  */
 
+const fs = require('fs');
 const path = require('path');
-const fs   = require('fs');
-
-const log = (() => {
-  try { return require('electron-log'); } catch { return console; }
-})();
-
-const CATALOG_PATH = path.join(__dirname, 'capability-catalog.json');
 
 class CapabilityRegistry {
   constructor() {
-    this._capabilities = new Map();
-    this._loaded = false;
-    this._load();
+    this.capabilities = new Map(); // id -> map(version -> metadata)
+    this.registryDir = path.join(__dirname, 'registry');
+    this._loadCertifiedCapabilities();
   }
 
-  // ── Private ──────────────────────────────────────────────────────────────
+  _loadCertifiedCapabilities() {
+    if (!fs.existsSync(this.registryDir)) {
+      fs.mkdirSync(this.registryDir, { recursive: true });
+      return;
+    }
 
-  _load() {
-    try {
-      const raw  = fs.readFileSync(CATALOG_PATH, 'utf8');
-      const data = JSON.parse(raw);
+    const files = fs.readdirSync(this.registryDir).filter(f => f.endsWith('.json'));
+    for (const file of files) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(this.registryDir, file), 'utf8'));
+        const id = data.manifest.identity.id;
+        const version = data.manifest.identity.version;
 
-      for (const cap of (data.capabilities || [])) {
-        this._capabilities.set(cap.id, cap);
+        if (!this.capabilities.has(id)) {
+          this.capabilities.set(id, new Map());
+        }
+        this.capabilities.get(id).set(version, data);
+      } catch (err) {
+        console.error(`[Registry] Failed to load certified capability from ${file}: ${err.message}`);
       }
-
-      this._loaded = true;
-      log.info(`[CapabilityRegistry] Loaded ${this._capabilities.size} capabilities from catalog v${data.schemaVersion}`);
-    } catch (err) {
-      log.error('[CapabilityRegistry] Failed to load capability catalog:', err.message);
     }
   }
 
-  // ── Public API ────────────────────────────────────────────────────────────
-
   /**
-   * Returns a single capability definition by ID.
-   * @param {string} id
-   * @returns {object|null}
+   * Capability Intelligence: Which capabilities satisfy this intent?
+   * @param {string} intentType E.g. 'hr.job.application'
+   * @param {string} kernelVersion The ABI version of the running Kernel (e.g., '1.1')
    */
-  getCapability(id) {
-    return this._capabilities.get(id) || null;
+  findCapabilitiesForIntent(intentType, kernelVersion) {
+    const matches = [];
+
+    for (const [id, versions] of this.capabilities.entries()) {
+      for (const [version, data] of versions.entries()) {
+        const { manifest, certificate } = data;
+        
+        // Check Intent matching
+        if (manifest.runtime.intentTypes.includes(intentType)) {
+          // ABI Compatibility Check (Version Negotiation)
+          const minKernel = parseFloat(manifest.metadata.minKernelVersion || '1.0');
+          const currentKernel = parseFloat(kernelVersion || '1.0');
+          
+          if (currentKernel >= minKernel) {
+            matches.push({
+              id,
+              version,
+              manifest,
+              certificate
+            });
+          }
+        }
+      }
+    }
+
+    return matches;
   }
 
-  /**
-   * Returns all capability definitions.
-   * @returns {object[]}
-   */
+  getCapability(id, version) {
+    if (this.capabilities.has(id)) {
+      return this.capabilities.get(id).get(version);
+    }
+    return null;
+  }
+
   getAllCapabilities() {
-    return Array.from(this._capabilities.values());
-  }
-
-  /**
-   * Returns capabilities belonging to a specific domain.
-   * @param {string} domain
-   * @returns {object[]}
-   */
-  getByDomain(domain) {
-    return this.getAllCapabilities().filter(c => c.domain === domain);
-  }
-
-  /**
-   * Returns all unique domain strings.
-   * @returns {string[]}
-   */
-  getDomains() {
-    const domains = new Set();
-    for (const cap of this._capabilities.values()) {
-      domains.add(cap.domain);
+    const all = [];
+    for (const [id, versions] of this.capabilities.entries()) {
+      for (const [version, data] of versions.entries()) {
+        all.push(data.manifest || data); // some places might expect the raw object or manifest
+      }
     }
-    return Array.from(domains);
-  }
-
-  /**
-   * Returns true if the capability requires user approval before execution.
-   * @param {string} id
-   * @returns {boolean}
-   */
-  requiresApproval(id) {
-    const cap = this.getCapability(id);
-    return cap ? cap.approval === 'always' : false;
-  }
-
-  /**
-   * Returns the policy group string for a capability.
-   * @param {string} id
-   * @returns {string}
-   */
-  getPolicyGroup(id) {
-    const cap = this.getCapability(id);
-    return cap ? cap.policyGroup : 'safe';
-  }
-
-  /**
-   * Returns true if the registry loaded successfully.
-   * @returns {boolean}
-   */
-  isLoaded() {
-    return this._loaded;
+    return all;
   }
 }
 
-const capabilityRegistry = new CapabilityRegistry();
-module.exports = { capabilityRegistry, CapabilityRegistry };
+class ProviderRegistry {
+  constructor() {
+    this.providers = new Map(); // id -> map(version -> metadata)
+    this.registryDir = path.join(__dirname, '../providers/registry');
+    this._loadCertifiedProviders();
+  }
+
+  _loadCertifiedProviders() {
+    if (!fs.existsSync(this.registryDir)) {
+      fs.mkdirSync(this.registryDir, { recursive: true });
+      return;
+    }
+
+    const files = fs.readdirSync(this.registryDir).filter(f => f.endsWith('.json'));
+    for (const file of files) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(this.registryDir, file), 'utf8'));
+        const id = data.manifest.identity.id;
+        const version = data.manifest.identity.version;
+
+        if (!this.providers.has(id)) {
+          this.providers.set(id, new Map());
+        }
+        this.providers.get(id).set(version, data);
+      } catch (err) {
+        console.error(`[Registry] Failed to load certified provider from ${file}: ${err.message}`);
+      }
+    }
+  }
+
+  /**
+   * Capability -> Provider Compatibility Matrix
+   * Computes compatibility purely via declarative requirements.
+   */
+  getCompatibleProviders(capabilityManifest) {
+    const matches = [];
+    const requiredAuth = capabilityManifest.runtime.requirements?.auth || [];
+    const requiredOps = capabilityManifest.runtime.requirements?.operations || [];
+
+    for (const [id, versions] of this.providers.entries()) {
+      for (const [version, data] of versions.entries()) {
+        const providerManifest = data.manifest;
+
+        // Check if provider explicitly supports this capability
+        if (!providerManifest.capabilities.includes(capabilityManifest.identity.id)) {
+          continue;
+        }
+
+        // Check explicit authentication contract requirements
+        if (requiredAuth.length > 0 && !requiredAuth.includes(providerManifest.authentication.type)) {
+           continue;
+        }
+
+        // Check explicit operational pattern requirements (e.g., Streaming, Webhook)
+        const supportedPatterns = providerManifest.operations.patterns || [];
+        const missingOps = requiredOps.filter(op => !supportedPatterns.includes(op));
+        if (missingOps.length > 0) {
+           continue;
+        }
+
+        matches.push(data);
+      }
+    }
+    return matches;
+  }
+}
+
+module.exports = {
+  CapabilityRegistry: new CapabilityRegistry(),
+  ProviderRegistry: new ProviderRegistry()
+};

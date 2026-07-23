@@ -8,19 +8,19 @@ import { Toaster as Sonner } from './ui/sonner';
 // Do NOT add ProductionCallNotifications here - it creates duplicate listeners
 
 interface AppLayoutProps {
-  children: React.ReactNode;
-  user: any;
-  profile: any;
+ children: React.ReactNode;
+ user: any;
+ profile: any;
 }
 
 export const AppLayout = ({ children, user, profile }: AppLayoutProps) => {
-  return (
-    <>
-      <NetworkStatus />
-      <InstallPWAPrompt />
-      {children}
-      <Toaster />
-      <Sonner />
-    </>
-  );
+ return (
+ <>
+ <NetworkStatus />
+ <InstallPWAPrompt />
+ {children}
+ <Toaster />
+ <Sonner />
+ </>
+ );
 };

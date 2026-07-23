@@ -2,37 +2,16 @@
 
 const crypto = require('crypto');
 const { TransactionAuditLog } = require('./transaction-audit-log.cjs');
+const { ledger } = require('../events/ledger.cjs');
+const { bus } = require('../events/bus.cjs');
 
 /**
- * CHATR Kernel — Transaction Engine
- * Platform Milestone P1.4
+ * CHATR Kernel — Transaction Engine (Refounded)
+ * Platform Milestone P1.4 -> OS Refoundation
  *
  * The single authority for transaction lifecycle.
- * Responsible for creating, transitioning, and recovering transactions.
- *
- * Transaction State Machine:
- *
- *   PENDING
- *     │
- *     ▼ dispatchPayment()
- *   PAYMENT_PENDING
- *     │
- *     ├──(confirmed)──► PAYMENT_CONFIRMED
- *     │                        │
- *     │                        ▼ verify()
- *     │                 VERIFIED ──► TRACKING
- *     │
- *     ├──(retryable)──► PAYMENT_RETRYABLE
- *     │                        │
- *     │                        ▼ retry()
- *     │                 PAYMENT_PENDING (loop)
- *     │
- *     └──(hard fail)──► PAYMENT_FAILED
- *                              │
- *                              ▼ cancel()
- *                       PAYMENT_CANCELLED
- *
- * ABI: chatr.transaction.v0_9_rc
+ * Now fully EVENT-SOURCED. All state rebuilt exclusively via replay.
+ * State is projected in memory, but sourced durably from the Event Ledger.
  */
 
 const ABI_VERSION = 'chatr.transaction.v0_9_rc';
@@ -64,26 +43,57 @@ const LEGAL_TRANSITIONS = {
 
 class TransactionEngine {
   constructor(options = {}) {
-    this._bus = options.bus;
+    this._bus = options.bus || bus;
     this._auditLog = options.auditLog || new TransactionAuditLog();
-    // Store: transactionId -> transaction object
+    
+    // Projections (Rebuilt via replay. Persistence handled by ledger.append via bus)
     this._transactions = new Map();
-    // Idempotency store: idempotency_key -> transactionId
     this._idempotencyKeys = new Map();
+    
+    // Subscribe to rebuild events in real-time
+    this._bus.subscribe('kernel.transaction.created', (envelope) => this._applyEvent(envelope));
+    this._bus.subscribe('kernel.transaction.state_changed', (envelope) => this._applyEvent(envelope));
+  }
+
+  /**
+   * REBUILD PROJECTION FROM LEDGER
+   * Replays all transaction events to rebuild the in-memory state.
+   */
+  rebuildFromLedger() {
+    this._transactions.clear();
+    this._idempotencyKeys.clear();
+    
+    const events = ledger.readAll();
+    for (const envelope of events) {
+      if (envelope.event_type.startsWith('kernel.transaction.')) {
+        this._applyEvent(envelope);
+      }
+    }
+  }
+
+  /**
+   * Internal projection logic: applies an event to the local in-memory Map
+   */
+  _applyEvent(envelope) {
+    const payload = envelope.payload || {};
+    
+    if (envelope.event_type === 'kernel.transaction.created') {
+      this._transactions.set(payload.transaction_id, { ...payload });
+      if (payload.idempotency_key) {
+        this._idempotencyKeys.set(payload.idempotency_key, payload.transaction_id);
+      }
+    } else if (envelope.event_type === 'kernel.transaction.state_changed') {
+      const tx = this._transactions.get(payload.transaction_id);
+      if (tx) {
+        tx.status = payload.status;
+        tx.updated_at = payload.updated_at;
+        tx.retry_count = payload.retry_count;
+      }
+    }
   }
 
   /**
    * Create a new transaction.
-   * Returns a chatr.transaction.v0_9_rc ABI object — safe for IPC.
-   *
-   * @param {object} params
-   * @param {string} params.goalId
-   * @param {string} params.provider
-   * @param {number} params.amount
-   * @param {string} params.currency
-   * @param {string} params.entityType  e.g. 'restaurant_order', 'flight_booking', 'hotel_reservation'
-   * @param {string} [params.idempotencyKey]  Caller-provided. Prevents double-charge.
-   * @param {boolean} params.paymentRequired
    */
   create(params) {
     const {
@@ -95,19 +105,17 @@ class TransactionEngine {
       paymentRequired = true,
     } = params;
 
-    // ── Idempotency check ──────────────────────────────────────────────
     const idempotencyKey = params.idempotencyKey || `${goalId}_${provider}_${amount}`;
     if (this._idempotencyKeys.has(idempotencyKey)) {
       const existingId = this._idempotencyKeys.get(idempotencyKey);
       const existing = this._transactions.get(existingId);
-      this._auditLog.append(existingId, 'DUPLICATE_REJECTED', { idempotencyKey });
-      return this._buildABI(existing);
+      return existing;
     }
 
     const transactionId = `txn_${crypto.randomUUID()}`;
     const now = new Date().toISOString();
 
-    const transaction = {
+    const transactionPayload = {
       abi: ABI_VERSION,
       transaction_id: transactionId,
       idempotency_key: idempotencyKey,
@@ -123,17 +131,20 @@ class TransactionEngine {
       retry_count: 0,
     };
 
-    this._transactions.set(transactionId, transaction);
-    this._idempotencyKeys.set(idempotencyKey, transactionId);
-    this._auditLog.append(transactionId, 'CREATED', { provider, amount, entityType });
-    this._publish('kernel.transaction.created', this._buildABI(transaction));
+    // We no longer set the Map directly here. We publish to the bus.
+    // The bus will append to the ledger, then emit back, which triggers _applyEvent.
+    this._bus.publish('kernel.transaction.created', transactionPayload, {
+      correlationId: transactionId
+    });
 
-    return this._buildABI(transaction);
+    this._auditLog.append(transactionId, 'CREATED', { provider, amount, entityType });
+
+    // Since pub/sub is synchronous in EventEmitter, this._transactions will have it now
+    return this._transactions.get(transactionId) || transactionPayload;
   }
 
   /**
    * Transition a transaction to a new status.
-   * Enforces the legal state transition table.
    */
   transition(transactionId, newStatus, metadata = {}) {
     const tx = this._transactions.get(transactionId);
@@ -144,25 +155,29 @@ class TransactionEngine {
       throw new Error(`Illegal transition: ${tx.status} → ${newStatus} for transaction ${transactionId}`);
     }
 
-    tx.status = newStatus;
-    tx.updated_at = new Date().toISOString();
-    if (newStatus === TRANSACTION_STATUS.PAYMENT_RETRYABLE) {
-      tx.retry_count += 1;
-    }
+    const payload = {
+      transaction_id: transactionId,
+      status: newStatus,
+      updated_at: new Date().toISOString(),
+      retry_count: newStatus === TRANSACTION_STATUS.PAYMENT_RETRYABLE ? tx.retry_count + 1 : tx.retry_count,
+      metadata
+    };
+
+    // Emit event -> hits ledger -> emitted -> _applyEvent updates Map
+    this._bus.publish('kernel.transaction.state_changed', payload, {
+      correlationId: transactionId
+    });
 
     this._auditLog.append(transactionId, `STATUS_CHANGED_TO_${newStatus}`, metadata);
-    this._publish('kernel.transaction.state_changed', { ...this._buildABI(tx), metadata });
 
-    return this._buildABI(tx);
+    return this._transactions.get(transactionId);
   }
 
   /**
    * Get a transaction ABI by ID.
    */
   get(transactionId) {
-    const tx = this._transactions.get(transactionId);
-    if (!tx) return null;
-    return this._buildABI(tx);
+    return this._transactions.get(transactionId) || null;
   }
 
   /**
@@ -171,35 +186,15 @@ class TransactionEngine {
   auditTrail(transactionId) {
     return this._auditLog.forTransaction(transactionId);
   }
-
-  // ─── Private ────────────────────────────────────────────────────────────
-
-  _buildABI(tx) {
-    // Safe-for-IPC projection — no payment credentials included
-    return {
-      abi: tx.abi,
-      transaction_id: tx.transaction_id,
-      goal_id: tx.goal_id,
-      provider: tx.provider,
-      status: tx.status,
-      amount: tx.amount,
-      currency: tx.currency,
-      entity_type: tx.entity_type,
-      payment_required: tx.payment_required,
-      retry_count: tx.retry_count,
-      created_at: tx.created_at,
-      updated_at: tx.updated_at,
-    };
-  }
-
-  _publish(event, data) {
-    if (this._bus) this._bus.publish(event, data);
-  }
 }
 
 let _instance = null;
 function getTransactionEngine(options = {}) {
-  if (!_instance) _instance = new TransactionEngine(options);
+  if (!_instance) {
+    _instance = new TransactionEngine(options);
+    // Boot: replay history to rebuild projection
+    _instance.rebuildFromLedger();
+  }
   return _instance;
 }
 

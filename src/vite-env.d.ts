@@ -66,5 +66,15 @@ interface Window {
         durationSeconds?: number;
       }) => Promise<{ ok: boolean; path?: string; error?: string }>;
     };
+    intelligence?: {
+      getGoalGraph: () => Promise<any>;
+      createGoal: (data: any) => Promise<any>;
+      getDailyActionPlan: () => Promise<any>;
+      projectFuture: (goalId: string) => Promise<any>;
+      triggerDailyLoop: (type: 'morning' | 'evening') => Promise<any>;
+      getExecutiveFeed: () => Promise<any>;
+      triggerScenario: (scenario?: string) => Promise<boolean>;
+      syncContext: () => Promise<boolean>;
+    };
   };
 }

@@ -6,12 +6,12 @@ import { useState, useCallback } from 'react';
  */
 
 export function useGestureDetection(_onGestureDetected: (gesture: string) => void) {
-  const [isReady] = useState(false);
-  const [error] = useState<string | null>('Gesture detection is disabled');
+ const [isReady] = useState(false);
+ const [error] = useState<string | null>('Gesture detection is disabled');
 
-  const detectGesture = useCallback((_video: HTMLVideoElement) => {
-    // No-op: gesture detection disabled
-  }, []);
+ const detectGesture = useCallback((_video: HTMLVideoElement) => {
+ // No-op: gesture detection disabled
+ }, []);
 
-  return { isReady, error, detectGesture };
+ return { isReady, error, detectGesture };
 }

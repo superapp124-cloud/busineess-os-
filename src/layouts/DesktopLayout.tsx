@@ -33,6 +33,8 @@ import {
   Globe,
   Zap,
   Package,
+  UserPlus,
+  Bot,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -64,21 +66,25 @@ const NAV_SECTIONS = [
       { icon: MessageSquare, label: 'Chat',       subtitle: 'Messages & Conversations', path: '/desktop/chat' },
       { icon: Inbox,         label: 'Inbox',      subtitle: 'Unified Smart Inbox',       path: '/desktop/smart-inbox' },
       { icon: Phone,         label: 'Calls',      subtitle: 'Voice & Video Calls',       path: '/desktop/calls' },
-      { icon: Users,         label: 'Contacts',   subtitle: 'People & Directory',        path: '/desktop/contacts' },
     ],
   },
   {
     label: 'Intelligence',
     items: [
-      { icon: BrainCircuit,  label: 'AI',         subtitle: 'AI Assistant & Memory',    path: '/desktop/canvas' },
+      { icon: BrainCircuit,  label: 'AI Canvas',  subtitle: 'Business Canvas & Memory', path: '/desktop/canvas' },
+      { icon: Bot,           label: 'AI Agents',  subtitle: 'Autonomous Agent Hub',    path: '/desktop/ai-agents' },
       { icon: Zap,           label: 'Execution',  subtitle: 'Intent OS Engine',         path: '/desktop/intelligence' },
-      { icon: Package,       label: 'Ecosystem',  subtitle: 'Connector Marketplace',    path: '/desktop/intelligence?domain=ecosystem' },
+      { icon: Store,         label: 'Marketplace',subtitle: 'Agent & Connector Store',  path: '/desktop/marketplace' },
+      { icon: Package,       label: 'Ecosystem',  subtitle: 'Connector Marketplace',    path: '/desktop/connector-store' },
     ],
   },
   {
-    label: 'Productivity',
+    label: 'Productivity & OS',
     items: [
-      { icon: Sparkles,      label: 'Workspace',  subtitle: 'Unified IDE & OS',          path: '/desktop/workspace-ide' },
+      { icon: UserPlus,      label: 'Recruitment',subtitle: 'Talent OS & ATS Engine',    path: '/desktop/recruitment' },
+      { icon: Layers,        label: 'Business OS', subtitle: 'Executive Control & IDE',   path: '/desktop/business-os' },
+      { icon: Shield,        label: 'Enterprise', subtitle: 'Enterprise Security & Scale', path: '/enterprise' },
+      { icon: Calendar,      label: 'Calendar',   subtitle: 'Schedules & Meetings',      path: '/desktop/calendar' },
       { icon: CheckSquare,   label: 'Tasks',      subtitle: 'Tasks & Workflows',         path: '/desktop/workspace' },
       { icon: Building2,     label: 'CRM',        subtitle: 'Customers & Deals',         path: '/desktop/pro/business' },
       { icon: Hash,          label: 'Tickets',    subtitle: 'Service Desk',              path: '/desktop/tickets' },
@@ -474,9 +480,9 @@ const DesktopLayoutInner = () => {
 
           <ChatrConsole />
 
-          {/* Top header */}
+          {/* Top header — 30% reduced height */}
           <header className={cn(
-            'h-[60px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0',
+            'h-[42px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0',
             isDark ? 'border-white/6 bg-zinc-950/60 backdrop-blur-2xl' : 'border-zinc-200 bg-white/70 backdrop-blur-2xl'
           )}>
 
@@ -485,7 +491,7 @@ const DesktopLayoutInner = () => {
               <button
                 onClick={() => setCmdOpen(true)}
                 className={cn(
-                  'flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-xl border text-sm transition-all hover:scale-[1.01]',
+                  'flex items-center gap-2 pl-3 pr-2 py-1 rounded-xl border text-sm transition-all hover:scale-[1.01]',
                   isDark
                     ? 'border-white/10 bg-white/4 text-white/40 hover:bg-white/8 hover:text-white/70'
                     : 'border-zinc-200 bg-zinc-50 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600'
@@ -527,7 +533,7 @@ const DesktopLayoutInner = () => {
                   </span>
                 </div>
                 <div className="relative">
-                  <Avatar className={cn('w-8 h-8 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-zinc-200')}>
+                  <Avatar className={cn('w-7 h-7 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-zinc-200')}>
                     <AvatarImage src={profile?.avatar_url} />
                     <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-violet-100 text-violet-700')}>
                       {initials}
@@ -539,14 +545,14 @@ const DesktopLayoutInner = () => {
             </div>
           </header>
 
-          {/* Quick actions toolbar */}
-          <QuickActionsBar isDark={isDark} />
-
           {/* Page content */}
           <main className="flex-1 flex flex-col overflow-hidden relative">
             <Outlet />
           </main>
         </div>
+
+        {/* ── Transparent Expandable Quick Actions Bar (Right Sidebar) ── */}
+        <QuickActionsBar isDark={isDark} />
 
         {/* ── Global Call Overlay (Top Right Notification) ── */}
         <GlobalCallOverlay />

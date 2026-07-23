@@ -12,6 +12,7 @@
 
 const { EventEmitter } = require('events');
 const { createEventEnvelope } = require('./schema.cjs');
+const { ledger } = require('./ledger.cjs');
 
 class KernelEventBus extends EventEmitter {
   constructor() {
@@ -28,16 +29,30 @@ class KernelEventBus extends EventEmitter {
    * Publish a Kernel Event.
    * @param {string} eventName - e.g. KERNEL.OBSERVATION.CREATED
    * @param {object} payload
+   * @param {object} options
    */
-  publish(eventName, payload = {}) {
+  publish(eventName, payload = {}, options = {}) {
     this._metrics.published++;
     this._metrics.byEvent[eventName] = (this._metrics.byEvent[eventName] || 0) + 1;
     
-    const envelope = createEventEnvelope(eventName, payload);
+    const envelope = createEventEnvelope(eventName, payload, options);
     const correlationId = envelope.correlationId;
     const timestamp = envelope.timestamp_ms;
 
-    // --- OBSERVABILITY TRACING ---
+    // --- EVENT SOURCING DURABILITY ---
+    // Extract logical stream ID for the aggregate (intent, workflow, or correlation fallback)
+    const streamId = envelope.goal_id || envelope.workflow_id || envelope.correlation_id || 'system_stream';
+    
+    // Append to durable ledger BEFORE notifying in-memory subscribers
+    try {
+      ledger.append(streamId, envelope);
+    } catch (err) {
+      console.error('[EventBus] CRITICAL: Failed to append event to durable ledger', err);
+      // Depending on strictness, we might want to throw here to halt execution if not durable.
+      // But for backward compatibility with UI, we log and proceed for now.
+    }
+
+    // --- OBSERVABILITY TRACING (In-Memory only, persistence is now in ledger) ---
     if (!this._traces.has(correlationId)) {
       this._traces.set(correlationId, { start: timestamp, events: [] });
       
@@ -54,25 +69,6 @@ class KernelEventBus extends EventEmitter {
       if (eventName === 'KERNEL.ACTION.EXECUTED' || eventName === 'KERNEL.SUGGESTION.DISMISSED' || eventName === 'KERNEL.ACTION.CONFIRMED') {
         const path = trace.events.map(e => `${e.stage}(${e.duration}ms)`).join(' -> ');
         console.log(`\n🔍 [OBSERVABILITY TRACE] ${correlationId}\n${path}\n`);
-        
-        // Write structured trace to file
-        const fs = require('fs');
-        const pathModule = require('path');
-        const traceFile = pathModule.join(process.env.APPDATA || process.env.HOME || '', '.chatr', 'trace.jsonl');
-        const traceRecord = {
-          correlationId,
-          start: trace.start,
-          end: timestamp,
-          duration: timestamp - trace.start,
-          events: trace.events,
-          finalEvent: envelope.event_type,
-          payload: envelope.payload // Can contain metrics like timeToConfirm from UI
-        };
-        try {
-          fs.appendFileSync(traceFile, JSON.stringify(traceRecord) + '\n');
-        } catch (e) {
-          console.error('[EventBus] Failed to write trace log', e);
-        }
       }
     }
 

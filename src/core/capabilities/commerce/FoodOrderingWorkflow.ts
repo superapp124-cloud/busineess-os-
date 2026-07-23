@@ -12,6 +12,8 @@ import {
   WidgetAction,
 } from '@/core/workflow-ui';
 import type { ExecutionConsoleWidgetPayload, ExecutionPhase } from '@/core/workflow-ui/types';
+import { providerResolver } from '@/core/providers/ProviderResolver';
+import { executionAdapter } from '@/core/providers/ExecutionAdapter';
 
 // ─── Manifest ─────────────────────────────────────────────────────────────────
 
@@ -31,11 +33,7 @@ const FOOD_ORDERING_MANIFEST: WorkflowManifest = {
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
-const MOCK_RESTAURANTS = [
-  { id: 'rest-1', name: 'Domino\'s Pizza', rating: '4.2', eta: '25 min', price: 450, recommended: true, logo: '🍕' },
-  { id: 'rest-2', name: 'Pizza Hut', rating: '4.0', eta: '35 min', price: 420, recommended: false, logo: '🍕' },
-  { id: 'rest-3', name: 'Oven Story', rating: '4.5', eta: '40 min', price: 550, recommended: false, logo: '🍕' },
-];
+// MOCK_RESTAURANTS removed - routing through Provider OS
 
 const MOCK_DRIVER = {
   agentName: 'Ramesh Singh',
@@ -62,6 +60,11 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
   private selectedRestaurantId: string | null = null;
   private driverSimIntervalId?: ReturnType<typeof setInterval>;
   private phaseStartTimes: Record<string, number> = {};
+  private resolvedProvider: any = null;
+  private discoveredOptions: any[] = [];
+  private locationWidgetId = '';
+  private userAddress = '';
+  private isBuildingCart = false;
   
   // State
   private foodItem = '';
@@ -87,6 +90,7 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
       expanded: false,
       phases: [
         { id: 'intent',     label: 'Intent Understood',   status: 'running' },
+        { id: 'location',   label: 'Location Verified',   status: 'pending' },
         { id: 'discovery',  label: 'Finding Restaurants', status: 'pending' },
         { id: 'payment',    label: 'Payment',             status: 'pending' },
         { id: 'execution',  label: 'Placing Order',       status: 'pending' },
@@ -127,21 +131,72 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
     // 1. Intent Understood
     await this.delay(800);
     await this.updateExecutionPhase('intent', 'completed', `Identified request for ${this.foodItem}`);
-    
-    // 2. Finding Restaurants
-    await this.updateExecutionPhase('discovery', 'running');
-    await this.delay(1500);
-    await this.updateExecutionPhase('discovery', 'completed', `Found ${MOCK_RESTAURANTS.length} options`);
 
-    // Pauses here to show Selection
-    await this.showSelectionWidget();
+    // 1.5 Verify Location
+    const savedAddress = localStorage.getItem('chatr_saved_address');
+    if (savedAddress) {
+      this.userAddress = savedAddress;
+      const savedLabel = localStorage.getItem('chatr_saved_address_label') || 'Address';
+      await this.updateExecutionPhase('location', 'completed', `Loaded from Memory: ${savedLabel}`);
+      await this.runDiscovery();
+    } else {
+      await this.updateExecutionPhase('location', 'running');
+      await this.showLocationWidget();
+    }
   }
+
+  private async showLocationWidget(): Promise<void> {
+    this.locationWidgetId = buildWidgetId(this.workflowId, 'form', this.widgetIndex++);
+    emitWorkflowUIEvent({
+      event: 'WIDGET_CREATED',
+      workflowId: this.workflowId,
+      widgetId: this.locationWidgetId,
+      widgetType: 'form',
+      widgetVersion: '1.0',
+      lifecycle: 'WAITING_USER',
+      payload: {
+        title: 'Confirm Delivery Location',
+        subtitle: 'Please provide your precise address',
+        fields: [
+          { id: 'address', label: 'Complete Address', type: 'text', placeholder: 'Flat, Floor, Building Name', required: true },
+          { id: 'label', label: 'Save As', type: 'choice', options: ['Home', 'Work', 'Other'], required: true }
+        ],
+        ctaLabel: 'Confirm Location'
+      }
+    });
+  }
+
 
   private async handleWidgetAction(action: WidgetAction): Promise<void> {
     if (action.workflowId !== this.workflowId) return;
 
-    if (action.action === 'SELECT' && action.widgetId === this.selectionWidgetId) {
-      this.selectedRestaurantId = action.data.id as string;
+    if (action.action === 'SUBMIT' && action.widgetId === this.locationWidgetId) {
+      const values = action.data.values as Record<string, unknown>;
+      this.userAddress = values?.address as string;
+      const label = values?.label as string;
+
+      localStorage.setItem('chatr_saved_address', this.userAddress);
+      localStorage.setItem('chatr_saved_address_label', label);
+
+      emitWorkflowUIEvent({
+        event: 'WIDGET_UPDATED',
+        workflowId: this.workflowId,
+        widgetId: this.locationWidgetId,
+        widgetType: 'form',
+        widgetVersion: '1.0',
+        lifecycle: 'COMPLETED',
+        payload: { title: `Saved as ${label}` },
+      });
+
+      await this.updateExecutionPhase('location', 'completed', `Saved ${label} to Memory`);
+      await this.runDiscovery();
+    }
+
+    if (action.action === 'CONFIRM_SELECTION' && action.widgetId === this.selectionWidgetId) {
+      if (this.isBuildingCart || this.paymentWidgetId) return; // Prevent double execution if user spams the button
+      this.isBuildingCart = true;
+      const selectedIds = action.data.selectedIds as string[];
+      this.selectedRestaurantId = selectedIds[0];
       
       emitWorkflowUIEvent({
         event: 'WIDGET_UPDATED',
@@ -149,15 +204,27 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
         widgetId: this.selectionWidgetId,
         widgetType: 'selection',
         widgetVersion: '1.0',
-        lifecycle: 'COMPLETED',
+        lifecycle: 'EXECUTING', // Set to EXECUTING to disable UI interactions while cart builds
         payload: { selectedId: this.selectedRestaurantId },
       });
 
-      await this.delay(500);
-      await this.showPaymentWidget();
+      await this.buildCartAndShowHandoff();
     }
 
     if (action.action === 'PAY' && action.widgetId === this.paymentWidgetId) {
+      emitWorkflowUIEvent({
+        event: 'WIDGET_UPDATED',
+        workflowId: this.workflowId,
+        widgetId: this.paymentWidgetId,
+        widgetType: 'payment',
+        widgetVersion: '1.0',
+        lifecycle: 'EXECUTING',
+        payload: { ctaLabel: 'Waiting for Zomato Confirmation...' },
+      });
+
+      await this.updateExecutionPhase('payment', 'running', 'Awaiting payment confirmation from Zomato...');
+      await this.delay(5000); // Wait 5 seconds to simulate webhook delay
+
       emitWorkflowUIEvent({
         event: 'WIDGET_UPDATED',
         workflowId: this.workflowId,
@@ -176,6 +243,31 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
     }
   }
 
+  private async runDiscovery(): Promise<void> {
+    await this.updateExecutionPhase('discovery', 'running');
+    
+    this.resolvedProvider = await providerResolver.resolve('commerce.food.search');
+    if (!this.resolvedProvider) {
+       await this.updateExecutionPhase('discovery', 'failed', 'No food delivery providers available');
+       return;
+    }
+    
+    await this.updateExecutionPhase('discovery', 'running', `Resolved via ${this.resolvedProvider.name}`);
+
+    const response = await executionAdapter.execute(this.resolvedProvider, { 
+       capabilityId: 'commerce.food.search', 
+       parameters: { foodItem: this.foodItem, location: this.userAddress } 
+    });
+
+    if (response.status === 'FAILED') throw new Error(response.error);
+    this.discoveredOptions = response.data;
+    
+    await this.updateExecutionPhase('discovery', 'completed', `Found ${this.discoveredOptions.length} options`);
+
+    // Pauses here to show Selection
+    await this.showSelectionWidget();
+  }
+
   private async showSelectionWidget(): Promise<void> {
     this.selectionWidgetId = buildWidgetId(this.workflowId, 'selection', this.widgetIndex++);
     const payload: SelectionWidgetPayload = {
@@ -188,10 +280,10 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
         { key: 'price', label: 'Price', type: 'currency', currencyCode: 'INR' },
         { key: 'status', label: '', type: 'badge' }
       ],
-      options: MOCK_RESTAURANTS.map(r => ({
+      options: this.discoveredOptions.map(r => ({
         id: r.id,
         icon: r.logo,
-        values: { name: r.name, eta: r.eta, rating: r.rating, price: r.price, status: r.recommended ? 'Best Choice' : undefined },
+        values: { name: r.restaurant, eta: r.time, rating: String(r.rating), price: r.price, status: r.recommended ? 'Best Choice' : undefined },
         recommended: r.recommended,
         badge: r.recommended ? 'Best Match' : undefined,
         badgeVariant: r.recommended ? 'success' : undefined
@@ -209,14 +301,32 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
     });
   }
 
-  private async showPaymentWidget(): Promise<void> {
+  private async buildCartAndShowHandoff(): Promise<void> {
+    await this.updateExecutionPhase('execution', 'running', `Building cart via ${this.resolvedProvider?.name}...`);
+    
+    const response = await executionAdapter.execute(this.resolvedProvider, { 
+      capabilityId: 'commerce.food.order', 
+      parameters: { itemId: this.selectedRestaurantId, location: this.userAddress } 
+    });
+    
+    await this.updateExecutionPhase('execution', 'completed', `Cart built on Zomato`);
+
+    await this.showPaymentWidget(response.data.checkoutUrl);
+  }
+
+  private async showPaymentWidget(checkoutUrl: string): Promise<void> {
     await this.updateExecutionPhase('payment', 'running');
     
     this.paymentWidgetId = buildWidgetId(this.workflowId, 'payment', this.widgetIndex++);
-    const restaurant = MOCK_RESTAURANTS.find(r => r.id === this.selectedRestaurantId);
+    const restaurant = this.discoveredOptions.find(r => r.id === this.selectedRestaurantId);
+    console.log('[FoodOrderingWorkflow] selectedRestaurantId:', this.selectedRestaurantId);
+    console.log('[FoodOrderingWorkflow] discoveredOptions:', this.discoveredOptions);
+    console.log('[FoodOrderingWorkflow] found restaurant:', restaurant);
+
+    const restaurantName = restaurant?.restaurant || restaurant?.name || 'Selected Restaurant';
 
     const payload: PaymentWidgetPayload = {
-      title: `Order from ${restaurant?.name}`,
+      title: `Order from ${restaurantName}`,
       amount: restaurant?.price || 450,
       currencyCode: 'INR',
       breakdown: [
@@ -224,10 +334,8 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
         { label: 'Delivery Fee', amount: 40, type: 'fee' },
         { label: 'Taxes', amount: 10, type: 'fee' },
       ],
-      methods: [
-        { id: 'upi', name: 'Google Pay', icon: 'upi', isDefault: true },
-        { id: 'card', name: '**** 4242', icon: 'card' },
-      ]
+      checkoutUrl,
+      ctaLabel: 'Complete Payment on Zomato'
     };
 
     emitWorkflowUIEvent({
@@ -244,10 +352,6 @@ export class FoodOrderingWorkflow implements WorkflowCapabilityContract {
   private async executeOrder(): Promise<void> {
     await this.updateExecutionPhase('payment', 'completed', 'Payment Successful');
     
-    await this.updateExecutionPhase('execution', 'running');
-    await this.delay(1500); // Simulate API call to place order
-    await this.updateExecutionPhase('execution', 'completed', 'Order confirmed by restaurant');
-
     // Transition to Tracking phase
     await this.updateExecutionPhase('tracking', 'running');
     this.showTrackingWidget();

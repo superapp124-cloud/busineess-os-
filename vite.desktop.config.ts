@@ -9,7 +9,18 @@ function desktopEntryPlugin() {
     name: 'desktop-entry',
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
-        if (req.url === '/' || req.url === '/index.html') {
+        const pathname = (req.url || '/').split('?')[0];
+        const acceptsHtml = String(req.headers?.accept || '').includes('text/html');
+        const hasExtension = Boolean(path.extname(pathname));
+        const isInternalAsset =
+          pathname.startsWith('/@') ||
+          pathname.startsWith('/src/') ||
+          pathname.startsWith('/node_modules/') ||
+          pathname.startsWith('/assets/') ||
+          pathname.startsWith('/wasm/') ||
+          pathname.startsWith('/store-assets/');
+
+        if (pathname === '/' || pathname === '/index.html' || (acceptsHtml && !hasExtension && !isInternalAsset)) {
           try {
             let html = fs.readFileSync(
               path.resolve(__dirname, 'index.desktop.html'),

@@ -20,7 +20,7 @@ class RuntimeManager {
   constructor() {
     this.runtimes = new Map();     // name -> Runtime instance
     this.capabilities = new Map(); // capabilityId -> manifest
-    this.providers = new Map();    // capabilityId -> Provider instance
+    this.providers = new Map();    // capabilityId -> Array of { provider, priority, status, consecutiveFailures, id }
   }
 
   /**
@@ -37,7 +37,7 @@ class RuntimeManager {
   /**
    * Dynamically registers a capability using a Manifest.
    */
-  registerCapability(manifestPayload, providerInstance) {
+  registerCapability(manifestPayload, providerInstance, priority = 100) {
     try {
       const manifest = ManifestValidator.validateCapability(manifestPayload);
       
@@ -46,13 +46,30 @@ class RuntimeManager {
       }
 
       this.capabilities.set(manifest.id, manifest);
-      this.providers.set(manifest.id, providerInstance);
+      
+      if (!this.providers.has(manifest.id)) {
+        this.providers.set(manifest.id, []);
+      }
+      
+      const providerList = this.providers.get(manifest.id);
+      const providerId = providerInstance.id || `provider_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+      providerInstance._providerId = providerId;
+      
+      providerList.push({
+        id: providerId,
+        provider: providerInstance,
+        priority,
+        status: 'active',
+        consecutiveFailures: 0
+      });
+      
+      providerList.sort((a, b) => b.priority - a.priority);
 
       // Register the provider with its respective runtime
       const runtime = this.runtimes.get(manifest.runtime);
       runtime.registerProvider(manifest.id, providerInstance, true);
 
-      log.info(`[RuntimeManager] Registered Capability: ${manifest.id} (${manifest.version}) -> ${manifest.runtime}`);
+      log.info(`[RuntimeManager] Registered Capability: ${manifest.id} (${manifest.version}) -> ${manifest.runtime} (priority: ${priority})`);
       return manifest;
     } catch (err) {
       log.error(`[RuntimeManager] Capability Registration Failed: ${err.message}`);
@@ -61,14 +78,62 @@ class RuntimeManager {
   }
 
   /**
-   * Resolves a capability to its provider.
+   * Resolves a capability to its highest-priority active provider.
    */
   getProviderForCapability(capabilityId) {
-    const provider = this.providers.get(capabilityId);
-    if (!provider) {
-      throw new Error(`[RuntimeManager] No provider registered for capability: ${capabilityId}`);
+    const providerList = this.providers.get(capabilityId);
+    if (!providerList || providerList.length === 0) {
+      const { CapabilityNotBoundError } = require('./errors.cjs');
+      throw new CapabilityNotBoundError(`No provider registered for capability: ${capabilityId}`, { capability: capabilityId });
     }
-    return provider;
+    const activeProvider = providerList.find(p => p.status === 'active' || p.status === 'degraded');
+    if (!activeProvider) {
+      const { ProviderFailoverExhaustedError } = require('./errors.cjs');
+      throw new ProviderFailoverExhaustedError(`All providers for capability ${capabilityId} have failed.`, { capability: capabilityId });
+    }
+    return activeProvider.provider;
+  }
+  
+  /**
+   * Records a provider failure, handles failover logic.
+   */
+  recordProviderFailure(capabilityId, providerId) {
+    const providerList = this.providers.get(capabilityId);
+    if (!providerList) return null;
+    
+    const providerEntry = providerList.find(p => p.id === providerId);
+    if (providerEntry) {
+      providerEntry.consecutiveFailures++;
+      if (providerEntry.consecutiveFailures >= 3) {
+        providerEntry.status = 'failed';
+        log.warn(`[RuntimeManager] Provider ${providerId} for ${capabilityId} marked as failed.`);
+        
+        try {
+          const { bus } = require('../events/bus.cjs');
+          bus.publish('PROVIDER_FAILOVER', { capabilityId, failedProviderId: providerId });
+        } catch (e) {
+          // Bus might not be available
+        }
+      }
+    }
+    
+    // Return the next active provider
+    const nextActive = providerList.find(p => p.status === 'active' || p.status === 'degraded');
+    return nextActive ? nextActive.provider : null;
+  }
+
+  /**
+   * Records a successful execution by a provider, resetting failure counts.
+   */
+  recordProviderSuccess(capabilityId, providerId) {
+    const providerList = this.providers.get(capabilityId);
+    if (!providerList) return;
+    
+    const providerEntry = providerList.find(p => p.id === providerId);
+    if (providerEntry) {
+      providerEntry.consecutiveFailures = 0;
+      providerEntry.status = 'active';
+    }
   }
   
   /**

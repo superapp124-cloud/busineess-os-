@@ -67,7 +67,7 @@ export class JobQueue {
       
       // Find highest priority pending job that is ready to run
       const rows = await db.query(
-        \`SELECT * FROM job_queue WHERE status = 'pending' AND next_run_at <= ? ORDER BY priority ASC, id ASC LIMIT 1\`,
+        `SELECT * FROM job_queue WHERE status = 'pending' AND next_run_at <= ? ORDER BY priority ASC, id ASC LIMIT 1`,
         [Date.now()]
       );
 
@@ -84,7 +84,7 @@ export class JobQueue {
 
       const handler = this.handlers.get(row.type);
       if (!handler) {
-        throw new Error(\`No handler registered for job type: \${row.type}\`);
+        throw new Error(`No handler registered for job type: ${row.type}`);
       }
 
       try {
@@ -92,7 +92,7 @@ export class JobQueue {
         // Success
         await db.update('job_queue', { status: 'completed' }, { id: jobId });
       } catch (err: any) {
-        console.error(\`[JobQueue] Job \${jobId} failed:\`, err);
+        console.error(`[JobQueue] Job ${jobId} failed:`, err);
         const attempts = row.attempts + 1;
         const maxAttempts = row.max_attempts;
 

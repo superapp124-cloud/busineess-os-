@@ -9,51 +9,51 @@ import { Capacitor } from '@capacitor/core';
  * Tracks all screen views and user interactions
  */
 export const AnalyticsProvider = ({ children, userId }: { children: React.ReactNode; userId?: string }) => {
-  const location = useLocation();
-  const {
-    logScreenView,
-    logEvent,
-    setUserId: setAnalyticsUserId
-  } = useFirebaseAnalytics();
-  
-  const {
-    setUserId: setCrashlyticsUserId,
-    setCustomKey
-  } = useFirebaseCrashlytics();
+ const location = useLocation();
+ const {
+ logScreenView,
+ logEvent,
+ setUserId: setAnalyticsUserId
+ } = useFirebaseAnalytics();
+ 
+ const {
+ setUserId: setCrashlyticsUserId,
+ setCustomKey
+ } = useFirebaseCrashlytics();
 
-  // Set user ID for both Analytics and Crashlytics
-  useEffect(() => {
-    if (userId && Capacitor.isNativePlatform()) {
-      setAnalyticsUserId(userId);
-      setCrashlyticsUserId(userId);
-      setCustomKey('platform', Capacitor.getPlatform());
-    }
-  }, [userId, setAnalyticsUserId, setCrashlyticsUserId, setCustomKey]);
+ // Set user ID for both Analytics and Crashlytics
+ useEffect(() => {
+ if (userId && Capacitor.isNativePlatform()) {
+ setAnalyticsUserId(userId);
+ setCrashlyticsUserId(userId);
+ setCustomKey('platform', Capacitor.getPlatform());
+ }
+ }, [userId, setAnalyticsUserId, setCrashlyticsUserId, setCustomKey]);
 
-  // Track screen views
-  useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
-      const screenName = location.pathname.replace('/', '') || 'home';
-      logScreenView(screenName);
-      setCustomKey('last_screen', screenName);
-    }
-  }, [location, logScreenView, setCustomKey]);
+ // Track screen views
+ useEffect(() => {
+ if (Capacitor.isNativePlatform()) {
+ const screenName = location.pathname.replace('/', '') || 'home';
+ logScreenView(screenName);
+ setCustomKey('last_screen', screenName);
+ }
+ }, [location, logScreenView, setCustomKey]);
 
-  // Track page visibility (app state)
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+ // Track page visibility (app state)
+ useEffect(() => {
+ if (!Capacitor.isNativePlatform()) return;
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        logEvent('app_backgrounded');
-      } else {
-        logEvent('app_resumed');
-      }
-    };
+ const handleVisibilityChange = () => {
+ if (document.hidden) {
+ logEvent('app_backgrounded');
+ } else {
+ logEvent('app_resumed');
+ }
+ };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [logEvent]);
+ document.addEventListener('visibilitychange', handleVisibilityChange);
+ return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+ }, [logEvent]);
 
-  return <>{children}</>;
+ return <>{children}</>;
 };

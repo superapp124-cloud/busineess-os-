@@ -14,7 +14,14 @@ class LocalSearchProvider {
     this.name = 'LocalSearchProvider';
   }
 
-  async search(parameters) {
+  async execute(capabilityId, parameters, context) {
+    if (capabilityId === 'System.Search' || capabilityId === 'Knowledge.Discover') {
+      return this._search(parameters);
+    }
+    throw new Error(`Unsupported capability: ${capabilityId}`);
+  }
+
+  async _search(parameters) {
     const query = parameters.query ? parameters.query.toLowerCase() : '';
     if (!query) return { found: false, files: [] };
 

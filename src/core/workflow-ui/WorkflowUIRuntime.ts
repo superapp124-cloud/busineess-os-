@@ -31,26 +31,48 @@ import type {
 } from './types';
 import { workflowTimeline } from './WorkflowTimeline';
 
-// ─── Memory Store (Phase 1 default) ──────────────────────────────────────────
+// ─── LocalStorage Store ──────────────────────────────────────────────────────
 
-class MemoryWorkflowUIStore implements IWorkflowUIStore {
-  private store = new Map<string, WorkflowUISession>();
+const STORAGE_KEY = 'chatr_workflow_sessions';
+
+class LocalStorageWorkflowUIStore implements IWorkflowUIStore {
+  private getStore(): Record<string, WorkflowUISession> {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private setStore(data: Record<string, WorkflowUISession>) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e);
+    }
+  }
 
   async save(session: WorkflowUISession): Promise<void> {
-    this.store.set(session.workflowId, JSON.parse(JSON.stringify(session)));
+    const store = this.getStore();
+    store[session.workflowId] = session;
+    this.setStore(store);
   }
 
   async load(workflowId: string): Promise<WorkflowUISession | null> {
-    const s = this.store.get(workflowId);
-    return s ? JSON.parse(JSON.stringify(s)) : null;
+    const store = this.getStore();
+    return store[workflowId] || null;
   }
 
   async loadAll(): Promise<WorkflowUISession[]> {
-    return Array.from(this.store.values()).map(s => JSON.parse(JSON.stringify(s)));
+    const store = this.getStore();
+    return Object.values(store);
   }
 
   async delete(workflowId: string): Promise<void> {
-    this.store.delete(workflowId);
+    const store = this.getStore();
+    delete store[workflowId];
+    this.setStore(store);
   }
 }
 
@@ -68,7 +90,7 @@ class WorkflowUIRuntime {
   /** Global listeners — notified when any session list changes */
   private globalListeners = new Set<() => void>();
 
-  private store: IWorkflowUIStore = new MemoryWorkflowUIStore();
+  private store: IWorkflowUIStore = new LocalStorageWorkflowUIStore();
   private booted = false;
 
   private constructor() {}
@@ -89,6 +111,19 @@ class WorkflowUIRuntime {
   boot(): void {
     if (this.booted) return;
     this.booted = true;
+
+    // Load persisted sessions
+    this.store.loadAll().then(sessions => {
+      sessions.forEach(s => {
+        this.sessions.set(s.workflowId, s);
+      });
+      if (sessions.length > 0) {
+        this.notifyGlobal();
+        if (import.meta.env.DEV) {
+          console.debug(`[WorkflowUIRuntime] Loaded ${sessions.length} persisted sessions.`);
+        }
+      }
+    });
 
     // Subscribe to all workflow UI events from the kernel
     eventBus.on<WorkflowUIEvent>('WORKFLOW_UI_EVENT', (kernelEvent: CHATREvent<WorkflowUIEvent>) => {

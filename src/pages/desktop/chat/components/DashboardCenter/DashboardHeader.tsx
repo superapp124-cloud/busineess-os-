@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Clock } from 'lucide-react';
+import { Sparkles, Clock, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const DashboardHeader: React.FC<{
@@ -7,6 +7,7 @@ export const DashboardHeader: React.FC<{
 }> = ({ onCreateNew }) => {
   const [userName, setUserName] = useState('there');
   const [currentTime, setCurrentTime] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
 
   const greeting = () => {
     const h = new Date().getHours();
@@ -17,6 +18,7 @@ export const DashboardHeader: React.FC<{
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setCurrentDate(now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }));
     };
     updateTime();
     const interval = setInterval(updateTime, 60000);
@@ -32,9 +34,8 @@ export const DashboardHeader: React.FC<{
           .select('full_name, primary_handle')
           .eq('id', user.id)
           .single();
-        
+
         if (profile?.full_name) {
-          // Get first name
           setUserName(profile.full_name.split(' ')[0]);
         } else if (profile?.primary_handle) {
           setUserName(profile.primary_handle);
@@ -45,35 +46,50 @@ export const DashboardHeader: React.FC<{
   }, []);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-start justify-between gap-4">
+      {/* Left: Greeting */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
-          <Sparkles className="w-6 h-6 text-white" />
+        {/* Animated icon */}
+        <div className="relative shrink-0">
+          <div className="w-14 h-14 rounded-2xl overflow-hidden border border-violet-500/40 shadow-xl shadow-violet-500/30 shrink-0">
+            <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
+          </div>
+          {/* Pulse ring */}
+          <span className="absolute inset-0 rounded-2xl bg-violet-500/20 animate-ping" style={{ animationDuration: '3s' }} />
         </div>
+
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 capitalize">
-            {greeting()}, {userName} <span className="text-xl">👋</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-black text-white tracking-tight capitalize leading-none">
+              {greeting()}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-300">{userName}</span> 👋
+            </h1>
+            {/* Live clock pill */}
             {currentTime && (
-              <span className="flex items-center gap-1.5 text-sm bg-white/10 px-2.5 py-1 rounded-lg ml-2 border border-white/20 backdrop-blur-md shadow-sm">
-                <Clock className="w-4 h-4 text-violet-300" /> 
-                <span className="tracking-wide font-medium">{currentTime}</span>
+              <span className="inline-flex items-center gap-1.5 text-xs bg-white/[0.07] border border-white/[0.12] px-3 py-1.5 rounded-full font-mono text-white/70 backdrop-blur-md shadow-sm">
+                <Clock className="w-3.5 h-3.5 text-violet-400" />
+                {currentTime}
               </span>
             )}
-          </h1>
-          <p className="text-sm text-white/50 mt-0.5">Here's what's happening in your workspace today.</p>
+          </div>
+          {currentDate && (
+            <p className="text-sm text-white/40 mt-1.5 font-medium">{currentDate} — Here's what's happening in your workspace.</p>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <button 
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2 shrink-0 mt-1">
+        <button
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-          className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 text-sm font-medium border border-white/5 transition-colors"
+          className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.10] text-white/70 hover:text-white text-sm font-semibold border border-white/[0.08] hover:border-white/[0.15] transition-all"
         >
           Customize
         </button>
-        <button 
+        <button
           onClick={onCreateNew}
-          className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-sm font-bold shadow-lg shadow-violet-500/20 transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-bold shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
+          <Plus className="w-4 h-4" />
           New
         </button>
       </div>

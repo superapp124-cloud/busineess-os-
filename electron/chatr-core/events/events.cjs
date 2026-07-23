@@ -153,6 +153,11 @@ const PROVIDER = {
   FAILED:   'provider.failed',
 };
 
+const CONNECTIVITY = {
+  OFFLINE: 'connectivity.offline',
+  ONLINE:  'connectivity.online',
+};
+
 module.exports = {
   CAPABILITY,
   CORE,
@@ -167,4 +172,5 @@ module.exports = {
   RESOURCE,
   STRATEGY,
   TRUST,
+  CONNECTIVITY,
 };

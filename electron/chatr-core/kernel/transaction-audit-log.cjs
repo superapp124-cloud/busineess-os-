@@ -1,5 +1,7 @@
 'use strict';
 
+const { ledger } = require('../ledger/event-ledger.cjs');
+
 /**
  * CHATR Kernel — Transaction Audit Log
  * Platform Milestone P1.4
@@ -9,37 +11,38 @@
  */
 class TransactionAuditLog {
   constructor() {
-    // In production: flush to disk or a structured log sink
-    this._log = [];
+    // Persisted in the ledger
   }
 
   /**
    * Append an entry. Cannot be removed or modified.
    */
   append(transactionId, event, payload = {}) {
-    const entry = Object.freeze({
-      transaction_id: transactionId,
-      event,
-      payload,
-      recorded_at: new Date().toISOString(),
-      seq: this._log.length,
+    return ledger.append({
+      event_type: 'TRANSACTION_AUDIT',
+      correlation_id: transactionId,
+      payload: {
+        transaction_id: transactionId,
+        event,
+        ...payload
+      }
     });
-    this._log.push(entry);
-    return entry;
   }
 
   /**
    * Read all entries for a transaction (read-only view).
    */
   forTransaction(transactionId) {
-    return this._log.filter(e => e.transaction_id === transactionId);
+    return ledger.replayForCorrelation(transactionId)
+      .filter(e => e.event_type === 'TRANSACTION_AUDIT')
+      .map(e => e.payload);
   }
 
   /**
    * Return the entire log length (for metrics).
    */
   size() {
-    return this._log.length;
+    return ledger.getMetrics().byEventType['TRANSACTION_AUDIT'] || 0;
   }
 }
 

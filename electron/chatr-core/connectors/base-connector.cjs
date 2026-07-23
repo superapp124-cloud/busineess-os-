@@ -21,6 +21,14 @@ class BaseConnector {
   }
 
   /**
+   * Return capability-level maturity
+   * @returns {Object} e.g. { DISCOVER: 'L3', CHECKOUT: 'L0' }
+   */
+  maturity() {
+    return {};
+  }
+
+  /**
    * Return supported capabilities
    * @returns {string[]} e.g., ['DISCOVER', 'FETCH_MENU', 'CHECKOUT']
    */

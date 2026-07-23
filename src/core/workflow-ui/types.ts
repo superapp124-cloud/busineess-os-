@@ -135,6 +135,16 @@ export interface WorkflowManifest {
   supportsNestedWorkflows?: boolean;
   /** Expected maximum number of steps shown to the user */
   estimatedSteps?: number;
+  
+  // ─── Experience Engine Telemetry (Delegation Metrics) ─────────────────────
+  estimatedManualMinutes?: number;
+  expectedQuestions?: number;
+  expectedClicks?: number;
+  expectedApplications?: number;
+  expectedProviders?: number;
+  expectedWaitingMinutes?: number;
+  expectedMoneySaved?: number;
+  expectedRiskReduction?: string;
 }
 
 // ─── Workflow Capability Contract ─────────────────────────────────────────────
@@ -427,6 +437,7 @@ export interface PaymentWidgetPayload {
   methods?: PaymentMethod[];
   selectedMethodId?: string;
   ctaLabel?: string;
+  checkoutUrl?: string; // Handoff URL for Live Execution
 }
 
 export interface FormField {

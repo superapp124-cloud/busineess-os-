@@ -1,133 +1,90 @@
-'use strict';
+// Intent Lifecycle State Machine
+// Implements LIFECYCLE_SPEC_v1.md
 
-/**
- * CHATR Kernel v2.0 — Intent Lifecycle Manager
- * 
- * Tracks Intents using a unique intentId through their entire lifecycle.
- * States: Received -> Understood -> Planned -> Discovered -> Authorized -> Executing -> Waiting -> Completed -> Failed -> Recovered -> Archived
- */
-
-const crypto = require('crypto');
-
-const log = (() => {
-  try { return require('electron-log'); } catch { return console; }
-})();
-
-const IntentState = {
-  RECEIVED: 'Received',
-  UNDERSTOOD: 'Understood',
-  PLANNED: 'Planned',
-  DISCOVERED: 'Discovered',
-  AUTHORIZED: 'Authorized',
-  EXECUTING: 'Executing',
-  WAITING: 'Waiting',
-  COMPLETED: 'Completed',
-  FAILED: 'Failed',
-  RECOVERED: 'Recovered',
-  ARCHIVED: 'Archived'
+const LEGAL_TRANSITIONS = {
+    'DISCOVERED': {
+        'CLARIFYING': ['Kernel'],
+        'PLANNING': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'CLARIFYING': {
+        'PLANNING': ['Kernel', 'User'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'PLANNING': {
+        'DECIDING': ['Kernel'],
+        'FAILED': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'DECIDING': {
+        'EXECUTING': ['Kernel'],
+        'AWAITING_APPROVAL': ['Kernel'],
+        'DEFERRED': ['Kernel'],
+        'FAILED': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'AWAITING_APPROVAL': {
+        'EXECUTING': ['User'],
+        'DECIDING': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'EXECUTING': {
+        'VERIFYING': ['Kernel'],
+        'FAILED': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'VERIFYING': {
+        'COMPLETED': ['Kernel'],
+        'FAILED': ['Kernel'],
+        'EXECUTING': ['Kernel'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'DEFERRED': {
+        'DECIDING': ['Kernel', 'User'],
+        'CANCELLED': ['User', 'Kernel']
+    },
+    'COMPLETED': {}, // Terminal
+    'FAILED': {}, // Terminal
+    'CANCELLED': {} // Terminal
 };
 
-class IntentLifecycleManager {
-  constructor() {
-    this._intents = new Map();
-    this._listeners = new Set();
-  }
+class IntentLifecycle {
+    /**
+     * Attempts to transition an intent to a new lifecycle phase.
+     * @param {Object} intent - The intent object.
+     * @param {string} toPhase - The target lifecycle phase.
+     * @param {string} principal - The principal attempting the transition ('User', 'Kernel', etc).
+     * @throws {Error} LIFECYCLE_VIOLATION or AUTHORITY_VIOLATION if illegal.
+     */
+    static transition(intent, toPhase, principal) {
+        if (!intent) {
+            throw new Error('LIFECYCLE_VIOLATION: Invalid intent object');
+        }
 
-  /**
-   * Register a new intent
-   * @param {string} rawInput The raw user input/intent
-   * @param {string} [source] Source of the intent (e.g. 'ui', 'voice', 'background')
-   * @returns {string} intentId
-   */
-  registerIntent(rawInput, source = 'ui') {
-    const intentId = crypto.randomUUID();
-    
-    const intentRecord = {
-      intentId,
-      rawInput,
-      source,
-      state: IntentState.RECEIVED,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      history: [{ state: IntentState.RECEIVED, timestamp: new Date().toISOString() }],
-      context: null,
-      plan: null,
-      executionResult: null,
-      error: null
-    };
+        const currentPhase = intent.status || (intent.lifecycle && intent.lifecycle.phase);
+        
+        if (!currentPhase) {
+            throw new Error('LIFECYCLE_VIOLATION: Intent has no status');
+        }
 
-    this._intents.set(intentId, intentRecord);
-    log.info(`[IntentLifecycle] [${intentId}] Registered: ${rawInput}`);
-    this._notifyListeners(intentId, intentRecord);
+        // Check if transition exists from current phase
+        const allowedTargets = LEGAL_TRANSITIONS[currentPhase];
+        if (!allowedTargets || !allowedTargets[toPhase]) {
+            throw new Error(`LIFECYCLE_VIOLATION: Illegal transition from ${currentPhase} to ${toPhase}`);
+        }
 
-    return intentId;
-  }
+        // Check authority
+        const allowedPrincipals = allowedTargets[toPhase];
+        if (!allowedPrincipals.includes(principal)) {
+            throw new Error(`AUTHORITY_VIOLATION: ${principal} is not authorized to transition from ${currentPhase} to ${toPhase}`);
+        }
 
-  /**
-   * Transition an intent to a new state
-   */
-  transition(intentId, newState, payload = {}) {
-    const intent = this._intents.get(intentId);
-    if (!intent) {
-      log.warn(`[IntentLifecycle] Transition failed - Unknown intentId: ${intentId}`);
-      return;
+        // Transition successful
+        intent.status = toPhase;
+        if (intent.lifecycle) {
+            intent.lifecycle.phase = toPhase; // Legacy sync
+        }
     }
-
-    intent.state = newState;
-    intent.updatedAt = new Date().toISOString();
-    intent.history.push({ state: newState, timestamp: intent.updatedAt, ...payload });
-
-    // Store common payload data onto the main record for easy access
-    if (payload.context) intent.context = payload.context;
-    if (payload.plan) intent.plan = payload.plan;
-    if (payload.result) intent.executionResult = payload.result;
-    if (payload.error) intent.error = payload.error;
-
-    log.info(`[IntentLifecycle] [${intentId}] Transitioned -> ${newState}`);
-    this._notifyListeners(intentId, intent);
-  }
-
-  getIntent(intentId) {
-    return this._intents.get(intentId);
-  }
-
-  getAllActive() {
-    return Array.from(this._intents.values()).filter(i => 
-      i.state !== IntentState.COMPLETED && 
-      i.state !== IntentState.FAILED && 
-      i.state !== IntentState.ARCHIVED
-    );
-  }
-
-  subscribe(callback) {
-    this._listeners.add(callback);
-    return () => this._listeners.delete(callback);
-  }
-
-  _notifyListeners(intentId, intentRecord) {
-    let bus;
-    try {
-      const { bus: b } = require('../events/bus.cjs');
-      bus = b;
-    } catch { /* optional */ }
-
-    if (bus) {
-      try {
-        bus.publish('intent:lifecycle_change', { intentId, state: intentRecord.state, record: intentRecord });
-      } catch (err) {
-        log.warn('[IntentLifecycle] Failed to publish to bus', err);
-      }
-    }
-
-    for (const listener of this._listeners) {
-      try {
-        listener(intentId, intentRecord);
-      } catch (e) {
-        log.error('[IntentLifecycle] Listener error', e);
-      }
-    }
-  }
 }
 
-const intentLifecycleManager = new IntentLifecycleManager();
-module.exports = { intentLifecycleManager, IntentLifecycleManager, IntentState };
+module.exports = IntentLifecycle;
