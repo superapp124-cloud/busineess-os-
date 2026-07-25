@@ -172,20 +172,23 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  const normalizedPhone = phoneNumber.replace(/\s/g, '');
 
  // Step 2: Use edge function to handle Supabase auth (handles password mismatch)
- const response = await fetch(
- `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/firebase-phone-auth`,
- {
- method: 'POST',
- headers: {
- 'Content-Type': 'application/json',
- 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
- },
- body: JSON.stringify({
- phone_number: normalizedPhone,
- firebase_uid: firebaseUser.uid,
- }),
- }
- );
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
+  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/firebase-phone-auth`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        phone_number: normalizedPhone,
+        firebase_uid: firebaseUser.uid,
+      }),
+    }
+  );
 
   const responseText = await response.text();
   let data: any = {};

@@ -8,8 +8,8 @@ const getEnv = (key: string) => {
   return undefined;
 };
 
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://placeholder.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || 'placeholder';
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://sbayuqgomlflmxgicplz.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwMzgwODIsImV4cCI6MjA1NTYxNDA4Mn0.mockKey';
 
 // Storage mock for Node.js tests and SSR
 const memoryStorage = new Map<string, string>();
