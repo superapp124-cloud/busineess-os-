@@ -4,9 +4,10 @@
 
 // Preload critical assets
 export const preloadCriticalAssets = () => {
-  // Preload common icons and images
+  // Preload common logos, icons, and critical assets
   const criticalImages = [
     '/chatr-logo.png',
+    '/favicon.png',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png'
   ];
@@ -20,13 +21,14 @@ export const preloadCriticalAssets = () => {
   });
 };
 
-// Enable hardware acceleration for smooth animations
+// Enable hardware acceleration for smooth 60fps animations & transitions
 export const enableHardwareAcceleration = () => {
   const style = document.createElement('style');
   style.textContent = `
     * {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeSpeed;
     }
     
     /* Hardware acceleration for common animated elements */
@@ -43,10 +45,15 @@ export const enableHardwareAcceleration = () => {
       perspective: 1000px;
     }
     
-    /* Smooth scrolling */
+    /* Smooth touch scrolling with momentum */
     * {
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
+    }
+    
+    /* Content visibility optimization for offscreen content */
+    img, video {
+      content-visibility: auto;
     }
     
     /* Better text rendering */

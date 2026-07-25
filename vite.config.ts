@@ -32,23 +32,37 @@ export default defineConfig(({ mode }) => ({
     exclude: ['capacitor-native-biometric'],
   },
   esbuild: {
-    // Strip debugger statements in production builds
-    drop: mode === 'production' ? ['debugger'] : [],
+    // Strip debugger and console log statements in production builds for smaller JS size
+    drop: mode === 'production' ? ['debugger', 'console'] : [],
+    legalComments: 'none',
   },
   build: {
-    target: 'chrome87',
+    target: 'es2020',
     minify: 'esbuild',
     cssMinify: true,
+    cssCodeSplit: true,
     sourcemap: false,
+    reportCompressedSize: false,
     chunkSizeWarningLimit: 1200,
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'tanstack-query': ['@tanstack/react-query'],
+          'supabase-client': ['@supabase/supabase-js'],
           'lucide-icons': ['lucide-react'],
           'firebase-core': ['firebase/app', 'firebase/auth', 'firebase/messaging'],
           'framer-motion': ['framer-motion'],
-          'ui-radix': ['@radix-ui/react-dialog', '@radix-ui/react-popover', '@radix-ui/react-dropdown-menu'],
+          'ui-radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-switch'
+          ],
         },
       },
     },
