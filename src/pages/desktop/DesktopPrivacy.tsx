@@ -39,7 +39,7 @@ export const DesktopPrivacy: React.FC = () => {
  navigate('/auth');
  return;
  }
- const { data, error } = await supabase
+ const { data, error } = await (supabase as any)
  .from('profiles')
  .select('privacy_settings')
  .eq('id', user.id)
@@ -60,7 +60,7 @@ export const DesktopPrivacy: React.FC = () => {
  const { data: { user } } = await supabase.auth.getUser();
  if (!user) return;
  
- const { error } = await supabase
+ const { error } = await (supabase as any)
  .from('profiles')
  .update({ privacy_settings: newSettings as any })
  .eq('id', user.id);
