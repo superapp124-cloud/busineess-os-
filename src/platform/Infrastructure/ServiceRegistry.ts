@@ -6,11 +6,20 @@ class ServiceRegistryService {
   private initialized: Set<string> = new Set();
 
   register(service: IService): void {
-    if (this.services.has(service.name)) {
-      Logger.warn(`Service ${service.name} is already registered. Overwriting.`);
+    if (!service) {
+      Logger.warn('[ServiceRegistry] Attempted to register null/undefined service. Skipping.');
+      return;
     }
-    this.services.set(service.name, service);
-    Logger.debug(`[ServiceRegistry] Registered ${service.name}`);
+    const name = service.name || (service.constructor && service.constructor.name);
+    if (!name) {
+      Logger.warn('[ServiceRegistry] Service has no valid name property. Skipping.');
+      return;
+    }
+    if (this.services.has(name)) {
+      Logger.warn(`Service ${name} is already registered. Overwriting.`);
+    }
+    this.services.set(name, service);
+    Logger.debug(`[ServiceRegistry] Registered ${name}`);
   }
 
   async initializeAll(): Promise<void> {
@@ -20,18 +29,27 @@ class ServiceRegistryService {
       if (this.initialized.has(name)) return;
       
       const service = this.services.get(name);
-      if (!service) throw new Error(`Service ${name} not found in registry`);
+      if (!service) {
+        Logger.warn(`[ServiceRegistry] Service ${name} not registered. Skipping dependency.`);
+        return;
+      }
 
       // Initialize dependencies first
-      for (const dep of service.dependencies) {
-        if (!this.initialized.has(dep)) {
-          Logger.debug(`[ServiceRegistry] Initializing dependency ${dep} for ${name}`);
-          await initService(dep);
+      if (Array.isArray(service.dependencies)) {
+        for (const dep of service.dependencies) {
+          if (dep && !this.initialized.has(dep) && this.services.has(dep)) {
+            Logger.debug(`[ServiceRegistry] Initializing dependency ${dep} for ${name}`);
+            await initService(dep);
+          }
         }
       }
 
       Logger.info(`[ServiceRegistry] Initializing ${name}...`);
-      await service.initialize();
+      try {
+        await service.initialize();
+      } catch (err) {
+        Logger.error(`[ServiceRegistry] Failed to initialize service ${name}:`, err);
+      }
       this.initialized.add(name);
       uninitialized.delete(name);
     };
@@ -40,10 +58,12 @@ class ServiceRegistryService {
       const next = uninitialized.values().next().value;
       if (next) {
         await initService(next);
+      } else {
+        break;
       }
     }
     
-    Logger.info(`[ServiceRegistry] All services initialized successfully.`);
+    Logger.info(`[ServiceRegistry] Platform services initialization process completed.`);
   }
 
   get<T = any>(name: string): T {
