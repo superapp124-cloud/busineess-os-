@@ -106,111 +106,120 @@ export default function Privacy() {
  return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
  }
 
- return (
- <div className="min-h-screen bg-background p-4">
- <div className="max-w-2xl mx-auto">
- <div className="flex items-center gap-4 mb-6">
- <Button variant="ghost" size="icon" onClick={() => navigate('/profile')}>
- <ArrowLeft className="h-5 w-5" />
- </Button>
- <h1 className="text-page font-bold">Privacy & Security</h1>
- </div>
+  return (
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
+      {/* Header */}
+      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="rounded-full hover:bg-slate-100 text-slate-700"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-lg font-bold text-slate-900">Privacy & Security</h1>
+        </div>
+      </div>
 
- <Card className="mb-6 bg-emerald-500/10 border-emerald-500/20">
- <CardHeader>
- <CardTitle className="text-emerald-500">Our Privacy Commitment</CardTitle>
- <CardDescription>CHATR is a Privacy-First Communication OS</CardDescription>
- </CardHeader>
- <CardContent className="space-y-3">
- <div className="flex items-center gap-2 text-secondary">
- <span className="text-emerald-500">✓</span>
- <span>Contacts remain on your device</span>
- </div>
- <div className="flex items-center gap-2 text-secondary">
- <span className="text-emerald-500">✓</span>
- <span>Emails are processed locally</span>
- </div>
- <div className="flex items-center gap-2 text-secondary">
- <span className="text-emerald-500">✓</span>
- <span>Cloud AI is optional</span>
- </div>
- <div className="flex items-center gap-2 text-secondary">
- <span className="text-emerald-500">✓</span>
- <span>Google Contacts are not synchronized</span>
- </div>
- <div className="flex items-center gap-2 text-secondary">
- <span className="text-emerald-500">✓</span>
- <span>Device contacts are your primary address book</span>
- </div>
- </CardContent>
- </Card>
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6 sm:p-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-bold text-emerald-600">Our Privacy Commitment</h2>
+            <p className="text-xs text-slate-600 mt-1">CHATR is a Privacy-First Communication OS</p>
+          </div>
+          <div className="space-y-2.5 text-xs text-slate-700 font-medium">
+            <div className="flex items-center gap-2.5">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Contacts remain on your device</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Emails are processed locally</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Cloud AI is optional</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Google Contacts are not synchronized</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Device contacts are your primary address book</span>
+            </div>
+          </div>
+        </div>
 
- <Card>
- <CardHeader>
- <CardTitle>Privacy Settings</CardTitle>
- <CardDescription>Control who can see your information</CardDescription>
- </CardHeader>
- <CardContent className="space-y-6">
- <div className="space-y-2">
- <Label htmlFor="profile-visibility">Profile Visibility</Label>
- <Select
- value={settings.profile_visibility}
- onValueChange={(value) => updateSetting('profile_visibility', value)}
- >
- <SelectTrigger id="profile-visibility">
- <SelectValue />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="everyone">Everyone</SelectItem>
- <SelectItem value="contacts">Contacts Only</SelectItem>
- <SelectItem value="nobody">Nobody</SelectItem>
- </SelectContent>
- </Select>
- </div>
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Privacy Settings</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Control who can see your information</p>
+          </div>
 
- <div className="space-y-2">
- <Label htmlFor="last-seen">Last Seen</Label>
- <Select
- value={settings.last_seen_visibility}
- onValueChange={(value) => updateSetting('last_seen_visibility', value)}
- >
- <SelectTrigger id="last-seen">
- <SelectValue />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="everyone">Everyone</SelectItem>
- <SelectItem value="contacts">Contacts Only</SelectItem>
- <SelectItem value="nobody">Nobody</SelectItem>
- </SelectContent>
- </Select>
- </div>
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="profile-visibility" className="text-xs font-semibold text-slate-700">Profile Visibility</Label>
+              <Select
+                value={settings.profile_visibility}
+                onValueChange={(value) => updateSetting('profile_visibility', value)}
+              >
+                <SelectTrigger id="profile-visibility" className="bg-slate-50 border-slate-200 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="everyone">Everyone</SelectItem>
+                  <SelectItem value="contacts">Contacts Only</SelectItem>
+                  <SelectItem value="nobody">Nobody</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
- <div className="flex items-center justify-between">
- <div className="space-y-0.5">
- <Label htmlFor="read-receipts">Read Receipts</Label>
- <p className="text-secondary text-muted-foreground">Let others know when you've read their messages</p>
- </div>
- <Switch
- id="read-receipts"
- checked={settings.read_receipts}
- onCheckedChange={(checked) => updateSetting('read_receipts', checked)}
- />
- </div>
+            <div className="space-y-2">
+              <Label htmlFor="last-seen" className="text-xs font-semibold text-slate-700">Last Seen</Label>
+              <Select
+                value={settings.last_seen_visibility}
+                onValueChange={(value) => updateSetting('last_seen_visibility', value)}
+              >
+                <SelectTrigger id="last-seen" className="bg-slate-50 border-slate-200 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="everyone">Everyone</SelectItem>
+                  <SelectItem value="contacts">Contacts Only</SelectItem>
+                  <SelectItem value="nobody">Nobody</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
- <div className="flex items-center justify-between">
- <div className="space-y-0.5">
- <Label htmlFor="typing">Typing Indicators</Label>
- <p className="text-secondary text-muted-foreground">Show when you're typing</p>
- </div>
- <Switch
- id="typing"
- checked={settings.typing_indicators}
- onCheckedChange={(checked) => updateSetting('typing_indicators', checked)}
- />
- </div>
- </CardContent>
- </Card>
- </div>
- </div>
- );
+            <div className="flex items-center justify-between pt-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="read-receipts" className="text-xs font-semibold text-slate-700">Read Receipts</Label>
+                <p className="text-xs text-slate-500">Let others know when you've read their messages</p>
+              </div>
+              <Switch
+                id="read-receipts"
+                checked={settings.read_receipts}
+                onCheckedChange={(checked) => updateSetting('read_receipts', checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="typing" className="text-xs font-semibold text-slate-700">Typing Indicators</Label>
+                <p className="text-xs text-slate-500">Show when you're typing</p>
+              </div>
+              <Switch
+                id="typing"
+                checked={settings.typing_indicators}
+                onCheckedChange={(checked) => updateSetting('typing_indicators', checked)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

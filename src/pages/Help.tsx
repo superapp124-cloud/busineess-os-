@@ -127,103 +127,103 @@ export default function Help() {
  { title: 'Contact Support', path: '/contact' }
  ];
 
- return (
- <>
- <SEOHead
- title="Help Center | Chatr+ Support & FAQs"
- description="Get help with Chatr+. Find answers to frequently asked questions about chat, health features, payments, privacy, and more. 24/7 support available."
- />
- <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-cyan-500/5">
- {/* Header */}
- <div className="bg-background/95 backdrop-blur-xl border-b border-border/40 sticky top-0 z-50">
- <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
- <Button
- variant="ghost"
- size="icon"
- onClick={() => navigate(-1)}
- className="rounded-full"
- >
- <ArrowLeft className="h-5 w-5" />
- </Button>
- <h1 className="text-workspace font-bold">Help Center</h1>
- </div>
- </div>
+  return (
+    <>
+      <SEOHead
+        title="Help Center | Chatr+ Support & FAQs"
+        description="Get help with Chatr+. Find answers to frequently asked questions about chat, health features, payments, privacy, and more. 24/7 support available."
+      />
+      <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
+        {/* Header */}
+        <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
+          <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="rounded-full hover:bg-slate-100 text-slate-700"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-lg font-bold text-slate-900">Help Center</h1>
+          </div>
+        </div>
 
- <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
- {/* Search */}
- <Card className="p-6">
- <div className="relative">
- <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
- <Input
- placeholder="Search for help..."
- value={searchQuery}
- onChange={(e) => setSearchQuery(e.target.value)}
- className="pl-10"
- />
- </div>
- </Card>
+        <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+          {/* Search */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search for help..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-slate-50 border-slate-200 rounded-xl h-11 text-sm text-slate-900"
+              />
+            </div>
+          </div>
 
- {/* Categories */}
- <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
- {categories.map((cat, index) => (
- <Card key={index} className="p-4 text-center hover:shadow-lg transition-shadow cursor-pointer">
- <cat.icon className={`h-8 w-8 mx-auto mb-2 ${cat.color}`} />
- <p className="text-label ">{cat.title}</p>
- </Card>
- ))}
- </div>
+          {/* Categories */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {categories.map((cat, index) => (
+              <div key={index} className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center hover:shadow-md transition-all cursor-pointer">
+                <cat.icon className={`h-7 w-7 mx-auto mb-2 ${cat.color}`} />
+                <p className="text-xs font-semibold text-slate-800">{cat.title}</p>
+              </div>
+            ))}
+          </div>
 
- {/* FAQs */}
- <div className="space-y-6">
- <h2 className="text-page font-bold">Frequently Asked Questions</h2>
- {faqs.map((section, sectionIndex) => (
- <Card key={sectionIndex} className="p-6">
- <h3 className="text-section mb-4 text-primary">{section.category}</h3>
- <Accordion type="single" collapsible className="space-y-2">
- {section.questions.map((faq, faqIndex) => (
- <AccordionItem key={faqIndex} value={`${sectionIndex}-${faqIndex}`} className="border-b">
- <AccordionTrigger className="text-left hover:no-underline">
- {faq.q}
- </AccordionTrigger>
- <AccordionContent className="text-muted-foreground">
- {faq.a}
- </AccordionContent>
- </AccordionItem>
- ))}
- </Accordion>
- </Card>
- ))}
- </div>
+          {/* FAQs */}
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-slate-900">Frequently Asked Questions</h2>
+            {faqs.map((section, sectionIndex) => (
+              <div key={sectionIndex} className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">
+                <h3 className="text-base font-bold mb-4 text-purple-600">{section.category}</h3>
+                <Accordion type="single" collapsible className="space-y-2">
+                  {section.questions.map((faq, faqIndex) => (
+                    <AccordionItem key={faqIndex} value={`${sectionIndex}-${faqIndex}`} className="border-b border-slate-100">
+                      <AccordionTrigger className="text-left font-semibold text-sm text-slate-800 hover:no-underline hover:text-purple-600">
+                        {faq.q}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-slate-500 text-xs leading-relaxed pt-1">
+                        {faq.a}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            ))}
+          </div>
 
- {/* Quick Links */}
- <Card className="p-6">
- <h3 className="text-section mb-4">Quick Links</h3>
- <div className="grid md:grid-cols-2 gap-3">
- {quickLinks.map((link, index) => (
- <Button
- key={index}
- variant="outline"
- onClick={() => navigate(link.path)}
- className="justify-start"
- >
- {link.title}
- </Button>
- ))}
- </div>
- </Card>
+          {/* Quick Links */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900">Quick Links</h3>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {quickLinks.map((link, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  onClick={() => navigate(link.path)}
+                  className="justify-start border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50"
+                >
+                  {link.title}
+                </Button>
+              ))}
+            </div>
+          </div>
 
- {/* Contact Support CTA */}
- <Card className="p-8 text-center bg-gradient-to-br from-primary/5 to-cyan-500/5">
- <h3 className="text-workspace font-bold mb-2">Still need help?</h3>
- <p className="text-muted-foreground mb-4">
- Our support team is here to assist you 24/7
- </p>
- <Button onClick={() => navigate('/contact')}>
- Contact Support
- </Button>
- </Card>
- </div>
- </div>
- </>
- );
+          {/* Contact Support CTA */}
+          <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/5 to-cyan-500/10 border border-purple-200/60 rounded-3xl p-8 text-center space-y-3">
+            <h3 className="text-xl font-bold text-slate-900">Still need help?</h3>
+            <p className="text-sm text-slate-600">
+              Our support team is here to assist you 24/7
+            </p>
+            <Button onClick={() => navigate('/contact')} className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-6">
+              Contact Support
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
