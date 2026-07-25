@@ -46,7 +46,7 @@ export const StandaloneCallsApp = () => {
  setPreCallMediaStream(callId, stream);
 
  const normalized = normalizePhoneNumber(target);
- const { data: receiverProfile } = await supabase.from('profiles').select('*').eq('phone_number', normalized).maybeSingle();
+ const { data: receiverProfile } = await (supabase as any).from('profiles').select('*').eq('phone_number', normalized).maybeSingle();
  
  if (!receiverProfile) {
  await handleNonChatrNumber(target);
@@ -54,7 +54,7 @@ export const StandaloneCallsApp = () => {
  return;
  }
 
- const { data: myProfile } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
+ const { data: myProfile } = await (supabase as any).from('profiles').select('*').eq('id', currentUserId).single();
  const callerPhone = normalizePhoneNumber(myProfile?.phone_number || '');
  const receiverPhone = normalizePhoneNumber(receiverProfile.phone_number || target);
  
@@ -64,9 +64,9 @@ export const StandaloneCallsApp = () => {
  const callerAvatar = resolveCallAvatar(myProfile);
  const receiverAvatar = resolveCallAvatar(receiverProfile);
 
- const { data: convId } = await supabase.rpc('create_direct_conversation', { other_user_id: receiverProfile.id });
+ const { data: convId } = await (supabase as any).rpc('create_direct_conversation', { other_user_id: receiverProfile.id });
 
- await supabase.from('calls').insert({
+ await (supabase as any).from('calls').insert({
  id: callId,
  conversation_id: convId,
  caller_id: currentUserId,
@@ -81,7 +81,7 @@ export const StandaloneCallsApp = () => {
  status: 'ringing'
  });
 
- supabase.functions.invoke('fcm-notify', {
+ (supabase as any).functions.invoke('fcm-notify', {
  body: { type: 'call', receiverId: receiverProfile.id, callerId: currentUserId, callerName: finalCallerName, callerAvatar, callerPhone, callId, callType }
  });
 
@@ -111,14 +111,14 @@ export const StandaloneCallsApp = () => {
  <Suspense fallback={<PageLoader />}>
  <Routes>
  <Route index element={<StandaloneCallsDashboard themeColor={themeColor} setThemeColor={setThemeColor} themeMode={themeMode} setThemeMode={setThemeMode} />} />
- <Route path="favorites" element={<FavoritesScreen themeColor={themeColor} themeMode={themeMode} />} />
- <Route path="recents" element={<RecentsScreen themeColor={themeColor} themeMode={themeMode} onCall={(num) => handleCall(num, 'voice')} />} />
- <Route path="contacts" element={<ContactsScreen themeColor={themeColor} themeMode={themeMode} />} />
- <Route path="keypad" element={<KeypadScreen themeColor={themeColor} themeMode={themeMode} onCall={(num) => handleCall(num, 'voice')} />} />
+ <Route path="favorites" element={<FavoritesScreen {...({ themeColor, themeMode } as any)} />} />
+ <Route path="recents" element={<RecentsScreen {...({ themeColor, themeMode, onCall: (num: string) => handleCall(num, 'voice') } as any)} />} />
+ <Route path="contacts" element={<ContactsScreen {...({ themeColor, themeMode } as any)} />} />
+ <Route path="keypad" element={<KeypadScreen {...({ themeColor, themeMode, onCall: (num: string) => handleCall(num, 'voice') } as any)} />} />
  <Route path="*" element={<Navigate to="/calls" replace />} />
  </Routes>
  </Suspense>
- <StandaloneCallsNav themeColor={themeColor} themeMode={themeMode} />
+ <StandaloneCallsNav {...({ themeColor, themeMode } as any)} />
  </div>
  );
 };

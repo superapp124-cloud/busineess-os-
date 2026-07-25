@@ -42,7 +42,7 @@ import { getTurnConfig } from "./utils/webrtcSignaling";
 import { networkMonitor } from "./utils/networkMonitor";
 import { ChatrAIFab } from "./components/ChatrAIFab";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
-import { bootstrapPlatform } from "./platform/Runtime/Bootstrap";
+import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
 
 // Initiate the platform bootstrap immediately
 bootstrapPlatform();
@@ -336,7 +336,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  // Register service worker once on mount
  React.useEffect(() => {
  let registered = false;
- let preloadTimer: number | undefined;
+ let preloadTimer: any;
  
  const initServiceWorker = async () => {
  if (registered) return;

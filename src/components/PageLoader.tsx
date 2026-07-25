@@ -4,7 +4,11 @@ import React from 'react';
  * Lightweight page loader for Suspense fallbacks
  * Uses shimmer animation for perceived performance
  */
-export const PageLoader: React.FC = () => {
+interface PageLoaderProps {
+  message?: string;
+}
+
+export const PageLoader: React.FC<PageLoaderProps> = ({ message }) => {
  return (
  <div className="min-h-screen bg-background flex items-center justify-center">
  <div className="flex flex-col items-center gap-4">
@@ -17,6 +21,7 @@ export const PageLoader: React.FC = () => {
  <div className="h-3 bg-muted rounded-full animate-shimmer" style={{ width: '75%', animationDelay: '0.1s' }} />
  <div className="h-3 bg-muted rounded-full animate-shimmer" style={{ width: '50%', animationDelay: '0.2s' }} />
  </div>
+ {message && <p className="text-xs text-muted-foreground font-medium mt-1 animate-pulse">{message}</p>}
  </div>
  </div>
  );
