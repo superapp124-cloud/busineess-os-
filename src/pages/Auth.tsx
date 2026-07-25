@@ -11,147 +11,146 @@ import { getDeviceFingerprint } from '@/utils/deviceFingerprint';
 import { logAuthEvent, logAuthError } from '@/utils/authDebug';
 import { BiometricLogin } from '@/components/BiometricLogin';
 import { AuthLoadingSkeleton } from '@/components/ui/PremiumEmptyStates';
-import { AppleCard } from '@/components/ui/AppleCard';
 import { motion } from 'framer-motion';
 
 const Auth = () => {
- const { toast } = useToast();
- const navigate = useNavigate();
- const [loading, setLoading] = React.useState(true);
- const [userId, setUserId] = React.useState<string | undefined>();
- const onboarding = useOnboarding(userId);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(true);
+  const [userId, setUserId] = React.useState<string | undefined>();
+  const onboarding = useOnboarding(userId);
 
- React.useEffect(() => {
- const checkSession = async () => {
- try {
- logAuthEvent('Auth page: Checking session');
- 
- const { data: { session }, error: sessionError } = await supabase.auth.getSession();
- 
- if (sessionError) {
- logAuthError('Session check', sessionError);
- setLoading(false);
- return;
- }
+  React.useEffect(() => {
+    const checkSession = async () => {
+      try {
+        logAuthEvent('Auth page: Checking session');
+        
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          logAuthError('Session check', sessionError);
+          setLoading(false);
+          return;
+        }
 
- if (session) {
- logAuthEvent('Active session found', {
- userId: session.user.id,
- email: session.user.email,
- provider: session.user.app_metadata?.provider,
- });
- 
- setUserId(session.user.id);
- 
- const { data: profile, error: profileError } = await (supabase as any)
- .from('profiles')
- .select('*')
- .eq('id', session.user.id)
- .maybeSingle();
+        if (session) {
+          logAuthEvent('Active session found', {
+            userId: session.user.id,
+            email: session.user.email,
+            provider: session.user.app_metadata?.provider,
+          });
+          
+          setUserId(session.user.id);
+          
+          const { data: profile, error: profileError } = await (supabase as any)
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .maybeSingle();
 
- if (profileError) {
- console.error('[AUTH] Profile fetch error:', profileError);
- }
+          if (profileError) {
+            console.error('[AUTH] Profile fetch error:', profileError);
+          }
 
- if (profile) {
- const { data: roles } = await (supabase as any)
- .from("user_roles")
- .select("role")
- .eq("user_id", session.user.id);
- 
- const isAdmin = roles?.some((r: any) => r.role === "admin");
- 
- if (profile.onboarding_completed) {
- const redirectPath = sessionStorage.getItem('auth_redirect');
- sessionStorage.removeItem('auth_redirect');
- 
- console.log('[AUTH] User signed in:', profile.username || profile.email);
- 
- if (isAdmin) {
- navigate('/admin', { replace: true });
- } else {
- navigate(redirectPath || '/', { replace: true });
- }
- return;
- }
- }
- 
- setLoading(false);
- return;
- }
+          if (profile) {
+            const { data: roles } = await (supabase as any)
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", session.user.id);
+            
+            const isAdmin = roles?.some((r: any) => r.role === "admin");
+            
+            if (profile.onboarding_completed) {
+              const redirectPath = sessionStorage.getItem('auth_redirect');
+              sessionStorage.removeItem('auth_redirect');
+              
+              console.log('[AUTH] User signed in:', profile.username || profile.email);
+              
+              if (isAdmin) {
+                navigate('/admin', { replace: true });
+              } else {
+                navigate(redirectPath || '/', { replace: true });
+              }
+              return;
+            }
+          }
+          
+          setLoading(false);
+          return;
+        }
 
- // Skip device session re-hydration if user explicitly logged out
- const explicitSignout = sessionStorage.getItem('chatr_explicit_signout');
- if (!explicitSignout) {
- const deviceFingerprint = await getDeviceFingerprint();
- const { data: deviceSession } = await (supabase as any)
- .from('device_sessions')
- .select('*')
- .eq('device_fingerprint', deviceFingerprint)
- .eq('is_active', true)
- .gt('expires_at', new Date().toISOString())
- .maybeSingle();
+        // Skip device session re-hydration if user explicitly logged out
+        const explicitSignout = sessionStorage.getItem('chatr_explicit_signout');
+        if (!explicitSignout) {
+          const deviceFingerprint = await getDeviceFingerprint();
+          const { data: deviceSession } = await (supabase as any)
+            .from('device_sessions')
+            .select('*')
+            .eq('device_fingerprint', deviceFingerprint)
+            .eq('is_active', true)
+            .gt('expires_at', new Date().toISOString())
+            .maybeSingle();
 
- if (deviceSession) {
- setUserId(deviceSession.user_id);
- 
- const { data: profile } = await (supabase as any)
- .from('profiles')
- .select('onboarding_completed')
- .eq('id', deviceSession.user_id)
- .single();
- 
- if (profile?.onboarding_completed) {
- navigate('/', { replace: true });
- return;
- }
- }
- } else {
- sessionStorage.removeItem('chatr_explicit_signout');
- }
+          if (deviceSession) {
+            setUserId(deviceSession.user_id);
+            
+            const { data: profile } = await (supabase as any)
+              .from('profiles')
+              .select('onboarding_completed')
+              .eq('id', deviceSession.user_id)
+              .single();
+            
+            if (profile?.onboarding_completed) {
+              navigate('/', { replace: true });
+              return;
+            }
+          }
+        } else {
+          sessionStorage.removeItem('chatr_explicit_signout');
+        }
 
- setLoading(false);
- } catch (error) {
- console.error('Session check error:', error);
- setLoading(false);
- }
- };
+        setLoading(false);
+      } catch (error) {
+        console.error('Session check error:', error);
+        setLoading(false);
+      }
+    };
 
- checkSession();
+    checkSession();
 
- const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
- if (event === 'SIGNED_IN' && session) {
- setUserId(session.user.id);
- 
- setTimeout(async () => {
- const { data: profile } = await (supabase as any)
- .from('profiles')
- .select('onboarding_completed, username, phone_number')
- .eq('id', session.user.id)
- .maybeSingle();
- 
- if (profile?.onboarding_completed) {
- const redirectPath = sessionStorage.getItem('auth_redirect');
- sessionStorage.removeItem('auth_redirect');
- console.log('[AUTH] Welcome back');
- navigate(redirectPath || '/', { replace: true });
- } else {
- console.log('[AUTH] New user - complete profile');
- }
- }, 0);
- }
- 
- if (event === 'SIGNED_OUT') {
- setUserId(undefined);
- }
- });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        setUserId(session.user.id);
+        
+        setTimeout(async () => {
+          const { data: profile } = await (supabase as any)
+            .from('profiles')
+            .select('onboarding_completed, username, phone_number')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          
+          if (profile?.onboarding_completed) {
+            const redirectPath = sessionStorage.getItem('auth_redirect');
+            sessionStorage.removeItem('auth_redirect');
+            console.log('[AUTH] Welcome back');
+            navigate(redirectPath || '/', { replace: true });
+          } else {
+            console.log('[AUTH] New user - complete profile');
+          }
+        }, 0);
+      }
+      
+      if (event === 'SIGNED_OUT') {
+        setUserId(undefined);
+      }
+    });
 
- return () => subscription.unsubscribe();
- }, [toast, navigate]);
+    return () => subscription.unsubscribe();
+  }, [toast, navigate]);
 
- if (loading) {
- return <AuthLoadingSkeleton />;
- }
+  if (loading) {
+    return <AuthLoadingSkeleton />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 lg:p-10 relative overflow-hidden bg-[#040510] text-white font-sans selection:bg-purple-500 selection:text-white">
@@ -164,29 +163,29 @@ const Auth = () => {
       {/* Main Container */}
       <div className="relative z-10 w-full max-w-7xl flex flex-col items-center gap-8 my-auto">
         
-        {/* Header Branding */}
+        {/* Header Branding - Bright & Visible Logo */}
         <motion.div 
           className="text-center space-y-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Logo */}
+          {/* Logo with brightness-0 invert filter for 100% crisp visibility on dark background */}
           <div className="flex justify-center mb-2">
             <img 
               src={chatrBrandLogo} 
               alt="Chatr" 
-              className="h-12 sm:h-14 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.5)]"
+              className="h-12 sm:h-14 w-auto filter brightness-0 invert drop-shadow-[0_0_25px_rgba(6,182,212,0.9)] opacity-95"
             />
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-md">
             Chatr <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">Intent</span> <span className="inline-block text-cyan-400 animate-pulse">✨</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sm sm:text-base text-slate-400 font-medium">
+          <p className="text-sm sm:text-base text-slate-300 font-medium">
             The Intent Operating System for Life, Work & Everything.
           </p>
         </motion.div>
@@ -344,18 +343,14 @@ const Auth = () => {
 
       </div>
 
-      {/* Footer */}
+      {/* Linked Footer Component */}
       <motion.div 
-        className="relative z-10 text-center text-xs text-slate-500 space-y-1 mt-6"
+        className="relative z-10 w-full mt-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
       >
-        <p>Chatr Intent — A product of TalentXcel Services Pvt Ltd</p>
-        <p>© 2026 TalentXcel Services Pvt Ltd. All rights reserved.</p>
-        <div className="flex justify-center gap-3 pt-1 text-[11px] text-slate-400">
-          <span>About</span> | <span>Help</span> | <span>Contact</span> | <span>Terms</span> | <span>Privacy</span> | <span>Disclaimer</span>
-        </div>
+        <Footer />
       </motion.div>
 
       {/* Onboarding Dialog */}

@@ -1,61 +1,61 @@
 import { Link } from 'react-router-dom';
 
 export const Footer = () => {
- return (
- <footer className="w-full mt-auto py-6">
- <div className="container mx-auto px-4">
- <div className="flex flex-col items-center justify-center gap-3 text-center">
- <p className="text-[11px] text-muted-foreground/70">
- Chatr — A product of Talentxcel Services Pvt Ltd
- </p>
- <p className="text-[11px] text-muted-foreground/70">
- © 2026 Talentxcel Services Pvt Ltd. All rights reserved.
- </p>
- <div className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
- <Link 
- to="/about" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- About
- </Link>
- <span className="text-muted-foreground/50">|</span>
- <Link 
- to="/help" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- Help
- </Link>
- <span className="text-muted-foreground/50">|</span>
- <Link 
- to="/contact" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- Contact
- </Link>
- <span className="text-muted-foreground/50">|</span>
- <Link 
- to="/terms" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- Terms
- </Link>
- <span className="text-muted-foreground/50">|</span>
- <Link 
- to="/privacy" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- Privacy
- </Link>
- <span className="text-muted-foreground/50">|</span>
- <Link 
- to="/disclaimer" 
- className="text-muted-foreground/70 hover:text-primary transition-colors"
- >
- Disclaimer
- </Link>
- </div>
- </div>
- </div>
- </footer>
- );
+  return (
+    <footer className="w-full mt-auto py-4">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center justify-center gap-2 text-center">
+          <p className="text-[12px] text-slate-400 font-medium">
+            Chatr Intent — A product of TalentXcel Services Pvt Ltd
+          </p>
+          <p className="text-[11px] text-slate-500">
+            © 2026 TalentXcel Services Pvt Ltd. All rights reserved.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 text-[12px] pt-1">
+            <Link 
+              to="/about" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              About
+            </Link>
+            <span className="text-slate-600">|</span>
+            <Link 
+              to="/help" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              Help
+            </Link>
+            <span className="text-slate-600">|</span>
+            <Link 
+              to="/contact" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              Contact
+            </Link>
+            <span className="text-slate-600">|</span>
+            <Link 
+              to="/terms" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              Terms
+            </Link>
+            <span className="text-slate-600">|</span>
+            <Link 
+              to="/privacy" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              Privacy
+            </Link>
+            <span className="text-slate-600">|</span>
+            <Link 
+              to="/disclaimer" 
+              className="text-slate-400 hover:text-cyan-400 hover:underline transition-colors font-medium"
+            >
+              Disclaimer
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };
