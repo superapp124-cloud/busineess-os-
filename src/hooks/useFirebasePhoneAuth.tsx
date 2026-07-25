@@ -169,7 +169,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
  // Step 2: Use edge function to handle Supabase auth (handles password mismatch)
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
-  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
 
   const response = await fetch(
     `${supabaseUrl}/functions/v1/firebase-phone-auth`,
