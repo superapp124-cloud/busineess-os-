@@ -44,7 +44,7 @@ export const CountryCodeSelector = ({ value, onChange, disabled }: CountryCodeSe
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[105px] justify-between h-11 bg-slate-50 border-slate-200 text-slate-800 rounded-xl hover:bg-slate-100"
+          className="w-[105px] justify-between h-12 bg-[#12132A] border border-purple-500/30 text-white rounded-xl hover:bg-[#1A1B38] hover:text-white"
           disabled={disabled}
         >
           <span className="flex items-center gap-1.5 text-xs font-medium">
