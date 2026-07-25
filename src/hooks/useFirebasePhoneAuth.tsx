@@ -71,40 +71,36 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  /**
  * INSTANT CHECK: 1-second timeout for existing user check
  */
- const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
- setLoading(true);
- setError(null);
- setPhoneNumber(phone);
+  const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    setPhoneNumber(phone);
 
- const normalizedPhone = phone.replace(/\s/g, '');
- const email = `${normalizedPhone.replace(/\+/g, '')}@chatr.local`;
+    const normalizedPhone = phone.replace(/\s/g, '');
+    const cleanDigits = normalizedPhone.replace(/\+/g, '');
+    const email = `${cleanDigits}@chatr.local`;
 
- try {
- // FAST CHECK: 1-second timeout for instant login
- const controller = new AbortController();
- const timeoutId = setTimeout(() => controller.abort(), 1000);
- 
- const { data } = await supabase.auth.signInWithPassword({
- email,
- password: normalizedPhone,
- });
- 
- clearTimeout(timeoutId);
- 
- if (data?.session) {
- setIsExistingUser(true);
- console.log('✅ [Auth] Welcome back');
- setLoading(false);
- return true;
- }
- } catch {
- // Continue to OTP
- }
+    try {
+      // Instant login check for existing users
+      const { data } = await supabase.auth.signInWithPassword({
+        email,
+        password: normalizedPhone,
+      });
+      
+      if (data?.session) {
+        setIsExistingUser(true);
+        console.log('✅ [Auth] Existing user authenticated instantly');
+        setLoading(false);
+        return true;
+      }
+    } catch {
+      // Continue to OTP verification for new users
+    }
 
- // New user - send OTP immediately
- setIsExistingUser(false);
- return await sendOTP(phone);
- }, []);
+    // New user - send verification OTP immediately
+    setIsExistingUser(false);
+    return await sendOTP(phone);
+  }, []);
 
  const sendOTP = async (phone: string): Promise<boolean> => {
  try {
