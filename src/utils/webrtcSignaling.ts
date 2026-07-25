@@ -157,7 +157,7 @@ export const getTurnConfig = async () => {
 // Direct signaling through Supabase Realtime (no edge function)
 export const sendSignalDirect = async (signalData: SignalData) => {
   const user = await supabase.auth.getUser();
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('webrtc_signals')
     .insert([{
       call_id: signalData.callId,
@@ -180,7 +180,7 @@ export const getSignals = async (callId: string, toUserId: string) => {
     timestamp: new Date().toISOString()
   });
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('webrtc_signals')
     .select('*')
     .eq('call_id', callId)
@@ -197,7 +197,7 @@ export const getSignals = async (callId: string, toUserId: string) => {
   }
 
   console.log(`[getSignals] Found ${data?.length || 0} past signals:`,
-    data?.map(s => ({
+    data?.map((s: any) => ({
       type: s.signal_type,
       from: s.from_user,
       to: s.to_user,
@@ -210,7 +210,7 @@ export const getSignals = async (callId: string, toUserId: string) => {
 
 // Delete processed signals to keep table clean
 export const deleteProcessedSignals = async (callId: string, toUserId: string) => {
-  await supabase
+  await (supabase as any)
     .from('webrtc_signals')
     .delete()
     .eq('call_id', callId)
