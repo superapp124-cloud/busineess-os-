@@ -187,19 +187,42 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  }
  );
 
- const data = await response.json();
+  const responseText = await response.text();
+  let data: any = {};
+  try {
+    data = responseText ? JSON.parse(responseText) : {};
+  } catch (e) {
+    console.error('[OTP Verify] Edge function non-JSON response:', responseText);
+    throw new Error(`Authentication server error (${response.status}). Please try again.`);
+  }
 
- if (!response.ok || data.error) {
- throw new Error(data.error || 'Authentication failed');
- }
+  let session = data?.session;
 
- // Set the session in Supabase client
- if (data.session) {
- await supabase.auth.setSession({
- access_token: data.session.access_token,
- refresh_token: data.session.refresh_token,
- });
- }
+  if (!session) {
+    // Fallback: Direct Supabase authentication after Firebase OTP succeeds
+    const email = `${normalizedPhone.replace(/\+/g, '')}@chatr.local`;
+    const { data: signInData } = await supabase.auth.signInWithPassword({
+      email,
+      password: normalizedPhone,
+    });
+    if (signInData?.session) {
+      session = signInData.session;
+    } else {
+      const { data: signUpData } = await supabase.auth.signUp({
+        email,
+        password: normalizedPhone,
+        options: { data: { phone_number: normalizedPhone } }
+      });
+      session = signUpData?.session;
+    }
+  }
+
+  if (session) {
+    await supabase.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
+  }
 
  setLoading(false);
  return true;
