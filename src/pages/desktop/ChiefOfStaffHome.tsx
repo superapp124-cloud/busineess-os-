@@ -80,7 +80,7 @@ export const ChiefOfStaffHome: React.FC = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase
+          const { data: profile } = await (supabase as any)
             .from('profiles')
             .select('*')
             .eq('id', user.id)
