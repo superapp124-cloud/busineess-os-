@@ -43,7 +43,7 @@ const Auth = () => {
  
  setUserId(session.user.id);
  
- const { data: profile, error: profileError } = await supabase
+ const { data: profile, error: profileError } = await (supabase as any)
  .from('profiles')
  .select('*')
  .eq('id', session.user.id)
@@ -54,12 +54,12 @@ const Auth = () => {
  }
 
  if (profile) {
- const { data: roles } = await supabase
+ const { data: roles } = await (supabase as any)
  .from("user_roles")
  .select("role")
  .eq("user_id", session.user.id);
  
- const isAdmin = roles?.some(r => r.role === "admin");
+ const isAdmin = roles?.some((r: any) => r.role === "admin");
  
  if (profile.onboarding_completed) {
  const redirectPath = sessionStorage.getItem('auth_redirect');
@@ -84,7 +84,7 @@ const Auth = () => {
  const explicitSignout = sessionStorage.getItem('chatr_explicit_signout');
  if (!explicitSignout) {
  const deviceFingerprint = await getDeviceFingerprint();
- const { data: deviceSession } = await supabase
+ const { data: deviceSession } = await (supabase as any)
  .from('device_sessions')
  .select('*')
  .eq('device_fingerprint', deviceFingerprint)
@@ -95,7 +95,7 @@ const Auth = () => {
  if (deviceSession) {
  setUserId(deviceSession.user_id);
  
- const { data: profile } = await supabase
+ const { data: profile } = await (supabase as any)
  .from('profiles')
  .select('onboarding_completed')
  .eq('id', deviceSession.user_id)
@@ -124,7 +124,7 @@ const Auth = () => {
  setUserId(session.user.id);
  
  setTimeout(async () => {
- const { data: profile } = await supabase
+ const { data: profile } = await (supabase as any)
  .from('profiles')
  .select('onboarding_completed, username, phone_number')
  .eq('id', session.user.id)
