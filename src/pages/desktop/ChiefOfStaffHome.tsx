@@ -142,9 +142,10 @@ export const ChiefOfStaffHome: React.FC = () => {
         
         {/* ── 1. Top Header Banner with Sunset Graphic ──────────────────── */}
         <div className="relative bg-[#181B23] border border-white/10 rounded-[16px] p-6 md:p-7 overflow-hidden shadow-level-1">
-          {/* Sunset Graphic Background */}
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden rounded-r-[16px] pointer-events-none opacity-90 hidden lg:block">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#181B23] via-[#181B23]/80 to-transparent z-10" />
+          {/* Sunset Graphic Background with Smooth Right Edge Blend */}
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden rounded-r-[16px] pointer-events-none opacity-85 hidden lg:block">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#181B23] via-[#181B23]/75 to-transparent z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#181B23] to-transparent z-10" />
             <svg viewBox="0 0 400 200" className="w-full h-full object-cover">
               <defs>
                 <radialGradient id="sunGlow" cx="75%" cy="35%" r="50%">
@@ -169,21 +170,21 @@ export const ChiefOfStaffHome: React.FC = () => {
           </div>
 
           <div className="relative z-20 space-y-3 max-w-xl">
-            {/* Top Badges Row */}
+            {/* Cohesive Badges Row */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center flex-wrap gap-2.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] text-[11px] font-semibold backdrop-blur-md">
-                  <Crown className="h-3.5 w-3.5" /> Your Executive Chief of Staff
+              <div className="flex items-center flex-wrap gap-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold backdrop-blur-md">
+                  <Crown className="h-3.5 w-3.5 text-emerald-400" /> Your Executive Chief of Staff
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] text-[11px] font-semibold backdrop-blur-md">
-                  <Zap className="h-3.5 w-3.5" /> Mode: <span className="font-bold text-white uppercase">{personaMode}</span>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold backdrop-blur-md">
+                  <Zap className="h-3.5 w-3.5 text-emerald-400" /> Mode: <span className="font-bold text-white uppercase">{personaMode}</span>
                 </div>
               </div>
               
               {/* Customization Settings Trigger */}
               <button
                 onClick={() => setShowCustomizer(true)}
-                className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white rounded-[10px] text-xs font-semibold flex items-center gap-1.5 transition-all backdrop-blur-md"
+                className="px-3 py-1 bg-white/10 hover:bg-white/20 border border-white/15 text-slate-300 hover:text-white rounded-full text-[11px] font-semibold flex items-center gap-1.5 transition-all backdrop-blur-md"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" /> AI Personality
               </button>
@@ -194,7 +195,7 @@ export const ChiefOfStaffHome: React.FC = () => {
               <h1 className="text-[28px] md:text-[34px] font-extrabold tracking-tight text-white leading-tight">
                 Good morning, <span className="text-[#6D5DF6]">{userName}.</span>
               </h1>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-gray-300 text-sm mt-1 font-medium">
                 I reviewed your business this morning. Three items deserve your attention before lunch.
               </p>
             </div>
@@ -336,13 +337,13 @@ export const ChiefOfStaffHome: React.FC = () => {
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() => navigate('/desktop/calls')}
-                      className="px-3 py-1.5 bg-[#090A0F] hover:bg-white/10 text-[11px] font-semibold rounded-[12px] text-gray-300 flex items-center gap-1 border border-white/10 transition-colors"
+                      className="px-3 py-1.5 bg-[#090A0F] hover:bg-white/10 text-[11px] font-semibold rounded-[10px] text-gray-300 flex items-center gap-1 border border-white/10 transition-colors"
                     >
                       <Phone className="h-3 w-3 text-[#3B82F6]" /> Call
                     </button>
                     <button
                       onClick={() => handleExecuteGoal('Draft follow-up email to Rajesh regarding Acme Corp Proposal')}
-                      className="px-3 py-1.5 bg-[#22C55E] hover:bg-[#16a34a] text-[11px] font-semibold rounded-[12px] text-white flex items-center gap-1 transition-all shadow-md"
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-[11px] font-semibold rounded-[10px] text-white flex items-center gap-1 transition-all shadow-md"
                     >
                       <Send className="h-3 w-3" /> Draft Reply
                     </button>
@@ -361,7 +362,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                   </div>
                   <button
                     onClick={() => handleExecuteGoal('Prepare meeting briefing for 2 PM TalentXcel Client Meeting')}
-                    className="px-3 py-1.5 bg-[#6D5DF6] hover:bg-[#5b4be0] text-[11px] font-semibold rounded-[12px] text-white flex items-center gap-1 transition-all shadow-md shrink-0"
+                    className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-[11px] font-semibold rounded-[10px] text-white flex items-center gap-1 transition-all shadow-md shrink-0"
                   >
                     <Sparkles className="h-3 w-3" /> Prepare Me
                   </button>
@@ -379,7 +380,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                   </div>
                   <button
                     onClick={() => handleExecuteGoal('Summarize team performance and completed tasks from yesterday')}
-                    className="px-3 py-1.5 bg-[#22C55E]/10 border border-[#22C55E]/30 hover:bg-[#22C55E]/20 text-[#22C55E] text-[11px] font-semibold rounded-[12px] flex items-center gap-1 transition-all shrink-0"
+                    className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-[11px] font-semibold rounded-[10px] flex items-center gap-1 transition-all shrink-0"
                   >
                     <TrendingUp className="h-3 w-3" /> See Summary
                   </button>
@@ -388,32 +389,32 @@ export const ChiefOfStaffHome: React.FC = () => {
               </div>
             </div>
 
-            {/* Today's Schedule Card Group */}
+            {/* Today's Schedule Card Group - High Contrast */}
             <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-5 shadow-level-1 space-y-3">
               <div className="flex items-center justify-between">
-                <div className="text-[13px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                <div className="text-[13px] font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-[#3B82F6]" /> Today's Schedule
                 </div>
                 <button
                   onClick={() => navigate('/desktop/calendar')}
-                  className="text-xs text-gray-400 hover:text-white flex items-center gap-1 bg-[#090A0F] px-3 py-1.5 rounded-[12px] border border-white/10 transition-colors"
+                  className="text-xs text-gray-300 hover:text-white flex items-center gap-1 bg-[#0F111A] px-3 py-1.5 rounded-[10px] border border-white/10 hover:border-white/20 transition-all font-medium"
                 >
                   View Calendar <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="bg-[#090A0F] border border-white/10 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5">
-                  <span className="text-[#3B82F6] font-bold text-xs font-mono">9:30 AM</span>
-                  <span className="text-gray-200 text-xs font-semibold truncate">Sales Team Standup</span>
+                <div className="bg-[#0F111A] border border-blue-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-blue-500/40 transition-colors">
+                  <span className="text-blue-400 font-bold text-xs font-mono">9:30 AM</span>
+                  <span className="text-white text-xs font-semibold truncate">Sales Team Standup</span>
                 </div>
-                <div className="bg-[#090A0F] border border-white/10 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5">
-                  <span className="text-[#F59E0B] font-bold text-xs font-mono">11:00 AM</span>
-                  <span className="text-gray-200 text-xs font-semibold truncate">Vendor Sync</span>
+                <div className="bg-[#0F111A] border border-amber-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-amber-500/40 transition-colors">
+                  <span className="text-amber-400 font-bold text-xs font-mono">11:00 AM</span>
+                  <span className="text-white text-xs font-semibold truncate">Vendor Sync</span>
                 </div>
-                <div className="bg-[#090A0F] border border-white/10 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5">
-                  <span className="text-[#6D5DF6] font-bold text-xs font-mono">2:00 PM</span>
-                  <span className="text-gray-200 text-xs font-semibold truncate">TalentXcel Demo</span>
+                <div className="bg-[#0F111A] border border-purple-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-purple-500/40 transition-colors">
+                  <span className="text-purple-400 font-bold text-xs font-mono">2:00 PM</span>
+                  <span className="text-white text-xs font-semibold truncate">TalentXcel Demo</span>
                 </div>
               </div>
             </div>
@@ -489,14 +490,6 @@ export const ChiefOfStaffHome: React.FC = () => {
                   <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
               </div>
-
-              {/* Action Button */}
-              <button
-                onClick={() => handleExecuteGoal('What needs my attention today?')}
-                className="w-full bg-[#6D5DF6] hover:bg-[#5b4be0] text-white rounded-[12px] py-2.5 px-4 font-semibold text-xs flex items-center justify-center gap-2 shadow-level-2 transition-all"
-              >
-                <Sparkles className="h-3.5 w-3.5" /> Start Conversation
-              </button>
 
             </div>
           </div>
