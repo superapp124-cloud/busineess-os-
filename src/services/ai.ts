@@ -239,30 +239,22 @@ export async function generate({
   }
 
   // ── Privacy Gate ──────────────────────────────────────────────────────────
-  // If we reach here, local execution failed. 
-  // By default, CHATR is a desktop-first privacy product.
-  // We do NOT silently send data to the cloud unless explicitly allowed.
-  const strictPrivacyMode = true; // In the future, read this from user settings via Kernel
+  // Allow cloud fallback if preferLocal is false or if VITE_GEMINI_API_KEY / VITE_OPENAI_API_KEY is provided
+  const hasCloudKey = !!import.meta.env.VITE_GEMINI_API_KEY || !!import.meta.env.VITE_OPENAI_API_KEY;
+  const strictPrivacyMode = !preferLocal ? false : (!hasCloudKey);
 
   if (strictPrivacyMode) {
-    throw new Error(
-      '[CHATR AI Policy] Strict Privacy Mode is enabled. Local AI is currently unavailable or warming up, and cloud fallback is blocked. \n' +
-      'Options:\n' +
-      '• Wait for local Ollama to finish starting.\n' +
-      '• Disable Strict Privacy Mode in Settings to allow cloud fallback.'
-    );
-  }
+    console.warn('[CHATR AI] Local AI unavailable and cloud fallback is disabled by privacy policy.');
+  } else {
+    // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
+    const geminiResult = await tryGemini(prompt, systemPrompt);
+    if (geminiResult) return geminiResult;
 
-  // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
-  const geminiResult = await tryGemini(prompt, systemPrompt);
-  if (geminiResult) return geminiResult;
+    // ── Path 5: OpenAI API (cloud) ────────────────────────────────────────────
+    const openAIResult = await tryOpenAI(prompt, systemPrompt);
+    if (openAIResult) return openAIResult;
 
-  // ── Path 5: OpenAI API (cloud) ────────────────────────────────────────────
-  const openAIResult = await tryOpenAI(prompt, systemPrompt);
-  if (openAIResult) return openAIResult;
-
-  // ── Path 6: Supabase Edge Function ───────────────────────────────────────
-  if (!preferLocal) {
+    // ── Path 6: Supabase Edge Function ───────────────────────────────────────
     const edgeResult = await trySupabaseEdge(prompt, systemPrompt);
     if (edgeResult) return edgeResult;
   }

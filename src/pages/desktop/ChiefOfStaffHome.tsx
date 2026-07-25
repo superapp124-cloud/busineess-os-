@@ -39,6 +39,7 @@ import {
   HelpCircle,
   Database,
 } from 'lucide-react';
+import { generate } from '@/services/ai';
 import { supabase } from '@/integrations/supabase/client';
 import { contextBuilder } from '@/core/ai/context/ContextBuilder';
 import { DataProvenanceModal } from '@/components/desktop/DataProvenanceModal';
@@ -114,6 +115,29 @@ export const ChiefOfStaffHome: React.FC = () => {
     const depthToUse = overrideDepth || reasoningDepth;
     setIsProcessing(true);
     try {
+      // 1. Try Live Gemini / Cloud AI generation
+      const systemPrompt = `You are CHATR Executive Chief of Staff for ${userName}. Mode: ${personaMode.toUpperCase()}. Reasoning Depth: ${depthToUse}. Be concise, professional, structured, and action-oriented.`;
+      
+      const liveAiResult = await generate({
+        prompt: textToRun,
+        systemPrompt,
+        preferLocal: false,
+      });
+
+      if (liveAiResult && !liveAiResult.includes('CHATR Execution OS local AI')) {
+        setResponseContext(liveAiResult);
+      } else {
+        // Fallback to grounded rule synthesis if offline
+        const fallbackReply = contextBuilder.synthesizeExecutiveResponse(
+          textToRun,
+          userName,
+          personaMode,
+          depthToUse,
+          challengeDecisions
+        );
+        setResponseContext(fallbackReply);
+      }
+    } catch {
       const executiveReply = contextBuilder.synthesizeExecutiveResponse(
         textToRun,
         userName,
@@ -122,10 +146,6 @@ export const ChiefOfStaffHome: React.FC = () => {
         challengeDecisions
       );
       setResponseContext(executiveReply);
-    } catch {
-      setResponseContext(
-        `Good morning, ${userName}. Your business is in a healthy position today. Send the Acme Corp proposal follow-up before lunch.`
-      );
     } finally {
       setIsProcessing(false);
     }
