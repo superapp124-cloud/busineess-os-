@@ -154,99 +154,100 @@ const Auth = () => {
  }
 
  return (
- <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden safe-area-pt safe-area-pb">
- {/* Subtle gradient background - Apple style */}
- <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-muted/30" />
- 
- {/* Floating blur elements */}
- <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
- <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
- 
- <motion.div 
- className="relative w-full max-w-md z-10"
- initial={{ opacity: 0, y: 20 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
- >
- {/* Brand Section */}
- <div className="text-center mb-10 space-y-6">
- {/* Logo with subtle shadow */}
- <motion.div 
- className="flex justify-center"
- initial={{ scale: 0.9, opacity: 0 }}
- animate={{ scale: 1, opacity: 1 }}
- transition={{ delay: 0.1, duration: 0.5 }}
- >
- <img 
- src={chatrBrandLogo} 
- alt="Chatr" 
- className="h-20 w-auto drop-shadow-lg"
- />
- </motion.div>
- 
- {/* Title - Apple typography */}
- <motion.div
- initial={{ opacity: 0, y: 10 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ delay: 0.2, duration: 0.5 }}
- >
- <h1 className="text-display font-semibold tracking-tight text-foreground">
- Chatr<span className="text-primary">+</span>
- </h1>
- <p className="text-muted-foreground text-secondary mt-2">
- Smart Messaging, Privacy First
- </p>
- </motion.div>
- </div>
- 
- {/* Auth Card - Apple glass style */}
- <motion.div
- initial={{ opacity: 0, y: 20 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ delay: 0.3, duration: 0.5 }}
- >
- <AppleCard glass padding="lg" rounded="2xl" className="space-y-4">
- <FirebasePhoneAuth />
- <BiometricLogin />
- </AppleCard>
- </motion.div>
- 
- {/* Features Grid - Apple style */}
- <motion.div 
- className="mt-10 grid grid-cols-3 gap-4"
- initial={{ opacity: 0 }}
- animate={{ opacity: 1 }}
- transition={{ delay: 0.5, duration: 0.5 }}
- >
- {[
- { icon: '🔒', label: 'Secure' },
- { icon: '⚡', label: 'Fast' },
- { icon: '🤖', label: 'AI Powered' },
- ].map((feature, i) => (
- <motion.div 
- key={feature.label}
- className="flex flex-col items-center gap-2"
- initial={{ opacity: 0, y: 10 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ delay: 0.5 + i * 0.1 }}
- >
- <div className="w-12 h-12 rounded-2xl bg-muted/50 backdrop-blur-sm flex items-center justify-center text-workspace shadow-sm">
- {feature.icon}
- </div>
- <span className="text-label text-muted-foreground ">{feature.label}</span>
- </motion.div>
- ))}
- </motion.div>
- 
- {/* Footer */}
- <motion.div
- initial={{ opacity: 0 }}
- animate={{ opacity: 1 }}
- transition={{ delay: 0.7 }}
- >
- <Footer />
- </motion.div>
- </motion.div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50 text-slate-900">
+      {/* Soft light background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-slate-100" />
+      
+      {/* Floating soft blur elements */}
+      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-purple-200/40 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl" />
+      
+      <motion.div 
+        className="relative w-full max-w-md z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {/* Brand Section */}
+        <div className="text-center mb-8 space-y-3">
+          {/* Logo */}
+          <motion.div 
+            className="flex justify-center"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            <img 
+              src={chatrBrandLogo} 
+              alt="Chatr" 
+              className="h-16 w-auto"
+            />
+          </motion.div>
+          
+          {/* Title - Image 2 Typography */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Chatr<span className="text-[#8B5CF6]">+</span>
+            </h1>
+            <p className="text-sm font-medium text-slate-500 mt-1">
+              Smart Messaging, Privacy First
+            </p>
+          </motion.div>
+        </div>
+        
+        {/* Auth Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <div className="bg-white/95 backdrop-blur-xl border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-3xl p-6 sm:p-8 space-y-4">
+            <FirebasePhoneAuth />
+            <BiometricLogin />
+          </div>
+        </motion.div>
+        
+        {/* Features Grid - Image 2 style */}
+        <motion.div 
+          className="mt-8 grid grid-cols-3 gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          {[
+            { icon: '🔒', label: 'Secure' },
+            { icon: '⚡', label: 'Fast' },
+            { icon: '🤖', label: 'AI Powered' },
+          ].map((feature, i) => (
+            <motion.div 
+              key={feature.label}
+              className="flex flex-col items-center gap-1.5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+            >
+              <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-700 text-lg">
+                {feature.icon}
+              </div>
+              <span className="text-xs font-medium text-slate-600">{feature.label}</span>
+            </motion.div>
+          ))}
+        </motion.div>
+        
+        {/* Footer */}
+        <motion.div
+          className="mt-8 text-center text-xs text-slate-400 space-y-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+        >
+          <Footer />
+        </motion.div>
+      </motion.div>
  
  {/* Onboarding Dialog */}
  {userId && (

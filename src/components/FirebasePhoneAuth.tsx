@@ -153,146 +153,145 @@ export const FirebasePhoneAuth: React.FC = () => {
  };
 
  return (
- <>
- {/* Hidden reCAPTCHA container */}
- <style>{`
- .grecaptcha-badge { visibility: hidden !important; }
- `}</style>
- <div id="recaptcha-container" />
+    <>
+      {/* Hidden reCAPTCHA container */}
+      <style>{`
+        .grecaptcha-badge { visibility: hidden !important; }
+      `}</style>
+      <div id="recaptcha-container" />
 
- <Card className="w-full bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
- <CardHeader className="space-y-2 pb-4">
- <CardTitle className="text-page font-bold text-foreground">
- {step === 'phone' ? 'Welcome' : 'Verify Phone'}
- </CardTitle>
- <CardDescription className="text-secondary text-muted-foreground">
- {step === 'phone' 
- ? 'Enter your phone number to continue' 
- : `Enter the 6-digit OTP sent to ${countryCode} ${phoneNumber}`}
- </CardDescription>
- </CardHeader>
+      <div className="w-full space-y-6">
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-slate-900">
+            {step === 'phone' ? 'Welcome' : 'Verify Phone'}
+          </h2>
+          <p className="text-xs text-slate-500">
+            {step === 'phone' 
+              ? 'Enter your phone number to continue' 
+              : `Enter the 6-digit OTP sent to ${countryCode} ${phoneNumber}`}
+          </p>
+        </div>
 
- <CardContent className="space-y-6">
- {/* Error Display */}
- {error && (
- <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-secondary text-destructive">
- {error}
- </div>
- )}
+        <div className="space-y-5">
+          {/* Error Display */}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600">
+              {error}
+            </div>
+          )}
 
- {/* Phone Number Input */}
- {step === 'phone' && (
- <form onSubmit={handlePhoneSubmit} className="space-y-5">
- <div className="space-y-3">
- <Label htmlFor="phone" className="text-secondary font-medium text-foreground">
- Phone Number
- </Label>
- <div className="flex gap-3">
- <CountryCodeSelector
- value={countryCode}
- onChange={setCountryCode}
- />
- <Input
- id="phone"
- type="tel"
- placeholder="Your phone number"
- value={phoneNumber}
- onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
- className="flex-1 h-14 text-body bg-white border-2 border-gray-200 focus:border-primary rounded-xl transition-all"
- required
- autoFocus
- maxLength={15}
- />
- </div>
- <p className="text-label text-muted-foreground">
- New users will receive a verification OTP. Existing users login instantly.
- </p>
- </div>
- <Button 
- type="submit" 
- className="w-full h-14 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-semibold text-body rounded-xl shadow-lg hover:shadow-xl transition-all"
- disabled={loading || phoneNumber.length < 10}
- >
- {loading ? (
- <>
- <Loader2 className="mr-2 h-5 w-5 animate-spin" />
- Checking...
- </>
- ) : (
- <>
- Continue
- <ArrowRight className="ml-2 h-5 w-5" />
- </>
- )}
- </Button>
- </form>
- )}
+          {/* Phone Number Input */}
+          {step === 'phone' && (
+            <form onSubmit={handlePhoneSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-xs font-semibold text-slate-700">
+                  Phone Number
+                </Label>
+                <div className="flex gap-2.5">
+                  <CountryCodeSelector
+                    value={countryCode}
+                    onChange={setCountryCode}
+                  />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Your phone number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                    className="flex-1 h-11 text-sm bg-white border border-slate-200 text-slate-900 focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] rounded-xl transition-all placeholder:text-slate-400"
+                    required
+                    autoFocus
+                    maxLength={15}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                  New users will receive a verification OTP. Existing users login instantly.
+                </p>
+              </div>
 
- {/* OTP Verification (New Users Only) */}
- {step === 'otp' && (
- <div className="space-y-5">
- <Button
- variant="ghost"
- onClick={handleBack}
- className="mb-2 hover:bg-muted/50 rounded-lg"
- disabled={loading}
- >
- <ArrowLeft className="mr-2 h-4 w-4" />
- Change Number
- </Button>
+              <Button 
+                type="submit" 
+                className="w-full h-12 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium text-sm rounded-2xl shadow-sm transition-all"
+                disabled={loading || phoneNumber.length < 10}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
 
- <div className="space-y-4">
- <OTPInput
- length={6}
- value={otp}
- onChange={setOtp}
- onComplete={handleOTPComplete}
- disabled={loading}
- />
+          {/* OTP Verification (New Users Only) */}
+          {step === 'otp' && (
+            <div className="space-y-4">
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                className="text-xs text-slate-500 hover:bg-slate-100 rounded-lg h-8 px-2"
+                disabled={loading}
+              >
+                <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                Change Number
+              </Button>
 
- {/* Resend Timer */}
- <div className="text-center">
- {countdown > 0 ? (
- <p className="text-secondary text-muted-foreground">
- Resend OTP in <span className="font-semibold text-primary">{countdown}s</span>
- </p>
- ) : (
- <Button
- variant="ghost"
- onClick={handleResend}
- disabled={loading}
- className="text-primary hover:text-primary/80"
- >
- <RefreshCw className="mr-2 h-4 w-4" />
- Resend OTP
- </Button>
- )}
- </div>
- </div>
+              <div className="space-y-4">
+                <OTPInput
+                  length={6}
+                  value={otp}
+                  onChange={setOtp}
+                  onComplete={handleOTPComplete}
+                  disabled={loading}
+                />
 
- <Button
- onClick={() => handleOTPComplete(otp)}
- disabled={loading || otp.length < 6}
- className="w-full h-14 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-semibold text-body rounded-xl shadow-lg hover:shadow-xl transition-all"
- >
- {loading ? (
- <>
- <Loader2 className="mr-2 h-5 w-5 animate-spin" />
- Verifying...
- </>
- ) : (
- <>
- Verify OTP
- <CheckCircle className="ml-2 h-5 w-5" />
- </>
- )}
- </Button>
- </div>
- )}
+                {/* Resend Timer */}
+                <div className="text-center">
+                  {countdown > 0 ? (
+                    <p className="text-xs text-slate-500">
+                      Resend OTP in <span className="font-semibold text-[#8B5CF6]">{countdown}s</span>
+                    </p>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      onClick={handleResend}
+                      disabled={loading}
+                      className="text-xs text-[#8B5CF6] hover:text-[#7C3AED]"
+                    >
+                      <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+                      Resend OTP
+                    </Button>
+                  )}
+                </div>
+              </div>
 
- {/* Removed syncing state - verification happens inline */}
- </CardContent>
- </Card>
- </>
+              <Button
+                onClick={() => handleOTPComplete(otp)}
+                disabled={loading || otp.length < 6}
+                className="w-full h-12 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium text-sm rounded-2xl shadow-sm transition-all"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify OTP
+                    <CheckCircle className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
  );
 };

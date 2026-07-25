@@ -40,19 +40,19 @@ export const CountryCodeSelector = ({ value, onChange, disabled }: CountryCodeSe
  return (
  <Popover open={open} onOpenChange={setOpen}>
  <PopoverTrigger asChild>
- <Button
- variant="outline"
- role="combobox"
- aria-expanded={open}
- className="w-[110px] justify-between"
- disabled={disabled}
- >
- <span className="flex items-center gap-1.5">
- <span className="text-section">{selectedCountry.flag}</span>
- <span className="text-secondary font-medium">{selectedCountry.dialCode}</span>
- </span>
- <ChevronDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
- </Button>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[105px] justify-between h-11 bg-slate-50 border-slate-200 text-slate-800 rounded-xl hover:bg-slate-100"
+          disabled={disabled}
+        >
+          <span className="flex items-center gap-1.5 text-xs font-medium">
+            <span>{selectedCountry.flag}</span>
+            <span>{selectedCountry.dialCode}</span>
+          </span>
+          <ChevronDown className="ml-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+        </Button>
  </PopoverTrigger>
  <PopoverContent className="w-[300px] p-0" align="start">
  <div className="border-b px-3 py-2">
