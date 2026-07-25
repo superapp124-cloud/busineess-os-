@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
@@ -10,81 +9,81 @@ import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/SEOHead';
 
 export default function Contact() {
- const navigate = useNavigate();
- const [formData, setFormData] = useState({
- name: '',
- email: '',
- subject: '',
- message: ''
- });
- const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
- const handleSubmit = async (e: React.FormEvent) => {
- e.preventDefault();
- setIsSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
- try {
- // Store contact form submission in database
- const { error } = await supabase
- .from('contact_submissions')
- .insert([
- {
- name: formData.name,
- email: formData.email,
- subject: formData.subject,
- message: formData.message
- }
- ]);
+    try {
+      // Store contact form submission in database
+      const { error } = await (supabase as any)
+        .from('contact_submissions')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message
+          }
+        ]);
 
- if (error) throw error;
+      if (error) throw error;
 
- toast.success('Message sent successfully!', {
- description: 'We\'ll get back to you within 24 hours.'
- });
+      toast.success('Message sent successfully!', {
+        description: "We'll get back to you within 24 hours."
+      });
 
- // Reset form
- setFormData({ name: '', email: '', subject: '', message: '' });
- } catch (error) {
- console.error('Error submitting form:', error);
- toast.error('Failed to send message. Please try again.');
- } finally {
- setIsSubmitting(false);
- }
- };
+      // Reset form
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
- const contactInfo = [
- {
- icon: Mail,
- title: 'Email',
- value: 'support@chatr.chat',
- link: 'mailto:support@chatr.chat'
- },
- {
- icon: Phone,
- title: 'Phone',
- value: '+91 120 XXX XXXX',
- link: 'tel:+911201234567'
- },
- {
- icon: MapPin,
- title: 'Address',
- value: 'Noida, Uttar Pradesh, India',
- link: 'https://maps.google.com'
- },
- {
- icon: Clock,
- title: 'Support Hours',
- value: '24/7 Available',
- link: null
- }
- ];
+  const contactInfo = [
+    {
+      icon: Mail,
+      title: 'Email',
+      value: 'support@chatr.chat',
+      link: 'mailto:support@chatr.chat'
+    },
+    {
+      icon: Phone,
+      title: 'Phone',
+      value: '+91 120 XXX XXXX',
+      link: 'tel:+911201234567'
+    },
+    {
+      icon: MapPin,
+      title: 'Address',
+      value: 'Noida, Uttar Pradesh, India',
+      link: 'https://maps.google.com'
+    },
+    {
+      icon: Clock,
+      title: 'Support Hours',
+      value: '24/7 Available',
+      link: null
+    }
+  ];
 
- const socialLinks = [
- { name: 'Twitter', url: 'https://twitter.com/ChatrAppOfficial', icon: '𝕏' },
- { name: 'Instagram', url: 'https://instagram.com/chatrplus', icon: '📷' },
- { name: 'LinkedIn', url: 'https://linkedin.com/company/talentxcel', icon: '💼' },
- { name: 'Facebook', url: 'https://facebook.com/chatrplus', icon: '👍' }
- ];
+  const socialLinks = [
+    { name: 'Twitter', url: 'https://twitter.com/ChatrAppOfficial', icon: '𝕏' },
+    { name: 'Instagram', url: 'https://instagram.com/chatrplus', icon: '📷' },
+    { name: 'LinkedIn', url: 'https://linkedin.com/company/talentxcel', icon: '💼' },
+    { name: 'Facebook', url: 'https://facebook.com/chatrplus', icon: '👍' }
+  ];
 
   return (
     <>

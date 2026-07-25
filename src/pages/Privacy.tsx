@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -10,101 +9,101 @@ import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Privacy() {
- const navigate = useNavigate();
- const { toast } = useToast();
- const [loading, setLoading] = useState(true);
- const [settings, setSettings] = useState({
- profile_visibility: 'everyone',
- last_seen_visibility: 'everyone',
- read_receipts: true,
- typing_indicators: true,
- });
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState({
+    profile_visibility: 'everyone',
+    last_seen_visibility: 'everyone',
+    read_receipts: true,
+    typing_indicators: true,
+  });
 
- useEffect(() => {
- loadSettings();
- 
- // Subscribe to realtime updates
- const channel = supabase
- .channel('user_settings_privacy')
- .on(
- 'postgres_changes',
- {
- event: '*',
- schema: 'public',
- table: 'user_settings',
- },
- (payload: any) => {
- if (payload.new) {
- setSettings({
- profile_visibility: payload.new.profile_visibility ?? 'everyone',
- last_seen_visibility: payload.new.last_seen_visibility ?? 'everyone',
- read_receipts: payload.new.read_receipts ?? true,
- typing_indicators: payload.new.typing_indicators ?? true,
- });
- }
- }
- )
- .subscribe();
+  useEffect(() => {
+    loadSettings();
+    
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('user_settings_privacy')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_settings',
+        },
+        (payload: any) => {
+          if (payload.new) {
+            setSettings({
+              profile_visibility: payload.new.profile_visibility ?? 'everyone',
+              last_seen_visibility: payload.new.last_seen_visibility ?? 'everyone',
+              read_receipts: payload.new.read_receipts ?? true,
+              typing_indicators: payload.new.typing_indicators ?? true,
+            });
+          }
+        }
+      )
+      .subscribe();
 
- return () => {
- supabase.removeChannel(channel);
- };
- }, []);
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
- const loadSettings = async () => {
- try {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return;
+  const loadSettings = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
- const { data, error } = await supabase
- .from('user_settings')
- .select('*')
- .eq('user_id', user.id)
- .maybeSingle();
+      const { data, error } = await (supabase as any)
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
- if (error) throw error;
+      if (error) throw error;
 
- if (data) {
- setSettings({
- profile_visibility: data.profile_visibility,
- last_seen_visibility: data.last_seen_visibility,
- read_receipts: data.read_receipts,
- typing_indicators: data.typing_indicators,
- });
- } else {
- // Create default settings
- await supabase.from('user_settings').insert({ user_id: user.id });
- }
- } catch (error) {
- console.error('Error loading settings:', error);
- } finally {
- setLoading(false);
- }
- };
+      if (data) {
+        setSettings({
+          profile_visibility: data.profile_visibility,
+          last_seen_visibility: data.last_seen_visibility,
+          read_receipts: data.read_receipts,
+          typing_indicators: data.typing_indicators,
+        });
+      } else {
+        // Create default settings
+        await (supabase as any).from('user_settings').insert({ user_id: user.id });
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- const updateSetting = async (key: keyof typeof settings, value: string | boolean) => {
- try {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return;
+  const updateSetting = async (key: keyof typeof settings, value: string | boolean) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
- const { error } = await supabase
- .from('user_settings')
- .update({ [key]: value })
- .eq('user_id', user.id);
+      const { error } = await (supabase as any)
+        .from('user_settings')
+        .update({ [key]: value })
+        .eq('user_id', user.id);
 
- if (error) throw error;
+      if (error) throw error;
 
- setSettings(prev => ({ ...prev, [key]: value }));
- toast({ title: 'Settings updated' });
- } catch (error) {
- console.error('Error updating setting:', error);
- toast({ title: 'Failed to update settings', variant: 'destructive' });
- }
- };
+      setSettings(prev => ({ ...prev, [key]: value }));
+      toast({ title: 'Settings updated' });
+    } catch (error) {
+      console.error('Error updating setting:', error);
+      toast({ title: 'Failed to update settings', variant: 'destructive' });
+    }
+  };
 
- if (loading) {
- return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
- }
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen text-slate-500 text-sm">Loading settings...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
