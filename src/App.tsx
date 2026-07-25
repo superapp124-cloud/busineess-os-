@@ -371,7 +371,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  if ('requestIdleCallback' in window) {
  (window as any).requestIdleCallback(runPreload, { timeout: 4000 });
  } else {
- preloadTimer = window.setTimeout(runPreload, 3000);
+  preloadTimer = setTimeout(runPreload, 3000);
  }
  return;
  }
