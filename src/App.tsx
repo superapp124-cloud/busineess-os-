@@ -143,45 +143,36 @@ const isWebSubdomain = () => {
  new URLSearchParams(window.location.search).get('subdomain') === 'web';
 };
 
-// Component to handle subdomain redirect
+// Component to handle default startup redirect
 const SubdomainRedirect = () => {
  const navigate = useNavigate();
  const platform = usePlatform();
  const [redirected, setRedirected] = React.useState(false);
 
  React.useEffect(() => {
- // Desktop platform always goes to the Chief of Staff Home
- if (platform === "desktop") {
- navigate('/desktop/home', { replace: true });
- setRedirected(true);
- return;
- }
-
- // Mobile platform always goes to the mobile home
+ // Mobile platform goes to mobile home
  if (platform === "mobile") {
  navigate('/home', { replace: true });
  setRedirected(true);
  return;
  }
 
- // Web platform: check subdomains
+ // Seller portal check
  const hostname = window.location.hostname;
  if (hostname.startsWith('seller.') && window.location.pathname === '/') {
  navigate('/seller/portal', { replace: true });
  setRedirected(true);
  return;
  }
- if (isWebSubdomain() && window.location.pathname === '/') {
- navigate('/web', { replace: true });
- setRedirected(true);
- return;
- }
+
+ // Default for both web and desktop (Electron) platforms: /desktop/home
+ navigate('/desktop/home', { replace: true });
  setRedirected(true);
  }, [navigate, platform]);
 
- if (!redirected) return <PageLoader />;
+ if (!redirected) return <PageLoader message="Loading CHATR Business OS..." />;
 
- return <LazyRoute component={LazyPages.Index} />;
+ return <Navigate to="/desktop/home" replace />;
 };
 
 // Wrapper for lazy routes with Suspense
