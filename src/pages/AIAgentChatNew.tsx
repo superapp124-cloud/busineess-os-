@@ -13,6 +13,7 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 import { 
  ArrowLeft, 
  Send, 
@@ -429,8 +430,10 @@ export default function AIAgentChatNew() {
  <span className="w-2 h-2 rounded-full bg-current animate-bounce" style={{ animationDelay: '150ms' }} />
  <span className="w-2 h-2 rounded-full bg-current animate-bounce" style={{ animationDelay: '300ms' }} />
  </div>
+ ) : message.role === 'user' ? (
+   <p className="text-secondary whitespace-pre-wrap">{message.content}</p>
  ) : (
- <p className="text-secondary whitespace-pre-wrap">{message.content}</p>
+   <AIMarkdownRenderer content={message.content} />
  )}
  </Card>
 

@@ -140,8 +140,15 @@ export function useConversation(messagingService: any, currentUserId: string | n
 
       try {
         const aiResponseText = await generate({
-          prompt: `You are CHATR AI, an executive workspace assistant embedded in CHATR. Respond concisely and helpfully to the user's message: "${content}"`,
-          systemPrompt: "You are CHATR AI, an intelligent workspace AI assistant."
+          prompt: content,
+          systemPrompt: `You are CHATR Executive Intelligence, an elite AI advisor embedded in CHATR Business OS.
+Structure your answers clearly using markdown formatting:
+- Use headers (## or ###) on new lines for major sections or categories
+- Put a blank newline before and after headers
+- Use bullet points (• or -) on new lines for lists
+- Use **bold** for emphasis and key names
+- Never squash multiple headers onto the same line
+- Be direct, concise, high-signal, and executive in tone.`
         });
 
         const aiMsg: Message = {

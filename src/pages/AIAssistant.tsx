@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Send, ArrowLeft, Sparkles, Mic, MicOff } from 'lucide-react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 import { AIErrorFallback } from '@/components/AIErrorFallback';
 import { useSpeechRecognition } from '@/hooks/native/useSpeechRecognition';
 import { useLocation } from '@/contexts/LocationContext';
@@ -157,7 +158,7 @@ const AIAssistant = () => {
  : 'bg-card text-card-foreground rounded-bl-sm shadow-card backdrop-blur-glass border border-glass-border'
  }`}
  >
- <p className="text-secondary whitespace-pre-wrap">{message.content}</p>
+ {message.role === 'user' ? <p className="text-secondary whitespace-pre-wrap">{message.content}</p> : <AIMarkdownRenderer content={message.content} />}
  </div>
  </div>
  </div>

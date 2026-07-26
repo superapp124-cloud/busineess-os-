@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { WorkflowRenderer } from '@/components/workflow-ui';
 import type { Message, Room, CopilotMessage, RightPaneTab } from '../types';
 import { ExecutionResultCard } from '../../components/ExecutionResultCard';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 
 interface RightPaneProps {
  selectedRoom: Room | null;
@@ -273,7 +274,9 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  )}
 
  {/* Content */}
- {(!(m as any).isResolving || m.content) && m.content && <div>{m.content}</div>}
+ {(!(m as any).isResolving || m.content) && m.content && (
+   m.role === 'assistant' ? <AIMarkdownRenderer content={m.content} /> : <div>{m.content}</div>
+ )}
 
  {/* Execution Result */}
  {m.role === 'assistant' && !(m as any).isResolving && ((m as any).confidence || (m as any).explainability) && (

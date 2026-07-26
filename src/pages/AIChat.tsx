@@ -4,6 +4,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 import { 
  ArrowLeft, Send, Sparkles, Loader2, Brain, 
  Mic, MicOff, Copy, Check, ShieldCheck, ShieldAlert,
@@ -760,7 +761,7 @@ export default function AIChat() {
  </div>
  ) : (
  <>
- <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+ {isUser ? <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p> : <AIMarkdownRenderer content={message.content} />}
 
  {!isUser && (
  <div className="mt-3 space-y-2 border-t border-border/60 pt-2">

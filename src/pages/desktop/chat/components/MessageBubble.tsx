@@ -3,6 +3,7 @@ import { CheckCheck, Smile, Reply, Forward, Sparkles, MoreVertical, FileText, Do
 import { cn } from '@/lib/utils';
 import type { Message } from '../types';
 import { ExecutionResultCard } from '../../components/ExecutionResultCard';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 
 interface MessageBubbleProps {
  msg: Message;
@@ -88,7 +89,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
  )}
 
  {/* Render Content */}
- {(!msg.isResolving || msg.content) && msg.content && <div>{msg.content}</div>}
+ {(!msg.isResolving || msg.content) && msg.content && (
+   isAI ? <AIMarkdownRenderer content={msg.content} /> : <div>{msg.content}</div>
+ )}
 
  {/* Render Execution Result (Quiet Confidence) */}
  {isAI && !msg.isResolving && <ExecutionResultCard msg={msg} />}

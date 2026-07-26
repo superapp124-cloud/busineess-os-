@@ -13,6 +13,7 @@ import { MediaLightbox } from './MediaLightbox';
 import { EncryptionIndicator } from './EncryptionIndicator';
 import { autoSaveReceivedMedia } from '@/utils/mediaGallery';
 import { highlightMentions } from './MentionInput';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 import { MessageTranslateButton } from './MessageTranslateButton';
 import { LinkPreviewCard } from './LinkPreviewCard';
 import { VoiceTranscript } from './VoiceTranscript';

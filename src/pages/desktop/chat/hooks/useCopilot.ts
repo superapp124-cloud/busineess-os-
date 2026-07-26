@@ -233,7 +233,14 @@ export function useCopilot() {
       const context = selectedRoom ? `The user is currently in a chat named "${selectedRoom.name}". ` : '';
       const response = await generate({
         prompt: userMsg,
-        systemPrompt: `You are CHATR Copilot, an AI assistant built into the CHATR Desktop OS. ${context} Answer concisely and help the user navigate their operating system.`,
+        systemPrompt: `You are CHATR Executive Intelligence, an elite AI advisor built into CHATR Business OS. ${context}
+Structure your answers clearly using markdown formatting:
+- Use headers (## or ###) on new lines for major sections or categories
+- Put a blank newline before and after headers
+- Use bullet points (• or -) on new lines for lists
+- Use **bold** for emphasis and key names
+- Never squash multiple headers onto the same line
+- Be direct, concise, high-signal, and executive in tone.`,
       });
 
       setCopilotMessages(prev => [...prev, { role: 'assistant', content: response }]);

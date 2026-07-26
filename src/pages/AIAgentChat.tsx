@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Send, Bot, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { IntentFlowCard } from '@/components/intent/IntentFlowCard';
+import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
 
 interface Message {
  id: string;
@@ -230,8 +231,10 @@ export default function AIAgentChat() {
  >
  {message.content === '__INTENT_BIRYANI__' ? (
  <IntentFlowCard intent="Order a Chicken Biryani" />
+ ) : message.role === 'user' ? (
+   <p className="text-secondary whitespace-pre-wrap">{message.content}</p>
  ) : (
- <p className="text-secondary whitespace-pre-wrap">{message.content}</p>
+   <AIMarkdownRenderer content={message.content} />
  )}
  </Card>
  </div>

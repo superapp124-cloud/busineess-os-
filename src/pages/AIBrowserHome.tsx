@@ -85,12 +85,12 @@ const MODES = [
 ];
 
 const SUGGESTIONS = [
- "Best 5G phones under Rs 20,000",
- "How does quantum computing work?",
- "IPL 2026 points table",
- "How to file ITR online",
- "Top AI tools for startups 2026",
- "Delhi to Mumbai flight prices today",
+  "Find cheapest business-class flight to London next month",
+  "New UPI transaction limit rules for educational institutes",
+  "Best 5G phones under Rs 20,000 with price & fare history",
+  "Explain quantum computing & synthesize key takeaways",
+  "How to file ITR online in India step-by-step guide",
+  "Top AI tools for startups in 2026 with pricing models",
 ];
 
 const loadingMessages = [
@@ -800,90 +800,105 @@ function HomeView({
  }
  `}</style>
 
- <div style={{ marginBottom: 46, textAlign: "center", animation: "chatrLogoFloat 6s ease infinite" }}>
- <div
- className="chatr-home-logo"
- style={{
- fontSize: 56,
- fontWeight: 900,
- letterSpacing: 0,
- background: "linear-gradient(135deg, #818CF8 0%, #C084FC 45%, #F59E0B 100%)",
- WebkitBackgroundClip: "text",
- WebkitTextFillColor: "transparent",
- marginBottom: 10,
- }}
- >
- Chatr AI
- </div>
- <div className="chatr-home-subtitle" style={{ fontSize: 12, color: "#42526F", letterSpacing: 2, fontWeight: 550 }}>
- FREE LOCAL | INDIA-NATIVE | REAL-TIME SEARCH
- </div>
- </div>
+      <div style={{ marginBottom: 46, textAlign: "center", animation: "chatrLogoFloat 6s ease infinite" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 99, background: "rgba(129, 140, 248, 0.1)", border: "1px solid rgba(129, 140, 248, 0.25)", color: "#A5B4FC", fontSize: 11, fontWeight: 600, letterSpacing: 1, marginBottom: 16 }}>
+          <Zap size={13} color="#F59E0B" />
+          <span>CHATR INTENT OS — AI KNOWLEDGE & EXECUTION ENGINE</span>
+        </div>
+        <div
+          className="chatr-home-logo"
+          style={{
+            fontSize: 56,
+            fontWeight: 900,
+            letterSpacing: 0,
+            background: "linear-gradient(135deg, #818CF8 0%, #C084FC 45%, #F59E0B 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            marginBottom: 12,
+          }}
+        >
+          Chatr AI
+        </div>
+        <div className="chatr-home-subtitle" style={{ fontSize: 12, color: "#818CF8", letterSpacing: 2, fontWeight: 600, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", opacity: 0.9 }}>
+          <span>🇮🇳 INDIA-NATIVE DPI</span>
+          <span>•</span>
+          <span>⚡ 20+ PARALLEL WORKERS</span>
+          <span>•</span>
+          <span>🛡️ LOCAL SIDECAR EXECUTION</span>
+        </div>
+      </div>
 
- <div style={{ width: "100%", maxWidth: 640, marginBottom: 18 }}>
- <SearchBar
- value={query}
- onChange={setQuery}
- onSearch={onSearch}
- autoFocus
- isListening={isListening}
- onVoiceSearch={onVoiceSearch}
- />
- </div>
+      <div style={{ width: "100%", maxWidth: 640, marginBottom: 18 }}>
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          onSearch={onSearch}
+          autoFocus
+          isListening={isListening}
+          onVoiceSearch={onVoiceSearch}
+        />
+      </div>
 
- <div style={{ marginBottom: 42 }}>
- <ModeTabs active={mode} onChange={setMode} />
- </div>
+      <div style={{ marginBottom: 42 }}>
+        <ModeTabs active={mode} onChange={setMode} />
+      </div>
 
- <div style={{ textAlign: "center", maxWidth: 620 }}>
- <div
- style={{
- fontSize: 11,
- color: "#2A3A5A",
- letterSpacing: 2,
- marginBottom: 14,
- textTransform: "uppercase",
- }}
- >
- Try asking
- </div>
- <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
- {SUGGESTIONS.map((suggestion) => (
- <button
- key={suggestion}
- type="button"
- className="chatr-chip"
- onClick={() => onSearch(suggestion)}
- style={{
- padding: "8px 14px",
- borderRadius: 8,
- border: "1px solid #1A2535",
- background: "transparent",
- color: "#64748B",
- fontSize: 13,
- cursor: "pointer",
- transition: "all 0.15s",
- fontFamily: "inherit",
- }}
- >
- {suggestion}
- </button>
- ))}
- </div>
- </div>
+      <div style={{ textAlign: "center", maxWidth: 640 }}>
+        <div
+          style={{
+            fontSize: 11,
+            color: "#818CF8",
+            letterSpacing: 2,
+            marginBottom: 14,
+            textTransform: "uppercase",
+            fontWeight: 650,
+          }}
+        >
+          Try an intent or action
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+          {SUGGESTIONS.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              className="chatr-chip"
+              onClick={() => onSearch(suggestion)}
+              style={{
+                padding: "9px 15px",
+                borderRadius: 10,
+                border: "1px solid rgba(129, 140, 248, 0.2)",
+                background: "rgba(15, 23, 42, 0.6)",
+                color: "#CBD5E1",
+                fontSize: 13,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                fontFamily: "inherit",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+              }}
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </div>
 
- <div
- className="chatr-home-footer"
- style={{ marginTop: 48, display: "flex", alignItems: "center", gap: 20, color: "#243149", fontSize: 12 }}
- >
- <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
- <MapPin size={11} />
- <span>Noida | UP</span>
- </div>
- <div>Free/local stack active</div>
- <div>Real-time search</div>
- </div>
- </div>
+      <div
+        className="chatr-home-footer"
+        style={{ marginTop: 52, display: "flex", alignItems: "center", gap: 24, color: "#64748B", fontSize: 12, flexWrap: "wrap", justifyContent: "center" }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <MapPin size={13} color="#818CF8" />
+          <span style={{ color: "#94A3B8" }}>Noida | UP (India-Native Stack)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", display: "inline-block", boxShadow: "0 0 8px #10B981" }}></span>
+          <span>Local Sidecar Active (Port 8787)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Zap size={13} color="#F59E0B" />
+          <span>800ms Parallel TTFS</span>
+        </div>
+      </div>
  );
 }
 
