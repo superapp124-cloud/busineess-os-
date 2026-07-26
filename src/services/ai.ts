@@ -260,26 +260,17 @@ export async function generate({
     if (ollamaResult) return ollamaResult;
   }
 
-  // ── Privacy Gate ──────────────────────────────────────────────────────────
-  // Allow cloud fallback if preferLocal is false or if VITE_GEMINI_API_KEY / VITE_OPENAI_API_KEY is provided
-  const hasCloudKey = !!import.meta.env.VITE_GEMINI_API_KEY || !!import.meta.env.VITE_OPENAI_API_KEY;
-  const strictPrivacyMode = !preferLocal ? false : (!hasCloudKey);
+  // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
+  const geminiResult = await tryGemini(prompt, systemPrompt);
+  if (geminiResult) return geminiResult;
 
-  if (strictPrivacyMode) {
-    console.warn('[CHATR AI] Local AI unavailable and cloud fallback is disabled by privacy policy.');
-  } else {
-    // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
-    const geminiResult = await tryGemini(prompt, systemPrompt);
-    if (geminiResult) return geminiResult;
+  // ── Path 5: OpenAI API (cloud) ────────────────────────────────────────────
+  const openAIResult = await tryOpenAI(prompt, systemPrompt);
+  if (openAIResult) return openAIResult;
 
-    // ── Path 5: OpenAI API (cloud) ────────────────────────────────────────────
-    const openAIResult = await tryOpenAI(prompt, systemPrompt);
-    if (openAIResult) return openAIResult;
-
-    // ── Path 6: Supabase Edge Function ───────────────────────────────────────
-    const edgeResult = await trySupabaseEdge(prompt, systemPrompt);
-    if (edgeResult) return edgeResult;
-  }
+  // ── Path 6: Supabase Edge Function ───────────────────────────────────────
+  const edgeResult = await trySupabaseEdge(prompt, systemPrompt);
+  if (edgeResult) return edgeResult;
 
   // ── No AI available ───────────────────────────────────────────────────────
   throw new Error(
