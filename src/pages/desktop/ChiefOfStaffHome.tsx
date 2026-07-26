@@ -115,7 +115,52 @@ export const ChiefOfStaffHome: React.FC = () => {
     const depthToUse = overrideDepth || reasoningDepth;
     setIsProcessing(true);
 
-    const systemPrompt = `You are CHATR Executive Chief of Staff — an elite AI advisor. You are speaking directly with ${userName} in ${personaMode.toUpperCase()} mode. Be concise, direct, intelligent, and action-oriented. Never refer to yourself as a template or mock. Provide genuinely useful executive guidance.`;
+    // ── Executive Intelligence System Prompt ───────────────────────────────
+    const reasoningInstruction = {
+      just_answer: `Respond with a single, direct answer only. No explanations, no preamble. Lead with the answer. Maximum 3 sentences.`,
+      explain: `Structure every response as an Executive Brief with these sections (use markdown headers):
+## Executive Brief
+**Situation** — What is happening
+**Key Findings** — The 2–4 most important insights (use bullet points)
+**Business Impact** — Why this matters right now
+**Recommended Actions** — Prioritised steps with clear reasoning
+**Next Best Action** — The single highest-value thing to do now`,
+      think_with_me: `Think like a board-level advisor. Structure your response as:
+## Strategic Analysis
+**Situation** — Objective view of what's happening
+**Assumptions Being Made** — Surface and challenge the hidden assumptions
+**Option A vs Option B** — Compare at least two approaches
+**Risks & Mitigations** — Specific risks with how to address each
+**Recommendation** — Your recommended path with clear reasoning
+**Decision Prompt** — End with one sharp question that forces the right decision`,
+    }[depthToUse];
+
+    const personaInstruction = {
+      executive: `You think like a CEO, Chief of Staff, and Strategy Director combined. Optimise every response for clarity, business value, and immediate action. Never answer like a chatbot. Every response should help ${userName} make a better decision faster.`,
+      manager: `You think like a senior operations manager. Focus on execution, team dynamics, priorities, and removing blockers. Be practical and direct.`,
+      analyst: `You think like a McKinsey senior analyst. Lead with data, use structured frameworks, surface assumptions, and quantify business impact wherever possible.`,
+      coach: `You think like an executive coach. Ask sharp questions that help ${userName} reach their own clarity. Balance challenge with support.`,
+      casual: `You are a trusted advisor having a frank conversation. Skip the formality, be direct, use plain language, but never lose the insight.`,
+    }[personaMode];
+
+    const systemPrompt = `You are CHATR Executive Intelligence — the AI brain of CHATR Business OS.
+
+${personaInstruction}
+
+You are speaking directly with ${userName}.
+
+Tone rules:
+- Never say "Here is a summary" or "Certainly" or "Of course"
+- Never refer to yourself as an AI assistant or chatbot
+- Never use hollow filler phrases
+- Lead every response with the most important insight
+- Use executive language: concise, direct, structured, high-signal
+- Use markdown formatting: headers (##), bold (**), bullet points (•)
+- Sound like a Chief of Staff briefing a CEO — not software responding to a query
+
+When someone types only a few words like "summarise" or "what should I focus on" — do NOT ask them to paste something. Instead, produce an intelligent executive response based on what a Chief of Staff would know.
+
+Reasoning mode for this response: ${reasoningInstruction}`;
 
     // 1. Try Supabase Edge Function (ai-chat-assistant) - Secure server-side execution
     try {
@@ -258,7 +303,7 @@ export const ChiefOfStaffHome: React.FC = () => {
           <div className="bg-[#181B23] border border-[#6D5DF6]/50 p-5 rounded-[16px] text-xs space-y-4 shadow-level-2 animate-in fade-in duration-200">
             <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <Sparkles className="h-4 w-4 text-[#6D5DF6]" /> Executive Assistant Response
+                <Sparkles className="h-4 w-4 text-[#6D5DF6]" /> Executive Brief
               </div>
 
               {/* Reasoning Depth Controls */}
@@ -303,9 +348,35 @@ export const ChiefOfStaffHome: React.FC = () => {
               </div>
             </div>
 
-            {/* Natural Conversational Body */}
-            <div className="text-gray-200 text-xs leading-relaxed font-sans space-y-3 whitespace-pre-wrap">
-              {responseContext}
+            {/* Rendered Markdown Body */}
+            <div className="text-gray-200 text-xs leading-relaxed font-sans space-y-2">
+              {responseContext?.split('\n').map((line, i) => {
+                if (line.startsWith('## ')) {
+                  return <h3 key={i} className="text-white font-bold text-sm mt-4 mb-1 first:mt-0">{line.replace('## ', '')}</h3>;
+                }
+                if (line.startsWith('### ')) {
+                  return <h4 key={i} className="text-[#6D5DF6] font-semibold text-xs mt-3 mb-0.5">{line.replace('### ', '')}</h4>;
+                }
+                if (line.startsWith('**') && line.endsWith('**') && !line.slice(2, -2).includes('**')) {
+                  return <p key={i} className="font-bold text-white mt-2">{line.slice(2, -2)}</p>;
+                }
+                if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
+                  const content = line.slice(2);
+                  return (
+                    <div key={i} className="flex items-start gap-2 ml-2">
+                      <span className="text-[#6D5DF6] mt-0.5 shrink-0">•</span>
+                      <span dangerouslySetInnerHTML={{ __html: content.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>') }} />
+                    </div>
+                  );
+                }
+                if (line.trim() === '') return <div key={i} className="h-1" />;
+                return (
+                  <p key={i} dangerouslySetInnerHTML={{
+                    __html: line.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
+                      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                  }} />
+                );
+              })}
             </div>
 
             {/* Interactive Execution Action Pills */}
