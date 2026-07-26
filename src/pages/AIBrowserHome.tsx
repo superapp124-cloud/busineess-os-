@@ -899,7 +899,8 @@ function HomeView({
           <span>800ms Parallel TTFS</span>
         </div>
       </div>
- );
+    </div>
+  );
 }
 
 function LoadingView({ msg, query }: { msg: string; query: string }) {

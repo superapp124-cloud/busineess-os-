@@ -68,7 +68,7 @@ export const AIMarkdownRenderer: React.FC<AIMarkdownRendererProps> = React.memo(
 
     // Bullet points: •, -, or *
     if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || (trimmed.startsWith('* ') && !trimmed.endsWith('*'))) {
-      const text = trimmed.replace(/^[•-*]\s*/, '');
+      const text = trimmed.replace(/^[•*\-]\s*/, '');
       elements.push(
         <div key={`bullet-${index}`} className="flex items-start gap-2 ml-1 my-1">
           <span className="text-[#6D5DF6] font-bold mt-0.5 shrink-0 text-sm">•</span>
