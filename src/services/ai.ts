@@ -209,9 +209,15 @@ async function tryOpenAI(prompt: string, systemPrompt?: string): Promise<string 
 async function trySupabaseEdge(prompt: string, systemPrompt?: string): Promise<string | null> {
   try {
     const { data, error } = await supabase.functions.invoke('ai-chat-assistant', {
-      body: { prompt, system_prompt: systemPrompt, mode: 'generate' },
+      body: { 
+        action: 'summarize', 
+        prompt, 
+        messageText: prompt, 
+        system_prompt: systemPrompt 
+      },
     });
-    if (!error && data?.response) return data.response as string;
+    const reply = data?.response || data?.summary || data?.data?.summary || data?.data?.response || (typeof data === 'string' ? data : null);
+    if (!error && reply) return reply as string;
   } catch {
     // Edge function unavailable — fall through
   }
@@ -278,17 +284,13 @@ export async function generate({
     if (ollamaResult) return ollamaResult;
   }
 
-  // ── Path 4: Gemini API (cloud) ────────────────────────────────────────────
-  const geminiResult = await tryGemini(prompt, systemPrompt);
-  if (geminiResult) return geminiResult;
-
-  // ── Path 5: OpenAI API (cloud) ────────────────────────────────────────────
-  const openAIResult = await tryOpenAI(prompt, systemPrompt);
-  if (openAIResult) return openAIResult;
-
-  // ── Path 6: Supabase Edge Function ───────────────────────────────────────
+  // ── Path 4: Supabase Edge Function (Secure Cloud AI - no client key leaks) ──
   const edgeResult = await trySupabaseEdge(prompt, systemPrompt);
   if (edgeResult) return edgeResult;
+
+  // ── Path 5: OpenAI API (cloud fallback) ───────────────────────────────────
+  const openAIResult = await tryOpenAI(prompt, systemPrompt);
+  if (openAIResult) return openAIResult;
 
   // ── No AI available ───────────────────────────────────────────────────────
   throw new Error(

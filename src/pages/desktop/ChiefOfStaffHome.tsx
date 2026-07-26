@@ -117,61 +117,27 @@ export const ChiefOfStaffHome: React.FC = () => {
 
     const systemPrompt = `You are CHATR Executive Chief of Staff — an elite AI advisor. You are speaking directly with ${userName} in ${personaMode.toUpperCase()} mode. Be concise, direct, intelligent, and action-oriented. Never refer to yourself as a template or mock. Provide genuinely useful executive guidance.`;
 
-    // 1. Try direct Gemini API call (fastest path for web users)
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (geminiKey) {
-      // Try models in order — gemini-2.0-flash works on Google AI Studio free tier
-      const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.0-flash-lite', 'gemini-1.5-pro-latest'];
-      for (const model of modelsToTry) {
-        try {
-          const geminiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                contents: [{ role: 'user', parts: [{ text: textToRun }] }],
-              }),
-              signal: AbortSignal.timeout(15000),
-            }
-          );
-          if (geminiRes.ok) {
-            const geminiData = await geminiRes.json();
-            const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (geminiText) {
-              setResponseContext(geminiText);
-              setIsProcessing(false);
-              return;
-            }
-          } else if (geminiRes.status === 404) {
-            console.warn(`[ChiefOfStaff] Model ${model} not found, trying next...`);
-            continue; // try next model
-          } else {
-            const errText = await geminiRes.text().catch(() => '');
-            console.error(`[ChiefOfStaff] Gemini ${model} Error ${geminiRes.status}:`, errText);
-            break;
-          }
-        } catch (geminiErr) {
-          console.warn(`[ChiefOfStaff] Gemini ${model} fetch failed:`, geminiErr);
-        }
-      }
-    } else {
-      console.warn('[ChiefOfStaff] VITE_GEMINI_API_KEY not found in build. Using fallback.');
-    }
-
-    // 2. Try Supabase Edge Function (ai-chat-assistant)
+    // 1. Try Supabase Edge Function (ai-chat-assistant) - Secure server-side execution
     try {
       const { data: edgeData, error: edgeError } = await (supabase as any).functions.invoke('ai-chat-assistant', {
-        body: { action: 'summarize', messageText: `${systemPrompt}\n\nUser: ${textToRun}` },
+        body: { 
+          action: 'summarize',
+          prompt: textToRun,
+          messageText: textToRun,
+          system_prompt: systemPrompt
+        },
       });
-      if (!edgeError && edgeData?.summary) {
-        setResponseContext(edgeData.summary);
+      
+      const aiReply = edgeData?.response || edgeData?.summary || edgeData?.data?.summary || edgeData?.data?.response || (typeof edgeData === 'string' ? edgeData : null);
+      if (!edgeError && aiReply) {
+        setResponseContext(aiReply);
         setIsProcessing(false);
         return;
+      } else if (edgeError) {
+        console.warn('[ChiefOfStaff] Edge function error:', edgeError);
       }
     } catch (edgeErr) {
-      console.warn('[ChiefOfStaff] Edge function failed:', edgeErr);
+      console.warn('[ChiefOfStaff] Edge function invoke failed:', edgeErr);
     }
 
     // 3. Final fallback — local rule synthesis
