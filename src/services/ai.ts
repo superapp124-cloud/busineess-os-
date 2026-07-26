@@ -47,22 +47,51 @@ async function isKernelAvailable(): Promise<boolean> {
   }
 }
 
+// Cached Ollama health status to avoid unneeded fetch delays
+let ollamaHealthCache: { isAvailable: boolean; lastChecked: number } | null = null;
+
 /**
- * Path 3: Ollama REST API (browser — no Electron required)
+ * Fast 300ms probe to check if Ollama is running on localhost:11434
+ */
+async function checkOllamaHealthFast(): Promise<boolean> {
+  const now = Date.now();
+  if (ollamaHealthCache && (now - ollamaHealthCache.lastChecked) < 15000) {
+    return ollamaHealthCache.isAvailable;
+  }
+
+  try {
+    const res = await fetch('http://localhost:11434/api/tags', {
+      method: 'GET',
+      signal: AbortSignal.timeout(400),
+    });
+    const isOk = res.ok;
+    ollamaHealthCache = { isAvailable: isOk, lastChecked: now };
+    return isOk;
+  } catch {
+    ollamaHealthCache = { isAvailable: false, lastChecked: now };
+    return false;
+  }
+}
+
+/**
+ * Path 3: Local Ollama REST API (browser — ultra fast detection)
  */
 async function tryOllama(prompt: string): Promise<string | null> {
+  const isHealthy = await checkOllamaHealthFast();
+  if (!isHealthy) return null;
+
   try {
     const ollamaResponse = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'llama3.2', prompt, stream: false }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(4000), // Max 4 seconds before fallback
     });
     if (ollamaResponse.ok) {
       const json = await ollamaResponse.json();
       if (json?.response) return json.response as string;
     } else if (ollamaResponse.status === 404) {
-      // Model not found, let's trigger a pull in the background so it works later
+      // Model not found, trigger background pull
       fetch('http://localhost:11434/api/pull', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
@@ -73,23 +102,16 @@ async function tryOllama(prompt: string): Promise<string | null> {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: 'mistral', prompt, stream: false }),
-        signal: AbortSignal.timeout(30000),
+        signal: AbortSignal.timeout(4000),
       });
       if (fallback.ok) {
         const json2 = await fallback.json();
         if (json2?.response) return json2.response as string;
-      } else if (fallback.status === 404) {
-         fetch('http://localhost:11434/api/pull', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ name: 'mistral' })
-         }).catch(() => {});
-         throw new Error('Ollama AI engine is warming up in the background. Please wait a moment and try again.');
       }
     }
-  } catch (err: any) {
-    if (err.message?.includes('downloading')) throw err;
-    // Ollama not running — fall through
+  } catch {
+    // Ollama took too long or crashed — fall through to Gemini instantly
+    ollamaHealthCache = { isAvailable: false, lastChecked: Date.now() };
   }
   return null;
 }
