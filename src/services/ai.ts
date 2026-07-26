@@ -116,59 +116,8 @@ async function tryOllama(prompt: string): Promise<string | null> {
   return null;
 }
 
-/**
- * Path 4: Google Gemini REST API
- * Requires VITE_GEMINI_API_KEY env var.
- */
-async function tryGemini(prompt: string, systemPrompt?: string): Promise<string | null> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn('[CHATR AI] VITE_GEMINI_API_KEY is not defined in environment variables.');
-    return null;
-  }
-  try {
-    const payload: any = {
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    };
-
-    if (systemPrompt) {
-      payload.systemInstruction = {
-        parts: [{ text: systemPrompt }]
-      };
-    }
-
-    // Try gemini-1.5-flash first, then fallback to gemini-2.0-flash
-    const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
-    
-    for (const model of models) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(15000),
-          }
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) return text as string;
-        } else {
-          const errText = await res.text();
-          console.error(`[Gemini API ${model} Error ${res.status}]`, errText);
-        }
-      } catch (e) {
-        console.warn(`[Gemini API ${model} Fetch Failed]`, e);
-      }
-    }
-  } catch (err) {
-    console.error('[Gemini API Unknown Error]', err);
-  }
-  return null;
-}
+// Client-side Gemini fetch removed for security (preventing API key leaks and 403 errors).
+// All AI requests are now securely routed through server-side Supabase Edge Functions (ai-chat-assistant).
 
 /**
  * Path 5: OpenAI REST API
