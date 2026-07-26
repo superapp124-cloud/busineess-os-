@@ -121,7 +121,7 @@ export const ChiefOfStaffHome: React.FC = () => {
       const liveAiResult = await generate({
         prompt: textToRun,
         systemPrompt,
-        preferLocal: false,
+        preferLocal: true,
       });
 
       if (liveAiResult && !liveAiResult.includes('CHATR Execution OS local AI')) {
