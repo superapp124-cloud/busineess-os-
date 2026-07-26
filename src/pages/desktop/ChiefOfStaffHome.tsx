@@ -120,33 +120,41 @@ export const ChiefOfStaffHome: React.FC = () => {
     // 1. Try direct Gemini API call (fastest path for web users)
     const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (geminiKey) {
-      try {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              systemInstruction: { parts: [{ text: systemPrompt }] },
-              contents: [{ role: 'user', parts: [{ text: textToRun }] }],
-            }),
-            signal: AbortSignal.timeout(15000),
+      // Try models in order — gemini-2.0-flash works on Google AI Studio free tier
+      const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.0-flash-lite', 'gemini-1.5-pro-latest'];
+      for (const model of modelsToTry) {
+        try {
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{ role: 'user', parts: [{ text: textToRun }] }],
+              }),
+              signal: AbortSignal.timeout(15000),
+            }
+          );
+          if (geminiRes.ok) {
+            const geminiData = await geminiRes.json();
+            const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (geminiText) {
+              setResponseContext(geminiText);
+              setIsProcessing(false);
+              return;
+            }
+          } else if (geminiRes.status === 404) {
+            console.warn(`[ChiefOfStaff] Model ${model} not found, trying next...`);
+            continue; // try next model
+          } else {
+            const errText = await geminiRes.text().catch(() => '');
+            console.error(`[ChiefOfStaff] Gemini ${model} Error ${geminiRes.status}:`, errText);
+            break;
           }
-        );
-        if (geminiRes.ok) {
-          const geminiData = await geminiRes.json();
-          const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (geminiText) {
-            setResponseContext(geminiText);
-            setIsProcessing(false);
-            return;
-          }
-        } else {
-          const errText = await geminiRes.text().catch(() => '');
-          console.error(`[ChiefOfStaff] Gemini API Error ${geminiRes.status}:`, errText);
+        } catch (geminiErr) {
+          console.warn(`[ChiefOfStaff] Gemini ${model} fetch failed:`, geminiErr);
         }
-      } catch (geminiErr) {
-        console.warn('[ChiefOfStaff] Gemini fetch failed:', geminiErr);
       }
     } else {
       console.warn('[ChiefOfStaff] VITE_GEMINI_API_KEY not found in build. Using fallback.');

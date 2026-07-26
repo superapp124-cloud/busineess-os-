@@ -1,24 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
-import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-
-// Input validation schema
-const inputSchema = z.object({
-  action: z.enum(['smart-reply', 'summarize', 'extract-tasks', 'sentiment-analysis']),
-  messages: z.array(z.object({
-    role: z.string(),
-    content: z.string().max(5000)
-  })).max(100).optional(),
-  messageText: z.string().max(5000).optional(),
-  conversationId: z.string().uuid().optional()
-});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -27,222 +12,76 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    
-    // Validate input
-    const validationResult = inputSchema.safeParse(body);
-    if (!validationResult.success) {
+    const { prompt, messageText, system_prompt, action, messages } = body;
+
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+
+    if (!GEMINI_API_KEY) {
       return new Response(
-        JSON.stringify({ error: 'Validation failed', details: validationResult.error.errors }),
+        JSON.stringify({ error: "GEMINI_API_KEY is not configured in Supabase secrets." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Build the user text from whatever was sent
+    let userText = prompt || messageText || "";
+    if (!userText && messages && Array.isArray(messages)) {
+      userText = messages.map((m: any) => `${m.role}: ${m.content}`).join("\n");
+    }
+
+    if (!userText) {
+      return new Response(
+        JSON.stringify({ error: "No prompt or messageText provided." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-    
-    const { action, messages, messageText, conversationId } = validationResult.data;
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    
-    if (!OPENROUTER_API_KEY) {
-      throw new Error("OPENROUTER_API_KEY is not configured");
-    }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const systemInstruction = system_prompt || "You are CHATR AI — a helpful, intelligent, and concise executive assistant. Provide professional, action-oriented responses.";
 
-    let systemPrompt = "";
-    let userPrompt = "";
-    let tools: any[] = [];
+    // Try Gemini models in order
+    const models = ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-2.0-flash-lite", "gemini-1.5-pro-latest"];
 
-    // Define different AI actions
-    switch (action) {
-      case "smart-reply":
-        systemPrompt = `You are a helpful AI assistant that generates natural, conversational reply suggestions. 
-        Generate 3 different reply options with varying tones that fit any type of conversation:
-        1. Professional/Polite - Well-mannered and respectful
-        2. Friendly/Warm - Casual and approachable 
-        3. Quick/Simple - Brief and to the point
-        Keep replies natural, contextual, and universally applicable to any conversation topic.`;
-        userPrompt = `Generate 3 smart reply suggestions for this message: "${messageText}"`;
-        
-        tools = [{
-          type: "function",
-          function: {
-            name: "suggest_replies",
-            description: "Generate smart reply suggestions",
-            parameters: {
-              type: "object",
-              properties: {
-                replies: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      text: { type: "string" },
-                      tone: { type: "string", enum: ["professional", "friendly", "quick"] }
-                    },
-                    required: ["text", "tone"]
-                  }
-                }
-              },
-              required: ["replies"]
-            }
-          }
-        }];
+    for (const model of models) {
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            contents: [{ role: "user", parts: [{ text: userText }] }],
+          }),
+        }
+      );
+
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        const text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          return new Response(
+            JSON.stringify({ success: true, response: text, summary: text, model }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      } else if (geminiRes.status === 404) {
+        continue; // try next model
+      } else {
+        const errBody = await geminiRes.text();
+        console.error(`[ai-chat-assistant] Gemini ${model} error ${geminiRes.status}:`, errBody);
         break;
-
-      case "summarize":
-        systemPrompt = `You are an AI that creates concise, clear summaries of conversations. 
-        Focus on key points, decisions made, and action items. Keep it brief and actionable.`;
-        userPrompt = `Summarize this conversation:\n${messages?.map((m: any) => `${m.role}: ${m.content}`).join('\n') || 'No messages provided'}`;
-        
-        tools = [{
-          type: "function",
-          function: {
-            name: "create_summary",
-            description: "Create conversation summary",
-            parameters: {
-              type: "object",
-              properties: {
-                summary: { type: "string" },
-                keyPoints: {
-                  type: "array",
-                  items: { type: "string" }
-                },
-                actionItems: {
-                  type: "array",
-                  items: { type: "string" }
-                }
-              },
-              required: ["summary"]
-            }
-          }
-        }];
-        break;
-
-      case "extract-tasks":
-        systemPrompt = `You are an AI that extracts actionable tasks from messages. 
-        Identify tasks, deadlines, priorities, and assign appropriate categories.`;
-        userPrompt = `Extract tasks from: "${messageText}"`;
-        
-        tools = [{
-          type: "function",
-          function: {
-            name: "extract_tasks",
-            description: "Extract tasks from message",
-            parameters: {
-              type: "object",
-              properties: {
-                tasks: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      title: { type: "string" },
-                      priority: { type: "string", enum: ["low", "medium", "high"] },
-                      dueDate: { type: "string" },
-                      category: { type: "string" }
-                    },
-                    required: ["title", "priority"]
-                  }
-                }
-              },
-              required: ["tasks"]
-            }
-          }
-        }];
-        break;
-
-      case "sentiment-analysis":
-        systemPrompt = `Analyze the emotional tone and sentiment of messages. 
-        Provide sentiment (positive/neutral/negative) and suggested tone-based reactions.`;
-        userPrompt = `Analyze sentiment: "${messageText}"`;
-        
-        tools = [{
-          type: "function",
-          function: {
-            name: "analyze_sentiment",
-            description: "Analyze message sentiment",
-            parameters: {
-              type: "object",
-              properties: {
-                sentiment: { type: "string", enum: ["positive", "neutral", "negative"] },
-                confidence: { type: "number" },
-                suggestedReactions: {
-                  type: "array",
-                  items: { type: "string" }
-                },
-                tone: { type: "string" }
-              },
-              required: ["sentiment", "confidence"]
-            }
-          }
-        }];
-        break;
-
-      default:
-        throw new Error("Invalid action");
-    }
-
-    // Call OpenRouter AI
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://chatr.chat",
-        "X-Title": "Chatr Chat Assistant",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        tools: tools,
-        tool_choice: { type: "function", function: { name: tools[0].function.name } }
-      }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI credits depleted. Please add funds to continue." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      throw new Error(`AI Gateway error: ${response.status}`);
     }
-
-    const data = await response.json();
-    const toolCall = data.choices[0]?.message?.tool_calls?.[0];
-    
-    if (!toolCall) {
-      throw new Error("No tool call in response");
-    }
-
-    const result = JSON.parse(toolCall.function.arguments);
 
     return new Response(
-      JSON.stringify({ success: true, data: result }),
-      { 
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
+      JSON.stringify({ error: "All Gemini models failed. Check GEMINI_API_KEY in Supabase secrets." }),
+      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error: any) {
-    console.error("AI chat assistant error:", error);
+    console.error("[ai-chat-assistant] Error:", error);
     return new Response(
       JSON.stringify({ error: error.message || "Unknown error" }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
