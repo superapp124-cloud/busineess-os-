@@ -122,32 +122,50 @@ async function tryOllama(prompt: string): Promise<string | null> {
  */
 async function tryGemini(prompt: string, systemPrompt?: string): Promise<string | null> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey) {
+    console.warn('[CHATR AI] VITE_GEMINI_API_KEY is not defined in environment variables.');
+    return null;
+  }
   try {
-    const contents = systemPrompt
-      ? [
-          { role: 'user', parts: [{ text: systemPrompt }] },
-          { role: 'model', parts: [{ text: 'Understood. I will follow those instructions.' }] },
-          { role: 'user', parts: [{ text: prompt }] },
-        ]
-      : [{ role: 'user', parts: [{ text: prompt }] }];
+    const payload: any = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    };
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents }),
-        signal: AbortSignal.timeout(30000),
-      }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) return text as string;
+    if (systemPrompt) {
+      payload.systemInstruction = {
+        parts: [{ text: systemPrompt }]
+      };
     }
-  } catch {
-    // Gemini unavailable — fall through
+
+    // Try gemini-1.5-flash first, then fallback to gemini-2.0-flash
+    const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+    
+    for (const model of models) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(15000),
+          }
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text as string;
+        } else {
+          const errText = await res.text();
+          console.error(`[Gemini API ${model} Error ${res.status}]`, errText);
+        }
+      } catch (e) {
+        console.warn(`[Gemini API ${model} Fetch Failed]`, e);
+      }
+    }
+  } catch (err) {
+    console.error('[Gemini API Unknown Error]', err);
   }
   return null;
 }

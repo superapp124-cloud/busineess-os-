@@ -124,7 +124,7 @@ export const ChiefOfStaffHome: React.FC = () => {
         preferLocal: true,
       });
 
-      if (liveAiResult && !liveAiResult.includes('CHATR Execution OS local AI')) {
+      if (liveAiResult) {
         setResponseContext(liveAiResult);
       } else {
         // Fallback to grounded rule synthesis if offline
