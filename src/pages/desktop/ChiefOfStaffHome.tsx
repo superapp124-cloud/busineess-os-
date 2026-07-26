@@ -114,38 +114,70 @@ export const ChiefOfStaffHome: React.FC = () => {
 
     const depthToUse = overrideDepth || reasoningDepth;
     setIsProcessing(true);
-    try {
-      // 1. Try Live Gemini / Cloud AI generation
-      const systemPrompt = `You are CHATR Executive Chief of Staff for ${userName}. Mode: ${personaMode.toUpperCase()}. Reasoning Depth: ${depthToUse}. Be concise, professional, structured, and action-oriented.`;
-      
-      const liveAiResult = await generate({
-        prompt: textToRun,
-        systemPrompt,
-        preferLocal: true,
-      });
 
-      if (liveAiResult) {
-        setResponseContext(liveAiResult);
-      } else {
-        // Fallback to grounded rule synthesis if offline
-        const fallbackReply = contextBuilder.synthesizeExecutiveResponse(
-          textToRun,
-          userName,
-          personaMode,
-          depthToUse,
-          challengeDecisions
+    const systemPrompt = `You are CHATR Executive Chief of Staff — an elite AI advisor. You are speaking directly with ${userName} in ${personaMode.toUpperCase()} mode. Be concise, direct, intelligent, and action-oriented. Never refer to yourself as a template or mock. Provide genuinely useful executive guidance.`;
+
+    // 1. Try direct Gemini API call (fastest path for web users)
+    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (geminiKey) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: systemPrompt }] },
+              contents: [{ role: 'user', parts: [{ text: textToRun }] }],
+            }),
+            signal: AbortSignal.timeout(15000),
+          }
         );
-        setResponseContext(fallbackReply);
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (geminiText) {
+            setResponseContext(geminiText);
+            setIsProcessing(false);
+            return;
+          }
+        } else {
+          const errText = await geminiRes.text().catch(() => '');
+          console.error(`[ChiefOfStaff] Gemini API Error ${geminiRes.status}:`, errText);
+        }
+      } catch (geminiErr) {
+        console.warn('[ChiefOfStaff] Gemini fetch failed:', geminiErr);
       }
-    } catch {
-      const executiveReply = contextBuilder.synthesizeExecutiveResponse(
+    } else {
+      console.warn('[ChiefOfStaff] VITE_GEMINI_API_KEY not found in build. Using fallback.');
+    }
+
+    // 2. Try Supabase Edge Function (ai-chat-assistant)
+    try {
+      const { data: edgeData, error: edgeError } = await (supabase as any).functions.invoke('ai-chat-assistant', {
+        body: { action: 'summarize', messageText: `${systemPrompt}\n\nUser: ${textToRun}` },
+      });
+      if (!edgeError && edgeData?.summary) {
+        setResponseContext(edgeData.summary);
+        setIsProcessing(false);
+        return;
+      }
+    } catch (edgeErr) {
+      console.warn('[ChiefOfStaff] Edge function failed:', edgeErr);
+    }
+
+    // 3. Final fallback — local rule synthesis
+    try {
+      const fallbackReply = contextBuilder.synthesizeExecutiveResponse(
         textToRun,
         userName,
         personaMode,
         depthToUse,
         challengeDecisions
       );
-      setResponseContext(executiveReply);
+      setResponseContext(fallbackReply);
+    } catch {
+      setResponseContext(`I'm unable to process your request right now. Please check your Gemini API key in Vercel Environment Variables and redeploy.`);
     } finally {
       setIsProcessing(false);
     }
