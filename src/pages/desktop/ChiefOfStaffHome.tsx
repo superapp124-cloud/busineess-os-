@@ -121,10 +121,11 @@ export const ChiefOfStaffHome: React.FC = () => {
     try {
       const { data: edgeData, error: edgeError } = await (supabase as any).functions.invoke('ai-chat-assistant', {
         body: { 
-          action: 'summarize',
+          action: 'chat',
           prompt: textToRun,
           messageText: textToRun,
-          system_prompt: systemPrompt
+          system_prompt: systemPrompt,
+          messages: [{ role: 'user', content: textToRun }]
         },
       });
       

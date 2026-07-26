@@ -159,10 +159,11 @@ async function trySupabaseEdge(prompt: string, systemPrompt?: string): Promise<s
   try {
     const { data, error } = await supabase.functions.invoke('ai-chat-assistant', {
       body: { 
-        action: 'summarize', 
+        action: 'chat', 
         prompt, 
         messageText: prompt, 
-        system_prompt: systemPrompt 
+        system_prompt: systemPrompt,
+        messages: [{ role: 'user', content: prompt }]
       },
     });
     const reply = data?.response || data?.summary || data?.data?.summary || data?.data?.response || (typeof data === 'string' ? data : null);
