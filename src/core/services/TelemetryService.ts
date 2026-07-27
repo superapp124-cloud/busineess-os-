@@ -85,22 +85,29 @@ class TelemetryServiceImpl {
     });
   }
 
-  public track(params: {
-    commitmentId: string;
-    capability: string;
-    event: TelemetryEvent;
-    provider?: string;
-    error?: string;
-    metadata?: Record<string, any>;
-  }): void {
+  public track(params: any, metadata?: any): void {
+    if (typeof params === 'string') {
+      const eventName = params;
+      const meta = metadata || {};
+      params = {
+        commitmentId: meta.commitmentId || meta.actionId || 'system',
+        capability: meta.capability || eventName.split('.')[0] || 'system',
+        event: eventName,
+        metadata: meta,
+        provider: meta.provider || 'system'
+      };
+    }
+    const cap = params.capability || 'system';
+    const evt = params.event || 'event';
+    const cid = params.commitmentId || 'system';
     const now = Date.now();
-    const last = this.lastEventTime.get(params.commitmentId);
+    const last = this.lastEventTime.get(cid);
 
     const record: TelemetryRecord = {
       id: crypto.randomUUID(),
-      commitmentId: params.commitmentId,
-      capability: params.capability,
-      event: params.event,
+      commitmentId: cid,
+      capability: cap,
+      event: evt,
       timestamp: new Date(now).toISOString(),
       durationMs: last ? now - last : undefined,
       provider: params.provider,
@@ -108,11 +115,11 @@ class TelemetryServiceImpl {
       metadata: params.metadata,
     };
 
-    this.lastEventTime.set(params.commitmentId, now);
+    this.lastEventTime.set(cid, now);
     this.records.push(record);
     this.save();
 
-    console.log(`[Telemetry] ${params.capability} → ${params.event}${params.error ? ` ERROR: ${params.error}` : ''}${record.durationMs ? ` (${record.durationMs}ms)` : ''}`);
+    console.log(`[Telemetry] ${cap} → ${evt}${params.error ? ` ERROR: ${params.error}` : ''}${record.durationMs ? ` (${record.durationMs}ms)` : ''}`);
   }
 
   // ─── Analytics ──────────────────────────────────────────────────────────────

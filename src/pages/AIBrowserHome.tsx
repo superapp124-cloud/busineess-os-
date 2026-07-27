@@ -16,8 +16,9 @@ import {
  Zap,
 } from "lucide-react";
 import { useVoiceAI } from "@/hooks/useVoiceAI";
+import IntentOSCommandCenter from "@/components/intent/IntentOSCommandCenter";
 
-type ModeId = "web" | "news" | "code" | "research" | "bharat";
+type ModeId = "intent" | "web" | "news" | "code" | "research" | "bharat";
 type Phase = "home" | "loading" | "results";
 
 interface SearchResults {
@@ -69,6 +70,7 @@ interface LocalAnswerResponse {
 }
 
 const MODE_TO_CATEGORY: Record<ModeId, string> = {
+ intent: "web",
  web: "web",
  news: "news",
  code: "tech",
@@ -77,6 +79,7 @@ const MODE_TO_CATEGORY: Record<ModeId, string> = {
 };
 
 const MODES = [
+ { id: "intent" as const, label: "Intent OS ✨", Icon: Zap },
  { id: "web" as const, label: "Web", Icon: Globe },
  { id: "news" as const, label: "News", Icon: Newspaper },
  { id: "code" as const, label: "Code", Icon: Code },
@@ -1537,174 +1540,183 @@ function ResultsView({
 }
 
 export default function AIBrowserHome() {
- const [query, setQuery] = useState("");
- const [mode, setMode] = useState<ModeId>("web");
- const [phase, setPhase] = useState<Phase>("home");
- const [results, setResults] = useState<SearchResults>({ main: null, quick: null, india: null });
- const [sourceCards, setSourceCards] = useState<SourceCard[]>([]);
- const [answerMeta, setAnswerMeta] = useState<AnswerMeta>({});
- const [modelStatuses, setModelStatuses] = useState<ModelStatus[]>(DEFAULT_MODEL_STATUSES);
- const [streamStatus, setStreamStatus] = useState("");
- const [loadMsg, setLoadMsg] = useState("Initializing...");
- const { isListening, startListening, transcript, interimTranscript } = useVoiceAI({ processCommands: false });
- const lastTranscriptRef = useRef("");
- const latestSourcesRef = useRef<SourceCard[]>([]);
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<ModeId>("intent");
+  const [phase, setPhase] = useState<Phase>("home");
+  const [results, setResults] = useState<SearchResults>({ main: null, quick: null, india: null });
+  const [sourceCards, setSourceCards] = useState<SourceCard[]>([]);
+  const [answerMeta, setAnswerMeta] = useState<AnswerMeta>({});
+  const [modelStatuses, setModelStatuses] = useState<ModelStatus[]>(DEFAULT_MODEL_STATUSES);
+  const [streamStatus, setStreamStatus] = useState("");
+  const [loadMsg, setLoadMsg] = useState("Initializing...");
+  const { isListening, startListening, transcript, interimTranscript } = useVoiceAI({ processCommands: false });
+  const lastTranscriptRef = useRef("");
+  const latestSourcesRef = useRef<SourceCard[]>([]);
 
- useEffect(() => {
- if (phase !== "loading") return;
- let index = 0;
- const intervalId = window.setInterval(() => {
- setLoadMsg(loadingMessages[index++ % loadingMessages.length]);
- }, 700);
- return () => window.clearInterval(intervalId);
- }, [phase]);
+  useEffect(() => {
+    if (phase !== "loading") return;
+    let index = 0;
+    const intervalId = window.setInterval(() => {
+      setLoadMsg(loadingMessages[index++ % loadingMessages.length]);
+    }, 700);
+    return () => window.clearInterval(intervalId);
+  }, [phase]);
 
- useEffect(() => {
- const spokenQuery = transcript.trim();
- if (!spokenQuery || spokenQuery === lastTranscriptRef.current) return;
- lastTranscriptRef.current = spokenQuery;
- setQuery(spokenQuery);
- void handleSearch(spokenQuery);
- }, [transcript]);
+  useEffect(() => {
+    const spokenQuery = transcript.trim();
+    if (!spokenQuery || spokenQuery === lastTranscriptRef.current) return;
+    lastTranscriptRef.current = spokenQuery;
+    setQuery(spokenQuery);
+    void handleSearch(spokenQuery);
+  }, [transcript]);
 
- useEffect(() => {
- if (!isListening) return;
- const spokenPreview = interimTranscript.trim();
- if (spokenPreview) setQuery(spokenPreview);
- }, [interimTranscript, isListening]);
+  useEffect(() => {
+    if (!isListening) return;
+    const spokenPreview = interimTranscript.trim();
+    if (spokenPreview) setQuery(spokenPreview);
+  }, [interimTranscript, isListening]);
 
- const handleSearch = async (nextQuery?: string, modeOverride?: ModeId) => {
- const trimmed = sanitizeSearchQuery(nextQuery || query);
- if (!trimmed) return;
- const activeMode = modeOverride || mode;
+  const handleSearch = async (nextQuery?: string, modeOverride?: ModeId) => {
+    const trimmed = sanitizeSearchQuery(nextQuery || query);
+    if (!trimmed) return;
+    const activeMode = modeOverride || mode;
 
- setQuery(trimmed);
- setMode(activeMode);
- setPhase("loading");
- setResults({ main: null, quick: null, india: null });
- setSourceCards([]);
- latestSourcesRef.current = [];
- setAnswerMeta({});
- setModelStatuses(DEFAULT_MODEL_STATUSES);
- setStreamStatus("Preparing live search...");
+    setQuery(trimmed);
+    setMode(activeMode);
+    setPhase("loading");
+    setResults({ main: null, quick: null, india: null });
+    setSourceCards([]);
+    latestSourcesRef.current = [];
+    setAnswerMeta({});
+    setModelStatuses(DEFAULT_MODEL_STATUSES);
+    setStreamStatus("Preparing live search...");
 
- if (canUseSSESearch()) {
- setPhase("results");
- setResults({ main: "", quick: null, india: null });
+    if (canUseSSESearch()) {
+      setPhase("results");
+      setResults({ main: "", quick: null, india: null });
 
- try {
- const main = await streamChatrAPI(
- trimmed,
- activeMode,
- (partialAnswer) => setResults((previous) => ({ ...previous, main: partialAnswer })),
- setStreamStatus,
- (sources) => {
- latestSourcesRef.current = sources;
- setSourceCards(sources);
- },
- (update) => setModelStatuses((previous) => mergeModelStatus(previous, update)),
- (metadata) => setAnswerMeta((previous) => ({ ...previous, ...metadata })),
- );
- const finalMain = main || "Reliable live sources were limited. Try refining your search.";
- setResults({
- main: finalMain,
- quick: toFlashAnswer(finalMain),
- india: toBharatIntel(finalMain, latestSourcesRef.current, activeMode),
- });
- setStreamStatus("");
- return;
- } catch (error) {
- console.warn("[AIBrowserHome] SSE search failed, falling back to local answer route:", error);
- const localAnswer = await localAnswerAPI(trimmed, activeMode);
- const finalMain = localAnswer.answer || "Reliable live sources were limited. Try refining your search.";
- const nextSources = localAnswer.sources || localAnswer.citations || [];
- latestSourcesRef.current = nextSources;
- setSourceCards(nextSources);
- setAnswerMeta({
- citations: localAnswer.citations,
- relatedQuestions: localAnswer.relatedQuestions,
- confidence: localAnswer.confidence,
- providerUsed: localAnswer.providerUsed,
- latencyMs: localAnswer.latencyMs,
- });
- setResults({
- main: finalMain,
- quick: toFlashAnswer(finalMain),
- india: toBharatIntel(finalMain, nextSources, activeMode),
- });
- setStreamStatus("");
- return;
- }
- }
+      try {
+        const main = await streamChatrAPI(
+          trimmed,
+          activeMode,
+          (partialAnswer) => setResults((previous) => ({ ...previous, main: partialAnswer })),
+          setStreamStatus,
+          (sources) => {
+            latestSourcesRef.current = sources;
+            setSourceCards(sources);
+          },
+          (update) => setModelStatuses((previous) => mergeModelStatus(previous, update)),
+          (metadata) => setAnswerMeta((previous) => ({ ...previous, ...metadata })),
+        );
+        const finalMain = main || "Reliable live sources were limited. Try refining your search.";
+        setResults({
+          main: finalMain,
+          quick: toFlashAnswer(finalMain),
+          india: toBharatIntel(finalMain, latestSourcesRef.current, activeMode),
+        });
+        setStreamStatus("");
+        return;
+      } catch (error) {
+        console.warn("[AIBrowserHome] SSE search failed, falling back to local answer route:", error);
+        const localAnswer = await localAnswerAPI(trimmed, activeMode);
+        const finalMain = localAnswer.answer || "Reliable live sources were limited. Try refining your search.";
+        const nextSources = localAnswer.sources || localAnswer.citations || [];
+        latestSourcesRef.current = nextSources;
+        setSourceCards(nextSources);
+        setAnswerMeta({
+          citations: localAnswer.citations,
+          relatedQuestions: localAnswer.relatedQuestions,
+          confidence: localAnswer.confidence,
+          providerUsed: localAnswer.providerUsed,
+          latencyMs: localAnswer.latencyMs,
+        });
+        setResults({
+          main: finalMain,
+          quick: toFlashAnswer(finalMain),
+          india: toBharatIntel(finalMain, nextSources, activeMode),
+        });
+        setStreamStatus("");
+        return;
+      }
+    }
 
- const localAnswer = await localAnswerAPI(trimmed, activeMode);
- const finalMain = localAnswer.answer || "Reliable live sources were limited. Try refining your search.";
- const nextSources = localAnswer.sources || localAnswer.citations || [];
- latestSourcesRef.current = nextSources;
- setSourceCards(nextSources);
- setAnswerMeta({
- citations: localAnswer.citations,
- relatedQuestions: localAnswer.relatedQuestions,
- confidence: localAnswer.confidence,
- providerUsed: localAnswer.providerUsed,
- latencyMs: localAnswer.latencyMs,
- });
- setResults({
- main: finalMain,
- quick: toFlashAnswer(finalMain),
- india: toBharatIntel(finalMain, nextSources, activeMode),
- });
- setStreamStatus("");
- setPhase("results");
- };
+    const localAnswer = await localAnswerAPI(trimmed, activeMode);
+    const finalMain = localAnswer.answer || "Reliable live sources were limited. Try refining your search.";
+    const nextSources = localAnswer.sources || localAnswer.citations || [];
+    latestSourcesRef.current = nextSources;
+    setSourceCards(nextSources);
+    setAnswerMeta({
+      citations: localAnswer.citations,
+      relatedQuestions: localAnswer.relatedQuestions,
+      confidence: localAnswer.confidence,
+      providerUsed: localAnswer.providerUsed,
+      latencyMs: localAnswer.latencyMs,
+    });
+    setResults({
+      main: finalMain,
+      quick: toFlashAnswer(finalMain),
+      india: toBharatIntel(finalMain, nextSources, activeMode),
+    });
+    setStreamStatus("");
+    setPhase("results");
+  };
 
- const handleReset = () => {
- setPhase("home");
- setQuery("");
- setResults({ main: null, quick: null, india: null });
- setSourceCards([]);
- latestSourcesRef.current = [];
- setAnswerMeta({});
- setModelStatuses(DEFAULT_MODEL_STATUSES);
- setStreamStatus("");
- setLoadMsg("Initializing...");
- };
+  const handleReset = () => {
+    setPhase("home");
+    setQuery("");
+    setResults({ main: null, quick: null, india: null });
+    setSourceCards([]);
+    latestSourcesRef.current = [];
+    setAnswerMeta({});
+    setModelStatuses(DEFAULT_MODEL_STATUSES);
+    setStreamStatus("");
+    setLoadMsg("Initializing...");
+  };
 
- const handleVoiceSearch = () => {
- void startListening();
- };
+  const handleVoiceSearch = () => {
+    void startListening();
+  };
 
- if (phase === "home") {
- return (
- <HomeView
- query={query}
- setQuery={setQuery}
- onSearch={(value) => void handleSearch(value)}
- mode={mode}
- setMode={setMode}
- isListening={isListening}
- onVoiceSearch={handleVoiceSearch}
- />
- );
- }
+  if (mode === "intent") {
+    return (
+      <IntentOSCommandCenter
+        initialQuery={query}
+        onExit={() => setMode("web")}
+      />
+    );
+  }
 
- if (phase === "loading") {
- return <LoadingView msg={loadMsg} query={query} />;
- }
+  if (phase === "home") {
+    return (
+      <HomeView
+        query={query}
+        setQuery={setQuery}
+        onSearch={(value) => void handleSearch(value)}
+        mode={mode}
+        setMode={setMode}
+        isListening={isListening}
+        onVoiceSearch={handleVoiceSearch}
+      />
+    );
+  }
 
- return (
- <ResultsView
- query={query}
- setQuery={setQuery}
- onSearch={(value, nextMode) => void handleSearch(value, nextMode)}
- onReset={handleReset}
- results={results}
- statusText={streamStatus}
- sourceCards={sourceCards}
- answerMeta={answerMeta}
- modelStatuses={modelStatuses}
- mode={mode}
- setMode={setMode}
- />
- );
+  if (phase === "loading") {
+    return <LoadingView msg={loadMsg} query={query} />;
+  }
+
+  return (
+    <ResultsView
+      query={query}
+      setQuery={setQuery}
+      onSearch={(value, nextMode) => void handleSearch(value, nextMode)}
+      onReset={handleReset}
+      results={results}
+      statusText={streamStatus}
+      sourceCards={sourceCards}
+      answerMeta={answerMeta}
+      modelStatuses={modelStatuses}
+      mode={mode}
+      setMode={setMode}
+    />
+  );
 }

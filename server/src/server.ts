@@ -6,10 +6,34 @@ import { IntentClassifier } from './intentClassifier.js';
 import { RetrievalFilter } from './retrievalFilter.js';
 import { RetrievalLogger } from './logger.js';
 import { repository } from './kernel/data/BusinessObjectRepository.js';
+import { OSOrchestrator } from './os/core/MissionOrchestrator.js';
+import { kernel } from './os/kernel/Kernel.js';
+
+kernel.boot();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+const osOrchestrator = new OSOrchestrator();
+
+import { globalExecutionRuntime } from './os/runtimes/execution/ExecutionRuntime.js';
+
+app.get('/api/v1/os/grocery', async (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const query = (req.query.q as string) || "Buy groceries";
+  await osOrchestrator.runGroceryMission(query, res);
+});
+
+app.post('/api/v1/os/execute', async (req, res) => {
+  const { action, payload } = req.body;
+  const result = await globalExecutionRuntime.executeCommand(action, payload);
+  res.json(result);
+});
 
 const handleSearchStream = async (req: express.Request, res: express.Response) => {
   const startMs = Date.now();
@@ -86,7 +110,7 @@ loadStaticCapabilities();
 CapabilityLoader.discoverAndLoad().catch(err => console.error('Failed to load file-based capabilities:', err));
 
 // Boot the Recovery Engine (Durability Phase 2A)
-RecoveryEngine.bootAndRecover().catch(err => console.error('Failed to boot RecoveryEngine:', err));
+// RecoveryEngine.bootAndRecover().catch(err => console.error('Failed to boot RecoveryEngine:', err));
 
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';

@@ -1,6 +1,7 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, CheckCircle2, Sparkles, Grid } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface Source {
  title?: string;
@@ -24,7 +25,7 @@ interface AISummaryContentProps {
  className?: string;
 }
 
-// Parse Perplexity-style AI content with sections and formatting
+// 10x Better Parse Engine: Handles Bullet Lists, Metadata Grids, and Prose
 const parseAIContent = (text: string): React.ReactNode[] => {
  if (!text) return [];
  
@@ -37,57 +38,104 @@ const parseAIContent = (text: string): React.ReactNode[] => {
  let keyIdx = 0;
  
  for (let i = 0; i < parts.length; i++) {
- const part = parts[i].trim();
- if (!part) continue;
- 
- // Check if this is a header (odd index after split)
- const isAfterHeader = i > 0 && i % 2 === 1;
- 
- if (isAfterHeader && parts[i - 1] === '') {
- // This is a section header
- elements.push(
- <h3 key={`h-${keyIdx++}`} className="font-semibold text-foreground text-body mt-5 mb-2">
- {part}
- </h3>
- );
- continue;
- }
- 
- // Check for section header pattern
- if (/^[A-Z][a-zA-Z\s]+$/.test(part) && part.length < 50) {
- elements.push(
- <h3 key={`h-${keyIdx++}`} className="font-semibold text-foreground text-body mt-5 mb-2">
- {part}
- </h3>
- );
- continue;
- }
- 
- // Split content by paragraphs
- const paragraphs = part.split(/\n\n+/);
- 
- paragraphs.forEach((para) => {
- const trimmed = para.trim();
- if (!trimmed) return;
- 
- // Check if it's a section header on its own line
- if (/^##\s*/.test(trimmed)) {
- const headerText = trimmed.replace(/^##\s*/, '');
- elements.push(
- <h3 key={`h-${keyIdx++}`} className="font-semibold text-foreground text-body mt-5 mb-2">
- {headerText}
- </h3>
- );
- return;
- }
- 
- // Regular paragraph with inline formatting
- elements.push(
- <p key={`p-${keyIdx++}`} className="text-foreground leading-[1.7] mb-4">
- {renderInlineFormatting(trimmed)}
- </p>
- );
- });
+   const part = parts[i].trim();
+   if (!part) continue;
+   
+   // Check if this is a header (odd index after split)
+   const isAfterHeader = i > 0 && i % 2 === 1;
+   
+   if (isAfterHeader) {
+     elements.push(
+       <motion.h3 
+         key={`h-${keyIdx}`} 
+         initial={{ opacity: 0, y: 10 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ delay: keyIdx * 0.05 }}
+         className="font-bold text-foreground text-lg mt-6 mb-3 flex items-center gap-2 border-b border-white/5 pb-2 text-white"
+       >
+         {part}
+       </motion.h3>
+     );
+     keyIdx++;
+     continue;
+   }
+   
+   // Split content by paragraphs
+   const paragraphs = part.split(/\n\n+/);
+   
+   paragraphs.forEach((para) => {
+     const trimmed = para.trim();
+     if (!trimmed) return;
+     
+     // 1. Detect bulleted lists (starts with - or *)
+     if (trimmed.split('\n').every(line => /^\s*[-*]\s+/.test(line))) {
+        const lines = trimmed.split('\n');
+        elements.push(
+          <motion.div 
+            key={`list-${keyIdx}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: keyIdx * 0.05 }}
+            className="flex flex-col gap-3 my-4 pl-1"
+          >
+            {lines.map((line, idx) => {
+              const lineText = line.replace(/^\s*[-*]\s+/, '');
+              return (
+                <div key={idx} className="flex items-start gap-2.5 text-[15px] text-slate-300">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  <span className="leading-relaxed">{renderInlineFormatting(lineText)}</span>
+                </div>
+              );
+            })}
+          </motion.div>
+        );
+        keyIdx++;
+        return;
+     }
+
+     // 2. Detect Key-Value Grid (lines like **Key:** Value)
+     if (trimmed.split('\n').every(line => /^\s*\*\*[^*]+\*\*\s*:?\s+/.test(line))) {
+        const lines = trimmed.split('\n');
+        elements.push(
+          <motion.div 
+            key={`grid-${keyIdx}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: keyIdx * 0.05 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 my-5 bg-slate-800/30 p-5 rounded-2xl border border-white/10 shadow-lg"
+          >
+            {lines.map((line, idx) => {
+              const match = line.match(/^\s*\*\*([^*]+)\*\*\s*:?\s+(.*)$/);
+              if (match) {
+                 return (
+                   <div key={idx} className="flex flex-col">
+                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{match[1]}</span>
+                     <span className="text-[15px] font-bold text-slate-200">{renderInlineFormatting(match[2])}</span>
+                   </div>
+                 );
+              }
+              return <div key={idx} className="text-slate-300">{line}</div>;
+            })}
+          </motion.div>
+        );
+        keyIdx++;
+        return;
+     }
+
+     // 3. Regular paragraph
+     elements.push(
+       <motion.p 
+         key={`p-${keyIdx}`} 
+         initial={{ opacity: 0, y: 10 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ delay: keyIdx * 0.05 }}
+         className="text-[15px] text-slate-300 leading-relaxed mb-4"
+       >
+         {renderInlineFormatting(trimmed)}
+       </motion.p>
+     );
+     keyIdx++;
+   });
  }
  
  return elements;
@@ -136,38 +184,39 @@ export const AISummaryContent: React.FC<AISummaryContentProps> = ({
  
  return (
  <div className={cn("space-y-1", className)}>
- {/* Images gallery - Perplexity style horizontal scroll */}
- {images && images.length > 0 && (
- <div className="mb-4">
- <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
- {images.slice(0, 6).map((img, idx) => (
- <a 
- key={idx}
- href={img.fullUrl || img.url}
- target="_blank"
- rel="noopener noreferrer"
- className="relative flex-shrink-0 rounded-lg overflow-hidden bg-muted hover:opacity-90 transition-opacity cursor-pointer"
- style={{ width: '120px', height: '90px' }}
- >
- <img 
- src={img.thumbnail || img.url} 
- alt={img.title || ''}
- className="w-full h-full object-cover"
- loading="lazy"
- onError={(e) => {
- (e.target as HTMLImageElement).style.display = 'none';
- }}
- />
- {img.source && (
- <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">
- {img.source}
- </div>
- )}
- </a>
- ))}
- </div>
- </div>
- )}
+  {/* Images gallery - 10x Better Hero / Masonry Layout */}
+  {images && images.length > 0 && (
+  <motion.div 
+    initial={{ opacity: 0, scale: 0.98 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.4 }}
+    className="mb-6 grid grid-cols-4 gap-2 h-48 md:h-64 rounded-2xl overflow-hidden"
+  >
+    {images.map((img, idx) => {
+      // First image is hero (spans 2 cols, full height)
+      if (idx === 0) {
+        return (
+          <a key={idx} href={img.fullUrl || img.url} target="_blank" rel="noopener noreferrer" className="col-span-2 row-span-2 relative group cursor-pointer">
+            <img src={img.url} alt={img.title || 'Hero'} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+              <span className="text-white text-xs font-semibold truncate">{img.source || img.title}</span>
+            </div>
+          </a>
+        );
+      }
+      // Max 4 additional images in the remaining 2 columns, 2 rows
+      if (idx > 4) return null;
+      return (
+        <a key={idx} href={img.fullUrl || img.url} target="_blank" rel="noopener noreferrer" className="relative group cursor-pointer overflow-hidden">
+          <img src={img.thumbnail || img.url} alt={img.title || ''} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <ExternalLink className="w-4 h-4 text-white" />
+          </div>
+        </a>
+      );
+    })}
+  </motion.div>
+  )}
  
  {/* Main content - Perplexity-style flowing prose */}
  <div className="text-[15px] text-foreground">
