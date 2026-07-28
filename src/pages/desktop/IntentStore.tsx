@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, Star, CheckCircle, Code, TrendingUp, Users, FileText, Zap,
@@ -7,13 +7,14 @@ import {
   UserCheck, Plane, HeartPulse, Scale, Store, Cpu, BadgeCheck,
   Workflow, PlusCircle, Loader2, Sparkles, Send, FolderKanban,
   LayoutDashboard, Inbox, Calendar, GitBranch, BarChart, Settings,
-  Slack, Github, ChevronDown
+  Slack, Github, ChevronDown, AlertCircle, Package, Activity
 } from 'lucide-react';
 import { useInstalledModules, InstalledModule } from '@/hooks/useInstalledModules';
 import { supabase } from '@/integrations/supabase/client';
+import { deployCapability, uninstallCapability } from '@/core/os/deployCapability';
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
-type TabId = 'featured' | 'agents' | 'workflows' | 'connectors' | 'templates' | 'enterprise' | 'developer';
+type TabId = 'featured' | 'agents' | 'workflows' | 'connectors' | 'templates' | 'enterprise' | 'developer' | 'installed';
 type PriceModel = 'Free' | 'Premium' | 'Pay-per-use' | 'Enterprise' | 'Revenue Share';
 
 interface DeployStep { label: string; detail: string; }
@@ -526,33 +527,63 @@ const DeployModal: React.FC<{
 }> = ({ item, onClose }) => {
   const navigate = useNavigate();
   const { installModule } = useInstalledModules();
-  const [phase, setPhase] = useState<'preview' | 'deploying' | 'done'>('preview');
+  const [phase, setPhase] = useState<'preview' | 'deploying' | 'done' | 'error'>('preview');
   const [currentStep, setCurrentStep] = useState(-1);
+  const [deployError, setDeployError] = useState<string | null>(null);
 
-  const startDeploy = () => {
+  const startDeploy = useCallback(async () => {
     setPhase('deploying');
     setCurrentStep(0);
-    item.deploySteps.forEach((_, i) => {
-      setTimeout(() => {
-        setCurrentStep(i + 1);
-        if (i === item.deploySteps.length - 1) {
-          setTimeout(() => {
-            // Register module in sidebar
-            installModule({
-              id: item.moduleId,
-              name: item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', ''),
-              icon: item.moduleLucideIcon,
-              path: item.workspacePath,
-              color: item.moduleColor,
-              installedAt: new Date().toISOString(),
-              structure: item.workspaceStructure.map(s => s.label),
-            });
-            setPhase('done');
-          }, 500);
-        }
-      }, (i + 1) * 900);
-    });
-  };
+    setDeployError(null);
+
+    const totalSteps = item.deploySteps.length;
+    const stepDuration = 900; // ms per visual step
+
+    // Animate through all steps visually
+    for (let i = 0; i < totalSteps - 1; i++) {
+      await new Promise<void>(resolve => setTimeout(resolve, stepDuration));
+      setCurrentStep(i + 1);
+    }
+
+    // Final step — call the real Supabase RPC
+    try {
+      await deployCapability({
+        capabilityId:   item.moduleId,
+        capabilityName: item.name,
+        capabilityType: item.category?.toLowerCase().includes('connector')
+          ? 'connector'
+          : item.category?.toLowerCase().includes('template')
+            ? 'template'
+            : 'agent',
+        workspacePath:  item.workspacePath,
+        iconName:       item.moduleLucideIcon,
+        color:          item.moduleColor,
+        structure:      item.workspaceStructure.map(s => s.label),
+      });
+
+      // Optimistic sidebar update (realtime will confirm)
+      installModule({
+        id:           crypto.randomUUID(),
+        capabilityId: item.moduleId,
+        name:         item.name.replace(/ Agent$/, '').replace(/ OS$/, '').replace(/ Workspace$/, ''),
+        icon:         item.moduleLucideIcon,
+        path:         item.workspacePath,
+        color:        item.moduleColor,
+        structure:    item.workspaceStructure.map(s => s.label),
+        status:       'installed',
+        installedAt:  new Date().toISOString(),
+        version:      '1.0.0',
+      });
+
+      setCurrentStep(totalSteps);
+      setTimeout(() => setPhase('done'), 500);
+
+    } catch (err: any) {
+      console.error('[DeployModal] deployCapability failed:', err);
+      setDeployError(err?.message ?? 'Deployment failed. Please try again.');
+      setPhase('error');
+    }
+  }, [item, installModule]);
 
   const handleOpen = () => {
     onClose();
@@ -741,6 +772,17 @@ const DeployModal: React.FC<{
               Deploying… do not close this window
             </div>
           )}
+          {phase === 'error' && (
+            <>
+              <button onClick={() => setPhase('preview')} className="py-3 px-5 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
+                Back
+              </button>
+              <button onClick={startDeploy}
+                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-sm font-black cursor-pointer flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4" /> Retry
+              </button>
+            </>
+          )}
           {phase === 'done' && (
             <>
               <button onClick={onClose} className="py-3 px-5 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
@@ -754,6 +796,88 @@ const DeployModal: React.FC<{
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+/* ─── Installed Tab ──────────────────────────────────────────────────── */
+
+const InstalledTab: React.FC = () => {
+  const navigate = useNavigate();
+  const { modules, loading, uninstallModule } = useInstalledModules();
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[1,2,3].map(i => (
+          <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
+        ))}
+      </div>
+    );
+  }
+
+  if (modules.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/8 flex items-center justify-center">
+          <Package className="w-7 h-7 text-slate-500" />
+        </div>
+        <div>
+          <h3 className="text-base font-black text-white mb-1">No modules installed</h3>
+          <p className="text-sm text-slate-400">Browse Featured or Agents to deploy your first capability.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-[10px] font-black text-white/25 uppercase tracking-widest">{modules.length} installed module{modules.length !== 1 ? 's' : ''}</p>
+      {modules.map(mod => (
+        <div key={mod.capabilityId}
+          className="flex items-center gap-4 p-4 rounded-2xl border border-white/7 bg-[#0e1017] hover:border-white/12 transition-all">
+          {/* Icon */}
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-base flex-shrink-0 bg-${mod.color}-500/15 text-${mod.color}-400 border border-${mod.color}-500/20`}>
+            {mod.name[0]}
+          </div>
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <p className="text-sm font-bold text-white truncate">{mod.name}</p>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-slate-500">v{mod.version}</span>
+              <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400">
+                <Activity className="w-2.5 h-2.5" /> Healthy
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-500">
+              Installed {new Date(mod.installedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </p>
+            {mod.structure.length > 0 && (
+              <p className="text-[10px] text-slate-600 mt-0.5 truncate">{mod.structure.slice(0, 4).join(' · ')}</p>
+            )}
+          </div>
+          {/* Actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => navigate(mod.path)}
+              className="text-[11px] px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all cursor-pointer">
+              Open
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await uninstallCapability(mod.capabilityId);
+                  uninstallModule(mod.capabilityId);
+                } catch (e) {
+                  console.error('Uninstall failed:', e);
+                }
+              }}
+              className="text-[11px] px-3 py-1.5 rounded-xl border border-white/8 text-slate-400 hover:border-red-500/30 hover:text-red-400 font-bold transition-all cursor-pointer">
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
@@ -857,15 +981,17 @@ export const IntentStore: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('featured');
   const [searchQuery, setSearchQuery] = useState('');
   const [deployItem, setDeployItem] = useState<IntentCapability | null>(null);
+  const { modules: installedModules } = useInstalledModules();
 
   const TABS: TabDef[] = [
-    { id: 'featured', label: 'Featured', icon: <Star className="w-3.5 h-3.5" /> },
-    { id: 'agents', label: 'Agents', icon: <Bot className="w-3.5 h-3.5" />, count: AGENTS.length },
-    { id: 'workflows', label: 'Workflows', icon: <Workflow className="w-3.5 h-3.5" />, count: 4 },
-    { id: 'connectors', label: 'Connectors', icon: <Globe className="w-3.5 h-3.5" />, count: CONNECTORS.length },
-    { id: 'templates', label: 'Templates', icon: <Layers className="w-3.5 h-3.5" />, count: TEMPLATES.length },
-    { id: 'enterprise', label: 'Enterprise', icon: <Building2 className="w-3.5 h-3.5" /> },
-    { id: 'developer', label: 'Developer', icon: <Code className="w-3.5 h-3.5" /> },
+    { id: 'featured',   label: 'Featured',    icon: <Star className="w-3.5 h-3.5" /> },
+    { id: 'agents',     label: 'Agents',      icon: <Bot className="w-3.5 h-3.5" />,      count: AGENTS.length },
+    { id: 'workflows',  label: 'Workflows',   icon: <Workflow className="w-3.5 h-3.5" />,  count: 4 },
+    { id: 'connectors', label: 'Connectors',  icon: <Globe className="w-3.5 h-3.5" />,     count: CONNECTORS.length },
+    { id: 'templates',  label: 'Templates',   icon: <Layers className="w-3.5 h-3.5" />,    count: TEMPLATES.length },
+    { id: 'enterprise', label: 'Enterprise',  icon: <Building2 className="w-3.5 h-3.5" /> },
+    { id: 'installed',  label: 'Installed',   icon: <CheckCircle className="w-3.5 h-3.5" />, count: installedModules.length || undefined },
+    { id: 'developer',  label: 'Developer',   icon: <Code className="w-3.5 h-3.5" /> },
   ];
 
   const filterItems = (items: IntentCapability[]) =>
@@ -1022,6 +1148,7 @@ export const IntentStore: React.FC = () => {
             </button>
           </div>
         )}
+        {activeTab === 'installed' && <InstalledTab />}
       </div>
 
       {deployItem && <DeployModal item={deployItem} onClose={() => setDeployItem(null)} />}
