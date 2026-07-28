@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/utils';
 import { kernelClient } from '@/core/ipc/KernelClient';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ConnectedProvider {
   id: string;
@@ -107,31 +108,103 @@ export default function Workspace() {
   }, [searchQuery]);
 
   useEffect(() => {
+    async function loadUser() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          const name = profile?.full_name || profile?.display_name || user.email?.split('@')[0];
+          if (name) {
+            setUserName(name.split(' ')[0]);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load user', err);
+      }
+    }
+    loadUser();
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch Timeline
-        const timelineRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_timeline' });
-        if (timelineRes.success && timelineRes.data && timelineRes.data.length > 0) {
-          setIntentFeed(timelineRes.data);
+        // Fetch real data from Supabase instead of mock kernel IPC
+        
+        // 1. Fetch Timeline (Notifications)
+        const { data: timelineData } = await supabase
+          .from('notifications')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(4);
+          
+        if (timelineData && timelineData.length > 0) {
+          setIntentFeed(timelineData.map(t => ({
+            id: t.id,
+            title: t.title,
+            time: new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            detail: t.type || 'System',
+            category: 'Notification',
+            icon: 'activity'
+          })));
+        } else {
+          setIntentFeed([]);
         }
 
-        // Fetch Intents
-        const intentsRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_active_intents' });
-        if (intentsRes.success && intentsRes.data && intentsRes.data.length > 0) {
-          setActiveIntents(intentsRes.data);
+        // 2. Fetch Active Intents (Workflow runs)
+        const { data: activeWorkflows } = await supabase
+          .from('workflow_runs')
+          .select('*')
+          .in('status', ['running', 'pending', 'paused'])
+          .limit(3);
+          
+        if (activeWorkflows && activeWorkflows.length > 0) {
+          setActiveIntents(activeWorkflows.map(w => ({
+            id: w.id,
+            text: w.workflow_id || 'Running Workflow',
+            progress: w.status === 'running' ? 75 : 25,
+            category: 'System'
+          })));
+        } else {
+          setActiveIntents([]);
         }
 
-        // Fetch Memory
-        const memoryRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_recent_memory' });
-        if (memoryRes.success && memoryRes.data && memoryRes.data.length > 0) {
-          setRecentMemory(memoryRes.data);
+        // 3. Fetch Recent Memory (Just pulling top docs/conversations)
+        const { data: memoryData } = await (supabase as any)
+          .from('business_conversations')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(3);
+          
+        if (memoryData && memoryData.length > 0) {
+          setRecentMemory(memoryData.map((m: any) => ({
+            id: m.id,
+            title: m.title || 'Recent Conversation',
+            type: 'Conversation',
+            time: new Date(m.created_at).toLocaleDateString()
+          })));
+        } else {
+          setRecentMemory([]);
         }
 
-        // Fetch Intelligence Brief
-        const briefRes = await kernelClient.dispatchIntent({ intent: 'dashboard.get_intelligence_brief' });
-        if (briefRes.success && briefRes.data && briefRes.data.metrics) {
-          setIntelligenceBrief(briefRes.data);
-        }
+        // 4. Fetch Intelligence Brief (Metrics)
+        const { count: unreadMsgs } = await supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('is_read', false);
+        const { count: meetings } = await supabase.from('calendar_events').select('*', { count: 'exact', head: true }).gte('start_at', new Date().toISOString());
+        const { count: activeTasks } = await supabase.from('workflow_runs').select('*', { count: 'exact', head: true }).in('status', ['running', 'pending']);
+        
+        setIntelligenceBrief({
+          metrics: { 
+            emails: unreadMsgs || 0, 
+            contracts: activeTasks || 0, 
+            invoices: 0, 
+            meetings: meetings || 0 
+          },
+          actions: [{ label: 'Review Active Workflows' }, { label: 'Clear Notifications' }]
+        });
         
         // Fetch Smart Inbox State
         const electronAPI = (window as any).electronAPI;
