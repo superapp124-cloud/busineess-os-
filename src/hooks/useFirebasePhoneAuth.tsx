@@ -58,7 +58,18 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  
  // Small delay to ensure DOM is ready
  const timer = setTimeout(initRecaptcha, 500);
- return () => clearTimeout(timer);
+ 
+ return () => {
+   clearTimeout(timer);
+   if (recaptchaVerifierRef.current) {
+     try {
+       recaptchaVerifierRef.current.clear();
+     } catch (e) {
+       // ignore cleanup errors
+     }
+     recaptchaVerifierRef.current = null;
+   }
+ };
  }, []);
 
  useEffect(() => {
@@ -148,11 +159,18 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   }
   
   setError(msg);
- if (waitTime > 0) setCountdown(waitTime);
- setStep('phone');
- setLoading(false);
- recaptchaVerifierRef.current = null;
- return false;
+  if (waitTime > 0) setCountdown(waitTime);
+  setStep('phone');
+  setLoading(false);
+  
+  if (recaptchaVerifierRef.current) {
+    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
+    recaptchaVerifierRef.current = null;
+  }
+  const container = document.getElementById('recaptcha-container');
+  if (container) container.innerHTML = '';
+  
+  return false;
  }
  };
 
@@ -241,23 +259,37 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  }
  }, [phoneNumber]);
 
- const resendOTP = useCallback(async (): Promise<boolean> => {
- if (countdown > 0) return false;
- recaptchaVerifierRef.current = null;
- setRecaptchaReady(false);
- return sendOTP(phoneNumber);
- }, [countdown, phoneNumber]);
+  const resendOTP = useCallback(async (): Promise<boolean> => {
+  if (countdown > 0) return false;
+  
+  if (recaptchaVerifierRef.current) {
+    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
+    recaptchaVerifierRef.current = null;
+  }
+  const container = document.getElementById('recaptcha-container');
+  if (container) container.innerHTML = '';
+  
+  setRecaptchaReady(false);
+  return sendOTP(phoneNumber);
+  }, [countdown, phoneNumber]);
 
- const reset = useCallback(() => {
- setStep('phone');
- setLoading(false);
- setError(null);
- setCountdown(0);
- setPhoneNumber('');
- setIsExistingUser(false);
- setFailedAttempts(0);
- confirmationResultRef.current = null;
- }, []);
+  const reset = useCallback(() => {
+  setStep('phone');
+  setLoading(false);
+  setError(null);
+  setCountdown(0);
+  setPhoneNumber('');
+  setIsExistingUser(false);
+  setFailedAttempts(0);
+  confirmationResultRef.current = null;
+  
+  if (recaptchaVerifierRef.current) {
+    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
+    recaptchaVerifierRef.current = null;
+  }
+  const container = document.getElementById('recaptcha-container');
+  if (container) container.innerHTML = '';
+  }, []);
 
  return {
  step,
