@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, Star, CheckCircle, Sparkles, Briefcase, Code, Stethoscope,
-  TrendingUp, Users, FileText, Zap, Globe, GitBranch, Database,
-  Shield, ArrowRight, Play, X, Building2, Calendar, MessageSquare,
-  Phone, ChevronRight, Award, Lock, Clock, IndianRupee, Package,
-  Layers, Bot, Hash, Mail, Slack, Github, BarChart2, UserCheck,
-  Plane, HeartPulse, Scale, GraduationCap, Store, Cpu, BadgeCheck,
-  Workflow, RefreshCw, PlusCircle, CheckSquare, Loader2
+  Search, Star, CheckCircle, Code, TrendingUp, Users, FileText, Zap,
+  Globe, Database, Shield, ArrowRight, X, Building2, Phone,
+  ChevronRight, Lock, Clock, IndianRupee, Layers, Bot, Mail, BarChart2,
+  UserCheck, Plane, HeartPulse, Scale, Store, Cpu, BadgeCheck,
+  Workflow, PlusCircle, Loader2, Sparkles, Send, FolderKanban,
+  LayoutDashboard, Inbox, Calendar, GitBranch, BarChart, Settings,
+  Slack, Github, ChevronDown
 } from 'lucide-react';
+import { useInstalledModules, InstalledModule } from '@/hooks/useInstalledModules';
+import { supabase } from '@/integrations/supabase/client';
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
 type TabId = 'featured' | 'agents' | 'workflows' | 'connectors' | 'templates' | 'enterprise' | 'developer';
 type PriceModel = 'Free' | 'Premium' | 'Pay-per-use' | 'Enterprise' | 'Revenue Share';
 
-interface IntentItem {
+interface DeployStep { label: string; detail: string; }
+
+interface IntentCapability {
   id: string;
   name: string;
   creator: string;
@@ -25,263 +29,489 @@ interface IntentItem {
   priceModel: PriceModel;
   priceLabel: string;
   icon: React.ReactNode;
-  installed: boolean;
   verified: boolean;
   privacyLevel: 'High' | 'Standard';
   dataResidency: string;
   aiModel: string;
   estimatedTime: string;
   permissions: string[];
-  deploySteps?: string[];
+  deploySteps: DeployStep[];
   tags?: string[];
-  workspacePath: string; // where to navigate after deploy
+  workspacePath: string;
+  workspaceStructure: { icon: React.ReactNode; label: string; }[];
+  moduleId: string;
+  moduleColor: string;
+  moduleLucideIcon: string;
 }
 
-/* ─── Data ───────────────────────────────────────────────────────────── */
+/* ─── Capability Definitions ─────────────────────────────────────────── */
 
-const AGENTS: IntentItem[] = [
+const AGENTS: IntentCapability[] = [
   {
-    id: 'a1', name: 'RecruitmentOS Agent', creator: 'CHATR Core',
-    description: 'End-to-end talent acquisition. Sources candidates from LinkedIn & GitHub, runs AI screening, schedules interviews and drafts offer letters automatically.',
+    id: 'a1', moduleId: 'recruitment', moduleColor: 'blue', moduleLucideIcon: 'Users',
+    name: 'RecruitmentOS Agent', creator: 'CHATR Core',
+    description: 'End-to-end talent acquisition. Sources candidates from LinkedIn & GitHub, runs AI screening, schedules interviews and drafts offer letters.',
     rating: 4.9, reviews: 1248, category: 'HR & Recruitment', priceModel: 'Free', priceLabel: 'Free',
-    icon: <Users className="w-7 h-7" />, installed: true, verified: true,
+    icon: <Users className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
     estimatedTime: '2–10 min/task', permissions: ['Calendar', 'Email', 'LinkedIn', 'Files'],
-    deploySteps: ['Create Recruitment Workspace', 'Connect LinkedIn & Gmail', 'Install ATS Pipeline', 'Set up screening workflows', 'Enable analytics dashboard'],
-    tags: ['HR', 'Recruitment', 'ATS'], workspacePath: '/desktop/recruitment'
+    deploySteps: [
+      { label: 'Creating Recruitment Workspace', detail: 'Initialising dedicated workspace…' },
+      { label: 'Installing RecruitmentOS Agent', detail: 'Loading AI model and agent runtime…' },
+      { label: 'Connecting Gmail & Calendar', detail: 'OAuth handshake in progress…' },
+      { label: 'Creating ATS Database', detail: 'Setting up candidate pipeline schema…' },
+      { label: 'Building Candidate Pipeline', detail: 'Generating stages: Applied → Screening → Interview → Offer…' },
+      { label: 'Creating Recruitment Dashboard', detail: 'Configuring KPI widgets and metrics…' },
+      { label: 'Setting up Smart Inbox', detail: 'Filtering recruitment emails…' },
+      { label: 'Installing Screening Workflows', detail: 'Deploying 6 automated workflows…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Recruiter' },
+      { icon: <Inbox className="w-3.5 h-3.5" />, label: 'Candidate Inbox' },
+      { icon: <Calendar className="w-3.5 h-3.5" />, label: 'Interviews' },
+      { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Jobs Board' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Talent Pool' },
+      { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Analytics' },
+      { icon: <Settings className="w-3.5 h-3.5" />, label: 'Settings' },
+    ],
+    workspacePath: '/desktop/recruitment', tags: ['HR', 'Recruitment', 'ATS'],
   },
   {
-    id: 'a2', name: 'Legal Contract Reviewer', creator: 'LexAI Partners',
-    description: 'Reads NDAs, MSAs and employment contracts. Highlights liabilities, non-standard clauses and risk areas with cited references.',
+    id: 'a2', moduleId: 'legal', moduleColor: 'slate', moduleLucideIcon: 'Scale',
+    name: 'Legal Contract Reviewer', creator: 'LexAI Partners',
+    description: 'Reads NDAs, MSAs and employment contracts. Highlights liabilities, non-standard clauses and risk areas.',
     rating: 4.7, reviews: 892, category: 'Legal', priceModel: 'Premium', priceLabel: '₹4,999/mo',
-    icon: <Scale className="w-7 h-7" />, installed: false, verified: true,
+    icon: <Scale className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet',
     estimatedTime: '3–8 min/contract', permissions: ['Documents', 'Files'],
-    deploySteps: ['Install Legal Agent', 'Connect document storage', 'Configure review templates', 'Enable alerts'],
-    tags: ['Legal', 'Contracts', 'Risk'], workspacePath: '/desktop/business-os'
+    deploySteps: [
+      { label: 'Installing Legal Agent', detail: 'Loading contract review model…' },
+      { label: 'Connecting Document Storage', detail: 'Linking your Files vault…' },
+      { label: 'Configuring Review Templates', detail: 'Loading NDA, MSA, Employment templates…' },
+      { label: 'Setting up Risk Alerts', detail: 'Configuring liability detection rules…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Reviewer' },
+      { icon: <FileText className="w-3.5 h-3.5" />, label: 'Contracts' },
+      { icon: <Shield className="w-3.5 h-3.5" />, label: 'Risk Alerts' },
+    ],
+    workspacePath: '/desktop/business-os', tags: ['Legal', 'Contracts', 'Risk'],
   },
   {
-    id: 'a3', name: 'Sales Intelligence Agent', creator: 'CHATR Core',
-    description: 'Analyzes your CRM pipeline, identifies warm leads, drafts outreach sequences and surfaces deal-winning intelligence from past conversations.',
+    id: 'a3', moduleId: 'sales', moduleColor: 'emerald', moduleLucideIcon: 'TrendingUp',
+    name: 'Sales Intelligence Agent', creator: 'CHATR Core',
+    description: 'Analyzes your CRM pipeline, identifies warm leads, drafts outreach sequences and surfaces deal-winning intelligence.',
     rating: 4.8, reviews: 673, category: 'Sales', priceModel: 'Premium', priceLabel: '₹3,499/mo',
-    icon: <TrendingUp className="w-7 h-7" />, installed: false, verified: true,
+    icon: <TrendingUp className="w-6 h-6" />, verified: true,
     privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'GPT-4o',
     estimatedTime: '1–3 min/lead', permissions: ['CRM', 'Email', 'Calendar'],
-    deploySteps: ['Connect CRM', 'Import pipeline', 'Configure sequences', 'Enable scoring'],
-    tags: ['Sales', 'CRM', 'Lead Gen'], workspacePath: '/desktop/pro/business'
+    deploySteps: [
+      { label: 'Creating Sales Workspace', detail: 'Initialising CRM environment…' },
+      { label: 'Connecting CRM Data', detail: 'Importing existing pipeline…' },
+      { label: 'Configuring Lead Scoring', detail: 'Training on your historical deals…' },
+      { label: 'Building Outreach Sequences', detail: 'Creating 5 email cadences…' },
+      { label: 'Enabling Deal Intelligence', detail: 'Activating win/loss analysis…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Pipeline' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Sales Agent' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Leads' },
+      { icon: <Mail className="w-3.5 h-3.5" />, label: 'Outreach' },
+      { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Analytics' },
+    ],
+    workspacePath: '/desktop/pro/business', tags: ['Sales', 'CRM', 'Lead Gen'],
   },
   {
-    id: 'a4', name: 'Finance & Accounting Agent', creator: 'CHATR Core',
-    description: 'Automates invoice processing, GST reminders, expense approvals and financial reporting. Alerts on anomalies and cash-flow risks.',
+    id: 'a4', moduleId: 'finance', moduleColor: 'amber', moduleLucideIcon: 'IndianRupee',
+    name: 'Finance & Accounting Agent', creator: 'CHATR Core',
+    description: 'Automates invoice processing, GST reminders, expense approvals and financial reporting.',
     rating: 4.8, reviews: 521, category: 'Finance', priceModel: 'Free', priceLabel: 'Free',
-    icon: <IndianRupee className="w-7 h-7" />, installed: false, verified: true,
+    icon: <IndianRupee className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Gemini 1.5 Flash',
     estimatedTime: '1–5 min/invoice', permissions: ['Finance', 'Email', 'Files'],
-    deploySteps: ['Connect accounting system', 'Configure tax rules', 'Set approval workflows', 'Enable alerts'],
-    tags: ['Finance', 'Accounting', 'GST'], workspacePath: '/desktop/business-os'
+    deploySteps: [
+      { label: 'Creating Finance Workspace', detail: 'Initialising accounting environment…' },
+      { label: 'Connecting Accounting System', detail: 'Linking existing data…' },
+      { label: 'Configuring Tax Rules', detail: 'Setting up GST, TDS rules for India…' },
+      { label: 'Building Approval Workflows', detail: 'Multi-level invoice approval ready…' },
+      { label: 'Enabling Anomaly Detection', detail: 'AI risk monitoring activated…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
+      { icon: <FileText className="w-3.5 h-3.5" />, label: 'Invoices' },
+      { icon: <GitBranch className="w-3.5 h-3.5" />, label: 'Approvals' },
+      { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Reports' },
+    ],
+    workspacePath: '/desktop/business-os', tags: ['Finance', 'Accounting', 'GST'],
   },
   {
-    id: 'a5', name: 'Medical Triage Assistant', creator: 'HealthTech Solutions',
+    id: 'a5', moduleId: 'healthcare', moduleColor: 'red', moduleLucideIcon: 'HeartPulse',
+    name: 'Medical Triage Assistant', creator: 'HealthTech Solutions',
     description: 'HIPAA-compliant agent that conducts preliminary patient symptom screening, routes cases by urgency and updates EMR systems.',
     rating: 4.6, reviews: 334, category: 'Healthcare', priceModel: 'Pay-per-use', priceLabel: '₹50/session',
-    icon: <HeartPulse className="w-7 h-7" />, installed: false, verified: true,
+    icon: <HeartPulse className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM',
     estimatedTime: '3–5 min/patient', permissions: ['Patient Records', 'Messaging'],
-    deploySteps: ['HIPAA onboarding', 'Connect EMR', 'Configure triage rules', 'Enable routing'],
-    tags: ['Healthcare', 'HIPAA', 'Triage'], workspacePath: '/desktop/ai-agents'
-  },
-  {
-    id: 'a6', name: 'Marketing Strategist Agent', creator: 'GrowthOS Lab',
-    description: 'Plans campaigns, writes copy, schedules social posts, analyzes performance and iterates based on engagement data.',
-    rating: 4.5, reviews: 287, category: 'Marketing', priceModel: 'Premium', priceLabel: '₹2,999/mo',
-    icon: <BarChart2 className="w-7 h-7" />, installed: false, verified: false,
-    privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'GPT-4o',
-    estimatedTime: '5–15 min/campaign', permissions: ['Social Accounts', 'Analytics', 'Email'],
-    deploySteps: ['Connect social accounts', 'Import brand kit', 'Set campaign goals', 'Enable analytics'],
-    tags: ['Marketing', 'Social', 'Campaigns'], workspacePath: '/desktop/ai-agents'
-  },
-];
-
-const WORKFLOWS: IntentItem[] = [
-  {
-    id: 'w1', name: 'Employee Onboarding', creator: 'CHATR Core',
-    description: 'Automates the full onboarding journey from offer acceptance to 90-day check-in. Creates accounts, assigns tasks, schedules introductions.',
-    rating: 4.9, reviews: 892, category: 'HR & Ops', priceModel: 'Free', priceLabel: 'Free',
-    icon: <UserCheck className="w-7 h-7" />, installed: false, verified: true,
-    privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Rule-based + AI',
-    estimatedTime: 'Runs over 90 days', permissions: ['HR System', 'Email', 'Calendar', 'Slack'],
-    tags: ['HR', 'Onboarding'], workspacePath: '/desktop/studio'
-  },
-  {
-    id: 'w2', name: 'Invoice Approval Pipeline', creator: 'CHATR Core',
-    description: 'Routes invoices through multi-level approval, validates against POs, sends reminders and posts to accounting on approval.',
-    rating: 4.8, reviews: 654, category: 'Finance', priceModel: 'Free', priceLabel: 'Free',
-    icon: <FileText className="w-7 h-7" />, installed: false, verified: true,
-    privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Rule-based',
-    estimatedTime: '1–48 hrs/invoice', permissions: ['Finance', 'Email'],
-    tags: ['Finance', 'Approval'], workspacePath: '/desktop/studio'
-  },
-  {
-    id: 'w3', name: 'Lead Qualification Pipeline', creator: 'SalesTech Co.',
-    description: 'Scores inbound leads using firmographic and behavioral signals, routes hot leads to sales and nurtures cold leads automatically.',
-    rating: 4.7, reviews: 421, category: 'Sales', priceModel: 'Premium', priceLabel: '₹1,999/mo',
-    icon: <TrendingUp className="w-7 h-7" />, installed: false, verified: true,
-    privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'Scoring Model',
-    estimatedTime: '< 2 min/lead', permissions: ['CRM', 'Email'],
-    tags: ['Sales', 'Leads'], workspacePath: '/desktop/pro/business'
-  },
-  {
-    id: 'w4', name: 'Travel Approval Workflow', creator: 'CHATR Core',
-    description: 'Handles travel requests, finds cheapest fares, gets manager approval and books flights + hotels within policy limits.',
-    rating: 4.6, reviews: 287, category: 'Operations', priceModel: 'Free', priceLabel: 'Free',
-    icon: <Plane className="w-7 h-7" />, installed: false, verified: true,
-    privacyLevel: 'Standard', dataResidency: 'India / EU', aiModel: 'Gemini + Rules',
-    estimatedTime: '2–6 hrs/request', permissions: ['Calendar', 'Email', 'Travel APIs'],
-    tags: ['Travel', 'Ops'], workspacePath: '/desktop/studio'
+    deploySteps: [
+      { label: 'HIPAA Compliance Onboarding', detail: 'Verifying data residency and encryption…' },
+      { label: 'Installing Triage Agent', detail: 'Loading medical symptom model…' },
+      { label: 'Connecting EMR System', detail: 'Establishing secure EMR link…' },
+      { label: 'Configuring Triage Rules', detail: 'Setting urgency thresholds…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Patient Queue' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'Triage Agent' },
+      { icon: <FileText className="w-3.5 h-3.5" />, label: 'Medical Records' },
+      { icon: <Shield className="w-3.5 h-3.5" />, label: 'Compliance' },
+    ],
+    workspacePath: '/desktop/ai-agents', tags: ['Healthcare', 'HIPAA', 'Triage'],
   },
 ];
 
-const CONNECTORS: IntentItem[] = [
-  { id: 'c1', name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies, trigger workflows on email events.', rating: 4.9, reviews: 15400, category: 'Email', priceModel: 'Free', priceLabel: 'Free', icon: <Mail className="w-7 h-7" />, installed: true, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'], workspacePath: '/desktop/connected-accounts' },
-  { id: 'c2', name: 'Slack', creator: 'Salesforce', description: 'Post alerts, receive commands and sync workspace activity to Slack channels.', rating: 4.8, reviews: 9800, category: 'Messaging', priceModel: 'Free', priceLabel: 'Free', icon: <Slack className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Slack OAuth'], tags: ['Messaging', 'Slack'], workspacePath: '/desktop/connected-accounts' },
-  { id: 'c3', name: 'GitHub', creator: 'Microsoft', description: 'Trigger agents on PR events, review code and sync issues to your workspace.', rating: 4.7, reviews: 6200, category: 'Engineering', priceModel: 'Free', priceLabel: 'Free', icon: <Github className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'US', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['GitHub OAuth'], tags: ['Engineering', 'GitHub'], workspacePath: '/desktop/connected-accounts' },
-  { id: 'c4', name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.', rating: 4.6, reviews: 4100, category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo', icon: <Database className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN', aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'], workspacePath: '/desktop/connected-accounts' },
-  { id: 'c5', name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages, receive customer queries and route to agents.', rating: 4.8, reviews: 8700, category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/message', icon: <Phone className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'], workspacePath: '/desktop/connected-accounts' },
-  { id: 'c6', name: 'SAP ERP', creator: 'SAP SE', description: 'Connect financial, HR and supply chain data from SAP to your Intent OS workspace.', rating: 4.5, reviews: 1200, category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <Building2 className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'On-Premise / EU', aiModel: 'N/A', estimatedTime: 'Batch / Real-time', permissions: ['SAP API Key'], tags: ['ERP', 'SAP'], workspacePath: '/desktop/connected-accounts' },
+const TEMPLATES: IntentCapability[] = [
+  {
+    id: 't1', moduleId: 'startup', moduleColor: 'violet', moduleLucideIcon: 'Zap',
+    name: 'Startup Workspace', creator: 'CHATR Core',
+    description: 'Everything a startup needs from day one. CRM, recruitment, finance, project management and AI tools — deployed in 5 minutes.',
+    rating: 4.9, reviews: 2100, category: 'Startup', priceModel: 'Free', priceLabel: 'Free',
+    icon: <Zap className="w-6 h-6" />, verified: true,
+    privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple',
+    estimatedTime: 'Deploy in 5 min', permissions: ['Email', 'Calendar', 'CRM'],
+    deploySteps: [
+      { label: 'Creating Startup Workspace', detail: 'Initialising OS environment…' },
+      { label: 'Installing 4 Core Agents', detail: 'Sales · HR · Finance · Marketing agents…' },
+      { label: 'Connecting Gmail & Calendar', detail: 'OAuth authentication…' },
+      { label: 'Building CRM Pipeline', detail: 'Lead → Qualified → Proposal → Closed…' },
+      { label: 'Creating Finance Module', detail: 'Invoicing, expenses, reporting…' },
+      { label: 'Setting up Project Board', detail: 'Kanban boards and sprint tracking…' },
+      { label: 'Installing 8 Workflows', detail: 'Onboarding, lead follow-up, invoice approval…' },
+      { label: 'Building Analytics Dashboard', detail: 'Revenue, headcount, pipeline metrics…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Command Centre' },
+      { icon: <TrendingUp className="w-3.5 h-3.5" />, label: 'Sales CRM' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Recruitment' },
+      { icon: <IndianRupee className="w-3.5 h-3.5" />, label: 'Finance' },
+      { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Projects' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Agents' },
+      { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Analytics' },
+      { icon: <Settings className="w-3.5 h-3.5" />, label: 'Settings' },
+    ],
+    workspacePath: '/desktop/home', tags: ['Startup', 'All-in-one'],
+  },
+  {
+    id: 't2', moduleId: 'lawfirm', moduleColor: 'slate', moduleLucideIcon: 'Scale',
+    name: 'Law Firm OS', creator: 'LexAI Partners',
+    description: 'Complete legal operations. Contract review, client intake, billing, compliance and matter management — live in 30 minutes.',
+    rating: 4.8, reviews: 543, category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo',
+    icon: <Scale className="w-6 h-6" />, verified: true,
+    privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet',
+    estimatedTime: 'Deploy in 30 min', permissions: ['Files', 'Email', 'Billing'],
+    deploySteps: [
+      { label: 'Creating Law Firm Workspace', detail: 'Initialising legal OS environment…' },
+      { label: 'Installing Legal Contract Agent', detail: 'Loading NDA, MSA, SLA review model…' },
+      { label: 'Configuring Matter Management', detail: 'Setting up client and case schema…' },
+      { label: 'Building Client CRM', detail: 'Intake forms, contacts, timeline…' },
+      { label: 'Setting up Billing Pipeline', detail: 'Hourly billing and retainer workflows…' },
+      { label: 'Creating Document Vault', detail: 'Encrypted document storage…' },
+      { label: 'Enabling Compliance Alerts', detail: 'Deadline and regulatory tracking…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'Legal Agent' },
+      { icon: <FileText className="w-3.5 h-3.5" />, label: 'Contract Review' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Client CRM' },
+      { icon: <IndianRupee className="w-3.5 h-3.5" />, label: 'Billing' },
+      { icon: <Database className="w-3.5 h-3.5" />, label: 'Knowledge Base' },
+      { icon: <Calendar className="w-3.5 h-3.5" />, label: 'Calendar' },
+      { icon: <Lock className="w-3.5 h-3.5" />, label: 'Document Vault' },
+    ],
+    workspacePath: '/desktop/business-os', tags: ['Legal', 'Enterprise'],
+  },
+  {
+    id: 't3', moduleId: 'recruitment-agency', moduleColor: 'blue', moduleLucideIcon: 'Users',
+    name: 'Recruitment Agency', creator: 'CHATR Core',
+    description: 'Full-stack ATS, candidate pipeline, client management and revenue tracking for recruitment agencies.',
+    rating: 4.9, reviews: 876, category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo',
+    icon: <Users className="w-6 h-6" />, verified: true,
+    privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
+    estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'],
+    deploySteps: [
+      { label: 'Creating Agency Workspace', detail: 'Initialising multi-client environment…' },
+      { label: 'Installing RecruitmentOS Agent', detail: 'AI sourcing and screening agent…' },
+      { label: 'Connecting LinkedIn & Job Boards', detail: 'Authenticating data sources…' },
+      { label: 'Building Client Portal', detail: 'Hiring manager dashboards…' },
+      { label: 'Creating Candidate Pipeline', detail: 'Multi-client ATS with stage tracking…' },
+      { label: 'Enabling Revenue Analytics', detail: 'Placement fees and commission tracking…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Agency Dashboard' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Recruiter' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Candidate Pool' },
+      { icon: <Building2 className="w-3.5 h-3.5" />, label: 'Client Portal' },
+      { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Pipeline' },
+      { icon: <IndianRupee className="w-3.5 h-3.5" />, label: 'Revenue' },
+    ],
+    workspacePath: '/desktop/recruitment', tags: ['Recruitment', 'Agency'],
+  },
+  {
+    id: 't4', moduleId: 'hospital', moduleColor: 'red', moduleLucideIcon: 'HeartPulse',
+    name: 'Hospital OS', creator: 'HealthTech Solutions',
+    description: 'HIPAA-compliant hospital workspace. Patient intake, triage, appointment scheduling and EMR integration.',
+    rating: 4.7, reviews: 312, category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
+    icon: <HeartPulse className="w-6 h-6" />, verified: true,
+    privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM',
+    estimatedTime: 'Deploy in 2 hrs', permissions: ['Patient Records', 'Messaging', 'EMR'],
+    deploySteps: [
+      { label: 'HIPAA Compliance Setup', detail: 'End-to-end encryption and audit trail…' },
+      { label: 'Installing Medical Triage Agent', detail: 'Symptom screening model loading…' },
+      { label: 'Connecting EMR System', detail: 'Secure EMR integration…' },
+      { label: 'Setting up Patient Intake', detail: 'Digital intake forms and queue…' },
+      { label: 'Configuring Appointment System', detail: 'Doctor calendars and booking…' },
+      { label: 'Building Staff Dashboard', detail: 'Ward overview and patient status…' },
+    ],
+    workspaceStructure: [
+      { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Ward Dashboard' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'Triage Agent' },
+      { icon: <Users className="w-3.5 h-3.5" />, label: 'Patient Queue' },
+      { icon: <Calendar className="w-3.5 h-3.5" />, label: 'Appointments' },
+      { icon: <FileText className="w-3.5 h-3.5" />, label: 'Medical Records' },
+      { icon: <Shield className="w-3.5 h-3.5" />, label: 'Compliance' },
+    ],
+    workspacePath: '/desktop/ai-agents', tags: ['Healthcare', 'HIPAA'],
+  },
 ];
 
-const TEMPLATES: IntentItem[] = [
-  { id: 't1', name: 'Startup Workspace', creator: 'CHATR Core', description: 'Pre-configured workspace for early-stage startups. Includes CRM, recruitment, finance and project management.', rating: 4.9, reviews: 2100, category: 'Startup', priceModel: 'Free', priceLabel: 'Free', icon: <Zap className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple', estimatedTime: 'Deploy in 5 min', permissions: ['Email', 'Calendar', 'CRM'], deploySteps: ['Create Startup workspace', 'Install 3 core agents', 'Connect Gmail & Calendar', 'Enable CRM pipeline', 'Set up growth dashboard'], tags: ['Startup', 'All-in-one'], workspacePath: '/desktop/home' },
-  { id: 't2', name: 'Law Firm OS', creator: 'LexAI Partners', description: 'Complete legal operations suite. Contract review, client intake, billing, compliance tracking and matter management.', rating: 4.8, reviews: 543, category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo', icon: <Scale className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet', estimatedTime: 'Deploy in 30 min', permissions: ['Files', 'Email', 'Billing'], deploySteps: ['Create Legal workspace', 'Install Contract Reviewer', 'Set up matter management', 'Configure billing pipeline', 'Enable compliance alerts'], tags: ['Legal', 'Enterprise'], workspacePath: '/desktop/business-os' },
-  { id: 't3', name: 'Recruitment Agency', creator: 'CHATR Core', description: 'Full-stack ATS, candidate pipeline, client management and revenue tracking for recruitment agencies.', rating: 4.9, reviews: 876, category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo', icon: <Users className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro', estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'], deploySteps: ['Create Agency workspace', 'Install RecruitmentOS Agent', 'Connect LinkedIn & Job Boards', 'Set up client portal', 'Enable revenue analytics'], tags: ['Recruitment', 'Agency'], workspacePath: '/desktop/recruitment' },
-  { id: 't4', name: 'Hospital OS', creator: 'HealthTech Solutions', description: 'HIPAA-compliant hospital workspace. Patient intake, triage, appointment scheduling and EMR integration.', rating: 4.7, reviews: 312, category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <HeartPulse className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM', estimatedTime: 'Deploy in 2 hrs', permissions: ['Patient Records', 'Messaging', 'EMR'], deploySteps: ['HIPAA onboarding', 'Install Medical Triage Agent', 'Connect EMR system', 'Set up appointment system', 'Configure routing rules'], tags: ['Healthcare', 'HIPAA'], workspacePath: '/desktop/ai-agents' },
+const CONNECTORS: IntentCapability[] = [
+  {
+    id: 'c1', moduleId: 'gmail', moduleColor: 'red', moduleLucideIcon: 'Mail',
+    name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies and trigger workflows on email events.',
+    rating: 4.9, reviews: 15400, category: 'Email', priceModel: 'Free', priceLabel: 'Free',
+    icon: <Mail className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU',
+    aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'],
+    deploySteps: [
+      { label: 'Gmail Authentication', detail: 'Opening OAuth flow…' },
+      { label: 'Syncing Mail', detail: 'Importing last 90 days…' },
+      { label: 'AI Categorisation', detail: 'Labelling and sorting with AI…' },
+      { label: 'Smart Inbox Ready', detail: 'Filtering and priority scoring active…' },
+    ],
+    workspaceStructure: [
+      { icon: <Inbox className="w-3.5 h-3.5" />, label: 'Smart Inbox' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Replies' },
+    ],
+    workspacePath: '/desktop/smart-inbox',
+  },
+  {
+    id: 'c2', moduleId: 'slack', moduleColor: 'green', moduleLucideIcon: 'Slack',
+    name: 'Slack', creator: 'Salesforce', description: 'Post alerts, receive commands and sync workspace activity to Slack channels.',
+    rating: 4.8, reviews: 9800, category: 'Messaging', priceModel: 'Free', priceLabel: 'Free',
+    icon: <Slack className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU',
+    aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Slack OAuth'], tags: ['Messaging', 'Slack'],
+    deploySteps: [
+      { label: 'Slack Authentication', detail: 'OAuth flow…' },
+      { label: 'Connecting Channels', detail: 'Mapping workspace alerts…' },
+      { label: 'Enabling Commands', detail: 'Registering slash commands…' },
+    ],
+    workspaceStructure: [{ icon: <Inbox className="w-3.5 h-3.5" />, label: 'Slack Bridge' }],
+    workspacePath: '/desktop/connected-accounts',
+  },
+  {
+    id: 'c3', moduleId: 'github', moduleColor: 'slate', moduleLucideIcon: 'Github',
+    name: 'GitHub', creator: 'Microsoft', description: 'Trigger agents on PR events, review code and sync issues to your workspace.',
+    rating: 4.7, reviews: 6200, category: 'Engineering', priceModel: 'Free', priceLabel: 'Free',
+    icon: <Github className="w-6 h-6" />, verified: true, privacyLevel: 'Standard', dataResidency: 'US',
+    aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['GitHub OAuth'], tags: ['Engineering', 'GitHub'],
+    deploySteps: [
+      { label: 'GitHub Authentication', detail: 'OAuth flow…' },
+      { label: 'Linking Repositories', detail: 'Scanning org repos…' },
+      { label: 'Enabling PR Webhooks', detail: 'Connecting PR review triggers…' },
+    ],
+    workspaceStructure: [{ icon: <Code className="w-3.5 h-3.5" />, label: 'Code Review' }],
+    workspacePath: '/desktop/connected-accounts',
+  },
+  {
+    id: 'c4', moduleId: 'salesforce', moduleColor: 'blue', moduleLucideIcon: 'Database',
+    name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.',
+    rating: 4.6, reviews: 4100, category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo',
+    icon: <Database className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN',
+    aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'],
+    deploySteps: [
+      { label: 'Salesforce Authentication', detail: 'Connecting to your org…' },
+      { label: 'Syncing Leads & Contacts', detail: 'Bi-directional mapping…' },
+      { label: 'Enabling AI Enrichment', detail: 'Lead scoring and enrichment…' },
+    ],
+    workspaceStructure: [{ icon: <TrendingUp className="w-3.5 h-3.5" />, label: 'CRM Sync' }],
+    workspacePath: '/desktop/pro/business',
+  },
+  {
+    id: 'c5', moduleId: 'whatsapp', moduleColor: 'green', moduleLucideIcon: 'Phone',
+    name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages and route customer queries to the right agent.',
+    rating: 4.8, reviews: 8700, category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/msg',
+    icon: <Phone className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'India',
+    aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'],
+    deploySteps: [
+      { label: 'API Key Verification', detail: 'Verifying Business API credentials…' },
+      { label: 'Connecting Number', detail: 'Linking WhatsApp Business number…' },
+      { label: 'Enabling AI Routing', detail: 'Smart message triage and routing…' },
+    ],
+    workspaceStructure: [{ icon: <Inbox className="w-3.5 h-3.5" />, label: 'WhatsApp Inbox' }],
+    workspacePath: '/desktop/smart-inbox',
+  },
+  {
+    id: 'c6', moduleId: 'sap', moduleColor: 'orange', moduleLucideIcon: 'Building2',
+    name: 'SAP ERP', creator: 'SAP SE', description: 'Connect financial, HR and supply chain data from SAP to your Intent OS workspace.',
+    rating: 4.5, reviews: 1200, category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
+    icon: <Building2 className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'On-Premise / EU',
+    aiModel: 'N/A', estimatedTime: 'Batch / Real-time', permissions: ['SAP API Key'], tags: ['ERP', 'SAP'],
+    deploySteps: [
+      { label: 'SAP API Configuration', detail: 'Setting up secure API gateway…' },
+      { label: 'Mapping Data Entities', detail: 'Finance · HR · Supply Chain schemas…' },
+      { label: 'Enabling Live Sync', detail: 'Configuring batch and real-time sync…' },
+    ],
+    workspaceStructure: [{ icon: <Database className="w-3.5 h-3.5" />, label: 'SAP Bridge' }],
+    workspacePath: '/desktop/business-os',
+  },
 ];
 
-/* ─── Sub-components ─────────────────────────────────────────────────── */
+const ALL_ITEMS = { agents: AGENTS, templates: TEMPLATES, connectors: CONNECTORS };
 
-const PriceBadge: React.FC<{ model: PriceModel; label: string }> = ({ model, label }) => {
-  const styles: Record<PriceModel, string> = {
-    'Free': 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    'Premium': 'bg-violet-500/15 text-violet-300 border-violet-500/30',
-    'Pay-per-use': 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    'Enterprise': 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-    'Revenue Share': 'bg-pink-500/15 text-pink-300 border-pink-500/30',
-  };
-  return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wide ${styles[model]}`}>
-      {label}
-    </span>
-  );
+/* ─── AI Deployment Assistant ────────────────────────────────────────── */
+
+const EXAMPLES = [
+  'I want to start a recruitment agency.',
+  'I need a CRM for 50 salespeople.',
+  'Set up a law firm workspace.',
+  'Create a hospital management system.',
+  'Build a startup OS from scratch.',
+];
+
+const INTENT_MAP: Record<string, string[]> = {
+  recruit: ['a1', 't3'],
+  hiring: ['a1'],
+  talent: ['a1', 't3'],
+  'law firm': ['a2', 't2'],
+  legal: ['a2', 't2'],
+  lawyer: ['a2', 't2'],
+  sales: ['a3', 'c4'],
+  crm: ['a3', 'c4'],
+  finance: ['a4'],
+  accounting: ['a4'],
+  invoice: ['a4'],
+  hospital: ['a5', 't4'],
+  medical: ['a5', 't4'],
+  healthcare: ['a5', 't4'],
+  startup: ['t1', 'c1', 'c2'],
+  gmail: ['c1'],
+  slack: ['c2'],
+  github: ['c3'],
+  salesforce: ['c4'],
+  whatsapp: ['c5'],
 };
 
-const TrustSignals: React.FC<{ item: IntentItem }> = ({ item }) => (
-  <div className="grid grid-cols-2 gap-1.5 mt-3 pt-3 border-t border-white/5">
-    {item.verified && (
-      <div className="flex items-center gap-1.5 text-[10px] text-emerald-400">
-        <BadgeCheck className="w-3 h-3 shrink-0" />
-        <span>Verified by CHATR</span>
-      </div>
-    )}
-    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-      <Lock className="w-3 h-3 shrink-0" />
-      <span>{item.privacyLevel} Privacy</span>
-    </div>
-    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-      <Globe className="w-3 h-3 shrink-0" />
-      <span>{item.dataResidency}</span>
-    </div>
-    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-      <Cpu className="w-3 h-3 shrink-0" />
-      <span>{item.aiModel}</span>
-    </div>
-    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-      <Clock className="w-3 h-3 shrink-0" />
-      <span>{item.estimatedTime}</span>
-    </div>
-    {item.permissions.length > 0 && (
-      <div className="flex items-center gap-1.5 text-[10px] text-slate-400 col-span-2">
-        <Shield className="w-3 h-3 shrink-0" />
-        <span className="truncate">Needs: {item.permissions.slice(0, 3).join(', ')}</span>
-      </div>
-    )}
-  </div>
-);
+function resolveIntent(query: string): IntentCapability[] {
+  const q = query.toLowerCase();
+  const ids = new Set<string>();
+  for (const [key, capIds] of Object.entries(INTENT_MAP)) {
+    if (q.includes(key)) capIds.forEach(id => ids.add(id));
+  }
+  if (ids.size === 0) return [AGENTS[0], TEMPLATES[0]]; // default recommendations
+  const all = [...AGENTS, ...TEMPLATES, ...CONNECTORS];
+  return Array.from(ids).map(id => all.find(c => c.id === id)!).filter(Boolean).slice(0, 4);
+}
 
-const ItemCard: React.FC<{
-  item: IntentItem;
-  onDeploy: (item: IntentItem) => void;
-  colorClass?: string;
-}> = ({ item, onDeploy, colorClass = 'text-indigo-400 bg-indigo-500/15 border-indigo-500/25' }) => {
-  const [expanded, setExpanded] = useState(false);
+const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }> = ({ onDeploy }) => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<IntentCapability[]>([]);
+  const [thinking, setThinking] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    setThinking(true);
+    setShowResults(false);
+    setTimeout(() => {
+      setResults(resolveIntent(query));
+      setThinking(false);
+      setShowResults(true);
+    }, 1200);
+  };
 
   return (
-    <div
-      className="group relative rounded-2xl border border-white/8 bg-[#0e1017] hover:border-white/15 hover:bg-[#13151f] transition-all duration-200 p-5 flex flex-col gap-3 cursor-pointer"
-      onClick={() => setExpanded(e => !e)}
-    >
-      {/* Top Row */}
-      <div className="flex items-start gap-3.5">
-        <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center flex-shrink-0 ${colorClass}`}>
-          {item.icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
-            {item.verified && <BadgeCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
+    <div className="relative rounded-3xl overflow-hidden p-7"
+      style={{ background: 'linear-gradient(135deg, #0f0a2a 0%, #0a0d20 50%, #060a1a 100%)', border: '1px solid rgba(99,102,241,0.2)' }}>
+      {/* Background glows */}
+      <div className="absolute -top-12 -left-12 w-72 h-72 bg-violet-600/15 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-12 right-0 w-72 h-72 bg-indigo-600/10 rounded-full blur-[60px] pointer-events-none" />
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-2.5 mb-1">
+          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-white" />
           </div>
-          <p className="text-[11px] text-slate-500">By {item.creator}</p>
-          <div className="flex items-center gap-1.5 mt-1">
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-            <span className="text-[11px] font-bold text-amber-400">{item.rating}</span>
-            <span className="text-[10px] text-slate-500">({item.reviews.toLocaleString()})</span>
+          <span className="text-white font-black text-base tracking-tight">AI Deployment Assistant</span>
+          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30 uppercase tracking-widest">Beta</span>
+        </div>
+        <p className="text-sm text-white/40 mb-5">Describe what you want to build. I'll recommend and deploy the right capabilities.</p>
+
+        {/* Input */}
+        <div className="flex gap-2 mb-4">
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSearch()}
+              placeholder="What are you trying to build?"
+              className="w-full px-4 py-3 rounded-2xl text-sm text-white outline-none placeholder:text-white/20 font-medium"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}
+            />
           </div>
-        </div>
-        <PriceBadge model={item.priceModel} label={item.priceLabel} />
-      </div>
-
-      {/* Description */}
-      <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">{item.description}</p>
-
-      {/* Tags */}
-      {item.tags && (
-        <div className="flex flex-wrap gap-1">
-          {item.tags.map(t => (
-            <span key={t} className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/[0.04] text-slate-500 border border-white/5">
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Expanded trust signals */}
-      {expanded && <TrustSignals item={item} />}
-
-      {/* Action button */}
-      <div className="flex items-center justify-between pt-1">
-        <button
-          className="text-[10px] text-slate-500 hover:text-white transition-colors flex items-center gap-1"
-          onClick={e => { e.stopPropagation(); setExpanded(v => !v); }}
-        >
-          {expanded ? 'Less info' : 'More info'}
-          <ChevronRight className={`w-3 h-3 transition-transform ${expanded ? 'rotate-90' : ''}`} />
-        </button>
-
-        {item.installed ? (
           <button
-            onClick={e => { e.stopPropagation(); }}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold cursor-default"
+            onClick={handleSearch}
+            disabled={!query.trim() || thinking}
+            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 cursor-pointer flex items-center gap-2 shadow-lg shadow-violet-500/30"
           >
-            <CheckCircle className="w-3.5 h-3.5" />
-            Installed
+            {thinking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {thinking ? 'Thinking…' : 'Deploy'}
           </button>
-        ) : (
-          <button
-            onClick={e => { e.stopPropagation(); onDeploy(item); }}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-indigo-500/25 cursor-pointer"
-          >
-            <Zap className="w-3.5 h-3.5" />
-            {item.deploySteps ? 'Deploy' : 'Connect'}
-          </button>
+        </div>
+
+        {/* Example prompts */}
+        {!showResults && (
+          <div className="flex flex-wrap gap-2">
+            {EXAMPLES.map((ex, i) => (
+              <button key={i} onClick={() => { setQuery(ex); setTimeout(() => { setResults(resolveIntent(ex)); setShowResults(true); }, 0); }}
+                className="text-[11px] px-3 py-1.5 rounded-full text-white/50 hover:text-white border border-white/8 hover:border-white/20 transition-all cursor-pointer">
+                "{ex}"
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Results */}
+        {showResults && results.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Recommended for you</p>
+            <div className="grid grid-cols-2 gap-2">
+              {results.map(item => (
+                <button key={item.id} onClick={() => onDeploy(item)}
+                  className="flex items-center gap-3 p-3 rounded-2xl text-left transition-all hover:scale-[1.01] cursor-pointer"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                    {item.icon}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-white truncate">{item.name}</p>
+                    <p className="text-[10px] text-white/40">{item.priceLabel}</p>
+                  </div>
+                  <Zap className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -289,258 +519,374 @@ const ItemCard: React.FC<{
 };
 
 /* ─── Deploy Modal ─────────────────────────────────────────────────────── */
+
 const DeployModal: React.FC<{
-  item: IntentItem;
+  item: IntentCapability;
   onClose: () => void;
 }> = ({ item, onClose }) => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(-1); // -1 = preview, 0..n = deploying
-  const [done, setDone] = useState(false);
-  const steps = item.deploySteps || ['Installing', 'Configuring', 'Activating'];
+  const { installModule } = useInstalledModules();
+  const [phase, setPhase] = useState<'preview' | 'deploying' | 'done'>('preview');
+  const [currentStep, setCurrentStep] = useState(-1);
 
   const startDeploy = () => {
-    setStep(0);
-    steps.forEach((_, i) => {
+    setPhase('deploying');
+    setCurrentStep(0);
+    item.deploySteps.forEach((_, i) => {
       setTimeout(() => {
-        setStep(i + 1);
-        if (i === steps.length - 1) {
-          setTimeout(() => setDone(true), 600);
+        setCurrentStep(i + 1);
+        if (i === item.deploySteps.length - 1) {
+          setTimeout(() => {
+            // Register module in sidebar
+            installModule({
+              id: item.moduleId,
+              name: item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', ''),
+              icon: item.moduleLucideIcon,
+              path: item.workspacePath,
+              color: item.moduleColor,
+              installedAt: new Date().toISOString(),
+              structure: item.workspaceStructure.map(s => s.label),
+            });
+            setPhase('done');
+          }, 500);
         }
-      }, (i + 1) * 1400);
+      }, (i + 1) * 900);
     });
   };
 
-  const handleOpenWorkspace = () => {
+  const handleOpen = () => {
     onClose();
     navigate(item.workspacePath);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={phase === 'preview' ? onClose : undefined}>
       <div
-        className="relative w-full max-w-md rounded-3xl border border-white/15 bg-[#0d0f1a] shadow-2xl p-6 flex flex-col gap-5"
+        className="relative w-full max-w-lg rounded-3xl border border-white/12 shadow-2xl flex flex-col overflow-hidden"
+        style={{ background: '#0d0f1a', maxHeight: '90vh' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Close */}
-        <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors cursor-pointer">
-          <X className="w-4 h-4" />
-        </button>
-
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400">
+        <div className="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-white/5 flex-shrink-0">
+          <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 flex-shrink-0">
             {item.icon}
           </div>
-          <div>
-            <h2 className="text-base font-black text-white">{item.name}</h2>
-            <p className="text-xs text-slate-400">One-Click Deployment</p>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-black text-white leading-tight">{item.name}</h2>
+            <p className="text-[11px] text-slate-400">
+              {phase === 'preview' ? 'One-Click OS Deployment' : phase === 'deploying' ? 'Installing capability…' : 'Deployment Complete'}
+            </p>
           </div>
+          {phase === 'preview' && (
+            <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors cursor-pointer flex-shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {!done ? (
-          <>
-            {/* Steps */}
-            <div className="flex flex-col gap-2">
-              {steps.map((s, i) => {
-                const isComplete = step > i;
-                const isActive = step === i;
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+
+          {/* PREVIEW phase */}
+          {phase === 'preview' && (
+            <>
+              {/* What will be created */}
+              <div>
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">What will be created</p>
+                <div className="rounded-2xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  {item.deploySteps.map((step, i) => (
+                    <div key={i} className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0 opacity-60" />
+                      <p className="text-xs text-slate-300">{step.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Workspace structure preview */}
+              <div>
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">Your new workspace</p>
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-5 h-5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                      {item.icon}
+                    </div>
+                    <p className="text-xs font-bold text-white">{item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', '')}</p>
+                  </div>
+                  <div className="pl-3 border-l border-white/5 space-y-1.5 ml-2">
+                    {item.workspaceStructure.map((ws, i) => (
+                      <div key={i} className="flex items-center gap-2 text-slate-400">
+                        <span className="text-white/20 text-[10px] font-mono">├──</span>
+                        <span className="text-white/40">{ws.icon}</span>
+                        <span className="text-[11px]">{ws.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Trust signals */}
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { icon: <BadgeCheck className="w-3.5 h-3.5" />, label: 'Verified by CHATR', color: 'text-emerald-400' },
+                  { icon: <Lock className="w-3.5 h-3.5" />, label: `${item.privacyLevel} Privacy`, color: 'text-slate-400' },
+                  { icon: <Globe className="w-3.5 h-3.5" />, label: item.dataResidency, color: 'text-slate-400' },
+                  { icon: <Clock className="w-3.5 h-3.5" />, label: item.estimatedTime, color: 'text-slate-400' },
+                ].map((t, i) => (
+                  <div key={i} className={`flex items-center gap-1.5 text-[10px] font-medium ${t.color}`}>
+                    {t.icon} {t.label}
+                  </div>
+                ))}
+              </div>
+
+              {/* Permissions */}
+              <div className="rounded-2xl p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Permissions Required</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {item.permissions.map(p => (
+                    <span key={p} className="text-[10px] px-2 py-0.5 rounded-full text-slate-300 border border-white/8" style={{ background: 'rgba(255,255,255,0.04)' }}>{p}</span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* DEPLOYING phase */}
+          {phase === 'deploying' && (
+            <div className="space-y-2">
+              {item.deploySteps.map((step, i) => {
+                const isComplete = currentStep > i;
+                const isActive = currentStep === i;
                 return (
-                  <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 ${
-                    isComplete ? 'border-emerald-500/30 bg-emerald-500/5' :
-                    isActive ? 'border-indigo-500/40 bg-indigo-500/8 animate-pulse' :
-                    'border-white/5 bg-white/[0.02]'
+                  <div key={i} className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all duration-400 ${
+                    isComplete ? 'border-emerald-500/25 bg-emerald-500/4' :
+                    isActive ? 'border-indigo-500/35 bg-indigo-500/6' :
+                    'border-white/4 bg-white/[0.01]'
                   }`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
                       isComplete ? 'bg-emerald-500/20 text-emerald-400' :
                       isActive ? 'bg-indigo-500/20 text-indigo-400' :
-                      'bg-white/5 text-slate-500'
+                      'bg-white/5 text-white/20'
                     }`}>
-                      {isComplete ? <CheckCircle className="w-3.5 h-3.5" /> :
-                       isActive ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
-                       <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                      {isComplete ? <CheckCircle className="w-3 h-3" /> :
+                       isActive ? <Loader2 className="w-3 h-3 animate-spin" /> :
+                       <div className="w-1 h-1 rounded-full bg-current" />}
                     </div>
-                    <span className={`text-xs font-semibold ${
-                      isComplete ? 'text-emerald-300' : isActive ? 'text-white' : 'text-slate-500'
-                    }`}>{s}</span>
+                    <div>
+                      <p className={`text-xs font-semibold leading-tight ${
+                        isComplete ? 'text-emerald-300' : isActive ? 'text-white' : 'text-white/20'
+                      }`}>{step.label}</p>
+                      {isActive && <p className="text-[10px] text-white/30 mt-0.5">{step.detail}</p>}
+                    </div>
                   </div>
                 );
               })}
             </div>
+          )}
 
-            {/* Permissions */}
-            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Permissions Required</p>
-              <div className="flex flex-wrap gap-1.5">
-                {item.permissions.map(p => (
-                  <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10">{p}</span>
-                ))}
+          {/* DONE phase */}
+          {phase === 'done' && (
+            <div className="flex flex-col items-center gap-5 py-3">
+              {/* Success ring */}
+              <div className="relative">
+                <div className="w-18 h-18 w-[72px] h-[72px] rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                  <CheckCircle className="w-9 h-9 text-emerald-400" />
+                </div>
+                <span className="absolute inset-0 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2s' }} />
               </div>
-            </div>
 
-            {/* CTA */}
-            <div className="flex gap-2">
-              <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
-                Cancel
-              </button>
-              {step === -1 && (
-                <button
-                  onClick={startDeploy}
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-bold transition-all shadow-lg shadow-indigo-500/30 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Zap className="w-4 h-4" />
-                  Deploy Now
-                </button>
-              )}
-            </div>
-          </>
-        ) : (
-          /* Success State */
-          <div className="flex flex-col items-center gap-4 py-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
-            </div>
-            <div className="text-center">
-              <h3 className="text-lg font-black text-white mb-1">Deployed Successfully!</h3>
-              <p className="text-sm text-slate-400">
-                <span className="text-white font-semibold">{item.name}</span> is now active in your Intent OS workspace.
+              <div className="text-center">
+                <h3 className="text-lg font-black text-white mb-1.5">Deployment Complete</h3>
+                <p className="text-sm text-slate-400 leading-relaxed max-w-xs mx-auto">
+                  <span className="text-white font-semibold">{item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', '')}</span> is now part of your Intent OS.
+                </p>
+              </div>
+
+              {/* What was created summary */}
+              <div className="w-full rounded-2xl p-4" style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)' }}>
+                <p className="text-[10px] font-black text-emerald-400/60 uppercase tracking-widest mb-3">Your new workspace</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {item.workspaceStructure.map((ws, i) => (
+                    <div key={i} className="flex items-center gap-2 text-emerald-300/80 text-[11px] font-medium">
+                      <CheckCircle className="w-3 h-3 text-emerald-500/60 flex-shrink-0" />
+                      {ws.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-500 flex items-center gap-1.5">
+                <Zap className="w-3 h-3 text-violet-400" />
+                Sidebar updated · Workflows installed · Ready to use
               </p>
             </div>
-            <button
-              onClick={handleOpenWorkspace}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-bold cursor-pointer hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2"
-            >
-              Open Workspace <ArrowRight className="w-4 h-4" />
-            </button>
+          )}
+        </div>
+
+        {/* Footer actions */}
+        <div className="px-6 pb-6 pt-3 border-t border-white/5 flex gap-2 flex-shrink-0">
+          {phase === 'preview' && (
+            <>
+              <button onClick={onClose} className="flex-1 py-3 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
+                Cancel
+              </button>
+              <button onClick={startDeploy}
+                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-black transition-all shadow-lg shadow-indigo-500/30 cursor-pointer flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4" />
+                Deploy Now
+              </button>
+            </>
+          )}
+          {phase === 'deploying' && (
+            <div className="flex-1 py-3 rounded-2xl border border-white/5 text-center text-xs text-slate-500">
+              Deploying… do not close this window
+            </div>
+          )}
+          {phase === 'done' && (
+            <>
+              <button onClick={onClose} className="py-3 px-5 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
+                Back to Store
+              </button>
+              <button onClick={handleOpen}
+                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-black cursor-pointer hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                Open Workspace <ArrowRight className="w-4 h-4" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Card ───────────────────────────────────────────────────────────── */
+
+const CapabilityCard: React.FC<{ item: IntentCapability; onDeploy: (item: IntentCapability) => void }> = ({ item, onDeploy }) => {
+  const { isInstalled } = useInstalledModules();
+  const installed = isInstalled(item.moduleId);
+  const [expanded, setExpanded] = useState(false);
+
+  const priceColors: Record<PriceModel, string> = {
+    'Free': 'bg-emerald-500/12 text-emerald-300 border-emerald-500/25',
+    'Premium': 'bg-violet-500/12 text-violet-300 border-violet-500/25',
+    'Pay-per-use': 'bg-amber-500/12 text-amber-300 border-amber-500/25',
+    'Enterprise': 'bg-blue-500/12 text-blue-300 border-blue-500/25',
+    'Revenue Share': 'bg-pink-500/12 text-pink-300 border-pink-500/25',
+  };
+
+  return (
+    <div className="group rounded-2xl border border-white/7 bg-[#0e1017] hover:border-white/14 hover:bg-[#131520] transition-all duration-200 p-5 flex flex-col gap-3">
+      {/* Top */}
+      <div className="flex items-start gap-3.5">
+        <div className="w-11 h-11 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center flex-shrink-0 text-slate-300 group-hover:border-indigo-500/30 group-hover:text-indigo-300 transition-all">
+          {item.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+            <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
+            {item.verified && <BadgeCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
           </div>
+          <p className="text-[11px] text-slate-500 mb-1">By {item.creator}</p>
+          <div className="flex items-center gap-1.5">
+            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+            <span className="text-[11px] font-bold text-amber-400">{item.rating}</span>
+            <span className="text-[10px] text-slate-500">({item.reviews.toLocaleString()})</span>
+          </div>
+        </div>
+        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wide flex-shrink-0 ${priceColors[item.priceModel]}`}>
+          {item.priceLabel}
+        </span>
+      </div>
+
+      <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">{item.description}</p>
+
+      {/* Tags */}
+      {item.tags && (
+        <div className="flex flex-wrap gap-1">
+          {item.tags.map(t => (
+            <span key={t} className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-white/[0.03] text-slate-500 border border-white/5">{t}</span>
+          ))}
+        </div>
+      )}
+
+      {/* Expandable workspace structure */}
+      <button onClick={() => setExpanded(v => !v)}
+        className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer">
+        <ChevronDown className={`w-3 h-3 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+        {expanded ? 'Hide workspace structure' : 'Preview workspace structure'}
+      </button>
+
+      {expanded && (
+        <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="space-y-1.5">
+            {item.workspaceStructure.map((ws, i) => (
+              <div key={i} className="flex items-center gap-2 text-[10px] text-slate-400">
+                <span className="text-white/15 font-mono">├──</span>
+                <span className="text-white/30">{ws.icon}</span>
+                <span>{ws.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Action */}
+      <div className="mt-auto pt-1">
+        {installed ? (
+          <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-500/12 text-emerald-300 border border-emerald-500/20 text-xs font-bold cursor-default">
+            <CheckCircle className="w-3.5 h-3.5" /> Installed in your OS
+          </button>
+        ) : (
+          <button onClick={() => onDeploy(item)}
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-indigo-500/20 cursor-pointer">
+            <Zap className="w-3.5 h-3.5" />
+            {item.deploySteps.length > 2 ? 'Deploy to OS' : 'Connect'}
+          </button>
         )}
       </div>
     </div>
   );
 };
 
-/* ─── Featured Tab ─────────────────────────────────────────────────────── */
-const FeaturedTab: React.FC<{ onDeploy: (item: IntentItem) => void }> = ({ onDeploy }) => (
-  <div className="flex flex-col gap-8">
-    {/* Hero Banner */}
-    <div className="relative rounded-3xl overflow-hidden p-8 min-h-[200px] flex flex-col justify-end"
-      style={{ background: 'linear-gradient(135deg, #1a0c3a 0%, #0f0d2a 40%, #060c1e 100%)' }}>
-      <div className="absolute -top-20 -left-20 w-96 h-96 bg-violet-600/20 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-20 right-0 w-96 h-96 bg-indigo-600/15 blur-[80px] rounded-full pointer-events-none" />
-      <div className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none" />
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-[10px] font-black uppercase tracking-widest text-violet-400 bg-violet-500/15 border border-violet-500/25 px-2.5 py-1 rounded-full">New Release</span>
-        </div>
-        <h2 className="text-2xl font-black text-white mb-2">RecruitmentOS Agent v2.0</h2>
-        <p className="text-sm text-white/60 max-w-lg mb-4">The most advanced end-to-end talent acquisition agent. Now with AI video interview summaries and offer letter generation.</p>
-        <button
-          onClick={() => onDeploy(AGENTS[0])}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white text-black text-sm font-bold hover:bg-white/90 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-        >
-          <Zap className="w-4 h-4" />
-          Deploy Free
-        </button>
-      </div>
-    </div>
+/* ─── Tab config ─────────────────────────────────────────────────────── */
 
-    {/* Collections */}
-    <div>
-      <h3 className="text-xs font-black text-white/40 uppercase tracking-widest mb-4">Featured Collections</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { label: 'Startup Pack', count: '8 items', icon: <Zap className="w-5 h-5" />, color: 'from-violet-600/20 to-indigo-600/20 border-indigo-500/25 text-indigo-300' },
-          { label: 'Enterprise Suite', count: '14 items', icon: <Building2 className="w-5 h-5" />, color: 'from-blue-600/20 to-cyan-600/20 border-blue-500/25 text-blue-300' },
-          { label: 'Legal & Compliance', count: '5 items', icon: <Scale className="w-5 h-5" />, color: 'from-slate-600/20 to-slate-700/20 border-slate-500/25 text-slate-300' },
-          { label: 'Healthcare OS', count: '6 items', icon: <HeartPulse className="w-5 h-5" />, color: 'from-red-600/20 to-rose-600/20 border-red-500/25 text-red-300' },
-        ].map((c, i) => (
-          <button key={i} className={`p-4 rounded-2xl border bg-gradient-to-br ${c.color} hover:scale-[1.02] transition-all cursor-pointer text-left flex flex-col gap-2`}>
-            <div className="opacity-80">{c.icon}</div>
-            <div>
-              <p className="text-sm font-bold text-white">{c.label}</p>
-              <p className="text-[10px] text-slate-400">{c.count}</p>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* Top Agents */}
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">Top Intent Agents</h3>
-        <button className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer">View all <ArrowRight className="w-3.5 h-3.5" /></button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {AGENTS.slice(0, 4).map(agent => (
-          <ItemCard key={agent.id} item={agent} onDeploy={onDeploy} colorClass="text-indigo-400 bg-indigo-500/15 border-indigo-500/25" />
-        ))}
-      </div>
-    </div>
-  </div>
-);
+type TabDef = { id: TabId; label: string; icon: React.ReactNode; count?: number };
 
 /* ─── Main Component ─────────────────────────────────────────────────── */
-const TAB_CONFIG: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
-  { id: 'featured', label: 'Featured', icon: <Star className="w-3.5 h-3.5" /> },
-  { id: 'agents', label: 'Agents', icon: <Bot className="w-3.5 h-3.5" />, count: AGENTS.length },
-  { id: 'workflows', label: 'Workflows', icon: <Workflow className="w-3.5 h-3.5" />, count: WORKFLOWS.length },
-  { id: 'connectors', label: 'Connectors', icon: <Globe className="w-3.5 h-3.5" />, count: CONNECTORS.length },
-  { id: 'templates', label: 'Templates', icon: <Layers className="w-3.5 h-3.5" />, count: TEMPLATES.length },
-  { id: 'enterprise', label: 'Enterprise', icon: <Building2 className="w-3.5 h-3.5" /> },
-  { id: 'developer', label: 'Developer', icon: <Code className="w-3.5 h-3.5" /> },
-];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  'HR & Recruitment': 'text-blue-400 bg-blue-500/15 border-blue-500/25',
-  'Legal': 'text-slate-300 bg-slate-500/15 border-slate-500/25',
-  'Sales': 'text-emerald-400 bg-emerald-500/15 border-emerald-500/25',
-  'Finance': 'text-amber-400 bg-amber-500/15 border-amber-500/25',
-  'Healthcare': 'text-red-400 bg-red-500/15 border-red-500/25',
-  'Marketing': 'text-pink-400 bg-pink-500/15 border-pink-500/25',
-  'HR & Ops': 'text-blue-400 bg-blue-500/15 border-blue-500/25',
-  'Operations': 'text-cyan-400 bg-cyan-500/15 border-cyan-500/25',
-  'Email': 'text-red-400 bg-red-500/15 border-red-500/25',
-  'Messaging': 'text-green-400 bg-green-500/15 border-green-500/25',
-  'Engineering': 'text-emerald-400 bg-emerald-500/15 border-emerald-500/25',
-  'CRM': 'text-blue-400 bg-blue-500/15 border-blue-500/25',
-  'ERP': 'text-orange-400 bg-orange-500/15 border-orange-500/25',
-  'Startup': 'text-violet-400 bg-violet-500/15 border-violet-500/25',
-  'HR': 'text-blue-400 bg-blue-500/15 border-blue-500/25',
-};
 
 export const IntentStore: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('featured');
   const [searchQuery, setSearchQuery] = useState('');
-  const [deployItem, setDeployItem] = useState<IntentItem | null>(null);
+  const [deployItem, setDeployItem] = useState<IntentCapability | null>(null);
 
-  const filterItems = (items: IntentItem[]) =>
+  const TABS: TabDef[] = [
+    { id: 'featured', label: 'Featured', icon: <Star className="w-3.5 h-3.5" /> },
+    { id: 'agents', label: 'Agents', icon: <Bot className="w-3.5 h-3.5" />, count: AGENTS.length },
+    { id: 'workflows', label: 'Workflows', icon: <Workflow className="w-3.5 h-3.5" />, count: 4 },
+    { id: 'connectors', label: 'Connectors', icon: <Globe className="w-3.5 h-3.5" />, count: CONNECTORS.length },
+    { id: 'templates', label: 'Templates', icon: <Layers className="w-3.5 h-3.5" />, count: TEMPLATES.length },
+    { id: 'enterprise', label: 'Enterprise', icon: <Building2 className="w-3.5 h-3.5" /> },
+    { id: 'developer', label: 'Developer', icon: <Code className="w-3.5 h-3.5" /> },
+  ];
+
+  const filterItems = (items: IntentCapability[]) =>
     items.filter(i =>
       i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       i.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      i.category.toLowerCase().includes(searchQuery.toLowerCase())
+      (i.tags || []).some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
-  const renderGrid = (items: IntentItem[]) => (
+  const renderGrid = (items: IntentCapability[]) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filterItems(items).map(item => (
-        <ItemCard
-          key={item.id}
-          item={item}
-          onDeploy={setDeployItem}
-          colorClass={CATEGORY_COLORS[item.category] || 'text-indigo-400 bg-indigo-500/15 border-indigo-500/25'}
-        />
-      ))}
+      {filterItems(items).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
     </div>
   );
 
   return (
-    <div
-      className="flex flex-col h-full overflow-hidden text-white"
-      style={{ background: '#080a10', fontFamily: 'Inter, system-ui, sans-serif' }}
-    >
+    <div className="flex flex-col h-full overflow-hidden text-white" style={{ background: '#080a10', fontFamily: 'Inter, system-ui, sans-serif' }}>
+
       {/* ── Header ── */}
-      <div className="flex-shrink-0 px-8 pt-8 pb-5" style={{ borderBottom: '1px solid #ffffff0d' }}>
-        <div className="flex items-center justify-between gap-4 mb-6">
+      <div className="flex-shrink-0 px-8 pt-7 pb-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="flex items-center justify-between gap-4 mb-5">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)' }}>
@@ -549,34 +895,25 @@ export const IntentStore: React.FC = () => {
               <h1 className="text-2xl font-black text-white tracking-tight">Intent Store</h1>
               <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-widest">Ecosystem</span>
             </div>
-            <p className="text-sm text-slate-400">Discover, deploy and orchestrate AI capabilities for your entire business.</p>
+            <p className="text-sm text-slate-400">Deploy capabilities into your Intent OS. Each install creates a complete workspace.</p>
           </div>
-
-          {/* Search */}
           <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search agents, workflows, connectors…"
+              placeholder="Search capabilities…"
               className="w-full pl-9 pr-4 py-2.5 rounded-2xl text-xs text-white outline-none"
-              style={{ background: '#ffffff0d', border: '1px solid #ffffff12' }}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
             />
           </div>
         </div>
-
-        {/* Tabs */}
         <div className="flex items-center gap-1">
-          {TAB_CONFIG.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+          {TABS.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
-              }`}
-            >
+                activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
+              }`}>
               {tab.icon}
               {tab.label}
               {tab.count && (
@@ -590,10 +927,57 @@ export const IntentStore: React.FC = () => {
       </div>
 
       {/* ── Content ── */}
-      <div className="flex-1 overflow-y-auto px-8 py-6 custom-scrollbar">
-        {activeTab === 'featured' && <FeaturedTab onDeploy={setDeployItem} />}
-        {activeTab === 'agents' && renderGrid(AGENTS)}
-        {activeTab === 'workflows' && renderGrid(WORKFLOWS)}
+      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+
+        {/* AI Assistant always visible on Featured */}
+        {activeTab === 'featured' && (
+          <>
+            <AIDeployAssistant onDeploy={setDeployItem} />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-black text-white/30 uppercase tracking-widest">Top Agents</h3>
+                <button onClick={() => setActiveTab('agents')} className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer">
+                  View all <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {AGENTS.slice(0, 4).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-black text-white/30 uppercase tracking-widest">Deploy-Ready Templates</h3>
+                <button onClick={() => setActiveTab('templates')} className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer">
+                  View all <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {TEMPLATES.map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'agents' && (
+          <>
+            <AIDeployAssistant onDeploy={setDeployItem} />
+            {renderGrid(AGENTS)}
+          </>
+        )}
+        {activeTab === 'workflows' && (
+          <div className="flex flex-col items-center justify-center gap-5 py-20 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
+              <Workflow className="w-7 h-7 text-indigo-400" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-white mb-2">Workflows</h2>
+              <p className="text-sm text-slate-400 max-w-sm">Workflows are automatically installed when you deploy an Agent or Template. No manual setup required.</p>
+            </div>
+            <button onClick={() => setActiveTab('templates')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition-all cursor-pointer">
+              Browse Templates <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         {activeTab === 'connectors' && renderGrid(CONNECTORS)}
         {activeTab === 'templates' && renderGrid(TEMPLATES)}
 
@@ -604,7 +988,7 @@ export const IntentStore: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-black text-white mb-2">Enterprise Deployments</h2>
-              <p className="text-sm text-slate-400 max-w-md">Custom agent deployments, dedicated infrastructure, SLA guarantees, on-premise data residency and white-labelling for your organization.</p>
+              <p className="text-sm text-slate-400 max-w-md">Custom agent deployments, dedicated infrastructure, SLA guarantees, on-premise data residency and white-labelling.</p>
             </div>
             <button className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg shadow-blue-500/25 cursor-pointer">
               <Phone className="w-4 h-4" /> Contact Enterprise Sales
@@ -619,7 +1003,7 @@ export const IntentStore: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-black text-white mb-2">Developer Program</h2>
-              <p className="text-sm text-slate-400 max-w-md">Publish your agents, workflows and connectors to the Intent Store. Set your own pricing, keep 70% of revenue and reach thousands of businesses.</p>
+              <p className="text-sm text-slate-400 max-w-md">Publish agents, workflows and connectors. Set your own pricing, keep 70% of revenue, reach thousands of businesses.</p>
             </div>
             <div className="grid grid-cols-3 gap-4 text-left w-full max-w-lg">
               {[
@@ -627,7 +1011,7 @@ export const IntentStore: React.FC = () => {
                 { label: 'Intent OS SDK', icon: <Code className="w-4 h-4" /> },
                 { label: 'Verified Badges', icon: <BadgeCheck className="w-4 h-4" /> },
               ].map((f, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/8 flex flex-col gap-2">
+                <div key={i} className="p-4 rounded-2xl bg-white/[0.02] border border-white/6 flex flex-col gap-2">
                   <div className="text-emerald-400">{f.icon}</div>
                   <p className="text-xs font-bold text-white">{f.label}</p>
                 </div>
@@ -640,10 +1024,7 @@ export const IntentStore: React.FC = () => {
         )}
       </div>
 
-      {/* ── Deploy Modal ── */}
-      {deployItem && (
-        <DeployModal item={deployItem} onClose={() => setDeployItem(null)} />
-      )}
+      {deployItem && <DeployModal item={deployItem} onClose={() => setDeployItem(null)} />}
     </div>
   );
 };

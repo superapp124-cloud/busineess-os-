@@ -56,6 +56,7 @@ import { ProductivityDock } from '@/components/desktop/ProductivityDock';
 import { TinyAIIndicator } from '@/components/desktop/TinyAIIndicator';
 import { GlobalIntentProvider } from '@/core/os/GlobalIntentProvider';
 import { KernelErrorBoundary } from '@/components/desktop/KernelErrorBoundary';
+import { useInstalledModules } from '@/hooks/useInstalledModules';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
@@ -180,6 +181,7 @@ const DesktopLayoutInner = () => {
   const { theme, setTheme } = useTheme();
   const { themeMode, accentColor, fontScale, fontFamily } = useAppearanceStore();
   const { myStatus, setStatus, getStatusColor, getStatusLabel } = usePresence(user?.id);
+  const { modules: installedModules } = useInstalledModules();
 
   // Font scale
   useEffect(() => {
@@ -380,6 +382,55 @@ const DesktopLayoutInner = () => {
                 </div>
               ))}
             </nav>
+
+              {/* ── My Workspaces (dynamic, from Intent Store installs) ── */}
+              {installedModules.length > 0 && (
+                <div className="mt-4">
+                  <p className={cn(
+                    'text-[9px] font-bold uppercase tracking-widest px-3 mb-1 overflow-hidden whitespace-nowrap',
+                    isDark ? 'text-white/25' : 'text-zinc-400',
+                    'opacity-0 group-hover:opacity-100'
+                  )}>
+                    My Workspaces
+                  </p>
+                  <div className="space-y-0.5 px-2">
+                    {installedModules.map(mod => {
+                      const isActive = location.pathname.startsWith(mod.path);
+                      return (
+                        <Tooltip key={mod.id} delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => navigate(mod.path)}
+                              className={cn(
+                                'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm relative group/btn [-webkit-app-region:no-drag]',
+                                isActive
+                                  ? isDark
+                                    ? 'bg-white/10 text-white border border-white/10 shadow-sm'
+                                    : 'bg-violet-50 text-violet-700 border border-violet-200/60'
+                                  : isDark
+                                    ? 'text-white/50 hover:bg-white/6 hover:text-white/90'
+                                    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
+                              )}
+                            >
+                              {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-violet-500 rounded-r-full" />}
+                              <div className={cn('w-[18px] h-[18px] rounded-md flex items-center justify-center flex-shrink-0 text-[10px] font-black', `bg-${mod.color}-500/20 text-${mod.color}-400`)}>
+                                {mod.name[0]}
+                              </div>
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-0 text-left">
+                                <div className="text-[13px] font-semibold leading-tight truncate">{mod.name}</div>
+                                <div className={cn('text-[10px] leading-tight truncate', isDark ? 'text-white/30' : 'text-zinc-400')}>Installed workspace</div>
+                              </div>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="z-[100]">
+                            <span className="font-semibold">{mod.name}</span>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
           </ScrollArea>
 
           {/* AI Engine Status — non-intrusive, auto-hides when ready */}
