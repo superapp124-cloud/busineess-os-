@@ -382,9 +382,6 @@ export const RecruiterWorkspace = lazy(() => import('@/pages/desktop/RecruiterWo
 
 // FinanceOS
 export const FinanceWorkspace = React.lazy(() => import("../pages/desktop/FinanceWorkspace").then(m => ({ default: m.default })));
-
-// Marketing & LegalOS
-export const MarketingDashboard = React.lazy(() => import("../pages/desktop/MarketingDashboard").then(m => ({ default: m.default })));
 export const SalesWorkspace = lazy(() => import('@/pages/desktop/SalesWorkspace').then(m => ({ default: m.default })));
 export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWorkspace').then(m => ({ default: m.CandidateWorkspace })));
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
