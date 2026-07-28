@@ -209,11 +209,11 @@ Reasoning mode for this response: ${reasoningInstruction}`;
   };
 
   return (
-    <div className="flex-1 h-full bg-[#090A0F] text-white overflow-y-auto p-5 font-sans selection:bg-[#6D5DF6]/30">
-      <div className="max-w-[1440px] mx-auto space-y-5">
+    <div className="flex-1 h-full bg-[#090A0F] text-white overflow-hidden p-2.5 sm:p-4 font-sans selection:bg-[#6D5DF6]/30">
+      <div className="max-w-[1440px] mx-auto h-full flex flex-col gap-3 sm:gap-4">
         
         {/* ── 1. Top Header Banner with Sunset Graphic ──────────────────── */}
-        <div className="relative bg-[#181B23] border border-white/10 rounded-[16px] p-6 md:p-7 overflow-hidden shadow-level-1">
+        <div className="relative bg-[#181B23] border border-white/10 rounded-[16px] p-4 md:p-5 overflow-hidden shadow-level-1 shrink-0">
           {/* Sunset Graphic Background with Smooth Right Edge Blend */}
           <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden rounded-r-[16px] pointer-events-none opacity-85 hidden lg:block">
             <div className="absolute inset-0 bg-gradient-to-r from-[#181B23] via-[#181B23]/75 to-transparent z-10" />
@@ -241,7 +241,7 @@ Reasoning mode for this response: ${reasoningInstruction}`;
             </svg>
           </div>
 
-          <div className="relative z-20 space-y-3 max-w-xl">
+          <div className="relative z-20 space-y-2 max-w-xl">
             {/* Cohesive Badges Row */}
             <div className="flex items-center justify-between">
               <div className="flex items-center flex-wrap gap-2">
@@ -264,10 +264,10 @@ Reasoning mode for this response: ${reasoningInstruction}`;
 
             {/* Greeting */}
             <div>
-              <h1 className="text-[28px] md:text-[34px] font-extrabold tracking-tight text-white leading-tight">
+              <h1 className="text-[24px] md:text-[28px] font-extrabold tracking-tight text-white leading-tight">
                 Good morning, <span className="text-[#6D5DF6]">{userName}.</span>
               </h1>
-              <p className="text-gray-300 text-sm mt-1 font-medium">
+              <p className="text-gray-300 text-xs md:text-sm mt-0.5 font-medium">
                 I reviewed your business this morning. Three items deserve your attention before lunch.
               </p>
             </div>
@@ -275,8 +275,8 @@ Reasoning mode for this response: ${reasoningInstruction}`;
         </div>
 
         {/* ── 2. Command Bar (Cursor-Style Command Center) ───────────────── */}
-        <form onSubmit={handleFormSubmit} className="space-y-2">
-          <div className="bg-[#181B23] border border-white/10 focus-within:border-[#6D5DF6] rounded-[14px] p-2 pl-4 pr-2 flex items-center gap-3 shadow-level-2 transition-all">
+        <form onSubmit={handleFormSubmit} className="shrink-0">
+          <div className="bg-[#181B23] border border-white/10 focus-within:border-[#6D5DF6] rounded-[12px] p-1.5 pl-4 pr-1.5 flex items-center gap-3 shadow-level-2 transition-all">
             <Search className="h-4 w-4 text-[#6D5DF6] shrink-0" />
             <input
               type="text"
@@ -286,11 +286,11 @@ Reasoning mode for this response: ${reasoningInstruction}`;
               className="w-full bg-transparent text-sm text-white placeholder-gray-500 outline-none"
             />
             <div className="flex items-center gap-1 shrink-0">
-              <kbd className="px-2 py-0.5 rounded bg-white/10 text-[10px] font-mono text-gray-400 border border-white/10">⌘K</kbd>
+              <kbd className="px-2 py-0.5 rounded bg-white/10 text-[10px] font-mono text-gray-400 border border-white/10 hidden sm:inline-block">⌘K</kbd>
               <button
                 type="submit"
                 disabled={isProcessing}
-                className="w-8 h-8 bg-[#6D5DF6] hover:bg-[#5b4be0] text-white rounded-[10px] flex items-center justify-center shadow-md transition-all shrink-0 disabled:opacity-50 ml-1"
+                className="w-7 h-7 sm:w-8 sm:h-8 bg-[#6D5DF6] hover:bg-[#5b4be0] text-white rounded-[8px] flex items-center justify-center shadow-md transition-all shrink-0 disabled:opacity-50 ml-1"
               >
                 {isProcessing ? <Clock className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-3.5 w-3.5" />}
               </button>
@@ -300,8 +300,8 @@ Reasoning mode for this response: ${reasoningInstruction}`;
 
         {/* ── Conversational & Structured Executive Card Response ───────── */}
         {responseContext && (
-          <div className="bg-[#181B23] border border-[#6D5DF6]/50 p-5 rounded-[16px] text-xs space-y-4 shadow-level-2 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
+          <div className="bg-[#181B23] border border-[#6D5DF6]/50 p-4 rounded-[16px] text-xs space-y-3 shadow-level-2 animate-in fade-in duration-200 shrink-0">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2 flex-wrap gap-2">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
                 <Sparkles className="h-4 w-4 text-[#6D5DF6]" /> Executive Brief
               </div>
@@ -349,16 +349,16 @@ Reasoning mode for this response: ${reasoningInstruction}`;
             </div>
 
             {/* Rendered Markdown Body */}
-            <div className="text-gray-200 text-xs leading-relaxed font-sans space-y-2">
+            <div className="text-gray-200 text-[11px] sm:text-xs leading-relaxed font-sans space-y-1.5 max-h-[15vh] overflow-y-auto pr-2 custom-scrollbar">
               {responseContext?.split('\n').map((line, i) => {
                 if (line.startsWith('## ')) {
-                  return <h3 key={i} className="text-white font-bold text-sm mt-4 mb-1 first:mt-0">{line.replace('## ', '')}</h3>;
+                  return <h3 key={i} className="text-white font-bold text-xs sm:text-sm mt-2 mb-1 first:mt-0">{line.replace('## ', '')}</h3>;
                 }
                 if (line.startsWith('### ')) {
-                  return <h4 key={i} className="text-[#6D5DF6] font-semibold text-xs mt-3 mb-0.5">{line.replace('### ', '')}</h4>;
+                  return <h4 key={i} className="text-[#6D5DF6] font-semibold text-[11px] mt-1.5 mb-0.5">{line.replace('### ', '')}</h4>;
                 }
                 if (line.startsWith('**') && line.endsWith('**') && !line.slice(2, -2).includes('**')) {
-                  return <p key={i} className="font-bold text-white mt-2">{line.slice(2, -2)}</p>;
+                  return <p key={i} className="font-bold text-white mt-1">{line.slice(2, -2)}</p>;
                 }
                 if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
                   const content = line.slice(2);
@@ -369,7 +369,7 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                     </div>
                   );
                 }
-                if (line.trim() === '') return <div key={i} className="h-1" />;
+                if (line.trim() === '') return <div key={i} className="h-0.5" />;
                 return (
                   <p key={i} dangerouslySetInnerHTML={{
                     __html: line.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
@@ -380,68 +380,62 @@ Reasoning mode for this response: ${reasoningInstruction}`;
             </div>
 
             {/* Interactive Execution Action Pills */}
-            <div className="pt-3 border-t border-white/10 flex items-center flex-wrap gap-2.5">
+            <div className="pt-2 border-t border-white/10 flex items-center flex-wrap gap-2">
               <button
                 onClick={() => handleExecuteGoal('Draft follow-up email to Rajesh regarding Acme Corp Proposal')}
-                className="px-3.5 py-1.5 bg-[#6D5DF6] hover:bg-[#5b4be0] text-white rounded-[10px] text-xs font-semibold flex items-center gap-1.5 shadow transition-all"
+                className="px-3 py-1 bg-[#6D5DF6] hover:bg-[#5b4be0] text-white rounded-[8px] text-[10px] sm:text-[11px] font-semibold flex items-center gap-1.5 shadow transition-all"
               >
-                <Send className="h-3.5 w-3.5" /> Draft Follow-up
+                <Send className="h-3 w-3" /> Draft Follow-up
               </button>
               <button
                 onClick={() => handleExecuteGoal('Prepare meeting briefing for 2 PM TalentXcel Client Meeting')}
-                className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-[10px] text-xs font-semibold flex items-center gap-1.5 transition-all"
+                className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-[8px] text-[10px] sm:text-[11px] font-semibold flex items-center gap-1.5 transition-all"
               >
-                <Calendar className="h-3.5 w-3.5 text-[#3B82F6]" /> Prepare Meeting
-              </button>
-              <button
-                onClick={() => navigate('/desktop/business-os')}
-                className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-[10px] text-xs font-semibold flex items-center gap-1.5 transition-all"
-              >
-                <TrendingUp className="h-3.5 w-3.5 text-[#22C55E]" /> Show Dashboard
+                <Calendar className="h-3 w-3 text-[#3B82F6]" /> Prepare Meeting
               </button>
             </div>
           </div>
         )}
 
-        {/* ── 3. 12-Column Adaptive Layout ─────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* ── 3. 12-Column Adaptive Layout (Flexible space absorber) ───── */}
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 overflow-hidden">
           
           {/* Left Column: Priority Timeline & Schedule (8 cols) */}
-          <div className="lg:col-span-8 space-y-5">
+          <div className="lg:col-span-8 flex flex-col gap-3 sm:gap-4 h-full min-h-0">
             
             {/* Priority AI Timeline */}
-            <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-5 shadow-level-1 space-y-4">
-              <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h3 className="text-[14px] font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-[#6D5DF6]" /> Priority Timeline
+            <div className="flex-1 min-h-0 bg-[#181B23] border border-white/10 rounded-[16px] p-3 sm:p-4 shadow-level-1 flex flex-col">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2 shrink-0">
+                <h3 className="text-[12px] sm:text-[13px] font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-[#6D5DF6]" /> Priority Timeline
                 </h3>
-                <span className="text-[11px] text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/30 px-2.5 py-0.5 rounded-full font-medium">
+                <span className="text-[10px] sm:text-[11px] text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/30 px-2 py-0.5 rounded-full font-medium">
                   3 Actions Required
                 </span>
               </div>
 
-              <div className="space-y-3 relative before:absolute before:left-3.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-white/10">
+              <div className="flex-1 overflow-y-auto custom-scrollbar pt-3 space-y-2.5 relative before:absolute before:left-3.5 before:top-4 before:bottom-2 before:w-0.5 before:bg-white/10">
                 
                 {/* Timeline Item 1: 09:15 */}
-                <div className="relative pl-8 flex items-center justify-between gap-4 group">
-                  <div className="absolute left-2.5 top-2.5 w-2.5 h-2.5 rounded-full bg-[#EF4444] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-                  <div>
+                <div className="relative pl-8 flex items-center justify-between gap-2 group">
+                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#EF4444] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-[#EF4444]">09:15 AM</span>
-                      <span className="text-xs font-bold text-white">Rajesh hasn't replied for 6 days</span>
+                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#EF4444] shrink-0">09:15 AM</span>
+                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">Rajesh hasn't replied for 6 days</span>
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Acme Corp Proposal · Value: ₹18.4 Lakh</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">Acme Corp Proposal · Value: ₹18.4 Lakh</p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0 hidden sm:flex">
                     <button
                       onClick={() => navigate('/desktop/calls')}
-                      className="px-3 py-1.5 bg-[#090A0F] hover:bg-white/10 text-[11px] font-semibold rounded-[10px] text-gray-300 flex items-center gap-1 border border-white/10 transition-colors"
+                      className="px-2.5 py-1 bg-[#090A0F] hover:bg-white/10 text-[10px] font-semibold rounded-[8px] text-gray-300 flex items-center gap-1 border border-white/10 transition-colors"
                     >
                       <Phone className="h-3 w-3 text-[#3B82F6]" /> Call
                     </button>
                     <button
                       onClick={() => handleExecuteGoal('Draft follow-up email to Rajesh regarding Acme Corp Proposal')}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-[11px] font-semibold rounded-[10px] text-white flex items-center gap-1 transition-all shadow-md"
+                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-[10px] font-semibold rounded-[8px] text-white flex items-center gap-1 transition-all shadow-md"
                     >
                       <Send className="h-3 w-3" /> Draft Reply
                     </button>
@@ -449,70 +443,69 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 </div>
 
                 {/* Timeline Item 2: 10:30 */}
-                <div className="relative pl-8 flex items-center justify-between gap-4 group">
-                  <div className="absolute left-2.5 top-2.5 w-2.5 h-2.5 rounded-full bg-[#F59E0B] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
-                  <div>
+                <div className="relative pl-8 flex items-center justify-between gap-2 group">
+                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#F59E0B] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-[#F59E0B]">10:30 AM</span>
-                      <span className="text-xs font-bold text-white">2 PM Client Meeting starts in 3 hours</span>
+                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#F59E0B] shrink-0">10:30 AM</span>
+                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">2 PM Client Meeting in 3 hours</span>
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-0.5">TalentXcel Services · 4 Attendees</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">TalentXcel Services · 4 Attendees</p>
                   </div>
                   <button
                     onClick={() => handleExecuteGoal('Prepare meeting briefing for 2 PM TalentXcel Client Meeting')}
-                    className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-[11px] font-semibold rounded-[10px] text-white flex items-center gap-1 transition-all shadow-md shrink-0"
+                    className="hidden sm:flex px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-[10px] font-semibold rounded-[8px] text-white items-center gap-1 transition-all shadow-md shrink-0"
                   >
-                    <Sparkles className="h-3 w-3" /> Prepare Me
+                    <Sparkles className="h-3 w-3" /> Prepare
                   </button>
                 </div>
 
                 {/* Timeline Item 3: Yesterday Summary */}
-                <div className="relative pl-8 flex items-center justify-between gap-4 group">
-                  <div className="absolute left-2.5 top-2.5 w-2.5 h-2.5 rounded-full bg-[#22C55E] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                  <div>
+                <div className="relative pl-8 flex items-center justify-between gap-2 group">
+                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#22C55E] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-[#22C55E]">Yesterday</span>
-                      <span className="text-xs font-bold text-white">12 Tasks Completed by your team</span>
+                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#22C55E] shrink-0">Yesterday</span>
+                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">12 Tasks Completed by team</span>
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Engineering & Growth Operations</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">Engineering & Growth Operations</p>
                   </div>
                   <button
                     onClick={() => handleExecuteGoal('Summarize team performance and completed tasks from yesterday')}
-                    className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-[11px] font-semibold rounded-[10px] flex items-center gap-1 transition-all shrink-0"
+                    className="hidden sm:flex px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-semibold rounded-[8px] items-center gap-1 transition-all shrink-0"
                   >
-                    <TrendingUp className="h-3 w-3" /> See Summary
+                    <TrendingUp className="h-3 w-3" /> Summary
                   </button>
                 </div>
-
               </div>
             </div>
 
             {/* Today's Schedule Card Group - High Contrast */}
-            <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-5 shadow-level-1 space-y-3">
+            <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3 sm:p-4 shadow-level-1 space-y-2.5 shrink-0">
               <div className="flex items-center justify-between">
-                <div className="text-[13px] font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-[#3B82F6]" /> Today's Schedule
+                <div className="text-[11px] sm:text-[12px] font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                  <Calendar className="h-3.5 w-3.5 text-[#3B82F6]" /> Today's Schedule
                 </div>
                 <button
                   onClick={() => navigate('/desktop/calendar')}
-                  className="text-xs text-gray-300 hover:text-white flex items-center gap-1 bg-[#0F111A] px-3 py-1.5 rounded-[10px] border border-white/10 hover:border-white/20 transition-all font-medium"
+                  className="text-[10px] sm:text-xs text-gray-300 hover:text-white flex items-center gap-1 bg-[#0F111A] px-2.5 py-1 rounded-[8px] border border-white/10 hover:border-white/20 transition-all font-medium"
                 >
-                  View Calendar <ChevronRight className="h-3.5 w-3.5" />
+                  View <span className="hidden sm:inline">Calendar</span> <ChevronRight className="h-3 w-3" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="bg-[#0F111A] border border-blue-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-blue-500/40 transition-colors">
-                  <span className="text-blue-400 font-bold text-xs font-mono">9:30 AM</span>
-                  <span className="text-white text-xs font-semibold truncate">Sales Team Standup</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                <div className="bg-[#0F111A] border border-blue-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-blue-500/40 transition-colors">
+                  <span className="text-blue-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">9:30 AM</span>
+                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">Sales Standup</span>
                 </div>
-                <div className="bg-[#0F111A] border border-amber-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-amber-500/40 transition-colors">
-                  <span className="text-amber-400 font-bold text-xs font-mono">11:00 AM</span>
-                  <span className="text-white text-xs font-semibold truncate">Vendor Sync</span>
+                <div className="bg-[#0F111A] border border-amber-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-amber-500/40 transition-colors">
+                  <span className="text-amber-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">11:00 AM</span>
+                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">Vendor Sync</span>
                 </div>
-                <div className="bg-[#0F111A] border border-purple-500/20 px-3.5 py-2.5 rounded-[12px] flex items-center gap-2.5 hover:border-purple-500/40 transition-colors">
-                  <span className="text-purple-400 font-bold text-xs font-mono">2:00 PM</span>
-                  <span className="text-white text-xs font-semibold truncate">TalentXcel Demo</span>
+                <div className="bg-[#0F111A] border border-purple-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-purple-500/40 transition-colors">
+                  <span className="text-purple-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">2:00 PM</span>
+                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">TalentXcel Demo</span>
                 </div>
               </div>
             </div>
@@ -520,72 +513,72 @@ Reasoning mode for this response: ${reasoningInstruction}`;
           </div>
 
           {/* Right Column: Conversational AI Assistant Side Panel (4 cols) */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-5 space-y-4 shadow-level-2 sticky top-5">
+          <div className="lg:col-span-4 h-full min-h-0">
+            <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3 sm:p-4 h-full flex flex-col shadow-level-2">
               
               {/* Header */}
-              <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-                <div className="bg-[#6D5DF6]/20 border border-[#6D5DF6]/40 p-2 rounded-[12px] text-[#6D5DF6]">
-                  <Bot className="h-5 w-5" />
+              <div className="flex items-center gap-2.5 border-b border-white/10 pb-2.5 shrink-0">
+                <div className="bg-[#6D5DF6]/20 border border-[#6D5DF6]/40 p-1.5 rounded-[10px] text-[#6D5DF6]">
+                  <Bot className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-white">What would you like to work on?</h3>
-                  <p className="text-[11px] text-[#22C55E] flex items-center gap-1 mt-0.5 font-medium">
+                  <h3 className="font-bold text-[12px] sm:text-[13px] text-white leading-tight">What to work on?</h3>
+                  <p className="text-[10px] text-[#22C55E] flex items-center gap-1 font-medium mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" /> Active & Conversational
                   </p>
                 </div>
               </div>
 
               {/* Conversational Prompt Suggestions */}
-              <div className="space-y-2">
+              <div className="flex-1 overflow-y-auto custom-scrollbar pt-2.5 space-y-1.5">
                 <button
                   onClick={() => handleExecuteGoal('What needs my attention today?')}
-                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2.5 rounded-[12px] flex items-center justify-between text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
+                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-[10px] flex items-center justify-between text-[11px] sm:text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
                 >
-                  <span className="flex items-center gap-2 truncate">
+                  <span className="flex items-center gap-1.5 truncate">
                     💬 What needs my attention today?
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
 
                 <button
                   onClick={() => handleExecuteGoal('Draft a reply to Rajesh regarding the Acme proposal')}
-                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2.5 rounded-[12px] flex items-center justify-between text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
+                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-[10px] flex items-center justify-between text-[11px] sm:text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
                 >
-                  <span className="flex items-center gap-2 truncate">
+                  <span className="flex items-center gap-1.5 truncate">
                     ✉️ Draft a reply to Rajesh
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
 
                 <button
                   onClick={() => handleExecuteGoal('Prepare me for my next meeting at 2 PM')}
-                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2.5 rounded-[12px] flex items-center justify-between text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
+                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-[10px] flex items-center justify-between text-[11px] sm:text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
                 >
-                  <span className="flex items-center gap-2 truncate">
-                    📅 Prepare me for my next meeting
+                  <span className="flex items-center gap-1.5 truncate">
+                    📅 Prepare me for next meeting
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
 
                 <button
                   onClick={() => handleExecuteGoal('Delay the Acme follow-up until next week')}
-                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2.5 rounded-[12px] flex items-center justify-between text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
+                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-[10px] flex items-center justify-between text-[11px] sm:text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
                 >
-                  <span className="flex items-center gap-2 truncate">
-                    ⚡ Challenge decision: Delay follow-up
+                  <span className="flex items-center gap-1.5 truncate">
+                    ⚡ Challenge: Delay follow-up
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
 
                 <button
                   onClick={() => handleExecuteGoal('Give me this week executive summary and team progress')}
-                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2.5 rounded-[12px] flex items-center justify-between text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
+                  className="w-full bg-[#090A0F] hover:bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-[10px] flex items-center justify-between text-[11px] sm:text-xs font-medium text-gray-300 hover:text-white transition-all text-left group"
                 >
-                  <span className="flex items-center gap-2 truncate">
+                  <span className="flex items-center gap-1.5 truncate">
                     📊 Give me this week's summary
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-white transition-colors shrink-0" />
                 </button>
               </div>
 
@@ -595,71 +588,71 @@ Reasoning mode for this response: ${reasoningInstruction}`;
         </div>
 
         {/* ── 4. Dashboard Metrics with Trend Comparison ─────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 shrink-0">
           
           {/* Metric 1: Tasks */}
-          <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3.5 flex items-center justify-between shadow-level-1">
+          <div className="bg-[#181B23] border border-white/10 rounded-[12px] p-2.5 sm:p-3 flex items-center justify-between shadow-level-1">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#22C55E]" />
-                Tasks Completed
+              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-400 font-medium truncate">
+                <CheckCircle2 className="h-3 w-3 text-[#22C55E]" />
+                Tasks
               </div>
-              <div className="text-xl font-extrabold text-white">✔ 12</div>
-              <div className="text-[10px] text-[#22C55E] font-semibold">+4% vs last week</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">✔ 12</div>
+              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">+4% vs last week</div>
             </div>
-            <MiniSparkline color="#22C55E" />
+            <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#22C55E" /></div>
           </div>
 
           {/* Metric 2: Meetings */}
-          <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3.5 flex items-center justify-between shadow-level-1">
+          <div className="bg-[#181B23] border border-white/10 rounded-[12px] p-2.5 sm:p-3 flex items-center justify-between shadow-level-1">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                <Calendar className="h-3.5 w-3.5 text-[#3B82F6]" />
-                Meetings Today
+              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-400 font-medium truncate">
+                <Calendar className="h-3 w-3 text-[#3B82F6]" />
+                Meetings
               </div>
-              <div className="text-xl font-extrabold text-white">📅 3</div>
-              <div className="text-[10px] text-[#3B82F6] font-semibold">On Schedule</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">📅 3</div>
+              <div className="text-[9px] sm:text-[10px] text-[#3B82F6] font-semibold">On Schedule</div>
             </div>
-            <MiniSparkline color="#3B82F6" />
+            <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#3B82F6" /></div>
           </div>
 
           {/* Metric 3: Tickets */}
-          <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3.5 flex items-center justify-between shadow-level-1">
+          <div className="bg-[#181B23] border border-white/10 rounded-[12px] p-2.5 sm:p-3 flex items-center justify-between shadow-level-1">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                <Ticket className="h-3.5 w-3.5 text-[#F59E0B]" />
-                Pending Tickets
+              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-400 font-medium truncate">
+                <Ticket className="h-3 w-3 text-[#F59E0B]" />
+                Tickets
               </div>
-              <div className="text-xl font-extrabold text-white">🎟️ 5</div>
-              <div className="text-[10px] text-[#F59E0B] font-semibold">2 High Priority</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">🎟️ 5</div>
+              <div className="text-[9px] sm:text-[10px] text-[#F59E0B] font-semibold">2 High Priority</div>
             </div>
-            <MiniSparkline color="#F59E0B" />
+            <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#F59E0B" /></div>
           </div>
 
           {/* Metric 4: Unread Messages */}
-          <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3.5 flex items-center justify-between shadow-level-1">
+          <div className="bg-[#181B23] border border-white/10 rounded-[12px] p-2.5 sm:p-3 flex items-center justify-between shadow-level-1">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                <MessageSquare className="h-3.5 w-3.5 text-[#6D5DF6]" />
-                Unread Messages
+              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-400 font-medium truncate">
+                <MessageSquare className="h-3 w-3 text-[#6D5DF6]" />
+                Unread
               </div>
-              <div className="text-xl font-extrabold text-white">💬 8</div>
-              <div className="text-[10px] text-[#6D5DF6] font-semibold">3 Direct Threads</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">💬 8</div>
+              <div className="text-[9px] sm:text-[10px] text-[#6D5DF6] font-semibold">3 Direct Threads</div>
             </div>
-            <MiniSparkline color="#6D5DF6" />
+            <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#6D5DF6" /></div>
           </div>
 
           {/* Metric 5: Time Saved */}
-          <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-3.5 flex items-center justify-between shadow-level-1">
+          <div className="bg-[#181B23] border border-white/10 rounded-[12px] p-2.5 sm:p-3 flex items-center justify-between shadow-level-1 col-span-2 sm:col-span-1">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                <Clock className="h-3.5 w-3.5 text-[#22C55E]" />
+              <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-400 font-medium truncate">
+                <Clock className="h-3 w-3 text-[#22C55E]" />
                 Time Saved
               </div>
-              <div className="text-xl font-extrabold text-white">⚡ 6h 18m</div>
-              <div className="text-[10px] text-[#22C55E] font-semibold">+12% productivity</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">⚡ 6h 18m</div>
+              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">+12% productivity</div>
             </div>
-            <MiniSparkline color="#22C55E" />
+            <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#22C55E" /></div>
           </div>
 
         </div>
