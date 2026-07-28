@@ -256,6 +256,36 @@ export const InfiniteCanvas: React.FC = () => {
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [activeBottomTab, setActiveBottomTab] = useState<'worklog' | 'analytics' | 'journey'>('worklog');
 
+  const [highlights, setHighlights] = useState<any[]>([]);
+  const [activeWorkflows, setActiveWorkflows] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchSidebarData() {
+      try {
+        const { data: wf } = await supabase.from('workflow_runs').select('*').in('status', ['running', 'pending']).limit(3);
+        if (wf) setActiveWorkflows(wf);
+
+        const { data: notifs } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(4);
+        if (notifs && notifs.length > 0) {
+          const colors = [
+            { color: '#f59e0b', icon: <Zap /> },
+            { color: '#c084fc', icon: <UserPlus /> },
+            { color: '#fb923c', icon: <BarChart /> },
+            { color: '#38bdf8', icon: <FileText /> }
+          ];
+          setHighlights(notifs.map((n, i) => ({
+            text: n.title,
+            color: colors[i % colors.length].color,
+            icon: colors[i % colors.length].icon
+          })));
+        }
+      } catch (err) {
+        console.warn('Failed to fetch sidebar data', err);
+      }
+    }
+    fetchSidebarData();
+  }, []);
+
   const handleAISearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
     setAiLoading(true);
@@ -571,12 +601,12 @@ export const InfiniteCanvas: React.FC = () => {
               <div>
                 <p className="text-slate-400 text-xs font-bold mb-2">Key Highlights</p>
                 <div className="space-y-2">
-                  {[
+                  {(highlights.length > 0 ? highlights : [
                     { text: 'Project Apollo has 3 active engineering blockers', color: '#f59e0b', icon: <Zap /> },
                     { text: 'Rajesh Kumar connected to 2 active requisitions', color: '#c084fc', icon: <UserPlus /> },
                     { text: 'Invoice INV-304 affects Project Apollo budget', color: '#fb923c', icon: <BarChart /> },
                     { text: 'Master Service Agreement pending legal approval', color: '#38bdf8', icon: <FileText /> },
-                  ].map((item, i) => (
+                  ]).map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/10 hover:border-indigo-500/40 cursor-pointer transition-all">
                       <div className="p-1 rounded-lg flex-shrink-0 mt-0.5" style={{ background: item.color + '22', color: item.color }}>
                         {React.cloneElement(item.icon, { className: 'w-3.5 h-3.5' })}
@@ -616,7 +646,11 @@ export const InfiniteCanvas: React.FC = () => {
                 <Cpu className="w-3.5 h-3.5 text-indigo-400" />
                 <span className="text-white text-xs font-bold">Active Workflows</span>
               </div>
-              <p className="text-slate-400 text-[11px] mb-2 leading-tight">Automated candidate screening & contract triggers running.</p>
+              <p className="text-slate-400 text-[11px] mb-2 leading-tight">
+                {activeWorkflows.length > 0 
+                  ? `${activeWorkflows.length} automated workflow${activeWorkflows.length > 1 ? 's' : ''} running: ${activeWorkflows.map(w => w.workflow_id).join(', ')}.`
+                  : 'Automated candidate screening & contract triggers running.'}
+              </p>
               <button className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer">
                 Manage Workflows <ArrowRight className="w-3 h-3" />
               </button>
