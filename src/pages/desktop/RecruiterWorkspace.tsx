@@ -1952,11 +1952,20 @@ export const RecruiterWorkspace: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [reqsRes, candsRes] = await Promise.all([
-        supabase.from('requisitions').select('*').order('created_at', { ascending: false }),
-        supabase.from('candidates').select('*').order('created_at', { ascending: false }),
+        supabase.from('rec_jobs').select('*').order('created_at', { ascending: false }),
+        supabase.from('rec_candidates').select('*').order('created_at', { ascending: false }),
       ]);
-      if (reqsRes.data) setRequisitions(reqsRes.data);
-      if (candsRes.data) setCandidates(candsRes.data);
+      if (reqsRes.data) setRequisitions(reqsRes.data.map((r: any) => ({
+        id: r.id, title: r.title, department: r.department, location: r.location,
+        type: r.type, status: r.status, jd: r.description || '', created_at: r.created_at,
+      })));
+      if (candsRes.data) setCandidates(candsRes.data.map((c: any) => ({
+        id: c.id, first_name: c.first_name, last_name: c.last_name,
+        email: c.email, phone: c.phone, status: c.stage,
+        applied_for: c.job_id, created_at: c.created_at,
+        ai_match: c.ai_score, priority: 'Medium', risk: 'Low',
+        salary_fit: 'Within Band',
+      })));
     } finally { setLoading(false); }
   }, []);
 
@@ -1974,8 +1983,8 @@ export const RecruiterWorkspace: React.FC = () => {
   useEffect(() => {
     fetchData();
     fetchAutomation();
-    const reqs = supabase.channel('tos-reqs').on('postgres_changes', { event: '*', schema: 'public', table: 'requisitions' }, fetchData).subscribe();
-    const cands = supabase.channel('tos-cands').on('postgres_changes', { event: '*', schema: 'public', table: 'candidates' }, fetchData).subscribe();
+    const reqs  = supabase.channel('tos-reqs').on('postgres_changes',  { event: '*', schema: 'public', table: 'rec_jobs' },       fetchData).subscribe();
+    const cands = supabase.channel('tos-cands').on('postgres_changes', { event: '*', schema: 'public', table: 'rec_candidates' }, fetchData).subscribe();
     return () => { supabase.removeChannel(reqs); supabase.removeChannel(cands); };
   }, [fetchData, fetchAutomation]);
 
@@ -1985,55 +1994,58 @@ export const RecruiterWorkspace: React.FC = () => {
   }, []);
 
   const handleCreateRequisition = useCallback(async (reqData: Partial<Requisition>) => {
+    const { data: { user } } = await supabase.auth.getUser();
     if (reqData.id) {
-      // Update existing
       setRequisitions(prev => prev.map(r => r.id === reqData.id ? { ...r, ...reqData } as Requisition : r));
-      await supabase.from('requisitions').update(reqData).eq('id', reqData.id);
-      toast.success('Job requisition updated');
+      await supabase.from('rec_jobs').update({
+        title: reqData.title, location: reqData.location,
+        department: reqData.department, type: reqData.type, status: reqData.status,
+        description: reqData.jd,
+      }).eq('id', reqData.id);
+      toast.success('Job updated');
     } else {
-      // Create new
       const newJob: Requisition = {
-        id: `req-${Date.now()}`,
-        title: reqData.title || 'Untitled Role',
-        location: reqData.location || 'Remote',
-        department: reqData.department || 'Engineering',
-        type: reqData.type || 'Full-time',
-        status: 'Open',
-        jd: reqData.jd || '',
-        created_at: new Date().toISOString(),
+        id: `req-${Date.now()}`, title: reqData.title || 'Untitled Role',
+        location: reqData.location || 'Remote', department: reqData.department || 'Engineering',
+        type: reqData.type || 'Full-time', status: 'Open',
+        jd: reqData.jd || '', created_at: new Date().toISOString(),
       };
       setRequisitions(prev => [newJob, ...prev]);
-      await supabase.from('requisitions').insert(newJob);
-      toast.success(`Requisition '${newJob.title}' published`);
+      await supabase.from('rec_jobs').insert({
+        user_id: user?.id, title: newJob.title, location: newJob.location,
+        department: newJob.department, type: newJob.type, status: newJob.status,
+        description: newJob.jd,
+      });
+      toast.success(`Job '${newJob.title}' published`);
     }
   }, []);
 
   const handleImportJobs = useCallback(async (jobs: Partial<Requisition>[]) => {
+    const { data: { user } } = await supabase.auth.getUser();
     const formatted: Requisition[] = jobs.map((j, i) => ({
       id: `imported-req-${Date.now()}-${i}`,
-      title: j.title || 'Imported Requisition',
-      location: j.location || 'Remote',
-      department: j.department || 'Engineering',
-      type: j.type || 'Full-time',
-      status: 'Open',
-      jd: j.jd || '',
-      created_at: new Date().toISOString(),
+      title: j.title || 'Imported Requisition', location: j.location || 'Remote',
+      department: j.department || 'Engineering', type: j.type || 'Full-time',
+      status: 'Open', jd: j.jd || '', created_at: new Date().toISOString(),
     }));
     setRequisitions(prev => [...formatted, ...prev]);
     for (const job of formatted) {
-      await supabase.from('requisitions').insert(job);
+      await supabase.from('rec_jobs').insert({
+        user_id: user?.id, title: job.title, location: job.location,
+        department: job.department, type: job.type, status: job.status, description: job.jd,
+      });
     }
   }, []);
 
   const handleImportCandidate = useCallback(async (candidateData: Partial<Candidate>) => {
+    const { data: { user } } = await supabase.auth.getUser();
     const newCand: Candidate = {
       id: `cand-${Date.now()}`,
       first_name: candidateData.first_name || 'New',
       last_name: candidateData.last_name || 'Candidate',
       email: candidateData.email || 'candidate@example.com',
       phone: candidateData.phone || null,
-      status: 'Applied',
-      applied_for: candidateData.applied_for || null,
+      status: 'Applied', applied_for: candidateData.applied_for || null,
       current_company: candidateData.current_company || 'Tech Firm',
       experience_years: candidateData.experience_years || 4,
       expected_ctc: candidateData.expected_ctc || 20,
@@ -2049,8 +2061,16 @@ export const RecruiterWorkspace: React.FC = () => {
       created_at: new Date().toISOString(),
     };
     setCandidates(prev => [newCand, ...prev]);
-    publishTOSEvent({ type: 'CandidateApplied', candidateId: newCand.id, candidateName: `${newCand.first_name} ${newCand.last_name}`, timestamp: new Date(), actor: 'AI Parser' });
-    await supabase.from('candidates').insert(newCand);
+    publishTOSEvent({ type: 'CandidateApplied', candidateId: newCand.id,
+      candidateName: `${newCand.first_name} ${newCand.last_name}`,
+      timestamp: new Date(), actor: 'AI Parser' });
+    await supabase.from('rec_candidates').insert({
+      user_id: user?.id,
+      job_id: newCand.applied_for,
+      first_name: newCand.first_name, last_name: newCand.last_name,
+      email: newCand.email, phone: newCand.phone,
+      stage: 'Applied', source: 'Import',
+    });
   }, []);
 
   const handlePositiveResponse = useCallback(async (candidate: Candidate) => {
@@ -2074,8 +2094,8 @@ export const RecruiterWorkspace: React.FC = () => {
   const handleStageChange = useCallback(async (candidateId: string, newStage: CandidateStage) => {
     setCandidates(c => c.map(x => x.id === candidateId ? { ...x, status: newStage } : x));
     toast.success(`Moved to ${newStage}`);
-    if (!candidateId.startsWith('demo-')) {
-      await supabase.from('candidates').update({ status: newStage }).eq('id', candidateId);
+    if (!candidateId.startsWith('demo-') && !candidateId.startsWith('cand-')) {
+      await supabase.from('rec_candidates').update({ stage: newStage }).eq('id', candidateId);
     }
   }, []);
 
