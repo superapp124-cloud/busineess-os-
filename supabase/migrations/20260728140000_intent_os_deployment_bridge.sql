@@ -297,49 +297,47 @@ SET search_path = public
 AS $$
 DECLARE
   v_user_id uuid := auth.uid();
-  v_job1_id uuid;
-  v_job2_id uuid;
-  v_job3_id uuid;
+  v_job1_id uuid := gen_random_uuid();
+  v_job2_id uuid := gen_random_uuid();
+  v_job3_id uuid := gen_random_uuid();
 BEGIN
+  -- Only seed if workspace is empty
   IF EXISTS (SELECT 1 FROM rec_jobs WHERE user_id = v_user_id LIMIT 1) THEN
     RETURN;
   END IF;
 
-  INSERT INTO rec_jobs (user_id, title, department, location, type, status, description, openings)
-  VALUES (v_user_id, 'Senior Product Designer', 'Design', 'Remote', 'Full-time', 'Open',
-    'Looking for a senior designer to lead our product design team.', 2)
-  RETURNING id INTO v_job1_id;
+  -- Insert 3 demo jobs using pre-generated IDs
+  INSERT INTO rec_jobs (id, user_id, title, department, location, type, status, description, openings)
+  VALUES
+    (v_job1_id, v_user_id, 'Senior Product Designer',   'Design',      'Remote',    'Full-time', 'Open',
+     'Lead product design, run user research and ship beautiful experiences.', 2),
+    (v_job2_id, v_user_id, 'Backend Engineer (Node.js)', 'Engineering', 'Bangalore', 'Full-time', 'Open',
+     'Build scalable APIs and microservices for our platform.', 3),
+    (v_job3_id, v_user_id, 'Sales Development Rep',      'Sales',       'Mumbai',    'Full-time', 'Open',
+     'Generate leads and qualify prospects for our enterprise sales team.', 5);
 
-  INSERT INTO rec_jobs (user_id, title, department, location, type, status, description, openings)
-  VALUES (v_user_id, 'Backend Engineer (Node.js)', 'Engineering', 'Bangalore', 'Full-time', 'Open',
-    'Build scalable APIs and microservices for our platform.', 3)
-  RETURNING id INTO v_job2_id;
-
-  INSERT INTO rec_jobs (user_id, title, department, location, type, status, description, openings)
-  VALUES (v_user_id, 'Sales Development Rep', 'Sales', 'Mumbai', 'Full-time', 'Open',
-    'Generate leads and qualify prospects for our enterprise sales team.', 5)
-  RETURNING id INTO v_job3_id;
-
+  -- Insert 8 demo candidates
   INSERT INTO rec_candidates
     (user_id, job_id, first_name, last_name, email, stage, rating, ai_score, ai_summary, source)
   VALUES
     (v_user_id, v_job2_id, 'Priya',   'Sharma',  'priya.sharma@example.com',  'Screening',  4, 87.5,
-     'Strong match. 6 years of Node.js experience. Previously at Razorpay.', 'LinkedIn'),
+     'Strong match. 6 years of Node.js. Previously at Razorpay.', 'LinkedIn'),
     (v_user_id, v_job2_id, 'Rahul',   'Mehta',   'rahul.mehta@example.com',   'Interview',  5, 92.0,
-     'Excellent candidate. System design skills are exceptional. Recommended.', 'Referral'),
+     'Excellent candidate. System design skills exceptional. Recommended.', 'Referral'),
     (v_user_id, v_job2_id, 'Sneha',   'Patil',   'sneha.patil@example.com',   'Applied',    3, 71.0,
-     'Decent background. Missing microservices experience. Good communication.', 'Direct'),
+     'Decent background. Missing microservices experience.', 'Direct'),
     (v_user_id, v_job2_id, 'Arjun',   'Nair',    'arjun.nair@example.com',    'Offer',      5, 95.0,
      'Top performer. Multiple competing offers. Move fast.', 'GitHub'),
     (v_user_id, v_job2_id, 'Kavitha', 'Rajan',   'kavitha.rajan@example.com', 'Assessment', 4, 83.0,
      'Strong fundamentals. Needs a system design round.', 'LinkedIn'),
     (v_user_id, v_job1_id, 'Meera',   'Iyer',    'meera.iyer@example.com',    'Screening',  4, 88.0,
-     'Excellent portfolio. Figma skills are strong. Works well with engineers.', 'Behance'),
+     'Excellent portfolio. Figma skills strong. Great engineer-designer.', 'Behance'),
     (v_user_id, v_job1_id, 'Rohan',   'Kapoor',  'rohan.kapoor@example.com',  'Applied',    3, 74.0,
      'Good visual design but limited product thinking.', 'Direct'),
     (v_user_id, v_job3_id, 'Ananya',  'Singh',   'ananya.singh@example.com',  'Interview',  5, 91.0,
-     'High energy, great communicator. Ex-Salesforce. Strong fit for enterprise sales.', 'LinkedIn');
+     'High energy, great communicator. Ex-Salesforce. Strong fit.', 'LinkedIn');
 END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.seed_recruitment_demo TO authenticated;
+
