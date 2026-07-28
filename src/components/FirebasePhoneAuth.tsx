@@ -176,9 +176,9 @@ export const FirebasePhoneAuth: React.FC = () => {
 
           {/* Phone Number Input */}
           {step === 'phone' && (
-            <form onSubmit={handlePhoneSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-xs font-semibold text-white tracking-wide">
+            <form onSubmit={handlePhoneSubmit} className="space-y-6">
+              <div className="space-y-1.5">
+                <Label htmlFor="phone" className="text-[11px] font-medium text-white/50 tracking-wide uppercase">
                   Phone Number
                 </Label>
                 <div className="flex gap-2.5">
@@ -189,35 +189,31 @@ export const FirebasePhoneAuth: React.FC = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="Your phone number"
+                    placeholder="Enter number"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                    className="flex-1 h-12 text-sm bg-[#12132A] border border-purple-500/30 text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 rounded-xl transition-all placeholder:text-slate-500"
+                    className="flex-1 h-12 text-sm bg-white/[0.03] border border-white/10 text-white focus:border-white/30 focus:ring-0 rounded-xl transition-all placeholder:text-white/20"
                     required
                     autoFocus
                     maxLength={15}
                   />
                 </div>
-                <div className="text-[12px] text-slate-400 mt-2 space-y-0.5 leading-relaxed">
-                  <p>New users will receive a verification OTP.</p>
-                  <p className="font-semibold text-white">Existing users login instantly.</p>
-                </div>
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] hover:from-[#6D28D9] hover:to-[#0891B2] text-white font-semibold text-sm rounded-2xl shadow-lg shadow-purple-500/20 hover:shadow-cyan-500/30 transition-all duration-300 active:scale-[0.99]"
+                className="w-full h-12 bg-white text-black hover:bg-white/90 font-medium text-sm rounded-xl transition-all duration-200 active:scale-[0.98]"
                 disabled={loading || phoneNumber.length < 10}
               >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Checking...
+                    Connecting...
                   </>
                 ) : (
                   <>
                     Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-4 w-4 opacity-50" />
                   </>
                 )}
               </Button>
