@@ -38,39 +38,10 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  const confirmationResultRef = useRef<ConfirmationResult | null>(null);
  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
- // PRE-INITIALIZE reCAPTCHA on mount for instant OTP
- useEffect(() => {
- const initRecaptcha = async () => {
- try {
- const container = document.getElementById('recaptcha-container');
- if (container && !recaptchaVerifierRef.current) {
- container.innerHTML = '';
- recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
- size: 'invisible',
- });
- await recaptchaVerifierRef.current.render();
- setRecaptchaReady(true);
- }
- } catch (err) {
- console.warn('[reCAPTCHA] Pre-init failed, will retry on send');
- }
- };
- 
- // Small delay to ensure DOM is ready
- const timer = setTimeout(initRecaptcha, 500);
- 
- return () => {
-   clearTimeout(timer);
-   if (recaptchaVerifierRef.current) {
-     try {
-       recaptchaVerifierRef.current.clear();
-     } catch (e) {
-       // ignore cleanup errors
-     }
-     recaptchaVerifierRef.current = null;
-   }
- };
- }, []);
+ // NOTE: We no longer pre-initialize RecaptchaVerifier in a useEffect.
+ // Pre-initializing invisible recaptcha in React causes MALFORMED errors if the component 
+ // unmounts/remounts because .clear() corrupts the Google reCAPTCHA scripts in the head.
+ // We will initialize it lazily and globally in sendOTP instead.
 
  useEffect(() => {
  if (countdown > 0) {
@@ -113,19 +84,21 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     return await sendOTP(phone);
   }, []);
 
- const sendOTP = async (phone: string): Promise<boolean> => {
- try {
- // Use pre-initialized reCAPTCHA or create new one
- if (!recaptchaVerifierRef.current) {
- const container = document.getElementById('recaptcha-container');
- if (container) container.innerHTML = '';
- 
- recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
- size: failedAttempts >= 2 ? 'normal' : 'invisible',
- });
- }
+  const sendOTP = async (phone: string): Promise<boolean> => {
+  try {
+  // Lazily initialize recaptcha globally on the window object.
+  // This guarantees exactly ONE instance for the entire browser session,
+  // completely bypassing React's strict mode lifecycle re-render bugs.
+  if (!(window as any).recaptchaVerifier) {
+    const container = document.getElementById('recaptcha-container');
+    if (container) container.innerHTML = '';
+    
+    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: failedAttempts >= 2 ? 'normal' : 'invisible',
+    });
+  }
 
- const confirmationResult = await signInWithPhoneNumber(auth, phone, recaptchaVerifierRef.current);
+  const confirmationResult = await signInWithPhoneNumber(auth, phone, (window as any).recaptchaVerifier);
  confirmationResultRef.current = confirmationResult;
  
  setStep('otp');
@@ -163,12 +136,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   setStep('phone');
   setLoading(false);
   
-  if (recaptchaVerifierRef.current) {
-    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
-    recaptchaVerifierRef.current = null;
-  }
-  const container = document.getElementById('recaptcha-container');
-  if (container) container.innerHTML = '';
+  // Do NOT clear or nullify recaptchaVerifierRef here. 
+  // Firebase requires reusing the same instance, otherwise it throws MALFORMED.
   
   return false;
  }
@@ -262,14 +231,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   const resendOTP = useCallback(async (): Promise<boolean> => {
   if (countdown > 0) return false;
   
-  if (recaptchaVerifierRef.current) {
-    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
-    recaptchaVerifierRef.current = null;
-  }
-  const container = document.getElementById('recaptcha-container');
-  if (container) container.innerHTML = '';
+  // Do NOT clear recaptchaVerifierRef here to avoid MALFORMED errors on retry
   
-  setRecaptchaReady(false);
   return sendOTP(phoneNumber);
   }, [countdown, phoneNumber]);
 
@@ -283,12 +246,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   setFailedAttempts(0);
   confirmationResultRef.current = null;
   
-  if (recaptchaVerifierRef.current) {
-    try { recaptchaVerifierRef.current.clear(); } catch(e) {}
-    recaptchaVerifierRef.current = null;
-  }
-  const container = document.getElementById('recaptcha-container');
-  if (container) container.innerHTML = '';
+  // Do NOT clear recaptchaVerifierRef here to avoid MALFORMED errors on retry
   }, []);
 
  return {
