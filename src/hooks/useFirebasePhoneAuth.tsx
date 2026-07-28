@@ -131,18 +131,23 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
  let msg = 'Failed to send OTP';
  let waitTime = 0;
  
- if (err.code === 'auth/invalid-phone-number') {
- msg = 'Invalid phone number';
- } else if (err.code === 'auth/too-many-requests') {
- msg = 'Too many attempts. Please wait or use Google login.';
- waitTime = 180;
- } else if (err.message?.includes('Hostname')) {
- msg = 'Domain not authorized';
- } else if (err.message?.includes('reCAPTCHA Timeout') || err.message?.includes('reCAPTCHA')) {
- msg = 'Security check timed out. Please try again.';
- }
- 
- setError(msg);
+  if (err.code === 'auth/invalid-phone-number') {
+    msg = 'Invalid phone number';
+  } else if (err.code === 'auth/unauthorized-domain') {
+    msg = 'Domain not authorized. Please add this domain to Firebase Console.';
+  } else if (err.code === 'auth/too-many-requests') {
+    msg = 'Too many attempts. Please wait or use Google login.';
+    waitTime = 180;
+  } else if (err.message?.includes('Hostname') || err.message?.includes('unauthorized')) {
+    msg = 'Domain not authorized. Please add chatrchat.in to Firebase Console.';
+  } else if (err.message?.includes('reCAPTCHA Timeout') || err.message?.includes('reCAPTCHA')) {
+    msg = 'Security check timed out. Please try again.';
+  } else {
+    // Show exact firebase error to help debug
+    msg = err.message || 'Failed to send OTP';
+  }
+  
+  setError(msg);
  if (waitTime > 0) setCountdown(waitTime);
  setStep('phone');
  setLoading(false);
