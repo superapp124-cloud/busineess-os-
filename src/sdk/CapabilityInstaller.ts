@@ -36,10 +36,21 @@ const STEPS = [
 
 // ─── In-Memory Registries ────────────────────────────────────────────────────
 
+let initialCapabilities: string[] = [];
+try {
+  const stored = localStorage.getItem('chatr_installed_capabilities');
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed)) {
+      initialCapabilities = parsed;
+    }
+  }
+} catch (e) {
+  console.warn('Could not parse installed capabilities, starting fresh.');
+}
+
 /** Tracks which capability IDs are installed in this session */
-const installedCapabilities = new Set<string>(
-  JSON.parse(localStorage.getItem('chatr_installed_capabilities') ?? '[]')
-);
+const installedCapabilities = new Set<string>(initialCapabilities);
 
 /** Stores full SDK for each installed capability */
 const capabilityStore = new Map<string, ICapabilitySDK>();
@@ -49,7 +60,9 @@ try {
   const stored = localStorage.getItem('chatr_capability_sdks');
   if (stored) {
     const parsed = JSON.parse(stored) as ICapabilitySDK[];
-    parsed.forEach(sdk => capabilityStore.set(sdk.id, sdk));
+    if (Array.isArray(parsed)) {
+      parsed.forEach(sdk => capabilityStore.set(sdk.id, sdk));
+    }
   }
 } catch { /* ignore */ }
 
