@@ -487,7 +487,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="privacy" element={<LazyRoute component={LazyPages.DesktopPrivacy} />} />
  <Route path="account" element={<LazyRoute component={LazyPages.DesktopAccount} />} />
  <Route path="device-management" element={<LazyRoute component={LazyPages.DesktopConnectPairing} />} />
+ <Route path="tickets" element={<LazyRoute component={LazyPages.DesktopTickets} />} />
  <Route path="recruitment" element={<LazyRoute component={LazyPages.RecruiterWorkspace} />} />
+ <Route path="sales" element={<LazyRoute component={LazyPages.SalesWorkspace} />} />
  <Route path="candidate" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
  <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
  <Route path="intent-store" element={<LazyRoute component={LazyPages.IntentStore} />} />
