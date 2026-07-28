@@ -1,52 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, IndianRupee, MessageSquare, FileText, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCHATROS } from '@/core/os/hooks';
 import { triggerFlightBooking } from '@/core/capabilities/travel/FlightBookingWorkflow';
-
-const insights = [
-  {
-    text: <>Revenue is <span className="text-emerald-400 font-bold">12% higher</span> than yesterday.</>,
-    dot: 'bg-emerald-400 shadow-emerald-400/60',
-    tag: 'Revenue',
-    tagColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
-  },
-  {
-    text: <>Payroll approval is <span className="text-amber-400 font-bold">pending</span>.</>,
-    dot: 'bg-amber-400 shadow-amber-400/60',
-    tag: 'Action Required',
-    tagColor: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
-  },
-  {
-    text: <><span className="text-red-400 font-bold">6 customers</span> haven't received replies.</>,
-    dot: 'bg-red-400 shadow-red-400/60',
-    tag: 'Urgent',
-    tagColor: 'bg-red-500/15 text-red-300 border-red-500/25',
-  },
-  {
-    text: <>One <span className="text-orange-400 font-bold">automation failed</span>.</>,
-    dot: 'bg-orange-400 shadow-orange-400/60',
-    tag: 'System',
-    tagColor: 'bg-orange-500/15 text-orange-300 border-orange-500/25',
-  },
-  {
-    text: <>Your Srinagar trip can be booked <span className="text-emerald-400 font-bold">₹4,500 cheaper</span> today.</>,
-    dot: 'bg-violet-400 shadow-violet-400/60',
-    tag: 'Opportunity',
-    tagColor: 'bg-violet-500/15 text-violet-300 border-violet-500/25',
-  },
-  {
-    text: <>Sales team completed <span className="text-sky-400 font-bold">87%</span> of this month's target.</>,
-    dot: 'bg-sky-400 shadow-sky-400/60',
-    tag: 'Progress',
-    tagColor: 'bg-sky-500/15 text-sky-300 border-sky-500/25',
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
 
 export const AIBriefHero: React.FC = () => {
   const navigate = useNavigate();
   const chatrOS = useCHATROS();
+  const [insights, setInsights] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchInsights() {
+      try {
+        const { data } = await supabase
+          .from('notifications')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(6);
+
+        if (data && data.length > 0) {
+          const mappedInsights = data.map((n, i) => {
+            const colors = [
+              { dot: 'bg-emerald-400 shadow-emerald-400/60', tagColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25', text: 'emerald-400' },
+              { dot: 'bg-amber-400 shadow-amber-400/60', tagColor: 'bg-amber-500/15 text-amber-300 border-amber-500/25', text: 'amber-400' },
+              { dot: 'bg-red-400 shadow-red-400/60', tagColor: 'bg-red-500/15 text-red-300 border-red-500/25', text: 'red-400' },
+              { dot: 'bg-sky-400 shadow-sky-400/60', tagColor: 'bg-sky-500/15 text-sky-300 border-sky-500/25', text: 'sky-400' },
+              { dot: 'bg-violet-400 shadow-violet-400/60', tagColor: 'bg-violet-500/15 text-violet-300 border-violet-500/25', text: 'violet-400' },
+              { dot: 'bg-orange-400 shadow-orange-400/60', tagColor: 'bg-orange-500/15 text-orange-300 border-orange-500/25', text: 'orange-400' }
+            ];
+            const colorSet = colors[i % colors.length];
+            return {
+              text: <><span className={`text-${colorSet.text} font-bold`}>{n.title}</span> - {n.message || n.body || 'System Update'}</>,
+              dot: colorSet.dot,
+              tag: n.type || (i === 0 ? 'Urgent' : 'Update'),
+              tagColor: colorSet.tagColor
+            };
+          });
+          setInsights(mappedInsights);
+        } else {
+          setInsights([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch insights:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchInsights();
+  }, []);
 
   const handleAction = (label: string) => {
     switch (label) {

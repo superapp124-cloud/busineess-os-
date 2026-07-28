@@ -58,10 +58,8 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
         <button
           onClick={() => setIsExpanded(true)}
           className={cn(
-            'flex flex-col items-center gap-2 py-3 px-2 rounded-2xl border transition-all duration-300 shadow-xl cursor-pointer group hover:scale-105',
-            isDark 
-              ? 'border-white/10 bg-black/40 backdrop-blur-xl text-white/80 hover:bg-black/60 hover:border-indigo-500/40 shadow-black/80' 
-              : 'border-zinc-200 bg-white/60 backdrop-blur-xl text-zinc-700 hover:bg-white/90 shadow-zinc-300/40'
+            'flex flex-col items-center gap-2 py-3 px-2 rounded-2xl transition-all duration-300 cursor-pointer group hover:scale-105',
+            'border border-white/10 bg-[#0A0B10]/60 backdrop-blur-xl text-white/80 hover:bg-[#0A0B10]/80 hover:border-indigo-500/40 shadow-2xl shadow-black/80'
           )}
           title="Quick Actions"
         >
@@ -78,9 +76,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
         <div 
           className={cn(
             'w-56 p-3.5 rounded-3xl border shadow-2xl transition-all duration-300 animate-in slide-in-from-right-4 duration-200 flex flex-col gap-2.5',
-            isDark 
-              ? 'border-white/15 bg-black/65 backdrop-blur-2xl text-white shadow-black/90' 
-              : 'border-zinc-200 bg-white/85 backdrop-blur-2xl text-zinc-900 shadow-zinc-400/50'
+            'border-white/10 bg-[#0A0B10]/70 backdrop-blur-2xl text-white shadow-black/90'
           )}
         >
           {/* Header */}
@@ -93,7 +89,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
             </div>
             <button 
               onClick={() => setIsExpanded(false)}
-              className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -110,7 +106,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-2xl text-xs font-bold transition-all duration-150 cursor-pointer group text-left hover:translate-x-1',
                     action.hoverColor,
-                    isDark ? 'text-white/90 hover:text-white bg-white/[0.03] border border-white/5' : 'text-zinc-800 hover:text-zinc-950 bg-zinc-50 border border-zinc-200/60'
+                    'text-white/90 hover:text-white bg-white/[0.03] border border-white/5'
                   )}
                 >
                   <div className={cn('w-7 h-7 rounded-xl flex items-center justify-center border shrink-0 group-hover:scale-110 transition-transform', action.bg)}>
@@ -127,7 +123,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
             onClick={() => navigate('/settings')}
             className={cn(
               'flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold transition-all mt-1 border cursor-pointer',
-              isDark ? 'text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border-white/10' : 'text-zinc-500 hover:text-zinc-800 bg-zinc-100 hover:bg-zinc-200 border-zinc-200'
+              'text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border-white/10'
             )}
           >
             <Plus className="w-3.5 h-3.5" />
