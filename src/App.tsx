@@ -43,6 +43,7 @@ import { networkMonitor } from "./utils/networkMonitor";
 import { ChatrAIFab } from "./components/ChatrAIFab";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
 import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
+import { TenantProvider } from "./core/tenant/TenantContext";
 
 // Initiate the platform bootstrap immediately
 bootstrapPlatform();
@@ -430,6 +431,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <ThemeCustomizationProvider>
  <LocationProvider>
  <PlatformProvider>
+ <TenantProvider>
  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
  <CallProvider>
  <NativeStartupRouteGate>
@@ -459,6 +461,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <WorkflowInspectorPage />
  </Suspense>
  } />
+ <Route path="finance" element={<LazyRoute component={LazyPages.FinanceWorkspace} />} />
  <Route path="health" element={
  <Suspense fallback={<PageLoader message="Loading Engine Health..." />}>
  <EngineHealthDashboardPage />
@@ -852,6 +855,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  </NativeStartupRouteGate>
  </CallProvider>
  </Router>
+ </TenantProvider>
  </PlatformProvider>
  </LocationProvider>
  </ThemeCustomizationProvider>
