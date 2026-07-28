@@ -490,6 +490,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="recruitment" element={<LazyRoute component={LazyPages.RecruiterWorkspace} />} />
  <Route path="candidate" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
  <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
+ <Route path="intent-store" element={<LazyRoute component={LazyPages.IntentStore} />} />
  <Route path="connector-store" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="agent/:id" element={<LazyRoute component={LazyPages.AgentWorkspace} />} />
  <Route path="studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />

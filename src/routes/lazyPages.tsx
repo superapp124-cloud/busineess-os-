@@ -381,6 +381,7 @@ export const DesktopSettings = lazy(() => import('@/pages/desktop/DesktopSetting
 export const RecruiterWorkspace = lazy(() => import('@/pages/desktop/RecruiterWorkspace').then(m => ({ default: m.RecruiterWorkspace })));
 export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWorkspace').then(m => ({ default: m.CandidateWorkspace })));
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
+export const IntentStore = lazy(() => import('@/pages/desktop/IntentStore').then(m => ({ default: m.IntentStore })));
 export const DesktopConnectorStore = lazy(() => import('@/pages/desktop/DesktopConnectorStore').then(m => ({ default: m.default })));
 export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio').then(m => ({ default: m.WorkflowStudio })));
 export const AgentWorkspace = lazy(() => import('@/pages/desktop/AgentWorkspace').then(m => ({ default: m.AgentWorkspace })));

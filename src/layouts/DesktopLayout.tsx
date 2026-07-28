@@ -74,7 +74,7 @@ const NAV_SECTIONS = [
       { icon: BrainCircuit,  label: 'AI Canvas',  subtitle: 'Business Canvas & Memory', path: '/desktop/canvas' },
       { icon: Bot,           label: 'AI Agents',  subtitle: 'Autonomous Agent Hub',    path: '/desktop/ai-agents' },
       { icon: Zap,           label: 'Execution',  subtitle: 'Intent OS Engine',         path: '/desktop/intelligence' },
-      { icon: Store,         label: 'Marketplace',subtitle: 'Agent & Connector Store',  path: '/desktop/marketplace' },
+      { icon: Store,         label: 'Intent Store', subtitle: 'Agents · Workflows · Connectors', path: '/desktop/intent-store' },
       { icon: Package,       label: 'Ecosystem',  subtitle: 'Connector Marketplace',    path: '/desktop/connector-store' },
     ],
   },
