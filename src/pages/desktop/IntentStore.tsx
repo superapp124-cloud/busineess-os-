@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search, Star, CheckCircle, Sparkles, Briefcase, Code, Stethoscope,
   TrendingUp, Users, FileText, Zap, Globe, GitBranch, Database,
@@ -33,6 +34,7 @@ interface IntentItem {
   permissions: string[];
   deploySteps?: string[];
   tags?: string[];
+  workspacePath: string; // where to navigate after deploy
 }
 
 /* ─── Data ───────────────────────────────────────────────────────────── */
@@ -46,7 +48,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
     estimatedTime: '2–10 min/task', permissions: ['Calendar', 'Email', 'LinkedIn', 'Files'],
     deploySteps: ['Create Recruitment Workspace', 'Connect LinkedIn & Gmail', 'Install ATS Pipeline', 'Set up screening workflows', 'Enable analytics dashboard'],
-    tags: ['HR', 'Recruitment', 'ATS']
+    tags: ['HR', 'Recruitment', 'ATS'], workspacePath: '/desktop/recruitment'
   },
   {
     id: 'a2', name: 'Legal Contract Reviewer', creator: 'LexAI Partners',
@@ -56,7 +58,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet',
     estimatedTime: '3–8 min/contract', permissions: ['Documents', 'Files'],
     deploySteps: ['Install Legal Agent', 'Connect document storage', 'Configure review templates', 'Enable alerts'],
-    tags: ['Legal', 'Contracts', 'Risk']
+    tags: ['Legal', 'Contracts', 'Risk'], workspacePath: '/desktop/business-os'
   },
   {
     id: 'a3', name: 'Sales Intelligence Agent', creator: 'CHATR Core',
@@ -66,7 +68,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'GPT-4o',
     estimatedTime: '1–3 min/lead', permissions: ['CRM', 'Email', 'Calendar'],
     deploySteps: ['Connect CRM', 'Import pipeline', 'Configure sequences', 'Enable scoring'],
-    tags: ['Sales', 'CRM', 'Lead Gen']
+    tags: ['Sales', 'CRM', 'Lead Gen'], workspacePath: '/desktop/pro/business'
   },
   {
     id: 'a4', name: 'Finance & Accounting Agent', creator: 'CHATR Core',
@@ -76,7 +78,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Gemini 1.5 Flash',
     estimatedTime: '1–5 min/invoice', permissions: ['Finance', 'Email', 'Files'],
     deploySteps: ['Connect accounting system', 'Configure tax rules', 'Set approval workflows', 'Enable alerts'],
-    tags: ['Finance', 'Accounting', 'GST']
+    tags: ['Finance', 'Accounting', 'GST'], workspacePath: '/desktop/business-os'
   },
   {
     id: 'a5', name: 'Medical Triage Assistant', creator: 'HealthTech Solutions',
@@ -86,7 +88,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM',
     estimatedTime: '3–5 min/patient', permissions: ['Patient Records', 'Messaging'],
     deploySteps: ['HIPAA onboarding', 'Connect EMR', 'Configure triage rules', 'Enable routing'],
-    tags: ['Healthcare', 'HIPAA', 'Triage']
+    tags: ['Healthcare', 'HIPAA', 'Triage'], workspacePath: '/desktop/ai-agents'
   },
   {
     id: 'a6', name: 'Marketing Strategist Agent', creator: 'GrowthOS Lab',
@@ -96,7 +98,7 @@ const AGENTS: IntentItem[] = [
     privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'GPT-4o',
     estimatedTime: '5–15 min/campaign', permissions: ['Social Accounts', 'Analytics', 'Email'],
     deploySteps: ['Connect social accounts', 'Import brand kit', 'Set campaign goals', 'Enable analytics'],
-    tags: ['Marketing', 'Social', 'Campaigns']
+    tags: ['Marketing', 'Social', 'Campaigns'], workspacePath: '/desktop/ai-agents'
   },
 ];
 
@@ -108,7 +110,7 @@ const WORKFLOWS: IntentItem[] = [
     icon: <UserCheck className="w-7 h-7" />, installed: false, verified: true,
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Rule-based + AI',
     estimatedTime: 'Runs over 90 days', permissions: ['HR System', 'Email', 'Calendar', 'Slack'],
-    tags: ['HR', 'Onboarding']
+    tags: ['HR', 'Onboarding'], workspacePath: '/desktop/studio'
   },
   {
     id: 'w2', name: 'Invoice Approval Pipeline', creator: 'CHATR Core',
@@ -117,7 +119,7 @@ const WORKFLOWS: IntentItem[] = [
     icon: <FileText className="w-7 h-7" />, installed: false, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Rule-based',
     estimatedTime: '1–48 hrs/invoice', permissions: ['Finance', 'Email'],
-    tags: ['Finance', 'Approval']
+    tags: ['Finance', 'Approval'], workspacePath: '/desktop/studio'
   },
   {
     id: 'w3', name: 'Lead Qualification Pipeline', creator: 'SalesTech Co.',
@@ -126,7 +128,7 @@ const WORKFLOWS: IntentItem[] = [
     icon: <TrendingUp className="w-7 h-7" />, installed: false, verified: true,
     privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'Scoring Model',
     estimatedTime: '< 2 min/lead', permissions: ['CRM', 'Email'],
-    tags: ['Sales', 'Leads']
+    tags: ['Sales', 'Leads'], workspacePath: '/desktop/pro/business'
   },
   {
     id: 'w4', name: 'Travel Approval Workflow', creator: 'CHATR Core',
@@ -135,24 +137,24 @@ const WORKFLOWS: IntentItem[] = [
     icon: <Plane className="w-7 h-7" />, installed: false, verified: true,
     privacyLevel: 'Standard', dataResidency: 'India / EU', aiModel: 'Gemini + Rules',
     estimatedTime: '2–6 hrs/request', permissions: ['Calendar', 'Email', 'Travel APIs'],
-    tags: ['Travel', 'Ops']
+    tags: ['Travel', 'Ops'], workspacePath: '/desktop/studio'
   },
 ];
 
 const CONNECTORS: IntentItem[] = [
-  { id: 'c1', name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies, trigger workflows on email events.', rating: 4.9, reviews: 15400, category: 'Email', priceModel: 'Free', priceLabel: 'Free', icon: <Mail className="w-7 h-7" />, installed: true, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'] },
-  { id: 'c2', name: 'Slack', creator: 'Salesforce', description: 'Post alerts, receive commands and sync workspace activity to Slack channels.', rating: 4.8, reviews: 9800, category: 'Messaging', priceModel: 'Free', priceLabel: 'Free', icon: <Slack className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Slack OAuth'], tags: ['Messaging', 'Slack'] },
-  { id: 'c3', name: 'GitHub', creator: 'Microsoft', description: 'Trigger agents on PR events, review code and sync issues to your workspace.', rating: 4.7, reviews: 6200, category: 'Engineering', priceModel: 'Free', priceLabel: 'Free', icon: <Github className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'US', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['GitHub OAuth'], tags: ['Engineering', 'GitHub'] },
-  { id: 'c4', name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.', rating: 4.6, reviews: 4100, category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo', icon: <Database className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN', aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'] },
-  { id: 'c5', name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages, receive customer queries and route to agents.', rating: 4.8, reviews: 8700, category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/message', icon: <Phone className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'] },
-  { id: 'c6', name: 'SAP ERP', creator: 'SAP SE', description: 'Connect financial, HR and supply chain data from SAP to your Intent OS workspace.', rating: 4.5, reviews: 1200, category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <Building2 className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'On-Premise / EU', aiModel: 'N/A', estimatedTime: 'Batch / Real-time', permissions: ['SAP API Key'], tags: ['ERP', 'SAP'] },
+  { id: 'c1', name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies, trigger workflows on email events.', rating: 4.9, reviews: 15400, category: 'Email', priceModel: 'Free', priceLabel: 'Free', icon: <Mail className="w-7 h-7" />, installed: true, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'], workspacePath: '/desktop/connected-accounts' },
+  { id: 'c2', name: 'Slack', creator: 'Salesforce', description: 'Post alerts, receive commands and sync workspace activity to Slack channels.', rating: 4.8, reviews: 9800, category: 'Messaging', priceModel: 'Free', priceLabel: 'Free', icon: <Slack className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Slack OAuth'], tags: ['Messaging', 'Slack'], workspacePath: '/desktop/connected-accounts' },
+  { id: 'c3', name: 'GitHub', creator: 'Microsoft', description: 'Trigger agents on PR events, review code and sync issues to your workspace.', rating: 4.7, reviews: 6200, category: 'Engineering', priceModel: 'Free', priceLabel: 'Free', icon: <Github className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'US', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['GitHub OAuth'], tags: ['Engineering', 'GitHub'], workspacePath: '/desktop/connected-accounts' },
+  { id: 'c4', name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.', rating: 4.6, reviews: 4100, category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo', icon: <Database className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN', aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'], workspacePath: '/desktop/connected-accounts' },
+  { id: 'c5', name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages, receive customer queries and route to agents.', rating: 4.8, reviews: 8700, category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/message', icon: <Phone className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India', aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'], workspacePath: '/desktop/connected-accounts' },
+  { id: 'c6', name: 'SAP ERP', creator: 'SAP SE', description: 'Connect financial, HR and supply chain data from SAP to your Intent OS workspace.', rating: 4.5, reviews: 1200, category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <Building2 className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'On-Premise / EU', aiModel: 'N/A', estimatedTime: 'Batch / Real-time', permissions: ['SAP API Key'], tags: ['ERP', 'SAP'], workspacePath: '/desktop/connected-accounts' },
 ];
 
 const TEMPLATES: IntentItem[] = [
-  { id: 't1', name: 'Startup Workspace', creator: 'CHATR Core', description: 'Pre-configured workspace for early-stage startups. Includes CRM, recruitment, finance and project management.', rating: 4.9, reviews: 2100, category: 'Startup', priceModel: 'Free', priceLabel: 'Free', icon: <Zap className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple', estimatedTime: 'Deploy in 5 min', permissions: ['Email', 'Calendar', 'CRM'], deploySteps: ['Create Startup workspace', 'Install 3 core agents', 'Connect Gmail & Calendar', 'Enable CRM pipeline', 'Set up growth dashboard'], tags: ['Startup', 'All-in-one'] },
-  { id: 't2', name: 'Law Firm OS', creator: 'LexAI Partners', description: 'Complete legal operations suite. Contract review, client intake, billing, compliance tracking and matter management.', rating: 4.8, reviews: 543, category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo', icon: <Scale className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet', estimatedTime: 'Deploy in 30 min', permissions: ['Files', 'Email', 'Billing'], deploySteps: ['Create Legal workspace', 'Install Contract Reviewer', 'Set up matter management', 'Configure billing pipeline', 'Enable compliance alerts'], tags: ['Legal', 'Enterprise'] },
-  { id: 't3', name: 'Recruitment Agency', creator: 'CHATR Core', description: 'Full-stack ATS, candidate pipeline, client management and revenue tracking for recruitment agencies.', rating: 4.9, reviews: 876, category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo', icon: <Users className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro', estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'], deploySteps: ['Create Agency workspace', 'Install RecruitmentOS Agent', 'Connect LinkedIn & Job Boards', 'Set up client portal', 'Enable revenue analytics'], tags: ['Recruitment', 'Agency'] },
-  { id: 't4', name: 'Hospital OS', creator: 'HealthTech Solutions', description: 'HIPAA-compliant hospital workspace. Patient intake, triage, appointment scheduling and EMR integration.', rating: 4.7, reviews: 312, category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <HeartPulse className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM', estimatedTime: 'Deploy in 2 hrs', permissions: ['Patient Records', 'Messaging', 'EMR'], deploySteps: ['HIPAA onboarding', 'Install Medical Triage Agent', 'Connect EMR system', 'Set up appointment system', 'Configure routing rules'], tags: ['Healthcare', 'HIPAA'] },
+  { id: 't1', name: 'Startup Workspace', creator: 'CHATR Core', description: 'Pre-configured workspace for early-stage startups. Includes CRM, recruitment, finance and project management.', rating: 4.9, reviews: 2100, category: 'Startup', priceModel: 'Free', priceLabel: 'Free', icon: <Zap className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple', estimatedTime: 'Deploy in 5 min', permissions: ['Email', 'Calendar', 'CRM'], deploySteps: ['Create Startup workspace', 'Install 3 core agents', 'Connect Gmail & Calendar', 'Enable CRM pipeline', 'Set up growth dashboard'], tags: ['Startup', 'All-in-one'], workspacePath: '/desktop/home' },
+  { id: 't2', name: 'Law Firm OS', creator: 'LexAI Partners', description: 'Complete legal operations suite. Contract review, client intake, billing, compliance tracking and matter management.', rating: 4.8, reviews: 543, category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo', icon: <Scale className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet', estimatedTime: 'Deploy in 30 min', permissions: ['Files', 'Email', 'Billing'], deploySteps: ['Create Legal workspace', 'Install Contract Reviewer', 'Set up matter management', 'Configure billing pipeline', 'Enable compliance alerts'], tags: ['Legal', 'Enterprise'], workspacePath: '/desktop/business-os' },
+  { id: 't3', name: 'Recruitment Agency', creator: 'CHATR Core', description: 'Full-stack ATS, candidate pipeline, client management and revenue tracking for recruitment agencies.', rating: 4.9, reviews: 876, category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo', icon: <Users className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro', estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'], deploySteps: ['Create Agency workspace', 'Install RecruitmentOS Agent', 'Connect LinkedIn & Job Boards', 'Set up client portal', 'Enable revenue analytics'], tags: ['Recruitment', 'Agency'], workspacePath: '/desktop/recruitment' },
+  { id: 't4', name: 'Hospital OS', creator: 'HealthTech Solutions', description: 'HIPAA-compliant hospital workspace. Patient intake, triage, appointment scheduling and EMR integration.', rating: 4.7, reviews: 312, category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales', icon: <HeartPulse className="w-7 h-7" />, installed: false, verified: true, privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM', estimatedTime: 'Deploy in 2 hrs', permissions: ['Patient Records', 'Messaging', 'EMR'], deploySteps: ['HIPAA onboarding', 'Install Medical Triage Agent', 'Connect EMR system', 'Set up appointment system', 'Configure routing rules'], tags: ['Healthcare', 'HIPAA'], workspacePath: '/desktop/ai-agents' },
 ];
 
 /* ─── Sub-components ─────────────────────────────────────────────────── */
@@ -291,6 +293,7 @@ const DeployModal: React.FC<{
   item: IntentItem;
   onClose: () => void;
 }> = ({ item, onClose }) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(-1); // -1 = preview, 0..n = deploying
   const [done, setDone] = useState(false);
   const steps = item.deploySteps || ['Installing', 'Configuring', 'Activating'];
@@ -305,6 +308,11 @@ const DeployModal: React.FC<{
         }
       }, (i + 1) * 1400);
     });
+  };
+
+  const handleOpenWorkspace = () => {
+    onClose();
+    navigate(item.workspacePath);
   };
 
   return (
@@ -398,10 +406,10 @@ const DeployModal: React.FC<{
               </p>
             </div>
             <button
-              onClick={onClose}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-bold cursor-pointer hover:from-emerald-500 hover:to-teal-500 transition-all"
+              onClick={handleOpenWorkspace}
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-bold cursor-pointer hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2"
             >
-              Open Workspace →
+              Open Workspace <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
