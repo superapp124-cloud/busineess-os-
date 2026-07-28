@@ -74,6 +74,19 @@ export const ChiefOfStaffHome: React.FC = () => {
   const [emojiUsage, setEmojiUsage] = useState<'off' | 'minimal' | 'normal'>('minimal');
   const [showProactive, setShowProactive] = useState(true);
 
+  // Real Data State
+  const [dashboardMetrics, setDashboardMetrics] = useState({
+    tasksCompleted: 0,
+    meetingsToday: 0,
+    pendingTickets: 0,
+    unreadMessages: 0,
+    timeSavedHours: 0,
+    timeSavedMinutes: 0
+  });
+  const [scheduleEvents, setScheduleEvents] = useState<any[]>([]);
+  const [priorityTimeline, setPriorityTimeline] = useState<any[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -106,6 +119,73 @@ export const ChiefOfStaffHome: React.FC = () => {
       }
     }
     loadUser();
+  }, []);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        setDataLoading(true);
+        // 1. Tasks Completed (workflow runs)
+        const { count: tasksCount } = await (supabase as any)
+          .from('workflow_runs')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed');
+        
+        // 2. Pending Tickets (crm leads open)
+        const { count: ticketsCount } = await (supabase as any)
+          .from('crm_leads')
+          .select('*', { count: 'exact', head: true })
+          .not('status', 'in', '("won", "lost")');
+          
+        // 3. Unread Messages (notifications)
+        const { count: messagesCount } = await (supabase as any)
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false);
+          
+        // 4. Meetings Today
+        const startOfDay = new Date();
+        startOfDay.setHours(0,0,0,0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23,59,59,999);
+        const { data: meetings, count: meetingsCount } = await (supabase as any)
+          .from('calendar_events')
+          .select('*', { count: 'exact' })
+          .gte('start_at', startOfDay.toISOString())
+          .lte('start_at', endOfDay.toISOString())
+          .order('start_at', { ascending: true })
+          .limit(3);
+          
+        setScheduleEvents(meetings || []);
+        
+        // Calculate proxy time saved (15 mins per task)
+        const totalMins = (tasksCount || 0) * 15;
+        
+        setDashboardMetrics({
+          tasksCompleted: tasksCount || 0,
+          meetingsToday: meetingsCount || 0,
+          pendingTickets: ticketsCount || 0,
+          unreadMessages: messagesCount || 0,
+          timeSavedHours: Math.floor(totalMins / 60),
+          timeSavedMinutes: totalMins % 60
+        });
+        
+        // 5. Priority Timeline (Recent notifications)
+        const { data: timelineData } = await (supabase as any)
+          .from('notifications')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(3);
+          
+        setPriorityTimeline(timelineData || []);
+        
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      } finally {
+        setDataLoading(false);
+      }
+    }
+    fetchDashboardData();
   }, []);
 
   const handleExecuteGoal = async (promptText?: string, overrideDepth?: 'just_answer' | 'explain' | 'think_with_me') => {
@@ -415,68 +495,36 @@ Reasoning mode for this response: ${reasoningInstruction}`;
               </div>
 
               <div className="flex-1 overflow-y-auto custom-scrollbar pt-3 space-y-2.5 relative before:absolute before:left-3.5 before:top-4 before:bottom-2 before:w-0.5 before:bg-white/10">
-                
-                {/* Timeline Item 1: 09:15 */}
-                <div className="relative pl-8 flex items-center justify-between gap-2 group">
-                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#EF4444] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#EF4444] shrink-0">09:15 AM</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">Rajesh hasn't replied for 6 days</span>
+                {dataLoading && <div className="text-gray-400 text-xs pl-8">Loading priority events...</div>}
+                {!dataLoading && priorityTimeline.length === 0 && (
+                  <div className="text-gray-400 text-xs pl-8">No urgent notifications. You're all caught up!</div>
+                )}
+                {!dataLoading && priorityTimeline.map((item, index) => {
+                  const colors = ['#EF4444', '#F59E0B', '#22C55E', '#3B82F6', '#6D5DF6'];
+                  const color = colors[index % colors.length];
+                  return (
+                    <div key={item.id || index} className="relative pl-8 flex items-center justify-between gap-2 group">
+                      <div className={`absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full ring-4 ring-[#181B23]`} style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}99` }} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] sm:text-[11px] font-mono font-bold shrink-0" style={{ color }}>
+                            {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <span className="text-[11px] sm:text-xs font-bold text-white truncate">{item.title || 'Notification'}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-0.5 truncate">{item.message || item.body || 'New alert from system'}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0 hidden sm:flex">
+                        <button
+                          onClick={() => handleExecuteGoal(`Address priority item: ${item.title}`)}
+                          className="px-2.5 py-1 bg-[#6D5DF6] hover:bg-[#5b4be0] text-[10px] font-semibold rounded-[8px] text-white flex items-center gap-1 transition-all shadow-md"
+                        >
+                          <Sparkles className="h-3 w-3" /> Address
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">Acme Corp Proposal · Value: ₹18.4 Lakh</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0 hidden sm:flex">
-                    <button
-                      onClick={() => navigate('/desktop/calls')}
-                      className="px-2.5 py-1 bg-[#090A0F] hover:bg-white/10 text-[10px] font-semibold rounded-[8px] text-gray-300 flex items-center gap-1 border border-white/10 transition-colors"
-                    >
-                      <Phone className="h-3 w-3 text-[#3B82F6]" /> Call
-                    </button>
-                    <button
-                      onClick={() => handleExecuteGoal('Draft follow-up email to Rajesh regarding Acme Corp Proposal')}
-                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-[10px] font-semibold rounded-[8px] text-white flex items-center gap-1 transition-all shadow-md"
-                    >
-                      <Send className="h-3 w-3" /> Draft Reply
-                    </button>
-                  </div>
-                </div>
-
-                {/* Timeline Item 2: 10:30 */}
-                <div className="relative pl-8 flex items-center justify-between gap-2 group">
-                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#F59E0B] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#F59E0B] shrink-0">10:30 AM</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">2 PM Client Meeting in 3 hours</span>
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">TalentXcel Services · 4 Attendees</p>
-                  </div>
-                  <button
-                    onClick={() => handleExecuteGoal('Prepare meeting briefing for 2 PM TalentXcel Client Meeting')}
-                    className="hidden sm:flex px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-[10px] font-semibold rounded-[8px] text-white items-center gap-1 transition-all shadow-md shrink-0"
-                  >
-                    <Sparkles className="h-3 w-3" /> Prepare
-                  </button>
-                </div>
-
-                {/* Timeline Item 3: Yesterday Summary */}
-                <div className="relative pl-8 flex items-center justify-between gap-2 group">
-                  <div className="absolute left-2.5 top-1.5 w-2.5 h-2.5 rounded-full bg-[#22C55E] ring-4 ring-[#181B23] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#22C55E] shrink-0">Yesterday</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white truncate">12 Tasks Completed by team</span>
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">Engineering & Growth Operations</p>
-                  </div>
-                  <button
-                    onClick={() => handleExecuteGoal('Summarize team performance and completed tasks from yesterday')}
-                    className="hidden sm:flex px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-semibold rounded-[8px] items-center gap-1 transition-all shrink-0"
-                  >
-                    <TrendingUp className="h-3 w-3" /> Summary
-                  </button>
-                </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -495,18 +543,22 @@ Reasoning mode for this response: ${reasoningInstruction}`;
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-                <div className="bg-[#0F111A] border border-blue-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-blue-500/40 transition-colors">
-                  <span className="text-blue-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">9:30 AM</span>
-                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">Sales Standup</span>
-                </div>
-                <div className="bg-[#0F111A] border border-amber-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-amber-500/40 transition-colors">
-                  <span className="text-amber-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">11:00 AM</span>
-                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">Vendor Sync</span>
-                </div>
-                <div className="bg-[#0F111A] border border-purple-500/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-purple-500/40 transition-colors">
-                  <span className="text-purple-400 font-bold text-[10px] sm:text-[11px] font-mono shrink-0">2:00 PM</span>
-                  <span className="text-white text-[10px] sm:text-xs font-semibold truncate">TalentXcel Demo</span>
-                </div>
+                {dataLoading && <div className="text-gray-400 text-xs py-2 col-span-3">Loading schedule...</div>}
+                {!dataLoading && scheduleEvents.length === 0 && (
+                  <div className="text-gray-400 text-xs py-2 col-span-3">No meetings scheduled for today.</div>
+                )}
+                {!dataLoading && scheduleEvents.map((event, i) => {
+                  const colors = ['blue-500', 'amber-500', 'purple-500'];
+                  const colorCode = colors[i % colors.length];
+                  return (
+                    <div key={event.id || i} className={`bg-[#0F111A] border border-${colorCode}/20 px-3 py-2 rounded-[10px] flex items-center gap-2 hover:border-${colorCode}/40 transition-colors`}>
+                      <span className={`text-${colorCode.replace('-500', '-400')} font-bold text-[10px] sm:text-[11px] font-mono shrink-0`}>
+                        {new Date(event.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className="text-white text-[10px] sm:text-xs font-semibold truncate">{event.title}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -597,8 +649,10 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 <CheckCircle2 className="h-3 w-3 text-[#22C55E]" />
                 Tasks
               </div>
-              <div className="text-lg sm:text-xl font-extrabold text-white">✔ 12</div>
-              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">+4% vs last week</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">
+                {dataLoading ? <span className="animate-pulse text-gray-600">...</span> : `✔ ${dashboardMetrics.tasksCompleted}`}
+              </div>
+              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">Completed</div>
             </div>
             <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#22C55E" /></div>
           </div>
@@ -610,8 +664,10 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 <Calendar className="h-3 w-3 text-[#3B82F6]" />
                 Meetings
               </div>
-              <div className="text-lg sm:text-xl font-extrabold text-white">📅 3</div>
-              <div className="text-[9px] sm:text-[10px] text-[#3B82F6] font-semibold">On Schedule</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">
+                {dataLoading ? <span className="animate-pulse text-gray-600">...</span> : `📅 ${dashboardMetrics.meetingsToday}`}
+              </div>
+              <div className="text-[9px] sm:text-[10px] text-[#3B82F6] font-semibold">Today</div>
             </div>
             <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#3B82F6" /></div>
           </div>
@@ -623,8 +679,10 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 <Ticket className="h-3 w-3 text-[#F59E0B]" />
                 Tickets
               </div>
-              <div className="text-lg sm:text-xl font-extrabold text-white">🎟️ 5</div>
-              <div className="text-[9px] sm:text-[10px] text-[#F59E0B] font-semibold">2 High Priority</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">
+                {dataLoading ? <span className="animate-pulse text-gray-600">...</span> : `🎟️ ${dashboardMetrics.pendingTickets}`}
+              </div>
+              <div className="text-[9px] sm:text-[10px] text-[#F59E0B] font-semibold">Action Required</div>
             </div>
             <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#F59E0B" /></div>
           </div>
@@ -636,8 +694,10 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 <MessageSquare className="h-3 w-3 text-[#6D5DF6]" />
                 Unread
               </div>
-              <div className="text-lg sm:text-xl font-extrabold text-white">💬 8</div>
-              <div className="text-[9px] sm:text-[10px] text-[#6D5DF6] font-semibold">3 Direct Threads</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">
+                {dataLoading ? <span className="animate-pulse text-gray-600">...</span> : `💬 ${dashboardMetrics.unreadMessages}`}
+              </div>
+              <div className="text-[9px] sm:text-[10px] text-[#6D5DF6] font-semibold">Action Required</div>
             </div>
             <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#6D5DF6" /></div>
           </div>
@@ -649,8 +709,14 @@ Reasoning mode for this response: ${reasoningInstruction}`;
                 <Clock className="h-3 w-3 text-[#22C55E]" />
                 Time Saved
               </div>
-              <div className="text-lg sm:text-xl font-extrabold text-white">⚡ 6h 18m</div>
-              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">+12% productivity</div>
+              <div className="text-lg sm:text-xl font-extrabold text-white">
+                {dataLoading ? (
+                  <span className="animate-pulse text-gray-600">...</span>
+                ) : (
+                  `⚡ ${dashboardMetrics.timeSavedHours}h ${dashboardMetrics.timeSavedMinutes}m`
+                )}
+              </div>
+              <div className="text-[9px] sm:text-[10px] text-[#22C55E] font-semibold">Automated</div>
             </div>
             <div className="hidden lg:block scale-75 origin-right"><MiniSparkline color="#22C55E" /></div>
           </div>
