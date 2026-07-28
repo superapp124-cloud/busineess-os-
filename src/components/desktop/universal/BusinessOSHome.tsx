@@ -13,14 +13,19 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
  const [currentTime, setCurrentTime] = useState(new Date());
 
  useEffect(() => {
- // Generate the SAR assessment
- const assessedItems = SituationAssessmentRuntime.assessCurrentSituation();
- setItems(assessedItems);
- setBriefing(SituationAssessmentRuntime.generateBriefing(assessedItems));
- setActivity(SituationAssessmentRuntime.getRecentActivity(24));
- 
- const timer = setInterval(() => setCurrentTime(new Date()), 60000);
- return () => clearInterval(timer);
+   // Generate the SAR assessment
+   const loadAssessment = async () => {
+     const assessedItems = await SituationAssessmentRuntime.assessCurrentSituation();
+     setItems(assessedItems);
+     setBriefing(SituationAssessmentRuntime.generateBriefing(assessedItems));
+     const recentActivity = await SituationAssessmentRuntime.getRecentActivity(24);
+     setActivity(recentActivity);
+   };
+   
+   loadAssessment();
+   
+   const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+   return () => clearInterval(timer);
  }, []);
 
  const getGreeting = () => {

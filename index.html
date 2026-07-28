@@ -234,10 +234,8 @@
         
         async function registerSW() {
           try {
-            // Check existing registration first
             const existing = await navigator.serviceWorker.getRegistration('/').catch(function() { return null; });
             if (existing) {
-              console.log('SW already registered');
               // Silently update - never throw
               existing.update().catch(function() {});
               setupSWListeners(existing);
@@ -256,27 +254,21 @@
             clearTimeout(timeoutId);
             
             if (!swCheck || !swCheck.ok) {
-              console.log('SW file not available, skipping');
               return;
             }
             
-            // Register with timeout protection
             const registration = await navigator.serviceWorker.register('/sw.js', {
               scope: '/',
               updateViaCache: 'none'
             }).catch(function(err) {
-              console.log('SW registration skipped:', err.message);
               return null;
             });
             
             if (!registration) return;
-            
-            console.log('SW registered');
             setupSWListeners(registration);
             
           } catch (err) {
             // Silently fail - SW is optional, never crash the app
-            console.log('SW setup skipped');
           }
         }
         
@@ -331,14 +323,12 @@
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log('PWA Install prompt ready');
         
         // Optionally show install button
         window.showInstallPrompt = () => {
           if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choice) => {
-              console.log('User choice:', choice.outcome);
               deferredPrompt = null;
             });
           }
@@ -347,7 +337,6 @@
       
       // Handle app installed
       window.addEventListener('appinstalled', () => {
-        console.log('PWA installed successfully');
         deferredPrompt = null;
       });
     </script>

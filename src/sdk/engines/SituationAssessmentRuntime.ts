@@ -27,7 +27,7 @@ export const SituationAssessmentRuntime = {
   /**
    * Scans all installed packages and their data to assess what needs attention.
    */
-  assessCurrentSituation(): IAttentionItem[] {
+  async assessCurrentSituation(): Promise<IAttentionItem[]> {
     const items: IAttentionItem[] = [];
     const registry = (window as any).__CHATR_SDK_REGISTRY__ || {};
 
@@ -36,7 +36,7 @@ export const SituationAssessmentRuntime = {
       if (!manifest.objects) continue;
 
       for (const obj of manifest.objects) {
-        const records = BusinessObjectStore.list(capabilityId, obj.name);
+        const records = await BusinessObjectStore.list(capabilityId, obj.name);
         
         for (const record of records) {
           // 1. Check for Pending Policies (Approvals)
@@ -106,7 +106,7 @@ export const SituationAssessmentRuntime = {
   /**
    * Generates dynamic stats by parsing the _history log of all records.
    */
-  getRecentActivity(hours: number = 24) {
+  async getRecentActivity(hours: number = 24) {
     const registry = (window as any).__CHATR_SDK_REGISTRY__ || {};
     let totalChanges = 0;
     let recordsCreated = 0;
@@ -120,7 +120,7 @@ export const SituationAssessmentRuntime = {
       if (!manifest.objects) continue;
 
       for (const obj of manifest.objects) {
-        const records = BusinessObjectStore.list(capabilityId, obj.name);
+        const records = await BusinessObjectStore.list(capabilityId, obj.name);
         for (const record of records) {
           if (record._history) {
             for (const event of record._history) {
