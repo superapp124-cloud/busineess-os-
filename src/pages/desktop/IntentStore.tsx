@@ -408,6 +408,14 @@ function resolveIntent(query: string): IntentCapability[] {
   return Array.from(ids).map(id => all.find(c => c.id === id)!).filter(Boolean).slice(0, 4);
 }
 
+const EXAMPLES = [
+  'I want to start a recruitment agency.',
+  'I need a CRM for 50 salespeople.',
+  'Set up a law firm workspace.',
+  'Create a hospital management system.',
+  'Build a startup OS from scratch.',
+];
+
 const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }> = ({ onDeploy }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<IntentCapability[]>([]);
