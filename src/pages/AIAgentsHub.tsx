@@ -356,7 +356,7 @@ export default function AIAgentsHub() {
   };
 
   return (
-    <div className={`h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors ${isDark ? 'bg-[#0a0a0c] text-white' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors bg-background text-foreground`}>
       
       {/* ── Top Header Bar ── */}
       <div className={`px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 ${isDark ? 'bg-[#0d0f1a]/90 border-white/10' : 'bg-white/90 border-slate-200 shadow-sm'}`}>
@@ -396,34 +396,11 @@ export default function AIAgentsHub() {
             <motion.div key="s1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
               
               {/* Executive Welcome Header */}
-              <div className="text-center space-y-3 max-w-3xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-xs font-bold uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5" /> Executive Onboarding Experience
-                </div>
+              <div className="text-center space-y-2 max-w-3xl mx-auto">
                 <h2 className="text-3xl font-black tracking-tight">Welcome to CHATR Business OS</h2>
                 <p className="text-slate-400 text-sm leading-relaxed">
                   We'll configure your workspace, AI workforce, integrations, and automations in under 5 minutes.
                 </p>
-
-                {/* Value Checklist */}
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-1 text-xs font-semibold">
-                  {['✓ AI Employees', '✓ Business Workspace', '✓ Integrations', '✓ Automations', '✓ Analytics Dashboards'].map((val, idx) => (
-                    <span key={idx} className={`px-3 py-1 rounded-lg border ${isDark ? 'bg-white/[0.03] border-white/10 text-slate-300' : 'bg-white border-slate-200 text-slate-700 shadow-sm'}`}>
-                      {val}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Trust Indicators */}
-                <div className={`mt-3 py-2.5 px-4 rounded-2xl border inline-flex flex-wrap items-center justify-center gap-6 text-[11px] font-bold ${isDark ? 'bg-[#0d0f1a] border-white/10 text-slate-300' : 'bg-white border-slate-200 text-slate-700 shadow-sm'}`}>
-                  <span>⚡ 88 Certified Integrations</span>
-                  <span className="text-slate-600">|</span>
-                  <span>🤖 16 AI Employees</span>
-                  <span className="text-slate-600">|</span>
-                  <span>🔄 420 Automations</span>
-                  <span className="text-slate-600">|</span>
-                  <span className="text-emerald-400">🛡️ Enterprise Ready</span>
-                </div>
               </div>
 
               {/* Business AI Assistant Greeting */}
