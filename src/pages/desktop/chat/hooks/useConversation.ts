@@ -9,7 +9,7 @@ const DEFAULT_AI_ROOM: Room = {
   name: 'CHATR AI',
   type: 'dm',
   unreadCount: 0,
-  avatarUrl: '/chatr-icon-logo.png'
+  avatarUrl: '/chatr-ai-logo.jpg'
 };
 
 const INITIAL_AI_WELCOME_MSG: Message = {
