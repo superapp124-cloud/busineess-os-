@@ -37,23 +37,45 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleInstallClick = () => {
+  const handleInstallClick = async () => {
     setIsDownloading(true);
 
     // Platform binary selection
     const platform = window.navigator.platform.toLowerCase();
-    let downloadUrl = '/download/chatr-desktop-setup.exe'; // Default Windows installer
+    let filename = 'chatr-desktop-setup.exe';
 
     if (platform.includes('mac')) {
-      downloadUrl = '/download/chatr-desktop.dmg';
+      filename = 'chatr-desktop.dmg';
     } else if (platform.includes('linux')) {
-      downloadUrl = '/download/chatr-desktop.AppImage';
+      filename = 'chatr-desktop.AppImage';
     }
 
-    // Automatically trigger browser file download
+    const downloadUrl = `/download/${filename}`;
+
+    try {
+      // Direct fetch to blob to ensure executable binary download without SPA navigation
+      const res = await fetch(downloadUrl);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        return;
+      }
+    } catch (e) {
+      console.warn('[DesktopGuard] Blob download fallback:', e);
+    }
+
+    // Direct link trigger fallback
     const link = document.createElement('a');
     link.href = downloadUrl;
-    link.download = downloadUrl.split('/').pop() || 'chatr-desktop-setup.exe';
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
