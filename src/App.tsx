@@ -753,8 +753,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/ai-browser-home" element={<LazyRoute component={LazyPages.AIBrowserHome} />} />
  <Route path="/ai-search" element={<LazyRoute component={LazyPages.AIBrowserHome} />} />
  <Route path="/ai-browser" element={<LazyRoute component={LazyPages.AIBrowserView} />} />
- <Route path="/chatr-ai" element={<LazyRoute component={LazyPages.AIChat} />} />
- <Route path="/chat-ai" element={<LazyRoute component={LazyPages.AIChat} />} />
+ <Route path="/chatr-ai" element={<Navigate to="/desktop/chat" replace />} />
+ <Route path="/chat-ai" element={<Navigate to="/desktop/chat" replace />} />
  <Route path="/capture" element={<LazyRoute component={LazyPages.Capture} />} />
  <Route path="/account" element={<LazyRoute component={LazyPages.Account} />} />
  <Route path="/prechu-ai" element={<ProtectedLazyRoute component={LazyPages.PrechuAI} />} />

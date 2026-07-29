@@ -27,11 +27,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
   const selectedRoom = rooms.find(r => r.id === selectedId);
 
   return (
-    <div className="w-72 shrink-0 border-r border-white/[0.06] bg-[#0b0b14] flex flex-col relative z-20">
-      
+    <div className="w-72 shrink-0 border-r flex flex-col relative z-20" style={{ background: 'hsl(var(--sidebar-background))', borderColor: 'hsl(var(--sidebar-border))' }}>
+
       {/* Header */}
-      <div className="p-4 flex items-center justify-between border-b border-white/[0.04]">
-        <h2 className="text-secondary font-bold text-white/90">Messages</h2>
+      <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
+        <h2 className="text-secondary font-bold" style={{ color: 'hsl(var(--sidebar-foreground))' }}>Messages</h2>
         <div className="flex gap-1">
           <button className="w-7 h-7 rounded-lg hover:bg-white/[0.08] flex items-center justify-center text-white/50 transition-colors">
             <Search className="w-4 h-4" />

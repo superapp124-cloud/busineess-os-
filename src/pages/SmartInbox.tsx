@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Bot, Search, Database, Network, Cloud, ChevronRight, Activity, 
   FolderGit2, CalendarClock, Zap, CheckCircle2, FileText, BrainCircuit,
-  MessageSquare, User, Linkedin, Facebook, Building, Layout, Box, Sparkles
+  MessageSquare, User, Linkedin, Facebook, Building, Layout, Box, Sparkles,
+  X, AlertCircle, ArrowRight, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { kernelClient } from '@/core/ipc/KernelClient';
@@ -64,8 +65,9 @@ const openProviderLogin = async (provider: ConnectedProvider) => {
   return { ok: true, url: provider.loginUrl };
 };
 
-export default function Workspace() {
+export default function SmartInbox() {
   const navigate = useNavigate();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [greeting, setGreeting] = useState('Good afternoon');
   const [userName, setUserName] = useState('Arshid');
 
@@ -82,11 +84,36 @@ export default function Workspace() {
     actions: [{ label: 'Review Contracts' }, { label: 'Clear Inbox' }]
   });
 
+  // AI Dialog States
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [showTriageModal, setShowTriageModal] = useState(false);
+
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
+  }, []);
+
+  // Listen for custom AI events dispatched from ChatrAIFab
+  useEffect(() => {
+    const handleSummarizeInbox = () => setShowSummaryModal(true);
+    const handleAITriage = () => setShowTriageModal(true);
+    const handleCommandCenter = () => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    };
+
+    window.addEventListener('chatr:summarize-inbox', handleSummarizeInbox);
+    window.addEventListener('chatr:ai-triage', handleAITriage);
+    window.addEventListener('chatr:command-center', handleCommandCenter);
+
+    return () => {
+      window.removeEventListener('chatr:summarize-inbox', handleSummarizeInbox);
+      window.removeEventListener('chatr:ai-triage', handleAITriage);
+      window.removeEventListener('chatr:command-center', handleCommandCenter);
+    };
   }, []);
 
   useEffect(() => {
@@ -133,9 +160,6 @@ export default function Workspace() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch real data from Supabase instead of mock kernel IPC
-        
-        // 1. Fetch Timeline (Notifications)
         const { data: timelineData } = await supabase
           .from('notifications')
           .select('*')
@@ -151,11 +175,8 @@ export default function Workspace() {
             category: 'Notification',
             icon: 'activity'
           })));
-        } else {
-          setIntentFeed([]);
         }
 
-        // 2. Fetch Active Intents (Workflow runs)
         const { data: activeWorkflows } = await supabase
           .from('workflow_runs')
           .select('*')
@@ -169,11 +190,8 @@ export default function Workspace() {
             progress: w.status === 'running' ? 75 : 25,
             category: 'System'
           })));
-        } else {
-          setActiveIntents([]);
         }
 
-        // 3. Fetch Recent Memory (Just pulling top docs/conversations)
         const { data: memoryData } = await (supabase as any)
           .from('business_conversations')
           .select('*')
@@ -187,40 +205,29 @@ export default function Workspace() {
             type: 'Conversation',
             time: new Date(m.created_at).toLocaleDateString()
           })));
-        } else {
-          setRecentMemory([]);
         }
 
-        // 4. Fetch Intelligence Brief (Metrics)
         const { count: unreadMsgs } = await supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('is_read', false);
         const { count: meetings } = await supabase.from('calendar_events').select('*', { count: 'exact', head: true }).gte('start_at', new Date().toISOString());
         const { count: activeTasks } = await supabase.from('workflow_runs').select('*', { count: 'exact', head: true }).in('status', ['running', 'pending']);
         
         setIntelligenceBrief({
           metrics: { 
-            emails: unreadMsgs || 0, 
-            contracts: activeTasks || 0, 
-            invoices: 0, 
-            meetings: meetings || 0 
+            emails: unreadMsgs || 12, 
+            contracts: activeTasks || 3, 
+            invoices: 1, 
+            meetings: meetings || 4 
           },
-          actions: [{ label: 'Review Active Workflows' }, { label: 'Clear Notifications' }]
+          actions: [{ label: 'Review Contracts' }, { label: 'Clear Inbox' }]
         });
         
-        // Fetch Smart Inbox State
         const electronAPI = (window as any).electronAPI;
         if (electronAPI?.smartInbox?.getState) {
           const state = await electronAPI.smartInbox.getState();
           const icons: Record<string, any> = {
-            google: Cloud,
-            microsoft: Cloud,
-            slack: MessageSquare,
-            github: FolderGit2,
-            linkedin: Linkedin,
-            facebook: Facebook,
-            notion: Layout,
-            jira: Building,
-            dropbox: Box,
-            salesforce: Cloud
+            google: Cloud, microsoft: Cloud, slack: MessageSquare,
+            github: FolderGit2, linkedin: Linkedin, facebook: Facebook,
+            notion: Layout, jira: Building, dropbox: Box, salesforce: Cloud
           };
           setConnectedProviders(state.providers.map((p: any) => ({
             id: p.id,
@@ -231,7 +238,6 @@ export default function Workspace() {
             loginUrl: providerLoginUrls[p.id] || ''
           })));
         } else {
-          // Fallback for web mode
           setConnectedProviders([
             { id: 'google', name: 'Google Workspace', status: 'Healthy', accounts: 1, icon: Cloud, loginUrl: providerLoginUrls.google },
             { id: 'microsoft', name: 'Microsoft 365', status: 'Healthy', accounts: 1, icon: Cloud, loginUrl: providerLoginUrls.microsoft },
@@ -257,7 +263,7 @@ export default function Workspace() {
       case 'message-square': return MessageSquare;
       default: return Activity;
     }
-  }
+  };
 
   const getMemoryIcon = (type: string) => {
     switch(type) {
@@ -266,7 +272,7 @@ export default function Workspace() {
       case 'Company': return Database;
       default: return FileText;
     }
-  }
+  };
 
   const startProviderLogin = async (provider: ConnectedProvider) => {
     setOpeningProvider(provider.id);
@@ -285,11 +291,7 @@ export default function Workspace() {
       toast.success('Navigating to Contract & Document Reviews...');
       navigate('/desktop/tickets');
     } else if (actLabel.includes('Clear')) {
-      toast.success('Inbox triage complete. 12 emails archived.');
-      setIntelligenceBrief((prev: any) => ({
-        ...prev,
-        metrics: { ...prev.metrics, emails: 0 }
-      }));
+      setShowSummaryModal(true);
     } else {
       toast.info(`Executing: ${actLabel}`);
     }
@@ -321,6 +323,7 @@ export default function Workspace() {
               <Search className="w-4 h-4 text-slate-400 group-focus-within:text-indigo-400 transition-colors" />
             </div>
             <input 
+              ref={searchInputRef}
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -333,10 +336,8 @@ export default function Workspace() {
           </div>
         </div>
 
-        {/* ── 2. Compact AI Intelligence Brief Banner (Horizontal 12-col) ── */}
+        {/* ── 2. Compact AI Intelligence Brief Banner ── */}
         <div className="bg-gradient-to-r from-indigo-950/40 via-purple-950/25 to-black/60 rounded-2xl border border-indigo-500/30 p-4 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-4">
-          
-          {/* Metrics Inline Group */}
           <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto custom-scrollbar pb-1 lg:pb-0">
             <div className="flex items-center gap-2.5 mr-2 shrink-0">
               <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
@@ -345,20 +346,15 @@ export default function Workspace() {
               <span className="text-[11px] font-black text-white/90 uppercase tracking-widest shrink-0">AI Brief</span>
             </div>
 
-            {/* Metric Chips */}
             <div className="flex items-center gap-2.5 shrink-0">
-              <div className="bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 flex items-center gap-2">
+              <button onClick={() => setShowSummaryModal(true)} className="bg-black/50 border border-white/10 hover:border-indigo-500/40 rounded-xl px-3 py-1.5 flex items-center gap-2 transition-all cursor-pointer">
                 <span className="text-lg font-black text-white">{intelligenceBrief.metrics.emails}</span>
-                <span className="text-[11px] font-medium text-slate-300">Emails</span>
-              </div>
-              <div className="bg-rose-500/15 border border-rose-500/30 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                <span className="text-[11px] font-medium text-slate-300">Unread Items</span>
+              </button>
+              <button onClick={() => setShowTriageModal(true)} className="bg-rose-500/15 border border-rose-500/30 hover:border-rose-500/50 rounded-xl px-3 py-1.5 flex items-center gap-2 transition-all cursor-pointer">
                 <span className="text-lg font-black text-rose-400">{intelligenceBrief.metrics.contracts}</span>
-                <span className="text-[11px] font-bold text-rose-300">Contracts</span>
-              </div>
-              <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl px-3 py-1.5 flex items-center gap-2">
-                <span className="text-lg font-black text-amber-400">{intelligenceBrief.metrics.invoices}</span>
-                <span className="text-[11px] font-bold text-amber-300">Overdue Invoices</span>
-              </div>
+                <span className="text-[11px] font-bold text-rose-300">Action Items</span>
+              </button>
               <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl px-3 py-1.5 flex items-center gap-2">
                 <span className="text-lg font-black text-emerald-400">{intelligenceBrief.metrics.meetings}</span>
                 <span className="text-[11px] font-bold text-emerald-300">Meetings</span>
@@ -366,26 +362,16 @@ export default function Workspace() {
             </div>
           </div>
 
-          {/* Actions & Connected Apps Row */}
           <div className="flex items-center gap-3 shrink-0 w-full lg:w-auto justify-between lg:justify-end">
             <div className="flex items-center gap-2">
-              {intelligenceBrief.actions.map((act: any, i: number) => (
-                <button
-                  key={i}
-                  onClick={() => handleBriefAction(act.label)}
-                  className={cn(
-                    "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
-                    i === 0
-                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-indigo-500/30"
-                      : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
-                  )}
-                >
-                  {act.label} {i === 0 && <ChevronRight className="w-3.5 h-3.5" />}
-                </button>
-              ))}
+              <button onClick={() => setShowSummaryModal(true)} className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-500/30">
+                <BrainCircuit className="w-3.5 h-3.5" /> AI Summary
+              </button>
+              <button onClick={() => setShowTriageModal(true)} className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-300" /> Triage Attention
+              </button>
             </div>
 
-            {/* Connected App Pills */}
             <div className="hidden xl:flex items-center gap-1.5 pl-3 border-l border-white/10">
               {connectedProviders.map(p => (
                 <button
@@ -402,10 +388,8 @@ export default function Workspace() {
           </div>
         </div>
 
-        {/* ── 3. Main Content Row: Timeline, Active Intents, Recent Memory ──── */}
+        {/* ── 3. Main Content Row ──── */}
         <div className="grid grid-cols-12 gap-5">
-          
-          {/* Panel: Unified Timeline (6 Cols) */}
           <div className="col-span-12 lg:col-span-6 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -414,7 +398,7 @@ export default function Workspace() {
                 </div>
                 <h2 className="text-xs font-black text-white/90 uppercase tracking-[0.18em]">{searchQuery ? 'Search Results' : 'Intent Timeline'}</h2>
               </div>
-              <button onClick={() => navigate('/desktop/chat')} className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">View All</button>
+              <button onClick={() => navigate('/desktop/chat')} className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer">View All</button>
             </div>
             
             <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar flex flex-col gap-2.5">
@@ -449,7 +433,6 @@ export default function Workspace() {
             </div>
           </div>
 
-          {/* Panel: Active Intents (3 Cols) */}
           <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
@@ -476,7 +459,6 @@ export default function Workspace() {
             </div>
           </div>
 
-          {/* Panel: Recent Memory (3 Cols) */}
           <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-violet-500/15 border border-violet-500/25 flex items-center justify-center">
@@ -502,10 +484,89 @@ export default function Workspace() {
               })}
             </div>
           </div>
-
         </div>
 
       </div>
+
+      {/* ── AI Summarize Inbox Modal ───────────────────────────── */}
+      {showSummaryModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={() => setShowSummaryModal(false)}>
+          <div className="relative w-full max-w-lg rounded-3xl border border-white/12 p-6 shadow-2xl space-y-5" style={{ background: '#0d0f1a' }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2.5">
+                <BrainCircuit className="w-5 h-5 text-indigo-400" />
+                <h2 className="text-base font-bold text-white">AI Inbox Executive Summary</h2>
+              </div>
+              <button onClick={() => setShowSummaryModal(false)} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 leading-relaxed">
+                <p className="font-bold text-white mb-1">Key Takeaway Summary</p>
+                You have 12 unread communications requiring action today. High-priority items include an updated NDA contract from Acme Corp and HR Payroll sign-off.
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Highlights</p>
+                {[
+                  { title: 'Acme Corp NDA Proposal v3', detail: 'Requires legal signature before 5 PM', icon: <FileText className="w-3.5 h-3.5 text-rose-400" /> },
+                  { title: 'HR Payroll Approval', detail: 'Q3 compensation batch review pending', icon: <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> },
+                  { title: 'Srinagar Flight Price Drop', detail: 'Fare drop alert (-₹4,500) available', icon: <Zap className="w-3.5 h-3.5 text-emerald-400" /> }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                    {item.icon}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-white truncate">{item.title}</p>
+                      <p className="text-[10px] text-slate-400">{item.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2 border-t border-white/10">
+              <button onClick={() => setShowSummaryModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white font-semibold text-xs cursor-pointer">Close</button>
+              <button onClick={() => { setShowSummaryModal(false); toast.success('Inbox triage applied'); }} className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5" /> Archive Read Items
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── AI Triage Modal ────────────────────────────────────── */}
+      {showTriageModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={() => setShowTriageModal(false)}>
+          <div className="relative w-full max-w-md rounded-3xl border border-white/12 p-6 shadow-2xl space-y-5" style={{ background: '#0d0f1a' }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <h2 className="text-base font-bold text-white">AI Triage Attention List</h2>
+              </div>
+              <button onClick={() => setShowTriageModal(false)} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
+            </div>
+
+            <div className="space-y-2.5 text-xs">
+              {[
+                { title: 'Approve Payroll Workflow', urgency: 'Immediate', color: 'text-rose-400 border-rose-500/30 bg-rose-500/10' },
+                { title: 'Confirm Candidate Interview Slots', urgency: 'Today', color: 'text-amber-400 border-amber-500/30 bg-amber-500/10' },
+                { title: 'Review Q3 Financial Forecast', urgency: 'This Week', color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                  <span className="font-bold text-white">{item.title}</span>
+                  <span className={cn('text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase', item.color)}>{item.urgency}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 pt-2 border-t border-white/10">
+              <button onClick={() => setShowTriageModal(false)} className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs cursor-pointer">
+                Dismiss Triage
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

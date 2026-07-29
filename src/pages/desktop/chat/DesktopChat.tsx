@@ -927,8 +927,8 @@ export default function DesktopChat() {
  }, [messagingService]);
 
 
- return (
- <div className={cn("flex h-full font-sans", isDark ? "bg-[#0a0a12] text-white" : "bg-white text-zinc-950")}>
+  return (
+  <div className="flex h-full font-sans transition-colors duration-300" style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
  {/* Hidden File Input Picker (always mounted) */}
  <input 
  type="file" 

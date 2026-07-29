@@ -273,22 +273,34 @@ const DesktopLayoutInner = () => {
   const isDark = themeMode === 'dark' || (themeMode === 'system' && theme === 'dark');
 
   const themeClasses: any = {
-    dark:   'theme-dark text-white',
-    light:  'theme-light text-zinc-950',
-    system: theme === 'dark' ? 'theme-dark text-white' : 'theme-light text-zinc-950',
+    dark:   'dark theme-dark',
+    light:  'light theme-light',
+    system: theme === 'dark' ? 'dark theme-dark' : 'light theme-light',
   }[themeMode];
 
   const sidebarClasses: any = {
-    dark:   'bg-zinc-950/90 border-white/8 shadow-[4px_0_32px_rgba(0,0,0,0.6)]',
-    light:  'bg-white/80 backdrop-blur-3xl border-zinc-200/70 shadow-sm',
+    dark: [
+      'border-[hsl(240,8%,14%)]',
+      'bg-[hsl(240,14%,8%)]/95',
+      'shadow-[1px_0_0_0_hsl(240,8%,14%)]',
+    ].join(' '),
+    light: [
+      'border-[hsl(220,13%,90%)]',
+      'bg-[hsl(0,0%,100%)]/96',
+      'shadow-[1px_0_0_0_hsl(220,13%,90%)]',
+    ].join(' '),
     system: theme === 'dark'
-      ? 'bg-zinc-950/90 border-white/8 shadow-[4px_0_32px_rgba(0,0,0,0.6)]'
-      : 'bg-white/80 backdrop-blur-3xl border-zinc-200/70 shadow-sm',
+      ? 'border-[hsl(240,8%,14%)] bg-[hsl(240,14%,8%)]/95 shadow-[1px_0_0_0_hsl(240,8%,14%)]'
+      : 'border-[hsl(220,13%,90%)] bg-[hsl(0,0%,100%)]/96 shadow-[1px_0_0_0_hsl(220,13%,90%)]',
   }[themeMode];
 
   const fontClasses: any = {
     inter: 'font-sans', sans: 'font-sans', serif: 'font-serif', mono: 'font-mono tracking-tight',
   }[fontFamily];
+
+  const textMuted = isDark ? 'text-white/45' : 'text-zinc-400';
+  const textPrimary = isDark ? 'text-white/90' : 'text-zinc-900';
+  const hoverBg = isDark ? 'hover:bg-white/[0.06]' : 'hover:bg-zinc-100';
 
   const displayName = profile?.full_name || profile?.display_name || profile?.username || 'User';
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
@@ -300,14 +312,17 @@ const DesktopLayoutInner = () => {
 
   return (
     <TooltipProvider>
-      <div className={cn('h-screen w-screen flex overflow-hidden transition-colors duration-300 relative', themeClasses, fontClasses, `accent-${accentColor}`)}>
+      <div className={cn('h-screen w-screen flex overflow-hidden transition-colors duration-500 relative', themeClasses, fontClasses, `accent-${accentColor}`)} style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
 
-        {/* Ambient orb */}
+        {/* Ambient orb — dark mode only */}
         {isDark && (
-          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-violet-600/10 rounded-full blur-[160px] pointer-events-none" />
+          <div className="absolute top-[-15%] left-[-5%] w-[40%] h-[40%] bg-violet-600/8 rounded-full blur-[180px] pointer-events-none z-0" />
+        )}
+        {isDark && (
+          <div className="absolute bottom-[-10%] right-[10%] w-[30%] h-[30%] bg-indigo-600/6 rounded-full blur-[160px] pointer-events-none z-0" />
         )}
 
-        {/* ── Sidebar ─────────────────────────────────────────────────────── */}
+        {/* ── Sidebar ────────────────────────────────────────────────────── */}
         <aside className={cn(
           'h-screen shrink-0 border-r flex flex-col transition-all duration-300 w-16 hover:w-60 group z-50 relative [-webkit-app-region:drag] backdrop-blur-2xl',
           sidebarClasses
@@ -532,10 +547,12 @@ const DesktopLayoutInner = () => {
 
           <ChatrConsole />
 
-          {/* Top header — 30% reduced height */}
+          {/* Top header — refined Apple-quality bar */}
           <header className={cn(
-            'h-[42px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0',
-            isDark ? 'border-white/6 bg-zinc-950/60 backdrop-blur-2xl' : 'border-zinc-200 bg-white/70 backdrop-blur-2xl'
+            'h-[46px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0 backdrop-blur-2xl transition-colors duration-300',
+            isDark
+              ? 'border-[hsl(240,8%,16%)] bg-[hsl(240,13%,7%)]/85'
+              : 'border-[hsl(220,13%,90%)] bg-[hsl(0,0%,100%)]/85'
           )}>
 
             {/* Left: Global search trigger */}

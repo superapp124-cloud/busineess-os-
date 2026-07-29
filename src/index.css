@@ -5,24 +5,19 @@
 
 @layer base {
   html {
-    font-size: 10.4px; /* 20% reduction across entire platform for ultra-compact executive density */
+    font-size: 10px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  @media (max-width: 1280px) {
-    html {
-      font-size: 9.6px;
-    }
-  }
 
   :root {
-    /* CHATR Design System v2.0 — Base Typography Tokens */
-    --font-heading: 'Geist', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'Geist Mono', monospace;
+    /* Apple-Inspired System Typography */
+    --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', 'Menlo', 'Monaco', monospace;
 
-    /* Spacing System Tokens: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96 */
+    /* Refined Spacing (8px Grid System) */
     --space-4: 0.25rem;
     --space-8: 0.5rem;
     --space-12: 0.75rem;
@@ -33,72 +28,72 @@
     --space-40: 2.5rem;
     --space-48: 3rem;
 
-    /* Strictly Standardized Border Radius Tokens */
-    --radius-card: 16px;
-    --radius-button: 12px;
-    --radius-input: 14px;
-    --radius-modal: 20px;
-    --radius-widget: 24px;
+    /* Apple-style Soft Radius */
+    --radius-card: 20px;
+    --radius-button: 10px;
+    --radius-input: 10px;
+    --radius-modal: 24px;
+    --radius-widget: 16px;
     --radius-full: 9999px;
 
-    /* Theme: CHATR Dark (Default Premium) */
-    --background: 226 25% 6%; /* #090A0F */
-    --foreground: 0 0% 100%;
-    
-    --card: 223 15% 10%; /* #181B23 */
-    --card-foreground: 0 0% 100%;
-    
-    --popover: 223 17% 8%; /* #111318 */
-    --popover-foreground: 0 0% 100%;
-    
-    --primary: 246 89% 66%; /* #6D5DF6 Primary Brand */
+    /* ── Premium CHATR Dark Theme ── */
+    --background: 240 13% 7%;      /* #0F0F14 — Near-black with subtle blue tint */
+    --foreground: 0 0% 95%;        /* Almost white */
+
+    --card: 240 11% 11%;           /* #181820 — Slightly lifted from bg */
+    --card-foreground: 0 0% 95%;
+
+    --popover: 240 13% 9%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 258 90% 68%;        /* Refined violet — #7C5AF5 */
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 223 15% 10%;
-    --secondary-foreground: 0 0% 100%;
-    
-    --muted: 223 15% 10%;
-    --muted-foreground: 215 14% 65%;
-    
-    --accent: 222 100% 68%;
+
+    --secondary: 240 9% 16%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 240 9% 14%;
+    --muted-foreground: 240 5% 55%;
+
+    --accent: 258 90% 68%;
     --accent-foreground: 0 0% 100%;
-    
-    --success: 142 71% 45%; /* #22C55E */
+
+    --success: 145 65% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%; /* #F59E0B */
+    --warning: 36 91% 52%;
     --warning-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%; /* #EF4444 Danger */
+    --destructive: 4 82% 60%;
     --destructive-foreground: 0 0% 100%;
-    --info: 217 91% 60%; /* #3B82F6 Information */
+    --info: 213 90% 58%;
 
-    --border: 223 15% 15%;
-    --input: 223 15% 15%;
-    --ring: 246 89% 66%;
+    --border: 240 8% 18%;
+    --input: 240 8% 18%;
+    --ring: 258 90% 68%;
 
-    /* 3-Level Strict Shadow System */
-    --shadow-level-1: 0 4px 16px rgba(0, 0, 0, 0.25); /* Cards */
-    --shadow-level-2: 0 8px 32px rgba(0, 0, 0, 0.40); /* Floating Panels */
-    --shadow-level-3: 0 16px 48px rgba(0, 0, 0, 0.60); /* Dialogs & Modals */
+    /* Apple-Grade Shadow System */
+    --shadow-level-1: 0 2px 12px rgba(0, 0, 0, 0.30);
+    --shadow-level-2: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --shadow-level-3: 0 20px 60px rgba(0, 0, 0, 0.65);
 
-    --chat-background: 226 25% 6%;
-    
-    --sidebar-background: 226 25% 6%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 246 89% 66%;
+    --chat-background: 240 13% 7%;
+
+    --sidebar-background: 240 14% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 258 90% 68%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 223 15% 10%;
-    --sidebar-accent-foreground: 222 100% 68%;
-    --sidebar-border: 223 15% 15%;
-    --sidebar-ring: 246 89% 66%;
+    --sidebar-accent: 240 9% 14%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 240 8% 15%;
+    --sidebar-ring: 258 90% 68%;
 
-    --radius: 1rem;
-    
+    --radius: 1.125rem;
+
     /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(246, 89%, 66%) 0%, hsl(222, 100%, 68%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(142, 71%, 45%) 0%, hsl(142, 71%, 55%) 100%);
-    --gradient-warning: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(38, 92%, 60%) 100%);
-    --gradient-card: linear-gradient(135deg, hsla(223, 15%, 12%, 1) 0%, hsla(223, 15%, 8%, 1) 100%);
-    --gradient-glass: linear-gradient(135deg, hsla(223, 15%, 10%, 0.8) 0%, hsla(223, 15%, 6%, 0.9) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(258, 90%, 68%) 0%, hsl(230, 100%, 70%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(145, 65%, 42%) 0%, hsl(145, 65%, 52%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(36, 91%, 52%) 0%, hsl(36, 91%, 62%) 100%);
+    --gradient-card: linear-gradient(145deg, hsla(240, 11%, 13%, 1) 0%, hsla(240, 11%, 9%, 1) 100%);
+    --gradient-glass: linear-gradient(145deg, hsla(240, 14%, 14%, 0.8) 0%, hsla(240, 14%, 8%, 0.9) 100%);
   }
 
   [data-theme="enterprise"] {
@@ -131,61 +126,67 @@
 
   .light,
   [data-theme="light"] {
-    --background: 220 20% 97%;
-    --foreground: 224 71% 4%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
-    
+    /* ── Apple macOS-Inspired Light Theme ── */
+    --background: 220 17% 95%;      /* #F1F2F5 — Warm off-white */
+    --foreground: 225 25% 12%;      /* #171B26 — Near-black with blue warmth */
+
+    --card: 0 0% 100%;              /* Pure white cards */
+    --card-foreground: 225 25% 12%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    
-    --secondary: 220 14% 93%;
-    --secondary-foreground: 220 10% 15%;
-    
-    --muted: 220 14% 93%;
-    --muted-foreground: 220 10% 45%;
-    
-    --accent: 220 14% 90%;
-    --accent-foreground: 224 71% 4%;
-    
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    
-    --chat-background: 220 20% 97%;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 224 71% 4%;
+    --popover-foreground: 225 25% 12%;
+
+    --secondary: 220 15% 91%;
+    --secondary-foreground: 225 25% 12%;
+
+    --muted: 220 15% 91%;
+    --muted-foreground: 220 10% 44%;
+
+    --accent: 258 90% 68%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 220 13% 86%;
+    --input: 220 13% 86%;
+
+    --chat-background: 220 17% 95%;
+    --sidebar-background: 0 0% 99%;  /* Near-pure white sidebar */
+    --sidebar-foreground: 225 25% 12%;
     --sidebar-border: 220 13% 88%;
-    --sidebar-accent: 220 14% 93%;
-    --sidebar-accent-foreground: 224 71% 4%;
+    --sidebar-accent: 220 15% 92%;
+    --sidebar-accent-foreground: 225 25% 12%;
+
+    --shadow-level-1: 0 1px 6px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+    --shadow-level-2: 0 4px 20px rgba(0, 0, 0, 0.10), 0 8px 32px rgba(0, 0, 0, 0.06);
+    --shadow-level-3: 0 8px 40px rgba(0, 0, 0, 0.14), 0 20px 60px rgba(0, 0, 0, 0.08);
   }
 
   .dark,
   [data-theme="dark"] {
-    --background: 226 25% 6%;
-    --foreground: 0 0% 100%;
-    
-    --card: 223 15% 10%;
-    --card-foreground: 0 0% 100%;
-    
-    --popover: 223 17% 8%;
-    --popover-foreground: 0 0% 100%;
-    
-    --secondary: 223 15% 10%;
-    --secondary-foreground: 0 0% 100%;
-    
-    --muted: 223 15% 12%;
-    --muted-foreground: 215 14% 65%;
-    
-    --border: 223 15% 15%;
-    --input: 223 15% 15%;
-    
-    --chat-background: 226 25% 6%;
-    --sidebar-background: 226 25% 6%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-border: 223 15% 15%;
-    --sidebar-accent: 223 15% 10%;
-    --sidebar-accent-foreground: 222 100% 68%;
+    /* ── Premium CHATR Dark Theme (matches :root) ── */
+    --background: 240 13% 7%;
+    --foreground: 0 0% 95%;
+
+    --card: 240 11% 11%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 240 13% 9%;
+    --popover-foreground: 0 0% 95%;
+
+    --secondary: 240 9% 16%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 240 9% 14%;
+    --muted-foreground: 240 5% 55%;
+
+    --border: 240 8% 18%;
+    --input: 240 8% 18%;
+
+    --chat-background: 240 13% 7%;
+    --sidebar-background: 240 14% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-border: 240 8% 15%;
+    --sidebar-accent: 240 9% 14%;
+    --sidebar-accent-foreground: 0 0% 90%;
   }
 
   .theme-light {
