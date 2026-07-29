@@ -258,16 +258,16 @@ export default function AIAgentsHub() {
     <div className={`h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors bg-background text-foreground`}>
       
       {/* ── Top Header Bar ── */}
-      <div className={`px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 ${isDark ? 'bg-[#0d0f1a]/90 border-white/10' : 'bg-white/90 border-slate-200 shadow-sm'}`}>
+      <div className="px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 bg-background/90 border-border shadow-sm">
         <div className="flex items-center gap-4">
-          <button onClick={() => safeBack(navigate, '/desktop/chat')} className={`p-2 rounded-xl border transition-all cursor-pointer ${isDark ? 'border-white/10 text-slate-400 hover:text-white hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
+          <button onClick={() => safeBack(navigate, '/desktop/chat')} className="p-2 rounded-xl border transition-all cursor-pointer border-border text-muted-foreground hover:text-foreground hover:bg-muted">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <h1 className="text-base font-extrabold tracking-tight">
               {step === 'done' ? `${selectedBizObj.label} OS Workspace` : 'Create Your Business OS'}
             </h1>
-            <p className="text-[11px] font-medium text-slate-400">
+            <p className="text-[11px] font-medium text-muted-foreground">
               {installedIds.size} capabilities active · {selectedBizObj.label} Domain
             </p>
           </div>
@@ -279,23 +279,21 @@ export default function AIAgentsHub() {
             {stepLabels.map((label, i) => (
               <React.Fragment key={i}>
                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all ${
-                  i === stepIdx ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20' :
-                  i < stepIdx ? (isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') : (isDark ? 'text-slate-600' : 'text-slate-400')}`}>
-                  {i < stepIdx ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <span>{i+1}</span>}
+                  i === stepIdx ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' :
+                  i < stepIdx ? 'bg-primary/10 text-primary border border-primary/30' : 'text-muted-foreground'}`}>
+                  {i < stepIdx ? <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> : <span>{i+1}</span>}
                   <span>{label}</span>
                 </div>
-                {i < 4 && <ChevronRight className="w-3 h-3 text-slate-600" />}
+                {i < 4 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
               </React.Fragment>
             ))}
           </div>
         ) : (
           <button
             onClick={() => setStep('business_type')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-              isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-200' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-700'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-card border-border hover:bg-muted text-muted-foreground`}
           >
-            <Settings className="w-3.5 h-3.5 text-indigo-400" />
+            <Settings className="w-3.5 h-3.5" />
             <span>Reconfigure Domain Setup</span>
           </button>
         )}
@@ -311,19 +309,19 @@ export default function AIAgentsHub() {
               {/* Clean Executive Welcome Header */}
               <div className="text-center space-y-2 max-w-3xl mx-auto">
                 <h2 className="text-3xl font-black tracking-tight">Welcome to CHATR Business OS</h2>
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   We'll configure your workspace, AI workforce, integrations, and automations in under 5 minutes.
                 </p>
               </div>
 
               {/* Business AI Assistant Greeting */}
-              <div className={`p-4 rounded-2xl border flex items-center gap-3.5 shadow-lg ${isDark ? 'bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-black/60 border-indigo-500/30' : 'bg-gradient-to-r from-indigo-50 via-purple-50 to-white border-indigo-200'}`}>
-                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-indigo-500/30 shadow-md">
+              <div className="p-4 rounded-2xl border flex items-center gap-3.5 shadow-lg bg-card border-border">
+                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-primary/30 shadow-md">
                   <img src="/chatr-ai-logo.jpg" alt="CHATR AI" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 text-xs">
-                  <p className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider mb-0.5">Meet your Business AI Guide</p>
-                  <p className={isDark ? 'text-slate-200' : 'text-slate-800'}>
+                  <p className="font-bold text-primary uppercase text-[10px] tracking-wider mb-0.5">Meet your Business AI Guide</p>
+                  <p className="text-foreground">
                     "I'm going to configure your company. Select your domain below, and I'll assemble the best capabilities, apps, and AI agents for your business."
                   </p>
                 </div>
@@ -340,15 +338,15 @@ export default function AIAgentsHub() {
                       <div
                         key={biz.id}
                         onClick={() => setSelectedBusiness(biz.id)}
-                        className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between relative group ${
+                        className={`cursor-pointer group flex flex-col justify-between p-4 rounded-2xl border text-left transition-all relative ${
                           isSelected
-                            ? (isDark ? 'border-indigo-500 bg-indigo-950/40 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500' : 'border-indigo-500 bg-indigo-50/70 shadow-lg ring-1 ring-indigo-500')
-                            : (isDark ? 'border-white/10 bg-[#0d0f1a] hover:border-white/20 hover:bg-white/[0.03]' : 'border-slate-200 bg-white hover:border-slate-300 shadow-sm')
+                            ? 'border-primary bg-primary/10 shadow-xl shadow-primary/10 ring-1 ring-primary'
+                            : 'border-border bg-card hover:border-primary/50 shadow-sm'
                         }`}
                       >
                         {/* Top Badges */}
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <div className={`p-2 rounded-xl w-fit ${isSelected ? 'bg-indigo-500/20 text-indigo-400' : (isDark ? 'bg-white/5 text-slate-400' : 'bg-slate-100 text-slate-600')}`}>
+                          <div className={`p-2 rounded-xl w-fit ${isSelected ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
                             {biz.icon}
                           </div>
                           <div className="flex items-center gap-1.5">
@@ -357,7 +355,7 @@ export default function AIAgentsHub() {
                                 <Star className="w-2.5 h-2.5 fill-amber-400" /> Recommended
                               </span>
                             )}
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${isDark ? 'bg-white/10 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-muted text-muted-foreground">
                               {biz.badge}
                             </span>
                           </div>
@@ -365,16 +363,16 @@ export default function AIAgentsHub() {
 
                         <div>
                           <div className="flex items-center justify-between">
-                            <h3 className={`text-sm font-bold leading-tight ${isSelected ? 'text-indigo-400' : (isDark ? 'text-white' : 'text-slate-900')}`}>{biz.label}</h3>
-                            {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 ml-1" />}
+                            <h3 className={`text-sm font-bold leading-tight ${isSelected ? 'text-primary' : 'text-foreground'}`}>{biz.label}</h3>
+                            {isSelected && <CheckCircle2 className="w-4 h-4 text-primary shrink-0 ml-1" />}
                           </div>
-                          <p className={`text-[10px] leading-relaxed mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{biz.description}</p>
+                          <p className="text-[10px] leading-relaxed mt-1 text-muted-foreground">{biz.description}</p>
                         </div>
 
                         {/* Included Apps Chips */}
-                        <div className="mt-3 pt-2.5 border-t border-white/5 flex flex-wrap gap-1">
+                        <div className="mt-3 pt-2.5 border-t border-border flex flex-wrap gap-1">
                           {biz.apps.map((app, idx) => (
-                            <span key={idx} className={`text-[9px] font-semibold px-2 py-0.5 rounded-md ${isSelected ? (isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-800') : (isDark ? 'bg-white/5 text-slate-400' : 'bg-slate-100 text-slate-600')}`}>
+                            <span key={idx} className={`text-[9px] font-semibold px-2 py-0.5 rounded-md ${isSelected ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
                               ✓ {app}
                             </span>
                           ))}
@@ -385,10 +383,10 @@ export default function AIAgentsHub() {
                 </div>
 
                 {/* Right Column: Live Assembly Preview Panel (4 Cols) */}
-                <div className={`col-span-12 lg:col-span-5 xl:col-span-4 rounded-3xl border p-5 space-y-5 sticky top-24 shadow-2xl ${isDark ? 'bg-[#0d0f1a] border-indigo-500/30' : 'bg-white border-slate-200 shadow-md'}`}>
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="col-span-12 lg:col-span-5 xl:col-span-4 rounded-3xl border p-5 space-y-5 sticky top-24 shadow-2xl bg-card border-border shadow-md">
+                  <div className="flex items-center justify-between border-b border-border pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400">
+                      <div className="p-1.5 rounded-lg bg-primary/20 text-primary">
                         <Activity className="w-4 h-4" />
                       </div>
                       <h3 className="text-xs font-black uppercase tracking-wider">Live OS Assembly Preview</h3>
@@ -399,30 +397,30 @@ export default function AIAgentsHub() {
                   </div>
 
                   {/* Selected Business Card Header */}
-                  <div className={`p-3.5 rounded-2xl border flex items-center gap-3 ${isDark ? 'bg-white/[0.03] border-white/10' : 'bg-slate-50 border-slate-200'}`}>
-                    <div className="p-2 rounded-xl bg-indigo-600 text-white shrink-0">
+                  <div className="p-3.5 rounded-2xl border flex items-center gap-3 bg-muted border-border">
+                    <div className="p-2 rounded-xl bg-primary text-primary-foreground shrink-0">
                       {selectedBizObj.icon}
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase text-indigo-400 tracking-wider">Selected Domain</p>
+                      <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Selected Domain</p>
                       <h4 className="text-sm font-bold">{selectedBizObj.label}</h4>
                     </div>
                   </div>
 
                   {/* Recommended App Stack */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Recommended Capability Stack</p>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Recommended Capability Stack</p>
                     <div className="space-y-2">
                       {selectedBizObj.previewStack.map((app, idx) => {
                         const Icon = app.icon;
                         return (
-                          <div key={idx} className={`p-2.5 rounded-xl border flex items-center gap-2.5 text-xs ${isDark ? 'bg-white/[0.02] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                            <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-400 shrink-0">
+                          <div key={idx} className="p-2.5 rounded-xl border flex items-center gap-2.5 text-xs bg-card border-border">
+                            <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">
                               <Icon className="w-3.5 h-3.5" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="font-bold truncate">{app.name}</p>
-                              <p className="text-[10px] text-slate-400 truncate">{app.detail}</p>
+                              <p className="text-[10px] text-muted-foreground truncate">{app.detail}</p>
                             </div>
                             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                           </div>
@@ -435,7 +433,7 @@ export default function AIAgentsHub() {
                   <div className="pt-2">
                     <button
                       onClick={() => setStep('goals')}
-                      className="w-full py-3.5 px-6 rounded-2xl font-black text-xs text-white uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 shadow-xl shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98]"
+                      className="w-full py-3.5 px-6 rounded-2xl font-black text-xs text-white uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <span>Continue → Next: Workspace Goals</span>
                     </button>
@@ -450,9 +448,9 @@ export default function AIAgentsHub() {
           {step === 'goals' && (
             <motion.div key="s2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6 max-w-4xl mx-auto">
               <div className="text-center space-y-2">
-                <div className="p-3 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 w-fit mx-auto"><Target className="w-6 h-6 text-indigo-400" /></div>
+                <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 w-fit mx-auto"><Target className="w-6 h-6 text-primary" /></div>
                 <h2 className="text-2xl font-extrabold">What are your primary goals?</h2>
-                <p className="text-slate-400 text-sm">Select all that apply. CHATR builds your capability stack around these outcomes.</p>
+                <p className="text-muted-foreground text-sm">Select all that apply. CHATR builds your capability stack around these outcomes.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -460,23 +458,23 @@ export default function AIAgentsHub() {
                   const sel = selectedGoals.has(goal.id);
                   return (
                     <button key={goal.id} onClick={() => setSelectedGoals(prev => { const n = new Set(prev); n.has(goal.id) ? n.delete(goal.id) : n.add(goal.id); return n; })}
-                      className={`p-4 rounded-2xl border text-left flex items-start gap-3 cursor-pointer transition-all ${sel ? 'border-indigo-500 bg-indigo-950/40' : (isDark ? 'border-white/10 bg-[#0d0f1a] hover:border-white/20' : 'border-slate-200 bg-white hover:border-slate-300')}`}>
-                      <div className={`p-2 rounded-xl flex-shrink-0 ${sel ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white/5 text-slate-500'}`}>{goal.icon}</div>
+                      className={`p-4 rounded-2xl border text-left flex items-start gap-3 cursor-pointer transition-all ${sel ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/50'}`}>
+                      <div className={`p-2 rounded-xl flex-shrink-0 ${sel ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>{goal.icon}</div>
                       <div className="flex-1">
                         <h3 className="text-xs font-bold">{goal.label}</h3>
-                        <p className="text-[10px] text-slate-500 mt-0.5">{goal.description}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{goal.description}</p>
                       </div>
-                      {sel && <CheckCircle2 className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
+                      {sel && <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />}
                     </button>
                   );
                 })}
               </div>
 
               <div className="flex justify-center gap-3">
-                <button onClick={() => setStep('business_type')} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 bg-white/5 hover:bg-white/10 cursor-pointer">Back</button>
+                <button onClick={() => setStep('business_type')} className="px-5 py-2.5 rounded-xl text-xs font-bold text-muted-foreground bg-muted hover:bg-muted/80 cursor-pointer">Back</button>
                 <button onClick={() => { setIsThinking(true); setTimeout(() => { setIsThinking(false); setStep('ai_recommendation'); }, 2200); }}
                   disabled={selectedGoals.size === 0 || isThinking}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold text-sm transition-all ${selectedGoals.size > 0 && !isThinking ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white cursor-pointer shadow-lg shadow-indigo-500/30' : 'bg-white/5 text-slate-600 cursor-not-allowed'}`}>
+                  className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold text-sm transition-all ${selectedGoals.size > 0 && !isThinking ? 'bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}>
                   {isThinking ? <><RefreshCw className="w-4 h-4 animate-spin" /><span>CHATR is thinking...</span></> : <><Sparkles className="w-4 h-4" /><span>Assemble My Workspace Stack</span></>}
                 </button>
               </div>
@@ -486,22 +484,22 @@ export default function AIAgentsHub() {
           {/* ══ STEP 3: AI RECOMMENDATION ══ */}
           {step === 'ai_recommendation' && (
             <motion.div key="s3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-5 max-w-4xl mx-auto">
-              <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-indigo-950/40 to-slate-900 border border-emerald-500/40 space-y-3">
+              <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
+                  <Sparkles className="w-5 h-5 text-primary" />
                   <div>
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">CHATR Business OS AI</span>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-wider">CHATR Business OS AI</span>
                     <h3 className="text-base font-bold">Recommended Capability Stack</h3>
                   </div>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Based on your domain (<strong className="text-emerald-400">{selectedBizObj.label}</strong>), CHATR has prepared your foundation capabilities and integrations.
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Based on your domain (<strong className="text-primary">{selectedBizObj.label}</strong>), CHATR has prepared your foundation capabilities and integrations.
                 </p>
               </div>
 
               <div className="flex justify-center gap-3">
-                <button onClick={() => setStep('goals')} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 bg-white/5 hover:bg-white/10 cursor-pointer">Back</button>
-                <button onClick={() => setStep('marketplace')} className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm cursor-pointer shadow-lg shadow-emerald-500/30">
+                <button onClick={() => setStep('goals')} className="px-5 py-2.5 rounded-xl text-xs font-bold text-muted-foreground bg-muted hover:bg-muted/80 cursor-pointer">Back</button>
+                <button onClick={() => setStep('marketplace')} className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm cursor-pointer shadow-lg shadow-emerald-600/20">
                   <span>Confirm & Proceed to Launch</span><ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -511,16 +509,16 @@ export default function AIAgentsHub() {
           {/* ══ STEP 4: LAUNCH & MARKETPLACE ══ */}
           {step === 'marketplace' && (
             <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6 max-w-3xl mx-auto text-center">
-              <div className="p-8 rounded-3xl border border-indigo-500/40 bg-gradient-to-b from-indigo-950/40 to-black space-y-5 shadow-2xl">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-emerald-500 p-0.5 mx-auto shadow-xl shadow-indigo-500/30">
-                  <div className="w-full h-full bg-[#0a0a0c] rounded-[14px] flex items-center justify-center">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <div className="p-8 rounded-3xl border border-primary/20 bg-card space-y-5 shadow-2xl">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 p-0.5 mx-auto">
+                  <div className="w-full h-full bg-card rounded-[14px] flex items-center justify-center">
+                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <h2 className="text-2xl font-black">Your Business OS is Assembled!</h2>
-                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto">
                     {selectedBizObj.label} capabilities, AI agents, and integrations are installed and active.
                   </p>
                 </div>
@@ -528,7 +526,7 @@ export default function AIAgentsHub() {
                 <div className="pt-4 flex justify-center">
                   <button
                     onClick={handleFinishSetup}
-                    className="px-10 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-indigo-600 hover:from-emerald-400 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-wider shadow-2xl shadow-emerald-500/40 hover:scale-105 transition-all cursor-pointer"
+                    className="px-10 py-4 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-black text-sm uppercase tracking-wider shadow-xl shadow-primary/20 hover:scale-105 transition-all cursor-pointer"
                   >
                     Launch My Business OS Workspace →
                   </button>
@@ -542,22 +540,20 @@ export default function AIAgentsHub() {
             <motion.div key="sdone" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-6">
               
               {/* Active Workspace Header Banner */}
-              <div className={`p-6 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl ${
-                isDark ? 'bg-gradient-to-r from-indigo-950/60 via-purple-950/30 to-black/80 border-indigo-500/30' : 'bg-gradient-to-r from-indigo-50 via-purple-50 to-white border-indigo-200'
-              }`}>
+              <div className="p-6 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm bg-card border-border">
                 <div className="flex items-center gap-4">
-                  <div className="p-3.5 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 shrink-0">
+                  <div className="p-3.5 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
                     {selectedBizObj.icon}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                         Active Business OS
                       </span>
-                      <span className="text-xs text-slate-400">· {selectedBizObj.badge}</span>
+                      <span className="text-xs text-muted-foreground">· {selectedBizObj.badge}</span>
                     </div>
                     <h2 className="text-2xl font-black mt-0.5">{selectedBizObj.label} Workspace</h2>
-                    <p className="text-xs text-slate-400 mt-1">{selectedBizObj.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{selectedBizObj.description}</p>
                   </div>
                 </div>
 
@@ -567,7 +563,7 @@ export default function AIAgentsHub() {
                       if (selectedBusiness === 'recruitment') navigate('/desktop/recruitment');
                       else navigate('/desktop/chat');
                     }}
-                    className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-primary/20 transition-all cursor-pointer flex items-center gap-2"
                   >
                     <span>Open App Studio</span>
                     <ArrowRight className="w-4 h-4" />
@@ -578,32 +574,30 @@ export default function AIAgentsHub() {
               {/* Active Domain Capabilities Grid */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Active Domain Capabilities & AI Workforce</h3>
-                  <span className="text-xs text-emerald-400 font-bold">● All Systems Operational</span>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Active Domain Capabilities & AI Workforce</h3>
+                  <span className="text-xs text-emerald-500 font-bold">● All Systems Operational</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {selectedBizObj.previewStack.map((app, idx) => {
                     const Icon = app.icon;
                     return (
-                      <div key={idx} className={`p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.01] ${
-                        isDark ? 'bg-[#0d0f1a] border-white/10 hover:border-indigo-500/40' : 'bg-white border-slate-200 shadow-sm hover:border-indigo-300'
-                      }`}>
+                      <div key={idx} className="p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.01] bg-card border-border shadow-sm">
                         <div className="flex items-center justify-between">
-                          <div className="p-2 rounded-xl bg-indigo-500/15 text-indigo-400">
+                          <div className="p-2 rounded-xl bg-primary/10 text-primary">
                             <Icon className="w-5 h-5" />
                           </div>
-                          <span className="text-[10px] font-bold text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                          <span className="text-[10px] font-bold text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                             Installed
                           </span>
                         </div>
                         <div>
                           <h4 className="text-sm font-bold">{app.name}</h4>
-                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{app.detail}</p>
+                          <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{app.detail}</p>
                         </div>
-                        <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
-                          <span className="text-[10px] text-slate-500">Capability ID: core.{selectedBusiness}.{idx+1}</span>
-                          <ChevronRight className="w-4 h-4 text-indigo-400" />
+                        <div className="pt-2 border-t border-border flex items-center justify-between text-xs">
+                          <span className="text-[10px] text-muted-foreground">Capability ID: core.{selectedBusiness}.{idx+1}</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground" />
                         </div>
                       </div>
                     );
@@ -612,22 +606,20 @@ export default function AIAgentsHub() {
               </div>
 
               {/* Active Integrations Telemetry */}
-              <div className={`p-5 rounded-2xl border space-y-3 ${isDark ? 'bg-[#0d0f1a] border-white/10' : 'bg-white border-slate-200 shadow-sm'}`}>
+              <div className="p-5 rounded-2xl border space-y-3 bg-card border-border shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Plug className="w-4 h-4 text-indigo-400" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider">Active Integrations Telemetry</h3>
+                    <Plug className="w-4 h-4 text-primary" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Active Integrations Telemetry</h3>
                   </div>
-                  <span className="text-xs text-slate-400">6 connected services</span>
+                  <span className="text-xs text-muted-foreground">6 connected services</span>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {['Google Analytics 4', 'Gmail & Calendar', 'LinkedIn B2B', 'Supabase Database', 'Google Gemini AI', 'Stripe Billing'].map((intName, idx) => (
-                    <div key={idx} className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-semibold ${
-                      isDark ? 'bg-white/[0.03] border-white/10 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'
-                    }`}>
+                    <span key={idx} className="px-3 py-1 rounded-lg border bg-card border-border text-card-foreground shadow-sm text-xs font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       <span>{intName}</span>
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
