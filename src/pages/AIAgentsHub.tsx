@@ -9,7 +9,7 @@ import {
   GraduationCap, Briefcase, ShoppingBag, Heart, Home, UtensilsCrossed, Factory,
   Sparkles, ArrowRight, CheckSquare, Play, Star, Plug, RefreshCw, Activity,
   Target, Coffee, DollarSign, Code2, Github, Store, Filter, ChevronDown,
-  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock
+  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText
 } from 'lucide-react';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 

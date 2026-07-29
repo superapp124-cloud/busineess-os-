@@ -11,6 +11,26 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     GLOBAL TYPOGRAPHY ENFORCEMENT (APPLE UI STYLE)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  
+  /* 1. Universal Font Application */
+  body, p, span, div, a, button, input, textarea, select, label, h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-main, var(--font-body)), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  }
+
+  /* Keep monospace fonts intact for code blocks */
+  code, pre, kbd {
+    font-family: var(--font-mono), monospace !important;
+  }
+
+  /* 2. Unified Premium Heading Styles */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em; /* Apple-style tight tracking */
+    font-weight: 700; 
+  }
+
   :root {
     /* Apple-Inspired System Typography */
     --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
