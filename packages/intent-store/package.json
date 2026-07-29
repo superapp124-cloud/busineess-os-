@@ -1,0 +1,18 @@
+{
+  "name": "@chatr/intent-store",
+  "version": "1.0.0",
+  "description": "Authoritative distribution catalogue and trust anchor for CHATR Intent OS",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/publisher": "workspace:*",
+    "@chatr/deployment": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0"
+  }
+}

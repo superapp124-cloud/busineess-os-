@@ -1,0 +1,16 @@
+{
+  "name": "@chatr/deployment",
+  "version": "1.0.0",
+  "description": "Runtime deployment and activation for CHATR Intent OS",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/intent-store": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

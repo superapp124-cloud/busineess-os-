@@ -1,0 +1,15 @@
+{
+  "name": "@chatr/publisher",
+  "version": "1.0.0",
+  "description": "Identity and signing tools for CHATR Intent OS capabilities",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

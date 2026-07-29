@@ -1,0 +1,17 @@
+{
+  "name": "@chatr/control-plane",
+  "version": "1.0.0",
+  "description": "Enterprise Control Plane for CHATR Intent OS — orchestrates, governs, and administers without executing business logic",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/intent-store": "workspace:*",
+    "@chatr/deployment": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

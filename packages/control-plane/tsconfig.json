@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@chatr/kernel": ["../kernel/src"],
+      "@chatr/intent-store": ["../intent-store/src"],
+      "@chatr/deployment": ["../deployment/src"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}
