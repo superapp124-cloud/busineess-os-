@@ -268,10 +268,10 @@ export const InfiniteCanvas: React.FC = () => {
         const { data: notifs } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(4);
         if (notifs && notifs.length > 0) {
           const colors = [
-            { color: '#f59e0b', icon: <Zap /> },
-            { color: '#c084fc', icon: <UserPlus /> },
-            { color: '#fb923c', icon: <BarChart /> },
-            { color: '#38bdf8', icon: <FileText /> }
+            { color: '#f59e0b', icon: <Zap className="w-3.5 h-3.5" /> },
+            { color: '#c084fc', icon: <UserPlus className="w-3.5 h-3.5" /> },
+            { color: '#fb923c', icon: <BarChart className="w-3.5 h-3.5" /> },
+            { color: '#38bdf8', icon: <FileText className="w-3.5 h-3.5" /> }
           ];
           setHighlights(notifs.map((n, i) => ({
             text: n.title,
@@ -602,14 +602,14 @@ export const InfiniteCanvas: React.FC = () => {
                 <p className="text-slate-400 text-xs font-bold mb-2">Key Highlights</p>
                 <div className="space-y-2">
                   {(highlights.length > 0 ? highlights : [
-                    { text: 'Project Apollo has 3 active engineering blockers', color: '#f59e0b', icon: <Zap /> },
-                    { text: 'Rajesh Kumar connected to 2 active requisitions', color: '#c084fc', icon: <UserPlus /> },
-                    { text: 'Invoice INV-304 affects Project Apollo budget', color: '#fb923c', icon: <BarChart /> },
-                    { text: 'Master Service Agreement pending legal approval', color: '#38bdf8', icon: <FileText /> },
+                    { text: 'Project Apollo has 3 active engineering blockers', color: '#f59e0b', icon: <Zap className="w-3.5 h-3.5" /> },
+                    { text: 'Rajesh Kumar connected to 2 active requisitions', color: '#c084fc', icon: <UserPlus className="w-3.5 h-3.5" /> },
+                    { text: 'Invoice INV-304 affects Project Apollo budget', color: '#fb923c', icon: <BarChart className="w-3.5 h-3.5" /> },
+                    { text: 'Master Service Agreement pending legal approval', color: '#38bdf8', icon: <FileText className="w-3.5 h-3.5" /> },
                   ]).map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/10 hover:border-indigo-500/40 cursor-pointer transition-all">
                       <div className="p-1 rounded-lg flex-shrink-0 mt-0.5" style={{ background: item.color + '22', color: item.color }}>
-                        {React.cloneElement(item.icon, { className: 'w-3.5 h-3.5' })}
+                        {item.icon}
                       </div>
                       <p className="text-slate-200 text-xs leading-relaxed">{item.text}</p>
                     </div>
