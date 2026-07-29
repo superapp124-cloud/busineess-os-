@@ -36,11 +36,14 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
     if (action.path) {
       navigate(action.path);
     } else if (action.event) {
-      window.dispatchEvent(new CustomEvent(action.event));
       if (['open-new-chat', 'open-new-call', 'open-new-video', 'open-new-group'].includes(action.event)) {
         if (!window.location.pathname.includes('/desktop/chat')) {
-          navigate('/desktop/chat');
+          navigate(`/desktop/chat?action=${action.event}`);
+        } else {
+          window.dispatchEvent(new CustomEvent(action.event));
         }
+      } else {
+        window.dispatchEvent(new CustomEvent(action.event));
       }
     } else {
       toast.info(`${action.label} coming soon!`);

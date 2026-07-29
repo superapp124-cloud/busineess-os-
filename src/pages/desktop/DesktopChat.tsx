@@ -107,10 +107,31 @@ export default function DesktopChat() {
 
  // Handle Query Params & Global Events
  useEffect(() => {
- const id = searchParams.get('id');
- if (id) {
- setSelectedId(id);
- }
+  const id = searchParams.get('id');
+  if (id) {
+    setSelectedId(id);
+  }
+
+  // Handle URL actions from QuickActionsBar
+  const action = searchParams.get('action');
+  if (action) {
+    // Clear it so it doesn't run again on reload
+    setTimeout(() => {
+      searchParams.delete('action');
+      setSearchParams(searchParams, { replace: true });
+    }, 100);
+
+    if (action === 'open-new-chat') setShowNewDmModal(true);
+    if (action === 'open-new-group') setShowCreateModal(true);
+    if (action === 'open-new-call') {
+      if (selectedId) startCall(selectedId, rooms.find(r => r.id === selectedId)?.name || 'Unknown', true);
+      else setShowNewDmModal(true);
+    }
+    if (action === 'open-new-video') {
+      if (selectedId) startCall(selectedId, rooms.find(r => r.id === selectedId)?.name || 'Unknown', false);
+      else setShowNewDmModal(true);
+    }
+  }
  
  // Global Event Listeners for QuickActionsBar
  const handleNewChat = () => setShowNewDmModal(true);

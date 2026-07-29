@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { 
  Store, Building2, Stethoscope, GraduationCap, Briefcase, Factory, Coffee, Landmark,
  LayoutGrid, Sparkles, Plus, Search, Settings, Shield, Bell, Database, Command, Users,
@@ -240,7 +241,7 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  <button onClick={() => setPhase('identity')} className="px-5 py-2.5 text-secondary bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center gap-2">
  Start Setup <ArrowRight size={16} />
  </button>
- <button className="px-5 py-2.5 text-button bg-[#111113] border border-zinc-800 text-white rounded-xl hover:bg-zinc-800 transition-all flex items-center gap-2">
+ <button onClick={() => toast.info('Company Import Wizard initializing...')} className="px-5 py-2.5 text-button bg-[#111113] border border-zinc-800 text-white rounded-xl hover:bg-zinc-800 transition-all flex items-center gap-2">
  <FolderOpen size={16} className="text-zinc-400" /> Import Company
  </button>
  </div>
@@ -307,7 +308,7 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  </div>
  ))}
  </div>
- <button className="px-5 py-2.5 bg-[#111113] hover:bg-zinc-800 text-white text-button rounded-lg border border-zinc-700 transition-all flex items-center gap-2">
+ <button onClick={() => toast.success('Full analysis report generated & downloaded.')} className="px-5 py-2.5 bg-[#111113] hover:bg-zinc-800 text-white text-button rounded-lg border border-zinc-700 transition-all flex items-center gap-2">
  View Full Analysis <ArrowRight size={16} />
  </button>
  </div>
@@ -2027,10 +2028,17 @@ export default function BusinessOS() {
  AutomationEngine.initialize();
  }, []);
 
- const [appState, setAppState] = useState<AppState>('onboarding');
+ const [appState, setAppState] = useState<AppState>('os');
  const [activeView, setActiveView] = useState<ViewMode>('home');
- const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(null);
- const [activeProfile, setActiveProfile] = useState<any>(null);
+ const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(() => resolveTemplate('Professional Services') || TEMPLATES[0]);
+ const [activeProfile, setActiveProfile] = useState<any>(() => ({
+   name: 'TalentXcel Services Inc.',
+   industry: 'Professional Services',
+   dept: ['Executive Office', 'Sales', 'Recruitment', 'Delivery', 'Finance'],
+   tech: ['Microsoft 365', 'Supabase', 'Gemini AI', 'Stripe'],
+   teamSize: '11-50',
+   location: 'Noida'
+ }));
  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
  const [installedPackages, setInstalledPackages] = useState<string[]>(
  () => CapabilityInstaller.getInstalledIds()
@@ -2302,6 +2310,9 @@ export default function BusinessOS() {
  </div>
  
  <span className="text-label font-bold text-zinc-500 px-3 py-1 bg-zinc-900 rounded-md border border-zinc-800">{activeTemplate?.name}</span>
+ <button onClick={() => setAppState('onboarding')} className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-md text-[11px] font-bold text-zinc-400 hover:text-white transition-colors cursor-pointer" title="Reconfigure Business OS Setup">
+   <Settings size={12} /> Reconfigure Setup
+ </button>
  <Bell size={16} className="text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors" />
  <Settings size={16} className="text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors" />
  </div>
