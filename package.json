@@ -16,7 +16,7 @@
     "kill:electron": "node -e \"const { execSync } = require('child_process'); try { execSync('taskkill /IM electron.exe /F'); console.log('Killed electron.exe'); } catch(e) { console.log('No electron process'); }\"",
     "dev:fresh": "npm run kill:electron && npm run kill:port && npm run electron:dev",
     "electron:dev": "cross-env NODE_ENV=development concurrently \"npm run dev:desktop\" \"wait-on http://localhost:8086 && electron .\"",
-    "electron:build": "npm run build:desktop && electron-builder",
+    "electron:build": "npm run build:desktop && electron-builder && node scripts/copy-built-installer.cjs",
     "start:desktop": "cross-env NODE_ENV=production electron .",
     "build": "vite build",
     "build:desktop": "vite build -c vite.desktop.config.ts --mode desktop",
@@ -237,7 +237,9 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "icon": "public/favicon.ico",
+      "artifactName": "chatr-desktop-setup.${ext}"
     },
     "mac": {
       "target": [

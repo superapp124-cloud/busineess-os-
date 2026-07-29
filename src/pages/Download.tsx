@@ -19,13 +19,16 @@ import {
   MessageSquare
 } from 'lucide-react';
 import logo from '@/assets/chatr-logo.png';
+import { ClaudeInstallerModal } from '@/components/desktop/ClaudeInstallerModal';
 
 export default function Download() {
   const navigate = useNavigate();
   const [downloadingOS, setDownloadingOS] = useState<string | null>(null);
+  const [showInstallerModal, setShowInstallerModal] = useState<boolean>(false);
 
   const handleDownloadExecutable = async (filename: string, osLabel: string) => {
     setDownloadingOS(osLabel);
+    setShowInstallerModal(true);
 
     const downloadUrl = `/download/${filename}`;
 
@@ -113,11 +116,11 @@ export default function Download() {
             {/* Primary Download CTAs */}
             <div className="space-y-3">
               <Button
-                onClick={() => handleDownloadExecutable('chatr-desktop-setup.cmd', 'Windows')}
+                onClick={() => handleDownloadExecutable('chatr-desktop-setup.exe', 'Windows')}
                 className="w-full sm:w-auto px-8 py-6 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-bold text-sm shadow-xl flex items-center justify-center gap-3 transition-all"
               >
                 <DownloadIcon className="w-5 h-5 text-slate-900" />
-                Download for Windows (.cmd)
+                Download for Windows
               </Button>
 
               <div className="flex flex-wrap gap-2 text-xs">
