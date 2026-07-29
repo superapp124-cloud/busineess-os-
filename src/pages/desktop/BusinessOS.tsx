@@ -1617,33 +1617,221 @@ const PlatformSettingsView = ({ template }: { template: OSTemplate }) => (
 // ─── Identity & Access System ──────────────────────────────────────────────────
 
 const IdentityAccessView = () => {
- </td>
- <td className="px-6 py-4">
- <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${u.name === 'AI Engine' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-zinc-800 text-zinc-300'}`}>
- {u.role}
- </span>
- </td>
- <td className="px-6 py-4 text-table text-zinc-400">{u.dept}</td>
- <td className="px-6 py-4">
- <div className="flex flex-wrap gap-1.5">
- {u.access.map(pkg => (
- <span key={pkg} className="text-[10px] bg-zinc-900 border border-zinc-700/50 text-zinc-400 px-2 py-0.5 rounded">
- {pkg}
- </span>
- ))}
- </div>
- </td>
- <td className="px-6 py-4 text-right">
- <button className="text-zinc-500 hover:text-white transition-colors"><Settings size={15} /></button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- </div>
- </div>
- );
+  const [users, setUsers] = useState([
+    { id: '1', name: 'Sarah Chen', email: 'sarah.chen@talentxcel.com', role: 'Domain Superintendent', dept: 'All', access: ['Recruitment', 'Core CRM', 'Client Portal'] },
+    { id: '2', name: 'Marcus Johnson', email: 'marcus.j@talentxcel.com', role: 'HR Manager', dept: 'HR', access: ['Recruitment', 'Core HR'] },
+    { id: '3', name: 'Elena Rodriguez', email: 'elena.r@talentxcel.com', role: 'Sales Lead', dept: 'Sales', access: ['Core CRM'] },
+    { id: '4', name: 'AI Engine', email: 'ai-autonomous@system.internal', role: 'System Autonomous', dept: 'System', access: ['All Packages'] }
+  ]);
+
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserRole, setNewUserRole] = useState('Department Manager');
+  const [newUserDept, setNewUserDept] = useState('Sales');
+
+  const handleAddUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserName.trim() || !newUserEmail.trim()) {
+      toast.error('Please enter full name and email address');
+      return;
+    }
+    const newUser = {
+      id: String(Date.now()),
+      name: newUserName,
+      email: newUserEmail,
+      role: newUserRole,
+      dept: newUserDept,
+      access: ['Core CRM', 'Recruitment']
+    };
+    setUsers(prev => [...prev, newUser]);
+    toast.success(`User ${newUserName} added to workspace!`);
+    setIsAddUserOpen(false);
+    setNewUserName('');
+    setNewUserEmail('');
+  };
+
+  const handleDeleteUser = (id: string, name: string) => {
+    if (name === 'AI Engine') {
+      toast.error('System Autonomous AI Engine cannot be deleted.');
+      return;
+    }
+    setUsers(prev => prev.filter(u => u.id !== id));
+    toast.success(`User ${name} removed from workspace.`);
+  };
+
+  return (
+    <div className="flex-1 overflow-y-auto bg-[#09090b] flex flex-col w-full h-full relative p-8">
+      {/* Add User Modal */}
+      {isAddUserOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-indigo-400" />
+                <h3 className="text-base font-bold text-white">Add New Teammate</h3>
+              </div>
+              <button onClick={() => setIsAddUserOpen(false)} className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddUser} className="space-y-4 text-xs">
+              <div>
+                <label className="font-bold text-zinc-400 block mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Alex Morgan"
+                  value={newUserName}
+                  onChange={e => setNewUserName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-950 text-white font-medium focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-zinc-400 block mb-1">Work Email</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="alex.morgan@company.com"
+                  value={newUserEmail}
+                  onChange={e => setNewUserEmail(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-950 text-white font-medium focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-zinc-400 block mb-1">Role</label>
+                  <select
+                    value={newUserRole}
+                    onChange={e => setNewUserRole(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-950 text-white font-medium focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Department Manager">Department Manager</option>
+                    <option value="Sales Lead">Sales Lead</option>
+                    <option value="HR Manager">HR Manager</option>
+                    <option value="Operations Lead">Operations Lead</option>
+                    <option value="Finance Lead">Finance Lead</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-zinc-400 block mb-1">Department</label>
+                  <select
+                    value={newUserDept}
+                    onChange={e => setNewUserDept(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-800 bg-zinc-950 text-white font-medium focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR & Recruitment</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Executive">Executive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-3">
+                <button type="button" onClick={() => setIsAddUserOpen(false)} className="px-4 py-2.5 rounded-xl font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700">
+                  Cancel
+                </button>
+                <button type="submit" className="px-6 py-2.5 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20">
+                  Add Teammate
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-6xl mx-auto space-y-8 w-full">
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-display font-extrabold text-white tracking-tight">Identity & Access</h1>
+            <p className="text-zinc-400 mt-2 text-section">Manage RBAC policies, user accounts, and AI execution permissions.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsAddUserOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-bold text-button rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 cursor-pointer"
+            >
+              <Plus size={16} /> Add User
+            </button>
+            <button
+              onClick={() => toast.info('Role configuration panel open')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-button rounded-xl hover:bg-zinc-700 transition-all cursor-pointer"
+            >
+              <Shield size={16} /> Create Role
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-zinc-800 bg-zinc-950/50">
+                <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">User / Identity</th>
+                <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Role</th>
+                <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Department</th>
+                <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Package Access</th>
+                <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-800/60">
+              {users.map((u) => (
+                <tr key={u.id} className="hover:bg-zinc-800/20 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-label font-bold text-white">
+                        {u.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-bold text-white">{u.name}</div>
+                        {u.email && <div className="text-[10px] text-zinc-500">{u.email}</div>}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${u.name === 'AI Engine' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-zinc-800 text-zinc-300'}`}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-table text-zinc-400">{u.dept}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {u.access.map(pkg => (
+                        <span key={pkg} className="text-[10px] bg-zinc-900 border border-zinc-700/50 text-zinc-400 px-2 py-0.5 rounded">
+                          {pkg}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => toast.info(`Settings for ${u.name}`)} className="p-1.5 text-zinc-400 hover:text-white transition-colors" title="User Settings">
+                        <Settings size={15} />
+                      </button>
+                      {u.name !== 'AI Engine' && (
+                        <button
+                          onClick={() => handleDeleteUser(u.id, u.name)}
+                          className="p-1.5 text-rose-500 hover:text-rose-400 transition-colors cursor-pointer"
+                          title="Delete User"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // ─── Generic Package Dashboard ───────────────────────────────────────────────
