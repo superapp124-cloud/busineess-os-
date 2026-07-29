@@ -45,6 +45,7 @@ import { getTurnConfig } from "./utils/webrtcSignaling";
 import { networkMonitor } from "./utils/networkMonitor";
 import { ChatrAIFab } from "./components/ChatrAIFab";
 import { GlobalBackHandler } from "./components/GlobalBackHandler";
+import { FloatingHomeFab } from "./components/FloatingHomeFab";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
 import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
 import { TenantProvider } from "./core/tenant/TenantContext";
@@ -443,6 +444,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <OfflineIndicator />
  <DeferredGlobalServices />
  <GlobalBackHandler />
+ <FloatingHomeFab />
  <ChatrAIFab />
  <Routes>
   {/* Developer Routes */}
