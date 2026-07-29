@@ -129,13 +129,153 @@
     --border: 224 60% 14%;
   }
 
+  .light,
   [data-theme="light"] {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 20% 97%;
+    --foreground: 224 71% 4%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 252 100% 60%;
-    --border: 214 32% 91%;
+    --card-foreground: 224 71% 4%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+    
+    --secondary: 220 14% 93%;
+    --secondary-foreground: 220 10% 15%;
+    
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 10% 45%;
+    
+    --accent: 220 14% 90%;
+    --accent-foreground: 224 71% 4%;
+    
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    
+    --chat-background: 220 20% 97%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-accent: 220 14% 93%;
+    --sidebar-accent-foreground: 224 71% 4%;
+  }
+
+  .dark,
+  [data-theme="dark"] {
+    --background: 226 25% 6%;
+    --foreground: 0 0% 100%;
+    
+    --card: 223 15% 10%;
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 223 17% 8%;
+    --popover-foreground: 0 0% 100%;
+    
+    --secondary: 223 15% 10%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 223 15% 12%;
+    --muted-foreground: 215 14% 65%;
+    
+    --border: 223 15% 15%;
+    --input: 223 15% 15%;
+    
+    --chat-background: 226 25% 6%;
+    --sidebar-background: 226 25% 6%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-border: 223 15% 15%;
+    --sidebar-accent: 223 15% 10%;
+    --sidebar-accent-foreground: 222 100% 68%;
+  }
+
+  .theme-light {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .theme-dark {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Dynamic Accent Color CSS Rules */
+  [data-accent="purple"] {
+    --primary: 263 90% 66%;
+    --ring: 263 90% 66%;
+    --sidebar-primary: 263 90% 66%;
+    --accent-color: #8b5cf6;
+  }
+
+  [data-accent="blue"] {
+    --primary: 217 91% 60%;
+    --ring: 217 91% 60%;
+    --sidebar-primary: 217 91% 60%;
+    --accent-color: #3b82f6;
+  }
+
+  [data-accent="emerald"] {
+    --primary: 160 84% 39%;
+    --ring: 160 84% 39%;
+    --sidebar-primary: 160 84% 39%;
+    --accent-color: #10b981;
+  }
+
+  [data-accent="rose"] {
+    --primary: 350 89% 60%;
+    --ring: 350 89% 60%;
+    --sidebar-primary: 350 89% 60%;
+    --accent-color: #f43f5e;
+  }
+
+  [data-accent="amber"] {
+    --primary: 38 92% 50%;
+    --ring: 38 92% 50%;
+    --sidebar-primary: 38 92% 50%;
+    --accent-color: #f59e0b;
+  }
+
+  /* Light Theme Automatic Background & Text Overrides for Desktop Workspace */
+  .light .bg-\[\#0b0b14\],
+  .light .bg-\[\#0a0a12\],
+  .light .bg-\[\#07070d\],
+  .light .bg-\[\#090a0f\],
+  .light .bg-\[\#111\],
+  .light .bg-\[\#111318\],
+  .light .bg-zinc-950,
+  .light .bg-black {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .light .bg-\[\#181b23\],
+  .light .bg-\[\#1c1c1e\],
+  .light .bg-card\/70,
+  .light .bg-white\/5,
+  .light .bg-white\/\[0\.04\] {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
+
+  .light .text-white,
+  .light .text-white\/90,
+  .light .text-white\/80 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .light .text-white\/50,
+  .light .text-white\/60,
+  .light .text-white\/40,
+  .light .text-white\/30 {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .light .border-white\/10,
+  .light .border-white\/15,
+  .light .border-white\/5,
+  .light .border-white\/\[0\.04\],
+  .light .border-white\/\[0\.06\] {
+    border-color: hsl(var(--border)) !important;
   }
 
     

@@ -410,6 +410,21 @@ export default function AIChat() {
  };
 
 
+  // Auto-trigger initial prompt if launched from ChatrAIFab or URL prompt parameter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlPrompt = params.get('prompt');
+    const storedPrompt = sessionStorage.getItem('chatr_ai_initial_prompt');
+    const promptToSend = urlPrompt || storedPrompt;
+
+    if (promptToSend) {
+      sessionStorage.removeItem('chatr_ai_initial_prompt');
+      setTimeout(() => {
+        void sendPrompt(promptToSend);
+      }, 350);
+    }
+  }, []);
+
  const handleSend = async () => {
  await sendPrompt(input);
  };

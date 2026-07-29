@@ -179,7 +179,7 @@ const DesktopLayoutInner = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-  const { themeMode, accentColor, fontScale, fontFamily } = useAppearanceStore();
+  const { themeMode, accentColor, fontScale, fontFamily, applyToDOM } = useAppearanceStore();
   const { myStatus, setStatus, getStatusColor, getStatusLabel } = usePresence(user?.id);
   const { modules: installedModules } = useInstalledModules();
 
@@ -193,12 +193,13 @@ const DesktopLayoutInner = () => {
 
   // Theme sync
   useEffect(() => {
+    applyToDOM();
     const resolvedTheme = themeMode === 'system' ? (theme || 'dark') : themeMode;
     if (theme !== resolvedTheme) setTheme(resolvedTheme);
     if ((window as any).electronAPI) {
       (window as any).electronAPI.send('window:update-theme', resolvedTheme);
     }
-  }, [theme, themeMode, setTheme]);
+  }, [theme, themeMode, accentColor, fontScale, fontFamily, setTheme, applyToDOM]);
 
   // Auth listener
   useEffect(() => {

@@ -19,12 +19,12 @@ interface AppearanceState {
   applyToDOM: () => void;
 }
 
-const ACCENT_MAP: Record<AccentColor, { hex: string; rgb: string }> = {
-  purple: { hex: '#8b5cf6', rgb: '139, 92, 246' },
-  blue: { hex: '#3b82f6', rgb: '59, 130, 246' },
-  emerald: { hex: '#10b981', rgb: '16, 185, 129' },
-  rose: { hex: '#f43f5e', rgb: '244, 63, 94' },
-  amber: { hex: '#f59e0b', rgb: '245, 158, 11' },
+const ACCENT_MAP: Record<AccentColor, { hex: string; rgb: string; hsl: string }> = {
+  purple: { hex: '#8b5cf6', rgb: '139, 92, 246', hsl: '263 90% 66%' },
+  blue: { hex: '#3b82f6', rgb: '59, 130, 246', hsl: '217 91% 60%' },
+  emerald: { hex: '#10b981', rgb: '16, 185, 129', hsl: '160 84% 39%' },
+  rose: { hex: '#f43f5e', rgb: '244, 63, 94', hsl: '350 89% 60%' },
+  amber: { hex: '#f59e0b', rgb: '245, 158, 11', hsl: '38 92% 50%' },
 };
 
 const FONT_MAP: Record<FontFamily, string> = {
@@ -54,18 +54,23 @@ export const applyAppearanceToDOM = (state: { themeMode: ThemeMode; accentColor:
   if (isDark) {
     root.classList.add('dark');
     root.classList.remove('light');
+    root.setAttribute('data-theme', 'dark');
     root.style.colorScheme = 'dark';
   } else {
     root.classList.remove('dark');
     root.classList.add('light');
+    root.setAttribute('data-theme', 'light');
     root.style.colorScheme = 'light';
   }
 
-  // 2. Apply Accent Color
+  // 2. Apply Accent Color (HSL for Tailwind CSS variables)
   const accent = ACCENT_MAP[state.accentColor] || ACCENT_MAP.purple;
+  root.style.setProperty('--primary', accent.hsl);
+  root.style.setProperty('--ring', accent.hsl);
+  root.style.setProperty('--sidebar-primary', accent.hsl);
+  root.style.setProperty('--accent', accent.hsl);
   root.style.setProperty('--accent-color', accent.hex);
   root.style.setProperty('--accent-rgb', accent.rgb);
-  root.style.setProperty('--primary', accent.hex);
   root.setAttribute('data-accent', state.accentColor);
 
   // 3. Apply Layout Density / Font Scale
