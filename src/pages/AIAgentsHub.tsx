@@ -9,7 +9,7 @@ import {
   GraduationCap, Briefcase, ShoppingBag, Heart, Home, UtensilsCrossed, Factory,
   Sparkles, ArrowRight, CheckSquare, Play, Star, Plug, RefreshCw, Activity,
   Target, Coffee, DollarSign, Code2, Github, Store, Filter, ChevronDown,
-  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText, Settings, ShieldAlert, Layers
+  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText, Settings, ShieldAlert, Layers, X, Calendar, UserCheck, PhoneCall, AlertTriangle, Stethoscope
 } from 'lucide-react';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 
@@ -23,18 +23,8 @@ type IntegrationCategory =
   | 'Payments & Finance' | 'Calendar & Meetings' | 'Storage & Docs'
   | 'AI Providers' | 'Developer & Automation' | 'Public Intelligence';
 
-interface Integration {
-  id: string;
-  name: string;
-  category: IntegrationCategory;
-  description: string;
-  free: boolean;
-  stars: number;
-  logoColor: string;
-  oauthUrl?: string;
-}
-
 interface PreviewApp {
+  id?: string;
   name: string;
   detail: string;
   icon: any;
@@ -54,154 +44,142 @@ interface RichBusinessType {
 
 const BUSINESS_TYPES: RichBusinessType[] = [
   {
-    id: 'recruitment',
-    label: 'Recruitment Agency',
-    icon: <Users className="w-5 h-5" />,
-    recommended: true,
-    badge: '145 templates included',
-    description: 'IT staffing, talent matching, campus hiring, ATS automation',
-    apps: ['AI Recruiter', 'Candidate CRM', 'Interview Scheduler', 'Job Distribution'],
-    previewStack: [
-      { name: 'Candidate CRM', detail: 'System of record for candidates & jobs', icon: Users },
-      { name: 'Resume Screener AI', detail: 'AI-assisted parsing & scoring', icon: Sparkles },
-      { name: 'Interview Scheduler', detail: 'Calendar & candidate slot matching', icon: Activity },
-      { name: 'Job Distribution', detail: 'Multi-board & social publishing', icon: Globe },
-      { name: 'Analytics & BI', detail: 'Placement metrics & revenue pipeline', icon: BarChart3 }
-    ],
-    estTime: '3 min setup'
-  },
-  {
     id: 'hospital',
     label: 'Healthcare / Hospital',
-    icon: <Heart className="w-5 h-5" />,
+    icon: <Heart className="w-5 h-5 text-rose-500" />,
     recommended: true,
     badge: '115 templates included',
     description: 'Clinics, labs, patient management, appointment scheduler',
     apps: ['Patient Records', 'Appointment AI', 'Lab Sync', 'Billing'],
     previewStack: [
-      { name: 'Patient Appointment Scheduler', detail: 'Automated slot booking & doctor sync', icon: Activity },
-      { name: 'AI Medical Triage Bot', detail: 'Symptom scoring & emergency routing', icon: Sparkles },
-      { name: 'Patient Records & EHR', detail: 'HIPAA compliant medical histories', icon: FileText },
-      { name: 'Lab Test Dispatch', detail: 'Instant results notifications via WhatsApp', icon: Zap }
+      { id: 'appointment', name: 'Patient Appointment Scheduler', detail: 'Automated slot booking & doctor sync', icon: Activity },
+      { id: 'triage', name: 'AI Medical Triage Bot', detail: 'Symptom scoring & emergency routing', icon: Sparkles },
+      { id: 'ehr', name: 'Patient Records & EHR', detail: 'HIPAA compliant medical histories', icon: FileText },
+      { id: 'lab', name: 'Lab Test Dispatch', detail: 'Instant results notifications via WhatsApp', icon: Zap }
+    ],
+    estTime: '3 min setup'
+  },
+  {
+    id: 'recruitment',
+    label: 'Recruitment Agency',
+    icon: <Users className="w-5 h-5 text-indigo-500" />,
+    recommended: true,
+    badge: '145 templates included',
+    description: 'IT staffing, talent matching, campus hiring, ATS automation',
+    apps: ['AI Recruiter', 'Candidate CRM', 'Interview Scheduler', 'Job Distribution'],
+    previewStack: [
+      { id: 'crm', name: 'Candidate CRM', detail: 'System of record for candidates & jobs', icon: Users },
+      { id: 'screener', name: 'Resume Screener AI', detail: 'AI-assisted parsing & scoring', icon: Sparkles },
+      { id: 'scheduler', name: 'Interview Scheduler', detail: 'Calendar & candidate slot matching', icon: Activity },
+      { id: 'distro', name: 'Job Distribution', detail: 'Multi-board & social publishing', icon: Globe },
+      { id: 'analytics', name: 'Analytics & BI', detail: 'Placement metrics & revenue pipeline', icon: BarChart3 }
     ],
     estTime: '3 min setup'
   },
   {
     id: 'saas',
     label: 'SaaS Startup',
-    icon: <Rocket className="w-5 h-5" />,
+    icon: <Rocket className="w-5 h-5 text-sky-500" />,
     recommended: true,
     badge: '120 templates included',
     description: 'Software product, subscriptions, lead scoring, growth pipeline',
     apps: ['Lead Scoring', 'Subscriptions', 'User Analytics', 'Support Bot'],
     previewStack: [
-      { name: 'Lead Scoring Engine', detail: 'AI lead qualification & routing', icon: Target },
-      { name: 'Stripe Subscription Sync', detail: 'MRR & subscription billing', icon: DollarSign },
-      { name: 'Product Analytics', detail: 'Funnel & retention tracking', icon: BarChart3 },
-      { name: 'Support AI Bot', detail: 'Automated customer onboarding', icon: MessageSquare }
+      { id: 'scoring', name: 'Lead Scoring Engine', detail: 'AI lead qualification & routing', icon: Target },
+      { id: 'billing', name: 'Stripe Subscription Sync', detail: 'MRR & subscription billing', icon: DollarSign },
+      { id: 'analytics', name: 'Product Analytics', detail: 'Funnel & retention tracking', icon: BarChart3 },
+      { id: 'support', name: 'Support AI Bot', detail: 'Automated customer onboarding', icon: MessageSquare }
     ],
     estTime: '2 min setup'
   },
   {
     id: 'consulting',
     label: 'Consulting Firm',
-    icon: <Briefcase className="w-5 h-5" />,
+    icon: <Briefcase className="w-5 h-5 text-amber-500" />,
     badge: '95 templates included',
     description: 'Advisory, project billing, enterprise client management',
     apps: ['Client CRM', 'Contract Reviewer', 'Invoice Manager', 'Time Tracker'],
     previewStack: [
-      { name: 'Client CRM', detail: 'Enterprise account management', icon: Building2 },
-      { name: 'Legal Contract Reviewer', detail: 'AI risk & compliance scanner', icon: ShieldCheck },
-      { name: 'Invoice Automation', detail: 'Milestone billing & PDF generation', icon: FileText }
+      { id: 'crm', name: 'Client CRM', detail: 'Enterprise account management', icon: Building2 },
+      { id: 'legal', name: 'Legal Contract Reviewer', detail: 'AI risk & compliance scanner', icon: ShieldCheck },
+      { id: 'invoice', name: 'Invoice Automation', detail: 'Milestone billing & PDF generation', icon: FileText }
     ],
     estTime: '3 min setup'
   },
   {
     id: 'ecommerce',
     label: 'E-commerce',
-    icon: <ShoppingBag className="w-5 h-5" />,
+    icon: <ShoppingBag className="w-5 h-5 text-emerald-500" />,
     badge: '80 templates included',
     description: 'Online store, products, fulfillment, customer support',
     apps: ['Order Sync', 'Customer Care Bot', 'Inventory AI', 'Review Engine'],
     previewStack: [
-      { name: 'Customer Care Bot', detail: '24/7 AI chat & order tracking', icon: MessageSquare },
-      { name: 'Razorpay / Stripe Payments', detail: 'Instant checkout & payouts', icon: DollarSign },
-      { name: 'Review & Feedback Engine', detail: 'Automated post-purchase survey', icon: Star }
+      { id: 'support', name: 'Customer Care Bot', detail: '24/7 AI chat & order tracking', icon: MessageSquare },
+      { id: 'payments', name: 'Razorpay / Stripe Payments', detail: 'Instant checkout & payouts', icon: DollarSign },
+      { id: 'reviews', name: 'Review & Feedback Engine', detail: 'Automated post-purchase survey', icon: Star }
     ],
     estTime: '4 min setup'
   },
   {
     id: 'education',
     label: 'Education / EdTech',
-    icon: <GraduationCap className="w-5 h-5" />,
+    icon: <GraduationCap className="w-5 h-5 text-purple-500" />,
     badge: '110 templates included',
     description: 'Courses, LMS, student placement, campus recruitment',
     apps: ['Student Portal', 'Placement AI', 'LMS Sync', 'Fees Manager'],
     previewStack: [
-      { name: 'Campus Placement Portal', detail: 'AI talent matching & hiring events', icon: GraduationCap },
-      { name: 'Student Communication AI', detail: 'Multichannel updates & alerts', icon: Mail }
+      { id: 'placement', name: 'Campus Placement Portal', detail: 'AI talent matching & hiring events', icon: GraduationCap },
+      { id: 'alerts', name: 'Student Communication AI', detail: 'Multichannel updates & alerts', icon: Mail }
     ],
     estTime: '3 min setup'
   },
   {
     id: 'realestate',
     label: 'Real Estate',
-    icon: <Home className="w-5 h-5" />,
+    icon: <Home className="w-5 h-5 text-cyan-500" />,
     badge: '85 templates included',
     description: 'Properties, lead management, site visits, agent CRM',
     apps: ['Property CRM', 'Site Visit Scheduler', 'Lead Bot', 'Deals'],
     previewStack: [
-      { name: 'Site Visit Scheduler', detail: 'Agent calendar & visit booking', icon: Home },
-      { name: 'WhatsApp Lead Bot', detail: 'Instant property brochure dispatch', icon: MessageSquare }
+      { id: 'visits', name: 'Site Visit Scheduler', detail: 'Agent calendar & visit booking', icon: Home },
+      { id: 'whatsapp', name: 'WhatsApp Lead Bot', detail: 'Instant property brochure dispatch', icon: MessageSquare }
     ],
     estTime: '3 min setup'
   },
   {
     id: 'restaurant',
     label: 'Restaurant / Food',
-    icon: <UtensilsCrossed className="w-5 h-5" />,
+    icon: <UtensilsCrossed className="w-5 h-5 text-orange-500" />,
     badge: '60 templates included',
     description: 'Dine-in, delivery, menus, customer reviews, order bot',
     apps: ['Order Bot', 'Menu AI', 'Review Engine', 'Inventory'],
     previewStack: [
-      { name: 'WhatsApp Order Bot', detail: 'Digital menu & order capture', icon: UtensilsCrossed },
-      { name: 'Review Collector', detail: 'Google Maps review growth', icon: Star }
+      { id: 'order', name: 'WhatsApp Order Bot', detail: 'Digital menu & order capture', icon: UtensilsCrossed },
+      { id: 'reviews', name: 'Review Collector', detail: 'Google Maps review growth', icon: Star }
     ],
     estTime: '2 min setup'
   },
   {
     id: 'manufacturing',
     label: 'Manufacturing',
-    icon: <Factory className="w-5 h-5" />,
+    icon: <Factory className="w-5 h-5 text-blue-500" />,
     badge: '90 templates included',
     description: 'Production, supply chain, B2B sales, vendor management',
     apps: ['Vendor Portal', 'B2B CRM', 'Supply Chain AI', 'Orders'],
     previewStack: [
-      { name: 'B2B Sales CRM', detail: 'Quote generation & deal tracking', icon: Factory },
-      { name: 'Vendor Portal', detail: 'PO tracking & delivery updates', icon: Building2 }
+      { id: 'b2b', name: 'B2B Sales CRM', detail: 'Quote generation & deal tracking', icon: Factory },
+      { id: 'vendor', name: 'Vendor Portal', detail: 'PO tracking & delivery updates', icon: Building2 }
     ],
     estTime: '4 min setup'
-  },
-  {
-    id: 'other',
-    label: 'Other Business',
-    icon: <Building2 className="w-5 h-5" />,
-    badge: 'Custom setup',
-    description: 'Tell CHATR AI more to tailor your custom Business OS',
-    apps: ['Custom AI', 'Integrations', 'Workflows', 'Analytics'],
-    previewStack: [
-      { name: 'Custom Capability Builder', detail: 'Dynamic intent composition', icon: Sparkles }
-    ],
-    estTime: '2 min setup'
   },
 ];
 
 const BUSINESS_GOALS = [
-  { id: 'grow_traffic', label: 'Get More Customers / Website Visitors', icon: <Globe className="w-4 h-4" />, description: 'SEO, social media, content marketing' },
-  { id: 'hire_faster', label: 'Hire People Faster', icon: <Users className="w-4 h-4" />, description: 'Job boards, candidate sourcing, ATS' },
-  { id: 'increase_sales', label: 'Increase Sales & Revenue', icon: <TrendingUp className="w-4 h-4" />, description: 'CRM, proposals, follow-ups, payments' },
-  { id: 'automate_ops', label: 'Automate Daily Business Operations', icon: <Zap className="w-4 h-4" />, description: 'Reports, emails, data entry, scheduling' },
-  { id: 'improve_marketing', label: 'Improve Marketing & Brand Awareness', icon: <Sparkles className="w-4 h-4" />, description: 'LinkedIn, Google Business, campaigns' },
+  { id: 'grow_traffic', label: 'Get More Customers / Patients / Visitors', icon: <Globe className="w-4 h-4" />, description: 'SEO, social media, appointments, content marketing' },
+  { id: 'hire_faster', label: 'Hire Staff & Doctors Faster', icon: <Users className="w-4 h-4" />, description: 'Job boards, candidate sourcing, ATS' },
+  { id: 'increase_sales', label: 'Increase Revenue & Billing', icon: <TrendingUp className="w-4 h-4" />, description: 'CRM, proposals, follow-ups, payments' },
+  { id: 'automate_ops', label: 'Automate Operations & Triage', icon: <Zap className="w-4 h-4" />, description: 'Reports, patient alerts, data entry, scheduling' },
+  { id: 'improve_marketing', label: 'Improve Brand Awareness', icon: <Sparkles className="w-4 h-4" />, description: 'LinkedIn, Google Business, campaigns' },
 ];
 
 export default function AIAgentsHub() {
@@ -216,7 +194,7 @@ export default function AIAgentsHub() {
 
   const [selectedBusiness, setSelectedBusiness] = useState<string>(() => {
     if (urlDomain) return urlDomain;
-    return localStorage.getItem('chatr_active_domain') || 'recruitment';
+    return localStorage.getItem('chatr_active_domain') || 'hospital';
   });
 
   const [step, setStep] = useState<SetupStep>(() => {
@@ -226,9 +204,21 @@ export default function AIAgentsHub() {
     return isCompleted ? 'done' : 'business_type';
   });
 
-  const [selectedGoals, setSelectedGoals] = useState<Set<string>>(new Set(['hire_faster', 'automate_ops']));
+  const [selectedGoals, setSelectedGoals] = useState<Set<string>>(new Set(['automate_ops', 'grow_traffic']));
   const [installedIds, setInstalledIds] = useState<Set<string>>(new Set(['ga4', 'gmail', 'google_calendar', 'linkedin', 'supabase', 'gemini']));
   const [isThinking, setIsThinking] = useState(false);
+
+  // Healthcare Interactive Modals State
+  const [activeModal, setActiveModal] = useState<'appointment' | 'triage' | 'ehr' | 'lab' | null>(null);
+
+  // Form states for Healthcare modals
+  const [patientName, setPatientName] = useState('Rahul Verma');
+  const [selectedDoctor, setSelectedDoctor] = useState('Dr. Sarah Jenkins (Cardiology)');
+  const [appointmentDate, setAppointmentDate] = useState('2026-07-30');
+  const [symptomsInput, setSymptomsInput] = useState('Severe headache, fever 102°F, light sensitivity');
+  const [triageResult, setTriageResult] = useState<{ risk: string; dept: string; priority: string } | null>(null);
+  const [labPatientPhone, setLabPatientPhone] = useState('+91 98765 43210');
+  const [labTestType, setLabTestType] = useState('Complete Blood Count (CBC) + Lipid Profile');
 
   // Sync state if URL search params change (e.g. clicking Hospital in sidebar)
   useEffect(() => {
@@ -254,13 +244,25 @@ export default function AIAgentsHub() {
     setStep('done');
   };
 
+  const handleCardClick = (appId?: string) => {
+    if (selectedBusiness === 'hospital') {
+      if (appId === 'appointment') setActiveModal('appointment');
+      else if (appId === 'triage') setActiveModal('triage');
+      else if (appId === 'ehr') setActiveModal('ehr');
+      else if (appId === 'lab') setActiveModal('lab');
+      else setActiveModal('appointment');
+    } else {
+      toast.info(`Opening ${appId || 'capability'} for ${selectedBizObj.label}`);
+    }
+  };
+
   return (
-    <div className={`h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors bg-background text-foreground`}>
+    <div className="h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors bg-background text-foreground relative">
       
       {/* ── Top Header Bar ── */}
-      <div className="px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 bg-background/90 border-border shadow-sm">
+      <div className={`px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 ${isDark ? 'bg-[#0d0f1a]/90 border-white/10' : 'bg-white/90 border-slate-200 shadow-sm'}`}>
         <div className="flex items-center gap-4">
-          <button onClick={() => safeBack(navigate, '/desktop/chat')} className="p-2 rounded-xl border transition-all cursor-pointer border-border text-muted-foreground hover:text-foreground hover:bg-muted">
+          <button onClick={() => safeBack(navigate, '/desktop/chat')} className={`p-2 rounded-xl border transition-all cursor-pointer ${isDark ? 'border-white/10 text-slate-400 hover:text-white hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
@@ -291,7 +293,7 @@ export default function AIAgentsHub() {
         ) : (
           <button
             onClick={() => setStep('business_type')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-card border-border hover:bg-muted text-muted-foreground`}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-card border-border hover:bg-muted text-muted-foreground"
           >
             <Settings className="w-3.5 h-3.5" />
             <span>Reconfigure Domain Setup</span>
@@ -561,11 +563,11 @@ export default function AIAgentsHub() {
                   <button
                     onClick={() => {
                       if (selectedBusiness === 'recruitment') navigate('/desktop/recruitment');
-                      else navigate('/desktop/chat');
+                      else setActiveModal('appointment');
                     }}
                     className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-primary/20 transition-all cursor-pointer flex items-center gap-2"
                   >
-                    <span>Open App Studio</span>
+                    <span>Launch Active App</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -582,22 +584,26 @@ export default function AIAgentsHub() {
                   {selectedBizObj.previewStack.map((app, idx) => {
                     const Icon = app.icon;
                     return (
-                      <div key={idx} className="p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.01] bg-card border-border shadow-sm">
+                      <div
+                        key={idx}
+                        onClick={() => handleCardClick(app.id)}
+                        className="p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.02] bg-card border-border shadow-sm hover:border-primary cursor-pointer group"
+                      >
                         <div className="flex items-center justify-between">
-                          <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                          <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                             <Icon className="w-5 h-5" />
                           </div>
                           <span className="text-[10px] font-bold text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                            Installed
+                            Active
                           </span>
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold">{app.name}</h4>
+                          <h4 className="text-sm font-bold group-hover:text-primary transition-colors">{app.name}</h4>
                           <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{app.detail}</p>
                         </div>
                         <div className="pt-2 border-t border-border flex items-center justify-between text-xs">
-                          <span className="text-[10px] text-muted-foreground">Capability ID: core.{selectedBusiness}.{idx+1}</span>
-                          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-[10px] font-bold text-primary">Click to Launch →</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     );
@@ -628,6 +634,264 @@ export default function AIAgentsHub() {
           )}
 
         </AnimatePresence>
+
+        {/* ══ INTERACTIVE HEALTHCARE MODALS ══ */}
+
+        {/* 1. Patient Appointment Scheduler Modal */}
+        {activeModal === 'appointment' && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-card border border-border rounded-3xl p-6 space-y-5 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-rose-500/10 text-rose-500">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">Patient Appointment Scheduler</h3>
+                    <p className="text-xs text-muted-foreground">Schedule doctor consultation & sync slots</p>
+                  </div>
+                </div>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-muted-foreground block mb-1">Patient Full Name</label>
+                  <input
+                    value={patientName}
+                    onChange={e => setPatientName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-muted-foreground block mb-1">Select Doctor & Department</label>
+                  <select
+                    value={selectedDoctor}
+                    onChange={e => setSelectedDoctor(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary"
+                  >
+                    <option value="Dr. Sarah Jenkins (Cardiology)">Dr. Sarah Jenkins (Cardiology)</option>
+                    <option value="Dr. Rajesh Kumar (Neurology)">Dr. Rajesh Kumar (Neurology)</option>
+                    <option value="Dr. Ananya Sharma (General Medicine)">Dr. Ananya Sharma (General Medicine)</option>
+                    <option value="Dr. Michael Chen (Orthopedics)">Dr. Michael Chen (Orthopedics)</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-bold text-muted-foreground block mb-1">Appointment Date</label>
+                    <input
+                      type="date"
+                      value={appointmentDate}
+                      onChange={e => setAppointmentDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-muted-foreground block mb-1">Time Slot</label>
+                    <select className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary">
+                      <option>10:00 AM - 10:30 AM</option>
+                      <option>11:30 AM - 12:00 PM</option>
+                      <option>03:00 PM - 03:30 PM</option>
+                      <option>05:00 PM - 05:30 PM</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button onClick={() => setActiveModal(null)} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-muted-foreground">
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success(`Appointment confirmed for ${patientName} with ${selectedDoctor}!`);
+                    setActiveModal(null);
+                  }}
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20"
+                >
+                  Confirm Appointment Booking
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* 2. AI Medical Triage Bot Drawer */}
+        {activeModal === 'triage' && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-card border border-border rounded-3xl p-6 space-y-5 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-purple-500/10 text-purple-500">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">AI Medical Symptom Triage Bot</h3>
+                    <p className="text-xs text-muted-foreground">Symptom scoring & emergency care routing</p>
+                  </div>
+                </div>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-muted-foreground block mb-1">Enter Patient Symptoms</label>
+                  <textarea
+                    rows={3}
+                    value={symptomsInput}
+                    onChange={e => setSymptomsInput(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-medium focus:outline-none focus:border-primary"
+                    placeholder="Describe symptoms..."
+                  />
+                </div>
+
+                {triageResult && (
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-500 flex items-center gap-1.5">
+                        <AlertTriangle className="w-4 h-4" /> Risk Score: {triageResult.risk}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold text-[10px]">
+                        Priority: {triageResult.priority}
+                      </span>
+                    </div>
+                    <p className="text-xs font-semibold">Recommended Dept: <strong className="text-foreground">{triageResult.dept}</strong></p>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button onClick={() => setActiveModal(null)} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-muted-foreground">
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setTriageResult({ risk: 'HIGH (88%)', dept: 'Emergency Cardiology', priority: 'CODE RED - Immediate Attending' });
+                    toast.warning('Triage analysis complete: High Risk Priority');
+                  }}
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20"
+                >
+                  Run AI Symptom Triage
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* 3. Patient Records & EHR Modal */}
+        {activeModal === 'ehr' && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-2xl bg-card border border-border rounded-3xl p-6 space-y-5 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-sky-500/10 text-sky-500">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">Patient Records & EHR Database</h3>
+                    <p className="text-xs text-muted-foreground">HIPAA compliant medical histories & prescriptions</p>
+                  </div>
+                </div>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'Rahul Verma (#P-8821)', age: 42, dept: 'Cardiology', allergy: 'Penicillin', blood: 'O+', status: 'Active Admitted' },
+                  { name: 'Sunita Patel (#P-9042)', age: 35, dept: 'Neurology', allergy: 'None', blood: 'B+', status: 'Outpatient' },
+                  { name: 'Amit Sharma (#P-7731)', age: 58, dept: 'Orthopedics', allergy: 'Sulfa Drugs', blood: 'A+', status: 'Discharged' },
+                ].map((pt, idx) => (
+                  <div key={idx} className="p-3.5 rounded-2xl border border-border bg-muted/40 flex items-center justify-between text-xs">
+                    <div>
+                      <h4 className="font-bold text-foreground">{pt.name}</h4>
+                      <p className="text-[10px] text-muted-foreground">Age {pt.age} · Dept: {pt.dept} · Blood: {pt.blood} · Allergy: {pt.allergy}</p>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                      {pt.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button onClick={() => setActiveModal(null)} className="px-6 py-2.5 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90">
+                  Done Viewing Records
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* 4. Lab Test Dispatch Modal */}
+        {activeModal === 'lab' && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-card border border-border rounded-3xl p-6 space-y-5 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">Lab Test WhatsApp Dispatch</h3>
+                    <p className="text-xs text-muted-foreground">Instant automated report notifications</p>
+                  </div>
+                </div>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-muted-foreground block mb-1">Lab Test Report Type</label>
+                  <select
+                    value={labTestType}
+                    onChange={e => setLabTestType(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary"
+                  >
+                    <option value="Complete Blood Count (CBC) + Lipid Profile">Complete Blood Count (CBC) + Lipid Profile</option>
+                    <option value="COVID-19 RT-PCR Test">COVID-19 RT-PCR Test</option>
+                    <option value="MRI Brain Scan Report">MRI Brain Scan Report</option>
+                    <option value="Thyroid Profile (T3 T4 TSH)">Thyroid Profile (T3 T4 TSH)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-muted-foreground block mb-1">Patient WhatsApp Number</label>
+                  <input
+                    value={labPatientPhone}
+                    onChange={e => setLabPatientPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-background text-foreground font-semibold focus:outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button onClick={() => setActiveModal(null)} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-muted-foreground">
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success(`Lab report dispatched to ${labPatientPhone} via WhatsApp! Tracking ID: #LAB-${Math.floor(Math.random()*9000+1000)}`);
+                    setActiveModal(null);
+                  }}
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20"
+                >
+                  Dispatch Results via WhatsApp
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -25,6 +25,15 @@ export interface InstalledModule {
 const CACHE_KEY = 'chatr_installed_modules_cache';
 
 function fromRow(row: any): InstalledModule {
+  let path = row.workspace_path;
+  if (
+    row.capability_id === 'hospital' ||
+    row.capability_id?.toLowerCase().includes('hospital') ||
+    row.capability_name?.toLowerCase().includes('hospital')
+  ) {
+    path = '/desktop/ai-agents?domain=hospital';
+  }
+
   return {
     id:           row.id,
     capabilityId: row.capability_id,
@@ -34,7 +43,7 @@ function fromRow(row: any): InstalledModule {
                     .replace(/ Workspace$/, '')
                     .replace(/ Agency$/, ''),
     icon:         row.icon_name ?? 'Bot',
-    path:         row.workspace_path,
+    path,
     color:        row.color ?? 'indigo',
     structure:    Array.isArray(row.structure)
                     ? row.structure
