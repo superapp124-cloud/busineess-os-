@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, Star, CheckCircle, Code, TrendingUp, Users, FileText, Zap,
+  Search, CheckCircle, Code, TrendingUp, Users, FileText, Zap,
   Globe, Database, Shield, ArrowRight, X, Building2, Phone,
   ChevronRight, Lock, Clock, IndianRupee, Layers, Bot, Mail, BarChart2,
   UserCheck, Plane, HeartPulse, Scale, Store, Cpu, BadgeCheck,
   Workflow, PlusCircle, Loader2, Sparkles, Send, FolderKanban,
   LayoutDashboard, Inbox, Calendar, GitBranch, BarChart, Settings,
-  Slack, Github, ChevronDown, AlertCircle, Package, Activity
+  Slack, Github, ChevronDown, AlertCircle, Package, Activity, Trash2
 } from 'lucide-react';
 import { useInstalledModules, InstalledModule } from '@/hooks/useInstalledModules';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,8 +24,6 @@ interface IntentCapability {
   name: string;
   creator: string;
   description: string;
-  rating: number;
-  reviews: number;
   category: string;
   priceModel: PriceModel;
   priceLabel: string;
@@ -52,7 +50,7 @@ const AGENTS: IntentCapability[] = [
     id: 'a1', moduleId: 'recruitment', moduleColor: 'blue', moduleLucideIcon: 'Users',
     name: 'RecruitmentOS Agent', creator: 'CHATR Core',
     description: 'End-to-end talent acquisition. Sources candidates from LinkedIn & GitHub, runs AI screening, schedules interviews and drafts offer letters.',
-    rating: 4.9, reviews: 1248, category: 'HR & Recruitment', priceModel: 'Free', priceLabel: 'Free',
+    category: 'HR & Recruitment', priceModel: 'Free', priceLabel: 'Free',
     icon: <Users className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
     estimatedTime: '2–10 min/task', permissions: ['Calendar', 'Email', 'LinkedIn', 'Files'],
@@ -82,7 +80,7 @@ const AGENTS: IntentCapability[] = [
     id: 'a2', moduleId: 'legal', moduleColor: 'slate', moduleLucideIcon: 'Scale',
     name: 'Legal Contract Reviewer', creator: 'LexAI Partners',
     description: 'Reads NDAs, MSAs and employment contracts. Highlights liabilities, non-standard clauses and risk areas.',
-    rating: 4.7, reviews: 892, category: 'Legal', priceModel: 'Premium', priceLabel: '₹4,999/mo',
+    category: 'Legal', priceModel: 'Premium', priceLabel: '₹4,999/mo',
     icon: <Scale className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet',
     estimatedTime: '3–8 min/contract', permissions: ['Documents', 'Files'],
@@ -104,7 +102,7 @@ const AGENTS: IntentCapability[] = [
     id: 'a3', moduleId: 'sales', moduleColor: 'emerald', moduleLucideIcon: 'TrendingUp',
     name: 'Sales Intelligence Agent', creator: 'CHATR Core',
     description: 'Analyzes your CRM pipeline, identifies warm leads, drafts outreach sequences and surfaces deal-winning intelligence.',
-    rating: 4.8, reviews: 673, category: 'Sales', priceModel: 'Premium', priceLabel: '₹3,499/mo',
+    category: 'Sales', priceModel: 'Premium', priceLabel: '₹3,499/mo',
     icon: <TrendingUp className="w-6 h-6" />, verified: true,
     privacyLevel: 'Standard', dataResidency: 'Global', aiModel: 'GPT-4o',
     estimatedTime: '1–3 min/lead', permissions: ['CRM', 'Email', 'Calendar'],
@@ -128,7 +126,7 @@ const AGENTS: IntentCapability[] = [
     id: 'a4', moduleId: 'finance', moduleColor: 'amber', moduleLucideIcon: 'IndianRupee',
     name: 'Finance & Accounting Agent', creator: 'CHATR Core',
     description: 'Automates invoice processing, GST reminders, expense approvals and financial reporting.',
-    rating: 4.8, reviews: 521, category: 'Finance', priceModel: 'Free', priceLabel: 'Free',
+    category: 'Finance', priceModel: 'Free', priceLabel: 'Free',
     icon: <IndianRupee className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Gemini 1.5 Flash',
     estimatedTime: '1–5 min/invoice', permissions: ['Finance', 'Email', 'Files'],
@@ -151,7 +149,7 @@ const AGENTS: IntentCapability[] = [
     id: 'a5', moduleId: 'healthcare', moduleColor: 'red', moduleLucideIcon: 'HeartPulse',
     name: 'Medical Triage Assistant', creator: 'HealthTech Solutions',
     description: 'HIPAA-compliant agent that conducts preliminary patient symptom screening, routes cases by urgency and updates EMR systems.',
-    rating: 4.6, reviews: 334, category: 'Healthcare', priceModel: 'Pay-per-use', priceLabel: '₹50/session',
+    category: 'Healthcare', priceModel: 'Pay-per-use', priceLabel: '₹50/session',
     icon: <HeartPulse className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM',
     estimatedTime: '3–5 min/patient', permissions: ['Patient Records', 'Messaging'],
@@ -176,7 +174,7 @@ const TEMPLATES: IntentCapability[] = [
     id: 't1', moduleId: 'startup', moduleColor: 'violet', moduleLucideIcon: 'Zap',
     name: 'Startup Workspace', creator: 'CHATR Core',
     description: 'Everything a startup needs from day one. CRM, recruitment, finance, project management and AI tools — deployed in 5 minutes.',
-    rating: 4.9, reviews: 2100, category: 'Startup', priceModel: 'Free', priceLabel: 'Free',
+    category: 'Startup', priceModel: 'Free', priceLabel: 'Free',
     icon: <Zap className="w-6 h-6" />, verified: true,
     privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple',
     estimatedTime: 'Deploy in 5 min', permissions: ['Email', 'Calendar', 'CRM'],
@@ -206,7 +204,7 @@ const TEMPLATES: IntentCapability[] = [
     id: 't2', moduleId: 'lawfirm', moduleColor: 'slate', moduleLucideIcon: 'Scale',
     name: 'Law Firm OS', creator: 'LexAI Partners',
     description: 'Complete legal operations. Contract review, client intake, billing, compliance and matter management — live in 30 minutes.',
-    rating: 4.8, reviews: 543, category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo',
+    category: 'Legal', priceModel: 'Enterprise', priceLabel: 'From ₹24,999/mo',
     icon: <Scale className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Claude 3.5 Sonnet',
     estimatedTime: 'Deploy in 30 min', permissions: ['Files', 'Email', 'Billing'],
@@ -235,7 +233,7 @@ const TEMPLATES: IntentCapability[] = [
     id: 't3', moduleId: 'recruitment-agency', moduleColor: 'blue', moduleLucideIcon: 'Users',
     name: 'Recruitment Agency', creator: 'CHATR Core',
     description: 'Full-stack ATS, candidate pipeline, client management and revenue tracking for recruitment agencies.',
-    rating: 4.9, reviews: 876, category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo',
+    category: 'HR', priceModel: 'Premium', priceLabel: '₹12,999/mo',
     icon: <Users className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
     estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'],
@@ -261,7 +259,7 @@ const TEMPLATES: IntentCapability[] = [
     id: 't4', moduleId: 'hospital', moduleColor: 'red', moduleLucideIcon: 'HeartPulse',
     name: 'Hospital OS', creator: 'HealthTech Solutions',
     description: 'HIPAA-compliant hospital workspace. Patient intake, triage, appointment scheduling and EMR integration.',
-    rating: 4.7, reviews: 312, category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
+    category: 'Healthcare', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
     icon: <HeartPulse className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India Only', aiModel: 'Custom Medical LLM',
     estimatedTime: 'Deploy in 2 hrs', permissions: ['Patient Records', 'Messaging', 'EMR'],
@@ -289,7 +287,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c1', moduleId: 'gmail', moduleColor: 'red', moduleLucideIcon: 'Mail',
     name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies and trigger workflows on email events.',
-    rating: 4.9, reviews: 15400, category: 'Email', priceModel: 'Free', priceLabel: 'Free',
+    category: 'Email', priceModel: 'Free', priceLabel: 'Free',
     icon: <Mail className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'],
     deploySteps: [
@@ -307,7 +305,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c2', moduleId: 'slack', moduleColor: 'green', moduleLucideIcon: 'Slack',
     name: 'Slack', creator: 'Salesforce', description: 'Post alerts, receive commands and sync workspace activity to Slack channels.',
-    rating: 4.8, reviews: 9800, category: 'Messaging', priceModel: 'Free', priceLabel: 'Free',
+    category: 'Messaging', priceModel: 'Free', priceLabel: 'Free',
     icon: <Slack className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Slack OAuth'], tags: ['Messaging', 'Slack'],
     deploySteps: [
@@ -321,7 +319,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c3', moduleId: 'github', moduleColor: 'slate', moduleLucideIcon: 'Github',
     name: 'GitHub', creator: 'Microsoft', description: 'Trigger agents on PR events, review code and sync issues to your workspace.',
-    rating: 4.7, reviews: 6200, category: 'Engineering', priceModel: 'Free', priceLabel: 'Free',
+    category: 'Engineering', priceModel: 'Free', priceLabel: 'Free',
     icon: <Github className="w-6 h-6" />, verified: true, privacyLevel: 'Standard', dataResidency: 'US',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['GitHub OAuth'], tags: ['Engineering', 'GitHub'],
     deploySteps: [
@@ -335,7 +333,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c4', moduleId: 'salesforce', moduleColor: 'blue', moduleLucideIcon: 'Database',
     name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.',
-    rating: 4.6, reviews: 4100, category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo',
+    category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo',
     icon: <Database className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN',
     aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'],
     deploySteps: [
@@ -349,7 +347,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c5', moduleId: 'whatsapp', moduleColor: 'green', moduleLucideIcon: 'Phone',
     name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages and route customer queries to the right agent.',
-    rating: 4.8, reviews: 8700, category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/msg',
+    category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/msg',
     icon: <Phone className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'India',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'],
     deploySteps: [
@@ -363,7 +361,7 @@ const CONNECTORS: IntentCapability[] = [
   {
     id: 'c6', moduleId: 'sap', moduleColor: 'orange', moduleLucideIcon: 'Building2',
     name: 'SAP ERP', creator: 'SAP SE', description: 'Connect financial, HR and supply chain data from SAP to your Intent OS workspace.',
-    rating: 4.5, reviews: 1200, category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
+    category: 'ERP', priceModel: 'Enterprise', priceLabel: 'Contact Sales',
     icon: <Building2 className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'On-Premise / EU',
     aiModel: 'N/A', estimatedTime: 'Batch / Real-time', permissions: ['SAP API Key'], tags: ['ERP', 'SAP'],
     deploySteps: [
@@ -374,18 +372,6 @@ const CONNECTORS: IntentCapability[] = [
     workspaceStructure: [{ icon: <Database className="w-3.5 h-3.5" />, label: 'SAP Bridge' }],
     workspacePath: '/desktop/business-os',
   },
-];
-
-const ALL_ITEMS = { agents: AGENTS, templates: TEMPLATES, connectors: CONNECTORS };
-
-/* ─── AI Deployment Assistant ────────────────────────────────────────── */
-
-const EXAMPLES = [
-  'I want to start a recruitment agency.',
-  'I need a CRM for 50 salespeople.',
-  'Set up a law firm workspace.',
-  'Create a hospital management system.',
-  'Build a startup OS from scratch.',
 ];
 
 const INTENT_MAP: Record<string, string[]> = {
@@ -417,7 +403,7 @@ function resolveIntent(query: string): IntentCapability[] {
   for (const [key, capIds] of Object.entries(INTENT_MAP)) {
     if (q.includes(key)) capIds.forEach(id => ids.add(id));
   }
-  if (ids.size === 0) return [AGENTS[0], TEMPLATES[0]]; // default recommendations
+  if (ids.size === 0) return [AGENTS[0], TEMPLATES[0]];
   const all = [...AGENTS, ...TEMPLATES, ...CONNECTORS];
   return Array.from(ids).map(id => all.find(c => c.id === id)!).filter(Boolean).slice(0, 4);
 }
@@ -443,7 +429,6 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
   return (
     <div className="relative rounded-3xl overflow-hidden p-7"
       style={{ background: 'linear-gradient(135deg, #0f0a2a 0%, #0a0d20 50%, #060a1a 100%)', border: '1px solid rgba(99,102,241,0.2)' }}>
-      {/* Background glows */}
       <div className="absolute -top-12 -left-12 w-72 h-72 bg-violet-600/15 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute -bottom-12 right-0 w-72 h-72 bg-indigo-600/10 rounded-full blur-[60px] pointer-events-none" />
 
@@ -457,7 +442,6 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
         </div>
         <p className="text-sm text-white/40 mb-5">Describe what you want to build. I'll recommend and deploy the right capabilities.</p>
 
-        {/* Input */}
         <div className="flex gap-2 mb-4">
           <div className="flex-1 relative">
             <input
@@ -480,7 +464,6 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
           </button>
         </div>
 
-        {/* Example prompts */}
         {!showResults && (
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map((ex, i) => (
@@ -492,7 +475,6 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
           </div>
         )}
 
-        {/* Results */}
         {showResults && results.length > 0 && (
           <div className="mt-4">
             <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Recommended for you</p>
@@ -519,281 +501,121 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
   );
 };
 
-/* ─── Deploy Modal ─────────────────────────────────────────────────────── */
+/* ─── Config Modal ─────────────────────────────────────────────────── */
 
-const DeployModal: React.FC<{
-  item: IntentCapability;
+const ConfigModal: React.FC<{
+  capabilityId: string;
+  capabilityName: string;
   onClose: () => void;
-}> = ({ item, onClose }) => {
-  const navigate = useNavigate();
-  const { installModule } = useInstalledModules();
-  const [phase, setPhase] = useState<'preview' | 'deploying' | 'done' | 'error'>('preview');
-  const [currentStep, setCurrentStep] = useState(-1);
-  const [deployError, setDeployError] = useState<string | null>(null);
+}> = ({ capabilityId, capabilityName, onClose }) => {
+  const [aiModel, setAiModel] = useState<string>('Gemini 1.5 Pro');
+  const [privacy, setPrivacy] = useState<string>('High');
+  const [residency, setResidency] = useState<string>('India / EU');
+  const [notifications, setNotifications] = useState<boolean>(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const startDeploy = useCallback(async () => {
-    setPhase('deploying');
-    setCurrentStep(0);
-    setDeployError(null);
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('user_capability_installs')
+        .select('config')
+        .eq('user_id', user.id)
+        .eq('capability_id', capabilityId)
+        .maybeSingle();
 
-    const totalSteps = item.deploySteps.length;
-    const stepDuration = 900; // ms per visual step
+      if (data?.config && typeof data.config === 'object') {
+        const cfg = data.config as Record<string, any>;
+        if (cfg.aiModel) setAiModel(cfg.aiModel);
+        if (cfg.privacy) setPrivacy(cfg.privacy);
+        if (cfg.residency) setResidency(cfg.residency);
+        if (typeof cfg.notifications === 'boolean') setNotifications(cfg.notifications);
+      }
+    })();
+  }, [capabilityId]);
 
-    // Animate through all steps visually
-    for (let i = 0; i < totalSteps - 1; i++) {
-      await new Promise<void>(resolve => setTimeout(resolve, stepDuration));
-      setCurrentStep(i + 1);
-    }
-
-    // Final step — call the real Supabase RPC
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      await deployCapability({
-        capabilityId:   item.moduleId,
-        capabilityName: item.name,
-        capabilityType: item.category?.toLowerCase().includes('connector')
-          ? 'connector'
-          : item.category?.toLowerCase().includes('template')
-            ? 'template'
-            : 'agent',
-        workspacePath:  item.workspacePath,
-        iconName:       item.moduleLucideIcon,
-        color:          item.moduleColor,
-        structure:      item.workspaceStructure.map(s => s.label),
-      });
-
-      // Optimistic sidebar update (realtime will confirm)
-      installModule({
-        id:           crypto.randomUUID(),
-        capabilityId: item.moduleId,
-        name:         item.name.replace(/ Agent$/, '').replace(/ OS$/, '').replace(/ Workspace$/, ''),
-        icon:         item.moduleLucideIcon,
-        path:         item.workspacePath,
-        color:        item.moduleColor,
-        structure:    item.workspaceStructure.map(s => s.label),
-        status:       'installed',
-        installedAt:  new Date().toISOString(),
-        version:      '1.0.0',
-      });
-
-      setCurrentStep(totalSteps);
-      setTimeout(() => setPhase('done'), 500);
-
-    } catch (err: any) {
-      console.error('[DeployModal] deployCapability failed:', err);
-      setDeployError(err?.message ?? 'Deployment failed. Please try again.');
-      setPhase('error');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('user_capability_installs')
+          .update({
+            config: { aiModel, privacy, residency, notifications },
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id)
+          .eq('capability_id', capabilityId);
+      }
+      setSaved(true);
+      setTimeout(() => {
+        setSaved(false);
+        onClose();
+      }, 800);
+    } catch (e) {
+      console.error('Failed to save configuration:', e);
+    } finally {
+      setSaving(false);
     }
-  }, [item, installModule]);
-
-  const handleOpen = () => {
-    onClose();
-    navigate(item.workspacePath);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={phase === 'preview' ? onClose : undefined}>
-      <div
-        className="relative w-full max-w-lg rounded-3xl border border-white/12 shadow-2xl flex flex-col overflow-hidden"
-        style={{ background: '#0d0f1a', maxHeight: '90vh' }}
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-white/5 flex-shrink-0">
-          <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 flex-shrink-0">
-            {item.icon}
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="relative w-full max-w-md rounded-3xl border border-white/12 p-6 shadow-2xl space-y-5" style={{ background: '#0d0f1a' }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="flex items-center gap-2.5">
+            <Settings className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-base font-bold text-white">Configure {capabilityName}</h2>
           </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-base font-black text-white leading-tight">{item.name}</h2>
-            <p className="text-[11px] text-slate-400">
-              {phase === 'preview' ? 'One-Click OS Deployment' : phase === 'deploying' ? 'Installing capability…' : 'Deployment Complete'}
-            </p>
-          </div>
-          {phase === 'preview' && (
-            <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors cursor-pointer flex-shrink-0">
-              <X className="w-4 h-4" />
-            </button>
-          )}
+          <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        <div className="space-y-4 text-xs">
+          <div>
+            <label className="block text-slate-400 mb-1 font-semibold uppercase tracking-wider text-[10px]">AI Reasoning Model</label>
+            <select value={aiModel} onChange={e => setAiModel(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-white outline-none">
+              <option value="Gemini 1.5 Pro" className="bg-slate-900">Gemini 1.5 Pro (Recommended)</option>
+              <option value="Claude 3.5 Sonnet" className="bg-slate-900">Claude 3.5 Sonnet</option>
+              <option value="GPT-4o" className="bg-slate-900">GPT-4o</option>
+              <option value="Local Ollama (Private)" className="bg-slate-900">Local Ollama (Private)</option>
+            </select>
+          </div>
 
-          {/* PREVIEW phase */}
-          {phase === 'preview' && (
-            <>
-              {/* What will be created */}
-              <div>
-                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">What will be created</p>
-                <div className="rounded-2xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  {item.deploySteps.map((step, i) => (
-                    <div key={i} className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0 opacity-60" />
-                      <p className="text-xs text-slate-300">{step.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <div>
+            <label className="block text-slate-400 mb-1 font-semibold uppercase tracking-wider text-[10px]">Privacy & Encryption Level</label>
+            <select value={privacy} onChange={e => setPrivacy(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-white outline-none">
+              <option value="High" className="bg-slate-900">High (End-to-End Encrypted)</option>
+              <option value="Standard" className="bg-slate-900">Standard</option>
+            </select>
+          </div>
 
-              {/* Workspace structure preview */}
-              <div>
-                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">Your new workspace</p>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-5 h-5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                      {item.icon}
-                    </div>
-                    <p className="text-xs font-bold text-white">{item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', '')}</p>
-                  </div>
-                  <div className="pl-3 border-l border-white/5 space-y-1.5 ml-2">
-                    {item.workspaceStructure.map((ws, i) => (
-                      <div key={i} className="flex items-center gap-2 text-slate-400">
-                        <span className="text-white/20 text-[10px] font-mono">├──</span>
-                        <span className="text-white/40">{ws.icon}</span>
-                        <span className="text-[11px]">{ws.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+          <div>
+            <label className="block text-slate-400 mb-1 font-semibold uppercase tracking-wider text-[10px]">Data Residency Region</label>
+            <select value={residency} onChange={e => setResidency(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-white outline-none">
+              <option value="India Only" className="bg-slate-900">India Only</option>
+              <option value="India / EU" className="bg-slate-900">India / EU</option>
+              <option value="Global" className="bg-slate-900">Global</option>
+            </select>
+          </div>
 
-              {/* Trust signals */}
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { icon: <BadgeCheck className="w-3.5 h-3.5" />, label: 'Verified by CHATR', color: 'text-emerald-400' },
-                  { icon: <Lock className="w-3.5 h-3.5" />, label: `${item.privacyLevel} Privacy`, color: 'text-slate-400' },
-                  { icon: <Globe className="w-3.5 h-3.5" />, label: item.dataResidency, color: 'text-slate-400' },
-                  { icon: <Clock className="w-3.5 h-3.5" />, label: item.estimatedTime, color: 'text-slate-400' },
-                ].map((t, i) => (
-                  <div key={i} className={`flex items-center gap-1.5 text-[10px] font-medium ${t.color}`}>
-                    {t.icon} {t.label}
-                  </div>
-                ))}
-              </div>
-
-              {/* Permissions */}
-              <div className="rounded-2xl p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Permissions Required</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {item.permissions.map(p => (
-                    <span key={p} className="text-[10px] px-2 py-0.5 rounded-full text-slate-300 border border-white/8" style={{ background: 'rgba(255,255,255,0.04)' }}>{p}</span>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* DEPLOYING phase */}
-          {phase === 'deploying' && (
-            <div className="space-y-2">
-              {item.deploySteps.map((step, i) => {
-                const isComplete = currentStep > i;
-                const isActive = currentStep === i;
-                return (
-                  <div key={i} className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all duration-400 ${
-                    isComplete ? 'border-emerald-500/25 bg-emerald-500/4' :
-                    isActive ? 'border-indigo-500/35 bg-indigo-500/6' :
-                    'border-white/4 bg-white/[0.01]'
-                  }`}>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                      isComplete ? 'bg-emerald-500/20 text-emerald-400' :
-                      isActive ? 'bg-indigo-500/20 text-indigo-400' :
-                      'bg-white/5 text-white/20'
-                    }`}>
-                      {isComplete ? <CheckCircle className="w-3 h-3" /> :
-                       isActive ? <Loader2 className="w-3 h-3 animate-spin" /> :
-                       <div className="w-1 h-1 rounded-full bg-current" />}
-                    </div>
-                    <div>
-                      <p className={`text-xs font-semibold leading-tight ${
-                        isComplete ? 'text-emerald-300' : isActive ? 'text-white' : 'text-white/20'
-                      }`}>{step.label}</p>
-                      {isActive && <p className="text-[10px] text-white/30 mt-0.5">{step.detail}</p>}
-                    </div>
-                  </div>
-                );
-              })}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5">
+            <div>
+              <p className="text-white font-semibold">Real-time Notifications</p>
+              <p className="text-slate-400 text-[10px]">Receive instant alerts on execution events</p>
             </div>
-          )}
-
-          {/* DONE phase */}
-          {phase === 'done' && (
-            <div className="flex flex-col items-center gap-5 py-3">
-              {/* Success ring */}
-              <div className="relative">
-                <div className="w-18 h-18 w-[72px] h-[72px] rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                  <CheckCircle className="w-9 h-9 text-emerald-400" />
-                </div>
-                <span className="absolute inset-0 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2s' }} />
-              </div>
-
-              <div className="text-center">
-                <h3 className="text-lg font-black text-white mb-1.5">Deployment Complete</h3>
-                <p className="text-sm text-slate-400 leading-relaxed max-w-xs mx-auto">
-                  <span className="text-white font-semibold">{item.name.replace(' Agent', '').replace(' OS', '').replace(' Workspace', '')}</span> is now part of your Intent OS.
-                </p>
-              </div>
-
-              {/* What was created summary */}
-              <div className="w-full rounded-2xl p-4" style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                <p className="text-[10px] font-black text-emerald-400/60 uppercase tracking-widest mb-3">Your new workspace</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {item.workspaceStructure.map((ws, i) => (
-                    <div key={i} className="flex items-center gap-2 text-emerald-300/80 text-[11px] font-medium">
-                      <CheckCircle className="w-3 h-3 text-emerald-500/60 flex-shrink-0" />
-                      {ws.label}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <p className="text-[10px] text-slate-500 flex items-center gap-1.5">
-                <Zap className="w-3 h-3 text-violet-400" />
-                Sidebar updated · Workflows installed · Ready to use
-              </p>
-            </div>
-          )}
+            <input type="checkbox" checked={notifications} onChange={e => setNotifications(e.target.checked)} className="w-4 h-4 accent-indigo-500 rounded cursor-pointer" />
+          </div>
         </div>
 
-        {/* Footer actions */}
-        <div className="px-6 pb-6 pt-3 border-t border-white/5 flex gap-2 flex-shrink-0">
-          {phase === 'preview' && (
-            <>
-              <button onClick={onClose} className="flex-1 py-3 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
-                Cancel
-              </button>
-              <button onClick={startDeploy}
-                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-black transition-all shadow-lg shadow-indigo-500/30 cursor-pointer flex items-center justify-center gap-2">
-                <Zap className="w-4 h-4" />
-                Deploy Now
-              </button>
-            </>
-          )}
-          {phase === 'deploying' && (
-            <div className="flex-1 py-3 rounded-2xl border border-white/5 text-center text-xs text-slate-500">
-              Deploying… do not close this window
-            </div>
-          )}
-          {phase === 'error' && (
-            <>
-              <button onClick={() => setPhase('preview')} className="py-3 px-5 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
-                Back
-              </button>
-              <button onClick={startDeploy}
-                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-sm font-black cursor-pointer flex items-center justify-center gap-2">
-                <Zap className="w-4 h-4" /> Retry
-              </button>
-            </>
-          )}
-          {phase === 'done' && (
-            <>
-              <button onClick={onClose} className="py-3 px-5 rounded-2xl border border-white/10 text-slate-400 text-sm font-semibold hover:border-white/20 hover:text-white transition-all cursor-pointer">
-                Back to Store
-              </button>
-              <button onClick={handleOpen}
-                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-black cursor-pointer hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-                Open Workspace <ArrowRight className="w-4 h-4" />
-              </button>
-            </>
-          )}
+        <div className="flex gap-2 pt-2 border-t border-white/10">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white font-semibold text-xs cursor-pointer">Cancel</button>
+          <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer">
+            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : saved ? <CheckCircle className="w-3.5 h-3.5 text-emerald-300" /> : <Settings className="w-3.5 h-3.5" />}
+            {saved ? 'Saved!' : 'Save Configuration'}
+          </button>
         </div>
       </div>
     </div>
@@ -802,7 +624,7 @@ const DeployModal: React.FC<{
 
 /* ─── Installed Tab ──────────────────────────────────────────────────── */
 
-const InstalledTab: React.FC = () => {
+const InstalledTab: React.FC<{ onConfigure: (mod: InstalledModule) => void }> = ({ onConfigure }) => {
   const navigate = useNavigate();
   const { modules, loading, uninstallModule } = useInstalledModules();
 
@@ -836,11 +658,9 @@ const InstalledTab: React.FC = () => {
       {modules.map(mod => (
         <div key={mod.capabilityId}
           className="flex items-center gap-4 p-4 rounded-2xl border border-white/7 bg-[#0e1017] hover:border-white/12 transition-all">
-          {/* Icon */}
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-base flex-shrink-0 bg-${mod.color}-500/15 text-${mod.color}-400 border border-${mod.color}-500/20`}>
             {mod.name[0]}
           </div>
-          {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
               <p className="text-sm font-bold text-white truncate">{mod.name}</p>
@@ -856,12 +676,16 @@ const InstalledTab: React.FC = () => {
               <p className="text-[10px] text-slate-600 mt-0.5 truncate">{mod.structure.slice(0, 4).join(' · ')}</p>
             )}
           </div>
-          {/* Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => navigate(mod.path)}
               className="text-[11px] px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all cursor-pointer">
-              Open
+              Open Workspace
+            </button>
+            <button
+              onClick={() => onConfigure(mod)}
+              className="text-[11px] px-3 py-1.5 rounded-xl border border-white/10 text-slate-300 hover:border-indigo-500/40 hover:text-indigo-300 font-bold transition-all cursor-pointer flex items-center gap-1">
+              <Settings className="w-3 h-3" /> Config
             </button>
             <button
               onClick={async () => {
@@ -872,8 +696,8 @@ const InstalledTab: React.FC = () => {
                   console.error('Uninstall failed:', e);
                 }
               }}
-              className="text-[11px] px-3 py-1.5 rounded-xl border border-white/8 text-slate-400 hover:border-red-500/30 hover:text-red-400 font-bold transition-all cursor-pointer">
-              Remove
+              className="text-[11px] px-3 py-1.5 rounded-xl border border-white/8 text-slate-400 hover:border-red-500/30 hover:text-red-400 font-bold transition-all cursor-pointer flex items-center gap-1">
+              <Trash2 className="w-3 h-3" /> Remove
             </button>
           </div>
         </div>
@@ -884,8 +708,12 @@ const InstalledTab: React.FC = () => {
 
 /* ─── Card ───────────────────────────────────────────────────────────── */
 
-const CapabilityCard: React.FC<{ item: IntentCapability; onDeploy: (item: IntentCapability) => void }> = ({ item, onDeploy }) => {
-  const { isInstalled } = useInstalledModules();
+const CapabilityCard: React.FC<{
+  item: IntentCapability;
+  onDeploy: (item: IntentCapability) => void;
+  onConfigure: (item: IntentCapability) => void;
+}> = ({ item, onDeploy, onConfigure }) => {
+  const { isInstalled, uninstallModule } = useInstalledModules();
   const installed = isInstalled(item.moduleId);
   const [expanded, setExpanded] = useState(false);
 
@@ -895,6 +723,15 @@ const CapabilityCard: React.FC<{ item: IntentCapability; onDeploy: (item: Intent
     'Pay-per-use': 'bg-amber-500/12 text-amber-300 border-amber-500/25',
     'Enterprise': 'bg-blue-500/12 text-blue-300 border-blue-500/25',
     'Revenue Share': 'bg-pink-500/12 text-pink-300 border-pink-500/25',
+  };
+
+  const handleUninstall = async () => {
+    try {
+      await uninstallCapability(item.moduleId);
+      uninstallModule(item.moduleId);
+    } catch (e) {
+      console.error('Failed to uninstall capability:', e);
+    }
   };
 
   return (
@@ -910,11 +747,6 @@ const CapabilityCard: React.FC<{ item: IntentCapability; onDeploy: (item: Intent
             {item.verified && <BadgeCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
           </div>
           <p className="text-[11px] text-slate-500 mb-1">By {item.creator}</p>
-          <div className="flex items-center gap-1.5">
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-            <span className="text-[11px] font-bold text-amber-400">{item.rating}</span>
-            <span className="text-[10px] text-slate-500">({item.reviews.toLocaleString()})</span>
-          </div>
         </div>
         <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wide flex-shrink-0 ${priceColors[item.priceModel]}`}>
           {item.priceLabel}
@@ -956,9 +788,17 @@ const CapabilityCard: React.FC<{ item: IntentCapability; onDeploy: (item: Intent
       {/* Action */}
       <div className="mt-auto pt-1">
         {installed ? (
-          <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-500/12 text-emerald-300 border border-emerald-500/20 text-xs font-bold cursor-default">
-            <CheckCircle className="w-3.5 h-3.5" /> Installed in your OS
-          </button>
+          <div className="flex items-center gap-2">
+            <button className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-emerald-500/12 text-emerald-300 border border-emerald-500/20 text-xs font-bold cursor-default">
+              <CheckCircle className="w-3.5 h-3.5" /> Installed
+            </button>
+            <button onClick={() => onConfigure(item)} className="p-2 rounded-xl border border-white/10 text-slate-300 hover:border-indigo-500/40 hover:text-indigo-300 text-xs font-semibold cursor-pointer" title="Custom Settings">
+              <Settings className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={handleUninstall} className="p-2 rounded-xl border border-white/10 text-slate-400 hover:border-red-500/40 hover:text-red-400 text-xs font-semibold cursor-pointer" title="Uninstall Capability">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
         ) : (
           <button onClick={() => onDeploy(item)}
             className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-indigo-500/20 cursor-pointer">
@@ -981,10 +821,11 @@ export const IntentStore: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('featured');
   const [searchQuery, setSearchQuery] = useState('');
   const [deployItem, setDeployItem] = useState<IntentCapability | null>(null);
+  const [configItem, setConfigItem] = useState<{ id: string; name: string } | null>(null);
   const { modules: installedModules } = useInstalledModules();
 
   const TABS: TabDef[] = [
-    { id: 'featured',   label: 'Featured',    icon: <Star className="w-3.5 h-3.5" /> },
+    { id: 'featured',   label: 'Featured',    icon: <Sparkles className="w-3.5 h-3.5" /> },
     { id: 'agents',     label: 'Agents',      icon: <Bot className="w-3.5 h-3.5" />,      count: AGENTS.length },
     { id: 'workflows',  label: 'Workflows',   icon: <Workflow className="w-3.5 h-3.5" />,  count: 4 },
     { id: 'connectors', label: 'Connectors',  icon: <Globe className="w-3.5 h-3.5" />,     count: CONNECTORS.length },
@@ -1001,9 +842,17 @@ export const IntentStore: React.FC = () => {
       (i.tags || []).some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
+  const handleConfigureCard = (item: IntentCapability) => {
+    setConfigItem({ id: item.moduleId, name: item.name });
+  };
+
+  const handleConfigureModule = (mod: InstalledModule) => {
+    setConfigItem({ id: mod.capabilityId, name: mod.name });
+  };
+
   const renderGrid = (items: IntentCapability[]) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filterItems(items).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
+      {filterItems(items).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} onConfigure={handleConfigureCard} />)}
     </div>
   );
 
@@ -1067,7 +916,7 @@ export const IntentStore: React.FC = () => {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {AGENTS.slice(0, 4).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
+                {AGENTS.slice(0, 4).map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} onConfigure={handleConfigureCard} />)}
               </div>
             </div>
             <div>
@@ -1078,7 +927,7 @@ export const IntentStore: React.FC = () => {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {TEMPLATES.map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} />)}
+                {TEMPLATES.map(item => <CapabilityCard key={item.id} item={item} onDeploy={setDeployItem} onConfigure={handleConfigureCard} />)}
               </div>
             </div>
           </>
@@ -1148,10 +997,11 @@ export const IntentStore: React.FC = () => {
             </button>
           </div>
         )}
-        {activeTab === 'installed' && <InstalledTab />}
+        {activeTab === 'installed' && <InstalledTab onConfigure={handleConfigureModule} />}
       </div>
 
       {deployItem && <DeployModal item={deployItem} onClose={() => setDeployItem(null)} />}
+      {configItem && <ConfigModal capabilityId={configItem.id} capabilityName={configItem.name} onClose={() => setConfigItem(null)} />}
     </div>
   );
 };

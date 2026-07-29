@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chatr/kernel": "workspace:*",
-    "@chatr/sdk": "workspace:*",
+    "@chatr/kernel": "*",
+    "@chatr/sdk": "*",
     "commander": "^12.0.0"
   },
   "devDependencies": {

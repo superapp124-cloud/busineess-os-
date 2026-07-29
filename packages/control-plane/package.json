@@ -7,9 +7,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chatr/kernel": "workspace:*",
-    "@chatr/intent-store": "workspace:*",
-    "@chatr/deployment": "workspace:*"
+    "@chatr/kernel": "*",
+    "@chatr/intent-store": "*",
+    "@chatr/deployment": "*"
   },
   "devDependencies": {
     "typescript": "^5.5.0"
