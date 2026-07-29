@@ -20,6 +20,11 @@ const validInvokeChannels = [
   // Auto Updater
   'updater:check',
   'updater:install',
+  // CHATR Runtime (Decoupled Background Service)
+  'chatr:runtime-status',
+  'chatr:runtime-prepare',
+  'chatr:runtime-generate',
+  'chatr:runtime-list-models',
   // AI Engine (ollama.cjs)
   'ai:status',
   'ai:ask',
@@ -92,6 +97,7 @@ const validInvokeChannels = [
 const validListenChannels = [
   'updater:status',
   'updater:progress',
+  'chatr:runtime-status-change',
   // AI Engine events (broadcast by ollama.cjs)
   'ai:status',
   // Legacy compat
@@ -171,6 +177,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   /** Register global shortcut handler (Cmd+Space etc) */
   onGlobalShortcut: (callback) => {
     ipcRenderer.on('global-shortcut', () => callback());
+  },
+
+  runtime: {
+    getStatus: () => ipcRenderer.invoke('chatr:runtime-status'),
+    prepare: () => ipcRenderer.invoke('chatr:runtime-prepare'),
+    generate: (req) => ipcRenderer.invoke('chatr:runtime-generate', req),
+    listModels: () => ipcRenderer.invoke('chatr:runtime-list-models'),
+    onStatusChange: (callback) => {
+      const listener = (event, data) => callback(data);
+      ipcRenderer.on('chatr:runtime-status-change', listener);
+      return () => ipcRenderer.removeListener('chatr:runtime-status-change', listener);
+    }
   },
 
   /**

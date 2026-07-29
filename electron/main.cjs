@@ -5,6 +5,7 @@ const log = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const { execFile } = require('child_process');
 const ollamaEngine = require('./ollama.cjs');
+const runtimeOrchestrator = require('./runtime/LocalRuntimeOrchestrator.cjs');
 const chatrKernel  = require('./chatr-core/index.cjs');
 const tokenVault = require('./token-vault.cjs');
 const syncEngine = require('./sync-engine.cjs');
@@ -1527,18 +1528,15 @@ JSON Output:
   });
 
   // -------------------------------------------------------------
-  // INVISIBLE AI ENGINE (OLLAMA) — Delegated to ollama.cjs
+  // INVISIBLE AI ENGINE (OLLAMA & CHATR RUNTIME) — Delegated to runtimeOrchestrator
   // -------------------------------------------------------------
-  // Register all ai: IPC handlers first
+  // Register all IPC handlers first
   ollamaEngine.registerIpcHandlers();
+  runtimeOrchestrator.registerIpcHandlers();
 
-  // Keepback-compat: agent:execute-task still needs its local Ollama bridge
-  // That handler is already registered above with the PS script logic.
-
-  // Start silent bootstrap — zero user interaction required
-  // Runs: check → download (if needed) → start → pull models → ready
-  // Fails closed when local AI is not available
+  // Start silent bootstrap
   ollamaEngine.bootstrap(mainWindow);
+  runtimeOrchestrator.bootstrap(mainWindow);
 
   // ── CHATR Kernel Boot ────────────────────────────────────────────────────
   // Boot after Ollama so OllamaProvider can resolve the active port.

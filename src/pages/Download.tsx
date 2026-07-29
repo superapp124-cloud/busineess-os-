@@ -73,52 +73,122 @@ export default function Download() {
  </p>
  </div>
 
- {/* Download Options */}
- <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
- {/* Mobile Apps */}
- <Card className="bg-card/50 backdrop-blur-glass border-glass-border">
- <CardContent className="p-6 space-y-6">
- <div className="flex items-center gap-3">
- <div className="p-3 rounded-full bg-primary/10">
- <Smartphone className="h-6 w-6 text-primary" />
- </div>
- <div>
- <h2 className="text-workspace font-bold">Mobile App</h2>
- <p className="text-secondary text-muted-foreground">For Android & iOS</p>
- </div>
- </div>
+      {/* Download Options Grid */}
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
 
- <div className="space-y-3">
- <Button 
- onClick={handleDownloadAndroid}
- className="w-full bg-green-600 hover:bg-green-700 text-white"
- size="lg"
- >
- <DownloadIcon className="mr-2 h-5 w-5" />
- Download for Android
- </Button>
- 
- <Button 
- onClick={handleDownloadIOS}
- className="w-full bg-blue-600 hover:bg-blue-700 text-white"
- size="lg"
- >
- <DownloadIcon className="mr-2 h-5 w-5" />
- Download for iPhone
- </Button>
- </div>
+        {/* CHATR Desktop (RECOMMENDED) */}
+        <Card className="bg-slate-900/90 border-2 border-cyan-500/80 shadow-xl shadow-cyan-500/10 relative overflow-hidden">
+          <div className="absolute top-3 right-3 bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full">
+            Recommended
+          </div>
+          <CardContent className="p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
+                <Monitor className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div>
+                <h2 className="text-workspace font-bold text-white">CHATR Desktop</h2>
+                <p className="text-xs text-cyan-400 font-medium">Windows • macOS • Linux</p>
+              </div>
+            </div>
 
- {/* QR Code */}
- <div className="flex flex-col items-center gap-3 pt-4 border-t border-glass-border">
- <p className="text-secondary text-muted-foreground">Scan to download on mobile</p>
- <div className="p-4 bg-white rounded-lg">
- <QRCodeSVG value={appUrl} size={150} />
- </div>
- </div>
- </CardContent>
- </Card>
+            <p className="text-xs text-slate-300">
+              The sovereign AI workspace. Runs local AI models, private offline memory, voice AI, and business automation 100% on your device.
+            </p>
 
- {/* Web App */}
+            <div className="space-y-2.5">
+              <Button 
+                onClick={() => window.open('/download/chatr-desktop-setup.exe', '_blank')}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/20"
+                size="lg"
+              >
+                <DownloadIcon className="mr-2 h-5 w-5" />
+                Download for Windows (.exe)
+              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button 
+                  onClick={() => window.open('/download/chatr-desktop.dmg', '_blank')}
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-slate-700 hover:bg-slate-800 text-slate-300"
+                >
+                  macOS (.dmg)
+                </Button>
+                <Button 
+                  onClick={() => window.open('/download/chatr-desktop.AppImage', '_blank')}
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-slate-700 hover:bg-slate-800 text-slate-300"
+                >
+                  Linux (.AppImage)
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-3 border-t border-slate-800 text-xs">
+              <p className="text-slate-400 font-medium">Superpowers included:</p>
+              <ul className="space-y-1 text-slate-300">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                  <span>Zero-Cloud Local AI Engine</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                  <span>Private Offline Document RAG</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                  <span>Voice AI & Autonomous Coworkers</span>
+                </li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Mobile Apps */}
+        <Card className="bg-card/50 backdrop-blur-glass border-glass-border">
+          <CardContent className="p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-primary/10">
+                <Smartphone className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-workspace font-bold">Mobile App</h2>
+                <p className="text-secondary text-muted-foreground">For Android & iOS</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Button 
+                onClick={handleDownloadAndroid}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                size="lg"
+              >
+                <DownloadIcon className="mr-2 h-5 w-5" />
+                Download for Android
+              </Button>
+              
+              <Button 
+                onClick={handleDownloadIOS}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                size="lg"
+              >
+                <DownloadIcon className="mr-2 h-5 w-5" />
+                Download for iPhone
+              </Button>
+            </div>
+
+            {/* QR Code */}
+            <div className="flex flex-col items-center gap-3 pt-4 border-t border-glass-border">
+              <p className="text-secondary text-muted-foreground">Scan to download on mobile</p>
+              <div className="p-4 bg-white rounded-lg">
+                <QRCodeSVG value={appUrl} size={130} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Web App */}
  <Card className="bg-card/50 backdrop-blur-glass border-glass-border">
  <CardContent className="p-6 space-y-6">
  <div className="flex items-center gap-3">
