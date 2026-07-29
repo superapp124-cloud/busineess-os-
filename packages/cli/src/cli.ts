@@ -11,6 +11,7 @@ import { testCommand } from './commands/development/test';
 import { inspectCommand } from './commands/development/inspect';
 import { validateCommand } from './commands/development/validate';
 import { graphCommand } from './commands/development/graph';
+import { certifyCommand } from './commands/development/certify';
 
 // Documentation Commands
 import { docsCommand } from './commands/documentation/docs';
@@ -38,6 +39,7 @@ program.addCommand(testCommand);
 program.addCommand(inspectCommand);
 program.addCommand(validateCommand);
 program.addCommand(graphCommand);
+program.addCommand(certifyCommand);
 
 // Documentation Group
 program.addCommand(docsCommand);
