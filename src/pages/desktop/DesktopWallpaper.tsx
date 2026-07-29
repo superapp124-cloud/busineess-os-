@@ -37,10 +37,10 @@ export const DesktopWallpaper: React.FC = () => {
  fetchWallpaper();
  }, []);
 
- const bg = isDark ? 'bg-[#0d0f1a]' : 'bg-slate-50';
- const cardBg = isDark ? 'bg-white/[0.03] border-white/[0.08]' : 'bg-white border-slate-200';
- const labelColor = isDark ? 'text-white/60' : 'text-slate-500';
- const headingColor = isDark ? 'text-white' : 'text-slate-900';
+ const bg = 'transition-colors duration-500'; // bg handled globally via index.css overrides
+ const cardBg = 'transition-colors duration-500';
+ const labelColor = 'text-muted-foreground';
+ const headingColor = 'text-foreground';
 
  const selectWallpaper = async (id: string, value: string) => {
  setSelected(id);

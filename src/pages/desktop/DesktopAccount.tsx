@@ -25,12 +25,12 @@ export const DesktopAccount: React.FC = () => {
  fetchMfa();
  }, []);
 
- const bg = isDark ? 'bg-[#0d0f1a]' : 'bg-slate-50';
- const cardBg = isDark ? 'bg-white/[0.03] border-white/[0.08]' : 'bg-white border-slate-200';
- const inputBg = isDark ? 'bg-white/[0.05] border-white/[0.1] text-white placeholder:text-white/30' : 'bg-white border-slate-200 text-slate-900';
- const labelColor = isDark ? 'text-white/60' : 'text-slate-500';
- const headingColor = isDark ? 'text-white' : 'text-slate-900';
- const textColor = isDark ? 'text-white/80' : 'text-slate-700';
+ const bg = 'transition-colors duration-500'; // bg handled globally via index.css overrides
+ const cardBg = 'transition-colors duration-500';
+ const inputBg = 'transition-colors duration-500 bg-background border-border text-foreground';
+ const labelColor = 'text-muted-foreground';
+ const headingColor = 'text-foreground';
+ const textColor = 'text-foreground';
 
  const handlePasswordChange = async () => {
  if (passwordForm.new !== passwordForm.confirm) {

@@ -451,47 +451,51 @@
     --accent-color: #f59e0b;
   }
 
-  /* Light Theme Automatic Background & Text Overrides for Desktop Workspace */
-  .light .bg-\[\#0b0b14\],
-  .light .bg-\[\#0a0a12\],
-  .light .bg-\[\#07070d\],
-  .light .bg-\[\#090a0f\],
-  .light .bg-\[\#111\],
-  .light .bg-\[\#111318\],
-  .light .bg-zinc-950,
-  .light .bg-black {
+  /* Universal Theme Automatic Background & Text Overrides (Fixes hardcoded colors in Neon/Enterprise/Midnight) */
+  :root .bg-\[\#0b0b14\],
+  :root .bg-\[\#0a0a12\],
+  :root .bg-\[\#07070d\],
+  :root .bg-\[\#090a0f\],
+  :root .bg-\[\#111\],
+  :root .bg-\[\#111318\],
+  :root .bg-\[\#0d0f1a\],
+  :root .bg-\[\#0a0a0c\],
+  :root .bg-zinc-950,
+  :root .bg-black {
     background-color: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;
   }
 
-  .light .bg-\[\#181b23\],
-  .light .bg-\[\#1c1c1e\],
-  .light .bg-card\/70,
-  .light .bg-white\/5,
-  .light .bg-white\/\[0\.04\] {
+  :root .bg-\[\#181b23\],
+  :root .bg-\[\#1c1c1e\],
+  :root .bg-card\/70,
+  :root .bg-white\/5,
+  :root .bg-white\/\[0\.04\],
+  :root .bg-white\/\[0\.03\],
+  :root .bg-white\/\[0\.02\] {
     background-color: hsl(var(--card)) !important;
     color: hsl(var(--card-foreground)) !important;
     border-color: hsl(var(--border)) !important;
   }
 
-  .light .text-white,
-  .light .text-white\/90,
-  .light .text-white\/80 {
+  :root .text-white,
+  :root .text-white\/90,
+  :root .text-white\/80 {
     color: hsl(var(--foreground)) !important;
   }
 
-  .light .text-white\/50,
-  .light .text-white\/60,
-  .light .text-white\/40,
-  .light .text-white\/30 {
+  :root .text-white\/50,
+  :root .text-white\/60,
+  :root .text-white\/40,
+  :root .text-white\/30 {
     color: hsl(var(--muted-foreground)) !important;
   }
 
-  .light .border-white\/10,
-  .light .border-white\/15,
-  .light .border-white\/5,
-  .light .border-white\/\[0\.04\],
-  .light .border-white\/\[0\.06\] {
+  :root .border-white\/10,
+  :root .border-white\/15,
+  :root .border-white\/5,
+  :root .border-white\/\[0\.04\],
+  :root .border-white\/\[0\.06\] {
     border-color: hsl(var(--border)) !important;
   }
 

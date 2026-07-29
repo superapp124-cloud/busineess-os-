@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { safeBack } from '@/lib/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -9,7 +9,7 @@ import {
   GraduationCap, Briefcase, ShoppingBag, Heart, Home, UtensilsCrossed, Factory,
   Sparkles, ArrowRight, CheckSquare, Play, Star, Plug, RefreshCw, Activity,
   Target, Coffee, DollarSign, Code2, Github, Store, Filter, ChevronDown,
-  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText
+  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText, Settings, ShieldAlert, Layers
 } from 'lucide-react';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 
@@ -33,127 +33,6 @@ interface Integration {
   logoColor: string;
   oauthUrl?: string;
 }
-
-interface TopBundle {
-  id: string;
-  name: string;
-  tagline: string;
-  stars: number;
-  color: string;
-  services: string[];
-  integrationIds: string[];
-  oauthUrl: string;
-}
-
-// ── 100+ Integration Registry ─────────────────────────────────────────────────
-
-const ALL_INTEGRATIONS: Integration[] = [
-  { id: 'ga4', name: 'Google Analytics 4', category: 'Analytics & BI', description: 'Website traffic & conversion tracking', free: true, stars: 5, logoColor: '#F57C00', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'gsc', name: 'Google Search Console', category: 'Analytics & BI', description: 'Search rankings & click-through data', free: true, stars: 5, logoColor: '#0F9D58', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'gbp', name: 'Google Business Profile', category: 'Analytics & BI', description: 'Appear on Google Maps & Reviews', free: true, stars: 5, logoColor: '#4285F4', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'gtm', name: 'Google Tag Manager', category: 'Analytics & BI', description: 'Track events without developer help', free: true, stars: 4, logoColor: '#4285F4' },
-  { id: 'clarity', name: 'Microsoft Clarity', category: 'Analytics & BI', description: 'Session recordings & heatmaps', free: true, stars: 4, logoColor: '#0078D4' },
-  { id: 'plausible', name: 'Plausible Analytics', category: 'Analytics & BI', description: 'Privacy-first open-source analytics', free: true, stars: 4, logoColor: '#5850EC' },
-  { id: 'matomo', name: 'Matomo', category: 'Analytics & BI', description: 'Self-hosted Google Analytics alternative', free: true, stars: 4, logoColor: '#3152A0' },
-  { id: 'posthog', name: 'PostHog', category: 'Analytics & BI', description: 'Product analytics & feature flags', free: true, stars: 4, logoColor: '#FF9635' },
-  { id: 'umami', name: 'Umami', category: 'Analytics & BI', description: 'Simple self-hosted website stats', free: true, stars: 3, logoColor: '#1A1A1A' },
-
-  { id: 'google_trends', name: 'Google Trends', category: 'Search & SEO', description: 'Discover trending keywords & topics', free: true, stars: 5, logoColor: '#4285F4' },
-  { id: 'bing_webmaster', name: 'Bing Webmaster Tools', category: 'Search & SEO', description: 'Bing search performance & indexing', free: true, stars: 4, logoColor: '#0078D4' },
-  { id: 'indexnow', name: 'IndexNow', category: 'Search & SEO', description: 'Instant search engine indexing protocol', free: true, stars: 4, logoColor: '#FF6B35' },
-  { id: 'pagespeed', name: 'Google PageSpeed Insights', category: 'Search & SEO', description: 'Core Web Vitals & performance scores', free: true, stars: 4, logoColor: '#34A853' },
-  { id: 'ahrefs_free', name: 'Ahrefs Webmaster Tools', category: 'Search & SEO', description: 'Backlink & keyword tracking', free: true, stars: 4, logoColor: '#0E6FFF' },
-  { id: 'semrush_free', name: 'SEMrush Free Projects', category: 'Search & SEO', description: 'Keyword & competitor research', free: true, stars: 3, logoColor: '#FF642B' },
-
-  { id: 'linkedin', name: 'LinkedIn', category: 'Social & Publishing', description: 'B2B outreach & professional publishing', free: true, stars: 5, logoColor: '#0077B5', oauthUrl: 'https://www.linkedin.com/login' },
-  { id: 'x_twitter', name: 'X (Twitter)', category: 'Social & Publishing', description: 'Real-time engagement & trends', free: true, stars: 4, logoColor: '#000000' },
-  { id: 'facebook', name: 'Facebook Pages', category: 'Social & Publishing', description: 'Business page management & ads', free: true, stars: 4, logoColor: '#1877F2', oauthUrl: 'https://www.facebook.com/login' },
-  { id: 'instagram', name: 'Instagram Business', category: 'Social & Publishing', description: 'Visual brand building & reels', free: true, stars: 4, logoColor: '#E4405F' },
-  { id: 'youtube', name: 'YouTube', category: 'Social & Publishing', description: 'Thought leadership via video content', free: true, stars: 4, logoColor: '#FF0000', oauthUrl: 'https://accounts.google.com/signin' },
-
-  { id: 'talentxcel', name: 'TalentXcel', category: 'Recruitment & Jobs', description: 'Your own recruitment platform', free: true, stars: 5, logoColor: '#10B981' },
-  { id: 'github_jobs', name: 'GitHub', category: 'Recruitment & Jobs', description: 'Developer sourcing & talent discovery', free: true, stars: 5, logoColor: '#24292E', oauthUrl: 'https://github.com/login' },
-  { id: 'indeed', name: 'Indeed', category: 'Recruitment & Jobs', description: 'Mass job posting & applicant tracking', free: true, stars: 4, logoColor: '#003A9B' },
-  { id: 'glassdoor', name: 'Glassdoor', category: 'Recruitment & Jobs', description: 'Employer branding & reviews', free: true, stars: 4, logoColor: '#0CAA41' },
-
-  { id: 'hubspot', name: 'HubSpot', category: 'CRM & Sales', description: 'Free CRM, deals pipeline & sequences', free: true, stars: 5, logoColor: '#FF7A59' },
-  { id: 'zoho_crm', name: 'Zoho CRM', category: 'CRM & Sales', description: 'Indian-friendly CRM with free tier', free: true, stars: 4, logoColor: '#E42527' },
-  { id: 'supabase', name: 'Supabase', category: 'CRM & Sales', description: 'Open-source PostgreSQL database & auth', free: true, stars: 5, logoColor: '#3ECF8E' },
-  { id: 'airtable', name: 'Airtable', category: 'CRM & Sales', description: 'Spreadsheet-database hybrid', free: true, stars: 4, logoColor: '#FCB400' },
-
-  { id: 'gmail', name: 'Gmail', category: 'Communication', description: 'Business email & automated sequences', free: true, stars: 5, logoColor: '#EA4335', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'outlook', name: 'Microsoft Outlook', category: 'Communication', description: 'Enterprise email & calendar sync', free: true, stars: 5, logoColor: '#0078D4', oauthUrl: 'https://login.microsoftonline.com' },
-  { id: 'whatsapp_business', name: 'WhatsApp Business', category: 'Communication', description: 'Direct messaging bridge', free: true, stars: 5, logoColor: '#25D366', oauthUrl: 'https://business.facebook.com' },
-
-  { id: 'razorpay', name: 'Razorpay', category: 'Payments & Finance', description: 'India payments & invoicing', free: true, stars: 5, logoColor: '#3395FF' },
-  { id: 'stripe', name: 'Stripe', category: 'Payments & Finance', description: 'Global payment processing & billing', free: true, stars: 5, logoColor: '#635BFF' },
-
-  { id: 'google_calendar', name: 'Google Calendar', category: 'Calendar & Meetings', description: 'Schedule meetings & interviews', free: true, stars: 5, logoColor: '#4285F4', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'ms_calendar', name: 'Microsoft Calendar', category: 'Calendar & Meetings', description: 'Outlook calendar sync', free: true, stars: 5, logoColor: '#0078D4', oauthUrl: 'https://login.microsoftonline.com' },
-
-  { id: 'google_drive', name: 'Google Drive', category: 'Storage & Docs', description: 'Client contracts & resume storage', free: true, stars: 5, logoColor: '#34A853', oauthUrl: 'https://accounts.google.com/signin' },
-  { id: 'onedrive', name: 'Microsoft OneDrive', category: 'Storage & Docs', description: 'Enterprise document management', free: true, stars: 4, logoColor: '#0078D4', oauthUrl: 'https://login.microsoftonline.com' },
-
-  { id: 'gemini', name: 'Google Gemini', category: 'AI Providers', description: 'Multimodal AI with Google grounding', free: true, stars: 5, logoColor: '#4285F4' },
-  { id: 'openai', name: 'OpenAI', category: 'AI Providers', description: 'GPT-4o for content & reasoning', free: false, stars: 5, logoColor: '#000000' },
-];
-
-const TOP_BUNDLES: TopBundle[] = [
-  {
-    id: 'google_workspace',
-    name: 'Google Workspace',
-    tagline: 'Connect once → Analytics, Search Console, Business Profile, Gmail, Calendar, Drive, YouTube',
-    stars: 5,
-    color: '#4285F4',
-    services: ['Google Analytics 4', 'Google Search Console', 'Google Business Profile', 'Gmail', 'Google Calendar', 'Google Drive', 'YouTube'],
-    integrationIds: ['ga4', 'gsc', 'gbp', 'gmail', 'google_calendar', 'google_drive', 'youtube'],
-    oauthUrl: 'https://accounts.google.com/signin',
-  },
-  {
-    id: 'microsoft365',
-    name: 'Microsoft 365',
-    tagline: 'Connect once → Outlook, Teams, Calendar, OneDrive, SharePoint',
-    stars: 5,
-    color: '#0078D4',
-    services: ['Outlook', 'Microsoft Teams', 'Microsoft Calendar', 'OneDrive', 'Microsoft Clarity'],
-    integrationIds: ['outlook', 'ms_teams', 'ms_calendar', 'onedrive', 'clarity'],
-    oauthUrl: 'https://login.microsoftonline.com',
-  },
-  {
-    id: 'meta_business',
-    name: 'Meta Business Suite',
-    tagline: 'Connect once → WhatsApp Business, Facebook Page, Instagram Business',
-    stars: 5,
-    color: '#1877F2',
-    services: ['WhatsApp Business', 'Facebook Pages', 'Instagram Business', 'Threads'],
-    integrationIds: ['whatsapp_business', 'facebook', 'instagram', 'threads'],
-    oauthUrl: 'https://business.facebook.com',
-  },
-];
-
-const CATEGORIES: IntegrationCategory[] = [
-  'Analytics & BI', 'Search & SEO', 'Social & Publishing',
-  'Recruitment & Jobs', 'CRM & Sales', 'Communication',
-  'Payments & Finance', 'Calendar & Meetings', 'Storage & Docs',
-  'AI Providers', 'Developer & Automation', 'Public Intelligence',
-];
-
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  'Analytics & BI': <BarChart3 className="w-3.5 h-3.5" />,
-  'Search & SEO': <Search className="w-3.5 h-3.5" />,
-  'Social & Publishing': <Globe className="w-3.5 h-3.5" />,
-  'Recruitment & Jobs': <Users className="w-3.5 h-3.5" />,
-  'CRM & Sales': <Target className="w-3.5 h-3.5" />,
-  'Communication': <Mail className="w-3.5 h-3.5" />,
-  'Payments & Finance': <DollarSign className="w-3.5 h-3.5" />,
-  'Calendar & Meetings': <Activity className="w-3.5 h-3.5" />,
-  'Storage & Docs': <Package className="w-3.5 h-3.5" />,
-  'AI Providers': <Sparkles className="w-3.5 h-3.5" />,
-  'Developer & Automation': <Code2 className="w-3.5 h-3.5" />,
-  'Public Intelligence': <Rss className="w-3.5 h-3.5" />,
-};
-
-// ── Rich Business Types ───────────────────────────────────────────────────────
 
 interface PreviewApp {
   name: string;
@@ -192,6 +71,22 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     estTime: '3 min setup'
   },
   {
+    id: 'hospital',
+    label: 'Healthcare / Hospital',
+    icon: <Heart className="w-5 h-5" />,
+    recommended: true,
+    badge: '115 templates included',
+    description: 'Clinics, labs, patient management, appointment scheduler',
+    apps: ['Patient Records', 'Appointment AI', 'Lab Sync', 'Billing'],
+    previewStack: [
+      { name: 'Patient Appointment Scheduler', detail: 'Automated slot booking & doctor sync', icon: Activity },
+      { name: 'AI Medical Triage Bot', detail: 'Symptom scoring & emergency routing', icon: Sparkles },
+      { name: 'Patient Records & EHR', detail: 'HIPAA compliant medical histories', icon: FileText },
+      { name: 'Lab Test Dispatch', detail: 'Instant results notifications via WhatsApp', icon: Zap }
+    ],
+    estTime: '3 min setup'
+  },
+  {
     id: 'saas',
     label: 'SaaS Startup',
     icon: <Rocket className="w-5 h-5" />,
@@ -211,7 +106,6 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     id: 'consulting',
     label: 'Consulting Firm',
     icon: <Briefcase className="w-5 h-5" />,
-    recommended: true,
     badge: '95 templates included',
     description: 'Advisory, project billing, enterprise client management',
     apps: ['Client CRM', 'Contract Reviewer', 'Invoice Manager', 'Time Tracker'],
@@ -248,19 +142,6 @@ const BUSINESS_TYPES: RichBusinessType[] = [
       { name: 'Student Communication AI', detail: 'Multichannel updates & alerts', icon: Mail }
     ],
     estTime: '3 min setup'
-  },
-  {
-    id: 'hospital',
-    label: 'Healthcare / Hospital',
-    icon: <Heart className="w-5 h-5" />,
-    badge: '75 templates included',
-    description: 'Clinics, labs, patient management, appointment scheduler',
-    apps: ['Patient Records', 'Appointment AI', 'Lab Sync', 'Billing'],
-    previewStack: [
-      { name: 'Patient Appointment Scheduler', detail: 'Automated slot booking', icon: Activity },
-      { name: 'Lab Test Dispatch', detail: 'Instant results notifications', icon: Zap }
-    ],
-    estTime: '4 min setup'
   },
   {
     id: 'realestate',
@@ -325,34 +206,52 @@ const BUSINESS_GOALS = [
 
 export default function AIAgentsHub() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { themeMode } = useAppearanceStore();
   const isDark = themeMode !== 'light';
 
-  const [step, setStep] = useState<SetupStep>('business_type');
-  const [selectedBusiness, setSelectedBusiness] = useState<string>('recruitment');
+  // Read domain from URL query params or localStorage
+  const urlDomain = searchParams.get('domain') || searchParams.get('workspace');
+  const forceReconfigure = searchParams.get('reconfigure') === 'true';
+
+  const [selectedBusiness, setSelectedBusiness] = useState<string>(() => {
+    if (urlDomain) return urlDomain;
+    return localStorage.getItem('chatr_active_domain') || 'recruitment';
+  });
+
+  const [step, setStep] = useState<SetupStep>(() => {
+    if (forceReconfigure) return 'business_type';
+    if (urlDomain) return 'done';
+    const isCompleted = localStorage.getItem('chatr_setup_completed') === 'true';
+    return isCompleted ? 'done' : 'business_type';
+  });
+
   const [selectedGoals, setSelectedGoals] = useState<Set<string>>(new Set(['hire_faster', 'automate_ops']));
   const [installedIds, setInstalledIds] = useState<Set<string>>(new Set(['ga4', 'gmail', 'google_calendar', 'linkedin', 'supabase', 'gemini']));
   const [isThinking, setIsThinking] = useState(false);
 
+  // Sync state if URL search params change (e.g. clicking Hospital in sidebar)
+  useEffect(() => {
+    if (urlDomain) {
+      setSelectedBusiness(urlDomain);
+      if (!forceReconfigure) {
+        setStep('done');
+      }
+    }
+  }, [urlDomain, forceReconfigure]);
+
   const selectedBizObj = useMemo(() => {
-    return BUSINESS_TYPES.find(b => b.id === selectedBusiness) || BUSINESS_TYPES[0];
-  }, [selectedBusiness]);
+    return BUSINESS_TYPES.find(b => b.id === selectedBusiness || b.id === urlDomain) || BUSINESS_TYPES[0];
+  }, [selectedBusiness, urlDomain]);
 
   const stepLabels = ['Discover', 'Workspace', 'AI Workforce', 'Connect', 'Launch'];
   const stepIdx = step === 'business_type' ? 0 : step === 'goals' ? 1 : step === 'ai_recommendation' ? 2 : step === 'marketplace' ? 3 : 4;
 
-  const toggleInstall = (id: string) => {
-    setInstalledIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        toast.info('Integration removed');
-      } else {
-        next.add(id);
-        toast.success('Integration added to your workspace');
-      }
-      return next;
-    });
+  const handleFinishSetup = () => {
+    localStorage.setItem('chatr_setup_completed', 'true');
+    localStorage.setItem('chatr_active_domain', selectedBusiness);
+    toast.success(`${selectedBizObj.label} Business OS active!`);
+    setStep('done');
   };
 
   return (
@@ -365,27 +264,41 @@ export default function AIAgentsHub() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-base font-extrabold tracking-tight">Create Your Business OS</h1>
+            <h1 className="text-base font-extrabold tracking-tight">
+              {step === 'done' ? `${selectedBizObj.label} OS Workspace` : 'Create Your Business OS'}
+            </h1>
             <p className="text-[11px] font-medium text-slate-400">
-              {installedIds.size} capabilities active · Executive Composition Mode
+              {installedIds.size} capabilities active · {selectedBizObj.label} Domain
             </p>
           </div>
         </div>
 
-        {/* Outcome-oriented Step Breadcrumb */}
-        <div className="hidden sm:flex items-center gap-1">
-          {stepLabels.map((label, i) => (
-            <React.Fragment key={i}>
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all ${
-                i === stepIdx ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20' :
-                i < stepIdx ? (isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') : (isDark ? 'text-slate-600' : 'text-slate-400')}`}>
-                {i < stepIdx ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <span>{i+1}</span>}
-                <span>{label}</span>
-              </div>
-              {i < 4 && <ChevronRight className="w-3 h-3 text-slate-600" />}
-            </React.Fragment>
-          ))}
-        </div>
+        {/* Step Breadcrumb or Reconfigure Button */}
+        {step !== 'done' ? (
+          <div className="hidden sm:flex items-center gap-1">
+            {stepLabels.map((label, i) => (
+              <React.Fragment key={i}>
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all ${
+                  i === stepIdx ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20' :
+                  i < stepIdx ? (isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') : (isDark ? 'text-slate-600' : 'text-slate-400')}`}>
+                  {i < stepIdx ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <span>{i+1}</span>}
+                  <span>{label}</span>
+                </div>
+                {i < 4 && <ChevronRight className="w-3 h-3 text-slate-600" />}
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          <button
+            onClick={() => setStep('business_type')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+              isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-200' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-700'
+            }`}
+          >
+            <Settings className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Reconfigure Domain Setup</span>
+          </button>
+        )}
       </div>
 
       <div className="max-w-[1400px] mx-auto w-full px-4 sm:px-6 py-6 flex-1 space-y-6">
@@ -395,7 +308,7 @@ export default function AIAgentsHub() {
           {step === 'business_type' && (
             <motion.div key="s1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
               
-              {/* Executive Welcome Header */}
+              {/* Clean Executive Welcome Header */}
               <div className="text-center space-y-2 max-w-3xl mx-auto">
                 <h2 className="text-3xl font-black tracking-tight">Welcome to CHATR Business OS</h2>
                 <p className="text-slate-400 text-sm leading-relaxed">
@@ -458,7 +371,7 @@ export default function AIAgentsHub() {
                           <p className={`text-[10px] leading-relaxed mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{biz.description}</p>
                         </div>
 
-                        {/* Included Apps Checklist Chips */}
+                        {/* Included Apps Chips */}
                         <div className="mt-3 pt-2.5 border-t border-white/5 flex flex-wrap gap-1">
                           {biz.apps.map((app, idx) => (
                             <span key={idx} className={`text-[9px] font-semibold px-2 py-0.5 rounded-md ${isSelected ? (isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-800') : (isDark ? 'bg-white/5 text-slate-400' : 'bg-slate-100 text-slate-600')}`}>
@@ -492,7 +405,7 @@ export default function AIAgentsHub() {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase text-indigo-400 tracking-wider">Selected Domain</p>
-                      <h4 className="text-sm font-bold text-white">{selectedBizObj.label}</h4>
+                      <h4 className="text-sm font-bold">{selectedBizObj.label}</h4>
                     </div>
                   </div>
 
@@ -508,7 +421,7 @@ export default function AIAgentsHub() {
                               <Icon className="w-3.5 h-3.5" />
                             </div>
                             <div className="min-w-0 flex-1">
-                              <p className="font-bold text-white truncate">{app.name}</p>
+                              <p className="font-bold truncate">{app.name}</p>
                               <p className="text-[10px] text-slate-400 truncate">{app.detail}</p>
                             </div>
                             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -614,16 +527,111 @@ export default function AIAgentsHub() {
 
                 <div className="pt-4 flex justify-center">
                   <button
-                    onClick={() => {
-                      toast.success(`${selectedBizObj.label} workspace launched!`);
-                      navigate('/desktop/chat');
-                    }}
+                    onClick={handleFinishSetup}
                     className="px-10 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-indigo-600 hover:from-emerald-400 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-wider shadow-2xl shadow-emerald-500/40 hover:scale-105 transition-all cursor-pointer"
                   >
                     Launch My Business OS Workspace →
                   </button>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* ══ STEP 5 / DONE: CONFIGURED ACTIVE BUSINESS WORKSPACE DASHBOARD ══ */}
+          {step === 'done' && (
+            <motion.div key="sdone" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+              
+              {/* Active Workspace Header Banner */}
+              <div className={`p-6 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl ${
+                isDark ? 'bg-gradient-to-r from-indigo-950/60 via-purple-950/30 to-black/80 border-indigo-500/30' : 'bg-gradient-to-r from-indigo-50 via-purple-50 to-white border-indigo-200'
+              }`}>
+                <div className="flex items-center gap-4">
+                  <div className="p-3.5 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 shrink-0">
+                    {selectedBizObj.icon}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        Active Business OS
+                      </span>
+                      <span className="text-xs text-slate-400">· {selectedBizObj.badge}</span>
+                    </div>
+                    <h2 className="text-2xl font-black mt-0.5">{selectedBizObj.label} Workspace</h2>
+                    <p className="text-xs text-slate-400 mt-1">{selectedBizObj.description}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      if (selectedBusiness === 'recruitment') navigate('/desktop/recruitment');
+                      else navigate('/desktop/chat');
+                    }}
+                    className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <span>Open App Studio</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Active Domain Capabilities Grid */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Active Domain Capabilities & AI Workforce</h3>
+                  <span className="text-xs text-emerald-400 font-bold">● All Systems Operational</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {selectedBizObj.previewStack.map((app, idx) => {
+                    const Icon = app.icon;
+                    return (
+                      <div key={idx} className={`p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.01] ${
+                        isDark ? 'bg-[#0d0f1a] border-white/10 hover:border-indigo-500/40' : 'bg-white border-slate-200 shadow-sm hover:border-indigo-300'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="p-2 rounded-xl bg-indigo-500/15 text-indigo-400">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <span className="text-[10px] font-bold text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            Installed
+                          </span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold">{app.name}</h4>
+                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{app.detail}</p>
+                        </div>
+                        <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+                          <span className="text-[10px] text-slate-500">Capability ID: core.{selectedBusiness}.{idx+1}</span>
+                          <ChevronRight className="w-4 h-4 text-indigo-400" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Integrations Telemetry */}
+              <div className={`p-5 rounded-2xl border space-y-3 ${isDark ? 'bg-[#0d0f1a] border-white/10' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Plug className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider">Active Integrations Telemetry</h3>
+                  </div>
+                  <span className="text-xs text-slate-400">6 connected services</span>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {['Google Analytics 4', 'Gmail & Calendar', 'LinkedIn B2B', 'Supabase Database', 'Google Gemini AI', 'Stripe Billing'].map((intName, idx) => (
+                    <div key={idx} className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-semibold ${
+                      isDark ? 'bg-white/[0.03] border-white/10 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    }`}>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>{intName}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </motion.div>
           )}
 

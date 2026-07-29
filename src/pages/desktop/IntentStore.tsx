@@ -165,7 +165,7 @@ const AGENTS: IntentCapability[] = [
       { icon: <FileText className="w-3.5 h-3.5" />, label: 'Medical Records' },
       { icon: <Shield className="w-3.5 h-3.5" />, label: 'Compliance' },
     ],
-    workspacePath: '/desktop/ai-agents', tags: ['Healthcare', 'HIPAA', 'Triage'],
+    workspacePath: '/desktop/ai-agents?domain=hospital', tags: ['Healthcare', 'HIPAA', 'Triage'],
   },
 ];
 
@@ -279,7 +279,7 @@ const TEMPLATES: IntentCapability[] = [
       { icon: <FileText className="w-3.5 h-3.5" />, label: 'Medical Records' },
       { icon: <Shield className="w-3.5 h-3.5" />, label: 'Compliance' },
     ],
-    workspacePath: '/desktop/ai-agents', tags: ['Healthcare', 'HIPAA'],
+    workspacePath: '/desktop/ai-agents?domain=hospital', tags: ['Healthcare', 'HIPAA'],
   },
 ];
 
