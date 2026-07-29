@@ -586,6 +586,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/launcher" element={<ProtectedLazyRoute component={LazyPages.Launcher} />} />
  <Route path="/auth" element={<LazyRoute component={LazyPages.Auth} />} />
  <Route path="/download" element={<LazyRoute component={LazyPages.Download} />} />
+ <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
  <Route path="/install" element={<LazyRoute component={LazyPages.Install} />} />
  <Route path="/onboarding" element={<LazyRoute component={LazyPages.Onboarding} />} />
  <Route path="/about" element={<LazyRoute component={LazyPages.About} />} />
