@@ -12,6 +12,30 @@ const syncEngine = require('./sync-engine.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 let localRecordsIpcRegistered = false;
+let mainWindow = null;
+let isQuitting = false;
+let hasShownTrayNotification = false;
+let tray = null;
+
+// Enforce Windows AppUserModelID so Windows Taskbar uses CHATR icon
+if (process.platform === 'win32') {
+  app.setAppUserModelId('chat.chatr.desktop');
+}
+
+// Enforce Single Instance Lock so opening app NEVER creates duplicate window instances
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  log.info('[Main] Another instance of CHATR Desktop is already running. Focus existing window & exiting.');
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
 
 const CHATR_BROWSER_AUTH_ORIGIN = 'https://chatr.chat';
 const PROVIDER_BROWSER_LOGIN_URLS = {
@@ -1614,7 +1638,10 @@ function createWindow() {
   
   const state = getWindowState();
 
+  const appIconPath = path.join(__dirname, '../public/chatr-icon-logo.png');
+
   mainWindow = new BrowserWindow({
+    icon: fs.existsSync(appIconPath) ? appIconPath : undefined,
     width: 1200,
     height: 800,
     center: true, // Force to center of primary display
@@ -1761,6 +1788,21 @@ function createWindow() {
       event.preventDefault();
       mainWindow.hide();
       log.info('Window hidden to tray');
+
+      if (!hasShownTrayNotification) {
+        hasShownTrayNotification = true;
+        try {
+          if (tray) {
+            tray.displayBalloon({
+              title: 'CHATR Desktop is running in the background',
+              content: 'CHATR stays active in your system tray so local AI and memory remain ready 24/7. Click the tray icon anytime to open.',
+              iconType: 'info'
+            });
+          }
+        } catch (e) {
+          log.warn('Could not show system tray balloon:', e.message);
+        }
+      }
     }
   });
 
