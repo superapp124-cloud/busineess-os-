@@ -1,73 +1,78 @@
-# CHATR RecruitmentOS — Flagship Business OS Specification
+# CHATR RecruitmentOS — Product Architecture & Composition Specification
 
 **Product Name**: CHATR RecruitmentOS  
-**Platform**: Built on CHATR Intent Platform v1.0 GA  
-**Architecture Model**: Composable Business OS (Zero monolithic business logic; 100% capability-driven)
+**Platform**: Built on CHATR Intent Platform v1.0 GA (`v1.0.0-ga`)  
+**Governance Invariant**: Zero platform modifications (`@chatr/kernel`, `@chatr/planner`, Conformance Spec) unless a production requirement exposes an insurmountable limitation.
 
 ---
 
-## Strategic Vision
+## Architecture: Three Capability Classes
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    CHATR RecruitmentOS                          │
-│     (Unified Business OS Workspace & Orchestration Layer)       │
-├─────────────────────────────────────────────────────────────────┤
-│                     Certified Capabilities                      │
-│ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────┐ │
-│ │ Candidate CRM │ │ Resume Screener│ │  Job Board   │ │ Portal│ │
-│ └───────────────┘ └───────────────┘ └───────────────┘ └───────┘ │
-├─────────────────────────────────────────────────────────────────┤
-│                     CHATR Intent Platform                       │
-│ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────┐ │
-│ │ Intent Store  │ │    Planner    │ │ Control Plane │ │Kernel │ │
-│ └───────────────┘ └───────────────┘ └───────────────┘ └───────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                   CHATR RecruitmentOS Workspace                  │
+│       (Navigation · Capability Composition · Planner Config)      │
+├──────────────────────────────────────────────────────────────────┤
+│                       Domain Capabilities                        │
+│ ┌────────────────┐ ┌────────────────┐ ┌────────────────────────┐ │
+│ │ Candidate CRM  │ │ Resume Review  │ │    Job Distribution    │ │
+│ └────────────────┘ └────────────────┘ └────────────────────────┘ │
+├──────────────────────────────────────────────────────────────────┤
+│                      Foundation Capabilities                     │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌───────────┐ │
+│ │ Calendar     │ │ Notifications│ │ Approvals    │ │ Search    │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ └───────────┘ │
+├──────────────────────────────────────────────────────────────────┤
+│                      CHATR Intent Platform                       │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌───────────┐ │
+│ │ Intent Store │ │   Planner    │ │Control Plane │ │  Kernel   │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ └───────────┘ │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 1. Capability Composition Map
+## 1. Class Definitions
 
-The Recruitment Business OS is composed of 8 modular, independently installable capabilities registered in the Intent Store:
+### Class 1: Foundation Capabilities (Reusable Everywhere)
+Capabilities shared across all Business OS products (RecruitmentOS, SalesOS, HealthOS, LegalOS):
+- `calendar`: Event scheduling, availability lookup, mutual slot matching
+- `notifications`: Multichannel alert dispatch (Email, SMS, Push, In-app)
+- `approvals`: Policy-based multi-tier approval chains
+- `documents`: Document parsing, PDF generation, e-signatures
+- `audit`: Immutable action logging and compliance auditing
 
-| Capability ID | Module Name | Primary Responsibilities |
-| :--- | :--- | :--- |
-| `recruitment-crm` | **Candidate CRM** | Unified candidate profiles, interaction history, talent pool segmentation, tag management |
-| `recruitment-screener` | **AI Resume Review** | Parser, automated match scoring, skill gap detection, qualification summaries |
-| `recruitment-jobboard` | **Job Distribution** | Requisition management, multi-board posting (LinkedIn, GitHub, Indeed), applicant intake |
-| `recruitment-scheduler` | **Interview Scheduler** | Calendar availability matching, automated slot selection, interviewer panel dispatch |
-| `recruitment-onboarding` | **Offer & Onboarding** | CTC calculator, offer letter generator, e-signature dispatch, document collection |
-| `recruitment-vendor` | **Vendor Management** | Staffing agency portal, candidate submission tracking, placement fee calculation |
-| `recruitment-client-portal` | **Hiring Manager Portal** | Read-only candidate review, feedback submitter, interview scorecards |
-| `recruitment-analytics` | **Analytics & BI** | Time-to-hire, funnel conversion rates, source attribution, interviewer rating metrics |
+### Class 2: Domain Capabilities (Industry Specific)
+Capabilities specific to HR & Talent Acquisition:
+- `recruitment-crm`: Candidate records, talent pools, stage pipelines
+- `recruitment-screener`: AI resume parsing, candidate scoring, skill matching
+- `recruitment-jobboard`: Job requisition management, job board connectors
+- `recruitment-scheduler`: Interview workflow orchestration using `calendar` + `notifications`
 
----
-
-## 2. Platform Contract Mapping
-
-Every module interacts exclusively through frozen platform contracts:
-
-1. **Intent Registration**: Each module declares intent schemas in its `CapabilityManifest`.
-2. **Planner Orchestration**: Multi-module flows (e.g. `Candidate Applied → Run AI Screener → Schedule Interview → Notify Hiring Manager`) are decomposed into an `ExecutionPlan` by the Planner.
-3. **Governance & Safety**: High-impact actions (e.g. `Generate Offer Letter`, `Publish Job Requisition`) run through `SafetyValidator` with `requiresHumanReview = true`.
-4. **Tenant Isolation**: All candidate data is scoped by `tenantId` in `user_capability_installs` and domain tables.
-5. **Observability**: Execution events emit standard `capability.executed` events to `os_events`.
+### Class 3: Workspace (Zero Business Logic)
+The `RecruitmentOS` application layout itself:
+- Provides top-level routing (`/desktop/recruitment`)
+- Composes active capabilities dynamically from `user_capability_installs`
+- Renders capability navigation tabs
+- Intercepts user intent via the **Planner**
 
 ---
 
-## 3. Product Roadmap
+## 2. Initial Four Product Modules
 
-### Phase 1: Core ATS Pipeline
-- Candidate CRM (`recruitment-crm`)
-- AI Resume Review (`recruitment-screener`)
-- Job Distribution (`recruitment-jobboard`)
+| Module | Capability Class | Dependencies | Platform Verification |
+| :--- | :--- | :--- | :--- |
+| **Candidate CRM** | Domain | `documents`, `audit` | Store registry, Supabase persistence, tenant isolation |
+| **AI Resume Screener** | Domain | `intelligence`, `documents` | Reasoner provider isolation, confidence safety gate |
+| **Job Distribution** | Domain | `notifications` | Connector webhooks, external channel routing |
+| **Interview Scheduler** | Domain | `calendar`, `notifications`, `approvals` | Multi-capability DAG execution by Planner |
 
-### Phase 2: Engagement & Offers
-- Interview Scheduler (`recruitment-scheduler`)
-- Offer & Onboarding (`recruitment-onboarding`)
-- Hiring Manager Portal (`recruitment-client-portal`)
+---
 
-### Phase 3: Enterprise Operations
-- Vendor Management (`recruitment-vendor`)
-- Analytics & BI (`recruitment-analytics`)
+## 3. Success Metric
+
+> **Can CHATR RecruitmentOS be assembled from certified capabilities without modifying the Kernel, Planner, or Control Plane?**
+
+- `[x]` Platform code remains untouched (`@chatr/kernel`, `@chatr/planner`, Conformance Spec).
+- `[ ]` All 4 initial modules pass Conformance Spec v1.
+- `[ ]` End-to-end user flows execute through Intent Store and Execution Engine.
