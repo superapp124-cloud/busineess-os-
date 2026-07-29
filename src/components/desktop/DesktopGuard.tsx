@@ -155,6 +155,16 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
               Downloading CHATR Desktop installer... Please run setup executable.
             </div>
           )}
+
+          {/* SmartScreen Helper */}
+          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-left text-xs space-y-1.5 mt-3">
+            <div className="text-amber-400 font-semibold flex items-center gap-1.5">
+              <span>ℹ️</span> Windows SmartScreen Prompt?
+            </div>
+            <p className="text-slate-400 leading-normal text-[11px]">
+              If Defender shows "Windows protected your PC": Click <span className="text-slate-200 font-medium font-mono">More info</span> → <span className="text-slate-200 font-medium font-mono">Run anyway</span>.
+            </p>
+          </div>
         </div>
 
         <div className="mt-6 text-[11px] text-slate-500">

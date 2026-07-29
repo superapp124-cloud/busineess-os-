@@ -1,290 +1,261 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
- ArrowLeft, 
- Smartphone, 
- Monitor, 
- Download as DownloadIcon,
- CheckCircle2,
- MessageCircle,
- Heart,
- Shield,
- Zap
+  ArrowLeft, 
+  Smartphone, 
+  Monitor, 
+  Download as DownloadIcon,
+  CheckCircle2,
+  Shield,
+  Zap,
+  Cpu,
+  Lock,
+  Sparkles,
+  Info
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import logo from '@/assets/chatr-logo.png';
 
 export default function Download() {
- const navigate = useNavigate();
- const appUrl = window.location.origin;
+  const navigate = useNavigate();
+  const appUrl = window.location.origin;
+  const [downloadingOS, setDownloadingOS] = useState<string | null>(null);
 
- const features = [
- { icon: MessageCircle, title: 'Instant Messaging', description: 'Chat with anyone, anywhere' },
- { icon: Heart, title: 'Healthcare Platform', description: 'Complete digital health services' },
- { icon: Shield, title: 'Health Passport', description: 'Your medical records in one place' },
- { icon: Zap, title: 'AI Assistant', description: '24/7 health guidance' }
- ];
+  const handleDownloadExecutable = async (filename: string, osLabel: string) => {
+    setDownloadingOS(osLabel);
 
- const handleDownloadAndroid = () => {
- // In production, this would link to Google Play Store
- window.open('https://play.google.com/store', '_blank');
- };
+    const downloadUrl = `/download/${filename}`;
 
- const handleDownloadIOS = () => {
- // In production, this would link to Apple App Store
- window.open('https://www.apple.com/app-store/', '_blank');
- };
+    try {
+      const res = await fetch(downloadUrl);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        return;
+      }
+    } catch (e) {
+      console.warn('[Download] Blob download fallback:', e);
+    }
 
- const handleOpenWeb = () => {
- navigate('/auth');
- };
+    // Direct trigger fallback
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
- return (
- <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
- {/* Header */}
- <div className="p-4 backdrop-blur-glass bg-gradient-glass border-b border-glass-border sticky top-0 z-10">
- <div className="max-w-6xl mx-auto flex items-center justify-between">
- <div className="flex items-center gap-3">
- <Button
- variant="ghost"
- size="icon"
- onClick={() => navigate('/')}
- className="rounded-full"
- >
- <ArrowLeft className="h-5 w-5" />
- </Button>
- <img src={logo} alt="chatr+ Logo" className="h-8 object-contain" />
- </div>
- <Button onClick={handleOpenWeb} variant="outline">
- Open Web App
- </Button>
- </div>
- </div>
-
- <div className="max-w-6xl mx-auto p-6 space-y-8">
- {/* Hero Section */}
- <div className="text-center space-y-4 py-8">
- <h1 className="text-display md:text-display bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
- Download Chatr+
- </h1>
- <p className="text-workspace text-muted-foreground max-w-2xl mx-auto">
- India's next-gen all-in-one messaging & healthcare platform
- </p>
- </div>
-
-      {/* Download Options Grid */}
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-
-        {/* CHATR Desktop (RECOMMENDED) */}
-        <Card className="bg-slate-900/90 border-2 border-cyan-500/80 shadow-xl shadow-cyan-500/10 relative overflow-hidden">
-          <div className="absolute top-3 right-3 bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full">
-            Recommended
+  return (
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-cyan-500 selection:text-black">
+      {/* Top Header */}
+      <div className="p-4 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/')}
+              className="rounded-full text-slate-300 hover:bg-slate-800"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <img src={logo} alt="CHATR Logo" className="h-8 object-contain" />
           </div>
-          <CardContent className="p-6 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
-                <Monitor className="h-6 w-6 text-cyan-400" />
-              </div>
-              <div>
-                <h2 className="text-workspace font-bold text-white">CHATR Desktop</h2>
-                <p className="text-xs text-cyan-400 font-medium">Windows • macOS • Linux</p>
-              </div>
+          <Button 
+            onClick={() => navigate('/auth')} 
+            variant="outline"
+            className="border-slate-700 hover:bg-slate-800 text-slate-300"
+          >
+            Open Web App
+          </Button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto p-6 space-y-12 py-12">
+        
+        {/* Claude Desktop-inspired Hero Section */}
+        <div className="text-center space-y-4 max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-indigo-400 bg-clip-text text-transparent leading-tight">
+            Do more with CHATR, everywhere you work
+          </h1>
+          <p className="text-lg text-slate-400 leading-relaxed">
+            Chat, cowork, and automate in one sovereign app. CHATR Desktop works with your local files, private AI models, voice, and browser tabs.
+          </p>
+        </div>
+
+        {/* Claude Desktop Card Showcase */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden grid lg:grid-cols-12 gap-8 items-center">
+          
+          {/* Left Column: Download Info */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" /> CHATR Desktop
             </div>
 
-            <p className="text-xs text-slate-300">
-              The sovereign AI workspace. Runs local AI models, private offline memory, voice AI, and business automation 100% on your device.
+            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+              The Sovereign Local AI Workspace
+            </h2>
+
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Run offline AI models, parse local documents privately, execute voice commands, and power multi-step agent workflows 100% on your device hardware.
             </p>
 
-            <div className="space-y-2.5">
-              <Button 
-                onClick={() => window.open('/download/chatr-desktop-setup.exe', '_blank')}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/20"
-                size="lg"
+            {/* Primary Action Buttons */}
+            <div className="space-y-3 pt-2">
+              <Button
+                onClick={() => handleDownloadExecutable('chatr-desktop-setup.exe', 'Windows')}
+                className="w-full sm:w-auto px-8 py-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-base shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-3"
               >
-                <DownloadIcon className="mr-2 h-5 w-5" />
-                Download for Windows (.exe)
+                <DownloadIcon className="w-5 h-5" />
+                Download for Windows
               </Button>
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  onClick={() => window.open('/download/chatr-desktop.dmg', '_blank')}
+
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  onClick={() => handleDownloadExecutable('chatr-desktop.dmg', 'macOS')}
                   variant="outline"
-                  size="sm"
-                  className="w-full border-slate-700 hover:bg-slate-800 text-slate-300"
+                  className="border-slate-700 hover:bg-slate-800 text-slate-300 text-xs"
                 >
                   macOS (.dmg)
                 </Button>
-                <Button 
-                  onClick={() => window.open('/download/chatr-desktop.AppImage', '_blank')}
+                <Button
+                  onClick={() => handleDownloadExecutable('chatr-desktop.AppImage', 'Linux')}
                   variant="outline"
-                  size="sm"
-                  className="w-full border-slate-700 hover:bg-slate-800 text-slate-300"
+                  className="border-slate-700 hover:bg-slate-800 text-slate-300 text-xs"
                 >
                   Linux (.AppImage)
                 </Button>
               </div>
+
+              {downloadingOS && (
+                <div className="p-3 bg-cyan-950/70 border border-cyan-700/60 rounded-xl text-cyan-300 text-xs flex items-center gap-2 mt-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                  Downloading CHATR Desktop for {downloadingOS}... Please run installer executable.
+                </div>
+              )}
             </div>
 
-            <div className="space-y-2 pt-3 border-t border-slate-800 text-xs">
-              <p className="text-slate-400 font-medium">Superpowers included:</p>
-              <ul className="space-y-1 text-slate-300">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
-                  <span>Zero-Cloud Local AI Engine</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
-                  <span>Private Offline Document RAG</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
-                  <span>Voice AI & Autonomous Coworkers</span>
-                </li>
-              </ul>
+            {/* SmartScreen Helper Notice */}
+            <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/80 text-xs space-y-2">
+              <div className="flex items-center gap-2 text-amber-400 font-semibold">
+                <Info className="w-4 h-4" /> Windows SmartScreen Notice
+              </div>
+              <p className="text-slate-400 leading-relaxed">
+                If Windows Defender SmartScreen displays <span className="text-slate-200 font-medium font-mono">"Windows protected your PC"</span>:
+              </p>
+              <div className="flex items-center gap-2 text-slate-300">
+                <span className="bg-slate-800 px-2 py-0.5 rounded font-mono text-[11px]">1. Click "More info"</span>
+                <span>→</span>
+                <span className="bg-slate-800 px-2 py-0.5 rounded font-mono text-[11px]">2. Click "Run anyway"</span>
+              </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Mobile Apps */}
-        <Card className="bg-card/50 backdrop-blur-glass border-glass-border">
-          <CardContent className="p-6 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-primary/10">
-                <Smartphone className="h-6 w-6 text-primary" />
+          </div>
+
+          {/* Right Column: Claude Desktop Style Floating Prompt Cards */}
+          <div className="lg:col-span-6 space-y-4 bg-slate-950/60 p-6 rounded-2xl border border-slate-800/80 relative">
+            <div className="text-xs text-slate-400 uppercase font-semibold tracking-wider mb-4">
+              Local AI Capabilities Preview
+            </div>
+
+            {/* Prompt Bubble 1 */}
+            <div className="bg-slate-900 border border-slate-700/70 p-4 rounded-2xl shadow-lg flex items-start gap-3 transform hover:-translate-y-1 transition-transform">
+              <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                <Cpu className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-workspace font-bold">Mobile App</h2>
-                <p className="text-secondary text-muted-foreground">For Android & iOS</p>
+                <p className="text-xs font-semibold text-white">"Parse these Q3 contract PDFs locally"</p>
+                <p className="text-[11px] text-slate-400">100% offline RAG vector index over your Documents folder.</p>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <Button 
-                onClick={handleDownloadAndroid}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                size="lg"
-              >
-                <DownloadIcon className="mr-2 h-5 w-5" />
-                Download for Android
-              </Button>
-              
-              <Button 
-                onClick={handleDownloadIOS}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                size="lg"
-              >
-                <DownloadIcon className="mr-2 h-5 w-5" />
-                Download for iPhone
-              </Button>
-            </div>
-
-            {/* QR Code */}
-            <div className="flex flex-col items-center gap-3 pt-4 border-t border-glass-border">
-              <p className="text-secondary text-muted-foreground">Scan to download on mobile</p>
-              <div className="p-4 bg-white rounded-lg">
-                <QRCodeSVG value={appUrl} size={130} />
+            {/* Prompt Bubble 2 */}
+            <div className="bg-slate-900 border border-slate-700/70 p-4 rounded-2xl shadow-lg flex items-start gap-3 transform hover:-translate-y-1 transition-transform ml-4">
+              <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white">"Turn receipts into an expense report"</p>
+                <p className="text-[11px] text-slate-400">Automates file scanning using local vision LLM models.</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Web App */}
- <Card className="bg-card/50 backdrop-blur-glass border-glass-border">
- <CardContent className="p-6 space-y-6">
- <div className="flex items-center gap-3">
- <div className="p-3 rounded-full bg-accent/10">
- <Monitor className="h-6 w-6 text-accent" />
- </div>
- <div>
- <h2 className="text-workspace font-bold">Web App</h2>
- <p className="text-secondary text-muted-foreground">Use in your browser</p>
- </div>
- </div>
+            {/* Prompt Bubble 3 */}
+            <div className="bg-slate-900 border border-slate-700/70 p-4 rounded-2xl shadow-lg flex items-start gap-3 transform hover:-translate-y-1 transition-transform">
+              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+                <Lock className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white">"Screen candidates privately with local LLM"</p>
+                <p className="text-[11px] text-slate-400">Zero cloud API costs. Complete data sovereignty.</p>
+              </div>
+            </div>
+          </div>
 
- <div className="space-y-4">
- <p className="text-muted-foreground">
- Access Chatr+ directly from your browser. Works on desktop and mobile.
- </p>
+        </div>
 
- <Button 
- onClick={handleOpenWeb}
- className="w-full"
- size="lg"
- variant="default"
- >
- Open Web App
- </Button>
+        {/* Mobile & Web Secondary Section */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto pt-6">
+          {/* Mobile */}
+          <Card className="bg-slate-900/60 border border-slate-800">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-slate-800 text-slate-300">
+                  <Smartphone className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">CHATR Mobile</h3>
+                  <p className="text-xs text-slate-400">Android & iOS</p>
+                </div>
+              </div>
 
- <div className="space-y-2 pt-4 border-t border-glass-border">
- <p className="text-secondary font-medium">Features include:</p>
- <ul className="space-y-2">
- {['Real-time messaging', 'Voice & video calls', 'Health passport access', 'AI health assistant'].map((feature) => (
- <li key={feature} className="flex items-center gap-2 text-secondary text-muted-foreground">
- <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
- <span>{feature}</span>
- </li>
- ))}
- </ul>
- </div>
- </div>
- </CardContent>
- </Card>
- </div>
+              <div className="flex flex-col gap-2">
+                <Button onClick={() => window.open('https://play.google.com/store', '_blank')} variant="outline" className="border-slate-700 text-xs">
+                  Download for Android
+                </Button>
+                <Button onClick={() => window.open('https://www.apple.com/app-store/', '_blank')} variant="outline" className="border-slate-700 text-xs">
+                  Download for iPhone
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
- {/* Features Grid */}
- <div className="max-w-4xl mx-auto">
- <h2 className="text-page font-bold text-center mb-6">Why Choose Chatr+?</h2>
- <div className="grid md:grid-cols-2 gap-4">
- {features.map((feature) => (
- <Card key={feature.title} className="bg-card/50 backdrop-blur-glass border-glass-border">
- <CardContent className="p-6 flex items-start gap-4">
- <div className="p-3 rounded-full bg-primary/10">
- <feature.icon className="h-5 w-5 text-primary" />
- </div>
- <div>
- <h3 className="font-semibold mb-1">{feature.title}</h3>
- <p className="text-secondary text-muted-foreground">{feature.description}</p>
- </div>
- </CardContent>
- </Card>
- ))}
- </div>
- </div>
+          {/* Web */}
+          <Card className="bg-slate-900/60 border border-slate-800">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-slate-800 text-slate-300">
+                  <Monitor className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">CHATR Web</h3>
+                  <p className="text-xs text-slate-400">Cloud AI Tier</p>
+                </div>
+              </div>
 
- {/* System Requirements */}
- <Card className="max-w-4xl mx-auto bg-card/50 backdrop-blur-glass border-glass-border">
- <CardContent className="p-6">
- <h3 className="font-semibold mb-4">System Requirements</h3>
- <div className="grid md:grid-cols-3 gap-6 text-secondary">
- <div>
- <p className="font-medium mb-2">Android</p>
- <p className="text-muted-foreground">Android 7.0 or higher</p>
- </div>
- <div>
- <p className="font-medium mb-2">iOS</p>
- <p className="text-muted-foreground">iOS 13.0 or higher</p>
- </div>
- <div>
- <p className="font-medium mb-2">Web</p>
- <p className="text-muted-foreground">Modern browsers (Chrome, Firefox, Safari, Edge)</p>
- </div>
- </div>
- </CardContent>
- </Card>
+              <p className="text-xs text-slate-400">
+                Access basic cloud chat directly from modern web browsers.
+              </p>
 
- {/* CTA */}
- <div className="text-center space-y-4 py-8">
- <h2 className="text-page font-bold">Ready to get started?</h2>
- <div className="flex flex-wrap gap-3 justify-center">
- <Button onClick={handleOpenWeb} size="lg">
- Start Using Chatr+
- </Button>
- <Button onClick={() => navigate('/')} variant="outline" size="lg">
- Learn More
- </Button>
- </div>
- </div>
- </div>
- </div>
- );
+              <Button onClick={() => navigate('/auth')} variant="secondary" className="w-full text-xs">
+                Open Browser App
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+      </div>
+    </div>
+  );
 }
