@@ -615,7 +615,7 @@ const DesktopLayoutInner = () => {
           </header>
 
           {/* Page content */}
-          <main className="flex-1 flex flex-col overflow-hidden relative">
+          <main className="flex-1 flex flex-col overflow-y-auto min-h-0 relative">
             <Outlet />
           </main>
         </div>

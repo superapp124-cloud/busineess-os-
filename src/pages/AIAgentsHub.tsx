@@ -356,7 +356,7 @@ export default function AIAgentsHub() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors ${isDark ? 'bg-[#0a0a0c] text-white' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`h-full w-full overflow-y-auto custom-scrollbar flex-1 flex flex-col font-sans transition-colors ${isDark ? 'bg-[#0a0a0c] text-white' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* ── Top Header Bar ── */}
       <div className={`px-6 py-4 border-b flex items-center justify-between backdrop-blur-xl sticky top-0 z-40 ${isDark ? 'bg-[#0d0f1a]/90 border-white/10' : 'bg-white/90 border-slate-200 shadow-sm'}`}>
