@@ -158,12 +158,16 @@ const GlobalCallOverlay = () => {
   );
 };
 
+import { DesktopGuard } from '@/components/desktop/DesktopGuard';
+
 // ─── Main Layout ──────────────────────────────────────────────────────────────
 
 const DesktopLayout: React.FC = () => (
   <KernelErrorBoundary>
     <GlobalIntentProvider>
-      <DesktopLayoutInner />
+      <DesktopGuard>
+        <DesktopLayoutInner />
+      </DesktopGuard>
     </GlobalIntentProvider>
   </KernelErrorBoundary>
 );
