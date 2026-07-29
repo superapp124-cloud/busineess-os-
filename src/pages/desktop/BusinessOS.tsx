@@ -899,6 +899,7 @@ const AppConfigModal = ({ pkg, onClose, onSave }: { pkg: any, onClose: () => voi
 
 const CATEGORIES = [
  'All',
+ 'Installed',
  'Executive & Strategy',
  'CRM & Sales',
  'Marketing',
@@ -934,7 +935,11 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
  const filtered = allPackages.filter(pkg => {
  const q = searchQuery.toLowerCase();
  const matchesSearch = !q || pkg.name?.toLowerCase().includes(q) || pkg.description?.toLowerCase().includes(q) || pkg.category?.toLowerCase().includes(q) || (pkg.tags || []).some((t: string) => t.toLowerCase().includes(q));
- const matchesCat = activeCategory === 'All' || pkg.category === activeCategory;
+ const matchesCat = activeCategory === 'All' 
+    ? true 
+    : activeCategory === 'Installed' 
+    ? localInstalled.includes(pkg.id) 
+    : pkg.category === activeCategory;
  return matchesSearch && matchesCat;
  });
 
@@ -986,11 +991,6 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
 
  {/* Stats */}
  <div className="flex items-center gap-3 mt-4 mb-4">
- <div className="flex items-center gap-1">
- <Star size={11} className="text-amber-400 fill-amber-400" />
- <span className="text-label text-zinc-400 ">{(pkg.rating || 4.5).toFixed(1)}</span>
- </div>
- <span className="text-zinc-700">·</span>
  <span className="text-label text-zinc-500">{pkg.installs ? `${(pkg.installs / 1000).toFixed(0)}k` : '1k'} installs</span>
  {pkg.version && <><span className="text-zinc-700">·</span><span className="text-label text-zinc-500">v{pkg.version}</span></>}
  </div>
@@ -1617,47 +1617,6 @@ const PlatformSettingsView = ({ template }: { template: OSTemplate }) => (
 // ─── Identity & Access System ──────────────────────────────────────────────────
 
 const IdentityAccessView = () => {
- const users = [
- { name: 'Sarah Chen', role: 'Domain Superintendent', dept: 'All', access: ['Recruitment', 'Core CRM', 'Client Portal'] },
- { name: 'Marcus Johnson', role: 'HR Manager', dept: 'HR', access: ['Recruitment', 'Core HR'] },
- { name: 'Elena Rodriguez', role: 'Sales Lead', dept: 'Sales', access: ['Core CRM'] },
- { name: 'AI Engine', role: 'System Autonomous', dept: 'System', access: ['All Packages'] }
- ];
-
- return (
- <div className="flex-1 overflow-hidden bg-[#09090b] flex w-full h-full relative" style={{ scrollbarWidth: 'thin', scrollbarColor: '#27272a transparent' }}>
- <div className="max-w-6xl mx-auto space-y-8">
- <div className="flex items-end justify-between">
- <div>
- <h1 className="text-display font-extrabold text-white tracking-tight">Identity & Access</h1>
- <p className="text-zinc-400 mt-2 text-section">Manage RBAC policies, user roles, and AI execution permissions.</p>
- </div>
- <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-bold text-button rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20">
- <Plus size={16} /> Create Role
- </button>
- </div>
-
- <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
- <table className="w-full text-left border-collapse">
- <thead>
- <tr className="border-b border-zinc-800 bg-zinc-950/50">
- <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">User / Identity</th>
- <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Role</th>
- <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Department</th>
- <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest">Package Access</th>
- <th className="px-6 py-4 text-table font-bold text-zinc-500 uppercase tracking-widest text-right">Actions</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-zinc-800/60">
- {users.map((u, i) => (
- <tr key={i} className="hover:bg-zinc-800/20 transition-colors">
- <td className="px-6 py-4">
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-label font-bold text-white">
- {u.name.charAt(0)}
- </div>
- <span className="font-medium text-white">{u.name}</span>
- </div>
  </td>
  <td className="px-6 py-4">
  <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${u.name === 'AI Engine' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-zinc-800 text-zinc-300'}`}>

@@ -36,17 +36,18 @@ const STEPS = [
 
 // ─── In-Memory Registries ────────────────────────────────────────────────────
 
-let initialCapabilities: string[] = [];
+const DEFAULT_CAPABILITIES = ['HR.ATS', 'CRM.LeadManagement', 'Finance.Invoicing', 'Executive.OKRGoals', 'Operations.ProjectManagement'];
+let initialCapabilities: string[] = DEFAULT_CAPABILITIES;
 try {
   const stored = localStorage.getItem('chatr_installed_capabilities');
   if (stored) {
     const parsed = JSON.parse(stored);
-    if (Array.isArray(parsed)) {
+    if (Array.isArray(parsed) && parsed.length > 0) {
       initialCapabilities = parsed;
     }
   }
 } catch (e) {
-  console.warn('Could not parse installed capabilities, starting fresh.');
+  console.warn('Could not parse installed capabilities, using defaults.');
 }
 
 /** Tracks which capability IDs are installed in this session */
