@@ -332,12 +332,6 @@ function registerLocalRecordsIpc() {
   });
 }
 
-const gotTheLock = app.requestSingleInstanceLock();
-if (!gotTheLock) {
-  app.quit();
-  process.exit(0);
-}
-
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient('chatr', process.execPath, [path.resolve(process.argv[1])]);
@@ -1599,10 +1593,6 @@ JSON Output:
     autoUpdater.quitAndInstall(false, true);
   });
 }
-
-let mainWindow;
-let tray = null;
-let isQuitting = false;
 
 const windowStateFile = path.join(app.getPath('userData'), 'window-state.json');
 
