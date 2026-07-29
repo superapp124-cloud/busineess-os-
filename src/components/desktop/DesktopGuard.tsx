@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DesktopDetectionService } from '../../services/desktop/DesktopDetectionService';
+import logo from '@/assets/chatr-icon-logo.png';
 
 export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isElectron, setIsElectron] = useState<boolean>(true); // Default true until checked
@@ -119,8 +120,8 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Logo */}
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 mx-auto flex items-center justify-center font-black text-2xl shadow-xl shadow-cyan-500/20 mb-6">
-          C
+        <div className="mx-auto flex items-center justify-center mb-6">
+          <img src={logo} alt="CHATR Logo" className="h-16 w-16 object-contain shadow-2xl drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]" />
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">

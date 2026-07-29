@@ -1825,6 +1825,17 @@ app.whenReady().then(() => {
   // PHASE 4: SYSTEM TRAY & GLOBAL SHORTCUTS
   // ---------------------------------------------------------
   
+  // Configure permanent Windows autostart on boot
+  try {
+    app.setLoginItemSettings({
+      openAtLogin: true,
+      openAsHidden: true,
+      name: 'CHATR Desktop'
+    });
+  } catch (e) {
+    log.warn('Could not set login item settings:', e.message);
+  }
+
   // 1. System Tray
   const iconPath = path.join(__dirname, '../public/favicon.png');
   try {
