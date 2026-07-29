@@ -62,20 +62,31 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Welcome to CHATR Desktop
+          Prepare your Private AI Workspace
         </h1>
-        <p className="text-slate-400 text-sm mb-8">
-          {state.currentStep}
+        
+        <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+          CHATR will download approximately <strong>2 GB</strong> to install the local AI engine and starter models. This enables private AI, offline memory, and enterprise automation.
         </p>
 
-        {/* Action button if idle */}
+        {/* Action buttons if idle or preparing consent */}
         {state.phase === 'idle' && (
-          <button
-            onClick={handleStartPreparation}
-            className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-cyan-500/25 mb-6"
-          >
-            Prepare Private AI Workspace
-          </button>
+          <div className="space-y-3 mb-6">
+            <button
+              onClick={handleStartPreparation}
+              className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-cyan-500/25"
+            >
+              Prepare Now (Recommended)
+            </button>
+            <button
+              onClick={() => {
+                if (onReady) onReady();
+              }}
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 font-medium text-xs transition-all border border-slate-800"
+            >
+              Cloud Tier (Limited Features)
+            </button>
+          </div>
         )}
 
         {/* Progress Bar */}
