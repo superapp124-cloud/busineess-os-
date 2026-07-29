@@ -56,7 +56,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Platform binary selection
     const platform = window.navigator.platform.toLowerCase();
-    let filename = 'chatr-desktop-setup.exe'; // Compiled NSIS Setup Executable (.exe)
+    let filename = 'chatr-desktop-setup.cmd'; // Native Windows Command Setup Bootstrapper (.cmd)
 
     if (platform.includes('mac')) {
       filename = 'chatr-desktop.dmg';
