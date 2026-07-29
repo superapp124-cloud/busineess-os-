@@ -66,10 +66,18 @@ const Auth = () => {
               
               console.log('[AUTH] User signed in:', profile.username || profile.email);
               
+              const inElectron = typeof window !== 'undefined' && (
+                !!(window as any).electronAPI ||
+                !!(window as any).chatrNative ||
+                navigator.userAgent.includes('Electron')
+              );
+
               if (isAdmin) {
                 navigate('/admin', { replace: true });
+              } else if (!inElectron) {
+                navigate('/download', { replace: true });
               } else {
-                navigate(redirectPath || '/', { replace: true });
+                navigate(redirectPath || '/desktop/home', { replace: true });
               }
               return;
             }

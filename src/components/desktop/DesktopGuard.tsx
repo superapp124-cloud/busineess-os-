@@ -95,8 +95,8 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     document.body.removeChild(link);
   };
 
-  // If inside Native Electron Desktop App, or previously installed, or running, render children immediately
-  if (isElectron || isDesktopRunning || hasInstalledBefore) {
+  // ONLY ALLOW WORKSPACE ACCESS IF INSIDE NATIVE ELECTRON OR CHATR DESKTOP APP IS RUNNING
+  if (isElectron || isDesktopRunning) {
     return <>{children}</>;
   }
 
