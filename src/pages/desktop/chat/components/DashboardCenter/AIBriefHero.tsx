@@ -5,12 +5,17 @@ import { toast } from 'sonner';
 import { useCHATROS } from '@/core/os/hooks';
 import { triggerFlightBooking } from '@/core/capabilities/travel/FlightBookingWorkflow';
 import { supabase } from '@/integrations/supabase/client';
+import { useAppearanceStore } from '@/hooks/useAppearanceStore';
+import { cn } from '@/lib/utils';
 
 export const AIBriefHero: React.FC = () => {
   const navigate = useNavigate();
   const chatrOS = useCHATROS();
   const [insights, setInsights] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { themeMode } = useAppearanceStore();
+  const isDark = themeMode === 'dark' || (themeMode === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
 
   useEffect(() => {
     async function fetchInsights() {
@@ -109,28 +114,42 @@ export const AIBriefHero: React.FC = () => {
   ];
 
   return (
-    <div className="w-full shrink-0 relative overflow-hidden rounded-2xl mt-4" style={{ background: 'linear-gradient(135deg, #1a1040 0%, #0d0b1f 50%, #0a091a 100%)' }}>
+    <div
+      className={cn(
+        'w-full shrink-0 relative overflow-hidden rounded-2xl mt-4 transition-colors duration-500 shadow-xl',
+        isDark ? 'border-white/[0.10]' : 'border-zinc-200/60'
+      )}
+      style={{
+        background: isDark
+          ? 'linear-gradient(135deg, #1a1040 0%, #0d0b1f 50%, #0a091a 100%)'
+          : 'linear-gradient(135deg, #ffffff 0%, #fcfcff 50%, #f8f7fa 100%)'
+      }}
+    >
       {/* Ambient glows */}
-      <div className="absolute -top-16 -left-16 w-72 h-72 bg-violet-600/20 blur-[90px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-16 -right-8 w-64 h-64 bg-indigo-600/15 blur-[80px] rounded-full pointer-events-none" />
+      {isDark && (
+        <>
+          <div className="absolute -top-16 -left-16 w-72 h-72 bg-violet-600/20 blur-[90px] rounded-full pointer-events-none" />
+          <div className="absolute -bottom-16 -right-8 w-64 h-64 bg-indigo-600/15 blur-[80px] rounded-full pointer-events-none" />
+        </>
+      )}
 
       {/* Border gradient overlay */}
-      <div className="absolute inset-0 rounded-2xl border border-white/[0.10] pointer-events-none" />
+      <div className={cn("absolute inset-0 rounded-2xl border pointer-events-none", isDark ? "border-white/[0.10]" : "border-zinc-200")} />
 
       <div className="relative z-10 p-7">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl overflow-hidden border border-violet-500/40 shadow-lg shadow-violet-500/20 shrink-0">
+          <div className={cn("w-10 h-10 rounded-xl overflow-hidden border shadow-lg shrink-0", isDark ? "border-violet-500/40 shadow-violet-500/20" : "border-violet-200 shadow-violet-500/5")}>
             <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">Today I noticed</h2>
-            <p className="text-xs text-white/40 mt-0.5">AI-curated briefing · Updated just now</p>
+            <h2 className={cn("text-xl font-bold tracking-tight", isDark ? "text-white" : "text-zinc-900")}>Today I noticed</h2>
+            <p className={cn("text-xs mt-0.5", isDark ? "text-white/40" : "text-zinc-500")}>AI-curated briefing · Updated just now</p>
           </div>
           {/* Live dot */}
           <div className="ml-auto flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400/80 font-medium">Live</span>
+            <span className={cn("text-xs font-medium", isDark ? "text-emerald-400/80" : "text-emerald-600")}>Live</span>
           </div>
         </div>
 
@@ -139,7 +158,7 @@ export const AIBriefHero: React.FC = () => {
           {insights.map((insight, i) => (
             <li key={i} className="flex items-center gap-3 group">
               <span className={`mt-0.5 w-2 h-2 rounded-full shrink-0 shadow-[0_0_8px] ${insight.dot}`} />
-              <span className="text-[15px] text-white/85 font-medium flex-1 leading-snug">{insight.text}</span>
+              <span className={cn("text-[15px] font-medium flex-1 leading-snug", isDark ? "text-white/85" : "text-zinc-700")}>{insight.text}</span>
               <span className={`hidden sm:inline-flex shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full border uppercase tracking-wide ${insight.tagColor}`}>
                 {insight.tag}
               </span>
@@ -148,17 +167,21 @@ export const AIBriefHero: React.FC = () => {
         </ul>
 
         {/* Divider */}
-        <div className="h-px bg-white/[0.07] mb-5" />
+        <div className={cn("h-px mb-5", isDark ? "bg-white/[0.07]" : "bg-zinc-200")} />
 
         {/* Action row */}
         <div>
-          <h3 className="text-[10px] font-black text-white/35 uppercase tracking-[0.22em] mb-3">What would you like to do?</h3>
+          <h3 className={cn("text-[10px] font-black uppercase tracking-[0.22em] mb-3", isDark ? "text-white/35" : "text-zinc-400")}>What would you like to do?</h3>
           <div className="flex flex-wrap items-center gap-2.5">
             {actions.map((action) => (
               <button
                 key={action.label}
                 onClick={() => handleAction(action.label)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold text-white transition-all shadow-lg ${action.bg} ${action.glow} hover:scale-[1.02] active:scale-[0.98] cursor-pointer`}
+                className={cn(
+                  "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+                  isDark ? "text-white" : "text-zinc-800 bg-white",
+                  action.bg, action.glow
+                )}
               >
                 <action.icon className={`w-4 h-4 ${action.iconClass}`} />
                 {action.label}

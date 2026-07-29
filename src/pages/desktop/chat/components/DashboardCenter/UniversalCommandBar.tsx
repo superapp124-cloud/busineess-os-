@@ -1,36 +1,60 @@
 import React, { useState } from 'react';
-import { Search, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useCHATROS } from '@/core/os/hooks';
+import { useAppearanceStore } from '@/hooks/useAppearanceStore';
+import { cn } from '@/lib/utils';
 
 export const UniversalCommandBar: React.FC = () => {
- const [query, setQuery] = useState('');
- const chatrOS = useCHATROS();
+  const [query, setQuery] = useState('');
+  const chatrOS = useCHATROS();
+  const { themeMode } = useAppearanceStore();
+  const isDark = themeMode === 'dark' || (themeMode === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
- return (
- <div className="w-full mt-4 mb-2">
- <div className="bg-[#11111a] border border-white/10 hover:border-violet-500/50 transition-colors rounded-2xl p-4 flex items-center gap-4 shadow-xl group">
- <div className="w-10 h-10 rounded-xl bg-violet-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
- <Sparkles className="w-5 h-5 text-violet-400" />
- </div>
- 
- <input 
- type="text" 
- value={query}
- onChange={(e) => setQuery(e.target.value)}
- onKeyDown={(e) => {
- if (e.key === 'Enter' && query.trim()) {
- chatrOS.submitIntent(query.trim());
- setQuery('');
- }
- }}
- placeholder='Search anything... try "book hotel in Srinagar" or "create payroll"' 
- className="flex-1 bg-transparent border-none outline-none text-section text-white placeholder-white/30 font-medium"
- />
+  return (
+    <div className="w-full">
+      <div
+        className={cn(
+          'border rounded-2xl p-3.5 flex items-center gap-3.5 transition-all group cursor-text',
+          isDark
+            ? 'bg-white/[0.04] border-white/[0.07] hover:border-violet-500/40 shadow-lg'
+            : 'bg-white border-zinc-200 hover:border-violet-300 shadow-sm hover:shadow-md'
+        )}
+        onClick={() => document.getElementById('universal-search-input')?.focus()}
+      >
+        <div className={cn(
+          'w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105',
+          isDark ? 'bg-violet-600/20' : 'bg-violet-50'
+        )}>
+          <Sparkles className="w-4.5 h-4.5 text-violet-500" />
+        </div>
 
- <div className="flex items-center gap-2 pr-2">
- <span className="text-label font-bold text-white/30 bg-white/5 px-2 py-1 rounded border border-white/5">⌘ K</span>
- </div>
- </div>
- </div>
- );
+        <input
+          id="universal-search-input"
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && query.trim()) {
+              chatrOS.submitIntent(query.trim());
+              setQuery('');
+            }
+          }}
+          placeholder='Search anything... try "book hotel in Srinagar" or "create payroll"'
+          className={cn(
+            'flex-1 bg-transparent border-none outline-none text-[13px] font-medium placeholder-opacity-50',
+            isDark ? 'text-white/80 placeholder:text-white/30' : 'text-zinc-700 placeholder:text-zinc-400'
+          )}
+        />
+
+        <div className="flex items-center gap-1.5 pr-1 shrink-0">
+          <kbd className={cn(
+            'text-[10px] font-bold px-2 py-0.5 rounded-lg border font-mono',
+            isDark ? 'text-white/30 bg-white/5 border-white/5' : 'text-zinc-400 bg-zinc-100 border-zinc-200'
+          )}>
+            ⌘ K
+          </kbd>
+        </div>
+      </div>
+    </div>
+  );
 };

@@ -199,6 +199,202 @@
     color: hsl(var(--foreground)) !important;
   }
 
+  /* ── Universal Light Mode Overrides ── */
+  html.light,
+  [data-theme="light"] {
+    color-scheme: light !important;
+  }
+
+  html.light .bg-\[\#0a0a0c\],
+  html.light .bg-\[\#0b0b14\],
+  html.light .bg-\[\#0c0d14\],
+  html.light .bg-\[\#0d0f1a\],
+  html.light .bg-\[\#111116\],
+  html.light .bg-\[\#0f0f13\],
+  html.light .bg-\[\#111\],
+  html.light .bg-\[\#0d0c1c\]\/90 {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+  }
+
+  html.light .bg-black,
+  html.light .bg-black\/40,
+  html.light .bg-black\/50,
+  html.light .bg-black\/60,
+  html.light .bg-black\/80 {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  html.light .border-white\/10,
+  html.light .border-white\/5,
+  html.light .border-white\/15,
+  html.light .border-white\/20,
+  html.light .border-white\/\[0\.06\],
+  html.light .border-white\/\[0\.07\] {
+    border-color: #e2e8f0 !important;
+  }
+
+  html.light .text-slate-400,
+  html.light .text-slate-500,
+  html.light .text-slate-600 {
+    color: #475569 !important;
+  }
+
+  html.light .text-white {
+    color: #0f172a !important;
+  }
+
+  /* Fill-button exceptions */
+  html.light button.bg-emerald-500 .text-white,
+  html.light button.bg-indigo-500 .text-white,
+  html.light button.bg-indigo-600 .text-white,
+  html.light button.bg-violet-600 .text-white,
+  html.light .bg-emerald-500,
+  html.light .bg-indigo-500,
+  html.light .bg-indigo-600,
+  html.light .bg-violet-600 {
+    color: #ffffff !important;
+  }
+
+  /* Dynamic Accent Color Utility Classes */
+  .bg-accent-dynamic {
+    background-color: var(--accent-color, #8b5cf6) !important;
+    color: #ffffff !important;
+  }
+
+  .text-accent-dynamic {
+    color: var(--accent-color, #8b5cf6) !important;
+  }
+
+  .border-accent-dynamic {
+    border-color: var(--accent-color, #8b5cf6) !important;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     APPLE-QUALITY GLOBAL LIGHT MODE SYSTEM
+     Applied to html.light — cascades to every component on every page
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  /* Universal cascade: any element without explicit bg gets light bg */
+  html.light body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* ── DARK BACKGROUND OVERRIDES ── */
+  html.light [class*="bg-zinc-950"],
+  html.light [class*="bg-zinc-900"],
+  html.light [class*="bg-black"],
+  html.light [class*="bg-neutral-950"],
+  html.light [class*="bg-neutral-900"] {
+    background-color: hsl(var(--background)) !important;
+  }
+
+  /* Specific hex dark colors used throughout the app */
+  html.light .bg-\[\#0b0b14\],
+  html.light .bg-\[\#0a0a12\],
+  html.light .bg-\[\#07070d\],
+  html.light .bg-\[\#090a0f\],
+  html.light .bg-\[\#0f0f14\],
+  html.light .bg-\[\#0d0c1c\],
+  html.light .bg-\[\#111318\],
+  html.light .bg-\[\#141418\],
+  html.light .bg-\[\#181b23\],
+  html.light .bg-\[\#1a1a2e\],
+  html.light .bg-\[\#1c1c1e\],
+  html.light .bg-\[\#111\],
+  html.light .bg-\[\#0d0d17\] {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Semi-transparent dark overlays */
+  html.light .bg-zinc-950\/95,
+  html.light .bg-zinc-950\/90,
+  html.light .bg-zinc-950\/80,
+  html.light .bg-zinc-950\/70,
+  html.light .bg-zinc-950\/60,
+  html.light .bg-zinc-950\/50,
+  html.light .bg-zinc-900\/80,
+  html.light .bg-zinc-900\/70,
+  html.light .bg-zinc-900\/60,
+  html.light .bg-zinc-900\/50 {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  /* White/glass overlays → map to muted/secondary */
+  html.light .bg-white\/\[0\.04\],
+  html.light .bg-white\/\[0\.05\],
+  html.light .bg-white\/\[0\.06\],
+  html.light .bg-white\/\[0\.07\],
+  html.light .bg-white\/\[0\.08\] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  html.light .bg-white\/5 { background-color: hsl(var(--muted)) !important; }
+  html.light .bg-white\/10 { background-color: hsl(var(--secondary)) !important; }
+  html.light .bg-white\/15 { background-color: hsl(var(--secondary)) !important; }
+  html.light .bg-white\/20 { background-color: hsl(220, 13%, 88%) !important; }
+
+  /* ── TEXT COLOR OVERRIDES ── */
+  html.light .text-white { color: hsl(var(--foreground)) !important; }
+  html.light .text-white\/95,
+  html.light .text-white\/90,
+  html.light .text-white\/85,
+  html.light .text-white\/80 { color: hsl(225, 25%, 12%) !important; }
+  html.light .text-white\/75,
+  html.light .text-white\/70,
+  html.light .text-white\/65,
+  html.light .text-white\/60 { color: hsl(220, 15%, 30%) !important; }
+  html.light .text-white\/55,
+  html.light .text-white\/50 { color: hsl(var(--muted-foreground)) !important; }
+  html.light .text-white\/45,
+  html.light .text-white\/40,
+  html.light .text-white\/35,
+  html.light .text-white\/30 { color: hsl(220, 10%, 52%) !important; }
+  html.light .text-white\/25,
+  html.light .text-white\/20,
+  html.light .text-white\/15 { color: hsl(220, 10%, 68%) !important; }
+
+  /* ── BORDER COLOR OVERRIDES ── */
+  html.light .border-white\/\[0\.04\],
+  html.light .border-white\/\[0\.05\],
+  html.light .border-white\/\[0\.06\],
+  html.light .border-white\/\[0\.07\],
+  html.light .border-white\/\[0\.08\],
+  html.light .border-white\/\[0\.10\],
+  html.light .border-white\/\[0\.12\],
+  html.light .border-white\/\[0\.15\],
+  html.light .border-white\/5,
+  html.light .border-white\/8,
+  html.light .border-white\/10,
+  html.light .border-white\/15,
+  html.light .border-white\/20 { border-color: hsl(var(--border)) !important; }
+
+  html.light .border-\[\#0b0b14\],
+  html.light .border-\[\#0a0a12\] { border-color: hsl(var(--border)) !important; }
+
+  /* ── HOVER OVERRIDES ── */
+  html.light .hover\:bg-white\/\[0\.04\]:hover,
+  html.light .hover\:bg-white\/\[0\.06\]:hover,
+  html.light .hover\:bg-white\/\[0\.08\]:hover,
+  html.light .hover\:bg-white\/\[0\.10\]:hover { background-color: hsl(var(--muted)) !important; }
+  html.light .hover\:bg-white\/5:hover { background-color: hsl(var(--muted)) !important; }
+  html.light .hover\:bg-white\/6:hover { background-color: hsl(var(--muted)) !important; }
+  html.light .hover\:bg-white\/8:hover { background-color: hsl(var(--muted)) !important; }
+  html.light .hover\:bg-white\/10:hover { background-color: hsl(var(--secondary)) !important; }
+  html.light .hover\:bg-white\/20:hover { background-color: hsl(220, 13%, 88%) !important; }
+  html.light .hover\:text-white:hover { color: hsl(var(--foreground)) !important; }
+  html.light .hover\:text-white\/70:hover { color: hsl(220, 15%, 30%) !important; }
+  html.light .hover\:text-white\/90:hover { color: hsl(225, 25%, 12%) !important; }
+
+  /* ── FOCUS OVERRIDES ── */
+  html.light .focus\:bg-white\/10:focus { background-color: hsl(var(--muted)) !important; }
+
+  /* ── RING OVERRIDES ── */
+  html.light .ring-zinc-950,
+  html.light .ring-zinc-900 { --tw-ring-color: hsl(var(--background)); }
+
   /* Dynamic Accent Color CSS Rules */
   [data-accent="purple"] {
     --primary: 263 90% 66%;

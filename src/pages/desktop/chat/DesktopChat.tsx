@@ -982,11 +982,11 @@ export default function DesktopChat() {
  )}
 
  {/* ── LEFT PANE: Channels & DMs ────────────────────────────────────── */}
- <div className="w-72 shrink-0 border-r border-white/[0.06] bg-[#0b0b14] flex flex-col relative z-20">
+ <div className="w-72 shrink-0 border-r flex flex-col relative z-20 transition-colors duration-300" style={{ background: 'hsl(var(--sidebar-background))', borderColor: 'hsl(var(--sidebar-border))' }}>
  
  {/* Header */}
- <div className="p-4 flex items-center justify-between border-b border-white/[0.04]">
- <h2 className="text-secondary font-bold text-white/90">Messages</h2>
+ <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
+ <h2 className="text-[14px] font-bold" style={{ color: 'hsl(var(--sidebar-foreground))' }}>Messages</h2>
  <div className="flex gap-1">
  <button className="w-7 h-7 rounded-lg hover:bg-white/[0.08] flex items-center justify-center text-white/50 transition-colors">
  <Search className="w-4 h-4" />
@@ -1105,21 +1105,21 @@ export default function DesktopChat() {
  </div>
 
  {/* ── CENTER PANE: Chat View ───────────────────────────────────────── */}
- <div className="flex-1 flex flex-col min-w-0 relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
- <div className="absolute inset-0 bg-zinc-950/95" /> {/* Overlay for dark mode text readability */}
+ <div className="flex-1 flex flex-col min-w-0 relative transition-colors duration-300" style={{ background: 'hsl(var(--background))' }}>
+ <div className="absolute inset-0 pointer-events-none" />
  
  {!selectedRoom ? (
  <div className="flex-1 flex flex-col relative z-10 p-8 overflow-y-auto">
  <div className="max-w-5xl mx-auto w-full">
  <div className="flex items-center gap-4 mb-8">
  <div className="w-16 h-16 rounded-[20px] bg-gradient-to-tr from-violet-600 to-indigo-500 p-0.5 shadow-2xl shadow-violet-500/20">
- <div className="w-full h-full bg-[#0b0b14] rounded-[18px] flex items-center justify-center">
+ <div className="w-full h-full rounded-[18px] flex items-center justify-center" style={{ background: 'hsl(var(--background))' }}>
  <Sparkles className="w-6 h-6 text-violet-400" />
  </div>
  </div>
  <div>
- <h2 className="text-page font-bold text-white mb-1">Welcome back.</h2>
- <p className="text-white/50 text-secondary">Here's your intelligent workspace overview for today.</p>
+ <h2 className="text-page font-bold mb-1" style={{ color: 'hsl(var(--foreground))' }}>Welcome back.</h2>
+ <p className="text-secondary" style={{ color: 'hsl(var(--muted-foreground))' }}>Here's your intelligent workspace overview for today.</p>
  </div>
  </div>
  
@@ -1155,9 +1155,9 @@ export default function DesktopChat() {
 
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
  {/* Activity Feed */}
- <div className="bg-zinc-900/50 border border-white/[0.04] rounded-2xl p-6">
- <div className="flex items-center justify-between mb-6">
- <h3 className="text-secondary font-bold text-white/90 uppercase tracking-wider">Live Activity</h3>
+ <div className="rounded-2xl p-5 border transition-colors" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+ <div className="flex items-center justify-between mb-5">
+ <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>Live Activity</h3>
  <button className="text-button text-violet-400 hover:text-violet-300">View All</button>
  </div>
  <div className="space-y-4">
@@ -1181,9 +1181,9 @@ export default function DesktopChat() {
  </div>
 
  {/* Extracted Context */}
- <div className="bg-zinc-900/50 border border-white/[0.04] rounded-2xl p-6">
- <div className="flex items-center justify-between mb-6">
- <h3 className="text-secondary font-bold text-white/90 uppercase tracking-wider">AI Priority Context</h3>
+ <div className="rounded-2xl p-5 border transition-colors" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+ <div className="flex items-center justify-between mb-5">
+ <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>AI Priority Context</h3>
  <Sparkles className="w-4 h-4 text-violet-400" />
  </div>
  <div className="space-y-3">
@@ -1207,7 +1207,7 @@ export default function DesktopChat() {
  ) : (
  <>
  {/* Header */}
- <div className="h-14 shrink-0 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-md flex items-center justify-between px-5 relative z-10">
+ <div className="h-14 shrink-0 border-b backdrop-blur-md flex items-center justify-between px-5 relative z-10 transition-colors duration-300" style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--background) / 0.85)' }}>
  <div className="flex items-center gap-3">
  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-label font-bold text-white shadow-lg", 
  selectedRoom.name === 'AI Assistant' ? 'bg-violet-600' : 'bg-gradient-to-br from-indigo-500 to-purple-500'
@@ -1215,7 +1215,7 @@ export default function DesktopChat() {
  {selectedRoom.name === 'AI Assistant' ? <BrainCircuit className="w-4 h-4 text-white" /> : (selectedRoom.name?.slice(0, 2).toUpperCase() || '??')}
  </div>
  <div>
- <h2 className="text-secondary font-bold text-white/90 flex items-center gap-2">
+ <h2 className="text-secondary font-bold flex items-center gap-2" style={{ color: 'hsl(var(--foreground))' }}>
  {selectedRoom.name}
  </h2>
  <div className="flex items-center gap-1.5 mt-0.5">
@@ -1265,7 +1265,7 @@ export default function DesktopChat() {
  <MoreVertical className="w-4 h-4" />
  </button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="bg-[#111] border-white/10 text-white w-56 p-1.5 shadow-2xl rounded-xl">
+ <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-2xl rounded-xl border" style={{ background: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))' }}>
  <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
  <Search className="w-4 h-4 mr-2.5 text-white/50" /> Search in chat
  </DropdownMenuItem>

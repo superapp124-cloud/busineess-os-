@@ -298,20 +298,20 @@ export default function SmartInbox() {
   };
 
   return (
-    <div className="flex-1 bg-[#0a0a0c] h-full overflow-y-auto font-sans custom-scrollbar">
+    <div className="flex-1 h-full overflow-y-auto font-sans custom-scrollbar transition-colors duration-500" style={{ background: 'hsl(var(--background))' }}>
       <div className="w-full max-w-[1600px] mx-auto p-5 md:p-6 space-y-5">
 
         {/* ── 1. Compact Header & Omni-Search Row ─────────────────── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/[0.03] border border-white/10 rounded-2xl p-5 backdrop-blur-xl shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border rounded-2xl p-5 shadow-lg transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-indigo-500/40 shadow-md shadow-indigo-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border shadow-md shrink-0 transition-colors" style={{ borderColor: 'hsl(var(--border))' }}>
               <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight leading-tight">
-                {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">{userName}</span> 👋
+              <h1 className="text-xl font-black tracking-tight leading-tight transition-colors" style={{ color: 'hsl(var(--foreground))' }}>
+                {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">{userName}</span> 👋
               </h1>
-              <p className="text-[11px] text-indigo-300/80 font-medium uppercase tracking-wider">
+              <p className="text-[11px] font-medium uppercase tracking-wider transition-colors" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 AI Processed {intentFeed.length} events today
               </p>
             </div>
@@ -337,13 +337,13 @@ export default function SmartInbox() {
         </div>
 
         {/* ── 2. Compact AI Intelligence Brief Banner ── */}
-        <div className="bg-gradient-to-r from-indigo-950/40 via-purple-950/25 to-black/60 rounded-2xl border border-indigo-500/30 p-4 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-4">
+        <div className="rounded-2xl border p-4 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-4 transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto custom-scrollbar pb-1 lg:pb-0">
             <div className="flex items-center gap-2.5 mr-2 shrink-0">
-              <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+              <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
               </div>
-              <span className="text-[11px] font-black text-white/90 uppercase tracking-widest shrink-0">AI Brief</span>
+              <span className="text-[11px] font-black uppercase tracking-widest shrink-0 transition-colors" style={{ color: 'hsl(var(--foreground))' }}>AI Brief</span>
             </div>
 
             <div className="flex items-center gap-2.5 shrink-0">
@@ -390,7 +390,7 @@ export default function SmartInbox() {
 
         {/* ── 3. Main Content Row ──── */}
         <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-12 lg:col-span-6 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
+          <div className="col-span-12 lg:col-span-6 rounded-2xl border p-5 flex flex-col gap-4 min-h-[420px] shadow-lg transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
@@ -433,7 +433,7 @@ export default function SmartInbox() {
             </div>
           </div>
 
-          <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
+          <div className="col-span-12 sm:col-span-6 lg:col-span-3 rounded-2xl border p-5 flex flex-col gap-4 min-h-[420px] shadow-lg transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
                 <FolderGit2 className="w-3.5 h-3.5 text-indigo-400" />
@@ -459,7 +459,7 @@ export default function SmartInbox() {
             </div>
           </div>
 
-          <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-[#111116] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 min-h-[420px] shadow-lg">
+          <div className="col-span-12 sm:col-span-6 lg:col-span-3 rounded-2xl border p-5 flex flex-col gap-4 min-h-[420px] shadow-lg transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-violet-500/15 border border-violet-500/25 flex items-center justify-center">
                 <Database className="w-3.5 h-3.5 text-violet-400" />
@@ -490,8 +490,8 @@ export default function SmartInbox() {
 
       {/* ── AI Summarize Inbox Modal ───────────────────────────── */}
       {showSummaryModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={() => setShowSummaryModal(false)}>
-          <div className="relative w-full max-w-lg rounded-3xl border border-white/12 p-6 shadow-2xl space-y-5" style={{ background: '#0d0f1a' }} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowSummaryModal(false)}>
+          <div className="relative w-full max-w-lg rounded-3xl border p-6 shadow-2xl space-y-5 transition-colors" style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <BrainCircuit className="w-5 h-5 text-indigo-400" />
@@ -536,8 +536,8 @@ export default function SmartInbox() {
 
       {/* ── AI Triage Modal ────────────────────────────────────── */}
       {showTriageModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-4" onClick={() => setShowTriageModal(false)}>
-          <div className="relative w-full max-w-md rounded-3xl border border-white/12 p-6 shadow-2xl space-y-5" style={{ background: '#0d0f1a' }} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowTriageModal(false)}>
+          <div className="relative w-full max-w-md rounded-3xl border p-6 shadow-2xl space-y-5 transition-colors" style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <Sparkles className="w-5 h-5 text-amber-400" />

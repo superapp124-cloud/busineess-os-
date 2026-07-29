@@ -17,10 +17,10 @@ export const DashboardCenterPanel: React.FC<{
   const { experience } = useExperience();
 
   return (
-    <div className="flex-1 flex flex-col relative z-10 bg-[#0b0b14] overflow-hidden">
-      {/* Subtle ambient background orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none" />
+    <div className="flex-1 flex flex-col relative z-10 overflow-hidden transition-colors duration-300" style={{ background: 'hsl(var(--background))' }}>
+      {/* Subtle ambient background orbs — dark only via low opacity */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/4 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-indigo-600/4 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="relative flex-1 overflow-y-auto custom-scrollbar">
         <div className="p-6 lg:p-8 flex flex-col gap-7 min-h-full">
@@ -36,7 +36,7 @@ export const DashboardCenterPanel: React.FC<{
 
           {/* ── 4. Primary Actions ────────────────────────────────── */}
           <div>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.22em] mb-4 pl-0.5">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] mb-4 pl-0.5" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Primary Actions
             </p>
             <IntentActions />
