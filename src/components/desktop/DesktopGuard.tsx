@@ -96,6 +96,54 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     document.body.removeChild(link);
   };
 
+  const isMobileDevice = typeof window !== 'undefined' && (
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+    (window.innerWidth <= 768)
+  );
+
+  // MOBILE PHONES & TABLETS: Allow normal web access over Cloud AI + sleek App Store banner
+  if (isMobileDevice) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Mobile Top App Banner */}
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-3 border-b border-cyan-500/30 flex items-center justify-between shadow-md text-xs sticky top-0 z-[9999]">
+          <div className="flex items-center gap-2.5">
+            <img src={logo} alt="CHATR" className="w-7 h-7 object-contain rounded-lg" />
+            <div>
+              <div className="font-bold text-white text-xs flex items-center gap-1.5">
+                <span>CHATR Mobile</span>
+                <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded font-mono">Cloud AI</span>
+              </div>
+              <p className="text-[10px] text-slate-300">Get the native app for iOS & Android</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <a
+              href="https://apps.apple.com"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[10px] border border-white/20 transition-all"
+            >
+              iOS
+            </a>
+            <a
+              href="https://play.google.com"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-[10px] shadow-sm transition-all"
+            >
+              Android
+            </a>
+          </div>
+        </div>
+
+        <div className="flex-1">
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   // ONLY ALLOW WORKSPACE ACCESS IF INSIDE NATIVE ELECTRON OR CHATR DESKTOP APP IS RUNNING
   if (isElectron || isDesktopRunning) {
     return <>{children}</>;
