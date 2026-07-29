@@ -287,7 +287,12 @@ export const ProviderPayments = lazy(() => import('@/pages/provider/Payments'));
 
 // Admin Pages
 export const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
-export const AdminUsers = lazy(() => import('@/pages/admin/Users'));
+export const CapabilityInspector = lazy(() => import('@/pages/desktop/CapabilityInspector'));
+export const IntentDebugger = lazy(() => import('@/pages/desktop/IntentDebugger'));
+export const ExecutionInspector = lazy(() => import('@/pages/desktop/ExecutionInspector'));
+export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio'));
+export const DesktopMarketplace = lazy(() => import('@/pages/desktop/Marketplace'));
+
 export const AdminProviders = lazy(() => import('@/pages/admin/Providers'));
 export const AdminAnalytics = lazy(() => import('@/pages/admin/Analytics'));
 export const AdminPayments = lazy(() => import('@/pages/admin/Payments'));
@@ -387,7 +392,7 @@ export const CandidateWorkspace = lazy(() => import('@/pages/desktop/CandidateWo
 export const AgentMarketplace = lazy(() => import('@/pages/desktop/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
 export const IntentStore = lazy(() => import('@/pages/desktop/IntentStore').then(m => ({ default: m.IntentStore })));
 export const DesktopConnectorStore = lazy(() => import('@/pages/desktop/DesktopConnectorStore').then(m => ({ default: m.default })));
-export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio').then(m => ({ default: m.WorkflowStudio })));
+
 export const AgentWorkspace = lazy(() => import('@/pages/desktop/AgentWorkspace').then(m => ({ default: m.AgentWorkspace })));
 export const DesktopNotifications = lazy(() => import('@/pages/desktop/DesktopNotifications'));
 export const DesktopProfile = lazy(() => import('@/pages/desktop/DesktopProfile').then(m => ({ default: m.DesktopProfile ?? m.default })));
@@ -399,4 +404,6 @@ export const DesktopCalendar = lazy(() => import('@/pages/desktop/DesktopCalenda
 export const BusinessOS = lazy(() => import('@/pages/desktop/BusinessOS').then(m => ({ default: m.default })));
 export const ProcessMonitor = lazy(() => import('@/pages/desktop/ProcessMonitor').then(m => ({ default: m.ProcessMonitor ?? m.default })));
 export const WorldExplorer = lazy(() => import('@/pages/desktop/WorldExplorer').then(m => ({ default: m.WorldExplorer ?? m.default })));
+export const GrowthWorkspace = lazy(() => import('@/pages/desktop/GrowthWorkspace'));
+export const LegalWorkspace = lazy(() => import('@/pages/desktop/LegalWorkspace'));
 

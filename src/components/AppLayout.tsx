@@ -1,6 +1,5 @@
 import React from 'react';
 import { NetworkStatus } from './NetworkStatus';
-import { InstallPWAPrompt } from './InstallPWAPrompt';
 import { Toaster } from './ui/toaster';
 import { Toaster as Sonner } from './ui/sonner';
 
@@ -17,7 +16,6 @@ export const AppLayout = ({ children, user, profile }: AppLayoutProps) => {
  return (
  <>
  <NetworkStatus />
- <InstallPWAPrompt />
  {children}
  <Toaster />
  <Sonner />

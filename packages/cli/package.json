@@ -1,0 +1,22 @@
+{
+  "name": "@chatr/cli",
+  "version": "1.0.0",
+  "description": "CLI tooling for CHATR Intent OS",
+  "main": "dist/index.js",
+  "bin": {
+    "chatr": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/sdk": "workspace:*",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0"
+  }
+}

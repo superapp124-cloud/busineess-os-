@@ -23,6 +23,9 @@ import { initializeCapabilities } from "./core/capabilities/init";
 
 // Initialize the Outcome Engine Capabilities
 initializeCapabilities();
+
+import { initializeKernelV2 } from "./sdk/kernel/sdkInit";
+initializeKernelV2();
 import { registerServiceWorker, resetServiceWorkerState } from "./utils/serviceWorkerRegistration";
 import { setupNativeCallUI } from "./utils/nativeCallUI";
 import { CrashlyticsErrorBoundary } from "./utils/crashlyticsErrorBoundary";
@@ -456,12 +459,15 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <KernelDashboard />
  </Suspense>
  } />
+ <Route path="capability-inspector" element={<LazyRoute component={LazyPages.CapabilityInspector} />} />
  <Route path="inspector" element={
  <Suspense fallback={<PageLoader message="Loading Workflow Inspector..." />}>
  <WorkflowInspectorPage />
  </Suspense>
  } />
  <Route path="finance" element={<LazyRoute component={LazyPages.FinanceWorkspace} />} />
+ <Route path="growth" element={<LazyRoute component={LazyPages.GrowthWorkspace} />} />
+ <Route path="legal" element={<LazyRoute component={LazyPages.LegalWorkspace} />} />
  <Route path="health" element={
  <Suspense fallback={<PageLoader message="Loading Engine Health..." />}>
  <EngineHealthDashboardPage />
@@ -478,6 +484,11 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="ai-agents/create" element={<LazyRoute component={LazyPages.AIAgentCreate} />} />
  <Route path="ai-agents/chat/:agentId" element={<LazyRoute component={LazyPages.AIAgentChatNew} />} />
  <Route path="ai-agents/settings/:agentId" element={<LazyRoute component={LazyPages.AIAgents} />} />
+ <Route path="capability-inspector" element={<LazyRoute component={LazyPages.CapabilityInspector} />} />
+ <Route path="intent-debugger" element={<LazyRoute component={LazyPages.IntentDebugger} />} />
+ <Route path="execution-inspector" element={<LazyRoute component={LazyPages.ExecutionInspector} />} />
+ <Route path="workflow-studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
+ <Route path="marketplace" element={<LazyRoute component={LazyPages.DesktopMarketplace} />} />
  <Route path="workspace" element={<LazyRoute component={LazyPages.DesktopWorkspace} />} />
  <Route path="calendar" element={<LazyRoute component={LazyPages.DesktopCalendar} />} />
  <Route path="intelligence" element={<LazyRoute component={LazyPages.DesktopIntelligence} />} />

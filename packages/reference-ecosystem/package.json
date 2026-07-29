@@ -1,0 +1,16 @@
+{
+  "name": "@chatr/reference-ecosystem",
+  "version": "1.0.0",
+  "description": "Continuous validation suite and reference implementations for CHATR Intent OS",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

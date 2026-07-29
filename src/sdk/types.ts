@@ -334,8 +334,9 @@ export interface IToolDeclaration {
   id: string;
   name: string;
   description: string;
-  inputs: any;           // JSON Schema
-  outputs: any;          // JSON Schema
+  inputSchema?: string | Record<string, any>;
+  outputSchema?: string | Record<string, any>;
+  capabilities?: string[]; // e.g. ["text_generation", "planning", "branding"]
   permissions: string[];
   cost?: number;
   timeout?: number;      // ms
@@ -372,12 +373,16 @@ export interface ICapabilityManifest {
   department: string;
   category: string;
   version: string;
+  schemaVersion?: string;
+  minimumKernelVersion?: string;
   maturity: 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
   icon: string;
   rating: number;
   installs: number;
   tags: string[];
   dependsOn?: string[]; // Kernel ABI modularity
+  connectors?: string[];
+  kernelServices?: string[];
 
   // Business data
   objects: IObjectDefinition[];
@@ -402,6 +407,12 @@ export interface ICapabilityManifest {
   ai?: IAIDeclaration; // Legacy fallback
   agents?: IAgentDeclaration[];
   tools?: IToolDeclaration[];
+  aiGovernance?: {
+    risk: 'low' | 'medium' | 'high';
+    approval: 'never' | 'recommended' | 'required';
+    audit: boolean;
+    explainability: boolean;
+  };
   
   // Universal Executive Intelligence (ABI v2.0)
   skills?: string[]; // Natural language skills (e.g. "Create Job", "Forecast Hiring")
@@ -417,16 +428,34 @@ export interface ICapabilityManifest {
   permissions: IPermissionMatrix;
   notifications: INotificationTemplate[];
 
-  // Data bootstrapping
+  // Data bootstrapping & Runtime
   seed: ISeedData;
+  deploySteps?: { label: string; detail: string }[];
+  healthChecks?: { name: string; endpoint?: string }[];
+  resourceLimits?: Record<string, number>;
+  
+  // Storage
+  tables?: string[];
+  repositories?: string[];
+  migrations?: string[];
 
   // Discovery & Search
   search: ISearchConfig;
   knowledgeAdapters?: IKnowledgeAdapter[];
 
+  // UX
+  activityTypes?: string[];
+  quickActions?: { id: string; label: string; icon: string; action: string }[];
+
   // Configuration
   settings: ISettingsField[];
   integrations: IIntegrationConfig[];
+
+  // Marketplace
+  pricing?: { type: 'free' | 'freemium' | 'paid' | 'enterprise'; tier?: string };
+  license?: string;
+  publisher?: string;
+  verificationLevel?: 'Experimental' | 'Beta' | 'Stable' | 'Enterprise Ready' | 'Certified';
 
   // Custom view escape hatch (for specialized UIs only)
   customViewComponent?: string; // component name — must be registered in ComponentRegistry

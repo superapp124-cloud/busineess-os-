@@ -1,0 +1,17 @@
+{
+  "name": "@chatr/sdk",
+  "version": "1.0.0",
+  "description": "Developer Experience SDK for CHATR Intent OS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

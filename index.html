@@ -318,27 +318,7 @@
         }
       })();
       
-      // Handle install prompt
-      let deferredPrompt;
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // Optionally show install button
-        window.showInstallPrompt = () => {
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choice) => {
-              deferredPrompt = null;
-            });
-          }
-        };
-      });
-      
-      // Handle app installed
-      window.addEventListener('appinstalled', () => {
-        deferredPrompt = null;
-      });
+
     </script>
   </body>
 </html>
