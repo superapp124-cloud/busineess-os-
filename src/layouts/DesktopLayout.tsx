@@ -159,6 +159,7 @@ const GlobalCallOverlay = () => {
 };
 
 import { DesktopGuard } from '@/components/desktop/DesktopGuard';
+import { FirstLaunchPreparation } from '@/components/desktop/FirstLaunchPreparation';
 
 // ─── Main Layout ──────────────────────────────────────────────────────────────
 
@@ -179,6 +180,7 @@ const DesktopLayoutInner = () => {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
+  const [aiPrepared, setAiPrepared] = useState<boolean>(() => localStorage.getItem('chatr_ai_prepared') === 'true');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -273,6 +275,17 @@ const DesktopLayoutInner = () => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
+
+  if (!aiPrepared) {
+    return (
+      <FirstLaunchPreparation
+        onReady={() => {
+          localStorage.setItem('chatr_ai_prepared', 'true');
+          setAiPrepared(true);
+        }}
+      />
+    );
+  }
 
   const isDark = themeMode === 'dark' || (themeMode === 'system' && theme === 'dark');
 
