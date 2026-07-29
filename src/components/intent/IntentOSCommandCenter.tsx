@@ -2593,11 +2593,6 @@ Do NOT include any XML tags, just the markdown text.`;
               Intent OS v1.0
             </span>
           </div>
-          {onExit && (
-            <button onClick={onExit} className="px-4 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-xs text-slate-300 transition-colors font-semibold">
-              ← Exit
-            </button>
-          )}
         </header>
 
         {/* Center Main Hero */}

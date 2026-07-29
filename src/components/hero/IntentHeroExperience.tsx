@@ -82,18 +82,6 @@ export const IntentHeroExperience: React.FC = () => {
 
  return (
  <div className="hero-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
- {/* Escape Hatch */}
- <button 
- onClick={() => navigate('/desktop/workspace-ide')}
- style={{
- position: 'absolute', top: 20, left: 24, zIndex: 100,
- background: 'transparent', border: 'none', color: '#55556a',
- fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
- }}
- >
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
- Exit to OS
- </button>
 
  <div style={{ padding: '24px', textAlign: 'center', opacity: 0.5, letterSpacing: '0.1em', fontSize: '11px', fontWeight: 600, color: '#9898b3', marginTop: '16px' }}>
  CHATR · INTENT OS
