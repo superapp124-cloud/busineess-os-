@@ -44,6 +44,7 @@ import { TurnCache } from "./services/turnCache";
 import { getTurnConfig } from "./utils/webrtcSignaling";
 import { networkMonitor } from "./utils/networkMonitor";
 import { ChatrAIFab } from "./components/ChatrAIFab";
+import { GlobalBackHandler } from "./components/GlobalBackHandler";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
 import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
 import { TenantProvider } from "./core/tenant/TenantContext";
@@ -441,6 +442,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <NativeAppProvider>
  <OfflineIndicator />
  <DeferredGlobalServices />
+ <GlobalBackHandler />
  <ChatrAIFab />
  <Routes>
   {/* Developer Routes */}

@@ -10,7 +10,7 @@ import { useCHATROS } from '@/core/os/hooks';
 const PAGE_AI_MENUS: Record<string, { label: string; description: string; icon: React.ReactNode; route: string; color: string }[]> = {
  '/desktop/chat': [
  { label: 'Conversation AI', description: 'Detect intents, create commitments', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/chatr-ai', color: 'bg-violet-600' },
- { label: 'Intelligence Panel', description: 'See extracted people, dates, intents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/chat', color: 'bg-indigo-600' },
+ { label: 'Intelligence Panel', description: 'See extracted people, dates, intents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/intelligence', color: 'bg-indigo-600' },
  { label: 'AI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
  ],
  '/desktop/calls': [
@@ -122,7 +122,14 @@ export const ChatrAIFab = () => {
  animate={{ opacity: 1, x: 0 }}
  transition={{ delay: idx * 0.05 }}
  className="flex items-center gap-3 justify-end group cursor-pointer"
- onClick={() => { setIsOpen(false); navigate(option.route); }}
+ onClick={() => { 
+   setIsOpen(false); 
+   if (option.label === 'Intelligence Panel' || option.label === 'Conversation AI' || option.label === 'ChatrAI') {
+     sessionStorage.setItem('chatr_open_intelligence_panel', 'true');
+     window.dispatchEvent(new CustomEvent('chatr:open-intelligence-panel'));
+   }
+   navigate(option.route); 
+ }}
  >
  <div className="max-w-[220px] rounded-lg bg-white px-3 py-2 text-right shadow-lg dark:bg-zinc-800">
  <div className="text-secondary font-semibold text-zinc-800 dark:text-white">{option.label}</div>

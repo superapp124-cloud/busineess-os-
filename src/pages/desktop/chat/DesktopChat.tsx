@@ -185,6 +185,30 @@ export default function DesktopChat() {
  };
  }, [selectedId]);
 
+ // Open Intelligence Panel Listener
+ useEffect(() => {
+ const handleOpenIntelligence = () => {
+ setActiveThreadId(null);
+ setRightPaneTab('copilot');
+ if (!selectedId) {
+ const defaultRoom = rooms.find(r => r.id === 'chatr-ai-room' || r.name === 'CHATR AI') || rooms[0];
+ if (defaultRoom) {
+ setSelectedId(defaultRoom.id);
+ }
+ }
+ };
+
+ if (sessionStorage.getItem('chatr_open_intelligence_panel') === 'true') {
+ sessionStorage.removeItem('chatr_open_intelligence_panel');
+ handleOpenIntelligence();
+ }
+
+ window.addEventListener('chatr:open-intelligence-panel', handleOpenIntelligence);
+ return () => {
+ window.removeEventListener('chatr:open-intelligence-panel', handleOpenIntelligence);
+ };
+ }, [selectedId, rooms, setSelectedId]);
+
 
 
 
@@ -1245,13 +1269,13 @@ export default function DesktopChat() {
  <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
  <Search className="w-4 h-4 mr-2.5 text-white/50" /> Search in chat
  </DropdownMenuItem>
- <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
+ <DropdownMenuItem onClick={() => { setActiveThreadId(null); setRightPaneTab('copilot'); }} className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
  <FileText className="w-4 h-4 mr-2.5 text-white/50" /> Summarize chat
  </DropdownMenuItem>
  <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
  <MessageSquare className="w-4 h-4 mr-2.5 text-white/50" /> Smart replies
  </DropdownMenuItem>
- <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
+ <DropdownMenuItem onClick={() => { setActiveThreadId(null); setRightPaneTab('copilot'); }} className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label ">
  <BrainCircuit className="w-4 h-4 mr-2.5 text-white/50" /> Analyze conversation
  </DropdownMenuItem>
  <DropdownMenuSeparator className="bg-white/10 my-1.5" />

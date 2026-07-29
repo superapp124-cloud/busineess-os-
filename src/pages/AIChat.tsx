@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { safeBack } from '@/lib/navigation';
 import { useChatrBrain } from '@/hooks/useChatrBrain';
 import { motion, AnimatePresence } from 'framer-motion';
 import { kernelBus } from '@/kernel/core/EventBus';
@@ -826,7 +827,6 @@ export default function AIChat() {
  </motion.div>
  );
  };
-
  return (
  <div className="h-screen flex flex-col bg-background">
  {/* Header */}
@@ -834,7 +834,7 @@ export default function AIChat() {
  <Button 
  size="icon" 
  variant="ghost" 
- onClick={() => navigate(-1)}
+ onClick={() => safeBack(navigate, '/desktop/chat')}
  className="h-9 w-9"
  >
  <ArrowLeft className="h-5 w-5" />

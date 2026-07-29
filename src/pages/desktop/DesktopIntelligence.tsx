@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { safeBack } from '@/lib/navigation';
 import {
  AlertTriangle,
+ ArrowLeft,
  BrainCircuit,
  CheckCircle2,
  Cpu,
@@ -284,7 +287,8 @@ const EphemeralWidget = ({
 };
 
 export default function ExecutionCenter() {
- const [input, setInput] = useState('');
+  const navigate = useNavigate();
+  const [input, setInput] = useState('');
  const [messages, setMessages] = useState<ChatMessage[]>([]);
  
  const scrollRef = useRef<HTMLDivElement>(null);
@@ -586,10 +590,27 @@ export default function ExecutionCenter() {
  };
 
  return (
- <div className="flex flex-col h-[calc(100vh-48px)] w-full bg-background text-foreground font-sans relative">
- 
- {/* Clean Background */}
- <div className="absolute inset-0 bg-background pointer-events-none" />
+  <div className="flex flex-col h-[calc(100vh-48px)] w-full bg-background text-foreground font-sans relative">
+  
+  {/* Header with Back Button */}
+  <div className="shrink-0 h-14 px-4 border-b border-border/40 bg-background/80 backdrop-blur-md flex items-center justify-between z-30 relative">
+    <div className="flex items-center gap-3">
+      <button
+        onClick={() => safeBack(navigate, '/desktop/chat')}
+        className="h-9 w-9 rounded-xl flex items-center justify-center bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border/50 transition-colors shadow-sm"
+        title="Back to Chat"
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </button>
+      <div className="flex items-center gap-2">
+        <Sparkles className="w-4.5 h-4.5 text-primary" />
+        <span className="font-bold text-secondary text-foreground">CHATR OS Intelligence</span>
+      </div>
+    </div>
+  </div>
+
+  {/* Clean Background */}
+  <div className="absolute inset-0 bg-background pointer-events-none" />
  
  {/* Main Scrollable Chat Area */}
  <div className="flex-1 overflow-y-auto w-full z-10 scroll-smooth">
