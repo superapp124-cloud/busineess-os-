@@ -21,7 +21,7 @@ export class DesktopDetectionService {
   static async checkDesktopStatus(): Promise<DesktopHealthResponse> {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 1500);
+      const timeout = setTimeout(() => controller.abort(), 1000);
 
       const res = await fetch(LOOPBACK_HEALTH_URL, {
         method: 'GET',
@@ -41,16 +41,29 @@ export class DesktopDetectionService {
         };
       }
     } catch {
-      // Endpoint unreachable — Desktop App is not currently running
+      // Endpoint unreachable — Desktop App is not currently running on this machine
     }
 
     return { isDesktopRunning: false };
   }
 
   /**
-   * Launch desktop app via custom deep link protocol (chatr://open)
+   * Safely launch desktop app via custom deep link protocol (chatr://open)
+   * Only called when loopback health check confirms app or user explicitly clicks open.
    */
   static launchDesktopApp(path: string = 'open') {
-    window.location.href = `chatr://${path}`;
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = `chatr://${path}`;
+      document.body.appendChild(iframe);
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 2000);
+    } catch {
+      // Ignore protocol launcher exceptions on unregistered machines
+    }
   }
 }
