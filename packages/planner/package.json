@@ -1,0 +1,11 @@
+{
+  "name": "@chatr/planner",
+  "version": "1.0.0",
+  "description": "Stable intent-to-plan contract for CHATR Intent OS. Never executes — only plans.",
+  "scripts": { "build": "tsc", "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@chatr/kernel": "workspace:*",
+    "@chatr/intent-store": "workspace:*"
+  },
+  "devDependencies": { "typescript": "^5.5.0" }
+}
