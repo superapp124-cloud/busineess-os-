@@ -7,6 +7,11 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
   const [isDesktopRunning, setIsDesktopRunning] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
+  // Persistent local storage check to remember installation status ONCE installed
+  const [hasInstalledBefore, setHasInstalledBefore] = useState<boolean>(() => {
+    return localStorage.getItem('chatr_desktop_installed') === 'true';
+  });
+
   useEffect(() => {
     // 1. Detect if running inside Electron Native Desktop App
     const inElectron = typeof window !== 'undefined' && (
@@ -19,6 +24,8 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (inElectron) {
       setIsChecking(false);
+      localStorage.setItem('chatr_desktop_installed', 'true');
+      setHasInstalledBefore(true);
       return;
     }
 
@@ -27,7 +34,11 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
 
     const pollDesktopStatus = async () => {
       const status = await DesktopDetectionService.checkDesktopStatus();
-      setIsDesktopRunning(status.isDesktopRunning);
+      if (status.isDesktopRunning) {
+        setIsDesktopRunning(true);
+        localStorage.setItem('chatr_desktop_installed', 'true');
+        setHasInstalledBefore(true);
+      }
       setIsChecking(false);
     };
 
@@ -39,6 +50,9 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleInstallClick = async () => {
     setIsDownloading(true);
+    // Mark as installed in local memory permanently
+    localStorage.setItem('chatr_desktop_installed', 'true');
+    setHasInstalledBefore(true);
 
     // Platform binary selection
     const platform = window.navigator.platform.toLowerCase();
@@ -81,8 +95,8 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     document.body.removeChild(link);
   };
 
-  // If inside Native Electron Desktop App, render children immediately
-  if (isElectron) {
+  // If inside Native Electron Desktop App, or previously installed, or running, render children immediately
+  if (isElectron || isDesktopRunning || hasInstalledBefore) {
     return <>{children}</>;
   }
 
