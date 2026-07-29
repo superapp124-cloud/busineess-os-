@@ -276,17 +276,6 @@ const DesktopLayoutInner = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  if (!aiPrepared) {
-    return (
-      <FirstLaunchPreparation
-        onReady={() => {
-          localStorage.setItem('chatr_ai_prepared', 'true');
-          setAiPrepared(true);
-        }}
-      />
-    );
-  }
-
   const isDark = themeMode === 'dark' || (themeMode === 'system' && theme === 'dark');
 
   const themeClasses: any = {
