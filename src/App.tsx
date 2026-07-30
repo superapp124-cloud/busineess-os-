@@ -3,6 +3,7 @@ import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation, useNav
 import { ThemeProvider } from "next-themes";
 import React, { Suspense, useEffect, createContext, useContext } from "react";
 import { Capacitor } from "@capacitor/core";
+import { ContextEngineProvider } from "./context-engine";
 
 // ============================================
 // PLATFORM CONTEXT
@@ -436,6 +437,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <HelmetProvider>
  <QueryClientProvider client={queryClient}>
  <SocketProvider>
+ <ContextEngineProvider>
  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
  <ThemeCustomizationProvider>
  <LocationProvider>
@@ -888,6 +890,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  </LocationProvider>
  </ThemeCustomizationProvider>
  </ThemeProvider>
+ </ContextEngineProvider>
  </SocketProvider>
  </QueryClientProvider>
  </HelmetProvider>
