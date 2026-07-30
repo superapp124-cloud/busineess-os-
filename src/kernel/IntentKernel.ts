@@ -1,24 +1,35 @@
 /**
- * CHATR Intent Kernel
- * Top-Level System Orchestrator linking CapabilityRegistry, ProviderRegistry, RuntimeManager, and EventBus.
+ * CHATR Intent Kernel (v3.0 Architecture)
+ * Master OS Kernel connecting 6 core subsystems:
+ * ExecutionEngine, TaskScheduler, StateStore, PermissionEngine, EventBus, and TelemetryService.
  */
 
 import { EventBus } from './eventbus/EventBus';
 import { CapabilityRegistry } from './registry/CapabilityRegistry';
 import { ProviderRegistry } from './registry/ProviderRegistry';
 import { RuntimeManager } from './RuntimeManager';
+import { ExecutionEngine } from './execution/ExecutionEngine';
+import { TaskScheduler } from './scheduler/TaskScheduler';
+import { StateStore } from './state/StateStore';
+import { PermissionEngine } from './permissions/PermissionEngine';
+import { Telemetry } from '../telemetry/TelemetryService';
 
 class IntentKernelService {
   private isBooted: boolean = false;
   private bootTimestamp: string | null = null;
 
+  public readonly executionEngine = ExecutionEngine;
+  public readonly scheduler = TaskScheduler;
+  public readonly stateStore = StateStore;
+  public readonly permissionEngine = PermissionEngine;
   public readonly eventBus = EventBus;
+  public readonly telemetry = Telemetry;
   public readonly capabilityRegistry = CapabilityRegistry;
   public readonly providerRegistry = ProviderRegistry;
   public readonly runtimeManager = RuntimeManager;
 
   /**
-   * Boot up the CHATR Intent Operating System Kernel
+   * Boot up the CHATR Intent Operating System Kernel v3.0
    */
   public async boot(): Promise<void> {
     if (this.isBooted) {
@@ -27,7 +38,7 @@ class IntentKernelService {
     }
 
     console.log('========================================================');
-    console.log('         CHATR INTENT OPERATING SYSTEM KERNEL          ');
+    console.log('         CHATR INTENT OPERATING SYSTEM KERNEL v3.0      ');
     console.log('========================================================');
 
     this.bootTimestamp = new Date().toISOString();
@@ -35,13 +46,19 @@ class IntentKernelService {
     // Initialize OS Runtimes via RuntimeManager
     await this.runtimeManager.initializeAll();
 
+    // Sync State Store
+    this.stateStore.updateState({
+      runtimeHealth: 'healthy',
+      connectedProviders: this.providerRegistry.listProviderIds(),
+    });
+
     this.isBooted = true;
-    console.log(`[IntentKernel] Kernel boot complete. Status: OK (${this.bootTimestamp})`);
+    console.log(`[IntentKernel] Kernel v3.0 boot complete. Status: HEALTHY (${this.bootTimestamp})`);
 
     await this.eventBus.publish(
       'model:status:changed',
       'IntentKernel',
-      { status: 'booted', timestamp: this.bootTimestamp }
+      { status: 'booted', version: '3.0.0', timestamp: this.bootTimestamp }
     );
   }
 
@@ -52,8 +69,14 @@ class IntentKernelService {
     return {
       isBooted: this.isBooted,
       bootTimestamp: this.bootTimestamp,
-      registeredProviders: this.providerRegistry.listProviderIds(),
-      registeredCapabilities: this.capabilityRegistry.getAllManifests().length,
+      subsystems: {
+        executionEngine: 'ready',
+        scheduler: this.scheduler.getQueueStats(),
+        stateStore: this.stateStore.getState(),
+        permissionEngine: 'active',
+        eventBus: 'active',
+        telemetry: this.telemetry.getSummary(),
+      },
     };
   }
 
