@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { UniversalSearchService, UniversalSearchResult, SearchDomain } from '../../search/UniversalSearchService';
 import { DocumentAgentTools } from '../../runtimes/intelligence/DocumentAgentTools';
-import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X, Play, Sparkles, Shield, FileCheck } from 'lucide-react';
+import { IntentPlanner } from '../../planner/IntentPlanner';
+import { ExecutionPlan } from '../../planner/ExecutionGraph';
+import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X, Play, Sparkles, Shield, FileCheck, GitBranch, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface UniversalSearchModalProps {
   isOpen: boolean;
@@ -33,6 +35,7 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
   const [selectedDomain, setSelectedDomain] = useState<SearchDomain | 'All'>('All');
   const [results, setResults] = useState<UniversalSearchResult[]>([]);
   const [actions, setActions] = useState<IntentAction[]>([]);
+  const [activePlan, setActivePlan] = useState<ExecutionPlan | null>(null);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,6 +112,18 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
       });
     }
 
+    // Generate Intent Execution Plan DAG via IntentPlanner
+    if (q.length >= 6 && (q.includes(' ') || q.includes('summarize') || q.includes('contract') || q.includes('email'))) {
+      try {
+        const plan = IntentPlanner.generatePlan(queryText);
+        setActivePlan(plan);
+      } catch (e) {
+        setActivePlan(null);
+      }
+    } else {
+      setActivePlan(null);
+    }
+
     setActions(detectedActions);
 
     const domainsFilter = selectedDomain === 'All' ? undefined : [selectedDomain];
@@ -174,6 +189,47 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
 
         {/* Scrollable Results & Intent Actions */}
         <div className="max-h-96 overflow-y-auto p-3 space-y-4">
+          {/* Compiled Intent Execution Plan DAG */}
+          {activePlan && (
+            <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3.5 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GitBranch className="w-4 h-4 text-indigo-400" />
+                  <span className="text-xs font-bold text-white">Compiled Execution Plan (DAG)</span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-indigo-500/20 text-indigo-300 font-mono rounded border border-indigo-500/30">
+                    Confidence: {(activePlan.confidence * 100).toFixed(0)}%
+                  </span>
+                </div>
+                <button
+                  onClick={async () => {
+                    const res = await IntentPlanner.executePlan(activePlan);
+                    setActionFeedback(`Execution Plan Completed: ${res.stepsCompleted}/${res.totalSteps} steps executed in ${res.durationMs}ms.`);
+                  }}
+                  className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 transition-all"
+                >
+                  <Play className="w-3 h-3 fill-current" />
+                  Execute DAG Plan
+                </button>
+              </div>
+
+              <div className="space-y-1.5 font-mono text-[11px] text-slate-300">
+                {activePlan.steps.map((step, idx) => (
+                  <div key={step.id} className="flex items-center gap-2 bg-slate-900/80 p-2 rounded border border-slate-800">
+                    <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-[10px]">
+                      {idx + 1}
+                    </span>
+                    <span className="font-semibold text-slate-200">{step.name}</span>
+                    {step.dependencies.length > 0 && (
+                      <span className="text-[9px] text-slate-500 ml-auto flex items-center gap-1">
+                        <ArrowRight className="w-3 h-3 text-slate-600" />
+                        dep: {step.dependencies.join(', ')}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Quick Intent Actions */}
           {actions.length > 0 && (
             <div className="space-y-1.5">
