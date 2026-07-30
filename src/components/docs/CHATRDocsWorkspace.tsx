@@ -11,7 +11,8 @@ import {
   FileText, UploadCloud, Cpu, Sparkles, Shield, Search, CheckCircle, RefreshCw, Command,
   ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Eye, Play, ArrowRight, CornerDownLeft,
   FileCheck, ShieldAlert, Layers, BookOpen, ExternalLink, HelpCircle, Activity, Tag,
-  Clock, Hash, FileSpreadsheet, AlertTriangle, CheckCircle2
+  Clock, Hash, FileSpreadsheet, AlertTriangle, CheckCircle2, Columns, GitCompare, ArrowUpRight,
+  ChevronDown, ChevronUp, DollarSign, Calendar as CalendarIcon, UserCheck, Briefcase
 } from 'lucide-react';
 
 interface BoundingBox {
@@ -32,6 +33,7 @@ interface ChatMessage {
     page: number;
     clause: string;
     confidence: number;
+    trustBadge: 'Verified Grounded' | 'High Confidence' | 'AI Estimate';
     bbox: BoundingBox;
   };
 }
@@ -43,16 +45,24 @@ interface DocumentInsights {
   entitiesCount: number;
   riskLevel: 'Low' | 'Medium' | 'High';
   companies: string[];
+  peopleCount: number;
+  datesCount: number;
+  moneyValuesCount: number;
   keyTerms: string[];
   suggestedPrompts: string[];
 }
 
 export const CHATRDocsWorkspace: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<string>('sample_contract_microsoft.pdf');
+  const [selectedFile, setSelectedFile] = useState<string>('sample_contract_microsoft_v2.pdf');
+  const [compareFile, setCompareFile] = useState<string>('sample_contract_microsoft_v1.pdf');
+  const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
+  const [isInsightsExpanded, setIsInsightsExpanded] = useState<boolean>(false);
+
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [inDocSearchQuery, setInDocSearchQuery] = useState<string>('');
   const [isBBoxPulsing, setIsBBoxPulsing] = useState<boolean>(true);
+  const [workflowFeedback, setWorkflowFeedback] = useState<string | null>(null);
 
   const [activeBBox, setActiveBBox] = useState<BoundingBox | null>({
     page: 1,
@@ -76,26 +86,30 @@ export const CHATRDocsWorkspace: React.FC = () => {
     confidenceScore: 99.4,
     entitiesCount: 6,
     riskLevel: 'Low',
-    companies: ['Microsoft Corporation', 'CHATR Systems'],
-    keyTerms: ['Liability Cap', 'Delaware Law', 'Net 30'],
-    suggestedPrompts: ['Find termination clause', 'List obligations', 'Payment terms & late fees'],
+    companies: ['Microsoft Corporation', 'CHATR Systems Inc.'],
+    peopleCount: 3,
+    datesCount: 4,
+    moneyValuesCount: 2,
+    keyTerms: ['Liability Cap ($1M)', 'Delaware Law', 'Net 30', '30-Day Notice'],
+    suggestedPrompts: ['Compare v1 vs v2 changes', 'Find termination clause', 'List payment terms'],
   });
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'msg_1',
       sender: 'assistant',
-      text: 'Welcome to CHATR Docs. I have performed instant document intelligence on your contract.',
+      text: 'Welcome to CHATR Docs Multi-Document Intelligence. You can compare document versions, diff clauses, and trigger Business OS workflows directly.',
     },
     {
       id: 'msg_2',
       sender: 'assistant',
-      text: 'According to Section 14.2 of the Master Services Agreement, aggregate liability is capped at $1,000,000 USD governed by Delaware law.',
+      text: 'Verified: According to Section 14.2 of the Master Services Agreement (v2), aggregate liability cap was increased to $1,000,000 USD (up from $500,000 USD in v1).',
       citation: {
-        documentName: 'sample_contract_microsoft.pdf',
+        documentName: 'sample_contract_microsoft_v2.pdf',
         page: 1,
         clause: 'Clause 14.2: Limitation of Liability',
-        confidence: 98.6,
+        confidence: 99.2,
+        trustBadge: 'Verified Grounded',
         bbox: {
           page: 1,
           x: 40,
@@ -118,10 +132,10 @@ export const CHATRDocsWorkspace: React.FC = () => {
 
       UniversalSearchService.indexItem({
         domain: 'Document',
-        title: 'Master Services Agreement (Microsoft)',
-        snippet: 'Section 14.2 Limitation of Liability: Neither party shall be liable for indirect damages...',
+        title: 'Master Services Agreement v2 (Microsoft)',
+        snippet: 'Section 14.2 Limitation of Liability: Aggregate liability capped at $1,000,000 USD...',
         score: 0.98,
-        urlOrPath: 'sample_contract_microsoft.pdf',
+        urlOrPath: 'sample_contract_microsoft_v2.pdf',
         timestamp: new Date().toISOString(),
       });
     });
@@ -133,7 +147,6 @@ export const CHATRDocsWorkspace: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Update Insights when selected file changes
   const handleSelectFile = (fileName: string) => {
     setSelectedFile(fileName);
     setIngestStatus('Streaming Upload & Parsing...');
@@ -147,19 +160,11 @@ export const CHATRDocsWorkspace: React.FC = () => {
         entitiesCount: 4,
         riskLevel: 'Low',
         companies: ['Acme Corporation'],
+        peopleCount: 1,
+        datesCount: 2,
+        moneyValuesCount: 3,
         keyTerms: ['INV-2026-884', '$4,250.00 USD', 'Tax ID'],
-        suggestedPrompts: ['Extract line item totals', 'Due date', 'Vendor tax ID'],
-      });
-    } else if (fileName.includes('ehr') || fileName.includes('medical')) {
-      setInsights({
-        docType: 'Medical',
-        readingTimeMins: 4,
-        confidenceScore: 99.1,
-        entitiesCount: 8,
-        riskLevel: 'Medium',
-        companies: ['Starlight Health'],
-        keyTerms: ['Lab Vitals', 'ICD-10 Code', 'Dosage'],
-        suggestedPrompts: ['Abnormal vitals', 'Diagnoses', 'Medications prescribed'],
+        suggestedPrompts: ['Extract line item totals', 'Due date', 'Push to Finance Ledger'],
       });
     } else {
       setInsights({
@@ -168,22 +173,20 @@ export const CHATRDocsWorkspace: React.FC = () => {
         confidenceScore: 99.4,
         entitiesCount: 6,
         riskLevel: 'Low',
-        companies: ['Microsoft Corporation', 'CHATR Systems'],
-        keyTerms: ['Liability Cap', 'Delaware Law', 'Net 30'],
-        suggestedPrompts: ['Find termination clause', 'List obligations', 'Payment terms & late fees'],
+        companies: ['Microsoft Corporation', 'CHATR Systems Inc.'],
+        peopleCount: 3,
+        datesCount: 4,
+        moneyValuesCount: 2,
+        keyTerms: ['Liability Cap ($1M)', 'Delaware Law', 'Net 30', '30-Day Notice'],
+        suggestedPrompts: ['Compare v1 vs v2 changes', 'Find termination clause', 'List payment terms'],
       });
     }
-
-    setTimeout(() => {
-      setIngestStatus('Baidu Unlimited-OCR Processing...');
-      setIngestProgress(60);
-    }, 300);
 
     setTimeout(() => {
       setIngestStatus('Indexed & Ready');
       setIngestProgress(100);
       IntelligenceRuntime.ingestDocument(`C:\\Users\\Arshid.Wani\\Documents\\CHATR\\${fileName}`);
-    }, 700);
+    }, 500);
   };
 
   const handleAskQuestion = (questionText: string) => {
@@ -200,48 +203,51 @@ export const CHATRDocsWorkspace: React.FC = () => {
 
     setTimeout(() => {
       const q = questionText.toLowerCase();
-      let answerText = 'I scanned the document structure and extracted the matching clause.';
+      let answerText = 'I scanned the multi-document repository and extracted matching clause revisions.';
       let citationObj: ChatMessage['citation'] = undefined;
 
-      if (q.includes('termination') || q.includes('cancel')) {
-        answerText = 'Section 18.1 states that either party may terminate this agreement for convenience upon thirty (30) days written notice.';
+      if (q.includes('compare') || q.includes('diff') || q.includes('change') || q.includes('v1')) {
+        answerText = 'Multi-Doc Diff Analysis: Section 14.2 increased liability cap from $500K to $1M USD. Section 18.1 reduced termination notice period from 60 days to 30 days.';
+        citationObj = {
+          documentName: selectedFile,
+          page: 1,
+          clause: 'Clause 14.2 vs v1 Clause 12.1',
+          confidence: 99.5,
+          trustBadge: 'Verified Grounded',
+          bbox: {
+            page: 1,
+            x: 40,
+            y: 180,
+            width: 520,
+            height: 90,
+            label: 'Diff Match: Liability Cap Increased to $1,000,000 USD',
+          },
+        };
+      } else if (q.includes('termination') || q.includes('cancel')) {
+        answerText = 'Verified: Section 18.1 allows termination for convenience upon 30 days written notice.';
         citationObj = {
           documentName: selectedFile,
           page: 2,
           clause: 'Clause 18.1: Termination Rights',
-          confidence: 97.8,
+          confidence: 98.4,
+          trustBadge: 'Verified Grounded',
           bbox: {
             page: 2,
             x: 40,
             y: 310,
             width: 520,
             height: 85,
-            label: 'Clause 18.1: 30-Day Written Termination Notice',
-          },
-        };
-      } else if (q.includes('payment') || q.includes('fee') || q.includes('cost') || q.includes('line')) {
-        answerText = 'Section 4.3 dictates Net 30 payment terms upon receipt of invoice, with a 1.5% monthly late fee for overdue balances.';
-        citationObj = {
-          documentName: selectedFile,
-          page: 1,
-          clause: 'Clause 4.3: Payment & Invoicing Terms',
-          confidence: 99.2,
-          bbox: {
-            page: 1,
-            x: 40,
-            y: 420,
-            width: 520,
-            height: 75,
-            label: 'Clause 4.3: Net 30 Payment Terms & 1.5% Late Fee',
+            label: 'Clause 18.1: 30-Day Termination Notice',
           },
         };
       } else {
-        answerText = `Found reference in ${selectedFile}: "${questionText}" matches Section 3.1 scope of work requirements.`;
+        answerText = `Verified Grounded Match in ${selectedFile}: "${questionText}" matches Section 3.1 scope specifications.`;
         citationObj = {
           documentName: selectedFile,
           page: 1,
           clause: 'Section 3.1: Scope of Work',
-          confidence: 96.5,
+          confidence: 97.2,
+          trustBadge: 'Verified Grounded',
           bbox: {
             page: 1,
             x: 40,
@@ -279,6 +285,17 @@ export const CHATRDocsWorkspace: React.FC = () => {
     }
   };
 
+  const handleTriggerBusinessOS = (workflowType: string) => {
+    if (workflowType === 'finance') {
+      setWorkflowFeedback('Pushed Acme Invoice INV-2026-884 ($4,250.00) to Business OS Finance Ledger!');
+    } else if (workflowType === 'calendar') {
+      setWorkflowFeedback('Created Contract Renewal Task & Calendar Sync for October 1, 2027!');
+    } else if (workflowType === 'hr') {
+      setWorkflowFeedback('Pushed Candidate Resume to HR People Ops Roster!');
+    }
+    setTimeout(() => setWorkflowFeedback(null), 4000);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-slate-950 text-slate-100 font-sans overflow-hidden">
       {/* Header Bar */}
@@ -289,7 +306,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
             <h1 className="font-bold text-sm text-white flex items-center gap-2">
               CHATR Docs
               <span className="text-[10px] px-2 py-0.5 bg-cyan-500/20 text-cyan-300 font-mono rounded border border-cyan-500/30 font-semibold">
-                Sprint 2 Reader Excellence
+                Sprint 3 Multi-Doc Intelligence
               </span>
             </h1>
           </div>
@@ -297,6 +314,18 @@ export const CHATRDocsWorkspace: React.FC = () => {
 
         {/* Header Action Controls */}
         <div className="flex items-center gap-3 text-xs font-mono text-slate-400">
+          <button
+            onClick={() => setIsCompareMode(!isCompareMode)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border font-sans font-medium text-xs shadow-sm transition-all ${
+              isCompareMode
+                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold'
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+            }`}
+          >
+            <GitCompare className="w-3.5 h-3.5" />
+            <span>{isCompareMode ? 'Exit Diff Mode' : 'Side-by-Side Compare'}</span>
+          </button>
+
           <button
             onClick={() => setIsSearchOpen(true)}
             className="flex items-center gap-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 transition-all font-sans font-medium text-xs shadow-sm"
@@ -308,14 +337,22 @@ export const CHATRDocsWorkspace: React.FC = () => {
 
           <div className="flex items-center gap-1.5 bg-slate-800/60 px-2.5 py-1 rounded border border-slate-700">
             <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Baidu Unlimited-OCR (CUDA)</span>
+            <span>Baidu Unlimited-OCR</span>
           </div>
         </div>
       </header>
 
+      {/* Workflow Notification Banner */}
+      {workflowFeedback && (
+        <div className="bg-emerald-500/10 border-b border-emerald-500/30 px-6 py-2 text-xs text-emerald-300 font-mono flex items-center gap-2 animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{workflowFeedback}</span>
+        </div>
+      )}
+
       {/* Main 3-Pane Workspace Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* PANE 1 (LEFT): Document Explorer, File List & Outline */}
+        {/* PANE 1 (LEFT): Document Explorer & Multi-Doc Selection */}
         <div className="w-72 border-r border-slate-800 bg-slate-950/90 p-4 flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             {/* Upload Zone */}
@@ -325,24 +362,23 @@ export const CHATRDocsWorkspace: React.FC = () => {
               </span>
               <div
                 onClick={() => handleSelectFile('new_custom_document.pdf')}
-                className="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/60 p-3.5 rounded-xl text-center cursor-pointer transition-all group"
+                className="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/60 p-3 rounded-xl text-center cursor-pointer transition-all group"
               >
                 <UploadCloud className="w-5 h-5 text-cyan-400 mx-auto group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-bold text-slate-200 mt-1.5 block">Drop PDF or Click to Upload</span>
-                <span className="text-[10px] text-slate-500">Auto-Indexed by Unlimited-OCR</span>
+                <span className="text-xs font-bold text-slate-200 mt-1 block">Drop PDF or Click to Upload</span>
               </div>
             </div>
 
-            {/* Document List */}
+            {/* Document Repository List */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">
-                Workspace Documents
+                Workspace Repository ({isCompareMode ? 'Multi-Select Diff' : 'Single View'})
               </span>
               <div className="space-y-1">
                 {[
-                  { name: 'sample_contract_microsoft.pdf', pages: 4, size: '2.4 MB', type: 'Contract' },
-                  { name: 'acme_invoice_2026.pdf', pages: 1, size: '420 KB', type: 'Invoice' },
-                  { name: 'starlight_ehr_report.pdf', pages: 6, size: '5.1 MB', type: 'Medical' },
+                  { name: 'sample_contract_microsoft_v2.pdf', tag: 'Version 2 (Current)', type: 'Contract' },
+                  { name: 'sample_contract_microsoft_v1.pdf', tag: 'Version 1 (Previous)', type: 'Contract' },
+                  { name: 'acme_invoice_2026.pdf', tag: 'INV-2026-884', type: 'Invoice' },
                 ].map(doc => {
                   const isSelected = selectedFile === doc.name;
                   return (
@@ -357,10 +393,8 @@ export const CHATRDocsWorkspace: React.FC = () => {
                     >
                       <FileText className={`w-4 h-4 shrink-0 ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`} />
                       <div className="truncate flex-1">
-                        <div className="truncate font-medium flex items-center justify-between">
-                          <span>{doc.name}</span>
-                        </div>
-                        <div className="text-[10px] text-slate-500 font-mono">{doc.type} • {doc.pages} Pg • {doc.size}</div>
+                        <div className="truncate font-medium">{doc.name}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">{doc.tag}</div>
                       </div>
                     </button>
                   );
@@ -368,16 +402,26 @@ export const CHATRDocsWorkspace: React.FC = () => {
               </div>
             </div>
 
-            {/* Document Headings & Outline */}
+            {/* Business OS One-Click Workflow Actions */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">
-                Document Headings & Outline
+              <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider font-bold">
+                Business OS Action Triggers
               </span>
-              <div className="space-y-1 font-mono text-[11px] text-slate-400 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800">
-                <div onClick={() => setCurrentPage(1)} className="hover:text-cyan-300 cursor-pointer py-0.5 truncate">• Sec 1: Definitions & Scope</div>
-                <div onClick={() => setCurrentPage(1)} className="hover:text-cyan-300 cursor-pointer py-0.5 truncate text-cyan-400 font-bold">• Sec 14.2: Limitation of Liability</div>
-                <div onClick={() => setCurrentPage(2)} className="hover:text-cyan-300 cursor-pointer py-0.5 truncate">• Sec 18.1: Termination Rights</div>
-                <div onClick={() => setCurrentPage(3)} className="hover:text-cyan-300 cursor-pointer py-0.5 truncate">• Schedule A: Deliverables</div>
+              <div className="space-y-1 text-xs">
+                <button
+                  onClick={() => handleTriggerBusinessOS('finance')}
+                  className="w-full text-left p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition-all"
+                >
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Push Invoice to Finance Ledger</span>
+                </button>
+                <button
+                  onClick={() => handleTriggerBusinessOS('calendar')}
+                  className="w-full text-left p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition-all"
+                >
+                  <CalendarIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span>Create Renewal Reminder</span>
+                </button>
               </div>
             </div>
           </div>
@@ -385,13 +429,13 @@ export const CHATRDocsWorkspace: React.FC = () => {
           {/* System Security Badge */}
           <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center gap-2.5 text-[10px] text-slate-400 font-mono">
             <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Local Memory Scope: Personal</span>
+            <span>Local Scope Memory Security</span>
           </div>
         </div>
 
-        {/* PANE 2 (CENTER): Interactive PDF Reader & Document Insights Bar */}
+        {/* PANE 2 (CENTER): Interactive PDF Reader Viewport (Single or Side-by-Side Diff) */}
         <div className="flex-1 flex flex-col bg-slate-900/50 border-r border-slate-800 overflow-hidden">
-          {/* Reader Toolbar with In-Document Search */}
+          {/* Reader Toolbar */}
           <div className="h-12 border-b border-slate-800 bg-slate-950/60 px-4 flex items-center justify-between text-xs font-mono text-slate-400">
             <div className="flex items-center gap-2">
               <button onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} className="p-1 hover:bg-slate-800 rounded text-slate-300">
@@ -403,143 +447,124 @@ export const CHATRDocsWorkspace: React.FC = () => {
               </button>
             </div>
 
-            {/* In-Document Search Bar */}
+            {/* In-Document Search */}
             <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1">
               <Search className="w-3.5 h-3.5 text-slate-500" />
               <input
                 type="text"
                 value={inDocSearchQuery}
                 onChange={e => setInDocSearchQuery(e.target.value)}
-                placeholder="Search in document..."
+                placeholder="Cross-document search..."
                 className="bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none w-36 font-sans"
               />
-              {inDocSearchQuery && (
-                <span className="text-[10px] text-cyan-400 font-bold bg-cyan-950 px-1.5 py-0.5 rounded">
-                  2 Matches
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                <button onClick={() => setZoomLevel(prev => Math.max(75, prev - 25))} className="p-0.5 hover:text-white">
-                  <ZoomOut className="w-3.5 h-3.5" />
-                </button>
-                <span className="w-12 text-center text-[11px]">{zoomLevel}%</span>
-                <button onClick={() => setZoomLevel(prev => Math.min(200, prev + 25))} className="p-0.5 hover:text-white">
-                  <ZoomIn className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {activeBBox && (
-                <div className="flex items-center gap-1.5 text-[10px] text-cyan-300 bg-cyan-950/60 px-2.5 py-1 rounded border border-cyan-500/30">
-                  <Eye className="w-3 h-3 text-cyan-400" />
-                  <span>Region BBox Active</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* DYNAMIC DOCUMENT INSIGHTS BANNER (Sprint 2 Feature) */}
-          <div className="bg-slate-950/80 border-b border-slate-800 px-6 py-2.5 flex items-center justify-between text-xs font-mono">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded font-bold border border-indigo-500/30 uppercase">
-                  {insights.docType}
-                </span>
-                <span className="text-slate-300 font-bold">{selectedFile}</span>
-              </div>
-              <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-                <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-400" /> Read: {insights.readingTimeMins}m</span>
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-400" /> Confidence: {insights.confidenceScore}%</span>
-                <span className="flex items-center gap-1"><Hash className="w-3 h-3 text-indigo-400" /> Entities: {insights.entitiesCount}</span>
-              </div>
             </div>
 
             <div className="flex items-center gap-2">
-              {insights.keyTerms.map(term => (
-                <span key={term} className="text-[10px] px-2 py-0.5 bg-slate-900 text-slate-300 rounded border border-slate-800">
-                  {term}
-                </span>
-              ))}
+              <button
+                onClick={() => setIsInsightsExpanded(!isInsightsExpanded)}
+                className="flex items-center gap-1 text-[11px] text-cyan-300 bg-cyan-950/60 px-2.5 py-1 rounded border border-cyan-500/30"
+              >
+                <span>Executive Summary</span>
+                {isInsightsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
             </div>
           </div>
 
-          {/* Interactive Document Page Viewport */}
-          <div ref={documentViewerRef} className="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-950/90 relative">
-            <div
-              style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
-              className="w-[600px] min-h-[780px] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-10 space-y-6 relative transition-all font-sans text-slate-300 text-xs"
-            >
-              {/* Document Header */}
-              <div className="border-b border-slate-800 pb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-                    {insights.docType === 'Invoice' ? 'ACME CORPORATION INVOICE' : 'MASTER SERVICES AGREEMENT'}
-                  </h2>
-                  <span className="text-[10px] text-slate-500 font-mono">Document Ref: {selectedFile} • Confidential</span>
+          {/* EXPANDABLE EXECUTIVE SUMMARY CARD (Sprint 3 Feature) */}
+          {isInsightsExpanded && (
+            <div className="bg-slate-950 border-b border-slate-800 p-4 font-mono text-xs space-y-3 animate-in fade-in">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white">Document Executive Intelligence Card</span>
+                  <span className="text-[10px] px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">
+                    Verified Grounded
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-1 bg-slate-800 text-slate-400 rounded">Page {currentPage}</span>
+                <span className="text-slate-400">Risk Assessment: <strong className="text-emerald-400">Low Risk</strong></span>
               </div>
 
-              {/* Document Page Content */}
-              {currentPage === 1 && (
-                <div className="space-y-5 leading-relaxed relative">
-                  <div>
-                    <h3 className="font-bold text-slate-200 text-xs">SECTION 1: DEFINITIONS & GENERAL SCOPE</h3>
-                    <p className="mt-1 text-slate-400">
-                      This Agreement is entered into by and between {insights.companies.join(' and ')}.
-                    </p>
-                  </div>
-
-                  {/* VISUAL BOUNDING BOX HIGHLIGHT OVERLAY (WITH SMOOTH PULSE ANIMATION) */}
-                  <div className={`relative p-3 bg-cyan-950/50 border-2 border-cyan-400 rounded-lg shadow-lg transition-all ${
-                    isBBoxPulsing ? 'ring-4 ring-cyan-500/30 animate-pulse' : ''
-                  }`}>
-                    <div className="absolute -top-2.5 left-3 px-2 py-0.5 bg-cyan-400 text-slate-950 text-[9px] font-mono font-extrabold rounded uppercase tracking-wider flex items-center gap-1 shadow-md">
-                      <Sparkles className="w-3 h-3 fill-current" />
-                      Grounded Citation Match • Clause 14.2 (High Confidence 98.6%)
-                    </div>
-                    <h3 className="font-bold text-cyan-200 text-xs mt-1">SECTION 14.2: LIMITATION OF LIABILITY & GOVERNING LAW</h3>
-                    <p className="mt-1 text-cyan-100 font-medium">
-                      Neither party shall be liable for indirect, incidental, or consequential damages. Maximum aggregate liability under this Agreement shall not exceed $1,000,000 USD. This Agreement shall be governed by and construed in accordance with Delaware law.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-slate-200 text-xs">SECTION 4.3: PAYMENT & INVOICING TERMS</h3>
-                    <p className="mt-1 text-slate-400">
-                      Invoices shall be submitted monthly. Payment terms are Net 30 days from invoice date. Overdue amounts incur 1.5% interest per month.
-                    </p>
-                  </div>
+              <div className="grid grid-cols-4 gap-3 text-[11px]">
+                <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+                  <span className="text-slate-500 block text-[10px]">Companies Identified</span>
+                  <div className="font-bold text-white mt-0.5">{insights.companies.join(', ')}</div>
                 </div>
-              )}
-
-              {currentPage === 2 && (
-                <div className="space-y-5 leading-relaxed">
-                  <div>
-                    <h3 className="font-bold text-slate-200 text-xs">SECTION 18.1: TERMINATION RIGHTS</h3>
-                    <p className="mt-1 text-slate-400 p-2 bg-slate-950 rounded border border-slate-800">
-                      Either party may terminate this agreement for convenience upon thirty (30) days written notice to the other party, or upon ten (10) days written notice in the event of material breach.
-                    </p>
-                  </div>
+                <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+                  <span className="text-slate-500 block text-[10px]">People / Signatories</span>
+                  <div className="font-bold text-cyan-300 mt-0.5">{insights.peopleCount} Executive Contacts</div>
                 </div>
-              )}
-
-              {currentPage >= 3 && (
-                <div className="space-y-5 leading-relaxed">
-                  <h3 className="font-bold text-slate-200 text-xs">SCHEDULE A: DELIVERABLES & MILESTONES</h3>
-                  <div className="p-3 bg-slate-950 rounded border border-slate-800 font-mono text-[11px]">
-                    <div>Sprint #24 Completion: October 15, 2026</div>
-                    <div>Final Audit Sign-off: November 1, 2026</div>
-                  </div>
+                <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+                  <span className="text-slate-500 block text-[10px]">Key Dates & Deadlines</span>
+                  <div className="font-bold text-indigo-300 mt-0.5">{insights.datesCount} Milestone Dates</div>
                 </div>
-              )}
+                <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+                  <span className="text-slate-500 block text-[10px]">Financial Liability</span>
+                  <div className="font-bold text-emerald-400 mt-0.5">$1,000,000 USD Cap</div>
+                </div>
+              </div>
             </div>
+          )}
+
+          {/* Interactive Document Page Viewport (Single or Side-by-Side Diff) */}
+          <div ref={documentViewerRef} className="flex-1 overflow-y-auto p-6 flex justify-center bg-slate-950/90 relative gap-6">
+            {/* Primary Document (Doc A) */}
+            <div
+              style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+              className={`${isCompareMode ? 'w-[440px]' : 'w-[600px]'} min-h-[780px] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-8 space-y-5 relative transition-all font-sans text-slate-300 text-xs`}
+            >
+              <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-bold text-white uppercase tracking-wider">{selectedFile}</h2>
+                  <span className="text-[10px] text-cyan-400 font-mono">Current Active Document</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-800 text-slate-400 rounded">Page {currentPage}</span>
+              </div>
+
+              <div className="space-y-4">
+                <div className={`p-3 rounded-lg border transition-all ${
+                  isCompareMode ? 'bg-emerald-950/40 border-emerald-500/50 ring-2 ring-emerald-500/20' : 'bg-cyan-950/40 border-cyan-400'
+                }`}>
+                  <div className="text-[9px] font-mono text-emerald-400 font-bold uppercase mb-1">
+                    {isCompareMode ? '+ Added Revision in v2' : 'Clause 14.2 Match'}
+                  </div>
+                  <h3 className="font-bold text-white text-xs">SECTION 14.2: LIMITATION OF LIABILITY</h3>
+                  <p className="mt-1 text-slate-200">
+                    Maximum aggregate liability under this Agreement shall not exceed $1,000,000 USD. Governed by Delaware law.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Side-by-Side Compare Document (Doc B - Diff View) */}
+            {isCompareMode && (
+              <div
+                style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+                className="w-[440px] min-h-[780px] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-8 space-y-5 relative transition-all font-sans text-slate-300 text-xs opacity-90"
+              >
+                <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{compareFile}</h2>
+                    <span className="text-[10px] text-rose-400 font-mono">Previous Revision (v1)</span>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-800 text-slate-400 rounded">Page {currentPage}</span>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-3 bg-rose-950/30 border border-rose-500/40 rounded-lg">
+                    <div className="text-[9px] font-mono text-rose-400 font-bold uppercase mb-1">
+                      - Superseded Clause in v1
+                    </div>
+                    <h3 className="font-bold text-slate-300 text-xs">SECTION 12.1: LIMITATION OF LIABILITY (v1)</h3>
+                    <p className="mt-1 text-slate-400 line-through">
+                      Maximum aggregate liability shall not exceed $500,000 USD. Governed by New York law.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* PANE 3 (RIGHT): AI Assistant Conversational Chat & Dynamic Prompts */}
+        {/* PANE 3 (RIGHT): Grounded AI Assistant Chat & High-Trust Cards */}
         <div className="w-96 bg-slate-950 p-4 flex flex-col justify-between overflow-hidden">
           {/* Header */}
           <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
@@ -548,7 +573,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
               <h3 className="text-xs font-bold text-white">Grounded AI Assistant</h3>
             </div>
             <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              Citations Active
+              Verified Grounded
             </span>
           </div>
 
@@ -579,8 +604,10 @@ export const CHATRDocsWorkspace: React.FC = () => {
                       <ExternalLink className="w-3 h-3 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
-                      <span>Page {msg.citation.page} • Highlight BBox Target</span>
-                      <span className="text-emerald-400 font-bold">Confidence: {msg.citation.confidence}%</span>
+                      <span>Page {msg.citation.page}</span>
+                      <span className="text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/20 rounded border border-emerald-500/30">
+                        {msg.citation.trustBadge} ({msg.citation.confidence}%)
+                      </span>
                     </div>
                   </button>
                 )}
@@ -591,7 +618,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
           {/* DYNAMIC DOCUMENT-SPECIFIC QUICK PROMPTS */}
           <div className="py-2 space-y-1.5 border-t border-slate-800">
             <span className="text-[10px] font-mono text-slate-500 uppercase font-bold">
-              Dynamic {insights.docType} Prompts
+              Suggested Prompts
             </span>
             <div className="flex flex-wrap gap-1.5 text-[11px]">
               {insights.suggestedPrompts.map(prompt => (
@@ -613,7 +640,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
                 type="text"
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
-                placeholder="Ask anything about this document..."
+                placeholder="Ask anything or compare versions..."
                 className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-3 pr-10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
               />
               <button
@@ -627,12 +654,12 @@ export const CHATRDocsWorkspace: React.FC = () => {
         </div>
       </div>
 
-      {/* BOTTOM BAR: Streaming Ingestion Timeline & Memory Status */}
+      {/* BOTTOM BAR: Ingestion Timeline Footer */}
       <footer className="h-10 border-t border-slate-800 bg-slate-950 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 ${ingestProgress < 100 ? 'animate-spin' : ''}`} />
-            <span>Ingestion Pipeline: {ingestStatus}</span>
+            <span>Multi-Doc Pipeline: {ingestStatus}</span>
           </div>
           <div className="w-32 bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
             <div className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full transition-all" style={{ width: `${ingestProgress}%` }} />
@@ -640,7 +667,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <span>Active BBox: Page {currentPage}</span>
+          <span>Mode: {isCompareMode ? 'Side-by-Side Diff' : 'Single Document'}</span>
           <span className="text-emerald-400 font-bold">Zero Kernel Edits</span>
         </div>
       </footer>
