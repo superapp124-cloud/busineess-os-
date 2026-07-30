@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { DesignSystemProvider } from "./contexts/DesignSystemContext";
+import { ContextEngineProvider } from "./context-engine";
 
 // Desktop entry point — platform is decided here, once, at startup.
 // Electron's main.cjs always loads this via localhost:8085.
@@ -13,9 +14,11 @@ if (!rootElement) throw new Error("Root element not found");
 try {
  console.log("🚀 [Main Desktop] Starting React mount...");
  createRoot(rootElement).render(
+ <ContextEngineProvider>
  <DesignSystemProvider>
  <App platform="desktop" />
  </DesignSystemProvider>
+ </ContextEngineProvider>
  );
  console.log("🚀 [Main Desktop] Render call completed");
 } catch (e: any) {

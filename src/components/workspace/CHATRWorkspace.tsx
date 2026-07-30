@@ -4,14 +4,17 @@ import { IntelligenceRuntime } from '../../runtimes/intelligence/IntelligenceRun
 import logo from '@/assets/chatr-icon-logo.png';
 import {
   UploadCloud, Search, CheckCircle, ExternalLink, Activity, ArrowUpRight,
-  Settings, Loader2, Sparkles, FileText, User, Mail, Grid, Briefcase, Zap, GitCompare
+  Settings, Loader2, Sparkles, FileText, User, Mail, Grid, Briefcase, Zap, GitCompare,
+  ShieldAlert, AlertTriangle, Lightbulb, ChevronRight
 } from 'lucide-react';
 import { WorkspaceItem, WorkspaceMetadata, WorkspaceCapabilities } from './adapters/types';
 import { WorkspaceViewport, getAdapterFor } from './adapters/WorkspaceViewport';
 import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
+import { useContextEngine, emit } from '../../context-engine';
 
 export const CHATRWorkspace: React.FC = () => {
+  const { context, addSource, removeSource } = useContextEngine();
   const [isDeveloperMode, setIsDeveloperMode] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,20 +45,41 @@ export const CHATRWorkspace: React.FC = () => {
     });
   }, []);
 
-  // When active item changes, fetch metadata, capabilities, and resolve Business Workspace
+  // When active item changes: emit signal to Context Engine + resolve UI modules
   useEffect(() => {
     if (!activeItem || !activeAdapter) {
       setActiveMetadata(null);
       setActiveCapabilities(null);
       setActiveWorkspace(null);
       setActiveModuleId(null);
+      removeSource('workspace');
       return;
     }
 
-    // Resolve domain workspace
+    // Emit signal to Context Engine — this triggers global Context Fusion
+    emit('document.opened', 'workspace', {
+      filename: activeItem.rawFile?.name ?? activeItem.sourceUri,
+      typeHint: activeItem.typeHint,
+    });
+
+    // Also register as a rich ContextSource (with text chunks for keyword matching)
+    addSource({
+      module: 'workspace',
+      signals: [{
+        type: 'document.opened',
+        sourceModule: 'workspace',
+        payload: { filename: activeItem.rawFile?.name ?? activeItem.sourceUri },
+        timestamp: Date.now(),
+      }],
+      textChunks: [
+        activeItem.rawFile?.name ?? activeItem.sourceUri,
+        activeItem.typeHint ?? '',
+      ],
+    });
+
+    // Resolve the legacy UI Workspace modules (for the left document panel tabs)
     const workspace = WorkspaceRegistry.matchWorkspace(activeItem);
     setActiveWorkspace(workspace);
-    
     if (workspace.modules.length > 0) {
       setActiveModuleId(workspace.modules[0].id);
     } else {

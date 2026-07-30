@@ -1,11 +1,12 @@
-import React from 'react';
-import { BrainCircuit, CheckCheck, Zap, FileText, Calendar, X, Loader2, Sparkles, CornerUpRight, Forward, Paperclip, CircleDashed, CheckCircle2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { BrainCircuit, CheckCheck, Zap, FileText, Calendar, X, Loader2, Sparkles, CornerUpRight, Forward, Paperclip, CircleDashed, CheckCircle2, ShieldAlert, AlertTriangle, TrendingUp } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { WorkflowRenderer } from '@/components/workflow-ui';
 import type { Message, Room, CopilotMessage, RightPaneTab } from '../types';
 import { ExecutionResultCard } from '../../components/ExecutionResultCard';
 import { AIMarkdownRenderer } from '@/components/ai/AIMarkdownRenderer';
+import { useContextEngine, emit } from '@/context-engine';
 
 interface RightPaneProps {
  selectedRoom: Room | null;
@@ -64,7 +65,37 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
 }) => {
  if (!selectedRoom) return null;
 
- return (
+ // ── Context Engine integration ─────────────────────────────────────────────
+ const { context, addSource } = useContextEngine();
+
+ // Emit chat context signal whenever the room or messages change
+ useEffect(() => {
+   if (!selectedRoom) return;
+   const lastMessage = chatMessages[chatMessages.length - 1];
+   emit('chat.context.updated', 'chat', {
+     contactName: selectedRoom.name,
+     roomId: selectedRoom.id,
+     lastMessage: lastMessage?.content ?? '',
+     messageCount: chatMessages.length,
+   });
+   addSource({
+     module: 'chat',
+     signals: [{
+       type: 'chat.context.updated',
+       sourceModule: 'chat',
+       payload: { contactName: selectedRoom.name, lastMessage: lastMessage?.content ?? '' },
+       timestamp: Date.now(),
+     }],
+     textChunks: [
+       selectedRoom.name ?? '',
+       lastMessage?.content ?? '',
+       ...chatMessages.slice(-10).map(m => m.content ?? ''),
+     ],
+   });
+ }, [selectedRoom?.id, chatMessages.length]);
+ // ── End Context Engine ────────────────────────────────────────────────────
+
+  return (
  <div className="w-[420px] shrink-0 border-l border-white/[0.06] bg-[#0b0b14] flex flex-col relative z-20">
  
  {/* State 1: Active Thread */}
@@ -210,39 +241,52 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  <ScrollArea className="flex-1">
  <div className="p-3 space-y-3">
  {copilotMessages.length === 0 && (
- <div className="flex flex-col gap-3">
- <div className="p-3 rounded-xl bg-violet-600/10 border border-violet-500/20 text-[11px] text-white/60 leading-relaxed">
- <span className="text-violet-300 font-bold flex items-center gap-1.5"><img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-4 h-4 rounded-md object-cover" /> chatrAI</span><br/>
- I'm your chatrAI assistant for this conversation. I've automatically analyzed the context.
- </div>
- 
- <div className="p-3 rounded-xl bg-zinc-900 border border-white/[0.04]">
- <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-2 block">Live Context</span>
- <div className="space-y-2">
- <div className="flex items-start gap-2">
- <FileText className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
- <p className="text-[11px] text-white/80">Discussing bulk and retail pricing options.</p>
- </div>
- <div className="flex items-start gap-2">
- <CheckCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
- <p className="text-[11px] text-white/80">Action item: Send quotation format.</p>
- </div>
- </div>
- </div>
+  <div className="flex flex-col gap-3">
+  <div className="p-3 rounded-xl bg-violet-600/10 border border-violet-500/20 text-[11px] text-white/60 leading-relaxed">
+  <span className="text-violet-300 font-bold flex items-center gap-1.5"><img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-4 h-4 rounded-md object-cover" /> chatrAI</span><br/>
+  I'm your chatrAI assistant for this conversation. I've automatically analyzed the context.
+  </div>
 
- <div className="space-y-1.5 mt-2">
- <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block px-1">Suggested Actions</span>
- <button onClick={() => onCopilotSend("Draft a quotation for retail pricing")} className="w-full text-left px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/80 transition-colors">
- Draft a quotation for retail pricing
- </button>
- <button onClick={() => onCopilotSend("Summarize our previous discussion")} className="w-full text-left px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/80 transition-colors">
- Summarize our previous discussion
- </button>
- <button onClick={() => onCopilotSend("Schedule a follow-up meeting")} className="w-full text-left px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/80 transition-colors">
- Schedule a follow-up meeting
- </button>
- </div>
- </div>
+  {/* ── Context Engine: Live Context ─────────────────────────────────────── */}
+  {context.entities.length > 0 && (
+  <div className="p-3 rounded-xl bg-zinc-900 border border-white/[0.04]">
+  <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-2 block">Live Context — {context.domains.join(' · ').toUpperCase()}</span>
+  <div className="space-y-2">
+    {context.insights.slice(0, 3).map(insight => (
+      <div key={insight.id} className="flex items-start gap-2">
+        {insight.severity === 'critical' && <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />}
+        {insight.severity === 'warning' && <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />}
+        {insight.severity === 'info' && <CheckCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />}
+        <p className="text-[11px] text-white/80">{insight.text}</p>
+      </div>
+    ))}
+  </div>
+  </div>
+  )}
+
+  {/* Summary from context engine */}
+  {context.summary && (
+  <div className="px-3 py-2 rounded-lg bg-violet-600/5 border border-violet-500/10 text-[11px] text-white/60 italic">
+    {context.summary}
+  </div>
+  )}
+
+  {/* ── Context Engine: Suggested Actions ─────────────────────────────────── */}
+  {context.actions.length > 0 && (
+  <div className="space-y-1.5 mt-2">
+  <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block px-1">Suggested Actions</span>
+  {context.actions.map(action => (
+    <button
+      key={action.id}
+      onClick={() => onCopilotSend(action.label)}
+      className="w-full text-left px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/80 transition-colors"
+    >
+      {action.label}
+    </button>
+  ))}
+  </div>
+  )}
+  </div>
  )}
  {copilotMessages.map((m, i) => (
  <div key={i} className={cn('flex flex-col gap-2', m.role === 'user' ? 'items-end' : 'items-start')}>
