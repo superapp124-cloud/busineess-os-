@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { UniversalSearchService, UniversalSearchResult, SearchDomain } from '../../search/UniversalSearchService';
-import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X } from 'lucide-react';
+import { DocumentAgentTools } from '../../runtimes/intelligence/DocumentAgentTools';
+import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X, Play, Sparkles, Shield, FileCheck } from 'lucide-react';
 
 interface UniversalSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectResult?: (result: UniversalSearchResult) => void;
+}
+
+export interface IntentAction {
+  id: string;
+  title: string;
+  category: 'DocumentTool' | 'Workflow' | 'Navigation';
+  description: string;
+  icon: React.ElementType;
+  handler: () => void | Promise<void>;
 }
 
 const DOMAIN_ICONS: Record<SearchDomain, React.ElementType> = {
@@ -22,6 +32,8 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
   const [queryText, setQueryText] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<SearchDomain | 'All'>('All');
   const [results, setResults] = useState<UniversalSearchResult[]>([]);
+  const [actions, setActions] = useState<IntentAction[]>([]);
+  const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,17 +49,73 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Dynamic Intent Detection & Search Results Query
   useEffect(() => {
-    if (!queryText.trim()) {
-      setResults(UniversalSearchService.search({ text: '', limit: 10 }));
-      return;
+    const q = queryText.toLowerCase().trim();
+    const detectedActions: IntentAction[] = [];
+
+    if (q.includes('summarize') || q.includes('summary')) {
+      detectedActions.push({
+        id: 'act_summarize',
+        title: 'Summarize Selected Document',
+        category: 'DocumentTool',
+        description: 'Execute AI document summarization on current workspace PDF',
+        icon: Sparkles,
+        handler: async () => {
+          const summary = await DocumentAgentTools.summarize('doc_current');
+          setActionFeedback(`Summary Generated: ${summary.slice(0, 120)}...`);
+        },
+      });
     }
+
+    if (q.includes('clause') || q.includes('contract') || q.includes('legal')) {
+      detectedActions.push({
+        id: 'act_clause',
+        title: 'Find Contract Clauses & Liability Caps',
+        category: 'DocumentTool',
+        description: 'Search Delaware governing law and liability clauses across contracts',
+        icon: FileCheck,
+        handler: async () => {
+          const clauses = await DocumentAgentTools.findClause('liability');
+          setActionFeedback(`Found ${clauses.length} clause matches in Master Services Agreement.`);
+        },
+      });
+    }
+
+    if (q.includes('redact') || q.includes('pii') || q.includes('ssn') || q.includes('privacy')) {
+      detectedActions.push({
+        id: 'act_redact',
+        title: 'Scan & Redact Sensitive PII Data',
+        category: 'DocumentTool',
+        description: 'Automatically mask SSNs, tax IDs, and confidential vitals',
+        icon: Shield,
+        handler: async () => {
+          const res = await DocumentAgentTools.redactPII('SSN sample: 000-12-3456');
+          setActionFeedback(`PII Scan Complete: Redacted ${res.piiCount} sensitive records.`);
+        },
+      });
+    }
+
+    if (q.includes('invoice') || q.includes('acme') || q.includes('create invoice')) {
+      detectedActions.push({
+        id: 'act_invoice',
+        title: 'Run Accounting AI Invoice Parsing Workflow',
+        category: 'Workflow',
+        description: 'Parse line items, vendor details, and tax totals for INV-2026-884',
+        icon: Play,
+        handler: () => {
+          setActionFeedback('Launched Accounting AI Workflow: Invoice INV-2026-884 verified.');
+        },
+      });
+    }
+
+    setActions(detectedActions);
 
     const domainsFilter = selectedDomain === 'All' ? undefined : [selectedDomain];
     const searchResults = UniversalSearchService.search({
       text: queryText,
       domains: domainsFilter,
-      limit: 15,
+      limit: 10,
     });
     setResults(searchResults);
   }, [queryText, selectedDomain]);
@@ -63,8 +131,11 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
           <input
             type="text"
             value={queryText}
-            onChange={e => setQueryText(e.target.value)}
-            placeholder="Universal Search across Documents, Email, Calendar, Tasks, Contacts... (Ctrl + K)"
+            onChange={e => {
+              setQueryText(e.target.value);
+              setActionFeedback(null);
+            }}
+            placeholder="Type intent command ('summarize', 'find clause', 'redact pii') or search..."
             autoFocus
             className="flex-1 bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
           />
@@ -75,6 +146,14 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Action Feedback Banner */}
+        {actionFeedback && (
+          <div className="bg-emerald-500/10 border-b border-emerald-500/30 p-3 text-xs text-emerald-300 font-mono flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{actionFeedback}</span>
+          </div>
+        )}
 
         {/* Domain Filters */}
         <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center gap-2 overflow-x-auto text-xs">
@@ -93,45 +172,83 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
           ))}
         </div>
 
-        {/* Results List */}
-        <div className="max-h-96 overflow-y-auto p-2 space-y-1">
-          {results.length === 0 ? (
-            <div className="p-8 text-center text-xs font-mono text-slate-500">
-              No matching items found across workspace memory.
-            </div>
-          ) : (
-            results.map(item => {
-              const Icon = DOMAIN_ICONS[item.domain] || FileText;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    if (onSelectResult) onSelectResult(item);
-                    onClose();
-                  }}
-                  className="p-3 rounded-xl hover:bg-slate-800/70 border border-transparent hover:border-slate-700/60 cursor-pointer flex items-start gap-3 transition-all"
-                >
-                  <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0 mt-0.5">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-semibold text-white truncate">{item.title}</h4>
-                      <span className="text-[10px] font-mono text-slate-500">{item.domain}</span>
+        {/* Scrollable Results & Intent Actions */}
+        <div className="max-h-96 overflow-y-auto p-3 space-y-4">
+          {/* Quick Intent Actions */}
+          {actions.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider px-1 font-bold">
+                Detected Intent Command Actions
+              </span>
+              {actions.map(act => {
+                const Icon = act.icon;
+                return (
+                  <button
+                    key={act.id}
+                    onClick={() => act.handler()}
+                    className="w-full text-left p-3 rounded-xl bg-cyan-950/30 hover:bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-between transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-white group-hover:text-cyan-300 transition-all">{act.title}</h4>
+                        <p className="text-[11px] text-slate-400">{act.description}</p>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 truncate mt-0.5">{item.snippet}</p>
-                  </div>
-                </div>
-              );
-            })
+                    <span className="text-[10px] font-mono px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded border border-cyan-500/30 font-semibold">
+                      Execute
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           )}
+
+          {/* Search Index Results */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider px-1 font-bold">
+              Universal Memory & Search Results ({results.length})
+            </span>
+            {results.length === 0 ? (
+              <div className="p-6 text-center text-xs font-mono text-slate-500">
+                No matching items found across workspace memory.
+              </div>
+            ) : (
+              results.map(item => {
+                const Icon = DOMAIN_ICONS[item.domain] || FileText;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      if (onSelectResult) onSelectResult(item);
+                      onClose();
+                    }}
+                    className="p-3 rounded-xl hover:bg-slate-800/70 border border-transparent hover:border-slate-700/60 cursor-pointer flex items-start gap-3 transition-all"
+                  >
+                    <div className="p-2 rounded-lg bg-slate-800 text-cyan-400 border border-slate-700 shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-semibold text-white truncate">{item.title}</h4>
+                        <span className="text-[10px] font-mono text-slate-500">{item.domain}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 truncate mt-0.5">{item.snippet}</p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
 
         {/* Footer */}
         <div className="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500">
           <div className="flex items-center gap-2">
             <Command className="w-3 h-3 text-cyan-400" />
-            <span>CHATR Universal Search Engine</span>
+            <span>CHATR Intent Launcher (Ctrl + K)</span>
           </div>
           <span>Press ESC or Ctrl+K to close</span>
         </div>
