@@ -3,7 +3,8 @@ import { UniversalSearchService, UniversalSearchResult, SearchDomain } from '../
 import { DocumentAgentTools } from '../../runtimes/intelligence/DocumentAgentTools';
 import { IntentPlanner } from '../../planner/IntentPlanner';
 import { ExecutionPlan } from '../../planner/ExecutionGraph';
-import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X, Play, Sparkles, Shield, FileCheck, GitBranch, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ExecutionInspector } from '../planner/ExecutionInspector';
+import { Search, FileText, Mail, Calendar, User, CheckSquare, MessageSquare, Globe, Command, X, Play, Sparkles, Shield, FileCheck, GitBranch, ArrowRight, CheckCircle2, Activity } from 'lucide-react';
 
 interface UniversalSearchModalProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
   const [results, setResults] = useState<UniversalSearchResult[]>([]);
   const [actions, setActions] = useState<IntentAction[]>([]);
   const [activePlan, setActivePlan] = useState<ExecutionPlan | null>(null);
+  const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
   useEffect(() => {
@@ -200,16 +202,25 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
                     Confidence: {(activePlan.confidence * 100).toFixed(0)}%
                   </span>
                 </div>
-                <button
-                  onClick={async () => {
-                    const res = await IntentPlanner.executePlan(activePlan);
-                    setActionFeedback(`Execution Plan Completed: ${res.stepsCompleted}/${res.totalSteps} steps executed in ${res.durationMs}ms.`);
-                  }}
-                  className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 transition-all"
-                >
-                  <Play className="w-3 h-3 fill-current" />
-                  Execute DAG Plan
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsInspectorOpen(true)}
+                    className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold text-xs rounded-lg border border-slate-700 flex items-center gap-1 transition-all"
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    Inspect DAG
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const res = await IntentPlanner.executePlan(activePlan);
+                      setActionFeedback(`Execution Plan Completed: ${res.stepsCompleted}/${res.totalSteps} steps executed in ${res.durationMs}ms.`);
+                    }}
+                    className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 transition-all"
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    Execute DAG Plan
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5 font-mono text-[11px] text-slate-300">
@@ -309,6 +320,12 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
           <span>Press ESC or Ctrl+K to close</span>
         </div>
       </div>
+      {/* Execution Inspector DevTools Modal */}
+      <ExecutionInspector
+        plan={activePlan}
+        isOpen={isInspectorOpen}
+        onClose={() => setIsInspectorOpen(false)}
+      />
     </div>
   );
 };
