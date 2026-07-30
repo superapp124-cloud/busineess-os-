@@ -316,6 +316,18 @@ export const CHATRDocsWorkspace: React.FC = () => {
         {/* Header Action Controls */}
         <div className="flex items-center gap-3 text-xs font-mono text-slate-400">
           <button
+            onClick={() => {
+              setSelectedFile('Master_Service_Agreement_120pg.pdf');
+              setIsInsightsExpanded(true);
+              handleAskQuestion('What legal risks should I review?');
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-indigo-500/20 hover:from-amber-500/30 hover:to-indigo-500/30 text-amber-300 rounded-lg border border-amber-500/40 font-sans font-bold text-xs shadow-sm transition-all"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Case Study 1: Enterprise Legal</span>
+          </button>
+
+          <button
             onClick={() => setIsCompareMode(!isCompareMode)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border font-sans font-medium text-xs shadow-sm transition-all ${
               isCompareMode
