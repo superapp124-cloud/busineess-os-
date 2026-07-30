@@ -25,7 +25,7 @@ export const createGenericWorkspace = (item: WorkspaceItem): BusinessWorkspace =
     matcher: (testItem) => {
       return {
         workspaceId: 'generic-workspace',
-        confidence: 0.1, // Always lowest priority fallback
+        confidence: 0.5, // Always lowest priority fallback, but higher than 0.1 misses
         reasoning: ['No specific business intent detected']
       };
     },

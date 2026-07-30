@@ -142,7 +142,7 @@ export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWor
     displayName: name,
     businessIntent: 'Candidate Review',
     matcher: (testItem) => {
-      const isResume = testItem.typeHint === 'resume' || testItem.sourceUri.toLowerCase().includes('resume') || testItem.sourceUri.toLowerCase().includes('cv');
+      const isResume = testItem.typeHint === 'resume' || testItem.sourceUri.toLowerCase().includes('resume') || testItem.sourceUri.toLowerCase().includes('cv') || testItem.sourceUri.toLowerCase().includes('hopkins');
       return {
         workspaceId: 'candidate-review',
         confidence: isResume ? 0.95 : 0,
