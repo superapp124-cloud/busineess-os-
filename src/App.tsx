@@ -214,9 +214,11 @@ const NativeStartupRouteGate = ({ children }: { children: React.ReactNode }) => 
 
   React.useEffect(() => {
     // Sanitizer for concatenated URLs like /desktop/calls#/desktop/workspace-ide
-    if (window.location.pathname !== '/' && window.location.hash.startsWith('#/')) {
+    if (window.location.protocol !== 'file:' && window.location.pathname !== '/' && window.location.hash.startsWith('#/')) {
       const hashTarget = window.location.hash.slice(1);
-      window.history.replaceState(null, '', `${window.location.origin}/#${hashTarget}`);
+      if (window.location.origin && window.location.origin !== 'null') {
+        window.history.replaceState(null, '', `${window.location.origin}/#${hashTarget}`);
+      }
       navigate(hashTarget, { replace: true });
       setIsReady(true);
       return;
