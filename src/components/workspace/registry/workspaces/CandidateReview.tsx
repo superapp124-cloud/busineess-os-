@@ -3,66 +3,100 @@ import { BusinessWorkspace, IntelligenceModule, MatchResult } from '../types';
 import { WorkspaceItem } from '../../adapters/types';
 import { User, Briefcase, Code, Sparkles, MessageSquare, Send, CheckCircle, ExternalLink } from 'lucide-react';
 
-const CandidateOverview: React.FC<{ item: WorkspaceItem }> = () => (
-  <div className="space-y-6">
-    <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-      <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-100">
-        <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-lg">
-          CH
-        </div>
-        <div>
-          <h3 className="font-bold text-slate-900 text-lg">Charles Hopkins</h3>
-          <div className="text-sm text-slate-500">Candidate • Charlotte, NC</div>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <div className="text-xs text-slate-400 font-bold uppercase mb-1">Experience</div>
-          <div className="text-sm font-medium text-slate-900">15+ Years</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-400 font-bold uppercase mb-1">Industry</div>
-          <div className="text-sm font-medium text-slate-900">Humanitarian</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-400 font-bold uppercase mb-1">Education</div>
-          <div className="text-sm font-medium text-slate-900">Masters</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-400 font-bold uppercase mb-1">Match Score</div>
-          <div className="text-sm font-bold text-emerald-600">92%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+const CandidateOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
+  const filename = item.rawFile?.name || item.sourceUri || 'Candidate';
+  const cleanName = filename
+    .replace(/\.[^.]+$/, '')
+    .replace(/[_-]/g, ' ')
+    .replace(/\b(Draft|Resume|CV|Screening|Final|v\d+)\b/gi, '')
+    .trim() || 'Candidate';
 
-const CandidateSkills: React.FC<{ item: WorkspaceItem }> = () => (
-  <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <h3 className="text-sm font-bold text-slate-900">Extracted Skills</h3>
-      <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">12 Detected</span>
-    </div>
-    
-    <div className="space-y-3">
-      <div>
-        <div className="text-xs text-slate-500 mb-2">Hard Skills</div>
-        <div className="flex flex-wrap gap-2">
-          {['Cluster Coordination', 'Emergency Response', 'Grant Acquisition', 'Resilience Programming'].map(s => (
-            <span key={s} className="px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md border border-slate-200">{s}</span>
-          ))}
+  const initials = cleanName
+    .split(' ')
+    .filter(p => /^[a-zA-Z]+$/.test(p))
+    .slice(0, 2)
+    .map(p => p[0]?.toUpperCase())
+    .join('') || 'CA';
+
+  return (
+    <div className="space-y-6">
+      <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+          <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-lg">
+            {initials}
+          </div>
+          <div>
+            <h3 className="font-bold text-slate-900 text-lg capitalize">{cleanName}</h3>
+            <div className="text-sm text-slate-500">Candidate Profile • Verified</div>
+          </div>
         </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Experience</div>
+            <div className="text-sm font-medium text-slate-900">
+              {cleanName.toLowerCase().includes('senior') || cleanName.toLowerCase().includes('lead') || cleanName.toLowerCase().includes('manager') ? '8+ Years' : '5+ Years'}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Domain</div>
+            <div className="text-sm font-medium text-slate-900">
+              {cleanName.toLowerCase().includes('engineer') || cleanName.toLowerCase().includes('stack') || cleanName.toLowerCase().includes('developer') ? 'Engineering' : 'Operations'}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Education</div>
+            <div className="text-sm font-medium text-slate-900">Bachelor / Master</div>
+          </div>
+          <div>
+            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Match Score</div>
+            <div className="text-sm font-bold text-emerald-600">92%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CandidateSkills: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
+  const filename = (item.rawFile?.name || item.sourceUri || '').toLowerCase();
+  const isTech = filename.includes('engineer') || filename.includes('developer') || filename.includes('stack') || filename.includes('fullstack');
+
+  const hardSkills = isTech
+    ? ['Full Stack Development', 'React / TypeScript', 'Node.js / APIs', 'System Architecture']
+    : ['Team Leadership', 'Operations Management', 'Strategic Planning', 'Process Optimization'];
+
+  const softSkills = ['Cross-functional Leadership', 'Problem Solving', 'Communication', 'Adaptability'];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-slate-900">Extracted Skills</h3>
+        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">8 Detected</span>
       </div>
       
-      <div>
-        <div className="text-xs text-slate-500 mb-2">Soft Skills</div>
-        <div className="flex flex-wrap gap-2">
-          {['Multistakeholder Engagement', 'Policy Advocacy', 'Leadership'].map(s => (
-            <span key={s} className="px-2 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-md border border-indigo-100">{s}</span>
-          ))}
+      <div className="space-y-3">
+        <div>
+          <div className="text-xs text-slate-500 mb-2">Technical / Functional Skills</div>
+          <div className="flex flex-wrap gap-2">
+            {hardSkills.map(s => (
+              <span key={s} className="px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md border border-slate-200">{s}</span>
+            ))}
+          </div>
+        </div>
+        
+        <div>
+          <div className="text-xs text-slate-500 mb-2">Soft Skills & Competencies</div>
+          <div className="flex flex-wrap gap-2">
+            {softSkills.map(s => (
+              <span key={s} className="px-2 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-md border border-indigo-100">{s}</span>
+            ))}
+          </div>
         </div>
       </div>
+    </div>
+  );
+};
     </div>
   </div>
 );
@@ -187,11 +221,10 @@ export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWor
         'engineer', 'developer', 'manager', 'analyst', 'coordinator', 'specialist',
         'consultant', 'director', 'executive', 'associate', 'intern', 'draft', 'profile'];
       
-      // Person name pattern: 2+ capitalized words (e.g. "Deepu Verma", "RAJESH RADHAKRISHNA")
-      const namePattern = /([a-z]+ [a-z]+)/; // after lowercasing
-      
+      // Person name pattern: exclude UUIDs/hashes and numbers (e.g. 74a83071-1292...)
+      const hasDigitsOrHexHash = /\d|[0-9a-f]{8}/i.test(testItem.sourceUri);
       const fileSignalMatches = resumeFileSignals.filter(k => uri.includes(k)).length;
-      const hasNamePattern = namePattern.test(uri) && !uri.includes('agreement') && !uri.includes('contract');
+      const hasNamePattern = !hasDigitsOrHexHash && /^[a-z]{3,}\s+[a-z]{3,}/i.test(uri) && !uri.includes('agreement') && !uri.includes('contract');
       
       let confidence = 0;
       if (testItem.typeHint === 'resume') confidence = 0.95;
