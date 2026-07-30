@@ -1,15 +1,17 @@
 /**
- * CHATR Intelligence Runtime
+ * CHATR Intelligence Runtime (v3.0 - ADR-004 & ADR-009 Compliant)
  * Specialized OS Runtime managed by RuntimeManager. Connects Document Intelligence, Model Lifecycle, and Agent Tools.
  */
 
 import { IOSRuntime } from '../../kernel/RuntimeManager';
+import { ExecutionEngine, StandardExecutionResult } from '../../kernel/execution/ExecutionEngine';
 import { CapabilityRegistry } from '../../kernel/registry/CapabilityRegistry';
 import { ProviderRegistry } from '../../kernel/registry/ProviderRegistry';
 import { PDFProviderPlugin } from '../../providers/documents/PDFProviderPlugin';
 import { InvoiceProviderPlugin } from '../../providers/documents/InvoiceProviderPlugin';
 import { ContractProviderPlugin } from '../../providers/documents/ContractProviderPlugin';
 import { DocumentQueue, QueueJob } from '../../pipelines/document/DocumentQueue';
+import { DocumentInput, DocumentOutput } from '../../providers/documents/DocumentProviderPlugin';
 
 export class IntelligenceRuntimeService implements IOSRuntime {
   public id = 'runtime-intelligence';
@@ -37,6 +39,29 @@ export class IntelligenceRuntimeService implements IOSRuntime {
 
     this.isReady = true;
     console.log(`[IntelligenceRuntime] ${this.name} initialized successfully.`);
+  }
+
+  /**
+   * Dispatch a document processing task through the Kernel Execution Engine (ADR-004)
+   */
+  public async executeDocumentTask(
+    documentId: string,
+    filePath: string,
+    requiredCapability = 'pdf'
+  ): Promise<StandardExecutionResult<DocumentOutput>> {
+    return ExecutionEngine.executeTask<DocumentInput, DocumentOutput>({
+      taskId: `tsk_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      query: {
+        category: 'document',
+        requiredCapabilities: [requiredCapability],
+        requiresOffline: true,
+      },
+      input: {
+        documentId,
+        filePath,
+        mimeType: 'application/pdf',
+      },
+    });
   }
 
   /**

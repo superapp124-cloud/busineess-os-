@@ -1,17 +1,17 @@
 /**
- * CHATR Document Pipeline Engine
+ * CHATR Document Pipeline Engine (ADR-004 & ADR-009 Compliant)
  * Executes modular stage transformation: Inspect -> Parse -> Extract -> Embed -> Graph -> Memory -> Search -> Notify
+ * Uses ExecutionEngine for provider dispatch.
  */
 
 import { EventBus } from '../../kernel/eventbus/EventBus';
-import { CapabilityRegistry } from '../../kernel/registry/CapabilityRegistry';
-import { ProviderRegistry } from '../../kernel/registry/ProviderRegistry';
+import { ExecutionEngine } from '../../kernel/execution/ExecutionEngine';
 import { EntityGraphEngine } from '../../graph/EntityGraphEngine';
 import { ScopedMemoryEngine } from '../../memory/ScopedMemoryEngine';
 import { UniversalSearchService } from '../../search/UniversalSearchService';
 import { Telemetry } from '../../telemetry/TelemetryService';
 import { DocumentQueue, QueueJob } from './DocumentQueue';
-import { IDocumentProviderPlugin } from '../../providers/documents/DocumentProviderPlugin';
+import { DocumentInput, DocumentOutput } from '../../providers/documents/DocumentProviderPlugin';
 
 export interface PipelineResult {
   jobId: string;
@@ -56,41 +56,37 @@ class DocumentPipelineEngine {
     const isInvoice = job.filePath.toLowerCase().includes('invoice') || job.filePath.toLowerCase().includes('inv');
     const isContract = job.filePath.toLowerCase().includes('contract') || job.filePath.toLowerCase().includes('agreement');
     
-    const requiredCategory = 'document';
+    const requiredCategory = 'document' as const;
     const requiredCap = isInvoice ? 'invoice' : isContract ? 'contract' : 'pdf';
 
     tracer.endStage('Inspect');
 
     // ─────────────────────────────────────────────────────────────
-    // STAGE 2: PARSE (Capability Selection & Model Execution)
+    // STAGE 2: PARSE (ExecutionEngine Provider Dispatch - ADR-004)
     // ─────────────────────────────────────────────────────────────
     DocumentQueue.updateJobProgress(job.jobId, 30);
     
-    // Select best provider via CapabilityRegistry
-    const manifest = CapabilityRegistry.selectBestProvider({
-      category: requiredCategory,
-      requiredCapabilities: [requiredCap],
-      requiresOffline: true,
-    }) || CapabilityRegistry.getAllManifests()[0];
-
-    const providerId = manifest ? manifest.id : 'provider-pdf-unlimited-ocr';
-    const provider = ProviderRegistry.getProvider<any, any>(providerId) as IDocumentProviderPlugin;
-
-    let parseOutput = {
-      documentId: job.documentId,
-      totalPages: 5,
-      markdown: `# Document Content (${job.filePath})\nParsed via CHATR Pipeline Engine.`,
-      structuredData: {},
-      parseDurationMs: 150,
-    };
-
-    if (provider) {
-      parseOutput = await provider.execute({
+    const execResult = await ExecutionEngine.executeTask<DocumentInput, DocumentOutput>({
+      taskId: `task_parse_${job.documentId}`,
+      query: {
+        category: requiredCategory,
+        requiredCapabilities: [requiredCap],
+        requiresOffline: true,
+      },
+      input: {
         documentId: job.documentId,
         filePath: job.filePath,
         mimeType: job.mimeType,
-      });
-    }
+      },
+    });
+
+    const parseOutput = execResult.output || {
+      documentId: job.documentId,
+      totalPages: 5,
+      markdown: `# Document Content (${job.filePath})\nParsed via ExecutionEngine.`,
+      structuredData: {},
+      parseDurationMs: execResult.metrics.durationMs,
+    };
 
     tracer.endStage('Parse');
     await EventBus.publish('document:parsed:page', 'DocumentPipeline', { documentId: job.documentId, pageIndex: 1, totalPages: parseOutput.totalPages });
