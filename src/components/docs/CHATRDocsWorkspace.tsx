@@ -313,19 +313,61 @@ export const CHATRDocsWorkspace: React.FC = () => {
           </div>
         </div>
 
-        {/* Header Action Controls */}
-        <div className="flex items-center gap-3 text-xs font-mono text-slate-400">
-          <button
-            onClick={() => {
-              setSelectedFile('Master_Service_Agreement_120pg.pdf');
-              setIsInsightsExpanded(true);
-              handleAskQuestion('What legal risks should I review?');
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-indigo-500/20 hover:from-amber-500/30 hover:to-indigo-500/30 text-amber-300 rounded-lg border border-amber-500/40 font-sans font-bold text-xs shadow-sm transition-all"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Case Study 1: Enterprise Legal</span>
-          </button>
+        {/* Header Action Controls & Industry Case Study Triggers */}
+        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 p-1 rounded-lg">
+            <span className="text-[10px] text-slate-500 font-mono font-bold px-1.5">Validation Case Studies:</span>
+            <button
+              onClick={() => {
+                setSelectedFile('Master_Service_Agreement_120pg.pdf');
+                setIsInsightsExpanded(true);
+                handleAskQuestion('What legal risks should I review?');
+              }}
+              className="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded font-sans font-bold text-[11px] border border-amber-500/40"
+            >
+              1. Legal
+            </button>
+            <button
+              onClick={() => {
+                handleSelectFile('acme_invoice_2026.pdf');
+                setIsInsightsExpanded(true);
+                handleAskQuestion('Extract line item totals & tax ID');
+              }}
+              className="px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded font-sans font-bold text-[11px] border border-emerald-500/40"
+            >
+              2. Finance
+            </button>
+            <button
+              onClick={() => {
+                handleSelectFile('resume_senior_engineer.pdf');
+                setIsInsightsExpanded(true);
+                handleAskQuestion('Compare candidate skills and experience');
+              }}
+              className="px-2 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 rounded font-sans font-bold text-[11px] border border-indigo-500/40"
+            >
+              3. HR
+            </button>
+            <button
+              onClick={() => {
+                handleSelectFile('starlight_ehr_report.pdf');
+                setIsInsightsExpanded(true);
+                handleAskQuestion('Highlight abnormal vitals & medications');
+              }}
+              className="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded font-sans font-bold text-[11px] border border-rose-500/40"
+            >
+              4. Health
+            </button>
+            <button
+              onClick={() => {
+                handleSelectFile('supplier_agreement_2026.pdf');
+                setIsInsightsExpanded(true);
+                handleAskQuestion('Identify renewal dates & compliance');
+              }}
+              className="px-2 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded font-sans font-bold text-[11px] border border-cyan-500/40"
+            >
+              5. Procurement
+            </button>
+          </div>
 
           <button
             onClick={() => setIsCompareMode(!isCompareMode)}
