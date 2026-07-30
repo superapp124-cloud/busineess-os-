@@ -4,15 +4,16 @@ import { IntelligenceRuntime } from '../../runtimes/intelligence/IntelligenceRun
 import { DocumentQueue, QueueJob } from '../../pipelines/document/DocumentQueue';
 import { EntityGraphEngine } from '../../graph/EntityGraphEngine';
 import { ScopedMemoryEngine } from '../../memory/ScopedMemoryEngine';
-import { UniversalSearchService } from '../../search/UniversalSearchService';
+import { UniversalSearchModal } from '../search/UniversalSearchModal';
 import logo from '@/assets/chatr-icon-logo.png';
-import { FileText, UploadCloud, Cpu, Layers, Sparkles, Shield, Search, Database, Share2, CheckCircle, RefreshCw } from 'lucide-react';
+import { FileText, UploadCloud, Cpu, Layers, Sparkles, Shield, Search, Database, Share2, CheckCircle, RefreshCw, Command } from 'lucide-react';
 
 export const CHATRDocsWorkspace: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string>('sample_contract_microsoft.pdf');
   const [jobs, setJobs] = useState<QueueJob[]>([]);
   const [activeTab, setActiveTab] = useState<'reader' | 'chat' | 'graph' | 'memory'>('reader');
   const [chatInput, setChatInput] = useState<string>('');
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'user' | 'assistant'; text: string; citation?: string }>>([
     {
       sender: 'assistant',
@@ -21,10 +22,38 @@ export const CHATRDocsWorkspace: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // Boot Intent Kernel
+    // Boot Intent Kernel & seed cross-domain items into Universal Search
     IntentKernel.boot().then(() => {
       IntentKernel.runtimeManager.registerRuntime(IntelligenceRuntime);
       IntelligenceRuntime.initialize();
+
+      // Seed cross-domain search items
+      UniversalSearchService.indexItem({
+        domain: 'Email',
+        title: 'Re: Microsoft Cloud Agreement Review',
+        snippet: 'Attached the revised Master Services Agreement. Please verify Section 14 liability clause.',
+        score: 0.95,
+        urlOrPath: 'mailto:legal@chatr.chat',
+        timestamp: new Date().toISOString(),
+      });
+
+      UniversalSearchService.indexItem({
+        domain: 'Calendar',
+        title: 'Microsoft Partnership Sync',
+        snippet: 'Quarterly review call with Microsoft Enterprise team at 3:00 PM EST.',
+        score: 0.90,
+        urlOrPath: 'calendar:event_992',
+        timestamp: new Date().toISOString(),
+      });
+
+      UniversalSearchService.indexItem({
+        domain: 'Task',
+        title: 'Audit Acme Invoice INV-2026-884',
+        snippet: 'Verify tax IDs and line items for $4,250.00 Acme Corporation invoice.',
+        score: 0.88,
+        urlOrPath: 'task:task_402',
+        timestamp: new Date().toISOString(),
+      });
     });
 
     // Subscribe to Document Queue updates
@@ -88,8 +117,17 @@ export const CHATRDocsWorkspace: React.FC = () => {
           </div>
         </div>
 
-        {/* Runtime Status Badges */}
-        <div className="flex items-center gap-4 text-xs font-mono text-slate-400">
+        {/* Runtime Status Badges & Ctrl+K Search Launcher */}
+        <div className="flex items-center gap-3 text-xs font-mono text-slate-400">
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="flex items-center gap-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 transition-all font-sans font-medium text-xs shadow-sm"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Universal Search</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-slate-900 rounded font-mono text-slate-400 border border-slate-700">Ctrl + K</span>
+          </button>
+
           <div className="flex items-center gap-1.5 bg-slate-800/60 px-2.5 py-1 rounded border border-slate-700">
             <Cpu className="w-3.5 h-3.5 text-emerald-400" />
             <span>Engine: Unlimited-OCR (CUDA)</span>
@@ -303,6 +341,12 @@ export const CHATRDocsWorkspace: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {/* Universal Search Modal (Ctrl + K) */}
+      <UniversalSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </div>
   );
 };
