@@ -1681,7 +1681,10 @@ function createWindow() {
 
   // Prevent new windows from being opened arbitrarily
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    log.warn(`Blocked attempt to open a new window: ${url}`);
+    if (url.startsWith('file:') || url.includes('localhost') || url.includes('127.0.0.1') || url.includes('#/')) {
+      return { action: 'deny' };
+    }
+    log.warn(`Blocked attempt to open an external window: ${url}`);
     shell.openExternal(url);
     return { action: 'deny' };
   });
@@ -1737,11 +1740,16 @@ function createWindow() {
 
   // Prevent navigation to external sites
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const parsedUrl = new URL(url);
-    if (!['localhost', '127.0.0.1'].includes(parsedUrl.hostname) && !url.includes('chatr.chat')) {
+    try {
+      // Allow internal file: protocol and local dev server navigations
+      if (url.startsWith('file:') || url.includes('localhost') || url.includes('127.0.0.1') || url.includes('chatr.chat')) {
+        return;
+      }
       log.warn(`Blocked navigation attempt to: ${url}`);
       event.preventDefault();
       shell.openExternal(url);
+    } catch (e) {
+      // Allow if URL cannot be parsed
     }
   });
 
