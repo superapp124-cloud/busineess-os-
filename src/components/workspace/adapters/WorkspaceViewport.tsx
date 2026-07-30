@@ -3,11 +3,15 @@ import { WorkspaceAdapter, WorkspaceItem } from './types';
 import { PDFAdapter } from './PDFAdapter';
 import { ResumeAdapter } from './ResumeAdapter';
 import { EmailAdapter } from './EmailAdapter';
+import { WordAdapter } from './WordAdapter';
+import { ImageAdapter } from './ImageAdapter';
 import { FileQuestion } from 'lucide-react';
 
 const builtInAdapters: WorkspaceAdapter[] = [
   new ResumeAdapter(), // Check specific types first
   new EmailAdapter(),
+  new WordAdapter(),
+  new ImageAdapter(),
   new PDFAdapter(),    // Fallback for general PDFs
 ];
 

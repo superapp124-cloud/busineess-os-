@@ -63,6 +63,8 @@ export const CHATRWorkspace: React.FC = () => {
     let typeHint = 'pdf';
     if (file.name.toLowerCase().includes('resume')) typeHint = 'resume';
     if (file.name.toLowerCase().endsWith('.eml') || file.name.toLowerCase().endsWith('.msg')) typeHint = 'email';
+    if (file.name.toLowerCase().endsWith('.docx') || file.name.toLowerCase().endsWith('.doc')) typeHint = 'word';
+    if (file.type.startsWith('image/')) typeHint = 'image';
 
     const newItem: WorkspaceItem = {
       id: `item_${Date.now()}`,
@@ -79,6 +81,7 @@ export const CHATRWorkspace: React.FC = () => {
   const getIconForType = (typeHint?: string) => {
     if (typeHint === 'resume') return <User className="w-5 h-5 text-amber-500" />;
     if (typeHint === 'email') return <Mail className="w-5 h-5 text-indigo-500" />;
+    if (typeHint === 'image') return <div className="w-5 h-5 bg-pink-100 text-pink-500 rounded flex items-center justify-center font-bold text-[10px]">IMG</div>;
     return <FileText className="w-5 h-5 text-cyan-500" />;
   };
 
