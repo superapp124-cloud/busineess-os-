@@ -1,5 +1,5 @@
 /**
- * CHATR Intent OS Execution Engine
+ * CHATR Intent OS Execution Engine (ADR-004 & ADR-009 Compliant)
  * Orchestrates task execution and enforces reversed provider resolution flow:
  * Runtime -> ExecutionEngine -> CapabilityRegistry -> ProviderRegistry -> Provider
  */
@@ -15,13 +15,24 @@ export interface ExecutionTask<TInput = unknown> {
   priority?: number;
 }
 
-export interface ExecutionResult<TOutput = unknown> {
-  taskId: string;
-  providerId: string;
-  status: 'success' | 'failed';
+export interface DiagnosticMessage {
+  severity: 'info' | 'warning' | 'error';
+  message: string;
+  code?: string;
+}
+
+export interface StandardExecutionResult<TOutput = unknown> {
+  success: boolean;
   output?: TOutput;
-  error?: string;
-  durationMs: number;
+  diagnostics: DiagnosticMessage[];
+  metrics: {
+    durationMs: number;
+    providerId: string;
+    modelName?: string;
+    vramUsedMb?: number;
+  };
+  eventsEmitted: string[];
+  artifactsCreated: string[];
 }
 
 class ExecutionEngineService {
@@ -30,7 +41,7 @@ class ExecutionEngineService {
    */
   public async executeTask<TInput = unknown, TOutput = unknown>(
     task: ExecutionTask<TInput>
-  ): Promise<ExecutionResult<TOutput>> {
+  ): Promise<StandardExecutionResult<TOutput>> {
     const startTime = performance.now();
     console.log(`[ExecutionEngine] Resolving provider for task: ${task.taskId}`);
 
@@ -38,11 +49,14 @@ class ExecutionEngineService {
     const manifest = CapabilityRegistry.selectBestProvider(task.query);
     if (!manifest) {
       return {
-        taskId: task.taskId,
-        providerId: 'none',
-        status: 'failed',
-        error: `No capability manifest matching query: ${JSON.stringify(task.query)}`,
-        durationMs: Math.round(performance.now() - startTime),
+        success: false,
+        diagnostics: [{ severity: 'error', message: `No capability manifest matching query: ${JSON.stringify(task.query)}` }],
+        metrics: {
+          durationMs: Math.round(performance.now() - startTime),
+          providerId: 'none',
+        },
+        eventsEmitted: [],
+        artifactsCreated: [],
       };
     }
 
@@ -50,33 +64,44 @@ class ExecutionEngineService {
     const provider = ProviderRegistry.getProvider<TInput, TOutput>(manifest.id);
     if (!provider) {
       return {
-        taskId: task.taskId,
-        providerId: manifest.id,
-        status: 'failed',
-        error: `Provider plugin [${manifest.id}] registered in manifest but not found in ProviderRegistry`,
-        durationMs: Math.round(performance.now() - startTime),
+        success: false,
+        diagnostics: [{ severity: 'error', message: `Provider plugin [${manifest.id}] not found in ProviderRegistry` }],
+        metrics: {
+          durationMs: Math.round(performance.now() - startTime),
+          providerId: manifest.id,
+        },
+        eventsEmitted: [],
+        artifactsCreated: [],
       };
     }
 
     // 3. Execute provider workload
     try {
-      const output = await provider.execute(task.input);
+      const providerResult = await provider.execute(task.input);
       const durationMs = Math.round(performance.now() - startTime);
 
       return {
-        taskId: task.taskId,
-        providerId: manifest.id,
-        status: 'success',
-        output,
-        durationMs,
+        success: true,
+        output: providerResult as unknown as TOutput,
+        diagnostics: [{ severity: 'info', message: `Task ${task.taskId} executed successfully by ${manifest.name}` }],
+        metrics: {
+          durationMs,
+          providerId: manifest.id,
+          modelName: manifest.name,
+        },
+        eventsEmitted: ['task:executed'],
+        artifactsCreated: [],
       };
     } catch (err: any) {
       return {
-        taskId: task.taskId,
-        providerId: manifest.id,
-        status: 'failed',
-        error: err.message,
-        durationMs: Math.round(performance.now() - startTime),
+        success: false,
+        diagnostics: [{ severity: 'error', message: err.message }],
+        metrics: {
+          durationMs: Math.round(performance.now() - startTime),
+          providerId: manifest.id,
+        },
+        eventsEmitted: [],
+        artifactsCreated: [],
       };
     }
   }
