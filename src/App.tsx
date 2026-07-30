@@ -76,6 +76,7 @@ const EngineHealthDashboardPage = React.lazy(() => import("./pages/desktop/Engin
 const BusinessLayout = React.lazy(() => import("./layouts/BusinessLayout").then(m => ({ default: m.BusinessLayout })));
 const DesignSystemPlayground = React.lazy(() => import("./pages/desktop/DesignSystemPlayground"));
 const CHATRDocsWorkspace = React.lazy(() => import("./components/docs/CHATRDocsWorkspace").then(m => ({ default: m.CHATRDocsWorkspace })));
+const BusinessOSWorkspace = React.lazy(() => import("./components/business/BusinessOSWorkspace").then(m => ({ default: m.BusinessOSWorkspace })));
 const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalendarCallback").then(m => ({ default: m.GoogleCalendarCallback })));
 const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
 const ChiefOfStaffHome = React.lazy(() => import("./pages/desktop/ChiefOfStaffHome").then(m => ({ default: m.ChiefOfStaffHome })));
@@ -601,6 +602,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/web" element={<LazyRoute component={LazyPages.ChatrWeb} />} />
  <Route path="/docs" element={<ProtectedLazyRoute component={CHATRDocsWorkspace} />} />
  <Route path="/desktop/docs" element={<ProtectedLazyRoute component={CHATRDocsWorkspace} />} />
+ <Route path="/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
+ <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  {/* Legacy Desktop paths (Removed during refactor) */}
  
  {/* Consolidated Hub Routes */}
