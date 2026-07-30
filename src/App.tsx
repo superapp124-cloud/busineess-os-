@@ -78,6 +78,7 @@ const DesignSystemPlayground = React.lazy(() => import("./pages/desktop/DesignSy
 const CHATRDocsWorkspace = React.lazy(() => import("./components/docs/CHATRDocsWorkspace").then(m => ({ default: m.CHATRDocsWorkspace })));
 const BusinessOSWorkspace = React.lazy(() => import("./components/business/BusinessOSWorkspace").then(m => ({ default: m.BusinessOSWorkspace })));
 const PluginMarketplaceWorkspace = React.lazy(() => import("./components/sdk/PluginMarketplaceWorkspace").then(m => ({ default: m.PluginMarketplaceWorkspace })));
+const CustomerValidationDashboard = React.lazy(() => import("./components/analytics/CustomerValidationDashboard").then(m => ({ default: m.CustomerValidationDashboard })));
 const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalendarCallback").then(m => ({ default: m.GoogleCalendarCallback })));
 const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
 const ChiefOfStaffHome = React.lazy(() => import("./pages/desktop/ChiefOfStaffHome").then(m => ({ default: m.ChiefOfStaffHome })));
@@ -607,6 +608,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  <Route path="/plugins" element={<ProtectedLazyRoute component={PluginMarketplaceWorkspace} />} />
  <Route path="/desktop/plugins" element={<ProtectedLazyRoute component={PluginMarketplaceWorkspace} />} />
+ <Route path="/validation" element={<ProtectedLazyRoute component={CustomerValidationDashboard} />} />
+ <Route path="/desktop/validation" element={<ProtectedLazyRoute component={CustomerValidationDashboard} />} />
  {/* Legacy Desktop paths (Removed during refactor) */}
  
  {/* Consolidated Hub Routes */}
