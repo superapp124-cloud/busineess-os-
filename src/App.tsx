@@ -75,7 +75,7 @@ const WorkflowInspectorPage = React.lazy(() => import("./pages/desktop/WorkflowI
 const EngineHealthDashboardPage = React.lazy(() => import("./pages/desktop/EngineHealthDashboard").then(m => ({ default: m.EngineHealthDashboard })));
 const BusinessLayout = React.lazy(() => import("./layouts/BusinessLayout").then(m => ({ default: m.BusinessLayout })));
 const DesignSystemPlayground = React.lazy(() => import("./pages/desktop/DesignSystemPlayground"));
-const CHATRDocsWorkspace = React.lazy(() => import("./components/docs/CHATRDocsWorkspace").then(m => ({ default: m.CHATRDocsWorkspace })));
+const CHATRWorkspace = React.lazy(() => import("./components/workspace/CHATRWorkspace").then(m => ({ default: m.CHATRWorkspace })));
 const BusinessOSWorkspace = React.lazy(() => import("./components/business/BusinessOSWorkspace").then(m => ({ default: m.BusinessOSWorkspace })));
 const PluginMarketplaceWorkspace = React.lazy(() => import("./components/sdk/PluginMarketplaceWorkspace").then(m => ({ default: m.PluginMarketplaceWorkspace })));
 const CustomerValidationDashboard = React.lazy(() => import("./components/analytics/CustomerValidationDashboard").then(m => ({ default: m.CustomerValidationDashboard })));
@@ -602,8 +602,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/disclaimer" element={<LazyRoute component={LazyPages.Disclaimer} />} />
  <Route path="/join" element={<LazyRoute component={LazyPages.JoinInvite} />} />
  <Route path="/web" element={<LazyRoute component={LazyPages.ChatrWeb} />} />
- <Route path="/docs" element={<ProtectedLazyRoute component={CHATRDocsWorkspace} />} />
- <Route path="/desktop/docs" element={<ProtectedLazyRoute component={CHATRDocsWorkspace} />} />
+ <Route path="/docs" element={<ProtectedLazyRoute component={CHATRWorkspace} />} />
+ <Route path="/desktop/docs" element={<ProtectedLazyRoute component={CHATRWorkspace} />} />
  <Route path="/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  <Route path="/plugins" element={<ProtectedLazyRoute component={PluginMarketplaceWorkspace} />} />
