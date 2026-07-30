@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IntentPlanner } from '../../planner/IntentPlanner';
 import { ExecutionHistoryStore } from '../../planner/ExecutionHistoryStore';
-import { Play, CheckCircle, Zap, Calendar, Mail, DollarSign, UserCheck, Shield, Sparkles, ArrowRight, CheckCircle2, RotateCcw, HelpCircle, Layers, FileSearch, ShieldCheck, CheckSquare, X } from 'lucide-react';
+import { Play, CheckCircle, Zap, Calendar, Mail, DollarSign, UserCheck, Shield, Sparkles, ArrowRight, CheckCircle2, RotateCcw, HelpCircle, Layers, FileSearch, ShieldCheck, CheckSquare, X, GitCompare, Scale, FileText, BarChart2 } from 'lucide-react';
 
 export interface WorkflowRecommendation {
   id: string;
@@ -273,24 +273,48 @@ export const WorkflowStudio: React.FC<WorkflowStudioProps> = ({ docName, docType
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          {!isWorkflowDone && (
-            <button 
-              onClick={() => setActiveActionSheet(rec)}
-              className="w-full text-left p-3 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 hover:border-slate-600 transition-all text-sm font-medium text-slate-200 flex justify-between items-center group"
-            >
-              {rec.suggestedOutcome}
-              <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition-colors" />
-            </button>
-          )}
-          
-          <button className="w-full text-left p-3 rounded-lg border border-slate-800/60 bg-slate-900/40 hover:bg-slate-800 hover:border-slate-700 transition-all text-sm text-slate-300 flex justify-between items-center group">
-            Compare with previous version
-            <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <button 
+            onClick={() => setActiveActionSheet(rec)}
+            className="flex items-start gap-3 p-3 text-left rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600 transition-all group"
+          >
+            <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg shrink-0">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{rec.suggestedOutcome}</div>
+              <div className="text-xs text-slate-400 mt-0.5">Automated workflow</div>
+            </div>
           </button>
-          <button className="w-full text-left p-3 rounded-lg border border-slate-800/60 bg-slate-900/40 hover:bg-slate-800 hover:border-slate-700 transition-all text-sm text-slate-300 flex justify-between items-center group">
-            Export Executive Brief
-            <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+          
+          <button className="flex items-start gap-3 p-3 text-left rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600 transition-all group">
+            <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg shrink-0">
+              <BarChart2 className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Compare Versions</div>
+              <div className="text-xs text-slate-400 mt-0.5">See what changed since v1</div>
+            </div>
+          </button>
+          
+          <button className="flex items-start gap-3 p-3 text-left rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600 transition-all group">
+            <div className="p-2 bg-rose-500/20 text-rose-400 rounded-lg shrink-0">
+              <Scale className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Review Risks</div>
+              <div className="text-xs text-slate-400 mt-0.5">Highlight unusual clauses</div>
+            </div>
+          </button>
+          
+          <button className="flex items-start gap-3 p-3 text-left rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600 transition-all group">
+            <div className="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg shrink-0">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Executive Summary</div>
+              <div className="text-xs text-slate-400 mt-0.5">Generate one-page brief</div>
+            </div>
           </button>
         </div>
       )}

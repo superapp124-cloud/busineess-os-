@@ -11,7 +11,7 @@ import {
   ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Eye, Play, ArrowRight, CornerDownLeft,
   FileCheck, ShieldAlert, Layers, BookOpen, ExternalLink, HelpCircle, Activity, Tag,
   Clock, Hash, FileSpreadsheet, AlertTriangle, CheckCircle2, Columns, GitCompare, ArrowUpRight,
-  ChevronDown, ChevronUp, DollarSign, Calendar as CalendarIcon, UserCheck, Briefcase, Settings
+  ChevronDown, ChevronUp, DollarSign, Calendar as CalendarIcon, UserCheck, Briefcase, Settings, Loader2
 } from 'lucide-react';
 
 interface BoundingBox {
@@ -52,14 +52,30 @@ interface DocumentInsights {
   suggestedPrompts: string[];
 }
 
+interface DocumentItem {
+  id: string;
+  name: string;
+  pages: number;
+  date: string;
+  status: 'Uploading...' | 'Reading document...' | 'Preparing insights...' | 'Ready' | 'Needs Attention';
+  type: string;
+}
+
 export const CHATRDocsWorkspace: React.FC = () => {
   const [isDeveloperMode, setIsDeveloperMode] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [selectedFile, setSelectedFile] = useState<string>('sample_contract_microsoft_v2.pdf');
-  const [compareFile, setCompareFile] = useState<string>('sample_contract_microsoft_v1.pdf');
+  const [documents, setDocuments] = useState<DocumentItem[]>([
+    { id: '1', name: 'Master_Service_Agreement_120pg.pdf', pages: 120, date: 'Updated today', status: 'Ready', type: 'Contract' },
+    { id: '2', name: 'acme_invoice_2026.pdf', pages: 3, date: 'Yesterday', status: 'Ready', type: 'Invoice' },
+    { id: '3', name: 'resume_senior_engineer.pdf', pages: 2, date: 'Last week', status: 'Ready', type: 'HR' }
+  ]);
+
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [compareFile, setCompareFile] = useState<string>('acme_invoice_2026.pdf');
   const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
-  const [isInsightsExpanded, setIsInsightsExpanded] = useState<boolean>(false);
+  const [isInsightsExpanded, setIsInsightsExpanded] = useState<boolean>(true);
 
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -76,9 +92,10 @@ export const CHATRDocsWorkspace: React.FC = () => {
     label: 'Clause 14.2: Governing Law & Liability Cap ($1,000,000)',
   });
 
-  const [jobs, setJobs] = useState<QueueJob[]>([]);
   const [chatInput, setChatInput] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+
+  // Ingestion stats for dev mode
   const [ingestStatus, setIngestStatus] = useState<string>('Indexed & Ready');
   const [ingestProgress, setIngestProgress] = useState<number>(100);
 
@@ -93,67 +110,78 @@ export const CHATRDocsWorkspace: React.FC = () => {
     datesCount: 4,
     moneyValuesCount: 2,
     keyTerms: ['Liability Cap ($1M)', 'Delaware Law', 'Net 30', '30-Day Notice'],
-    suggestedPrompts: ['Compare v1 vs v2 changes', 'Find termination clause', 'List payment terms'],
+    suggestedPrompts: ['Compare versions', 'Summarize payment terms', 'Review legal risks'],
   });
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'msg_1',
-      sender: 'assistant',
-      text: 'Hello. I can help you understand this document, compare versions, and trigger workflows.',
-    },
-    {
-      id: 'msg_2',
-      sender: 'assistant',
-      text: 'I noticed that the aggregate liability cap was increased to $1,000,000 USD (up from $500,000 USD in v1).',
-      citation: {
-        documentName: 'sample_contract_microsoft_v2.pdf',
-        page: 1,
-        clause: 'Clause 14.2',
-        conversationalText: 'the liability cap has increased from $500,000 to $1,000,000.',
-        confidence: 99.2,
-        trustBadge: 'Verified Grounded',
-        bbox: {
-          page: 1,
-          x: 40,
-          y: 180,
-          width: 520,
-          height: 90,
-          label: 'Clause 14.2: Governing Law & Liability Cap ($1,000,000)',
-        },
-      },
-    },
-  ]);
-
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const documentViewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     IntentKernel.boot().then(() => {
       IntentKernel.runtimeManager.registerRuntime(IntelligenceRuntime);
       IntelligenceRuntime.initialize();
-
-      UniversalSearchService.indexItem({
-        domain: 'Document',
-        title: 'Master Services Agreement v2 (Microsoft)',
-        snippet: 'Section 14.2 Limitation of Liability: Aggregate liability capped at $1,000,000 USD...',
-        score: 0.98,
-        urlOrPath: 'sample_contract_microsoft_v2.pdf',
-        timestamp: new Date().toISOString(),
-      });
     });
-
-    const unsubscribe = DocumentQueue.onUpdate(() => {
-      setJobs(DocumentQueue.getQueue());
-    });
-
-    return () => unsubscribe();
   }, []);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const newDocId = `doc_${Date.now()}`;
+    const newDoc: DocumentItem = {
+      id: newDocId,
+      name: file.name,
+      pages: Math.floor(Math.random() * 20) + 1, // mock
+      date: 'Just now',
+      status: 'Uploading...',
+      type: 'General'
+    };
+
+    setDocuments(prev => [newDoc, ...prev]);
+    setSelectedFile(file.name);
+    setIngestStatus('Uploading...');
+    setIngestProgress(20);
+
+    // Mock processing pipeline
+    setTimeout(() => {
+      setDocuments(prev => prev.map(d => d.id === newDocId ? { ...d, status: 'Reading document...' } : d));
+      setIngestStatus('Reading document...');
+      setIngestProgress(50);
+    }, 1500);
+
+    setTimeout(() => {
+      setDocuments(prev => prev.map(d => d.id === newDocId ? { ...d, status: 'Preparing insights...' } : d));
+      setIngestStatus('Preparing insights...');
+      setIngestProgress(80);
+    }, 3000);
+
+    setTimeout(() => {
+      setDocuments(prev => prev.map(d => d.id === newDocId ? { ...d, status: 'Ready' } : d));
+      setIngestStatus('Indexed & Ready');
+      setIngestProgress(100);
+      
+      setInsights({
+        docType: 'Contract',
+        readingTimeMins: 2,
+        confidenceScore: 98.1,
+        entitiesCount: 2,
+        riskLevel: 'Medium',
+        companies: ['Unknown Entity'],
+        peopleCount: 1,
+        datesCount: 1,
+        moneyValuesCount: 0,
+        keyTerms: ['General Terms'],
+        suggestedPrompts: ['What is this document about?', 'Extract key dates'],
+      });
+      
+      IntelligenceRuntime.ingestDocument(file.name);
+    }, 4500);
+    
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSelectFile = (fileName: string) => {
     setSelectedFile(fileName);
-    setIngestStatus('Streaming Upload & Parsing...');
-    setIngestProgress(25);
-
     if (fileName.includes('invoice')) {
       setInsights({
         docType: 'Invoice',
@@ -180,15 +208,9 @@ export const CHATRDocsWorkspace: React.FC = () => {
         datesCount: 4,
         moneyValuesCount: 2,
         keyTerms: ['Liability Cap ($1M)', 'Delaware Law', 'Net 30', '30-Day Notice'],
-        suggestedPrompts: ['Compare v1 vs v2 changes', 'Find termination clause', 'List payment terms'],
+        suggestedPrompts: ['Compare versions', 'Summarize payment terms', 'Review legal risks'],
       });
     }
-
-    setTimeout(() => {
-      setIngestStatus('Indexed & Ready');
-      setIngestProgress(100);
-      IntelligenceRuntime.ingestDocument(`C:\\Users\\Arshid.Wani\\Documents\\CHATR\\${fileName}`);
-    }, 500);
   };
 
   const handleAskQuestion = (questionText: string) => {
@@ -216,7 +238,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
           ? 'Multi-Doc Diff Analysis: Section 14.2 increased liability cap from $500K to $1M USD. Section 18.1 reduced termination notice period from 60 days to 30 days.'
           : 'I found a few differences between the versions. The liability cap increased, and the termination notice was reduced to 30 days.';
         citationObj = {
-          documentName: selectedFile,
+          documentName: selectedFile || 'document.pdf',
           page: 1,
           clause: 'Clause 14.2 vs v1 Clause 12.1',
           conversationalText: 'the liability cap increased from $500K to $1M USD.',
@@ -236,7 +258,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
           ? 'Verified: Section 18.1 allows termination for convenience upon 30 days written notice.'
           : 'You can terminate the agreement for convenience with 30 days written notice.';
         citationObj = {
-          documentName: selectedFile,
+          documentName: selectedFile || 'document.pdf',
           page: 2,
           clause: 'Clause 18.1',
           conversationalText: 'termination is allowed for convenience with 30 days written notice.',
@@ -254,12 +276,12 @@ export const CHATRDocsWorkspace: React.FC = () => {
       } else {
         answerText = isDeveloperMode
           ? `Verified Grounded Match in ${selectedFile}: "${questionText}" matches Section 3.1 scope specifications.`
-          : `I found a match for "${questionText}" in Section 3.1.`;
+          : `I found a match for your query in Section 3.1.`;
         citationObj = {
-          documentName: selectedFile,
+          documentName: selectedFile || 'document.pdf',
           page: 1,
           clause: 'Section 3.1',
-          conversationalText: `this section covers ${questionText}.`,
+          conversationalText: `this section covers relevant scope specifications.`,
           confidence: 97.2,
           trustBadge: 'Verified Grounded',
           bbox: {
@@ -299,21 +321,18 @@ export const CHATRDocsWorkspace: React.FC = () => {
     }
   };
 
-  const handleTriggerBusinessOS = (workflowType: string) => {
-    if (workflowType === 'finance') {
-      setWorkflowFeedback('Pushed Acme Invoice INV-2026-884 ($4,250.00) to Finance Ledger.');
-    } else if (workflowType === 'calendar') {
-      setWorkflowFeedback('Created Contract Renewal Task & Calendar Sync for October 1, 2027.');
-    } else if (workflowType === 'hr') {
-      setWorkflowFeedback('Added Candidate to HR Team Roster.');
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'Ready': return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+      case 'Needs Attention': return 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+      default: return 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20';
     }
-    setTimeout(() => setWorkflowFeedback(null), 4000);
   };
 
   return (
     <div className="flex flex-col h-screen bg-slate-950 text-slate-100 font-sans overflow-hidden">
       {/* Header Bar */}
-      <header className="h-14 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-4 flex items-center justify-between z-10">
+      <header className="h-14 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-4 flex items-center justify-between z-10 shrink-0">
         <div className="flex items-center gap-4">
           <img src={logo} alt="CHATR" className="w-7 h-7 object-contain rounded" />
           <h1 className="font-bold text-sm text-white flex items-center gap-2">
@@ -329,25 +348,19 @@ export const CHATRDocsWorkspace: React.FC = () => {
         <div className="flex items-center gap-4 text-xs">
           {isDeveloperMode ? (
             <div className="flex items-center gap-2 font-mono text-slate-400">
-              <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 p-1 rounded-lg">
-                <span className="text-[10px] text-slate-500 font-bold px-1.5">Validation Triggers:</span>
-                <button onClick={() => { handleSelectFile('Master_Service_Agreement_120pg.pdf'); setIsInsightsExpanded(true); handleAskQuestion('What legal risks should I review?'); }} className="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded font-sans font-bold text-[11px] border border-amber-500/40">1. Legal</button>
-                <button onClick={() => { handleSelectFile('acme_invoice_2026.pdf'); setIsInsightsExpanded(true); handleAskQuestion('Extract line item totals & tax ID'); }} className="px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded font-sans font-bold text-[11px] border border-emerald-500/40">2. Finance</button>
-                <button onClick={() => { handleSelectFile('resume_senior_engineer.pdf'); setIsInsightsExpanded(true); handleAskQuestion('Compare candidate skills and experience'); }} className="px-2 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 rounded font-sans font-bold text-[11px] border border-indigo-500/40">3. HR</button>
-                <button onClick={() => { handleSelectFile('starlight_ehr_report.pdf'); setIsInsightsExpanded(true); handleAskQuestion('Highlight abnormal vitals & medications'); }} className="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded font-sans font-bold text-[11px] border border-rose-500/40">4. Health</button>
-                <button onClick={() => { handleSelectFile('supplier_agreement_2026.pdf'); setIsInsightsExpanded(true); handleAskQuestion('Identify renewal dates & compliance'); }} className="px-2 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded font-sans font-bold text-[11px] border border-cyan-500/40">5. Procurement</button>
-              </div>
               <button onClick={() => setIsCompareMode(!isCompareMode)} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border shadow-sm transition-all ${isCompareMode ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}><GitCompare className="w-3.5 h-3.5" /><span>{isCompareMode ? 'Exit Diff Mode' : 'Side-by-Side Compare'}</span></button>
               <button onClick={() => setIsSearchOpen(true)} className="flex items-center gap-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 shadow-sm"><Search className="w-3.5 h-3.5" /><span>Universal Search</span><span className="text-[10px] px-1.5 py-0.5 bg-slate-900 rounded border border-slate-700">Ctrl + K</span></button>
               <div className="flex items-center gap-1.5 bg-slate-800/60 px-2.5 py-1 rounded border border-slate-700"><Cpu className="w-3.5 h-3.5 text-emerald-400" /><span>Baidu Unlimited-OCR</span></div>
             </div>
           ) : (
-            <div className="flex items-center gap-5 text-slate-300 font-sans">
-               <span className="font-semibold text-white">{selectedFile}</span>
-               <span className="text-slate-500">Updated 3 minutes ago</span>
-               <button className="flex items-center gap-1.5 hover:text-white transition-colors" onClick={() => setIsSearchOpen(true)}><Search className="w-4 h-4"/> Search</button>
-               <button className="flex items-center gap-1.5 hover:text-white transition-colors"><ExternalLink className="w-4 h-4"/> Share</button>
-            </div>
+            selectedFile && (
+              <div className="flex items-center gap-5 text-slate-300 font-sans">
+                 <span className="font-semibold text-white max-w-[200px] truncate">{selectedFile}</span>
+                 <span className="text-slate-500">Updated today</span>
+                 <button className="flex items-center gap-1.5 hover:text-white transition-colors" onClick={() => setIsSearchOpen(true)}><Search className="w-4 h-4"/> Search</button>
+                 <button className="flex items-center gap-1.5 hover:text-white transition-colors"><ExternalLink className="w-4 h-4"/> Share</button>
+              </div>
+            )
           )}
 
           {/* Settings Menu for Dev Mode Toggle */}
@@ -368,250 +381,171 @@ export const CHATRDocsWorkspace: React.FC = () => {
         </div>
       </header>
 
-      {/* Workflow Notification Banner */}
-      {workflowFeedback && (
-        <div className="bg-emerald-500/10 border-b border-emerald-500/30 px-6 py-2 text-xs text-emerald-300 font-mono flex items-center gap-2 animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{workflowFeedback}</span>
-        </div>
-      )}
-
-      {/* Main 3-Pane Workspace Container */}
+      {/* Main Workspace Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* PANE 1 (LEFT): Document Explorer */}
-        <div className="w-72 border-r border-slate-800 bg-slate-950/90 p-4 flex flex-col justify-between space-y-4">
-          <div className="space-y-4">
-            {/* Upload Zone */}
-            <div className="space-y-1.5">
-              {isDeveloperMode ? (
-                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Ingest Workspace PDF</span>
-              ) : null}
-              <div
-                onClick={() => handleSelectFile('new_custom_document.pdf')}
-                className={`border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/60 rounded-xl text-center cursor-pointer transition-all group ${isDeveloperMode ? 'p-3' : 'p-6'}`}
-              >
-                <UploadCloud className="w-5 h-5 text-cyan-400 mx-auto group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold text-slate-300 mt-2 block">Upload Document</span>
-              </div>
-            </div>
-
-            {/* Document Repository List */}
-            <div className="space-y-1.5 pt-2">
-              {isDeveloperMode ? (
-                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Workspace Repository</span>
-              ) : (
-                <span className="text-xs font-semibold text-slate-400">Documents</span>
-              )}
-              <div className="space-y-1 mt-2">
-                {[
-                  { name: 'Master_Service_Agreement_120pg.pdf', tag: 'Version 2 (Current)', type: 'Contract' },
-                  { name: 'sample_contract_microsoft_v1.pdf', tag: 'Version 1 (Previous)', type: 'Contract' },
-                  { name: 'acme_invoice_2026.pdf', tag: 'INV-2026-884', type: 'Invoice' },
-                ].map(doc => {
-                  const isSelected = selectedFile === doc.name;
-                  return (
-                    <button
-                      key={doc.name}
-                      onClick={() => handleSelectFile(doc.name)}
-                      className={`w-full text-left p-2.5 rounded-lg border text-xs transition-all flex items-center gap-2.5 ${
-                        isSelected
-                          ? 'bg-cyan-950/40 border-cyan-500/40 text-cyan-300 font-medium shadow-sm'
-                          : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
-                      }`}
-                    >
-                      <FileText className={`w-4 h-4 shrink-0 ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`} />
-                      <div className="truncate flex-1">
-                        <div className="truncate">{doc.name}</div>
-                        {isDeveloperMode && <div className="text-[10px] text-slate-500 font-mono mt-0.5">{doc.tag}</div>}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {isDeveloperMode && (
-              <div className="space-y-1.5 pt-4 border-t border-slate-800/50">
-                <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider font-bold">
-                  Business OS Action Triggers
-                </span>
-                <div className="space-y-1 text-xs">
-                  <button onClick={() => handleTriggerBusinessOS('finance')} className="w-full text-left p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition-all">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>Push Invoice to Finance Ledger</span>
-                  </button>
-                  <button onClick={() => handleTriggerBusinessOS('calendar')} className="w-full text-left p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition-all">
-                    <CalendarIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                    <span>Create Renewal Reminder</span>
-                  </button>
-                </div>
-              </div>
-            )}
+        {/* PANE 1 (LEFT, 20%): Sidebar */}
+        <div className="w-1/5 min-w-[280px] max-w-[320px] border-r border-slate-800 bg-slate-950 p-4 flex flex-col space-y-5 overflow-y-auto">
+          
+          <div className="space-y-3">
+            <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,image/*" />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full border-2 border-dashed border-slate-700 hover:border-cyan-500/50 hover:bg-cyan-950/20 bg-slate-900/60 rounded-xl p-4 text-center cursor-pointer transition-all group"
+            >
+              <UploadCloud className="w-5 h-5 text-cyan-400 mx-auto group-hover:scale-110 transition-transform mb-2" />
+              <span className="text-sm font-semibold text-slate-200 block">+ Upload documents</span>
+              <span className="text-xs text-slate-500 mt-1 block">Drag PDFs, Word or Images here<br/>or Browse Files</span>
+            </button>
           </div>
 
-          {isDeveloperMode && (
-            <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center gap-2.5 text-[10px] text-slate-400 font-mono">
-              <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>Local Scope Memory Security</span>
+          <div className="space-y-2 pt-2">
+            <span className="text-xs font-semibold text-slate-400 px-1 block">Recent Documents</span>
+            <div className="space-y-2">
+              {documents.map(doc => {
+                const isSelected = selectedFile === doc.name;
+                const isProcessing = doc.status !== 'Ready' && doc.status !== 'Needs Attention';
+                return (
+                  <button
+                    key={doc.id}
+                    onClick={() => handleSelectFile(doc.name)}
+                    className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-2 ${
+                      isSelected
+                        ? 'bg-cyan-950/20 border-cyan-500/30 shadow-sm'
+                        : 'bg-slate-900/40 border-slate-800/60 hover:bg-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <FileText className={`w-5 h-5 shrink-0 mt-0.5 ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`} />
+                      <div className="flex-1 overflow-hidden">
+                        <div className={`text-sm truncate font-medium ${isSelected ? 'text-white' : 'text-slate-300'}`}>{doc.name}</div>
+                        <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500">
+                          <span>{doc.pages} pages</span>
+                          <span>•</span>
+                          <span>{doc.date}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`self-start text-[10px] px-2 py-0.5 rounded border flex items-center gap-1.5 ${getStatusColor(doc.status)} font-medium`}>
+                      {isProcessing && <Loader2 className="w-3 h-3 animate-spin" />}
+                      {doc.status}
+                    </div>
+                  </button>
+                );
+              })}
+              {documents.length === 0 && (
+                <div className="text-center p-4 text-xs text-slate-500 bg-slate-900/30 rounded-lg border border-slate-800 border-dashed">
+                  Nothing uploaded yet
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* PANE 2 (CENTER): Interactive PDF Reader Viewport */}
-        <div className="flex-1 flex flex-col bg-slate-900/50 border-r border-slate-800 overflow-hidden">
-          {/* Reader Toolbar */}
-          <div className="h-12 border-b border-slate-800 bg-slate-950/60 px-4 flex items-center justify-between text-xs font-mono text-slate-400">
-            <div className="flex items-center gap-2">
-              <button onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} className="p-1 hover:bg-slate-800 rounded text-slate-300">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span>Page {currentPage} of 4</span>
-              <button onClick={() => setCurrentPage(prev => Math.min(4, prev + 1))} className="p-1 hover:bg-slate-800 rounded text-slate-300">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* In-Document Search */}
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1">
-              <Search className="w-3.5 h-3.5 text-slate-500" />
-              <input
-                type="text"
-                value={inDocSearchQuery}
-                onChange={e => setInDocSearchQuery(e.target.value)}
-                placeholder="Search document..."
-                className="bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none w-36 font-sans"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsInsightsExpanded(!isInsightsExpanded)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors font-sans font-medium text-xs ${isInsightsExpanded ? 'bg-cyan-500/10 text-cyan-300' : 'text-slate-300 hover:text-white'}`}
+        {/* PANE 2 (CENTER, 60%): Document Hero View */}
+        <div className="w-3/5 flex flex-col bg-slate-900/30 border-r border-slate-800 overflow-hidden relative">
+          {!selectedFile ? (
+            // EMPTY STATE
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 animate-in fade-in zoom-in-95 duration-500">
+              <div className="w-24 h-24 bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
+                <FileText className="w-10 h-10 text-slate-600" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-200 mb-2">Drop your first document here</h2>
+              <p className="text-slate-400 mb-6 text-sm">Supports PDF, Word, and Images</p>
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-medium transition-colors shadow-lg shadow-cyan-900/20"
               >
-                <span>Summary</span>
-                {isInsightsExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                Browse Files
               </button>
             </div>
-          </div>
-
-          {/* EXPANDABLE EXECUTIVE SUMMARY CARD */}
-          {isInsightsExpanded && (
-            <div className="bg-slate-950 border-b border-slate-800 p-5 font-sans space-y-4 animate-in fade-in">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-white">
-                    {isDeveloperMode ? 'Document Executive Intelligence Card' : 'Document Overview'}
-                  </span>
-                  {isDeveloperMode && (
-                    <span className="text-[10px] px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30 font-mono">
-                      Verified Grounded
-                    </span>
-                  )}
+          ) : (
+            // ACTIVE DOCUMENT
+            <>
+              {/* Document Header & Overview */}
+              <div className="shrink-0 bg-slate-950/80 backdrop-blur border-b border-slate-800 p-4 lg:p-6 shadow-sm z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-white tracking-tight">{isDeveloperMode ? 'Document Executive Intelligence Card' : 'Overview'}</h2>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setIsInsightsExpanded(!isInsightsExpanded)} className="text-slate-400 hover:text-white transition-colors">
+                      {isInsightsExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
-                {isDeveloperMode && (
-                  <span className="text-slate-400 text-xs font-mono">Risk Assessment: <strong className="text-emerald-400">Low Risk</strong></span>
+
+                {isInsightsExpanded && (
+                  <div className="animate-in slide-in-from-top-2 fade-in duration-200">
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300">
+                        {insights.docType}
+                      </div>
+                      <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 font-medium">
+                        $1M Value
+                      </div>
+                      <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300">
+                        Renews Oct 1
+                      </div>
+                      <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300">
+                        30-day Notice
+                      </div>
+                      <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300">
+                        Delaware
+                      </div>
+                      <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium rounded-lg">
+                        Low Risk
+                      </div>
+                    </div>
+                    
+                    {/* Action Studio embedded in overview */}
+                    <div className="mt-4 pt-4 border-t border-slate-800/50">
+                      <WorkflowStudio
+                        docName={selectedFile}
+                        docType={insights.docType}
+                        isDeveloperMode={isDeveloperMode}
+                        onWorkflowComplete={msg => setWorkflowFeedback(msg)}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-4 gap-4 text-xs text-slate-300">
-                <div className={`p-3 rounded-lg ${isDeveloperMode ? 'bg-slate-900 border border-slate-800 font-mono' : 'bg-slate-900/60 border border-slate-800/50'}`}>
-                  <span className={`block mb-1 ${isDeveloperMode ? 'text-slate-500 text-[10px]' : 'text-slate-400 font-semibold'}`}>Companies Identified</span>
-                  <div className={`font-bold ${isDeveloperMode ? 'text-white' : 'text-slate-200'}`}>{insights.companies.join(', ')}</div>
-                </div>
-                <div className={`p-3 rounded-lg ${isDeveloperMode ? 'bg-slate-900 border border-slate-800 font-mono' : 'bg-slate-900/60 border border-slate-800/50'}`}>
-                  <span className={`block mb-1 ${isDeveloperMode ? 'text-slate-500 text-[10px]' : 'text-slate-400 font-semibold'}`}>People / Signatories</span>
-                  <div className={`font-bold ${isDeveloperMode ? 'text-cyan-300' : 'text-slate-200'}`}>{insights.peopleCount} Executive Contacts</div>
-                </div>
-                <div className={`p-3 rounded-lg ${isDeveloperMode ? 'bg-slate-900 border border-slate-800 font-mono' : 'bg-slate-900/60 border border-slate-800/50'}`}>
-                  <span className={`block mb-1 ${isDeveloperMode ? 'text-slate-500 text-[10px]' : 'text-slate-400 font-semibold'}`}>Key Dates & Deadlines</span>
-                  <div className={`font-bold ${isDeveloperMode ? 'text-indigo-300' : 'text-slate-200'}`}>{insights.datesCount} Milestone Dates</div>
-                </div>
-                <div className={`p-3 rounded-lg ${isDeveloperMode ? 'bg-slate-900 border border-slate-800 font-mono' : 'bg-slate-900/60 border border-slate-800/50'}`}>
-                  <span className={`block mb-1 ${isDeveloperMode ? 'text-slate-500 text-[10px]' : 'text-slate-400 font-semibold'}`}>Financial Liability</span>
-                  <div className={`font-bold ${isDeveloperMode ? 'text-emerald-400' : 'text-slate-200'}`}>$1,000,000 USD Cap</div>
-                </div>
-              </div>
-
-              {/* AI Workflow Studio Component */}
-              <div className="pt-2">
-                <WorkflowStudio
-                  docName={selectedFile}
-                  docType={insights.docType}
-                  isDeveloperMode={isDeveloperMode}
-                  onWorkflowComplete={msg => setWorkflowFeedback(msg)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Interactive Document Page Viewport */}
-          <div ref={documentViewerRef} className="flex-1 overflow-y-auto p-6 flex justify-center bg-slate-950/90 relative gap-6">
-            {/* Primary Document (Doc A) */}
-            <div
-              style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
-              className={`${isCompareMode ? 'w-[440px]' : 'w-[600px]'} min-h-[780px] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-8 space-y-5 relative transition-all font-sans text-slate-300 text-xs`}
-            >
-              <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
-                <div>
-                  <h2 className="text-xs font-bold text-white uppercase tracking-wider">{selectedFile}</h2>
-                  {isDeveloperMode && <span className="text-[10px] text-cyan-400 font-mono mt-1 block">Current Active Document</span>}
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-800 text-slate-400 rounded">Page {currentPage}</span>
-              </div>
-
-              <div className="space-y-4">
-                <div className={`p-4 rounded-lg border transition-all ${
-                  isCompareMode ? 'bg-emerald-950/40 border-emerald-500/50 ring-2 ring-emerald-500/20' : 'bg-cyan-950/20 border-cyan-500/30'
-                }`}>
-                  {isDeveloperMode && (
-                    <div className="text-[9px] font-mono text-emerald-400 font-bold uppercase mb-1">
-                      {isCompareMode ? '+ Added Revision in v2' : 'Clause 14.2 Match'}
+              {/* PDF Viewport (Hero) */}
+              <div ref={documentViewerRef} className="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-950/80">
+                <div 
+                  className="w-full max-w-[800px] min-h-[1100px] bg-white rounded-sm shadow-2xl shadow-black p-12 text-slate-900 font-serif relative"
+                  style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+                >
+                  <h1 className="text-2xl font-bold text-center mb-8 uppercase tracking-widest border-b-2 border-black pb-4">Master Service Agreement</h1>
+                  <p className="mb-6">This Master Service Agreement ("Agreement") is entered into as of the Effective Date by and between the parties.</p>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">1. Scope of Services</h3>
+                      <p className="text-justify leading-relaxed">Provider agrees to perform the services described in each Statement of Work ("SOW") executed by the parties. All services shall be performed in a professional and workmanlike manner.</p>
                     </div>
-                  )}
-                  <h3 className="font-bold text-white text-xs mb-2">SECTION 14.2: LIMITATION OF LIABILITY</h3>
-                  <p className="text-slate-300 leading-relaxed text-[13px]">
-                    Maximum aggregate liability under this Agreement shall not exceed $1,000,000 USD. Governed by Delaware law.
-                  </p>
-                </div>
-              </div>
-            </div>
+                    
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">2. Term and Termination</h3>
+                      <p className="text-justify leading-relaxed">This Agreement shall commence on the Effective Date and continue until terminated. <span className="bg-yellow-200/50 rounded px-1">Either party may terminate this Agreement for convenience upon thirty (30) days prior written notice.</span></p>
+                    </div>
 
-            {/* Side-by-Side Compare Document */}
-            {isCompareMode && (
-              <div
-                style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
-                className="w-[440px] min-h-[780px] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-8 space-y-5 relative transition-all font-sans text-slate-300 text-xs opacity-90"
-              >
-                <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{compareFile}</h2>
-                    {isDeveloperMode && <span className="text-[10px] text-rose-400 font-mono mt-1 block">Previous Revision (v1)</span>}
-                  </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-800 text-slate-400 rounded">Page {currentPage}</span>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="p-4 bg-rose-950/20 border border-rose-500/30 rounded-lg">
-                    {isDeveloperMode && (
-                      <div className="text-[9px] font-mono text-rose-400 font-bold uppercase mb-1">
-                        - Superseded Clause in v1
-                      </div>
-                    )}
-                    <h3 className="font-bold text-slate-300 text-xs mb-2">SECTION 12.1: LIMITATION OF LIABILITY (v1)</h3>
-                    <p className="text-slate-400 line-through leading-relaxed text-[13px]">
-                      Maximum aggregate liability shall not exceed $500,000 USD. Governed by New York law.
-                    </p>
+                    <div className="mt-8 p-1 relative">
+                      <div className={`absolute -inset-2 rounded-lg transition-all duration-700 ${isBBoxPulsing ? 'bg-cyan-400/20 ring-2 ring-cyan-400' : ''}`}></div>
+                      <h3 className="font-bold text-lg mb-2 relative z-10">14. Limitation of Liability</h3>
+                      <p className="text-justify leading-relaxed relative z-10 font-bold bg-yellow-200/40 p-2 rounded">
+                        14.2 Maximum aggregate liability under this Agreement shall not exceed $1,000,000 USD. Governed by Delaware law.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
 
-        {/* PANE 3 (RIGHT): Assistant */}
-        <div className="w-[380px] bg-slate-950 p-4 flex flex-col justify-between overflow-hidden">
-          {/* Header */}
-          <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+        {/* PANE 3 (RIGHT, 20%): Assistant */}
+        <div className="w-1/5 min-w-[320px] max-w-[400px] bg-slate-950 p-4 flex flex-col justify-between overflow-hidden">
+          
+          <div className="border-b border-slate-800 pb-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-cyan-400" />
               <h3 className="text-sm font-semibold text-white">
@@ -625,14 +559,15 @@ export const CHATRDocsWorkspace: React.FC = () => {
             )}
           </div>
 
-          {/* Chat Messages Log */}
           <div className="flex-1 overflow-y-auto py-4 space-y-4 font-sans pr-2">
+            {messages.length === 0 && !isDeveloperMode && (
+              <div className="text-center text-slate-500 text-xs py-8 px-4 animate-in fade-in">
+                Select a document and ask a question to begin analyzing.
+              </div>
+            )}
             {messages.map(msg => (
-              <div
-                key={msg.id}
-                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div className={`p-3 rounded-2xl text-xs space-y-2 leading-relaxed max-w-[90%] ${
+              <div key={msg.id} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`p-3 rounded-2xl text-xs space-y-2 leading-relaxed max-w-[90%] shadow-sm ${
                   msg.sender === 'user'
                     ? 'bg-cyan-600 text-white rounded-tr-sm'
                     : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-sm'
@@ -640,10 +575,8 @@ export const CHATRDocsWorkspace: React.FC = () => {
                   <p>{msg.text}</p>
                 </div>
 
-                {/* Citation Card */}
                 {msg.citation && (
                   isDeveloperMode ? (
-                    // DEV MODE: Architectural Citation Badge
                     <button
                       onClick={() => handleCitationClick(msg.citation!)}
                       className="w-[90%] text-left mt-2 p-2.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-950 border border-cyan-500/40 text-cyan-300 transition-all font-mono text-[11px] space-y-1 group shadow-sm"
@@ -663,14 +596,13 @@ export const CHATRDocsWorkspace: React.FC = () => {
                       </div>
                     </button>
                   ) : (
-                    // CUSTOMER UI: Conversational citation
                     <div className="w-[90%] mt-2 bg-slate-900/50 p-3 rounded-xl border border-slate-800 text-xs">
-                      <p className="text-slate-300 leading-relaxed">
-                        According to <strong>{msg.citation.clause}</strong>, {msg.citation.conversationalText || msg.citation.clause}
+                      <p className="text-slate-300 leading-relaxed mb-2">
+                        <span className="font-semibold text-slate-200">Source:</span> {msg.citation.clause}
                       </p>
                       <button 
                         onClick={() => handleCitationClick(msg.citation!)} 
-                        className="mt-2 text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1.5 transition-colors"
+                        className="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1.5 transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         View in document
@@ -682,45 +614,55 @@ export const CHATRDocsWorkspace: React.FC = () => {
             ))}
           </div>
 
-          {/* DYNAMIC DOCUMENT-SPECIFIC QUICK PROMPTS */}
-          {!isDeveloperMode && (
-            <div className="py-3 flex flex-wrap gap-2 text-[11px]">
-              {insights.suggestedPrompts.slice(0, 2).map(prompt => (
-                <button
-                  key={prompt}
-                  onClick={() => handleAskQuestion(prompt)}
-                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-full border border-slate-700 transition-all truncate font-medium"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="shrink-0 pt-3">
+            {!isDeveloperMode && selectedFile && (
+              <div className="mb-3 space-y-1.5">
+                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block px-1">Try asking</span>
+                <div className="flex flex-col gap-1.5 text-xs">
+                  {['Compare this with last year\'s version', 'What obligations do we have?', 'What changed?', 'Summarize payment terms', 'Review legal risks'].slice(0, 3).map(prompt => (
+                    <button
+                      key={prompt}
+                      onClick={() => handleAskQuestion(prompt)}
+                      className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-700 hover:border-slate-600 transition-all text-left truncate font-medium"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* Question Input Form */}
-          <form onSubmit={e => { e.preventDefault(); handleAskQuestion(chatInput); }} className="pt-2">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                placeholder="Ask anything about this document..."
-                className="w-full bg-slate-900 border border-slate-800 rounded-full py-3 pl-4 pr-12 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 shadow-inner"
-              />
-              <button
-                type="submit"
-                className="absolute right-1.5 p-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full transition-all"
-              >
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
-          </form>
+            <form onSubmit={e => { e.preventDefault(); handleAskQuestion(chatInput); }}>
+              <div className="relative flex flex-col bg-slate-900 border border-slate-700 focus-within:border-cyan-500/50 rounded-xl overflow-hidden shadow-inner transition-colors">
+                <textarea
+                  value={chatInput}
+                  onChange={e => setChatInput(e.target.value)}
+                  placeholder="Ask anything about this document..."
+                  className="w-full bg-transparent py-3 pl-4 pr-12 text-sm text-white placeholder-slate-500 focus:outline-none resize-none h-16"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleAskQuestion(chatInput);
+                    }
+                  }}
+                />
+                <div className="absolute right-2 bottom-2">
+                  <button
+                    type="submit"
+                    className="p-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-all"
+                  >
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
         </div>
       </div>
 
-      {/* BOTTOM BAR: Ingestion Timeline Footer (Developer Mode Only) */}
       {isDeveloperMode && (
-        <footer className="h-10 border-t border-slate-800 bg-slate-950 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-10">
+        <footer className="h-10 border-t border-slate-800 bg-slate-950 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-10 shrink-0">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 ${ingestProgress < 100 ? 'animate-spin' : ''}`} />
@@ -730,15 +672,12 @@ export const CHATRDocsWorkspace: React.FC = () => {
               <div className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full transition-all" style={{ width: `${ingestProgress}%` }} />
             </div>
           </div>
-
           <div className="flex items-center gap-4">
-            <span>Mode: {isCompareMode ? 'Side-by-Side Diff' : 'Single Document'}</span>
             <span className="text-emerald-400 font-bold">Zero Kernel Edits</span>
           </div>
         </footer>
       )}
 
-      {/* Universal Search Modal (Ctrl + K) */}
       <UniversalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
