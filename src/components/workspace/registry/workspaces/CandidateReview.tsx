@@ -97,9 +97,6 @@ const CandidateSkills: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
     </div>
   );
 };
-    </div>
-  </div>
-);
 
 const CandidateInsights: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
   const [chatHistory, setChatHistory] = React.useState<Array<{ sender: 'user'|'ai', text: string }>>([]);
