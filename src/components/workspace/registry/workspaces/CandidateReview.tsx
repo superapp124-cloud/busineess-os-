@@ -67,24 +67,72 @@ const CandidateSkills: React.FC<{ item: WorkspaceItem }> = () => (
   </div>
 );
 
-const CandidateInsights: React.FC<{ item: WorkspaceItem }> = () => (
-  <div className="flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
-    <div className="p-4 border-b border-slate-100 bg-white">
-      <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-indigo-600" /> Ask about Charles
-      </h3>
-    </div>
-    <div className="flex-1 p-4 overflow-y-auto">
-      <div className="space-y-2">
-        {['Summarize experience', 'What are his major achievements?', 'Identify missing skills'].map(prompt => (
-          <button key={prompt} className="w-full text-left p-3 text-sm text-slate-600 bg-white border border-slate-200 rounded-lg hover:border-indigo-300 hover:text-indigo-700 transition-colors shadow-sm">
-            {prompt}
-          </button>
-        ))}
+const CandidateInsights: React.FC<{ item: WorkspaceItem }> = () => {
+  const [chatHistory, setChatHistory] = React.useState<Array<{ sender: 'user'|'ai', text: string }>>([]);
+  const [chatInput, setChatInput] = React.useState('');
+
+  const handleAsk = (question: string) => {
+    if (!question.trim()) return;
+    setChatHistory(prev => [...prev, { sender: 'user', text: question }]);
+    setChatInput('');
+    setTimeout(() => {
+      setChatHistory(prev => [...prev, { sender: 'ai', text: 'Based on the candidate\'s profile, Charles has extensive experience in coordinating multi-sector humanitarian operations and aligning food security clusters with international standards.' }]);
+    }, 600);
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+      <div className="p-4 border-b border-slate-100 bg-white">
+        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-indigo-600" /> Ask about Charles
+        </h3>
+      </div>
+      <div className="flex-1 p-4 overflow-y-auto space-y-4">
+        {chatHistory.length === 0 ? (
+          <div className="space-y-2">
+            {['Summarize experience', 'What are his major achievements?', 'Identify missing skills'].map(prompt => (
+              <button 
+                key={prompt} 
+                onClick={() => handleAsk(prompt)}
+                className="w-full text-left p-3 text-sm text-slate-600 bg-white border border-slate-200 rounded-lg hover:border-indigo-300 hover:text-indigo-700 transition-colors shadow-sm"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        ) : (
+          chatHistory.map((msg, i) => (
+            <div key={i} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+              <div className={`p-3 rounded-2xl text-sm leading-relaxed max-w-[90%] shadow-sm ${
+                msg.sender === 'user'
+                  ? 'bg-slate-900 text-white rounded-tr-sm font-medium'
+                  : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm'
+              }`}>
+                <p>{msg.text}</p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="p-3 bg-white border-t border-slate-100 shrink-0">
+        <form onSubmit={e => { e.preventDefault(); handleAsk(chatInput); }}>
+          <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              placeholder="Ask anything..."
+              className="w-full bg-transparent py-2 pl-3 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+            />
+            <button type="submit" className="absolute right-1 p-1.5 text-slate-400 hover:text-indigo-600 rounded-md transition-colors">
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWorkspace => {
   const name = item.rawFile?.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ") || 'Candidate';

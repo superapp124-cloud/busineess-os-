@@ -326,13 +326,6 @@ export const CHATRWorkspace: React.FC = () => {
 
 
 
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-400 text-sm p-8 text-center bg-slate-50">
-              Select a workspace item to view its intelligence panel.
-            </div>
-          )}
-        </div>
       </div>
       
       {/* Developer Mode Bottom Bar */}
