@@ -80,7 +80,7 @@ export const createLegalReviewWorkspace = (item: WorkspaceItem): BusinessWorkspa
       const isContract = testItem.sourceUri.toLowerCase().includes('agreement') || testItem.sourceUri.toLowerCase().includes('contract') || testItem.sourceUri.toLowerCase().includes('nda');
       return {
         workspaceId: 'legal-review',
-        confidence: isContract ? 0.90 : 0.1,
+        confidence: isContract ? 0.90 : 0,
         reasoning: isContract ? ['Agreement clauses detected', 'Parties identified', 'Liability section present'] : []
       };
     },

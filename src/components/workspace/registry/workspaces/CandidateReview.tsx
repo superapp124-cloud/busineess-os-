@@ -67,24 +67,62 @@ const CandidateSkills: React.FC<{ item: WorkspaceItem }> = () => (
   </div>
 );
 
-const CandidateInsights: React.FC<{ item: WorkspaceItem }> = () => {
+const CandidateInsights: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
   const [chatHistory, setChatHistory] = React.useState<Array<{ sender: 'user'|'ai', text: string }>>([]);
   const [chatInput, setChatInput] = React.useState('');
+
+  const candidateName = item.rawFile?.name
+    .replace(/\.[^.]+$/, '')
+    .replace(/[_-]/g, ' ')
+    .replace(/\b(Draft|Resume|CV|Screening|Final|v\d+)\b/gi, '')
+    .trim() || 'this candidate';
+
+  const getAIResponse = (question: string): string => {
+    const q = question.toLowerCase();
+    if (q.includes('education') || q.includes('degree') || q.includes('qualification') || q.includes('university') || q.includes('college')) {
+      return `Based on the profile, the candidate holds a relevant degree. Their educational background aligns with the role. Check the "Education" section in the document viewer for the exact institutions and years.`;
+    }
+    if (q.includes('experience') || q.includes('work') || q.includes('career') || q.includes('employment') || q.includes('years')) {
+      return `The candidate has documented professional experience spanning multiple organizations. Their career progression shows increasing responsibility. Refer to the "Professional Experience" section for detailed role descriptions and durations.`;
+    }
+    if (q.includes('skill') || q.includes('competenc') || q.includes('technolog') || q.includes('tool') || q.includes('stack')) {
+      return `The profile lists a range of technical and soft skills under "Core Skills & Competencies" or "Skills & Expertise". Key strengths are visible from the experience section. Use the Skills tab for an extracted breakdown.`;
+    }
+    if (q.includes('salary') || q.includes('ctc') || q.includes('compensation') || q.includes('pay') || q.includes('expect')) {
+      return `Current CTC and salary expectations may be listed in the screening section. If not visible, this should be clarified during the initial HR call. Check the candidate's notice period and current organization for negotiation context.`;
+    }
+    if (q.includes('notice') || q.includes('join') || q.includes('available')) {
+      return `The candidate's availability and notice period details are typically listed in the screening section. If it shows "Immediate Joiner", they are available without a transition period.`;
+    }
+    if (q.includes('summarize') || q.includes('summary') || q.includes('overview') || q.includes('brief') || q.includes('tell me')) {
+      return `${candidateName} is a professional with documented experience across multiple organizations. Their profile highlights relevant skills and educational qualifications. Based on the document structure, this appears to be a ${candidateName.toLowerCase().includes('engineer') || candidateName.toLowerCase().includes('developer') ? 'technical' : 'professional'} profile suitable for mid-to-senior level evaluation.`;
+    }
+    if (q.includes('interview') || q.includes('question')) {
+      return `Suggested interview questions based on this profile:\n1. Walk me through your most impactful project in your last role.\n2. How have you handled cross-functional collaboration?\n3. What are your short-term and long-term career goals?\n4. Describe a situation where you had to quickly learn a new skill.`;
+    }
+    if (q.includes('strength') || q.includes('achiev') || q.includes('accomplishment')) {
+      return `Key strengths visible in this profile include domain expertise, progressive career growth, and demonstrated delivery across multiple organizations. Review the "Professional Summary" and bullet points under each role for specific achievements.`;
+    }
+    if (q.includes('weakness') || q.includes('gap') || q.includes('missing')) {
+      return `Potential gaps to explore during interview:\n• Verify depth of experience in specific technical areas listed\n• Clarify reasons for any short tenures\n• Confirm hands-on vs. supervisory experience for key skills`;
+    }
+    return `Based on ${candidateName}'s profile, they appear to be a qualified candidate. The document contains detailed professional history, skills, and educational background. Ask about experience, education, skills, or interview questions for more specific insights.`;
+  };
 
   const handleAsk = (question: string) => {
     if (!question.trim()) return;
     setChatHistory(prev => [...prev, { sender: 'user', text: question }]);
     setChatInput('');
     setTimeout(() => {
-      setChatHistory(prev => [...prev, { sender: 'ai', text: 'Based on the candidate\'s profile, Charles has extensive experience in coordinating multi-sector humanitarian operations and aligning food security clusters with international standards.' }]);
-    }, 600);
+      setChatHistory(prev => [...prev, { sender: 'ai', text: getAIResponse(question) }]);
+    }, 400);
   };
 
   return (
     <div className="flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-100 bg-white">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-indigo-600" /> Ask about Charles
+          <Sparkles className="w-4 h-4 text-indigo-600" /> Ask about {candidateName}
         </h3>
       </div>
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
@@ -142,11 +180,30 @@ export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWor
     displayName: name,
     businessIntent: 'Candidate Review',
     matcher: (testItem) => {
-      const isResume = testItem.typeHint === 'resume' || testItem.sourceUri.toLowerCase().includes('resume') || testItem.sourceUri.toLowerCase().includes('cv') || testItem.sourceUri.toLowerCase().includes('hopkins');
+      const uri = testItem.sourceUri.toLowerCase().replace(/[_-]/g, ' ');
+      
+      // Broad resume filename signals
+      const resumeFileSignals = ['resume', 'cv', 'curriculum', 'candidate', 'screening',
+        'engineer', 'developer', 'manager', 'analyst', 'coordinator', 'specialist',
+        'consultant', 'director', 'executive', 'associate', 'intern', 'draft', 'profile'];
+      
+      // Person name pattern: 2+ capitalized words (e.g. "Deepu Verma", "RAJESH RADHAKRISHNA")
+      const namePattern = /([a-z]+ [a-z]+)/; // after lowercasing
+      
+      const fileSignalMatches = resumeFileSignals.filter(k => uri.includes(k)).length;
+      const hasNamePattern = namePattern.test(uri) && !uri.includes('agreement') && !uri.includes('contract');
+      
+      let confidence = 0;
+      if (testItem.typeHint === 'resume') confidence = 0.95;
+      else if (fileSignalMatches >= 2) confidence = 0.90;
+      else if (fileSignalMatches === 1) confidence = 0.75;
+      else if (hasNamePattern) confidence = 0.65;
+      
+      const isMatch = confidence > 0;
       return {
         workspaceId: 'candidate-review',
-        confidence: isResume ? 0.95 : 0,
-        reasoning: isResume ? ['Resume structure detected', 'Employment history found', 'Skills section present'] : []
+        confidence,
+        reasoning: isMatch ? ['Resume/candidate structure detected', 'Talent profile signals found'] : []
       };
     },
     modules: [

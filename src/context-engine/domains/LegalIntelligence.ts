@@ -18,7 +18,7 @@ export const LegalIntelligence: IntelligencePlugin = {
 
     let score = keywordMatches.length * 0.07;
     if (isLegalFile) score += 0.5;
-    return Math.min(score, 1);
+    return score > 0 ? Math.min(score, 1) : 0;
   },
 
   analyze(sources: ContextSource[]): Partial<Omit<ContextState, 'isProcessing' | 'updatedAt'>> {
