@@ -10,6 +10,43 @@ const chatrKernel  = require('./chatr-core/index.cjs');
 const tokenVault = require('./token-vault.cjs');
 const syncEngine = require('./sync-engine.cjs');
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASE 0: PERFORMANCE OBSERVATORY
+// Measures every startup milestone. Exposes via IPC for developer dashboard.
+// ─────────────────────────────────────────────────────────────────────────────
+class PerformanceTimeline {
+  constructor() {
+    this.origin = Date.now();
+    this.marks = [];
+  }
+  mark(label) {
+    const ms = Date.now() - this.origin;
+    this.marks.push({ label, ms, ts: Date.now() });
+    log.info(`[Perf] ${label}: +${ms}ms`);
+    return ms;
+  }
+  getAll() {
+    return this.marks;
+  }
+  getSummary() {
+    return this.marks.map(m => `${m.label}: +${m.ms}ms`).join(' | ');
+  }
+}
+const perf = new PerformanceTimeline();
+perf.mark('process-start');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAFE GPU FLAGS — minimal, well-supported set only
+// Aggressive flags like disable-frame-rate-limit skipped (GPU instability risk)
+// ─────────────────────────────────────────────────────────────────────────────
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
+// Prevent jank during heavy background work
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+// Smooth scrolling
+app.commandLine.appendSwitch('enable-smooth-scrolling');
+
 const isDev = process.env.NODE_ENV === 'development';
 let localRecordsIpcRegistered = false;
 let mainWindow = null;
@@ -1634,8 +1671,8 @@ function createWindow() {
     icon: fs.existsSync(appIconPath) ? appIconPath : undefined,
     width: 1200,
     height: 800,
-    center: true, // Force to center of primary display
-    show: true, // Force show immediately for debugging
+    center: true,
+    show: false, // Hidden until ready-to-show fires — eliminates white flash
     backgroundColor: '#09090b', // zinc-950
     titleBarStyle: 'hidden',
     titleBarOverlay: {
@@ -1753,10 +1790,20 @@ function createWindow() {
     }
   });
 
+  // ── ready-to-show: show window only when React has painted (no white flash) ──
+  mainWindow.once('ready-to-show', () => {
+    perf.mark('ready-to-show');
+    mainWindow.show();
+    // Destroy splash if it was created
+    if (global.splashWindow && !global.splashWindow.isDestroyed()) {
+      global.splashWindow.destroy();
+      global.splashWindow = null;
+    }
+    log.info('[Startup] Window visible. ' + perf.getSummary());
+  });
+
   if (isDev) {
     log.info('Loading Desktop Vite Dev Server (port 8086)');
-    // Always load the desktop pipeline — never the mobile one.
-    // vite.desktop.config.ts guarantees port 8086 with strictPort=true.
     mainWindow.loadURL('http://localhost:8086');
   } else {
     log.info('Loading Production Bundle');
@@ -1809,58 +1856,172 @@ function createWindow() {
   });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SERVICE REGISTRY — tracks each service's status for developer dashboard
+// ─────────────────────────────────────────────────────────────────────────────
+const serviceRegistry = {};
+function setServiceStatus(name, status, detail = '') {
+  serviceRegistry[name] = { status, detail, ts: Date.now() };
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('service:status', { name, status, detail });
+  }
+  log.info(`[Service] ${name}: ${status}${detail ? ' — ' + detail : ''}`);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PYTHON BACKEND — on-demand only, NOT started at launch
+// Call startPythonBackend() when user needs OCR, embeddings, etc.
+// ─────────────────────────────────────────────────────────────────────────────
+let pythonBackendProcess = null;
+function startPythonBackend() {
+  if (pythonBackendProcess) return Promise.resolve(true); // already running
+  return new Promise((resolve) => {
+    try {
+      const { spawn } = require('child_process');
+      const backendPath = path.join(__dirname, '../../chatr-backend');
+      setServiceStatus('python-backend', 'initializing');
+      pythonBackendProcess = spawn('python', ['-m', 'uvicorn', 'main:app', '--port', '8000'], {
+        cwd: backendPath,
+        stdio: 'ignore',
+        detached: false
+      });
+      pythonBackendProcess.on('error', (err) => {
+        setServiceStatus('python-backend', 'failed', err.message);
+        pythonBackendProcess = null;
+        resolve(false);
+      });
+      pythonBackendProcess.on('spawn', () => {
+        setServiceStatus('python-backend', 'ready');
+        resolve(true);
+      });
+      app.on('will-quit', () => { pythonBackendProcess?.kill(); });
+    } catch (err) {
+      setServiceStatus('python-backend', 'failed', err.message);
+      resolve(false);
+    }
+  });
+}
+
+// IPC: renderer requests Python backend on-demand
+ipcMain.handle('python:ensure', async () => startPythonBackend());
+ipcMain.handle('perf:timeline', () => perf.getAll());
+ipcMain.handle('service:registry', () => serviceRegistry);
+
 app.whenReady().then(() => {
-  // ── FIRST BOOT: Guarantee Documents/CHATR/Transcripts and Call Recordings exist ──
-  // This runs before the window opens so the folders are always there on install.
+  perf.mark('app-ready');
+
+  // ── STEP 1: Guarantee local directories (fast, synchronous) ────────────────
   try {
     const dirs = ensureLocalRecordsDirs();
     log.info('[LocalRecords] Folders guaranteed:', dirs.root);
+    perf.mark('dirs-ready');
   } catch (err) {
     log.error('[LocalRecords] Could not create Documents folders:', err.message);
   }
 
-  // ── START PYTHON BACKEND ──
-  try {
-    const { spawn } = require('child_process');
-    const backendPath = path.join(__dirname, '../../chatr-backend');
-    
-    // We attempt to spawn the python backend automatically so the user never has to run it.
-    // In a fully built app, this could be a PyInstaller executable instead of a raw python script.
-    const backendProcess = spawn('python', ['-m', 'uvicorn', 'main:app', '--port', '8000'], {
-      cwd: backendPath,
-      stdio: 'ignore', // We ignore stdio to prevent buffer overflow, but could log to file.
-      detached: false
+  // ── STEP 2: CREATE WINDOW IMMEDIATELY (window-first architecture) ──────────
+  // Splash window gives instant visual feedback while main window loads
+  const splashPath = path.join(__dirname, '../public/splash.html');
+  if (!isDev && fs.existsSync(splashPath)) {
+    global.splashWindow = new BrowserWindow({
+      width: 420,
+      height: 280,
+      center: true,
+      frame: false,
+      transparent: true,
+      alwaysOnTop: true,
+      resizable: false,
+      skipTaskbar: true,
+      webPreferences: { nodeIntegration: false, contextIsolation: true }
     });
-    
-    backendProcess.on('error', (err) => {
-      log.error('[Backend] Failed to start python backend:', err.message);
-    });
-
-    // Make sure we kill it when Electron quits
-    app.on('will-quit', () => {
-      if (backendProcess) {
-        backendProcess.kill();
-      }
-    });
-
-    log.info('[Backend] Python server spawned successfully on port 8000');
-  } catch (err) {
-    log.error('[Backend] Could not spawn backend:', err.message);
-  }
-
-  // ── BOOTSTRAP LAYER 4 INTELLIGENCE PLATFORM ──
-  try {
-    const { intelligencePlatform } = require('./chatr-core/intelligence/intelligence-platform.cjs');
-    intelligencePlatform.bootstrap().then(() => {
-      log.info('[IntelligencePlatform] Bootstrapped successfully');
-    }).catch(err => {
-      log.error('[IntelligencePlatform] Bootstrap failed:', err);
-    });
-  } catch(e) {
-    log.error('[IntelligencePlatform] Failed to require IntelligencePlatform:', e);
+    global.splashWindow.loadFile(splashPath);
+    log.info('[Startup] Splash window created');
+    perf.mark('splash-shown');
   }
 
   createWindow();
+  perf.mark('window-created');
+
+  // ── STEP 3: DEFERRED SERVICE INITIALIZATION (staged, non-blocking) ─────────
+  // Each service announces its status to the renderer via IPC.
+  // Stage 1 (100ms): IPC handlers only — zero cost
+  setTimeout(() => {
+    ollamaEngine.registerIpcHandlers();
+    runtimeOrchestrator.registerIpcHandlers();
+    setServiceStatus('ipc-handlers', 'ready');
+    perf.mark('ipc-handlers-ready');
+  }, 100);
+
+  // Stage 2 (500ms): Ollama detection (read-only probe, very fast)
+  setTimeout(() => {
+    setServiceStatus('ollama', 'initializing');
+    try {
+      ollamaEngine.bootstrap(mainWindow);
+      perf.mark('ollama-bootstrap-started');
+    } catch (e) {
+      setServiceStatus('ollama', 'failed', e.message);
+    }
+  }, 500);
+
+  // Stage 3 (800ms): Runtime orchestrator
+  setTimeout(() => {
+    setServiceStatus('runtime', 'initializing');
+    try {
+      runtimeOrchestrator.bootstrap(mainWindow);
+      setServiceStatus('runtime', 'ready');
+      perf.mark('runtime-ready');
+    } catch (e) {
+      setServiceStatus('runtime', 'failed', e.message);
+    }
+  }, 800);
+
+  // Stage 4 (1200ms): CHATR Kernel
+  setTimeout(() => {
+    setServiceStatus('chatr-kernel', 'initializing');
+    chatrKernel.boot().then(() => {
+      setServiceStatus('chatr-kernel', 'ready');
+      perf.mark('kernel-ready');
+    }).catch(err => {
+      setServiceStatus('chatr-kernel', 'failed', err.message);
+    });
+  }, 1200);
+
+  // Stage 5 (2000ms): Intelligence Platform
+  setTimeout(() => {
+    setServiceStatus('intelligence-platform', 'initializing');
+    try {
+      const { intelligencePlatform } = require('./chatr-core/intelligence/intelligence-platform.cjs');
+      intelligencePlatform.bootstrap().then(() => {
+        setServiceStatus('intelligence-platform', 'ready');
+        perf.mark('intelligence-ready');
+      }).catch(err => {
+        setServiceStatus('intelligence-platform', 'failed', err.message);
+      });
+    } catch(e) {
+      setServiceStatus('intelligence-platform', 'failed', e.message);
+    }
+  }, 2000);
+
+  // Stage 6 (3000ms): Identity + UserContextEngine (background, non-blocking)
+  setTimeout(() => {
+    setServiceStatus('identity-context', 'initializing');
+    try {
+      const { identityManager } = require('./chatr-core/identity/IdentityManager.cjs');
+      const { userContextEngine } = require('./chatr-core/context/user-context-engine.cjs');
+      identityManager.initialize().then(() => userContextEngine.initialize()).then(() => {
+        setServiceStatus('identity-context', 'ready');
+        perf.mark('context-ready');
+      }).catch(err => {
+        setServiceStatus('identity-context', 'failed', err.message);
+      });
+    } catch(e) {
+      setServiceStatus('identity-context', 'failed', e.message);
+    }
+  }, 3000);
+
+  // Python backend: NOT started here — started on-demand via 'python:ensure' IPC
+  setServiceStatus('python-backend', 'idle', 'on-demand');
+  perf.mark('startup-sequence-dispatched');
   // ---------------------------------------------------------
   // PHASE 4: SYSTEM TRAY & GLOBAL SHORTCUTS
   // ---------------------------------------------------------

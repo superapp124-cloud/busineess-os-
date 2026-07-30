@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { AIStatusBadge } from '@/components/desktop/AIStatusBadge';
+import { PerformanceObservatory } from '@/components/desktop/observatory/PerformanceObservatory';
 import {
   MessageSquare,
   Users,
@@ -35,6 +36,7 @@ import {
   Package,
   UserPlus,
   Bot,
+  FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -72,6 +74,7 @@ const NAV_SECTIONS = [
   {
     label: 'Intelligence',
     items: [
+      { icon: FileText,      label: 'CHATR Docs', subtitle: 'Document Intelligence',    path: '/docs' },
       { icon: BrainCircuit,  label: 'AI Canvas',  subtitle: 'Business Canvas & Memory', path: '/desktop/canvas' },
       { icon: Bot,           label: 'AI Agents',  subtitle: 'Autonomous Agent Hub',    path: '/desktop/ai-agents' },
       { icon: Zap,           label: 'Execution',  subtitle: 'Intent OS Engine',         path: '/desktop/intelligence' },
@@ -174,6 +177,7 @@ const DesktopLayout: React.FC = () => (
 );
 
 const DesktopLayoutInner = () => {
+  const isDev = import.meta.env.DEV;
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
@@ -637,6 +641,9 @@ const DesktopLayoutInner = () => {
 
         {/* ── Productivity Dock ────────────────────────────────────────────── */}
         <ProductivityDock />
+
+        {/* ── Performance Observatory (developer dashboard, dev mode only) ── */}
+        {isDev && <PerformanceObservatory />}
 
       </div>
     </TooltipProvider>

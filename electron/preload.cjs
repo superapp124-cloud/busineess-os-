@@ -91,7 +91,12 @@ const validInvokeChannels = [
   'intelligence:triggerDailyLoop',
   'intelligence:getExecutiveFeed',
   'intelligence:triggerScenario',
-  'intelligence:syncContext'
+  'intelligence:syncContext',
+  // Phase 0: Performance Observatory
+  'perf:timeline',
+  'service:registry',
+  // Python backend on-demand
+  'python:ensure',
 ];
 
 const validListenChannels = [
@@ -119,6 +124,8 @@ const validListenChannels = [
   'execution:capability_started',
   'execution:capability_completed',
   'background:job_completed',
+  // Phase 0: Performance Observatory — service lifecycle events
+  'service:status',
   // Hero Experience — Sprint 2 streaming events
   'hero:intent.understood',
   'hero:location.resolved',
