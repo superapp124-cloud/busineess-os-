@@ -64,6 +64,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   log.info('[Main] Another instance of CHATR Desktop is already running. Focus existing window & exiting.');
   app.quit();
+  process.exit(0);
 } else {
   app.on('second-instance', () => {
     if (mainWindow) {
@@ -1582,23 +1583,11 @@ JSON Output:
     return { error: "I understand what you need, but I haven't been taught how to do that yet!" };
   });
 
-  // -------------------------------------------------------------
-  // INVISIBLE AI ENGINE (OLLAMA & CHATR RUNTIME) — Delegated to runtimeOrchestrator
-  // -------------------------------------------------------------
-  // Register all IPC handlers first
-  ollamaEngine.registerIpcHandlers();
-  runtimeOrchestrator.registerIpcHandlers();
+  // ── Services bootstrapped in staged timeouts in app.whenReady ─────────────────
+  // Do NOT call ollamaEngine/runtimeOrchestrator/chatrKernel.boot() here.
+  // All service initialisation happens in the deferred Stage 1–6 sequence
+  // to guarantee the window opens first and services never block the UI.
 
-  // Start silent bootstrap
-  ollamaEngine.bootstrap(mainWindow);
-  runtimeOrchestrator.bootstrap(mainWindow);
-
-  // ── CHATR Kernel Boot ────────────────────────────────────────────────────
-  // Boot after Ollama so OllamaProvider can resolve the active port.
-  // Runs on port 8087. Zero user interaction required.
-  chatrKernel.boot().catch(err => {
-    log.error('[CHATR Kernel] Failed to boot:', err.message);
-  });
 
   // Auto Updater IPC Hooks
   ipcMain.handle('updater:check', () => {
@@ -1907,6 +1896,10 @@ ipcMain.handle('python:ensure', async () => startPythonBackend());
 ipcMain.handle('perf:timeline', () => perf.getAll());
 ipcMain.handle('service:registry', () => serviceRegistry);
 
+// Guard: prevent IPC handlers being registered twice (e.g. dev hot-reload)
+let ipcHandlersRegistered = false;
+
+
 app.whenReady().then(() => {
   perf.mark('app-ready');
 
@@ -1943,11 +1936,13 @@ app.whenReady().then(() => {
   perf.mark('window-created');
 
   // ── STEP 3: DEFERRED SERVICE INITIALIZATION (staged, non-blocking) ─────────
-  // Each service announces its status to the renderer via IPC.
-  // Stage 1 (100ms): IPC handlers only — zero cost
+  // Stage 1 (100ms): IPC handlers only — zero cost, guarded against double-registration
   setTimeout(() => {
-    ollamaEngine.registerIpcHandlers();
-    runtimeOrchestrator.registerIpcHandlers();
+    if (!ipcHandlersRegistered) {
+      ipcHandlersRegistered = true;
+      try { ollamaEngine.registerIpcHandlers(); } catch(e) { log.warn('[Stage1] ollama IPC already registered'); }
+      try { runtimeOrchestrator.registerIpcHandlers(); } catch(e) { log.warn('[Stage1] runtime IPC already registered'); }
+    }
     setServiceStatus('ipc-handlers', 'ready');
     perf.mark('ipc-handlers-ready');
   }, 100);
