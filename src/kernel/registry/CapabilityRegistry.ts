@@ -1,119 +1,77 @@
-import { EDLLivingObject } from '../contracts/edl/types';
+/**
+ * CHATR Capability Registry
+ * Matches incoming intents and tasks to optimal registered model providers based on capabilities, privacy, and hardware constraints.
+ */
 
-export interface InstalledPack {
-  manifest: any;
-  objects: EDLLivingObject[];
-  status: 'active' | 'disabled';
+import { CapabilityManifest, CapabilityCategory } from '../../models/capability/CapabilityManifest';
+
+export interface CapabilityQuery {
+  category: CapabilityCategory;
+  requiredCapabilities?: string[];
+  requiresOffline?: boolean;
+  maxLatencyMs?: number;
+  preferGpu?: boolean;
 }
 
-/**
- * Capability Registry
- * The universal source of truth for all installed Capability Packs in the runtime.
- * Supports Install, Upgrade, Enable, Disable, Uninstall.
- */
-export class CapabilityRegistry {
-  private packs: Map<string, InstalledPack> = new Map();
-  private objectLookup: Map<string, EDLLivingObject> = new Map(); // Fast lookup by aggregateType
-  private listeners: (() => void)[] = [];
+class CapabilityRegistryService {
+  private manifests: Map<string, CapabilityManifest> = new Map();
 
-  subscribe(listener: () => void) {
-    this.listeners.push(listener);
-    return () => {
-      this.listeners = this.listeners.filter(l => l !== listener);
-    };
-  }
-
-  private notify() {
-    for (const listener of this.listeners) {
-      listener();
-    }
+  /**
+   * Register a new model capability manifest
+   */
+  public registerManifest(manifest: CapabilityManifest): void {
+    this.manifests.set(manifest.id, manifest);
+    console.log(`[CapabilityRegistry] Registered capability provider: ${manifest.name} (${manifest.id})`);
   }
 
   /**
-   * Installs a pre-validated and compiled capability pack.
+   * Find the best provider matching query criteria
    */
-  install(manifest: any, objects: EDLLivingObject[]) {
-    if (this.packs.has(manifest.id)) {
-      throw new Error(`Pack ${manifest.id} is already installed. Use upgrade() instead.`);
+  public selectBestProvider(query: CapabilityQuery): CapabilityManifest | null {
+    const matches: CapabilityManifest[] = [];
+
+    for (const manifest of this.manifests.values()) {
+      if (manifest.category !== query.category) continue;
+
+      if (query.requiresOffline && !manifest.requirements.supportsOffline) continue;
+
+      if (query.maxLatencyMs && manifest.avgLatencyMs > query.maxLatencyMs) continue;
+
+      if (query.requiredCapabilities && query.requiredCapabilities.length > 0) {
+        const hasAllCaps = query.requiredCapabilities.every(cap => manifest.capabilities.includes(cap));
+        if (!hasAllCaps) continue;
+      }
+
+      matches.push(manifest);
     }
 
-    this.packs.set(manifest.id, {
-      manifest,
-      objects,
-      status: 'active'
+    if (matches.length === 0) {
+      return null;
+    }
+
+    // Sort by priority (descending), latency (ascending), and cost (ascending)
+    matches.sort((a, b) => {
+      if (b.priority !== a.priority) return b.priority - a.priority;
+      if (a.avgLatencyMs !== b.avgLatencyMs) return a.avgLatencyMs - b.avgLatencyMs;
+      return a.costPerOp - b.costPerOp;
     });
 
-    this.rebuildIndex();
+    return matches[0];
   }
 
   /**
-   * Disables a pack without removing it.
+   * Get all registered capability manifests
    */
-  disable(packId: string) {
-    const pack = this.packs.get(packId);
-    if (!pack) throw new Error(`Pack ${packId} not found`);
-    pack.status = 'disabled';
-    this.rebuildIndex();
+  public getAllManifests(): CapabilityManifest[] {
+    return Array.from(this.manifests.values());
   }
 
   /**
-   * Enables a previously disabled pack.
+   * Clear all registered manifests
    */
-  enable(packId: string) {
-    const pack = this.packs.get(packId);
-    if (!pack) throw new Error(`Pack ${packId} not found`);
-    pack.status = 'active';
-    this.rebuildIndex();
-  }
-
-  /**
-   * Uninstalls a pack completely from the runtime registry.
-   */
-  uninstall(packId: string) {
-    this.packs.delete(packId);
-    this.rebuildIndex();
-  }
-
-  /**
-   * Retrieves an EDL object definition by its aggregateType.
-   */
-  getAggregate(aggregateType: string): EDLLivingObject {
-    const obj = this.objectLookup.get(aggregateType);
-    if (!obj) {
-      throw new Error(`AggregateType '${aggregateType}' not found in any active Capability Pack.`);
-    }
-    return obj;
-  }
-
-  /**
-   * Retrieves all active packs.
-   */
-  getPacks(): InstalledPack[] {
-    return Array.from(this.packs.values());
-  }
-
-  /**
-   * Retrieves all active object definitions.
-   */
-  getObjects(): EDLLivingObject[] {
-    return Array.from(this.objectLookup.values());
-  }
-
-  /**
-   * Rebuilds the internal fast-lookup indices for active packs.
-   */
-  private rebuildIndex() {
-    this.objectLookup.clear();
-    for (const pack of this.packs.values()) {
-      if (pack.status !== 'active') continue;
-      
-      for (const obj of pack.objects) {
-        if (this.objectLookup.has(obj.type)) {
-          console.warn(`Object type ${obj.type} is redefined. Overwriting.`);
-        }
-        this.objectLookup.set(obj.type, obj);
-      }
-    }
-    this.notify();
+  public clear(): void {
+    this.manifests.clear();
   }
 }
+
+export const CapabilityRegistry = new CapabilityRegistryService();
