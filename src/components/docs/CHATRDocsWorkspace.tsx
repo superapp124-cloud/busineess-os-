@@ -6,6 +6,7 @@ import { EntityGraphEngine } from '../../graph/EntityGraphEngine';
 import { ScopedMemoryEngine } from '../../memory/ScopedMemoryEngine';
 import { UniversalSearchService } from '../../search/UniversalSearchService';
 import { UniversalSearchModal } from '../search/UniversalSearchModal';
+import { WorkflowStudio } from '../workflow/WorkflowStudio';
 import logo from '@/assets/chatr-icon-logo.png';
 import {
   FileText, UploadCloud, Cpu, Sparkles, Shield, Search, CheckCircle, RefreshCw, Command,
@@ -500,6 +501,15 @@ export const CHATRDocsWorkspace: React.FC = () => {
                   <span className="text-slate-500 block text-[10px]">Financial Liability</span>
                   <div className="font-bold text-emerald-400 mt-0.5">$1,000,000 USD Cap</div>
                 </div>
+              </div>
+
+              {/* AI Workflow Studio Component (Sprint 4) */}
+              <div className="pt-2">
+                <WorkflowStudio
+                  docName={selectedFile}
+                  docType={insights.docType}
+                  onWorkflowComplete={msg => setWorkflowFeedback(msg)}
+                />
               </div>
             </div>
           )}
