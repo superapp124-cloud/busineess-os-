@@ -142,10 +142,13 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
         </div>
       </div>
     );
-  }
+  // Allow user to bypass guard on web browser
+  const [bypassedWebGuard, setBypassedWebGuard] = useState<boolean>(() => {
+    return localStorage.getItem('chatr_web_guard_bypassed') === 'true';
+  });
 
-  // ONLY ALLOW WORKSPACE ACCESS IF INSIDE NATIVE ELECTRON OR CHATR DESKTOP APP IS RUNNING
-  if (isElectron || isDesktopRunning) {
+  // ONLY ALLOW WORKSPACE ACCESS IF INSIDE NATIVE ELECTRON, CHATR DESKTOP APP IS RUNNING, OR WEBPAGE BYPASSED
+  if (isElectron || isDesktopRunning || bypassedWebGuard) {
     return <>{children}</>;
   }
 
@@ -200,16 +203,26 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
           </div>
         </div>
 
-        {/* Automatic Download & Action Button */}
+        {/* Automatic Download & Action Buttons */}
         <div className="space-y-3">
           <button
             onClick={handleInstallClick}
-            className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-base transition-all shadow-xl shadow-cyan-500/30 tracking-wide flex items-center justify-center gap-3"
+            className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-xl shadow-cyan-500/30 tracking-wide flex items-center justify-center gap-3 cursor-pointer"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             Install CHATR Desktop
+          </button>
+
+          <button
+            onClick={() => {
+              localStorage.setItem('chatr_web_guard_bypassed', 'true');
+              setBypassedWebGuard(true);
+            }}
+            className="w-full py-3 px-6 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold text-xs transition-all border border-white/10 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Explore in Web Browser (Cloud AI Mode)</span>
           </button>
 
           {isDownloading && (
