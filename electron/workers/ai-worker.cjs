@@ -4,28 +4,35 @@
 
 const { parentPort } = require('electron');
 
-// Basic IPC handling
 if (parentPort) {
   parentPort.on('message', async (event) => {
-    const { type, payload, id } = event.data;
+    // Standard IPC Request Contract
+    const request = event.data;
+    const startTs = Date.now();
 
     try {
-      if (type === 'ai:ping') {
-        parentPort.postMessage({ id, type: 'ai:pong', payload: { status: 'ready', ts: Date.now() } });
+      if (request.action === 'ping') {
+        return sendResponse(request.id, true, { status: 'ready', type: 'ai' }, null, startTs);
       }
       
       // TODO: Move heavy Ollama streaming logic here later
-      // Currently acts as a skeleton to establish the multi-process architecture
+      throw new Error(`Unknown action: ${request.action}`);
 
     } catch (err) {
-      parentPort.postMessage({ 
-        id, 
-        type: 'ai:error', 
-        payload: { error: err.message } 
-      });
+      sendResponse(request.id, false, null, err.message, startTs);
     }
   });
 }
 
-// Keep process alive but lightweight
+function sendResponse(id, success, result, errorMsg, startTs) {
+  if (!parentPort || !id) return;
+  parentPort.postMessage({
+    id, success, result, error: errorMsg,
+    metrics: {
+      durationMs: Date.now() - startTs,
+      memoryMb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024)
+    }
+  });
+}
+
 setInterval(() => {}, 60000);

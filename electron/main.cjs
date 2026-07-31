@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage } = require('electron');
+const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage, utilityProcess } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const log = require('electron-log');
@@ -9,6 +9,7 @@ const runtimeOrchestrator = require('./runtime/LocalRuntimeOrchestrator.cjs');
 const chatrKernel  = require('./chatr-core/index.cjs');
 const tokenVault = require('./token-vault.cjs');
 const syncEngine = require('./sync-engine.cjs');
+const { WorkerManager } = require('./workers/WorkerManager.cjs');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PHASE 0: PERFORMANCE OBSERVATORY
@@ -1858,6 +1859,16 @@ function setServiceStatus(name, status, detail = '') {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// UTILITY PROCESS WORKERS
+// ─────────────────────────────────────────────────────────────────────────────
+const workerManager = new WorkerManager(null, setServiceStatus);
+
+// Forward IPC from renderer to workers using the standardized contract
+ipcMain.on('worker:send', (event, request) => {
+  workerManager.routeRequest(request);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PYTHON BACKEND — on-demand only, NOT started at launch
 // Call startPythonBackend() when user needs OCR, embeddings, etc.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2013,6 +2024,14 @@ app.whenReady().then(() => {
       setServiceStatus('identity-context', 'failed', e.message);
     }
   }, 3000);
+
+  // Stage 7 (4000ms): Utility Process Workers (AI, Search, Sync, Automation)
+  setTimeout(() => {
+    perf.mark('workers-spawning');
+    // Ensure the worker manager has the latest window reference before starting
+    workerManager.setMainWindow(mainWindow);
+    workerManager.startAll();
+  }, 4000);
 
   // Python backend: NOT started here — started on-demand via 'python:ensure' IPC
   setServiceStatus('python-backend', 'idle', 'on-demand');
