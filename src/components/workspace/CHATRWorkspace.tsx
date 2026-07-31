@@ -13,12 +13,18 @@ import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
 import { useContextEngine, emit } from '../../context-engine';
 import { classifyDocument, ClassificationResult } from '../../context-engine/AIClassifier';
+import { useCapability } from '../../platform/runtime/BootStageProvider';
 
 export const CHATRWorkspace: React.FC = () => {
   const { context, addSource, removeSource } = useContextEngine();
   const [isDeveloperMode, setIsDeveloperMode] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Progressive capability states from the Worker OS
+  const aiState = useCapability('worker-ai');
+  const searchState = useCapability('worker-search');
+  const kernelState = useCapability('chatr-kernel');
 
   // Classification state — tracks which items have been AI-classified
   const [classifying, setClassifying] = useState<Set<string>>(new Set());
@@ -307,10 +313,17 @@ export const CHATRWorkspace: React.FC = () => {
             <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,.eml,.msg,image/*" />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-lg p-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
+              disabled={kernelState === 'initializing'}
+              className={`w-full rounded-lg p-3 text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-sm ${
+                kernelState === 'initializing'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-slate-900 hover:bg-slate-800 text-white'
+              }`}
             >
-              <UploadCloud className="w-4 h-4" />
-              New Workspace Item
+              {kernelState === 'initializing'
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Platform warming up...</>
+                : <><UploadCloud className="w-4 h-4" /> New Workspace Item</>
+              }
             </button>
           </div>
           
