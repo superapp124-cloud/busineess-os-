@@ -1,0 +1,37 @@
+appId: com.chatr.os
+productName: CHATR Desktop
+directories:
+  output: dist-electron
+  buildResources: build
+files:
+  - dist-desktop/**/*
+  - electron/**/*
+  - package.json
+  # Exclude heavy assets (these should be capabilities)
+  - "!**/models/**"
+  - "!**/python_env/**"
+  - "!**/.git/**"
+  - "!**/*.md"
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: CHATR
+publish:
+  provider: github
+  owner: superapp124-cloud
+  repo: busineess-os-
+  releaseType: release
+mac:
+  target: dmg
+linux:
+  target: AppImage

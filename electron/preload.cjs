@@ -97,6 +97,10 @@ const validInvokeChannels = [
   // Phase 0: Performance Observatory
   'perf:timeline',
   'service:registry',
+  // Phase 4: Capability OS (Thin Kernel)
+  'capability:install',
+  'capability:check-updates',
+  'capability:list',
   // Python backend on-demand
   'python:ensure',
 ];
@@ -130,6 +134,8 @@ const validListenChannels = [
   'service:status',
   // Worker responses — standardized IPC contract responses from UtilityProcess workers
   'worker:response',
+  // Phase 4: Capability OS
+  'capability:progress',
   // Hero Experience — Sprint 2 streaming events
   'hero:intent.understood',
   'hero:location.resolved',

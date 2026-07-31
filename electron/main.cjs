@@ -10,6 +10,7 @@ const chatrKernel  = require('./chatr-core/index.cjs');
 const tokenVault = require('./token-vault.cjs');
 const syncEngine = require('./sync-engine.cjs');
 const { WorkerManager } = require('./workers/WorkerManager.cjs');
+const CapabilityManager = require('./workers/CapabilityManager.cjs');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PHASE 0: PERFORMANCE OBSERVATORY
@@ -2108,9 +2109,29 @@ app.whenReady().then(() => {
     }
   });
 
-  // Configure Auto Updater Logger
+  // --- Auto Updater (Core OS) ---
   autoUpdater.logger = log;
   autoUpdater.logger.transports.file.level = 'info';
+
+  // --- Capability Manager (Thin Kernel Plugins & Models) ---
+  const capabilityDir = path.join(app.getPath('userData'), 'capabilities');
+  global.capabilityManager = new CapabilityManager(capabilityDir);
+  
+  global.capabilityManager.on('progress', (payload) => {
+    mainWindow?.webContents.send('capability:progress', payload);
+  });
+
+  ipcMain.handle('capability:install', async (event, capabilityId) => {
+    return global.capabilityManager.installCapability(capabilityId);
+  });
+  
+  ipcMain.handle('capability:check-updates', async () => {
+    return global.capabilityManager.checkUpdates();
+  });
+  
+  ipcMain.handle('capability:list', async () => {
+    return global.capabilityManager.installed;
+  });
 
   if (!isDev) {
     // Check for updates shortly after startup
