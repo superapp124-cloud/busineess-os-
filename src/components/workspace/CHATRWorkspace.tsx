@@ -30,12 +30,15 @@ export const CHATRWorkspace: React.FC = () => {
   const [classifying, setClassifying] = useState<Set<string>>(new Set());
 
   const [items, setItems] = useState<WorkspaceItem[]>([
-    { id: '1', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
-    { id: '2', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') },
-    { id: '3', sourceUri: 'Q3_Renewal_Discussion.eml', typeHint: 'email', rawFile: new File([], 'Q3_Renewal_Discussion.eml') }
+    { id: '1', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
+    { id: '2', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
+    { id: '3', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
+    { id: '4', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
+    { id: '5', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') },
+    { id: '6', sourceUri: 'Q3_Renewal_Discussion.eml', typeHint: 'email', rawFile: new File([], 'Q3_Renewal_Discussion.eml') }
   ]);
 
-  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [activeItemId, setActiveItemId] = useState<string | null>('1');
   const [activeWorkspace, setActiveWorkspace] = useState<BusinessWorkspace | null>(null);
   
   const [activeMetadata, setActiveMetadata] = useState<WorkspaceMetadata | null>(null);
@@ -58,19 +61,17 @@ export const CHATRWorkspace: React.FC = () => {
   // ─── AI Classification Pipeline ───────────────────────────────────────────
   // Runs Gemini classification on an item, stamps the result onto the item,
   // then re-resolves the Workspace so the right Domain Intelligence activates.
-  // MUST be declared before any useEffect that calls it.
   const runClassification = useCallback(async (item: WorkspaceItem) => {
-    if (!item.rawFile || item.rawFile.size === 0) return;
-
     setClassifying(prev => new Set(prev).add(item.id));
 
     try {
-      const result: ClassificationResult = await classifyDocument(item.rawFile);
+      const fileToClassify = item.rawFile || new File([], item.sourceUri);
+      const result: ClassificationResult = await classifyDocument(fileToClassify);
 
       // Stamp the AI result onto the item so workspace matchers can read it
       (item as any).__classification__ = result;
 
-      // Trigger re-render by bumping the items array
+      // Trigger re-render by updating item in array
       setItems(prev => prev.map(i => i.id === item.id ? { ...i } : i));
 
       // Feed rich context to the Context Engine
@@ -80,7 +81,7 @@ export const CHATRWorkspace: React.FC = () => {
           type: 'document.opened',
           sourceModule: 'workspace',
           payload: {
-            filename: item.rawFile.name,
+            filename: item.sourceUri,
             documentType: result.documentType,
             domainIntelligence: result.domainIntelligence,
             industry: result.industry,
@@ -89,7 +90,7 @@ export const CHATRWorkspace: React.FC = () => {
           timestamp: Date.now(),
         }],
         textChunks: [
-          item.rawFile.name,
+          item.sourceUri,
           result.documentType,
           result.domainIntelligence,
           result.industry,
@@ -107,7 +108,7 @@ export const CHATRWorkspace: React.FC = () => {
       }
 
       emit('document.opened', 'workspace', {
-        filename: item.rawFile.name,
+        filename: item.sourceUri,
         domainIntelligence: result.domainIntelligence,
         confidence: result.confidence,
       });
@@ -147,8 +148,8 @@ export const CHATRWorkspace: React.FC = () => {
     activeAdapter.getMetadata(activeItem).then(meta => setActiveMetadata(meta));
     setActiveCapabilities(activeAdapter.getCapabilities());
 
-    // If no AI result yet and it's a real file, kick off classification
-    if (!existingClassification && activeItem.rawFile && activeItem.rawFile.size > 0) {
+    // If no AI result yet, kick off classification
+    if (!existingClassification) {
       runClassification(activeItem);
     }
   }, [activeItemId, runClassification]);
