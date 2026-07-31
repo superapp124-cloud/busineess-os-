@@ -2,9 +2,9 @@
 export { ContextEngineProvider, useContextEngine } from './ContextEngine';
 export { SignalBus, emit } from './SignalBus';
 export { classifyDocument } from './AIClassifier';
-export { inferUserGoal } from './goalIntelligence';
+export { inferUserGoal } from './GoalIntelligence';
 export type { ClassificationResult } from './AIClassifier';
-export type { GoalIntelligenceResult, InferredGoal, PrimaryDecision, ProactivePrompt, DynamicGoalTab } from './goalIntelligence';
+export type { GoalIntelligenceResult, InferredGoal, PrimaryDecision, ProactivePrompt, DynamicGoalTab } from './GoalIntelligence';
 export type {
   Signal,
   SignalType,
