@@ -1780,16 +1780,24 @@ function createWindow() {
     }
   });
 
-  // ── ready-to-show: show window only when React has painted (no white flash) ──
+  // ── ready-to-show: window becomes visible as soon as React paints ───────────
+  // Splash stays alive until BootStageProvider signals 'renderer:ready'.
+  // This gives a seamless native → React handoff with zero white-frame gap.
   mainWindow.once('ready-to-show', () => {
     perf.mark('ready-to-show');
     mainWindow.show();
-    // Destroy splash if it was created
+    log.info('[Startup] Window visible. ' + perf.getSummary());
+  });
+
+  // 'renderer:ready' is sent by BootStageProvider once React is interactive.
+  // At that point we can safely destroy the native splash.
+  ipcMain.once('renderer:ready', () => {
+    perf.mark('renderer-ready');
     if (global.splashWindow && !global.splashWindow.isDestroyed()) {
       global.splashWindow.destroy();
       global.splashWindow = null;
+      log.info('[Startup] Native splash destroyed — renderer is interactive.');
     }
-    log.info('[Startup] Window visible. ' + perf.getSummary());
   });
 
   if (isDev) {

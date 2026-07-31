@@ -9,6 +9,8 @@ const validSendChannels = [
   'process-transcript-chunk',
   'set-badge-count',
   'window:update-theme',
+  'renderer:ready',  // signals Electron to close native splash
+  'worker:send',     // route IPC requests to utility process workers
 ];
 
 const validInvokeChannels = [
@@ -126,6 +128,8 @@ const validListenChannels = [
   'background:job_completed',
   // Phase 0: Performance Observatory — service lifecycle events
   'service:status',
+  // Worker responses — standardized IPC contract responses from UtilityProcess workers
+  'worker:response',
   // Hero Experience — Sprint 2 streaming events
   'hero:intent.understood',
   'hero:location.resolved',

@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { AIStatusBadge } from '@/components/desktop/AIStatusBadge';
 import { PerformanceObservatory } from '@/components/desktop/observatory/PerformanceObservatory';
+import { BootStatusIndicator } from '@/components/desktop/BootStatusIndicator';
 import {
   MessageSquare,
   Users,
@@ -641,6 +642,9 @@ const DesktopLayoutInner = () => {
 
         {/* ── Productivity Dock ────────────────────────────────────────────── */}
         <ProductivityDock />
+
+        {/* ── Boot Status Indicator (non-blocking, auto-dismisses) ───────────────── */}
+        <BootStatusIndicator />
 
         {/* ── Performance Observatory (developer dashboard, dev mode only) ── */}
         {isDev && <PerformanceObservatory />}
