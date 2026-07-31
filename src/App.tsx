@@ -83,6 +83,7 @@ const CustomerValidationDashboard = React.lazy(() => import("./components/analyt
 const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalendarCallback").then(m => ({ default: m.GoogleCalendarCallback })));
 const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
 const ChiefOfStaffHome = React.lazy(() => import("./pages/desktop/ChiefOfStaffHome").then(m => ({ default: m.ChiefOfStaffHome })));
+const UniversalInbox = React.lazy(() => import("./pages/desktop/UniversalInbox").then(m => ({ default: m.UniversalInbox })));
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
@@ -463,7 +464,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   {/* Desktop Execution OS & Chief of Staff Home */}
   <Route element={<DesktopLayout />}>
   <Route index element={<Navigate to="home" replace />} />
-  <Route path="home" element={<Suspense fallback={<PageLoader message="Loading Chief of Staff..." />}><ChiefOfStaffHome /></Suspense>} />
+  <Route path="home" element={<Suspense fallback={<PageLoader message="Loading Home..." />}><ChiefOfStaffHome /></Suspense>} />
+  <Route path="inbox" element={<ProtectedLazyRoute component={UniversalInbox} />} />
   <Route path="workspace-ide" element={<LazyRoute component={LazyPages.WorkspaceIDE} />} />
  <Route path="chat" element={<LazyRoute component={LazyPages.DesktopChat} />} />
  <Route path="kernel" element={
