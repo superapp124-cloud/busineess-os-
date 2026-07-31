@@ -13,6 +13,11 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('chatr_desktop_installed') === 'true';
   });
 
+  // Allow user to bypass guard on web browser
+  const [bypassedWebGuard, setBypassedWebGuard] = useState<boolean>(() => {
+    return localStorage.getItem('chatr_web_guard_bypassed') === 'true';
+  });
+
   useEffect(() => {
     // 1. Detect if running inside Electron Native Desktop App
     const inElectron = typeof window !== 'undefined' && (
@@ -142,10 +147,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
         </div>
       </div>
     );
-  // Allow user to bypass guard on web browser
-  const [bypassedWebGuard, setBypassedWebGuard] = useState<boolean>(() => {
-    return localStorage.getItem('chatr_web_guard_bypassed') === 'true';
-  });
+  }
 
   // ONLY ALLOW WORKSPACE ACCESS IF INSIDE NATIVE ELECTRON, CHATR DESKTOP APP IS RUNNING, OR WEBPAGE BYPASSED
   if (isElectron || isDesktopRunning || bypassedWebGuard) {
@@ -155,11 +157,6 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
   // If checking, show minimal black screen
   if (isChecking) {
     return <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center font-mono text-xs">Auditing Desktop Runtime...</div>;
-  }
-
-  // If CHATR Desktop is running on loopback, allow access or launch app
-  if (isDesktopRunning) {
-    return <>{children}</>;
   }
 
   // MANDATORY GUARD: Block access to site until CHATR Desktop is installed/running
