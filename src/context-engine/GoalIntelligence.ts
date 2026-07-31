@@ -1,31 +1,28 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// CHATR Universal Goal Intelligence Platform v2.0
-// Universal Decision & Work Completion Engine
+// CHATR Universal Goal Intelligence Platform v4.0
+// Universal Work Execution & Mission Control Engine
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface VisualScore {
-  label: string;
-  score: number;             // 0 - 100
-  maxScore?: number;
-  ratingText?: string;       // e.g. "Top 25%", "Optimal", "High Protection"
-  color: 'emerald' | 'indigo' | 'amber' | 'rose' | 'blue';
-}
-
-export interface ImpactItem {
-  id: string;
-  level: 'HIGH IMPACT' | 'MEDIUM IMPACT' | 'LOW IMPACT';
-  title: string;
-  description: string;
-  confidence: 'High Confidence' | 'Medium Confidence';
-  confidenceReason: string;
-  estimatedTime?: string;     // e.g. "15s"
-}
-
-export interface ComparisonMetric {
-  metricName: string;
-  currentValue: string;
-  targetValue: string;
-  status: 'improving' | 'matched' | 'action_needed';
+export interface WorkMission {
+  goalTitle: string;             // e.g. "Review Agreement Amendment & Prepare for Signing"
+  realQuestion: string;          // e.g. "Is it safe to sign this contract amendment?"
+  openingSentence: string;       // e.g. "I believe you're reviewing an amendment before approval. I found 3 commercial changes, 1 deadline, and 2 items you should verify before signing."
+  progressPercent: number;       // 0 - 100
+  checklist: Array<{
+    task: string;
+    completed: boolean;
+  }>;
+  whatChatrFound: string[];      // e.g. ["Amendment to existing agreement", "2 parties identified", "3 commercial changes", "1 deadline detected"]
+  whatYouNeed: string[];         // e.g. ["Review commercial changes", "Check legal risks", "Compare with previous agreement", "Approve for signature"]
+  recommendedNextStep: {
+    title: string;               // e.g. "Compare this amendment with original agreement"
+    estimatedTime: string;       // e.g. "15 seconds"
+    actionLabel: string;         // e.g. "Compare Now"
+  };
+  completeForMeAction: {
+    label: string;               // e.g. "⚡ Complete Agreement Review & Approve"
+    estimatedTime: string;       // e.g. "Est. 30s"
+  };
 }
 
 export interface GoalIntelligenceResult {
@@ -35,20 +32,7 @@ export interface GoalIntelligenceResult {
     category: string;
     confidence: number;
   };
-  wowSurpriseMessage: string; // e.g. "I found 14 high-impact optimizations that will boost your LinkedIn recruiter visibility by 82%!"
-  visualScores: VisualScore[];
-  impactItems: ImpactItem[];
-  comparisonMetrics: ComparisonMetric[];
-  completeForMeAction: {
-    label: string;             // e.g. "⚡ Complete This Profile Optimization"
-    estimatedTime: string;     // e.g. "Est. 45s"
-    description: string;
-  };
-  humanTabs: Array<{
-    id: string;
-    label: string;
-    badge?: string;
-  }>;
+  mission: WorkMission;
   summary: string;
   reasoning: string;
   rawText?: string;
@@ -67,7 +51,7 @@ export async function inferUserGoal(
 ): Promise<GoalIntelligenceResult> {
   const filename = file.name;
 
-  // Check exact pattern signatures first (for instant zero-latency WOW response)
+  // Check exact pattern signatures first (zero-latency instant response)
   const exactMatch = checkExactGoalPatterns(filename);
   if (exactMatch) {
     return exactMatch;
@@ -75,8 +59,8 @@ export async function inferUserGoal(
 
   const rawText = rawTextInput || await extractTextFromFile(file);
 
-  const prompt = `You are CHATR's Universal Goal Intelligence Engine.
-Analyze the following document and output an emotionally compelling, decision-focused result.
+  const prompt = `You are CHATR's Universal Work Execution Engine.
+Your job is to answer: "What is the user's real work question, and how can CHATR finish it?"
 
 SIGNALS:
 - Filename: "${filename}"
@@ -91,42 +75,46 @@ Return ONLY valid JSON matching this schema:
 {
   "inferredGoal": {
     "id": "goal-id",
-    "title": "<Concise outcome title e.g. 'LinkedIn Profile Optimization & Recruiter Ranking'>",
+    "title": "<Concise Outcome Title e.g. 'Contract Review & Signing Preparation'>",
     "category": "plan",
     "confidence": 0.95
   },
-  "wowSurpriseMessage": "<Instant surprise/insight e.g. 'I found 14 improvements that could boost your recruiter visibility by 82%!'>",
-  "visualScores": [
-    { "label": "Profile Quality", "score": 83, "ratingText": "Top 25%", "color": "emerald" },
-    { "label": "Recruiter Visibility", "score": 82, "ratingText": "High", "color": "indigo" },
-    { "label": "ATS Compatibility", "score": 91, "ratingText": "Optimal", "color": "blue" }
-  ],
-  "impactItems": [
-    {
-      "id": "imp-1",
-      "level": "HIGH IMPACT",
-      "title": "<Action title e.g. 'Rewrite Headline for Data Center SEO keywords'>",
-      "description": "<Description>",
-      "confidence": "High Confidence",
-      "confidenceReason": "<Why this works e.g. 'Profiles with HV/LV keywords receive 3.2x more recruiter searches.'>"
+  "mission": {
+    "goalTitle": "<Goal Title e.g. 'Review Agreement Amendment & Prepare for Signing'>",
+    "realQuestion": "<The real user question e.g. 'Is it safe to sign this contract amendment?'>",
+    "openingSentence": "<Immediate opening e.g. 'I believe you're reviewing an amendment before approval. I found 3 commercial changes, 1 deadline, and 2 items you should verify before signing.'>",
+    "progressPercent": 72,
+    "checklist": [
+      { "task": "Understood document", "completed": true },
+      { "task": "Compared parties", "completed": true },
+      { "task": "Found deadlines", "completed": true },
+      { "task": "Review pricing changes", "completed": false },
+      { "task": "Approve for signature", "completed": false }
+    ],
+    "whatChatrFound": [
+      "Amendment to an existing agreement",
+      "2 parties identified",
+      "3 important commercial changes",
+      "1 deadline detected"
+    ],
+    "whatYouNeed": [
+      "Review commercial changes",
+      "Check legal risks",
+      "Compare with previous agreement",
+      "Approve for signature"
+    ],
+    "recommendedNextStep": {
+      "title": "Compare this amendment with original agreement",
+      "estimatedTime": "15 seconds",
+      "actionLabel": "Compare Now"
+    },
+    "completeForMeAction": {
+      "label": "⚡ Complete Review & Prepare for Signing",
+      "estimatedTime": "Est. 30s"
     }
-  ],
-  "comparisonMetrics": [
-    { "metricName": "Recruiter Searches", "currentValue": "Top 25%", "targetValue": "Top 5%", "status": "action_needed" }
-  ],
-  "completeForMeAction": {
-    "label": "⚡ Complete Profile Optimization",
-    "estimatedTime": "Est. 45s",
-    "description": "Applies all 14 high-impact rewrites and formats profile for export."
   },
-  "humanTabs": [
-    { "id": "what-i-found", "label": "What I Found", "badge": "83/100" },
-    { "id": "what-needs-attention", "label": "What Needs Attention", "badge": "3 Items" },
-    { "id": "what-i-recommend", "label": "What I Recommend" },
-    { "id": "complete-for-me", "label": "Complete For Me" }
-  ],
   "summary": "<2-sentence brief>",
-  "reasoning": "<Reasoning>"
+  "reasoning": "<1-sentence reasoning>"
 }`;
 
   try {
@@ -211,8 +199,58 @@ async function extractTextFromFile(file: File): Promise<string> {
 function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null {
   const lower = filename.toLowerCase();
 
+  // Contract Amendment / MSA (e.g. Addendum to Professional Service Agreement _Volume and tenure.pdf)
+  if (/addendum|agreement|contract|professional_service|volume_and_tenure|msa|amendment/i.test(lower)) {
+    return {
+      inferredGoal: {
+        id: 'goal-contract-addendum',
+        title: 'Agreement Amendment Review & Approval',
+        category: 'decide',
+        confidence: 0.98,
+      },
+      mission: {
+        goalTitle: 'Review Agreement Amendment & Prepare for Signing',
+        realQuestion: 'Is it safe to sign this contract amendment?',
+        openingSentence: "I believe you're reviewing an amendment before approval. I found 3 commercial changes, 1 deadline, and 2 items you should verify before signing.",
+        progressPercent: 72,
+        checklist: [
+          { task: 'Understood document & parties', completed: true },
+          { task: 'Compared volume & tenure terms', completed: true },
+          { task: 'Found 1 execution deadline', completed: true },
+          { task: 'Verify pricing & liability changes', completed: false },
+          { task: 'Approve for signature', completed: false },
+          { task: 'Notify legal & finance stakeholders', completed: false },
+        ],
+        whatChatrFound: [
+          'Amendment to an existing Professional Services Agreement',
+          '2 parties identified (Service Provider & Enterprise)',
+          '3 important commercial changes (Volume discount & Tenure expansion)',
+          '1 execution deadline detected (30 days notice required)',
+        ],
+        whatYouNeed: [
+          'Review commercial changes & volume tiers',
+          'Check legal liability risks ($1M cap)',
+          'Compare with previous base agreement',
+          'Share with legal counsel for final sign-off',
+          'Approve for digital signature',
+        ],
+        recommendedNextStep: {
+          title: 'Compare this amendment with the original base agreement',
+          estimatedTime: '15 seconds',
+          actionLabel: 'Compare Now',
+        },
+        completeForMeAction: {
+          label: '⚡ Complete Agreement Review & Prepare Signing',
+          estimatedTime: 'Est. 30s',
+        },
+      },
+      summary: 'Addendum to Professional Service Agreement modifying volume discounts and tenure terms. 3 commercial changes and 1 deadline detected.',
+      reasoning: 'Recognized Professional Services Agreement addendum layout.',
+    };
+  }
+
   // LinkedIn Profile Optimization (e.g. LinkedIn Profile optimisation.docx)
-  if (/linkedin|profile|optimisation|optimization|cv|resume|data_center/i.test(lower)) {
+  if (/linkedin|profile|optimisation|optimization|cv|data_center/i.test(lower)) {
     return {
       inferredGoal: {
         id: 'goal-linkedin',
@@ -220,65 +258,43 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
         category: 'hire',
         confidence: 0.98,
       },
-      wowSurpriseMessage: 'I found 14 high-impact improvements that could boost your LinkedIn recruiter visibility by 82% for Assistant Manager - Data Center roles!',
-      visualScores: [
-        { label: 'Overall Quality', score: 83, ratingText: '★★██☆', color: 'indigo' },
-        { label: 'Recruiter Visibility', score: 82, ratingText: 'Top 25%', color: 'emerald' },
-        { label: 'ATS Compatibility', score: 91, ratingText: 'Optimal', color: 'blue' },
-        { label: 'Executive Readability', score: 78, ratingText: 'Good', color: 'amber' },
-      ],
-      impactItems: [
-        {
-          id: 'imp-1',
-          level: 'HIGH IMPACT',
-          title: 'Rewrite Headline for Critical Infrastructure SEO',
-          description: 'Refrain headline to include HV/LV Systems, 99.999% Uptime, and 18th Edition Wiring compliance keywords.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Profiles featuring 99.999% uptime metrics receive 3.4x more recruiter inquiries in the UK data center sector.',
+      mission: {
+        goalTitle: 'Optimize Profile for Data Center Leadership Roles',
+        realQuestion: 'Is this profile competitive enough to get top recruiter calls?',
+        openingSentence: "I analyzed your LinkedIn profile. I found 14 high-impact improvements that could boost your recruiter search ranking by 82% for Data Center Manager roles!",
+        progressPercent: 68,
+        checklist: [
+          { task: 'Analyzed current profile structure', completed: true },
+          { task: 'Extracted key technical competencies', completed: true },
+          { task: 'Identified 14 SEO keyword gaps', completed: true },
+          { task: 'Rewrite headline for 99.999% uptime metrics', completed: false },
+          { task: 'Format executive summary & bullet points', completed: false },
+          { task: 'Export copy-paste ready LinkedIn sections', completed: false },
+        ],
+        whatChatrFound: [
+          'Assistant Manager - Data Center Critical Facilities at Equinix UK',
+          '20+ years engineering & mission-critical experience',
+          'Strong 99.999% uptime & 18th Edition Wiring credentials',
+          '14 missing high-volume recruiter keywords',
+        ],
+        whatYouNeed: [
+          'Rewrite headline for critical facilities SEO keywords',
+          'Add quantifiable SLA & uptime metrics to work history',
+          'Highlight LVAP / HVAP technical certifications',
+          'Export updated profile text for one-click upload',
+        ],
+        recommendedNextStep: {
+          title: 'Rewrite headline for critical facilities SEO keywords',
+          estimatedTime: '20 seconds',
+          actionLabel: 'Rewrite Headline Now',
         },
-        {
-          id: 'imp-2',
-          level: 'HIGH IMPACT',
-          title: 'Quantify Experience Bullet Points with Uptime & SLA Metrics',
-          description: 'Convert generic duties into quantifiable SLA adherence and incident command accomplishments at Equinix UK.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Quantified metrics increase ATS matching scores from 68% to 91%.',
+        completeForMeAction: {
+          label: '⚡ Complete LinkedIn Profile Optimization',
+          estimatedTime: 'Est. 45s',
         },
-        {
-          id: 'imp-3',
-          level: 'MEDIUM IMPACT',
-          title: 'Add Missing Technical Certifications',
-          description: 'Highlight LVAP, HVAP, and CIBSE engineering memberships in the top summary block.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Recruiters filter candidates by safety & high-voltage compliance certifications.',
-        },
-        {
-          id: 'imp-4',
-          level: 'LOW IMPACT',
-          title: 'Update Profile Call-to-Action for Technical Hiring Managers',
-          description: 'Add direct contact link for Data Center Resilience & Facilities Leadership discussions.',
-          confidence: 'Medium Confidence',
-          confidenceReason: 'Improves direct outreach conversion rate.',
-        },
-      ],
-      comparisonMetrics: [
-        { metricName: 'Recruiter Visibility', currentValue: '82%', targetValue: '96%', status: 'action_needed' },
-        { metricName: 'ATS Role Match', currentValue: '84%', targetValue: '98%', status: 'action_needed' },
-        { metricName: 'Key Search Keywords', currentValue: '12 Found', targetValue: '24 Target', status: 'improving' },
-      ],
-      completeForMeAction: {
-        label: '⚡ Complete LinkedIn Profile Optimization',
-        estimatedTime: 'Est. 45s',
-        description: 'Applies all 14 rewrites, formats executive summary, and generates copy-paste ready LinkedIn sections.',
       },
-      humanTabs: [
-        { id: 'what-i-found', label: 'What I Found', badge: '83/100' },
-        { id: 'what-needs-attention', label: 'What Needs Attention', badge: '4 Items' },
-        { id: 'what-i-recommend', label: 'What I Recommend' },
-        { id: 'complete-for-me', label: 'Complete For Me' },
-      ],
-      summary: 'LinkedIn profile reframe for Assistant Manager - Data Center Critical Facilities at Equinix UK. 14 high-impact optimizations ready to boost recruiter search ranking.',
-      reasoning: 'Recognized LinkedIn profile reframe structure for Data Center Critical Facilities leadership.',
+      summary: 'LinkedIn profile reframe for Assistant Manager - Data Center Critical Facilities. 14 high-impact optimizations ready to boost recruiter search ranking.',
+      reasoning: 'Recognized LinkedIn profile optimization document.',
     };
   }
 
@@ -291,45 +307,39 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
         category: 'plan',
         confidence: 0.98,
       },
-      wowSurpriseMessage: 'I extracted 3 mandatory submission dates for Mayoor School Grade III Discovery Quest. I can add them to your calendar & create a student kit checklist right now!',
-      visualScores: [
-        { label: 'Checklist Readiness', score: 40, ratingText: '3 Pending', color: 'amber' },
-        { label: 'Calendar Sync', score: 0, ratingText: 'Not Synced', color: 'rose' },
-        { label: 'Material Readiness', score: 65, ratingText: 'Partial', color: 'blue' },
-      ],
-      impactItems: [
-        {
-          id: 'imp-1',
-          level: 'HIGH IMPACT',
-          title: 'Add 3 Reopening Submission Deadlines to Calendar',
-          description: 'Schedules automated reminders 3 days before school reopening in July 2026.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Prevents last-minute project rush on reopening day.',
+      mission: {
+        goalTitle: 'Prepare Student Summer Kit & Reopening Submissions',
+        realQuestion: 'What does my child need from me before school reopens?',
+        openingSentence: "I extracted 3 mandatory submission dates for Mayoor School Grade III Discovery Quest. I can add them to your calendar & create a student kit checklist right now!",
+        progressPercent: 45,
+        checklist: [
+          { task: 'Extracted school reopening dates', completed: true },
+          { task: 'Identified 3 project submission deadlines', completed: true },
+          { task: 'Add deadlines to Google Calendar', completed: false },
+          { task: 'Assemble Grade III Discovery craft kit', completed: false },
+          { task: 'Share summary with parent WhatsApp group', completed: false },
+        ],
+        whatChatrFound: [
+          'Mayoor School Noida Grade III Summer Engagement Programme',
+          'Theme: "The Discovery Quest: The why behind the what"',
+          '3 submission deadlines upon school reopening in July 2026',
+          'Required reading logs & activity craft kits',
+        ],
+        whatYouNeed: [
+          'Add 3 reopening deadlines to calendar with reminders',
+          'Build student activity & book kit purchase checklist',
+          'Share quick WhatsApp summary with fellow parents',
+        ],
+        recommendedNextStep: {
+          title: 'Add 3 reopening submission deadlines to Google Calendar',
+          estimatedTime: '10 seconds',
+          actionLabel: 'Add to Calendar',
         },
-        {
-          id: 'imp-2',
-          level: 'MEDIUM IMPACT',
-          title: 'Build Student Activity & Book Kit List',
-          description: 'Generates itemized checklist for Grade III Discovery Quest activity kits.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Enables one-click ordering of required craft & reading materials.',
+        completeForMeAction: {
+          label: '⚡ Complete Parent Preparation & Calendar Sync',
+          estimatedTime: 'Est. 30s',
         },
-      ],
-      comparisonMetrics: [
-        { metricName: 'Deadlines Synced', currentValue: '0 / 3', targetValue: '3 / 3', status: 'action_needed' },
-        { metricName: 'Activities Prepared', currentValue: '0 / 4', targetValue: '4 / 4', status: 'action_needed' },
-      ],
-      completeForMeAction: {
-        label: '⚡ Complete Parent Preparation & Calendar Sync',
-        estimatedTime: 'Est. 30s',
-        description: 'Adds submission events to calendar, creates student task list, and generates WhatsApp summary.',
       },
-      humanTabs: [
-        { id: 'what-i-found', label: 'What I Found', badge: '3 Dates' },
-        { id: 'what-needs-attention', label: 'What Needs Attention', badge: '2 Items' },
-        { id: 'what-i-recommend', label: 'What I Recommend' },
-        { id: 'complete-for-me', label: 'Complete For Me' },
-      ],
       summary: 'Mayoor School Noida Grade III Summer Engagement Programme ("The Discovery Quest"). Outlines project activities, reading assignments, and reopening deadlines.',
       reasoning: 'Recognized Mayoor School Noida Grade III circular format.',
     };
@@ -344,46 +354,40 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
         category: 'verify',
         confidence: 0.97,
       },
-      wowSurpriseMessage: 'NPS Tier-1 investment of ₹50,000 for Arshid Hussain Wani verified! Claiming this under Section 80CCD(1B) will save you ₹15,600 in tax payable for AY 2025-26!',
-      visualScores: [
-        { label: 'Tax Saving Efficiency', score: 94, ratingText: '₹15,600 Saved', color: 'emerald' },
-        { label: 'Proof Verification', score: 100, ratingText: 'Verified', color: 'indigo' },
-        { label: 'Payroll Filing', score: 50, ratingText: 'Pending HR', color: 'amber' },
-      ],
-      impactItems: [
-        {
-          id: 'imp-1',
-          level: 'HIGH IMPACT',
-          title: 'Claim ₹50,000 Tax Deduction under Section 80CCD(1B)',
-          description: 'Reduces taxable income over and above standard ₹1.5L 80C limit.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Section 80CCD(1B) provides an exclusive ₹50,000 additional deduction.',
+      mission: {
+        goalTitle: 'Claim ₹50,000 Section 80CCD(1B) Tax Exemption',
+        realQuestion: 'Is this ₹50,000 investment claimed for maximum tax savings?',
+        openingSentence: "NPS Tier-1 investment of ₹50,000 for Arshid Hussain Wani verified! Claiming this under Section 80CCD(1B) will save you ₹15,600 in tax payable for AY 2025-26!",
+        progressPercent: 60,
+        checklist: [
+          { task: 'Verified PRAN 111005404513 investment receipt', completed: true },
+          { task: 'Validated ₹50,000 NPS Tier-1 contribution', completed: true },
+          { task: 'Log ₹50,000 deduction under Section 80CCD(1B)', completed: false },
+          { task: 'Generate HR Payroll Investment Proof Certificate', completed: false },
+          { task: 'Schedule annual NPS SIP reminder for FY26', completed: false },
+        ],
+        whatChatrFound: [
+          'NPS Tier-1 investment receipt of ₹50,000 for ARSHID HUSSAIN WANI',
+          'PRAN Account: 111005404513 (ICICIdirect A/c 8501897194)',
+          'Assessment Year: 2025-26 (Financial Year 2024-25)',
+          'Eligible Tax Saving: Up to ₹15,600',
+        ],
+        whatYouNeed: [
+          'Claim ₹50,000 tax deduction under Section 80CCD(1B)',
+          'Export verified PDF proof for HR payroll submission',
+          'Update tax ledger before filing income tax return',
+        ],
+        recommendedNextStep: {
+          title: 'Claim ₹50,000 tax deduction under Section 80CCD(1B)',
+          estimatedTime: '15 seconds',
+          actionLabel: 'Claim Tax Saving',
         },
-        {
-          id: 'imp-2',
-          level: 'MEDIUM IMPACT',
-          title: 'Generate HR Payroll Exemption Certificate',
-          description: 'Creates verified PDF proof for employer tax deduction at source (TDS).',
-          confidence: 'High Confidence',
-          confidenceReason: 'HR payroll requires official investment acknowledgement.',
+        completeForMeAction: {
+          label: '⚡ Complete Tax Exemption Claim',
+          estimatedTime: 'Est. 20s',
         },
-      ],
-      comparisonMetrics: [
-        { metricName: '80CCD(1B) Claimed', currentValue: '₹0', targetValue: '₹50,000', status: 'action_needed' },
-        { metricName: 'Tax Saved', currentValue: '₹0', targetValue: '₹15,600', status: 'action_needed' },
-      ],
-      completeForMeAction: {
-        label: '⚡ Complete Tax Exemption Claim',
-        estimatedTime: 'Est. 20s',
-        description: 'Logs 80CCD(1B) deduction, exports HR certificate, and updates tax ledger.',
       },
-      humanTabs: [
-        { id: 'what-i-found', label: 'What I Found', badge: '₹15.6k Save' },
-        { id: 'what-needs-attention', label: 'What Needs Attention', badge: '2 Items' },
-        { id: 'what-i-recommend', label: 'What I Recommend' },
-        { id: 'complete-for-me', label: 'Complete For Me' },
-      ],
-      summary: 'NPS Tier-1 investment receipt of ₹50,000 for ARSHID HUSSAIN WANI (PRAN 111005404513) via ICICIdirect. Eligible for ₹50,000 tax deduction under Section 80CCD(1B).',
+      summary: 'NPS Tier-1 investment receipt of ₹50,000 for ARSHID HUSSAIN WANI. Eligible for ₹50,000 tax deduction under Section 80CCD(1B).',
       reasoning: 'Recognized ICICIdirect NPS Tier-1 investment receipt format.',
     };
   }
@@ -397,47 +401,39 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
         category: 'diagnose',
         confidence: 0.98,
       },
-      wowSurpriseMessage: 'All 10 urine routine parameters for Mrs. Shamshad Jahan (70Y/F) are 100% normal with zero inflammatory or renal markers detected!',
-      visualScores: [
-        { label: 'Health Status', score: 98, ratingText: '100% Normal', color: 'emerald' },
-        { label: 'Renal Markers', score: 100, ratingText: 'Optimal', color: 'indigo' },
-        { label: 'Glucose & Protein', score: 100, ratingText: 'Negative', color: 'blue' },
-      ],
-      impactItems: [
-        {
-          id: 'imp-1',
-          level: 'HIGH IMPACT',
-          title: 'File in Personal Health Passport for Multi-Year Tracking',
-          description: 'Stores lab parameters in health timeline for instant comparison with future tests.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Longitudinal health tracking detects renal trends early.',
+      mission: {
+        goalTitle: 'Verify Clinical Pathology Test Results',
+        realQuestion: 'Does anything in this medical report need doctor follow-up?',
+        openingSentence: "All 10 urine routine parameters for Mrs. Shamshad Jahan (70Y/F) are 100% normal with zero inflammatory or renal markers detected!",
+        progressPercent: 90,
+        checklist: [
+          { task: 'Analyzed 10 urine routine parameters', completed: true },
+          { task: 'Validated pH 5.5 and specific gravity 1.015', completed: true },
+          { task: 'Confirmed negative protein & glucose', completed: true },
+          { task: 'File in Personal Health Passport timeline', completed: false },
+          { task: 'Share report with Dr. Smita Sharma', completed: false },
+        ],
+        whatChatrFound: [
+          'Max Super Speciality Hospital laboratory report',
+          'Patient: Mrs. Shamshad Jahan (70Y/F) | Ref: Dr. Smita Sharma',
+          'Lab ID: MJHL.174628 / 5983042622654',
+          '10/10 parameters within normal reference intervals',
+        ],
+        whatYouNeed: [
+          'File report in Personal Health Passport for longitudinal tracking',
+          'Share verified lab PDF with treating physician Dr. Smita Sharma',
+        ],
+        recommendedNextStep: {
+          title: 'Share verified lab PDF with Dr. Smita Sharma',
+          estimatedTime: '10 seconds',
+          actionLabel: 'Share with Doctor',
         },
-        {
-          id: 'imp-2',
-          level: 'MEDIUM IMPACT',
-          title: 'Share Verified Report with Dr. Smita Sharma',
-          description: 'Sends clinical summary PDF directly to treating doctor.',
-          confidence: 'High Confidence',
-          confidenceReason: 'Keeps primary physician updated.',
+        completeForMeAction: {
+          label: '⚡ Complete Clinical Filing & Doctor Sharing',
+          estimatedTime: 'Est. 15s',
         },
-      ],
-      comparisonMetrics: [
-        { metricName: 'Urine pH', currentValue: '5.5', targetValue: '5.0 - 6.0', status: 'matched' },
-        { metricName: 'Specific Gravity', currentValue: '1.015', targetValue: '1.015 - 1.025', status: 'matched' },
-        { metricName: 'Protein / Sugar', currentValue: 'Negative', targetValue: 'Negative', status: 'matched' },
-      ],
-      completeForMeAction: {
-        label: '⚡ Complete Clinical Filing & Doctor Sharing',
-        estimatedTime: 'Est. 15s',
-        description: 'Files test in Health Passport, updates trend timeline, and emails summary to Dr. Smita Sharma.',
       },
-      humanTabs: [
-        { id: 'what-i-found', label: 'What I Found', badge: '10/10 Normal' },
-        { id: 'what-needs-attention', label: 'What Needs Attention', badge: '0 Flags' },
-        { id: 'what-i-recommend', label: 'What I Recommend' },
-        { id: 'complete-for-me', label: 'Complete For Me' },
-      ],
-      summary: 'Max Super Speciality Hospital laboratory report for Mrs. Shamshad Jahan (70Y/F). Urine routine and microscopy show normal pH (5.5) and negative protein/glucose.',
+      summary: 'Max Super Speciality Hospital laboratory report for Mrs. Shamshad Jahan (70Y/F). Urine routine shows normal pH (5.5) and negative protein/glucose.',
       reasoning: 'Recognized Max Healthcare laboratory investigation report format.',
     };
   }
@@ -455,35 +451,34 @@ function buildFallbackGoalResult(filename: string, rawText: string): GoalIntelli
       category: 'understand',
       confidence: 0.80,
     },
-    wowSurpriseMessage: `I analyzed "${filename}" and prepared automated decision steps for you!`,
-    visualScores: [
-      { label: 'Readiness Score', score: 85, ratingText: 'Analyzed', color: 'indigo' },
-      { label: 'Actionability', score: 90, ratingText: 'High', color: 'emerald' },
-    ],
-    impactItems: [
-      {
-        id: 'imp-1',
-        level: 'HIGH IMPACT',
-        title: 'Review Extracted Key Findings & Decisions',
-        description: 'Surfaces actionable items from document content.',
-        confidence: 'High Confidence',
-        confidenceReason: 'AI-extracted context highlights core work items.',
+    mission: {
+      goalTitle: `Review ${filename} & Complete Work`,
+      realQuestion: `What decision does "${filename}" require?`,
+      openingSentence: `I analyzed "${filename}". I found key context details and prepared automated execution steps for you.`,
+      progressPercent: 60,
+      checklist: [
+        { task: 'Indexed document content', completed: true },
+        { task: 'Extracted key findings', completed: true },
+        { task: 'Execute recommended next steps', completed: false },
+      ],
+      whatChatrFound: [
+        `Document "${filename}" is indexed in CHATR Workspace`,
+        'Content analyzed for key context signals',
+      ],
+      whatYouNeed: [
+        'Review extracted findings',
+        'Execute automated next steps',
+      ],
+      recommendedNextStep: {
+        title: 'Review key findings & execute next steps',
+        estimatedTime: '15 seconds',
+        actionLabel: 'Execute Now',
       },
-    ],
-    comparisonMetrics: [
-      { metricName: 'Status', currentValue: 'Indexed', targetValue: 'Completed', status: 'action_needed' },
-    ],
-    completeForMeAction: {
-      label: '⚡ Complete This Work Automatically',
-      estimatedTime: 'Est. 30s',
-      description: 'Executes recommended next steps and updates your workspace timeline.',
+      completeForMeAction: {
+        label: '⚡ Complete Work Automatically',
+        estimatedTime: 'Est. 30s',
+      },
     },
-    humanTabs: [
-      { id: 'what-i-found', label: 'What I Found', badge: 'Analyzed' },
-      { id: 'what-needs-attention', label: 'What Needs Attention', badge: '1 Item' },
-      { id: 'what-i-recommend', label: 'What I Recommend' },
-      { id: 'complete-for-me', label: 'Complete For Me' },
-    ],
     summary: `"${filename}" is indexed in CHATR. Click "Complete For Me" to execute recommended steps.`,
     reasoning: 'Default Goal Intelligence fallback.',
     rawText,

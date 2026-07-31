@@ -29,20 +29,20 @@ export const CHATRWorkspace: React.FC = () => {
   const searchState = useCapability('worker-search');
   const kernelState = useCapability('chatr-kernel');
 
-  // Goal Intelligence & Classification State
+  // Work Execution & Classification State
   const [classifying, setClassifying] = useState<Set<string>>(new Set());
   const [activeGoalTabId, setActiveGoalTabId] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [items, setItems] = useState<WorkspaceItem[]>([
-    { id: '1', sourceUri: 'LinkedIn Profile optimisation.docx', typeHint: 'word', rawFile: new File([], 'LinkedIn Profile optimisation.docx') },
-    { id: '2', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
-    { id: '3', sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf', typeHint: 'pdf', rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
-    { id: '4', sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx', typeHint: 'pdf', rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
-    { id: '5', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
-    { id: '6', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
-    { id: '7', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
-    { id: '8', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') }
+    { id: '1', sourceUri: 'Addendum to Professional Service Agreement _Volume and tenure.pdf', typeHint: 'pdf', rawFile: new File([], 'Addendum to Professional Service Agreement _Volume and tenure.pdf') },
+    { id: '2', sourceUri: 'LinkedIn Profile optimisation.docx', typeHint: 'word', rawFile: new File([], 'LinkedIn Profile optimisation.docx') },
+    { id: '3', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
+    { id: '4', sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf', typeHint: 'pdf', rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
+    { id: '5', sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx', typeHint: 'pdf', rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
+    { id: '6', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
+    { id: '7', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
+    { id: '8', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') }
   ]);
 
   const [activeItemId, setActiveItemId] = useState<string | null>('1');
@@ -52,8 +52,6 @@ export const CHATRWorkspace: React.FC = () => {
   const [activeCapabilities, setActiveCapabilities] = useState<WorkspaceCapabilities | null>(null);
   
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  const [chatInput, setChatInput] = useState<string>('');
-  const [chatHistory, setChatHistory] = useState<Array<{ sender: 'user'|'ai', text: string, source?: string }>>([]);
 
   const activeItem = items.find(i => i.id === activeItemId) || null;
   const activeAdapter = activeItem ? getAdapterFor(activeItem) : undefined;
@@ -65,14 +63,13 @@ export const CHATRWorkspace: React.FC = () => {
     });
   }, []);
 
-  // ─── Universal Goal Intelligence Pipeline ─────────────────────────────────
+  // ─── Universal Work Execution Pipeline ─────────────────────────────────────
   const runClassification = useCallback(async (item: WorkspaceItem) => {
     setClassifying(prev => new Set(prev).add(item.id));
 
     try {
       const fileToClassify = item.rawFile || new File([], item.sourceUri);
       
-      // Parallel execution: AI Classification + Goal Inference
       const [classification, goalResult] = await Promise.all([
         classifyDocument(fileToClassify),
         inferUserGoal(fileToClassify)
@@ -81,11 +78,6 @@ export const CHATRWorkspace: React.FC = () => {
       // Stamp results onto item
       (item as any).__classification__ = classification;
       (item as any).__goalResult__ = goalResult;
-
-      // Set initial dynamic goal tab
-      if (goalResult.dynamicTabs.length > 0) {
-        setActiveGoalTabId(goalResult.dynamicTabs[0].id);
-      }
 
       // Trigger re-render by updating item in array
       setItems(prev => prev.map(i => i.id === item.id ? { ...i } : i));
@@ -107,9 +99,9 @@ export const CHATRWorkspace: React.FC = () => {
         textChunks: [
           item.sourceUri,
           goalResult.inferredGoal.title,
-          goalResult.primaryDecision.question,
+          goalResult.mission.realQuestion,
           goalResult.summary,
-          ...(goalResult.keyFindings?.map(f => `${f.label}: ${f.value}`) ?? []),
+          ...(goalResult.mission.whatChatrFound ?? []),
           goalResult.rawText ?? '',
         ],
       });
@@ -127,7 +119,7 @@ export const CHATRWorkspace: React.FC = () => {
         confidence: goalResult.inferredGoal.confidence,
       });
     } catch (err) {
-      console.error('[CHATRWorkspace] Goal Intelligence error:', err);
+      console.error('[CHATRWorkspace] Work Execution error:', err);
     } finally {
       setClassifying(prev => {
         const next = new Set(prev);
@@ -149,9 +141,6 @@ export const CHATRWorkspace: React.FC = () => {
     }
 
     const existingGoal = (activeItem as any).__goalResult__;
-    if (existingGoal && existingGoal.dynamicTabs.length > 0) {
-      setActiveGoalTabId(existingGoal.dynamicTabs[0].id);
-    }
 
     const workspace = WorkspaceRegistry.matchWorkspace(activeItem);
     setActiveWorkspace(workspace);
@@ -184,7 +173,7 @@ export const CHATRWorkspace: React.FC = () => {
     setItems(prev => [newItem, ...prev]);
     setActiveItemId(newItem.id);
 
-    // Kick off Goal Intelligence immediately
+    // Kick off Work Execution immediately
     runClassification(newItem);
 
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -215,13 +204,13 @@ export const CHATRWorkspace: React.FC = () => {
       
       {/* Toast Notification Bar */}
       {toastMessage && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-2">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-2">
           <Check className="w-4 h-4 text-emerald-400" />
           {toastMessage}
         </div>
       )}
 
-      {/* Universal Goal Intelligence Header */}
+      {/* Universal Workspace Header — Outcome & Goal Focused (Zero AI Jargon) */}
       <header className="h-14 border-b border-slate-200 bg-white px-4 flex items-center justify-between z-10 shrink-0">
         <div className="flex items-center gap-3">
           <img src={logo} alt="CHATR" className="w-7 h-7 object-contain rounded" />
@@ -235,7 +224,7 @@ export const CHATRWorkspace: React.FC = () => {
           </h1>
         </div>
 
-        {/* Dynamic Header Badge — Goal Intelligence */}
+        {/* Dynamic Header Badge — Outcome & Goal */}
         <div className="flex-1 flex justify-center">
           {activeItem && (() => {
             const goalResult: GoalIntelligenceResult | undefined = (activeItem as any).__goalResult__;
@@ -255,20 +244,20 @@ export const CHATRWorkspace: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Universal Goal Intelligence Badge */}
+                {/* Outcome Badge — Zero AI Terminology */}
                 {isClassifying ? (
                   <div className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm animate-pulse">
                     <Loader2 className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
-                    <span className="text-xs font-bold text-indigo-700">Inferring Goal...</span>
+                    <span className="text-xs font-bold text-indigo-700">Understanding Work...</span>
                   </div>
                 ) : goalResult ? (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-gradient-to-r from-indigo-50 via-purple-50 to-blue-50 border-indigo-200 shadow-sm">
                     <Target className="w-3.5 h-3.5 text-indigo-600" />
                     <span className="text-xs font-bold text-indigo-900">
-                      {goalResult.inferredGoal.title}
+                      {goalResult.mission.goalTitle}
                     </span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
-                      {Math.round(goalResult.inferredGoal.confidence * 100)}% Match
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      {goalResult.mission.progressPercent}% Complete
                     </span>
                   </div>
                 ) : null}
@@ -334,7 +323,7 @@ export const CHATRWorkspace: React.FC = () => {
                       <div className={`text-xs truncate font-bold ${isSelected ? 'text-indigo-950' : 'text-slate-700'}`}>{title}</div>
                       {goal ? (
                         <div className="text-[10px] font-semibold text-indigo-600 truncate mt-0.5">
-                          🎯 {goal.inferredGoal.title}
+                          🎯 {goal.mission.goalTitle}
                         </div>
                       ) : (
                         <div className="text-[10px] text-slate-400 mt-0.5">Updated today</div>
@@ -354,9 +343,9 @@ export const CHATRWorkspace: React.FC = () => {
               <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-200">
                 <Grid className="w-10 h-10 text-slate-300" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2 tracking-tight">CHATR Goal Intelligence Platform</h2>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2 tracking-tight">CHATR Work Execution Platform</h2>
               <p className="text-slate-500 mb-8 text-sm max-w-sm mx-auto leading-relaxed">
-                Drop any document, email, or investment receipt. CHATR automatically infers your goal and helps you complete it.
+                Drop any contract, resume, invoice, or health report. CHATR instantly understands your work goal and helps you finish it.
               </p>
               <button 
                 onClick={() => fileInputRef.current?.click()}
@@ -370,7 +359,7 @@ export const CHATRWorkspace: React.FC = () => {
           )}
         </div>
 
-        {/* SHELL: Right Intelligence Panel (20%) — Universal Goal Intelligence */}
+        {/* SHELL: Right Intelligence Panel (20%) — Outcome & Work Control Center */}
         <div className="w-1/5 min-w-[340px] max-w-[420px] bg-white flex flex-col z-10 p-4 overflow-y-auto shadow-[-4px_0_24px_rgba(0,0,0,0.02)]">
           {activeItem && (activeItem as any).__goalResult__ ? (
             <GoalDrivenWorkspacePane
@@ -383,24 +372,13 @@ export const CHATRWorkspace: React.FC = () => {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-sm p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
               <Loader2 className="w-6 h-6 text-indigo-500 animate-spin mb-3" />
-              <div className="font-bold text-slate-700">Inferring Goal & Primary Decision...</div>
-              <div className="text-xs text-slate-400 mt-1">Analyzing context and preparing automated next steps.</div>
+              <div className="font-bold text-slate-700">Understanding Work Goal...</div>
+              <div className="text-xs text-slate-400 mt-1">Analyzing context and building execution checklist.</div>
             </div>
           )}
         </div>
 
       </div>
-      
-      {/* Developer Mode Bottom Bar */}
-      {isDeveloperMode && (
-        <footer className="h-10 border-t border-slate-300 bg-slate-900 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-10 shrink-0">
-          <div className="flex items-center gap-4">
-            <span className="text-emerald-400 font-bold tracking-wider">DEV: GOAL_INTELLIGENCE_V2_ACTIVE</span>
-            <span className="text-indigo-400">Active Goal: {(activeItem as any)?.__goalResult__?.inferredGoal?.title || 'NULL'}</span>
-          </div>
-          <div>Confidence: {(activeItem as any)?.__goalResult__?.inferredGoal?.confidence ? Math.round((activeItem as any).__goalResult__.inferredGoal.confidence * 100) + '%' : '0%'}</div>
-        </footer>
-      )}
     </div>
   );
 };

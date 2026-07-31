@@ -65,14 +65,46 @@ export const prefetchRoute = (routeImport: () => Promise<any>) => {
   routeImport().catch(() => {});
 };
 
+// Helper to catch stale chunk import errors after Vercel deployments and auto-reload page
+function safeLazy<T extends React.ComponentType<any>>(
+  factory: () => Promise<any>
+) {
+  return lazy(async () => {
+    try {
+      const res = await factory();
+      return res.default ? res : { default: res };
+    } catch (error: any) {
+      const message = error?.message || '';
+      const isChunkError =
+        message.includes('Failed to fetch dynamically imported module') ||
+        message.includes('Importing a module script failed') ||
+        message.includes('Loading chunk');
+
+      if (isChunkError) {
+        const pageKey = 'chatr_chunk_reload_timestamp';
+        const lastReload = sessionStorage.getItem(pageKey);
+        const now = Date.now();
+
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          sessionStorage.setItem(pageKey, now.toString());
+          console.warn('[safeLazy] Stale Vercel deployment chunk detected. Auto-reloading page...');
+          window.location.reload();
+        }
+      }
+      throw error;
+    }
+  });
+}
+
 // ============================================
 // CRITICAL PAGES (Changed to lazy loaded to reduce bundle size)
 // ============================================
-export const Index = lazy(() => import('@/pages/Index'));
-export const Auth = lazy(() => import('@/pages/Auth'));
-export const Home = lazy(() => import('@/pages/Home'));
-export const WorkspaceSelector = lazy(() => import('@/pages/auth/WorkspaceSelector').then(m => ({ default: m.WorkspaceSelector })));
-export const WorkspaceIDE = lazy(() => import('@/pages/desktop/WorkspaceIDE').then(m => ({ default: m.WorkspaceIDE })));
+export const Index = safeLazy(() => import('@/pages/Index'));
+export const Auth = safeLazy(() => import('@/pages/Auth'));
+export const Home = safeLazy(() => import('@/pages/Home'));
+export const WorkspaceSelector = safeLazy(() => import('@/pages/auth/WorkspaceSelector').then(m => ({ default: m.WorkspaceSelector })));
+export const WorkspaceIDE = safeLazy(() => import('@/pages/desktop/WorkspaceIDE').then(m => ({ default: m.WorkspaceIDE })));
+
 export const ProUpgrade = lazy(() => import('@/pages/ProUpgrade'));
 export const AdminJobHealth = lazy(() => import('@/pages/AdminJobHealth'));
 export const CarePathDetail = lazy(() => import('@/pages/CarePathDetail'));

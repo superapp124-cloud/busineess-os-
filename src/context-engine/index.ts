@@ -6,9 +6,7 @@ export { inferUserGoal } from './GoalIntelligence';
 export type { ClassificationResult } from './AIClassifier';
 export type {
   GoalIntelligenceResult,
-  VisualScore,
-  ImpactItem,
-  ComparisonMetric
+  WorkMission
 } from './GoalIntelligence';
 export type {
   Signal,
