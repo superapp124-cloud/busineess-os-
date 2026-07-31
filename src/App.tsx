@@ -187,20 +187,61 @@ const SubdomainRedirect = () => {
  return <Navigate to="/desktop/home" replace />;
 };
 
-// Wrapper for lazy routes with Suspense
+// Local Error Boundary to catch stale Vercel deployment chunk errors during route navigation
+class StaleChunkErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError(error: Error) {
+    const isChunkError = error?.message?.includes('Failed to fetch dynamically imported module') ||
+                         error?.message?.includes('Importing a module script failed') ||
+                         error?.message?.includes('Loading chunk');
+    if (isChunkError) {
+      const pageKey = 'chatr_route_chunk_reload';
+      const lastReload = sessionStorage.getItem(pageKey);
+      const now = Date.now();
+      if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+        sessionStorage.setItem(pageKey, now.toString());
+        console.warn('[StaleChunkErrorBoundary] Auto-refreshing stale deployment chunk...');
+        window.location.reload();
+      }
+    }
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
+          <div className="text-sm font-bold text-slate-700 mb-2">Updating CHATR with latest features...</div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow"
+          >
+            Refresh Now
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Wrapper for lazy routes with Suspense & Stale Chunk Recovery
 const LazyRoute = ({ component: Component, ...props }: { component: React.ComponentType<any>, [key: string]: any }) => (
- <Suspense fallback={<PageLoader />}>
- <Component {...props} />
- </Suspense>
+  <StaleChunkErrorBoundary>
+    <Suspense fallback={<PageLoader />}>
+      <Component {...props} />
+    </Suspense>
+  </StaleChunkErrorBoundary>
 );
 
 // Protected lazy route wrapper
 const ProtectedLazyRoute = ({ component: Component }: { component: React.ComponentType<any> }) => (
- <ProtectedRoute>
- <Suspense fallback={<PageLoader />}>
- <Component />
- </Suspense>
- </ProtectedRoute>
+  <ProtectedRoute>
+    <StaleChunkErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Component />
+      </Suspense>
+    </StaleChunkErrorBoundary>
+  </ProtectedRoute>
 );
 
 const shouldNormalizeNativeStartupPath = (pathname: string) => (
