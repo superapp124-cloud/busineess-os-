@@ -75,7 +75,7 @@ const NAV_SECTIONS = [
   {
     label: 'Intelligence',
     items: [
-      { icon: FileText,      label: 'CHATR Docs', subtitle: 'Document Intelligence',    path: '/docs' },
+      { icon: FileText,      label: 'CHATR Docs', subtitle: 'Document Intelligence',    path: '/desktop/docs' },
       { icon: BrainCircuit,  label: 'AI Canvas',  subtitle: 'Business Canvas & Memory', path: '/desktop/canvas' },
       { icon: Bot,           label: 'AI Agents',  subtitle: 'Autonomous Agent Hub',    path: '/desktop/ai-agents' },
       { icon: Zap,           label: 'Execution',  subtitle: 'Intent OS Engine',         path: '/desktop/intelligence' },
