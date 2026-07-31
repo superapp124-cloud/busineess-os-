@@ -48,14 +48,38 @@ const openBrowserAuth = async (mode: AuthMode) => {
 };
 
 const openProviderLogin = async (provider: AccountProvider) => {
- const electronAuth = (window as any).electronAPI?.auth;
+  const electronAuth = (window as any).electronAPI?.auth;
 
- if (electronAuth?.openProviderLogin) {
- return electronAuth.openProviderLogin(provider.id);
- }
+  if (electronAuth?.openProviderLogin) {
+    return electronAuth.openProviderLogin(provider.id);
+  }
 
- window.open(provider.loginUrl, '_blank', 'noopener,noreferrer');
- return { ok: true, url: provider.loginUrl };
+  // Attempt authentic Supabase OAuth redirect if supported provider
+  const supabaseProviders: Record<string, any> = {
+    google: 'google',
+    microsoft: 'azure',
+    github: 'github',
+    slack: 'slack',
+    linkedin: 'linkedin_oidc'
+  };
+
+  const sbProvider = supabaseProviders[provider.id];
+  if (sbProvider) {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const safeOrigin = window.location.origin.startsWith('file://')
+      ? 'https://businessess-os.vercel.app'
+      : window.location.origin;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: sbProvider,
+      options: { redirectTo: `${safeOrigin}/#/desktop/connected-accounts?connected=${provider.id}` }
+    });
+
+    if (!error) return { ok: true, url: 'supabase_oauth' };
+  }
+
+  window.open(provider.loginUrl, '_blank', 'noopener,noreferrer');
+  return { ok: true, url: provider.loginUrl };
 };
 
 export default function ConnectedAccounts() {
