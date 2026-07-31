@@ -1815,8 +1815,12 @@ function createWindow() {
     log.info('Loading Desktop Vite Dev Server (port 8086)');
     mainWindow.loadURL('http://localhost:8086');
   } else {
-    log.info('Loading Production Bundle');
-    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html'));
+    log.info('Loading Live Vercel Sync Engine');
+    const LIVE_URL = 'https://businessess-os.vercel.app/#/desktop/home';
+    mainWindow.loadURL(LIVE_URL).catch((err) => {
+      log.warn('[Main] Live Vercel loading failed or offline, loading local bundle:', err.message);
+      mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html'));
+    });
   }
 
   // Setup the Context Engine endpoints for this window

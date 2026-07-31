@@ -38,9 +38,6 @@ import {
   UserPlus,
   Bot,
   FileText,
-  Home,
-  Brain,
-  LayoutGrid,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -68,35 +65,46 @@ import { useInstalledModules } from '@/hooks/useInstalledModules';
 
 const NAV_SECTIONS = [
   {
-    label: 'Overview',
-    items: [
-      { icon: Home,         label: 'Home',             subtitle: 'Your Intelligence Hub',          path: '/desktop/home' },
-      { icon: Inbox,        label: 'Universal Inbox',  subtitle: 'All Channels · One Place',       path: '/desktop/inbox' },
-      { icon: Sparkles,     label: 'AI Brief',         subtitle: 'Daily Intelligence Digest',      path: '/desktop/home' },
-    ],
-  },
-  {
     label: 'Communication',
     items: [
-      { icon: Users,        label: 'People',           subtitle: 'Contacts & Directory',           path: '/desktop/chat' },
-      { icon: Calendar,     label: 'Meetings',         subtitle: 'Schedules & Calls',              path: '/desktop/calendar' },
-      { icon: CheckSquare,  label: 'Tasks',            subtitle: 'Actions & Workflows',            path: '/desktop/workspace' },
-      { icon: Brain,        label: 'Memory',           subtitle: 'AI Canvas & Knowledge',          path: '/desktop/canvas' },
-      { icon: FolderOpen,   label: 'Files',            subtitle: 'Documents & Media',              path: '/desktop/files' },
+      { icon: MessageSquare, label: 'Chat',            subtitle: 'Messages & Conversations',         path: '/desktop/chat' },
+      { icon: Inbox,         label: 'Universal Inbox', subtitle: 'All Channels · One Place',         path: '/desktop/inbox' },
+      { icon: Phone,         label: 'Calls',           subtitle: 'Voice & Video Calls',              path: '/desktop/calls' },
     ],
   },
   {
     label: 'Intelligence',
     items: [
-      { icon: Layers,       label: 'Projects',         subtitle: 'Workspaces & Boards',            path: '/desktop/workspace' },
-      { icon: Bot,          label: 'Agents',           subtitle: 'Autonomous Agent Hub',           path: '/desktop/ai-agents' },
-      { icon: LayoutGrid,   label: 'Apps',             subtitle: 'Connectors & Marketplace',       path: '/desktop/connector-store' },
+      { icon: FileText,      label: 'CHATR Docs',   subtitle: 'Document Intelligence',             path: '/desktop/docs' },
+      { icon: BrainCircuit,  label: 'AI Canvas',    subtitle: 'Business Canvas & Memory',          path: '/desktop/canvas' },
+      { icon: Bot,           label: 'AI Agents',    subtitle: 'Autonomous Agent Hub',              path: '/desktop/ai-agents' },
+      { icon: Zap,           label: 'Execution',    subtitle: 'Intent OS Engine',                  path: '/desktop/intelligence' },
+      { icon: Store,         label: 'Intent Store', subtitle: 'Agents · Workflows · Connectors',   path: '/desktop/intent-store' },
+      { icon: Package,       label: 'Ecosystem',    subtitle: 'Connector Marketplace',             path: '/desktop/connector-store' },
+    ],
+  },
+  {
+    label: 'Productivity & OS',
+    items: [
+      { icon: UserPlus,      label: 'Recruitment',  subtitle: 'Talent OS & ATS Engine',            path: '/desktop/recruitment' },
+      { icon: Layers,        label: 'Business OS',  subtitle: 'Executive Control & IDE',            path: '/desktop/business-os' },
+      { icon: Shield,        label: 'Enterprise',   subtitle: 'Enterprise Security & Scale',        path: '/enterprise' },
+      { icon: Calendar,      label: 'Calendar',     subtitle: 'Schedules & Meetings',              path: '/desktop/calendar' },
+      { icon: CheckSquare,   label: 'Tasks',        subtitle: 'Tasks & Workflows',                 path: '/desktop/workspace' },
+      { icon: Building2,     label: 'CRM',          subtitle: 'Customers & Deals',                 path: '/desktop/pro/business' },
+      { icon: Hash,          label: 'Tickets',      subtitle: 'Service Desk',                      path: '/desktop/tickets' },
+      { icon: FolderOpen,    label: 'Files',        subtitle: 'Documents & Media',                 path: '/desktop/files' },
     ],
   },
   {
     label: 'System',
     items: [
-      { icon: Settings,     label: 'Settings',         subtitle: 'Preferences & Account',          path: '/desktop/settings' },
+      { icon: Bell,          label: 'Activity',     subtitle: 'Notifications & Alerts',            path: '/desktop/notifications' },
+      { icon: Globe,         label: 'Accounts',     subtitle: 'Connected Providers',               path: '/desktop/connected-accounts' },
+      { icon: Workflow,      label: 'Studio',       subtitle: 'Automations & Workflows',           path: '/desktop/studio' },
+      { icon: Activity,      label: 'Inspector',    subtitle: 'Pipeline Observability',            path: '/desktop/inspector' },
+      { icon: Server,        label: 'Health',       subtitle: 'Engine & Provider Health',          path: '/desktop/health' },
+      { icon: Settings,      label: 'Settings',     subtitle: 'Preferences & Account',             path: '/desktop/settings' },
     ],
   },
 ];
