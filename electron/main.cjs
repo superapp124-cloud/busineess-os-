@@ -1801,6 +1801,16 @@ function createWindow() {
     }
   });
 
+  // FALLBACK: If React crashes or the bundle is old and doesn't send the signal,
+  // we MUST destroy the splash window anyway so the user can see the error or use the app.
+  setTimeout(() => {
+    if (global.splashWindow && !global.splashWindow.isDestroyed()) {
+      global.splashWindow.destroy();
+      global.splashWindow = null;
+      log.warn('[Startup] Native splash destroyed via 10s fallback (renderer:ready not received).');
+    }
+  }, 10000);
+
   if (isDev) {
     log.info('Loading Desktop Vite Dev Server (port 8086)');
     mainWindow.loadURL('http://localhost:8086');

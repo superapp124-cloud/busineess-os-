@@ -5,14 +5,18 @@ import logo from '@/assets/chatr-icon-logo.png';
 import {
   UploadCloud, Search, CheckCircle, ExternalLink, Activity, ArrowUpRight,
   Settings, Loader2, Sparkles, FileText, User, Mail, Grid, Briefcase, Zap, GitCompare,
-  ShieldAlert, AlertTriangle, Lightbulb, ChevronRight, Shield, Heart, Brain
+  ShieldAlert, AlertTriangle, Lightbulb, ChevronRight, Shield, Heart, Brain, Target, Check
 } from 'lucide-react';
 import { WorkspaceItem, WorkspaceMetadata, WorkspaceCapabilities } from './adapters/types';
 import { WorkspaceViewport, getAdapterFor } from './adapters/WorkspaceViewport';
 import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
-import { useContextEngine, emit, classifyDocument, ClassificationResult } from '../../context-engine';
+import {
+  useContextEngine, emit, classifyDocument, ClassificationResult,
+  inferUserGoal, GoalIntelligenceResult
+} from '../../context-engine';
 import { useCapability } from '../../platform/runtime/BootStageProvider';
+import { GoalDrivenWorkspacePane } from './GoalDrivenWorkspace';
 
 export const CHATRWorkspace: React.FC = () => {
   const { context, addSource, removeSource } = useContextEngine();
@@ -25,16 +29,20 @@ export const CHATRWorkspace: React.FC = () => {
   const searchState = useCapability('worker-search');
   const kernelState = useCapability('chatr-kernel');
 
-  // Classification state — tracks which items have been AI-classified
+  // Goal Intelligence & Classification State
   const [classifying, setClassifying] = useState<Set<string>>(new Set());
+  const [activeGoalTabId, setActiveGoalTabId] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [items, setItems] = useState<WorkspaceItem[]>([
     { id: '1', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
-    { id: '2', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
-    { id: '3', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
-    { id: '4', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
-    { id: '5', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') },
-    { id: '6', sourceUri: 'Q3_Renewal_Discussion.eml', typeHint: 'email', rawFile: new File([], 'Q3_Renewal_Discussion.eml') }
+    { id: '2', sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf', typeHint: 'pdf', rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
+    { id: '3', sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx', typeHint: 'pdf', rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
+    { id: '4', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
+    { id: '5', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
+    { id: '6', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
+    { id: '7', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') },
+    { id: '8', sourceUri: 'Q3_Renewal_Discussion.eml', typeHint: 'email', rawFile: new File([], 'Q3_Renewal_Discussion.eml') }
   ]);
 
   const [activeItemId, setActiveItemId] = useState<string | null>('1');
@@ -57,23 +65,32 @@ export const CHATRWorkspace: React.FC = () => {
     });
   }, []);
 
-  // ─── AI Classification Pipeline ───────────────────────────────────────────
-  // Runs Gemini classification on an item, stamps the result onto the item,
-  // then re-resolves the Workspace so the right Domain Intelligence activates.
+  // ─── Universal Goal Intelligence Pipeline ─────────────────────────────────
   const runClassification = useCallback(async (item: WorkspaceItem) => {
     setClassifying(prev => new Set(prev).add(item.id));
 
     try {
       const fileToClassify = item.rawFile || new File([], item.sourceUri);
-      const result: ClassificationResult = await classifyDocument(fileToClassify);
+      
+      // Parallel execution: AI Classification + Goal Inference
+      const [classification, goalResult] = await Promise.all([
+        classifyDocument(fileToClassify),
+        inferUserGoal(fileToClassify)
+      ]);
 
-      // Stamp the AI result onto the item so workspace matchers can read it
-      (item as any).__classification__ = result;
+      // Stamp results onto item
+      (item as any).__classification__ = classification;
+      (item as any).__goalResult__ = goalResult;
+
+      // Set initial dynamic goal tab
+      if (goalResult.dynamicTabs.length > 0) {
+        setActiveGoalTabId(goalResult.dynamicTabs[0].id);
+      }
 
       // Trigger re-render by updating item in array
       setItems(prev => prev.map(i => i.id === item.id ? { ...i } : i));
 
-      // Feed rich context to the Context Engine
+      // Register context with global Context Engine
       addSource({
         module: 'workspace',
         signals: [{
@@ -81,25 +98,23 @@ export const CHATRWorkspace: React.FC = () => {
           sourceModule: 'workspace',
           payload: {
             filename: item.sourceUri,
-            documentType: result.documentType,
-            domainIntelligence: result.domainIntelligence,
-            industry: result.industry,
-            confidence: result.confidence,
+            goal: goalResult.inferredGoal.title,
+            category: goalResult.inferredGoal.category,
+            confidence: goalResult.inferredGoal.confidence,
           },
           timestamp: Date.now(),
         }],
         textChunks: [
           item.sourceUri,
-          result.documentType,
-          result.domainIntelligence,
-          result.industry,
-          result.summary,
-          ...(result.keyEntities?.map(e => `${e.label}: ${e.value}`) ?? []),
-          result.rawText ?? '',
+          goalResult.inferredGoal.title,
+          goalResult.primaryDecision.question,
+          goalResult.summary,
+          ...(goalResult.keyFindings?.map(f => `${f.label}: ${f.value}`) ?? []),
+          goalResult.rawText ?? '',
         ],
       });
 
-      // Re-resolve workspace with AI-stamped item
+      // Resolve business workspace
       const workspace = WorkspaceRegistry.matchWorkspace(item);
       setActiveWorkspace(workspace);
       if (workspace.modules.length > 0) {
@@ -108,11 +123,11 @@ export const CHATRWorkspace: React.FC = () => {
 
       emit('document.opened', 'workspace', {
         filename: item.sourceUri,
-        domainIntelligence: result.domainIntelligence,
-        confidence: result.confidence,
+        goal: goalResult.inferredGoal.title,
+        confidence: goalResult.inferredGoal.confidence,
       });
     } catch (err) {
-      console.error('[CHATRWorkspace] AI classification error:', err);
+      console.error('[CHATRWorkspace] Goal Intelligence error:', err);
     } finally {
       setClassifying(prev => {
         const next = new Set(prev);
@@ -123,8 +138,6 @@ export const CHATRWorkspace: React.FC = () => {
   }, [addSource]);
 
   // ─── Active Item Effect ───────────────────────────────────────────────────
-  // When user selects a different item, resolve its workspace immediately.
-  // If not yet AI-classified (real file, size > 0), also kick off classification.
   useEffect(() => {
     if (!activeItem || !activeAdapter) {
       setActiveMetadata(null);
@@ -135,7 +148,11 @@ export const CHATRWorkspace: React.FC = () => {
       return;
     }
 
-    const existingClassification = (activeItem as any).__classification__;
+    const existingGoal = (activeItem as any).__goalResult__;
+    if (existingGoal && existingGoal.dynamicTabs.length > 0) {
+      setActiveGoalTabId(existingGoal.dynamicTabs[0].id);
+    }
+
     const workspace = WorkspaceRegistry.matchWorkspace(activeItem);
     setActiveWorkspace(workspace);
     if (workspace.modules.length > 0) {
@@ -147,8 +164,8 @@ export const CHATRWorkspace: React.FC = () => {
     activeAdapter.getMetadata(activeItem).then(meta => setActiveMetadata(meta));
     setActiveCapabilities(activeAdapter.getCapabilities());
 
-    // If no AI result yet, kick off classification
-    if (!existingClassification) {
+    // If no Goal result yet, kick off inference
+    if (!existingGoal) {
       runClassification(activeItem);
     }
   }, [activeItemId, runClassification]);
@@ -161,16 +178,21 @@ export const CHATRWorkspace: React.FC = () => {
       id: `item_${Date.now()}`,
       sourceUri: file.name,
       rawFile: file,
-      typeHint: 'pdf',  // Will be overridden by AI classification
+      typeHint: 'pdf',
     };
 
     setItems(prev => [newItem, ...prev]);
     setActiveItemId(newItem.id);
 
-    // Kick off AI classification immediately after adding
+    // Kick off Goal Intelligence immediately
     runClassification(newItem);
 
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleExecuteGoalAction = (actionId: string, actionLabel: string) => {
+    setToastMessage(`✓ Executed: ${actionLabel}`);
+    setTimeout(() => setToastMessage(null), 4000);
   };
 
   const getIconForType = (typeHint?: string) => {
@@ -188,30 +210,20 @@ export const CHATRWorkspace: React.FC = () => {
     }
   };
 
-  const handleAskIntelligence = (question: string) => {
-    if (!question.trim()) return;
-    setChatHistory(prev => [...prev, { sender: 'user', text: question }]);
-    setChatInput('');
-
-    setTimeout(() => {
-      let aiText = `I analyzed the ${activeMetadata?.type?.toLowerCase() || 'workspace'} and found relevant information based on your query.`;
-      let sourceText = undefined;
-
-      if (question.toLowerCase().includes('compare') || question.toLowerCase().includes('diff')) {
-        aiText = 'The liability cap was increased from $500,000 to $1,000,000. Additionally, the termination notice period was reduced to 30 days.';
-        sourceText = 'Section 14.2 & Section 18.1';
-      }
-
-      setChatHistory(prev => [...prev, { sender: 'ai', text: aiText, source: sourceText }]);
-    }, 600);
-  };
-
   return (
     <div className="flex flex-col h-screen bg-slate-50 text-slate-800 font-sans overflow-hidden">
       
-      {/* Universal Workspace Header */}
+      {/* Toast Notification Bar */}
+      {toastMessage && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-2">
+          <Check className="w-4 h-4 text-emerald-400" />
+          {toastMessage}
+        </div>
+      )}
+
+      {/* Universal Goal Intelligence Header */}
       <header className="h-14 border-b border-slate-200 bg-white px-4 flex items-center justify-between z-10 shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <img src={logo} alt="CHATR" className="w-7 h-7 object-contain rounded" />
           <h1 className="font-bold text-sm text-slate-900 tracking-tight flex items-center gap-2">
             CHATR Workspace
@@ -223,17 +235,16 @@ export const CHATRWorkspace: React.FC = () => {
           </h1>
         </div>
 
-        {/* Dynamic Header Item — AI Classification Badge */}
+        {/* Dynamic Header Badge — Goal Intelligence */}
         <div className="flex-1 flex justify-center">
           {activeItem && (() => {
-            const classification = (activeItem as any).__classification__;
+            const goalResult: GoalIntelligenceResult | undefined = (activeItem as any).__goalResult__;
             const isClassifying = classifying.has(activeItem.id);
             return (
               <div className="flex items-center gap-2 flex-wrap justify-center">
-                {/* Document name */}
                 <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
                   {getIconForType(activeItem.typeHint)}
-                  <span className="font-bold text-sm text-slate-900 max-w-[200px] truncate">
+                  <span className="font-bold text-sm text-slate-900 max-w-[180px] truncate">
                     {activeItem.rawFile?.name || activeItem.sourceUri}
                   </span>
                   <span className="text-slate-300">|</span>
@@ -244,39 +255,20 @@ export const CHATRWorkspace: React.FC = () => {
                   </span>
                 </div>
 
-                {/* AI Classification Badge */}
+                {/* Universal Goal Intelligence Badge */}
                 {isClassifying ? (
                   <div className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm animate-pulse">
                     <Loader2 className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
-                    <span className="text-xs font-bold text-indigo-700">AI Classifying...</span>
+                    <span className="text-xs font-bold text-indigo-700">Inferring Goal...</span>
                   </div>
-                ) : classification ? (
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm ${
-                    classification.domainIntelligence === 'clinical' ? 'bg-rose-50 border-rose-200' :
-                    classification.domainIntelligence === 'insurance' ? 'bg-blue-50 border-blue-200' :
-                    classification.domainIntelligence === 'talent' ? 'bg-amber-50 border-amber-200' :
-                    classification.domainIntelligence === 'legal' ? 'bg-purple-50 border-purple-200' :
-                    classification.domainIntelligence === 'finance' ? 'bg-emerald-50 border-emerald-200' :
-                    'bg-slate-50 border-slate-200'
-                  }`}>
-                    <Brain className={`w-3.5 h-3.5 ${
-                      classification.domainIntelligence === 'clinical' ? 'text-rose-500' :
-                      classification.domainIntelligence === 'insurance' ? 'text-blue-500' :
-                      classification.domainIntelligence === 'talent' ? 'text-amber-500' :
-                      classification.domainIntelligence === 'legal' ? 'text-purple-500' :
-                      classification.domainIntelligence === 'finance' ? 'text-emerald-500' :
-                      'text-slate-500'
-                    }`} />
-                    <span className={`text-xs font-bold ${
-                      classification.domainIntelligence === 'clinical' ? 'text-rose-700' :
-                      classification.domainIntelligence === 'insurance' ? 'text-blue-700' :
-                      classification.domainIntelligence === 'talent' ? 'text-amber-700' :
-                      classification.domainIntelligence === 'legal' ? 'text-purple-700' :
-                      classification.domainIntelligence === 'finance' ? 'text-emerald-700' :
-                      'text-slate-700'
-                    }`}>{classification.domainLabel}</span>
-                    <span className="text-[10px] font-bold text-slate-400">
-                      {Math.round(classification.confidence * 100)}%
+                ) : goalResult ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-gradient-to-r from-indigo-50 via-purple-50 to-blue-50 border-indigo-200 shadow-sm">
+                    <Target className="w-3.5 h-3.5 text-indigo-600" />
+                    <span className="text-xs font-bold text-indigo-900">
+                      {goalResult.inferredGoal.title}
+                    </span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
+                      {Math.round(goalResult.inferredGoal.confidence * 100)}% Match
                     </span>
                   </div>
                 ) : null}
@@ -286,7 +278,6 @@ export const CHATRWorkspace: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Settings / Developer Mode */}
           <div className="relative">
             <button onClick={() => setIsSettingsOpen(!isSettingsOpen)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
               <Settings className="w-4 h-4" />
@@ -313,17 +304,10 @@ export const CHATRWorkspace: React.FC = () => {
             <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,.eml,.msg,image/*" />
             <button
               onClick={() => fileInputRef.current?.click()}
-              disabled={kernelState === 'initializing'}
-              className={`w-full rounded-lg p-3 text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-sm ${
-                kernelState === 'initializing'
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  : 'bg-slate-900 hover:bg-slate-800 text-white'
-              }`}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl p-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
-              {kernelState === 'initializing'
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Platform warming up...</>
-                : <><UploadCloud className="w-4 h-4" /> New Workspace Item</>
-              }
+              <UploadCloud className="w-4 h-4" />
+              New Workspace Item
             </button>
           </div>
           
@@ -331,25 +315,30 @@ export const CHATRWorkspace: React.FC = () => {
             <div className="px-2 py-1 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Recent Items</div>
             {items.map(item => {
               const isSelected = activeItemId === item.id;
-              // Mock simple metadata for sidebar if we don't have the full async metadata yet
-              const title = item.rawFile?.name || item.sourceUri;
+              const title = item.sourceUri;
+              const goal: GoalIntelligenceResult | undefined = (item as any).__goalResult__;
+
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveItemId(item.id)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-2 ${
+                  className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 ${
                     isSelected
-                      ? 'bg-indigo-50 border-indigo-200 shadow-sm'
+                      ? 'bg-indigo-50/80 border-indigo-200 shadow-sm'
                       : 'bg-white border-slate-100 hover:bg-slate-50 hover:border-slate-200'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5">{getIconForType(item.typeHint)}</div>
+                  <div className="flex items-start gap-2.5">
+                    <div className="mt-0.5 shrink-0">{getIconForType(item.typeHint)}</div>
                     <div className="flex-1 overflow-hidden">
-                      <div className={`text-sm truncate font-bold ${isSelected ? 'text-indigo-950' : 'text-slate-700'}`}>{title}</div>
-                      <div className="flex items-center gap-2 mt-1 text-[11px] font-medium text-slate-500">
-                        <span>Updated today</span>
-                      </div>
+                      <div className={`text-xs truncate font-bold ${isSelected ? 'text-indigo-950' : 'text-slate-700'}`}>{title}</div>
+                      {goal ? (
+                        <div className="text-[10px] font-semibold text-indigo-600 truncate mt-0.5">
+                          🎯 {goal.inferredGoal.title}
+                        </div>
+                      ) : (
+                        <div className="text-[10px] text-slate-400 mt-0.5">Updated today</div>
+                      )}
                     </div>
                   </div>
                 </button>
@@ -361,105 +350,44 @@ export const CHATRWorkspace: React.FC = () => {
         {/* SHELL: Center Viewport (60%) */}
         <div className="w-3/5 bg-slate-100 border-r border-slate-200 relative flex flex-col">
           {!activeItem ? (
-            // UNIVERSAL EMPTY STATE
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 animate-in fade-in duration-500">
               <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-200">
                 <Grid className="w-10 h-10 text-slate-300" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2 tracking-tight">Your Intelligent Workspace</h2>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2 tracking-tight">CHATR Goal Intelligence Platform</h2>
               <p className="text-slate-500 mb-8 text-sm max-w-sm mx-auto leading-relaxed">
-                Drop your file to create a workspace. We extract entities, structure insights, and enable semantic search instantly.
+                Drop any document, email, or investment receipt. CHATR automatically infers your goal and helps you complete it.
               </p>
-              
-              <div className="flex gap-4">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm"><FileText className="w-3.5 h-3.5" /> PDFs & Docs</div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm"><Mail className="w-3.5 h-3.5" /> Emails</div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm"><User className="w-3.5 h-3.5" /> Resumes</div>
-              </div>
-
               <button 
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-10 px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-xl shadow-slate-900/10 hover:shadow-slate-900/20"
+                className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-xl shadow-slate-900/10 hover:shadow-slate-900/20"
               >
                 Browse Files
               </button>
             </div>
           ) : (
-            // ADAPTER RENDER PORTAL
             <WorkspaceViewport item={activeItem} />
           )}
         </div>
 
-        {/* SHELL: Right Intelligence Panel (20%) */}
-        <div className="w-1/5 min-w-[320px] max-w-[400px] bg-white flex flex-col z-10 shadow-[-4px_0_24px_rgba(0,0,0,0.02)]">
-          {activeItem && activeWorkspace && activeModuleId ? (
-            <>
-              {/* Dynamic Intelligence Tabs */}
-              <div className="flex items-center border-b border-slate-100 p-2 shrink-0 overflow-x-auto hide-scrollbar">
-                {activeWorkspace.modules.map(module => (
-                  <button
-                    key={module.id}
-                    onClick={() => setActiveModuleId(module.id)}
-                    className={`flex items-center gap-1.5 px-3 py-2 min-w-max text-xs font-bold rounded-lg transition-all ${
-                      activeModuleId === module.id 
-                        ? 'bg-indigo-50 text-indigo-700 shadow-sm' 
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-                    }`}
-                  >
-                    {module.icon}
-                    {module.title}
-                  </button>
-                ))}
-              </div>
-
-              {/* Dynamic Module Renderer */}
-              <div className="flex-1 overflow-y-auto p-4 animate-in slide-in-from-bottom-2 fade-in flex flex-col">
-                {activeWorkspace.modules.map(module => {
-                  if (module.id !== activeModuleId) return null;
-                  const Component = module.component;
-                  
-                  return (
-                    <div key={module.id} className="flex flex-col h-full">
-                      {/* Module Content */}
-                      <div className="flex-1">
-                        <Component item={activeItem} />
-                      </div>
-                      
-                      {/* Module Actions (Owned by the module) */}
-                      {module.actions && module.actions.length > 0 && (
-                        <div className="mt-8 pt-4 border-t border-slate-100 space-y-2 shrink-0">
-                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">Recommended Actions</h4>
-                          {module.actions.map(action => (
-                            <button
-                              key={action.id}
-                              onClick={action.onClick}
-                              className="w-full flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm transition-all group"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded group-hover:scale-110 transition-transform">
-                                  {action.icon}
-                                </div>
-                                <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">
-                                  {action.label}
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
+        {/* SHELL: Right Intelligence Panel (20%) — Universal Goal Intelligence */}
+        <div className="w-1/5 min-w-[340px] max-w-[420px] bg-white flex flex-col z-10 p-4 overflow-y-auto shadow-[-4px_0_24px_rgba(0,0,0,0.02)]">
+          {activeItem && (activeItem as any).__goalResult__ ? (
+            <GoalDrivenWorkspacePane
+              item={activeItem}
+              goalResult={(activeItem as any).__goalResult__}
+              activeTabId={activeGoalTabId}
+              onTabChange={(tabId) => setActiveGoalTabId(tabId)}
+              onExecuteAction={handleExecuteGoalAction}
+            />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-400 text-sm p-8 text-center bg-slate-50">
-              Select a workspace item to view intelligence.
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-sm p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
+              <Loader2 className="w-6 h-6 text-indigo-500 animate-spin mb-3" />
+              <div className="font-bold text-slate-700">Inferring Goal & Primary Decision...</div>
+              <div className="text-xs text-slate-400 mt-1">Analyzing context and preparing automated next steps.</div>
             </div>
           )}
         </div>
-
-
 
       </div>
       
@@ -467,10 +395,10 @@ export const CHATRWorkspace: React.FC = () => {
       {isDeveloperMode && (
         <footer className="h-10 border-t border-slate-300 bg-slate-900 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-10 shrink-0">
           <div className="flex items-center gap-4">
-            <span className="text-emerald-400 font-bold tracking-wider">DEV: UNIVERSAL_ADAPTER_ROUTING_ACTIVE</span>
-            <span className="text-indigo-400">Active Adapter: {activeAdapter?.id || 'NULL'}</span>
+            <span className="text-emerald-400 font-bold tracking-wider">DEV: GOAL_INTELLIGENCE_V2_ACTIVE</span>
+            <span className="text-indigo-400">Active Goal: {(activeItem as any)?.__goalResult__?.inferredGoal?.title || 'NULL'}</span>
           </div>
-          <div>Capabilities Bound: {activeCapabilities ? Object.keys(activeCapabilities).length : 0}</div>
+          <div>Confidence: {(activeItem as any)?.__goalResult__?.inferredGoal?.confidence ? Math.round((activeItem as any).__goalResult__.inferredGoal.confidence * 100) + '%' : '0%'}</div>
         </footer>
       )}
     </div>
