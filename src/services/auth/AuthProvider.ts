@@ -90,14 +90,19 @@ export class AuthProvider {
       const safeOrigin = window.location.origin.startsWith('file://')
         ? 'https://busineess-os.vercel.app'
         : window.location.origin;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider === 'microsoft' ? 'azure' : 'google',
         options: {
           scopes,
-          redirectTo: safeOrigin + '/#/smart-inbox'
+          redirectTo: safeOrigin + '/#/smart-inbox',
+          skipBrowserRedirect: true
         }
       });
-
+      if (error) throw error;
+      if (data?.url) {
+        // Handle desktop flow or fallback
+        return { ok: true, url: data.url } as any;
+      }
       if (error) throw error;
       return new Promise(() => {});
     }

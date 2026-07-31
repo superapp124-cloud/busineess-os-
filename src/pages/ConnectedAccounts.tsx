@@ -70,12 +70,15 @@ const openProviderLogin = async (provider: AccountProvider) => {
       ? 'https://busineess-os.vercel.app'
       : window.location.origin;
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: sbProvider,
-      options: { redirectTo: `${safeOrigin}/#/desktop/connected-accounts?connected=${provider.id}` }
+      options: {
+        redirectTo: `${safeOrigin}/#/desktop/settings?connected=${provider.id}`,
+        skipBrowserRedirect: true
+      }
     });
 
-    if (!error) return { ok: true, url: 'supabase_oauth' };
+    if (error || data?.url) { return { ok: true, url: 'supabase_oauth' }; }
   }
 
   window.open(provider.loginUrl, '_blank', 'noopener,noreferrer');

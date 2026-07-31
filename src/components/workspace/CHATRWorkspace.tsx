@@ -12,11 +12,12 @@ import { WorkspaceViewport, getAdapterFor } from './adapters/WorkspaceViewport';
 import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
 import {
-  useContextEngine, emit, classifyDocument, ClassificationResult,
-  inferUserGoal, GoalIntelligenceResult
+  useContextEngine, emit, classifyDocument
 } from '../../context-engine';
 import { useCapability } from '../../platform/runtime/BootStageProvider';
 import { GoalDrivenWorkspacePane } from './GoalDrivenWorkspace';
+import { WorkspaceState } from '../../core/types';
+import { PipelineRunner } from '../../core/PipelineRunner';
 
 export const CHATRWorkspace: React.FC = () => {
   const { context, addSource, removeSource } = useContextEngine();
@@ -70,41 +71,20 @@ export const CHATRWorkspace: React.FC = () => {
     try {
       const fileToClassify = item.rawFile || new File([], item.sourceUri);
       
-      const [classification, goalResult] = await Promise.all([
-        classifyDocument(fileToClassify),
-        inferUserGoal(fileToClassify)
-      ]);
+      const runner = new PipelineRunner();
+      const workspaceState = await runner.processArtifact({
+        id: item.id,
+        sourceUri: item.sourceUri,
+        typeHint: item.typeHint,
+        rawFile: fileToClassify,
+        createdAt: new Date().toISOString()
+      });
 
       // Stamp results onto item
-      (item as any).__classification__ = classification;
-      (item as any).__goalResult__ = goalResult;
+      (item as any).__workspaceState__ = workspaceState;
 
       // Trigger re-render by updating item in array
       setItems(prev => prev.map(i => i.id === item.id ? { ...i } : i));
-
-      // Register context with global Context Engine
-      addSource({
-        module: 'workspace',
-        signals: [{
-          type: 'document.opened',
-          sourceModule: 'workspace',
-          payload: {
-            filename: item.sourceUri,
-            goal: goalResult.inferredGoal.title,
-            category: goalResult.inferredGoal.category,
-            confidence: goalResult.inferredGoal.confidence,
-          },
-          timestamp: Date.now(),
-        }],
-        textChunks: [
-          item.sourceUri,
-          goalResult.inferredGoal.title,
-          goalResult.mission.realQuestion,
-          goalResult.summary,
-          ...(goalResult.mission.whatChatrFound ?? []),
-          goalResult.rawText ?? '',
-        ],
-      });
 
       // Resolve business workspace
       const workspace = WorkspaceRegistry.matchWorkspace(item);
@@ -115,8 +95,8 @@ export const CHATRWorkspace: React.FC = () => {
 
       emit('document.opened', 'workspace', {
         filename: item.sourceUri,
-        goal: goalResult.inferredGoal.title,
-        confidence: goalResult.inferredGoal.confidence,
+        goal: workspaceState.goal.title,
+        confidence: workspaceState.artifact.confidence,
       });
     } catch (err) {
       console.error('[CHATRWorkspace] Work Execution error:', err);
@@ -140,7 +120,7 @@ export const CHATRWorkspace: React.FC = () => {
       return;
     }
 
-    const existingGoal = (activeItem as any).__goalResult__;
+    const existingState = (activeItem as any).__workspaceState__;
 
     const workspace = WorkspaceRegistry.matchWorkspace(activeItem);
     setActiveWorkspace(workspace);
@@ -153,8 +133,8 @@ export const CHATRWorkspace: React.FC = () => {
     activeAdapter.getMetadata(activeItem).then(meta => setActiveMetadata(meta));
     setActiveCapabilities(activeAdapter.getCapabilities());
 
-    // If no Goal result yet, kick off inference
-    if (!existingGoal) {
+    // If no State yet, kick off pipeline
+    if (!existingState) {
       runClassification(activeItem);
     }
   }, [activeItemId, runClassification]);
@@ -227,7 +207,7 @@ export const CHATRWorkspace: React.FC = () => {
         {/* Dynamic Header Badge — Outcome & Goal */}
         <div className="flex-1 flex justify-center">
           {activeItem && (() => {
-            const goalResult: GoalIntelligenceResult | undefined = (activeItem as any).__goalResult__;
+            const state: WorkspaceState | undefined = (activeItem as any).__workspaceState__;
             const isClassifying = classifying.has(activeItem.id);
             return (
               <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -236,28 +216,22 @@ export const CHATRWorkspace: React.FC = () => {
                   <span className="font-bold text-sm text-slate-900 max-w-[180px] truncate">
                     {activeItem.rawFile?.name || activeItem.sourceUri}
                   </span>
-                  <span className="text-slate-300">|</span>
-                  <span className="text-xs text-slate-500">{activeMetadata?.updatedAt || 'Just now'}</span>
-                  <span className="text-slate-300">|</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${getStatusColor(activeMetadata?.status)}`}>
-                    {activeMetadata?.status || 'Ready'}
-                  </span>
                 </div>
 
                 {/* Outcome Badge — Zero AI Terminology */}
                 {isClassifying ? (
                   <div className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm animate-pulse">
                     <Loader2 className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
-                    <span className="text-xs font-bold text-indigo-700">Understanding Work...</span>
+                    <span className="text-xs font-bold text-indigo-700">Processing Work...</span>
                   </div>
-                ) : goalResult ? (
+                ) : state ? (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-gradient-to-r from-indigo-50 via-purple-50 to-blue-50 border-indigo-200 shadow-sm">
                     <Target className="w-3.5 h-3.5 text-indigo-600" />
                     <span className="text-xs font-bold text-indigo-900">
-                      {goalResult.mission.goalTitle}
+                      {state.goal.title}
                     </span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
-                      {goalResult.mission.progressPercent}% Complete
+                    <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border ${state.readiness.isReady ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-amber-100 text-amber-800 border-amber-200'}`}>
+                      {state.readiness.isReady ? 'Ready' : `${state.readiness.percentage}% Ready`}
                     </span>
                   </div>
                 ) : null}
@@ -305,7 +279,7 @@ export const CHATRWorkspace: React.FC = () => {
             {items.map(item => {
               const isSelected = activeItemId === item.id;
               const title = item.sourceUri;
-              const goal: GoalIntelligenceResult | undefined = (item as any).__goalResult__;
+              const state: WorkspaceState | undefined = (item as any).__workspaceState__;
 
               return (
                 <button
@@ -321,9 +295,9 @@ export const CHATRWorkspace: React.FC = () => {
                     <div className="mt-0.5 shrink-0">{getIconForType(item.typeHint)}</div>
                     <div className="flex-1 overflow-hidden">
                       <div className={`text-xs truncate font-bold ${isSelected ? 'text-indigo-950' : 'text-slate-700'}`}>{title}</div>
-                      {goal ? (
+                      {state ? (
                         <div className="text-[10px] font-semibold text-indigo-600 truncate mt-0.5">
-                          🎯 {goal.mission.goalTitle}
+                          🎯 {state.goal.title}
                         </div>
                       ) : (
                         <div className="text-[10px] text-slate-400 mt-0.5">Updated today</div>
@@ -361,13 +335,12 @@ export const CHATRWorkspace: React.FC = () => {
 
         {/* SHELL: Right Intelligence Panel (20%) — Outcome & Work Control Center */}
         <div className="w-1/5 min-w-[340px] max-w-[420px] bg-white flex flex-col z-10 p-4 overflow-y-auto shadow-[-4px_0_24px_rgba(0,0,0,0.02)]">
-          {activeItem && (activeItem as any).__goalResult__ ? (
+          {activeItem && (activeItem as any).__workspaceState__ ? (
             <GoalDrivenWorkspacePane
-              item={activeItem}
-              goalResult={(activeItem as any).__goalResult__}
-              activeTabId={activeGoalTabId}
-              onTabChange={(tabId) => setActiveGoalTabId(tabId)}
-              onExecuteAction={handleExecuteGoalAction}
+              state={(activeItem as any).__workspaceState__}
+              onDecision={(d) => handleExecuteGoalAction(d.id, d.label)}
+              onRecommendation={(r) => handleExecuteGoalAction(r.id || '', r.title)}
+              onContextClick={(c) => console.log('Context clicked:', c)}
             />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-sm p-8 text-center bg-slate-50 rounded-xl border border-slate-200">

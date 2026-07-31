@@ -1700,8 +1700,8 @@ function createWindow() {
           "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat https://www.transparenttextures.com blob:;" +
           "connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net https://api.bigdatacloud.net;" +
           "worker-src 'self' blob:;" +
-          "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.net/;" +
-          "object-src 'none';"
+          "frame-src 'self' blob: https://www.google.com/recaptcha/ https://recaptcha.net/;" +
+          "object-src 'self' blob:;"
         ]
       }
     });

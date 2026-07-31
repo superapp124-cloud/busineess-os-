@@ -1,15 +1,19 @@
 {
   "name": "@chatr/kernel",
   "version": "1.0.0",
-  "description": "Core interface contracts for CHATR Intent OS",
+  "description": "CHATR Runtime Kernel",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@chatr/events": "workspace:*"
+  }
 }
