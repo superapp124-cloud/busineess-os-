@@ -86,12 +86,15 @@ export class AuthProvider {
           });
         });
       }
-    } else {
+      // In Electron, window.location.origin is 'file://' which Electron CSP blocks as a redirect.
+      const safeOrigin = window.location.origin.startsWith('file://')
+        ? 'https://businessess-os.vercel.app'
+        : window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider === 'microsoft' ? 'azure' : 'google',
         options: {
           scopes,
-          redirectTo: window.location.origin + '/#/smart-inbox'
+          redirectTo: safeOrigin + '/#/smart-inbox'
         }
       });
 
