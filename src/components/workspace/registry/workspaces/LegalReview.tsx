@@ -77,11 +77,25 @@ export const createLegalReviewWorkspace = (item: WorkspaceItem): BusinessWorkspa
     displayName: name,
     businessIntent: 'Legal Review',
     matcher: (testItem) => {
-      const isContract = testItem.sourceUri.toLowerCase().includes('agreement') || testItem.sourceUri.toLowerCase().includes('contract') || testItem.sourceUri.toLowerCase().includes('nda');
+      // ── AI Classification takes priority ──
+      const aiResult = (testItem as any).__classification__;
+      if (aiResult?.domainIntelligence === 'legal') {
+        return {
+          workspaceId: 'legal-review',
+          confidence: aiResult.confidence,
+          reasoning: [`AI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
+        };
+      }
+
+      // ── Fallback: filename heuristics ──
+      const isContract = testItem.sourceUri.toLowerCase().includes('agreement') ||
+        testItem.sourceUri.toLowerCase().includes('contract') ||
+        testItem.sourceUri.toLowerCase().includes('nda') ||
+        testItem.sourceUri.toLowerCase().includes('msa');
       return {
         workspaceId: 'legal-review',
         confidence: isContract ? 0.90 : 0,
-        reasoning: isContract ? ['Agreement clauses detected', 'Parties identified', 'Liability section present'] : []
+        reasoning: isContract ? ['Agreement/Contract keywords detected in filename'] : []
       };
     },
     modules: [

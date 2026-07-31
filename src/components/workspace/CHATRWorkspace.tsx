@@ -11,8 +11,7 @@ import { WorkspaceItem, WorkspaceMetadata, WorkspaceCapabilities } from './adapt
 import { WorkspaceViewport, getAdapterFor } from './adapters/WorkspaceViewport';
 import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
-import { useContextEngine, emit } from '../../context-engine';
-import { classifyDocument, ClassificationResult } from '../../context-engine/AIClassifier';
+import { useContextEngine, emit, classifyDocument, ClassificationResult } from '../../context-engine';
 import { useCapability } from '../../platform/runtime/BootStageProvider';
 
 export const CHATRWorkspace: React.FC = () => {

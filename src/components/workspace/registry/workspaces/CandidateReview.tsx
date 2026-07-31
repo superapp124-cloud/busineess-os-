@@ -223,12 +223,23 @@ export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWor
       const fileSignalMatches = resumeFileSignals.filter(k => uri.includes(k)).length;
       const hasNamePattern = !hasDigitsOrHexHash && /^[a-z]{3,}\s+[a-z]{3,}/i.test(uri) && !uri.includes('agreement') && !uri.includes('contract');
       
+      // ── AI Classification takes priority ──
+      const aiResult = (testItem as any).__classification__;
+      if (aiResult?.domainIntelligence === 'talent') {
+        return {
+          workspaceId: 'candidate-review',
+          confidence: aiResult.confidence,
+          reasoning: [`AI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
+        };
+      }
+
+      // ── Fallback: filename heuristics ──
       let confidence = 0;
       if (testItem.typeHint === 'resume') confidence = 0.95;
       else if (fileSignalMatches >= 2) confidence = 0.90;
       else if (fileSignalMatches === 1) confidence = 0.75;
       else if (hasNamePattern) confidence = 0.65;
-      
+
       const isMatch = confidence > 0;
       return {
         workspaceId: 'candidate-review',
