@@ -1,23 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IntentKernel } from '../../kernel/IntentKernel';
 import { IntelligenceRuntime } from '../../runtimes/intelligence/IntelligenceRuntime';
 import logo from '@/assets/chatr-icon-logo.png';
 import {
   UploadCloud, Search, CheckCircle, ExternalLink, Activity, ArrowUpRight,
   Settings, Loader2, Sparkles, FileText, User, Mail, Grid, Briefcase, Zap, GitCompare,
-  ShieldAlert, AlertTriangle, Lightbulb, ChevronRight
+  ShieldAlert, AlertTriangle, Lightbulb, ChevronRight, Shield, Heart, Brain
 } from 'lucide-react';
 import { WorkspaceItem, WorkspaceMetadata, WorkspaceCapabilities } from './adapters/types';
 import { WorkspaceViewport, getAdapterFor } from './adapters/WorkspaceViewport';
 import { WorkspaceRegistry } from './registry/WorkspaceRegistry';
 import { BusinessWorkspace } from './registry/types';
 import { useContextEngine, emit } from '../../context-engine';
+import { classifyDocument, ClassificationResult } from '../../context-engine/AIClassifier';
 
 export const CHATRWorkspace: React.FC = () => {
   const { context, addSource, removeSource } = useContextEngine();
   const [isDeveloperMode, setIsDeveloperMode] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Classification state — tracks which items have been AI-classified
+  const [classifying, setClassifying] = useState<Set<string>>(new Set());
 
   const [items, setItems] = useState<WorkspaceItem[]>([
     { id: '1', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
@@ -45,7 +49,76 @@ export const CHATRWorkspace: React.FC = () => {
     });
   }, []);
 
-  // When active item changes: emit signal to Context Engine + resolve UI modules
+  // ─── AI Classification Pipeline ───────────────────────────────────────────
+  // Runs Gemini classification on an item, stamps the result onto the item,
+  // then re-resolves the Workspace so the right Domain Intelligence activates.
+  // MUST be declared before any useEffect that calls it.
+  const runClassification = useCallback(async (item: WorkspaceItem) => {
+    if (!item.rawFile || item.rawFile.size === 0) return;
+
+    setClassifying(prev => new Set(prev).add(item.id));
+
+    try {
+      const result: ClassificationResult = await classifyDocument(item.rawFile);
+
+      // Stamp the AI result onto the item so workspace matchers can read it
+      (item as any).__classification__ = result;
+
+      // Trigger re-render by bumping the items array
+      setItems(prev => prev.map(i => i.id === item.id ? { ...i } : i));
+
+      // Feed rich context to the Context Engine
+      addSource({
+        module: 'workspace',
+        signals: [{
+          type: 'document.opened',
+          sourceModule: 'workspace',
+          payload: {
+            filename: item.rawFile.name,
+            documentType: result.documentType,
+            domainIntelligence: result.domainIntelligence,
+            industry: result.industry,
+            confidence: result.confidence,
+          },
+          timestamp: Date.now(),
+        }],
+        textChunks: [
+          item.rawFile.name,
+          result.documentType,
+          result.domainIntelligence,
+          result.industry,
+          result.summary,
+          ...(result.keyEntities?.map(e => `${e.label}: ${e.value}`) ?? []),
+          result.rawText ?? '',
+        ],
+      });
+
+      // Re-resolve workspace with AI-stamped item
+      const workspace = WorkspaceRegistry.matchWorkspace(item);
+      setActiveWorkspace(workspace);
+      if (workspace.modules.length > 0) {
+        setActiveModuleId(workspace.modules[0].id);
+      }
+
+      emit('document.opened', 'workspace', {
+        filename: item.rawFile.name,
+        domainIntelligence: result.domainIntelligence,
+        confidence: result.confidence,
+      });
+    } catch (err) {
+      console.error('[CHATRWorkspace] AI classification error:', err);
+    } finally {
+      setClassifying(prev => {
+        const next = new Set(prev);
+        next.delete(item.id);
+        return next;
+      });
+    }
+  }, [addSource]);
+
+  // ─── Active Item Effect ───────────────────────────────────────────────────
+  // When user selects a different item, resolve its workspace immediately.
+  // If not yet AI-classified (real file, size > 0), also kick off classification.
   useEffect(() => {
     if (!activeItem || !activeAdapter) {
       setActiveMetadata(null);
@@ -56,28 +129,7 @@ export const CHATRWorkspace: React.FC = () => {
       return;
     }
 
-    // Emit signal to Context Engine — this triggers global Context Fusion
-    emit('document.opened', 'workspace', {
-      filename: activeItem.rawFile?.name ?? activeItem.sourceUri,
-      typeHint: activeItem.typeHint,
-    });
-
-    // Also register as a rich ContextSource (with text chunks for keyword matching)
-    addSource({
-      module: 'workspace',
-      signals: [{
-        type: 'document.opened',
-        sourceModule: 'workspace',
-        payload: { filename: activeItem.rawFile?.name ?? activeItem.sourceUri },
-        timestamp: Date.now(),
-      }],
-      textChunks: [
-        activeItem.rawFile?.name ?? activeItem.sourceUri,
-        activeItem.typeHint ?? '',
-      ],
-    });
-
-    // Resolve the legacy UI Workspace modules (for the left document panel tabs)
+    const existingClassification = (activeItem as any).__classification__;
     const workspace = WorkspaceRegistry.matchWorkspace(activeItem);
     setActiveWorkspace(workspace);
     if (workspace.modules.length > 0) {
@@ -88,28 +140,30 @@ export const CHATRWorkspace: React.FC = () => {
 
     activeAdapter.getMetadata(activeItem).then(meta => setActiveMetadata(meta));
     setActiveCapabilities(activeAdapter.getCapabilities());
-  }, [activeItemId, activeItem, activeAdapter]);
+
+    // If no AI result yet and it's a real file, kick off classification
+    if (!existingClassification && activeItem.rawFile && activeItem.rawFile.size > 0) {
+      runClassification(activeItem);
+    }
+  }, [activeItemId, runClassification]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Detect type hint purely based on name for this v1 simulation
-    let typeHint = 'pdf';
-    if (file.name.toLowerCase().includes('resume')) typeHint = 'resume';
-    if (file.name.toLowerCase().endsWith('.eml') || file.name.toLowerCase().endsWith('.msg')) typeHint = 'email';
-    if (file.name.toLowerCase().endsWith('.docx') || file.name.toLowerCase().endsWith('.doc')) typeHint = 'word';
-    if (file.type.startsWith('image/')) typeHint = 'image';
-
     const newItem: WorkspaceItem = {
       id: `item_${Date.now()}`,
       sourceUri: file.name,
       rawFile: file,
-      typeHint
+      typeHint: 'pdf',  // Will be overridden by AI classification
     };
 
     setItems(prev => [newItem, ...prev]);
     setActiveItemId(newItem.id);
+
+    // Kick off AI classification immediately after adding
+    runClassification(newItem);
+
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -163,22 +217,66 @@ export const CHATRWorkspace: React.FC = () => {
           </h1>
         </div>
 
-        {/* Dynamic Header Item */}
+        {/* Dynamic Header Item — AI Classification Badge */}
         <div className="flex-1 flex justify-center">
-          {activeItem && activeWorkspace && (
-            <div className="flex items-center gap-3 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
-              {getIconForType(activeItem.typeHint)}
-              <span className="font-bold text-sm text-slate-900 max-w-[250px] truncate">{activeWorkspace.displayName}</span>
-              <span className="text-slate-300">|</span>
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeWorkspace.businessIntent}</span>
-              <span className="text-slate-300">|</span>
-              <span className="text-xs text-slate-500">{activeMetadata?.updatedAt || 'Just now'}</span>
-              <span className="text-slate-300">|</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${getStatusColor(activeMetadata?.status)}`}>
-                {activeMetadata?.status || 'Ready'}
-              </span>
-            </div>
-          )}
+          {activeItem && (() => {
+            const classification = (activeItem as any).__classification__;
+            const isClassifying = classifying.has(activeItem.id);
+            return (
+              <div className="flex items-center gap-2 flex-wrap justify-center">
+                {/* Document name */}
+                <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                  {getIconForType(activeItem.typeHint)}
+                  <span className="font-bold text-sm text-slate-900 max-w-[200px] truncate">
+                    {activeItem.rawFile?.name || activeItem.sourceUri}
+                  </span>
+                  <span className="text-slate-300">|</span>
+                  <span className="text-xs text-slate-500">{activeMetadata?.updatedAt || 'Just now'}</span>
+                  <span className="text-slate-300">|</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${getStatusColor(activeMetadata?.status)}`}>
+                    {activeMetadata?.status || 'Ready'}
+                  </span>
+                </div>
+
+                {/* AI Classification Badge */}
+                {isClassifying ? (
+                  <div className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm animate-pulse">
+                    <Loader2 className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
+                    <span className="text-xs font-bold text-indigo-700">AI Classifying...</span>
+                  </div>
+                ) : classification ? (
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm ${
+                    classification.domainIntelligence === 'clinical' ? 'bg-rose-50 border-rose-200' :
+                    classification.domainIntelligence === 'insurance' ? 'bg-blue-50 border-blue-200' :
+                    classification.domainIntelligence === 'talent' ? 'bg-amber-50 border-amber-200' :
+                    classification.domainIntelligence === 'legal' ? 'bg-purple-50 border-purple-200' :
+                    classification.domainIntelligence === 'finance' ? 'bg-emerald-50 border-emerald-200' :
+                    'bg-slate-50 border-slate-200'
+                  }`}>
+                    <Brain className={`w-3.5 h-3.5 ${
+                      classification.domainIntelligence === 'clinical' ? 'text-rose-500' :
+                      classification.domainIntelligence === 'insurance' ? 'text-blue-500' :
+                      classification.domainIntelligence === 'talent' ? 'text-amber-500' :
+                      classification.domainIntelligence === 'legal' ? 'text-purple-500' :
+                      classification.domainIntelligence === 'finance' ? 'text-emerald-500' :
+                      'text-slate-500'
+                    }`} />
+                    <span className={`text-xs font-bold ${
+                      classification.domainIntelligence === 'clinical' ? 'text-rose-700' :
+                      classification.domainIntelligence === 'insurance' ? 'text-blue-700' :
+                      classification.domainIntelligence === 'talent' ? 'text-amber-700' :
+                      classification.domainIntelligence === 'legal' ? 'text-purple-700' :
+                      classification.domainIntelligence === 'finance' ? 'text-emerald-700' :
+                      'text-slate-700'
+                    }`}>{classification.domainLabel}</span>
+                    <span className="text-[10px] font-bold text-slate-400">
+                      {Math.round(classification.confidence * 100)}%
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })()}
         </div>
 
         <div className="flex items-center gap-2">
