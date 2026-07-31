@@ -311,10 +311,14 @@ export const ConversationList = ({ userId, onConversationSelect }: ConversationL
  {!searchQuery && (
  <AppleButton
  variant="primary"
- onClick={() => {
- haptics.light();
- window.location.href = '/contacts';
- }}
+  onClick={() => {
+  haptics.light();
+  if (window.location.protocol === 'file:' || window.location.hash) {
+    window.location.hash = '#/desktop/chat';
+  } else {
+    window.location.href = '/contacts';
+  }
+  }}
  icon={<User className="w-4 h-4" />}
  >
  Add Contacts

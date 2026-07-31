@@ -52,8 +52,13 @@ export class GlobalErrorBoundary extends Component<Props, State> {
  };
 
  private handleGoHome = () => {
- window.location.href = '/';
- };
+    if (window.location.protocol === 'file:' || window.location.hash) {
+      window.location.hash = '#/desktop/home';
+    } else {
+      window.location.href = '/';
+    }
+    this.setState({ hasError: false, error: null, errorInfo: null });
+  };
 
  private handleReset = () => {
  this.setState({ hasError: false, error: null, errorInfo: null });

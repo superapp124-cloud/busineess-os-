@@ -14,8 +14,15 @@ interface ServiceCardProps {
 
 const ServiceCard = ({ icon: Icon, title, description, iconColor, route, badge, badgeColor, onClick }: ServiceCardProps) => {
  const handleClick = () => {
- if (onClick) onClick();
- if (route) window.location.href = route;
+  if (onClick) onClick();
+  if (route) {
+    if (window.location.protocol === 'file:' || window.location.hash) {
+      const cleanRoute = route.startsWith('/') ? route : '/' + route;
+      window.location.hash = `#${cleanRoute}`;
+    } else {
+      window.location.href = route;
+    }
+  }
  };
 
  // Get badge icon based on badge text
