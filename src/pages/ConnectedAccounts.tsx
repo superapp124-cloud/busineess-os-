@@ -67,7 +67,7 @@ const openProviderLogin = async (provider: AccountProvider) => {
   if (sbProvider) {
     const { supabase } = await import('@/integrations/supabase/client');
     const safeOrigin = window.location.origin.startsWith('file://')
-      ? 'https://businessess-os.vercel.app'
+      ? 'https://busineess-os.vercel.app'
       : window.location.origin;
 
     const { error } = await supabase.auth.signInWithOAuth({

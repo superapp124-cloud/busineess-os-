@@ -1816,7 +1816,7 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:8086');
   } else {
     log.info('Loading Live Vercel Sync Engine');
-    const LIVE_URL = 'https://businessess-os.vercel.app/#/desktop/home';
+    const LIVE_URL = 'https://busineess-os.vercel.app/#/desktop/home';
     mainWindow.loadURL(LIVE_URL).catch((err) => {
       log.warn('[Main] Live Vercel loading failed or offline, loading local bundle:', err.message);
       mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html'));

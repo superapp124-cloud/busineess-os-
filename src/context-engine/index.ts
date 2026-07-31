@@ -4,7 +4,12 @@ export { SignalBus, emit } from './SignalBus';
 export { classifyDocument } from './AIClassifier';
 export { inferUserGoal } from './GoalIntelligence';
 export type { ClassificationResult } from './AIClassifier';
-export type { GoalIntelligenceResult, InferredGoal, PrimaryDecision, ProactivePrompt, DynamicGoalTab } from './GoalIntelligence';
+export type {
+  GoalIntelligenceResult,
+  VisualScore,
+  ImpactItem,
+  ComparisonMetric
+} from './GoalIntelligence';
 export type {
   Signal,
   SignalType,

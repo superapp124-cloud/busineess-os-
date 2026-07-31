@@ -88,7 +88,7 @@ export class AuthProvider {
       }
       // In Electron, window.location.origin is 'file://' which Electron CSP blocks as a redirect.
       const safeOrigin = window.location.origin.startsWith('file://')
-        ? 'https://businessess-os.vercel.app'
+        ? 'https://busineess-os.vercel.app'
         : window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider === 'microsoft' ? 'azure' : 'google',

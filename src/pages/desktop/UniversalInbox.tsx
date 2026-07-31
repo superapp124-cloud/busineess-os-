@@ -167,7 +167,7 @@ export const UniversalInbox: React.FC = () => {
         setConnectionStep(1);
 
         const safeOrigin = window.location.origin.startsWith('file://')
-          ? 'https://businessess-os.vercel.app'
+          ? 'https://busineess-os.vercel.app'
           : window.location.origin;
 
         // Perform authentic Supabase OAuth login

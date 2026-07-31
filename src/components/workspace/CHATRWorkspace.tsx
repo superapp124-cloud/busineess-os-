@@ -35,14 +35,14 @@ export const CHATRWorkspace: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [items, setItems] = useState<WorkspaceItem[]>([
-    { id: '1', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
-    { id: '2', sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf', typeHint: 'pdf', rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
-    { id: '3', sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx', typeHint: 'pdf', rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
-    { id: '4', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
-    { id: '5', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
-    { id: '6', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
-    { id: '7', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') },
-    { id: '8', sourceUri: 'Q3_Renewal_Discussion.eml', typeHint: 'email', rawFile: new File([], 'Q3_Renewal_Discussion.eml') }
+    { id: '1', sourceUri: 'LinkedIn Profile optimisation.docx', typeHint: 'word', rawFile: new File([], 'LinkedIn Profile optimisation.docx') },
+    { id: '2', sourceUri: '5983042622654.pdf', typeHint: 'pdf', rawFile: new File([], '5983042622654.pdf') },
+    { id: '3', sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf', typeHint: 'pdf', rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
+    { id: '4', sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx', typeHint: 'pdf', rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
+    { id: '5', sourceUri: 'XXXPW9619X_2025-26_AIS.pdf', typeHint: 'pdf', rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
+    { id: '6', sourceUri: 'HDFC_Brezza_Motor_Policy.pdf', typeHint: 'pdf', rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
+    { id: '7', sourceUri: 'Master_Service_Agreement.pdf', typeHint: 'pdf', rawFile: new File([], 'Master_Service_Agreement.pdf') },
+    { id: '8', sourceUri: 'John_Smith_Resume.pdf', typeHint: 'resume', rawFile: new File([], 'John_Smith_Resume.pdf') }
   ]);
 
   const [activeItemId, setActiveItemId] = useState<string | null>('1');
