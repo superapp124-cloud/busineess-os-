@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert, Bot, Clock, Play, CheckCircle2, ArrowRight,
   Calendar, MessageSquare, FileText, Plus, Sparkles, AlertCircle, RefreshCw
@@ -8,6 +8,7 @@ import { identityRuntime } from '../../core/identity/IdentityRuntime';
 import { intentStore } from '../../core/intent/IntentStore';
 import { customerEvidenceFramework } from '../../core/evaluation/CustomerEvidenceFramework';
 import { UniversalInspectorModal, InspectorPayload } from '../enterprise-shell/UniversalInspectorModal';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   missionContext: MissionExecutionContext | null;
@@ -16,6 +17,44 @@ interface Props {
 
 export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate }) => {
   const [inspectorPayload, setInspectorPayload] = useState<InspectorPayload | null>(null);
+  const [userName, setUserName] = useState<string>('User');
+
+  // Calculate dynamic greeting based on local time
+  const hour = new Date().getHours();
+  const timeGreeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 17 ? 'Good Afternoon' : 'Good Evening';
+
+  // Fetch real logged-in user name
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const user = data?.session?.user;
+        if (user) {
+          const meta = user.user_metadata;
+          const fullName = meta?.full_name || meta?.name || meta?.company_name || meta?.display_name;
+          if (fullName) {
+            setUserName(fullName.split(' ')[0]);
+            return;
+          }
+          if (user.email) {
+            const nameFromEmail = user.email.split('@')[0];
+            setUserName(nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1));
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback below
+      }
+
+      const storedName = localStorage.getItem('chatr_user_name') || localStorage.getItem('user_name');
+      if (storedName) {
+        setUserName(storedName.split(' ')[0]);
+      } else {
+        setUserName('Arshid');
+      }
+    }
+    fetchUser();
+  }, []);
 
   // Live Subsystem Singletons
   const digitalWorkers = identityRuntime.getIdentitiesByType('DIGITAL_WORKER');
@@ -32,7 +71,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate }) 
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               Everything is running normally.
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Good Morning, Arshid.</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight">{timeGreeting}, {userName}.</h1>
             <p className="text-slate-300 text-sm leading-relaxed">
               You have <span className="text-amber-300 font-bold">2 approvals</span>, <span className="text-indigo-300 font-bold">3 meetings</span>, and <span className="text-emerald-300 font-bold">14 AI tasks completed overnight</span>. Nothing critical requires immediate attention.
             </p>

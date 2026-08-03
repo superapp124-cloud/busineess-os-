@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Bot, Search, Sparkles, CheckCircle2, Clock, AlertTriangle, Layers,
   Zap, Play, ArrowRight, ShieldCheck, Database, FileText, Users, Briefcase,
@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { identityRuntime } from '../../core/identity/IdentityRuntime';
 import { intentStore } from '../../core/intent/IntentStore';
+import { supabase } from '@/integrations/supabase/client';
 
 export type ConfigPackType = 'Healthcare' | 'Recruitment' | 'SaaS' | 'Manufacturing' | 'Finance' | 'Legal';
 
@@ -32,6 +33,44 @@ export const AIAgentsHub: React.FC = () => {
   const [executingCommand, setExecutingCommand] = useState(false);
   const [executionLog, setExecutionLog] = useState<string | null>(null);
   const [searchSkillQuery, setSearchSkillQuery] = useState('');
+  const [userName, setUserName] = useState<string>('User');
+
+  // Calculate dynamic greeting based on local time
+  const hour = new Date().getHours();
+  const timeGreeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 17 ? 'Good Afternoon' : 'Good Evening';
+
+  // Fetch real logged-in user name
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const user = data?.session?.user;
+        if (user) {
+          const meta = user.user_metadata;
+          const fullName = meta?.full_name || meta?.name || meta?.company_name || meta?.display_name;
+          if (fullName) {
+            setUserName(fullName.split(' ')[0]);
+            return;
+          }
+          if (user.email) {
+            const nameFromEmail = user.email.split('@')[0];
+            setUserName(nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1));
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback below
+      }
+
+      const storedName = localStorage.getItem('chatr_user_name') || localStorage.getItem('user_name');
+      if (storedName) {
+        setUserName(storedName.split(' ')[0]);
+      } else {
+        setUserName('Arshid');
+      }
+    }
+    fetchUser();
+  }, []);
 
   // Live Registered Digital Workers & Intent Packs
   const digitalWorkers = identityRuntime.getIdentitiesByType('DIGITAL_WORKER');
@@ -128,7 +167,7 @@ export const AIAgentsHub: React.FC = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <h1 className="text-2xl font-extrabold text-white">Good Morning, Arshid.</h1>
+            <h1 className="text-2xl font-extrabold text-white">{timeGreeting}, {userName}.</h1>
             <span className="text-xs font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800/50 px-2.5 py-0.5 rounded-full">
               CHATR Universal Runtime v2.5
             </span>
