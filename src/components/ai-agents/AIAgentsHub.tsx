@@ -39,22 +39,38 @@ export const AIAgentsHub: React.FC = () => {
   const hour = new Date().getHours();
   const timeGreeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 17 ? 'Good Afternoon' : 'Good Evening';
 
-  // Fetch real logged-in user name
+  // Fetch real logged-in user name or business name (filtering out pure numbers/phone numbers)
   useEffect(() => {
     async function fetchUser() {
+      const cleanName = (val: string | undefined | null) => {
+        if (!val) return null;
+        const s = val.trim();
+        // Skip pure numeric phone numbers like 919717161809
+        if (/^\d+$/.test(s)) return null;
+        return s.split(' ')[0];
+      };
+
       try {
         const { data } = await supabase.auth.getSession();
         const user = data?.session?.user;
         if (user) {
           const meta = user.user_metadata;
-          const fullName = meta?.full_name || meta?.name || meta?.company_name || meta?.display_name;
-          if (fullName) {
-            setUserName(fullName.split(' ')[0]);
+          const metaName = cleanName(meta?.full_name || meta?.name || meta?.company_name || meta?.business_name || meta?.display_name);
+          if (metaName) {
+            setUserName(metaName);
             return;
           }
-          if (user.email) {
-            const nameFromEmail = user.email.split('@')[0];
-            setUserName(nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1));
+
+          // Try fetching from profiles table
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, primary_handle, business_name, company_name')
+            .eq('id', user.id)
+            .maybeSingle();
+
+          const profileName = cleanName(profile?.username || profile?.business_name || profile?.company_name || profile?.primary_handle);
+          if (profileName) {
+            setUserName(profileName);
             return;
           }
         }
@@ -62,11 +78,11 @@ export const AIAgentsHub: React.FC = () => {
         // Fallback below
       }
 
-      const storedName = localStorage.getItem('chatr_user_name') || localStorage.getItem('user_name');
+      const storedName = cleanName(localStorage.getItem('chatr_user_name') || localStorage.getItem('user_name'));
       if (storedName) {
-        setUserName(storedName.split(' ')[0]);
+        setUserName(storedName);
       } else {
-        setUserName('Arshid');
+        setUserName('TalentXcel');
       }
     }
     fetchUser();
