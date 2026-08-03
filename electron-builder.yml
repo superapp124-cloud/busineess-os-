@@ -1,37 +1,52 @@
-appId: com.chatr.os
+appId: chat.chatr.desktop
 productName: CHATR Desktop
 directories:
   output: dist-electron
   buildResources: build
+publish:
+  provider: github
+  owner: chatr-workspace
+  repo: chatr-desktop
+
 files:
   - dist-desktop/**/*
   - electron/**/*
+  - node_modules/**/*
   - package.json
-  # Exclude heavy assets (these should be capabilities)
-  - "!**/models/**"
-  - "!**/python_env/**"
-  - "!**/.git/**"
-  - "!**/*.md"
+
 win:
   target:
     - target: nsis
       arch:
         - x64
-        - arm64
+  icon: public/favicon.ico
+  artifactName: chatr-desktop-setup.${ext}
+  certificateSubjectName: ${env.WIN_CSC_SUBJECT_NAME}
+  certificateSha1: ${env.WIN_CSC_SHA1}
+  signingHashAlgorithms:
+    - sha256
+  timeStampServer: http://timestamp.digicert.com
+  signtoolOptions:
+    certificateFile: ${env.WIN_CSC_LINK}
+    certificatePassword: ${env.WIN_CSC_KEY_PASSWORD}
+
 nsis:
   oneClick: false
   perMachine: false
-  allowElevation: true
   allowToChangeInstallationDirectory: true
-  createDesktopShortcut: true
-  createStartMenuShortcut: true
-  shortcutName: CHATR
-publish:
-  provider: github
-  owner: superapp124-cloud
-  repo: busineess-os-
-  releaseType: release
+  allowElevation: true
+  include: electron/installer.nsh
+
+protocols:
+  name: chatr-deep-link
+  schemes:
+    - chatr
+
 mac:
-  target: dmg
-linux:
-  target: AppImage
+  target:
+    - dmg
+    - zip
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist

@@ -153,6 +153,9 @@ const validListenChannels = [
   'INTELLIGENCE.DAILY_LOOP_STARTED'
 ];
 
+// Internal map to track wrapped listeners so off() can remove the correct reference.
+const _listenerWrappers = new Map(); // key: `${channel}::${func}`, value: wrapper fn
+
 contextBridge.exposeInMainWorld('electronAPI', {
   /** One-shot send (fire and forget) */
   send: (channel, data) => {
@@ -168,11 +171,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
     return Promise.reject(new Error(`Unauthorized IPC channel: ${channel}`));
   },
-
-// Internal map to track wrapped listeners so off() can remove the correct reference.
-// Without this, on() registers an anonymous wrapper but off() tries to remove the
-// original function — different references — and removeListener silently does nothing.
-const _listenerWrappers = new Map(); // key: `${channel}::${func}`, value: wrapper fn
 
   /** Subscribe to a renderer-side event */
   on: (channel, func) => {

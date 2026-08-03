@@ -325,6 +325,7 @@ export const ExecutionInspector = lazy(() => import('@/pages/desktop/ExecutionIn
 export const WorkflowStudio = lazy(() => import('@/pages/desktop/WorkflowStudio'));
 export const DesktopMarketplace = lazy(() => import('@/pages/desktop/Marketplace'));
 
+export const AdminUsers = lazy(() => import('@/pages/admin/Users'));
 export const AdminProviders = lazy(() => import('@/pages/admin/Providers'));
 export const AdminAnalytics = lazy(() => import('@/pages/admin/Analytics'));
 export const AdminPayments = lazy(() => import('@/pages/admin/Payments'));
@@ -415,7 +416,7 @@ export const DesktopTickets = lazy(() => import('@/pages/desktop/Tickets').then(
 export const DesktopFiles = lazy(() => import('@/pages/desktop/Files').then(m => ({ default: m.Files })));
 export const DesktopIntelligence = lazy(() => import('@/pages/desktop/DesktopIntelligence'));
 export const DesktopSettings = lazy(() => import('@/pages/desktop/DesktopSettings').then(m => ({ default: m.DesktopSettings })));
-export const RecruiterWorkspace = lazy(() => import('@/pages/desktop/RecruiterWorkspace').then(m => ({ default: m.RecruiterWorkspace })));
+export const RecruiterWorkspace = lazy(() => import('@/pages/desktop/RecruiterWorkspace').then(m => ({ default: m.RecruiterWorkspace || m.default })));
 
 // FinanceOS
 export const FinanceWorkspace = lazy(() => import("../pages/desktop/FinanceWorkspace").then(m => ({ default: m.default })));

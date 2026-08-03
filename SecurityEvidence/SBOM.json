@@ -1,0 +1,20 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-03T13:00:00.000Z",
+    "component": {
+      "name": "chatr-desktop",
+      "version": "0.9.0-rc",
+      "type": "application",
+      "purl": "pkg:npm/chatr-desktop@0.9.0-rc"
+    }
+  },
+  "components": [
+    { "name": "electron", "version": "42.5.0", "type": "library" },
+    { "name": "electron-builder", "version": "26.15.3", "type": "library" },
+    { "name": "@supabase/supabase-js", "version": "2.49.1", "type": "library" },
+    { "name": "react", "version": "18.3.1", "type": "library" }
+  ]
+}

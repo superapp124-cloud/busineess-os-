@@ -1,0 +1,50 @@
+name: CHATR Desktop Enterprise Release & Code Signing
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-sign:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Architecture & Governance Linters
+        run: npm run lint
+
+      - name: Generate CycloneDX 1.4 SBOM
+        run: node scripts/generate-sbom.cjs
+
+      - name: Build Desktop Vite Bundle
+        run: npm run build:desktop
+
+      - name: Package & Code Sign Windows Installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          WIN_CSC_SUBJECT_NAME: ${{ secrets.WIN_CSC_SUBJECT_NAME }}
+          WIN_CSC_SHA1: ${{ secrets.WIN_CSC_SHA1 }}
+        run: npx electron-builder --win --config electron-builder.yml
+
+      - name: Verify Signed Installer Executable
+        run: node scripts/verify-signed-installer.cjs
+
+      - name: Upload Signed Production Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: chatr-desktop-windows-signed
+          path: dist-electron/*.exe
