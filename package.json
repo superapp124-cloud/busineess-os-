@@ -25,6 +25,7 @@
     "search:server": "tsx watch server/src/server.ts",
     "readiness": "tsx src/scripts/readiness.ts",
     "certify:business-os": "node scripts/business-os-certification.cjs",
+    "cer:certify": "tsx cer_certify.ts",
     "lint": "npm run lint:architecture && npm run lint:governance",
     "lint:architecture": "node scripts/architecture-lint.cjs",
     "lint:architecture:update-baseline": "node scripts/architecture-lint.cjs --update-baseline",

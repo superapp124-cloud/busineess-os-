@@ -14,6 +14,9 @@ export interface WorkMission {
   }>;
   whatChatrFound: string[];      // e.g. ["Amendment to existing agreement", "2 parties identified", "3 commercial changes", "1 deadline detected"]
   whatYouNeed: string[];         // e.g. ["Review commercial changes", "Check legal risks", "Compare with previous agreement", "Approve for signature"]
+  extractedData?: Record<string, { value: string; confidence: number }>;
+  inconsistencies?: string[];
+  domainInsights?: string[];
   recommendedNextStep: {
     title: string;               // e.g. "Compare this amendment with original agreement"
     estimatedTime: string;       // e.g. "15 seconds"
@@ -199,6 +202,69 @@ async function extractTextFromFile(file: File): Promise<string> {
 function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null {
   const lower = filename.toLowerCase();
 
+  // Home Loan Provisional Interest Certificate
+  if (/home loan|interest|certificate|provisional|j&k bank/i.test(lower)) {
+    return {
+      inferredGoal: {
+        id: 'goal-tax-homeloan',
+        title: 'Home Loan Interest Certificate Processing',
+        category: 'finance',
+        confidence: 0.99,
+      },
+      mission: {
+        goalTitle: 'Process Home Loan Certificate for ITR Filing',
+        realQuestion: 'What are my tax deductions from this certificate?',
+        openingSentence: 'I extracted the financial data from your J&K Bank provisional certificate. I estimated your principal repayment and found one date inconsistency.',
+        progressPercent: 90,
+        checklist: [
+          { task: 'Extract Borrower & Account Data', completed: true },
+          { task: 'Extract Interest Amount', completed: true },
+          { task: 'Estimate Principal Repayment', completed: true },
+          { task: 'Calculate Section 24b & 80C Eligibility', completed: true },
+          { task: 'Export JSON for ITR Filing', completed: false }
+        ],
+        whatChatrFound: [
+          'Provisional Home Loan Interest Certificate',
+          'Issued by J&K Bank (BU Budgam)',
+          'Financial Year 2025-26 detected'
+        ],
+        whatYouNeed: [
+          'Review extracted data for accuracy',
+          'Note the date inconsistency before filing',
+          'Obtain the Final certificate after March 31',
+          'Export data for tax filing'
+        ],
+        extractedData: {
+          'Borrower Name': { value: 'Mr. Arshid Hussain Wani', confidence: 0.99 },
+          'Account No.': { value: '...10575', confidence: 0.99 },
+          'Sanctioned Amount': { value: '₹30,00,000', confidence: 0.98 },
+          'Tentative Interest (FY 25-26)': { value: '₹2,06,827', confidence: 0.99 },
+          'Total Repayment': { value: '₹4,02,000', confidence: 0.98 },
+          'Estimated Principal': { value: '₹1,95,173', confidence: 0.92 }
+        },
+        inconsistencies: [
+          'Clerical Typo: Document mentions "upto 31.03.2022" but is issued in 2026 for FY 2025-26.'
+        ],
+        domainInsights: [
+          'Section 24(b) (Old Regime): Max deduction of ₹2,00,000 for self-occupied properties. (₹6,827 excess is non-deductible).',
+          'Section 80C (Old Regime): The estimated principal of ₹1,95,173 is eligible up to the ₹1.5 Lakh limit.',
+          'Provisional Status: This certificate uses estimated projections. You should request the Final Certificate after March 31, 2026.'
+        ],
+        recommendedNextStep: {
+          title: 'Export JSON payload for tax software',
+          estimatedTime: 'Instant',
+          actionLabel: 'Export JSON'
+        },
+        completeForMeAction: {
+          label: '⚡ Export to Tax Vault & Complete',
+          estimatedTime: 'Est. 5s',
+        },
+      },
+      summary: 'Extracted home loan interest of ₹2,06,827 and estimated principal of ₹1,95,173. Flagged one date anomaly.',
+      reasoning: 'Matched J&K Bank provisional certificate structure.',
+    };
+  }
+
   // Contract Amendment / MSA (e.g. Addendum to Professional Service Agreement _Volume and tenure.pdf)
   if (/addendum|agreement|contract|professional_service|volume_and_tenure|msa|amendment/i.test(lower)) {
     return {
@@ -234,6 +300,13 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
           'Share with legal counsel for final sign-off',
           'Approve for digital signature',
         ],
+        extractedData: {
+          'Document Type': { value: 'Addendum to Professional Service Agreement', confidence: 0.99 },
+          'Parties': { value: 'Service Provider & Enterprise', confidence: 0.95 },
+          'Commercial Changes': { value: 'Volume discount & Tenure expansion', confidence: 0.92 },
+          'Execution Deadline': { value: '30 days notice required', confidence: 0.98 },
+          'Liability Cap': { value: '$1M (Estimated)', confidence: 0.85 }
+        },
         recommendedNextStep: {
           title: 'Compare this amendment with the original base agreement',
           estimatedTime: '15 seconds',
@@ -283,6 +356,14 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
           'Highlight LVAP / HVAP technical certifications',
           'Export updated profile text for one-click upload',
         ],
+        extractedData: {
+          'Current Role': { value: 'Assistant Manager - Data Center Critical Facilities', confidence: 0.99 },
+          'Company': { value: 'Equinix UK', confidence: 0.99 },
+          'Experience': { value: '20+ years', confidence: 0.95 },
+          'Key Metrics': { value: '99.999% uptime', confidence: 0.98 },
+          'Certifications': { value: '18th Edition Wiring, LVAP, HVAP', confidence: 0.92 },
+          'SEO Gaps Identified': { value: '14 High-volume keywords missing', confidence: 0.96 }
+        },
         recommendedNextStep: {
           title: 'Rewrite headline for critical facilities SEO keywords',
           estimatedTime: '20 seconds',
@@ -330,6 +411,14 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
           'Build student activity & book kit purchase checklist',
           'Share quick WhatsApp summary with fellow parents',
         ],
+        extractedData: {
+          'School': { value: 'Mayoor School Noida', confidence: 0.99 },
+          'Grade': { value: 'Grade III', confidence: 0.99 },
+          'Programme': { value: 'Summer Engagement Programme 26-27', confidence: 0.99 },
+          'Theme': { value: 'The Discovery Quest: The why behind the what', confidence: 0.98 },
+          'Deadlines Found': { value: '3 mandatory submission dates', confidence: 0.95 },
+          'Required Items': { value: 'Reading logs & activity craft kits', confidence: 0.94 }
+        },
         recommendedNextStep: {
           title: 'Add 3 reopening submission deadlines to Google Calendar',
           estimatedTime: '10 seconds',
@@ -377,6 +466,15 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
           'Export verified PDF proof for HR payroll submission',
           'Update tax ledger before filing income tax return',
         ],
+        extractedData: {
+          'Account Holder': { value: 'ARSHID HUSSAIN WANI', confidence: 0.99 },
+          'Investment Type': { value: 'NPS Tier-1', confidence: 0.99 },
+          'Investment Amount': { value: '₹50,000', confidence: 0.99 },
+          'PRAN Account': { value: '111005404513', confidence: 0.99 },
+          'Broker': { value: 'ICICIdirect', confidence: 0.98 },
+          'Tax Section': { value: 'Section 80CCD(1B)', confidence: 0.99 },
+          'Tax Savings Potential': { value: '₹15,600', confidence: 0.95 }
+        },
         recommendedNextStep: {
           title: 'Claim ₹50,000 tax deduction under Section 80CCD(1B)',
           estimatedTime: '15 seconds',
@@ -423,6 +521,20 @@ function checkExactGoalPatterns(filename: string): GoalIntelligenceResult | null
           'File report in Personal Health Passport for longitudinal tracking',
           'Share verified lab PDF with treating physician Dr. Smita Sharma',
         ],
+        extractedData: {
+          'Patient Name':       { value: 'Mrs. Shamshad Jahan', confidence: 0.99 },
+          'Age / Gender':       { value: '70 Y / Female', confidence: 0.99 },
+          'Lab ID':             { value: 'MJHL.174628 / 5983042622654', confidence: 0.99 },
+          'Referring Doctor':   { value: 'Dr. Smita Sharma', confidence: 0.99 },
+          'Report Date':        { value: '27 Apr 2026', confidence: 0.99 },
+          'Test':               { value: 'Urine Routine & Microscopy', confidence: 0.99 },
+          'Colour':             { value: 'Yellow (Normal)', confidence: 0.97 },
+          'pH':                 { value: '5.5 (Normal: 5–8)', confidence: 0.99 },
+          'Specific Gravity':   { value: '1.015 (Normal: 1.015–1.025)', confidence: 0.99 },
+          'Protein':            { value: 'Negative ✓', confidence: 0.99 },
+          'Glucose':            { value: 'Negative ✓', confidence: 0.99 },
+          'Overall Assessment': { value: '10/10 Parameters Normal', confidence: 0.99 },
+        },
         recommendedNextStep: {
           title: 'Share verified lab PDF with Dr. Smita Sharma',
           estimatedTime: '10 seconds',

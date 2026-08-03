@@ -169,18 +169,38 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return Promise.reject(new Error(`Unauthorized IPC channel: ${channel}`));
   },
 
+// Internal map to track wrapped listeners so off() can remove the correct reference.
+// Without this, on() registers an anonymous wrapper but off() tries to remove the
+// original function — different references — and removeListener silently does nothing.
+const _listenerWrappers = new Map(); // key: `${channel}::${func}`, value: wrapper fn
+
   /** Subscribe to a renderer-side event */
   on: (channel, func) => {
     if (validListenChannels.includes(channel)) {
       // Strip event object to prevent prototype pollution
-      ipcRenderer.on(channel, (event, ...args) => func(...args));
+      const wrapper = (event, ...args) => func(...args);
+      // Store wrapper keyed by channel + func identity so off() can retrieve it
+      const key = `${channel}::${func.toString().slice(0, 80)}`;
+      _listenerWrappers.set(key, { wrapper, func });
+      ipcRenderer.on(channel, wrapper);
+      // Return a cleanup function for use in useEffect hooks
+      return () => {
+        ipcRenderer.removeListener(channel, wrapper);
+        _listenerWrappers.delete(key);
+      };
     }
+    return () => {}; // no-op cleanup if channel not valid
   },
 
-  /** Remove a listener */
+  /** Remove a listener — must pass the same func reference used in on() */
   off: (channel, func) => {
     if (validListenChannels.includes(channel)) {
-      ipcRenderer.removeListener(channel, func);
+      const key = `${channel}::${func.toString().slice(0, 80)}`;
+      const entry = _listenerWrappers.get(key);
+      if (entry) {
+        ipcRenderer.removeListener(channel, entry.wrapper);
+        _listenerWrappers.delete(key);
+      }
     }
   },
 
@@ -273,7 +293,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 
   kernel: {
-    invoke: (action, request) => ipcRenderer.invoke(`kernel:${action}`, request),
+    /**
+     * Typed kernel invoke — validates the full composed channel name against
+     * the explicit whitelist before forwarding to main process.
+     * This prevents the previous bypass where any `action` string could reach
+     * ipcMain handlers regardless of the validInvokeChannels list.
+     */
+    invoke: (action, request) => {
+      const channel = `kernel:${action}`;
+      if (!validInvokeChannels.includes(channel)) {
+        return Promise.reject(new Error(`Unauthorized kernel action: ${action}`));
+      }
+      return ipcRenderer.invoke(channel, request);
+    },
   },
 
   intelligence: {

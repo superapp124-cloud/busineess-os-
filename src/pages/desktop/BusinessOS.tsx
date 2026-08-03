@@ -132,6 +132,40 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  const [profile, setProfile] = useState({ name: '', industry: '', dept: [] as string[], tech: [] as string[], teamSize: '', location: '' });
  const [activeField, setActiveField] = useState<string | null>(null);
  
+ // Company Import Wizard & Interactive Welcome State
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importCompanyName, setImportCompanyName] = useState('');
+  const [importDomain, setImportDomain] = useState('Recruitment');
+  const [importSource, setImportSource] = useState<'pack' | 'file' | 'provider'>('pack');
+  const [importFile, setImportFile] = useState<File | null>(null);
+
+  // Interactive Modals State
+  const [selectedHealthItem, setSelectedHealthItem] = useState<any | null>(null);
+  const [showFullAnalysisModal, setShowFullAnalysisModal] = useState(false);
+  const [selectedSetupStep, setSelectedSetupStep] = useState<any | null>(null);
+  const [activeGlanceModal, setActiveGlanceModal] = useState<'departments' | 'workflows' | 'automations' | 'integrations' | 'health' | null>(null);
+
+ const handleImportSubmit = (e: React.FormEvent) => {
+   e.preventDefault();
+   const companyName = importCompanyName.trim() || 'Imported Organization';
+   localStorage.setItem('chatr_company_name', companyName);
+   localStorage.setItem('chatr_active_domain', importDomain);
+   
+   const template = resolveTemplate(importDomain) || TEMPLATES[0];
+   const importedProfile = {
+     name: companyName,
+     industry: importDomain,
+     dept: ['Executive Office', 'Sales', 'Recruitment', 'Delivery', 'Finance'],
+     tech: ['Microsoft 365', 'Supabase', 'Gemini AI', 'Stripe'],
+     teamSize: '11-50',
+     location: 'Global'
+   };
+   
+   toast.success(`🎉 ${companyName} imported & activated successfully!`);
+   setShowImportModal(false);
+   onComplete(template, importedProfile);
+ };
+
  const completionPercent = Math.round(
  ((profile.name ? 1 : 0) + 
  (profile.industry ? 1 : 0) + 
@@ -241,7 +275,7 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  <button onClick={() => setPhase('identity')} className="px-5 py-2.5 text-secondary bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center gap-2">
  Start Setup <ArrowRight size={16} />
  </button>
- <button onClick={() => toast.info('Company Import Wizard initializing...')} className="px-5 py-2.5 text-button bg-[#111113] border border-zinc-800 text-white rounded-xl hover:bg-zinc-800 transition-all flex items-center gap-2">
+ <button onClick={() => setShowImportModal(true)} className="px-5 py-2.5 text-button bg-[#111113] border border-zinc-800 text-white rounded-xl hover:bg-zinc-800 transition-all flex items-center gap-2">
  <FolderOpen size={16} className="text-zinc-400" /> Import Company
  </button>
  </div>
@@ -292,23 +326,27 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  </div>
  <div className="grid grid-cols-2 gap-y-4 gap-x-6 mb-5">
  {[
- { title: 'Missing Departments', desc: '3 critical departments missing' },
- { title: 'Operational Bottlenecks', desc: '4 bottlenecks detected' },
- { title: 'Reporting Gaps', desc: '2 reporting gaps identified' },
- { title: 'Digital Opportunities', desc: '6 growth opportunities' },
- { title: 'Automation Processes', desc: '5 automation opportunities' },
- { title: 'Organizational Risks', desc: '3 potential risks found' }
+ { id: 'missing_dept', title: 'Missing Departments', desc: '3 critical departments missing', detail: 'Identified missing Legal, Delivery, and Compliance departments. Auto-provisioning will attach these 3 structural units to your workspace.' },
+ { id: 'bottlenecks', title: 'Operational Bottlenecks', desc: '4 bottlenecks detected', detail: 'Detected manual approval delays in invoice matching, candidate scheduling, client onboarding, and SLA reporting.' },
+ { id: 'reporting', title: 'Reporting Gaps', desc: '2 reporting gaps identified', detail: 'Missing real-time margin tracking and executive attendance velocity metrics. AI engine will install live analytics widgets.' },
+ { id: 'digital_opp', title: 'Digital Opportunities', desc: '6 growth opportunities', detail: 'High potential for automated lead qualification, smart triage, AI Document parsing, and 24/7 autonomous agent responses.' },
+ { id: 'automation_proc', title: 'Automation Processes', desc: '5 automation opportunities', detail: '5 repetitive human tasks qualified for 100% autonomous agent execution (AWCR target: 88%+).' },
+ { id: 'org_risks', title: 'Organizational Risks', desc: '3 potential risks found', detail: 'Single point of failure in key delivery leads, unencrypted document sharing, and delayed client follow-ups.' }
  ].map(item => (
- <div key={item.title} className="flex items-start gap-3">
- <CheckCircle2 size={18} className="text-emerald-500 mt-0.5 shrink-0" />
- <div>
- <div className="text-white text-secondary font-medium">{item.title}</div>
- <div className="text-zinc-500 text-label mt-0.5">{item.desc}</div>
- </div>
+ <div 
+   key={item.title} 
+   onClick={() => setSelectedHealthItem(item)}
+   className="flex items-start gap-3 p-2 rounded-xl hover:bg-zinc-800/50 hover:border-zinc-700/50 border border-transparent transition-all cursor-pointer group"
+ >
+   <CheckCircle2 size={18} className="text-emerald-500 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
+   <div>
+     <div className="text-white text-secondary font-medium group-hover:text-indigo-300 transition-colors">{item.title}</div>
+     <div className="text-zinc-500 text-label mt-0.5">{item.desc}</div>
+   </div>
  </div>
  ))}
  </div>
- <button onClick={() => toast.success('Full analysis report generated & downloaded.')} className="px-5 py-2.5 bg-[#111113] hover:bg-zinc-800 text-white text-button rounded-lg border border-zinc-700 transition-all flex items-center gap-2">
+ <button onClick={() => setShowFullAnalysisModal(true)} className="px-5 py-2.5 bg-[#111113] hover:bg-zinc-800 text-white text-button rounded-lg border border-zinc-700 transition-all flex items-center gap-2 cursor-pointer shadow-md">
  View Full Analysis <ArrowRight size={16} />
  </button>
  </div>
@@ -327,30 +365,34 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  
  <div className="space-y-4 relative before:absolute before:inset-0 before:ml-[11px] before:h-full before:w-[1px] before:bg-zinc-800">
  {[
- { step: 'Step 1', title: "Today's Consultation", desc: "We'll understand your business in detail", icon: <LayoutGrid size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10' },
- { step: 'Step 2', title: 'Business Analysis', desc: 'Our AI analyzes data and generates insights', icon: <ListTree size={14} className="text-purple-400"/>, ring: 'border-purple-500/30 bg-purple-500/10' },
- { step: 'Step 3', title: 'Business OS Generated', desc: 'Your tailored Business OS is ready', icon: <Package size={14} className="text-amber-400"/>, ring: 'border-amber-500/30 bg-amber-500/10' },
- { step: 'Step 4', title: 'CEO Dashboard Ready', desc: 'Real-time overview of your business', icon: <LayoutGrid size={14} className="text-blue-400"/>, ring: 'border-blue-500/30 bg-blue-500/10' },
- { step: 'Step 5', title: 'Ready for Operations', desc: "You're all set to operate and grow", icon: <CheckCircle2 size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10' }
- ].map((s, i) => (
- <div key={s.title} className="relative flex items-center justify-between group pl-10">
- <div className="absolute left-0 w-6 h-6 bg-[#111113] flex items-center justify-center z-10 -ml-1.5">
- <div className="w-2 h-2 rounded-full border border-zinc-500 bg-transparent" />
- </div>
- 
- <div className="flex items-center gap-3">
- <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${s.ring}`}>
- {s.icon}
- </div>
- <div>
- <div className="text-white text-secondary font-medium">{s.title}</div>
- <div className="text-zinc-500 text-label mt-0.5">{s.desc}</div>
- </div>
- </div>
- 
- <div className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wide uppercase ${s.step === 'Step 1' || s.step === 'Step 5' ? 'bg-emerald-500/10 text-emerald-400' : s.step === 'Step 2' ? 'bg-purple-500/10 text-purple-400' : s.step === 'Step 3' ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400'}`}>
- {s.step}
- </div>
+ { step: 'Step 1', title: "Today's Consultation", desc: "We'll understand your business in detail", icon: <LayoutGrid size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10', details: 'Our interactive business setup engine collects your organization name, industry, departments, and existing tech stack.' },
+ { step: 'Step 2', title: 'Business Analysis', desc: 'Our AI analyzes data and generates insights', icon: <ListTree size={14} className="text-purple-400"/>, ring: 'border-purple-500/30 bg-purple-500/10', details: 'Gemini AI constructs an organizational graph mapping your business workflows, team roles, and data objects.' },
+ { step: 'Step 3', title: 'Business OS Generated', desc: 'Your tailored Business OS is ready', icon: <Package size={14} className="text-amber-400"/>, ring: 'border-amber-500/30 bg-amber-500/10', details: 'Custom capability packs, UI dashboards, and autonomous agent hubs are dynamically compiled for your domain.' },
+ { step: 'Step 4', title: 'CEO Dashboard Ready', desc: 'Real-time overview of your business', icon: <LayoutGrid size={14} className="text-blue-400"/>, ring: 'border-blue-500/30 bg-blue-500/10', details: 'Executive control panel goes live with real-time process scheduler, team metrics, and revenue analytics.' },
+ { step: 'Step 5', title: 'Ready for Operations', desc: "You're all set to operate and grow", icon: <CheckCircle2 size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10', details: 'Your team starts executing intents, launching workflows, and delegating repetitive tasks to autonomous agents.' }
+ ].map((s) => (
+ <div 
+   key={s.title} 
+   onClick={() => setSelectedSetupStep(s)}
+   className="relative flex items-center justify-between group pl-10 p-2 rounded-xl hover:bg-zinc-800/40 cursor-pointer transition-all border border-transparent hover:border-zinc-800"
+ >
+   <div className="absolute left-0 w-6 h-6 bg-[#111113] flex items-center justify-center z-10 -ml-1.5">
+     <div className="w-2 h-2 rounded-full border border-zinc-500 bg-transparent group-hover:bg-indigo-400 group-hover:border-indigo-400 transition-colors" />
+   </div>
+   
+   <div className="flex items-center gap-3">
+     <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${s.ring}`}>
+       {s.icon}
+     </div>
+     <div>
+       <div className="text-white text-secondary font-medium group-hover:text-indigo-300 transition-colors">{s.title}</div>
+       <div className="text-zinc-500 text-label mt-0.5">{s.desc}</div>
+     </div>
+   </div>
+   
+   <div className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wide uppercase ${s.step === 'Step 1' || s.step === 'Step 5' ? 'bg-emerald-500/10 text-emerald-400' : s.step === 'Step 2' ? 'bg-purple-500/10 text-purple-400' : s.step === 'Step 3' ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400'}`}>
+     {s.step}
+   </div>
  </div>
  ))}
  </div>
@@ -367,27 +409,27 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  <ArrowRight size={14} className="text-zinc-600" />
  </div>
  
- <div className="bg-[#111113] border border-zinc-800/80 rounded-xl px-4 py-4 flex items-center justify-center gap-3">
+ <div onClick={() => setActiveGlanceModal('departments')} className="bg-[#111113] border border-zinc-800/80 hover:border-indigo-500/40 rounded-xl px-4 py-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-zinc-800/40 transition-all">
  <LayoutGrid size={20} className="text-blue-400" />
  <div><div className="text-white font-bold text-section ">12</div><div className="text-zinc-500 text-[10px]">Departments</div></div>
  </div>
  
- <div className="bg-[#111113] border border-zinc-800/80 rounded-xl px-4 py-4 flex items-center justify-center gap-3">
+ <div onClick={() => setActiveGlanceModal('workflows')} className="bg-[#111113] border border-zinc-800/80 hover:border-emerald-500/40 rounded-xl px-4 py-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-zinc-800/40 transition-all">
  <ListTree size={20} className="text-emerald-400" />
  <div><div className="text-white font-bold text-section ">48</div><div className="text-zinc-500 text-[10px]">Workflows</div></div>
  </div>
  
- <div className="bg-[#111113] border border-zinc-800/80 rounded-xl px-4 py-4 flex items-center justify-center gap-3">
+ <div onClick={() => setActiveGlanceModal('automations')} className="bg-[#111113] border border-zinc-800/80 hover:border-purple-500/40 rounded-xl px-4 py-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-zinc-800/40 transition-all">
  <Zap size={20} className="text-purple-400" />
  <div><div className="text-white font-bold text-section ">128</div><div className="text-zinc-500 text-[10px]">Automations</div></div>
  </div>
  
- <div className="bg-[#111113] border border-zinc-800/80 rounded-xl px-4 py-4 flex items-center justify-center gap-3">
+ <div onClick={() => setActiveGlanceModal('integrations')} className="bg-[#111113] border border-zinc-800/80 hover:border-amber-500/40 rounded-xl px-4 py-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-zinc-800/40 transition-all">
  <Cpu size={20} className="text-amber-400" />
  <div><div className="text-white font-bold text-section ">24</div><div className="text-zinc-500 text-[10px]">Integrations</div></div>
  </div>
 
- <div className="bg-[#111113] border border-zinc-800/80 rounded-xl px-4 py-4 flex items-center justify-center gap-3">
+ <div onClick={() => setActiveGlanceModal('health')} className="bg-[#111113] border border-zinc-800/80 hover:border-emerald-500/40 rounded-xl px-4 py-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-zinc-800/40 transition-all">
  <div className="relative w-8 h-8">
  <svg className="w-8 h-8 transform -rotate-90">
  <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="3" fill="transparent" className="text-zinc-800" />
@@ -743,8 +785,346 @@ const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTemplate, pr
  </div>
  </div>
  )}
- </div>
- );
+      {/* 1. Company Import Wizard Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-6 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20">
+                  <FolderOpen size={22} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Import Company & Workspace</h3>
+                  <p className="text-xs text-zinc-400">Import existing company backup, configuration pack, or connected tools</p>
+                </div>
+              </div>
+              <button onClick={() => setShowImportModal(false)} className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleImportSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Import Source</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'pack', label: 'Config Pack', icon: Package },
+                    { id: 'file', label: 'Backup JSON', icon: FileText },
+                    { id: 'provider', label: 'Connected Tool', icon: Shield }
+                  ].map(src => {
+                    const Icon = src.icon;
+                    return (
+                      <button
+                        key={src.id}
+                        type="button"
+                        onClick={() => setImportSource(src.id as any)}
+                        className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                          importSource === src.id ? 'bg-indigo-600/10 text-indigo-400 border-indigo-500/50' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        <Icon size={18} />
+                        <span>{src.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Organization / Company Name</label>
+                <input
+                  type="text"
+                  required
+                  value={importCompanyName}
+                  onChange={(e) => setImportCompanyName(e.target.value)}
+                  placeholder="e.g. Acme Global Services, Apex Talent Inc."
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-indigo-500 placeholder:text-zinc-600"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Target Business Domain Pack</label>
+                <select
+                  value={importDomain}
+                  onChange={(e) => setImportDomain(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="Recruitment">Recruitment & Staffing OS</option>
+                  <option value="Healthcare">Healthcare & Hospital OS</option>
+                  <option value="Professional Services">Professional Services & Consulting OS</option>
+                  <option value="Retail & Local">E-Commerce & Retail OS</option>
+                  <option value="Finance & Banking">Finance & Accounting OS</option>
+                  <option value="SaaS">SaaS & Platform OS</option>
+                </select>
+              </div>
+
+              {importSource === 'file' && (
+                <div>
+                  <label className="text-xs font-bold text-zinc-300 block mb-1.5">Upload Workspace Backup (.json or .chatr)</label>
+                  <div className="p-4 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 text-center space-y-2">
+                    <FolderOpen size={24} className="mx-auto text-indigo-400" />
+                    <p className="text-xs text-zinc-400">
+                      {importFile ? importFile.name : 'Click to select or drag backup file here'}
+                    </p>
+                    <input
+                      type="file"
+                      accept=".json,.chatr"
+                      onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="import-file-input-welcome"
+                    />
+                    <label htmlFor="import-file-input-welcome" className="inline-block px-3 py-1.5 rounded-lg bg-zinc-800 text-xs text-white font-bold cursor-pointer hover:bg-zinc-700">
+                      Choose File
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {importSource === 'provider' && (
+                <div>
+                  <label className="text-xs font-bold text-zinc-300 block mb-1.5">Select External Integration Provider</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Google Workspace', 'Microsoft 365', 'Salesforce CRM', 'SAP ERP'].map(p => (
+                      <div key={p} className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/50 text-xs font-bold text-zinc-300 flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-emerald-400" />
+                        <span>{p}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-3 flex justify-end gap-3 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setShowImportModal(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Import & Launch Business OS</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Health Item Detail Modal */}
+      {selectedHealthItem && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-4 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Stethoscope size={20} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">{selectedHealthItem.title}</h3>
+                  <p className="text-xs text-zinc-400">{selectedHealthItem.desc}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedHealthItem(null)} className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed">
+              <span className="font-bold text-indigo-400 block mb-1">Impact Analysis & Diagnosis</span>
+              {selectedHealthItem.detail}
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setSelectedHealthItem(null)} className="px-4 py-2 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer">
+                Close
+              </button>
+              <button onClick={() => { toast.success(`Applied AI Fix for ${selectedHealthItem.title}!`); setSelectedHealthItem(null); setPhase('identity'); }} className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-600/20">
+                <span>Fix & Start Setup</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Full Executive Health Analysis Modal */}
+      {showFullAnalysisModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-2xl bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-5 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20">
+                  <Activity size={22} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Full Business Health Audit Report</h3>
+                  <p className="text-xs text-zinc-400">Comprehensive AI Audit across structural, operational, and financial dimensions</p>
+                </div>
+              </div>
+              <button onClick={() => setShowFullAnalysisModal(false)} className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-center">
+                <div className="text-xs text-zinc-400 font-medium">Health Score</div>
+                <div className="text-xl font-extrabold text-emerald-400 mt-1">96 / 100</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-center">
+                <div className="text-xs text-zinc-400 font-medium">Potential AWCR</div>
+                <div className="text-xl font-extrabold text-indigo-400 mt-1">88.4%</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-center">
+                <div className="text-xs text-zinc-400 font-medium">Time Returned</div>
+                <div className="text-xl font-extrabold text-purple-400 mt-1">18.5 hrs/wk</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-zinc-300">Key Action Items</span>
+              <div className="space-y-2">
+                {[
+                  'Provision missing Legal, Delivery, and Compliance departments',
+                  'Enable 48 pre-packaged intent workflows across Sales & Delivery',
+                  'Connect Google Workspace & Microsoft 365 providers',
+                  'Deploy Domain Superintendent for 24/7 autonomous monitoring'
+                ].map((item, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800 text-xs text-zinc-300 flex items-center gap-2.5">
+                    <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 pt-3 border-t border-zinc-800">
+              <button onClick={() => { toast.success('Audit Report PDF downloaded.'); setShowFullAnalysisModal(false); }} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white cursor-pointer border border-zinc-700">
+                Download PDF
+              </button>
+              <button onClick={() => { setShowFullAnalysisModal(false); setPhase('identity'); }} className="px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center gap-2">
+                <span>Start Guided Setup</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Setup Step Modal */}
+      {selectedSetupStep && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-4 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${selectedSetupStep.ring}`}>
+                  {selectedSetupStep.icon}
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">{selectedSetupStep.step}: {selectedSetupStep.title}</h3>
+                  <p className="text-xs text-zinc-400">{selectedSetupStep.desc}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedSetupStep(null)} className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800 text-xs text-zinc-300 leading-relaxed">
+              <span className="font-bold text-purple-400 block mb-1">What Happens in this Step</span>
+              {selectedSetupStep.details}
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setSelectedSetupStep(null)} className="px-4 py-2 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer">
+                Close
+              </button>
+              <button onClick={() => { setSelectedSetupStep(null); setPhase('identity'); }} className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-600/20">
+                <span>Start Setup Now</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. At a Glance Metrics Modal */}
+      {activeGlanceModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-4 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 capitalize">
+                  {activeGlanceModal === 'departments' && <LayoutGrid size={22} />}
+                  {activeGlanceModal === 'workflows' && <ListTree size={22} />}
+                  {activeGlanceModal === 'automations' && <Zap size={22} />}
+                  {activeGlanceModal === 'integrations' && <Cpu size={22} />}
+                  {activeGlanceModal === 'health' && <Activity size={22} />}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white capitalize">{activeGlanceModal} Overview</h3>
+                  <p className="text-xs text-zinc-400">Live system architecture telemetry & status</p>
+                </div>
+              </div>
+              <button onClick={() => setActiveGlanceModal(null)} className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {activeGlanceModal === 'departments' && (
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  {['Executive Office', 'Sales & CRM', 'Recruitment', 'Delivery', 'Finance', 'HR & People', 'Marketing', 'Product', 'Engineering', 'Legal', 'Operations', 'Customer Success'].map(d => (
+                    <div key={d} className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 font-medium text-zinc-200 flex items-center gap-2">
+                      <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                      <span className="truncate">{d}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeGlanceModal === 'workflows' && (
+                <div className="space-y-2 text-xs">
+                  {['Automated Candidate Sourcing & Pipeline Matching', 'Invoice Reconciliation & Vendor Payment Gateways', 'SLA Breach Monitoring & Instant Escalations', 'Client Onboarding & Contract Auto-Generation'].map(w => (
+                    <div key={w} className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 font-medium text-zinc-200 flex items-center justify-between">
+                      <span className="truncate">{w}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 uppercase">Active</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeGlanceModal === 'automations' && (
+                <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 leading-relaxed">
+                  <span className="font-bold text-purple-400 block mb-1">128 Pre-Configured Automations</span>
+                  Includes automated calendar scheduling, email parsing, lead scoring, document OCR extraction, and weekly executive digests.
+                </div>
+              )}
+              {activeGlanceModal === 'integrations' && (
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {['Microsoft 365', 'Supabase Database', 'Gemini AI Engine', 'Stripe Payments', 'Slack Messaging', 'SAP Enterprise', 'Salesforce CRM', 'GitHub Workspace'].map(i => (
+                    <div key={i} className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 font-medium text-zinc-200 flex items-center gap-2">
+                      <Cpu size={14} className="text-amber-400 shrink-0" />
+                      <span className="truncate">{i}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeGlanceModal === 'health' && (
+                <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 leading-relaxed">
+                  <span className="font-bold text-emerald-400 block mb-1">System Health: 96%</span>
+                  All core kernel services, scheduler loops, and memory stores are operating within optimal latency (&lt;15ms).
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-zinc-800">
+              <button onClick={() => setActiveGlanceModal(null)} className="px-5 py-2 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white cursor-pointer">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ─── App Config Modal ────────────────────────────────────────────────────────
@@ -1830,6 +2210,136 @@ const IdentityAccessView = () => {
           </table>
         </div>
       </div>
+      {/* Company Import Wizard Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-[#111113] border border-zinc-800 rounded-3xl p-6 space-y-6 shadow-2xl relative text-left">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20">
+                  <FolderOpen size={22} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Import Company & Workspace</h3>
+                  <p className="text-xs text-zinc-400">Import existing company backup, configuration pack, or connected tools</p>
+                </div>
+              </div>
+              <button onClick={() => setShowImportModal(false)} className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleImportSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Import Source</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'pack', label: 'Config Pack', icon: Package },
+                    { id: 'file', label: 'Backup JSON', icon: FileText },
+                    { id: 'provider', label: 'Connected Tool', icon: Shield }
+                  ].map(src => {
+                    const Icon = src.icon;
+                    return (
+                      <button
+                        key={src.id}
+                        type="button"
+                        onClick={() => setImportSource(src.id as any)}
+                        className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                          importSource === src.id ? 'bg-indigo-600/10 text-indigo-400 border-indigo-500/50' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        <Icon size={18} />
+                        <span>{src.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Organization / Company Name</label>
+                <input
+                  type="text"
+                  required
+                  value={importCompanyName}
+                  onChange={(e) => setImportCompanyName(e.target.value)}
+                  placeholder="e.g. Acme Global Services, Apex Talent Inc."
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-indigo-500 placeholder:text-zinc-600"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-zinc-300 block mb-1.5">Target Business Domain Pack</label>
+                <select
+                  value={importDomain}
+                  onChange={(e) => setImportDomain(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="Recruitment">Recruitment & Staffing OS</option>
+                  <option value="Healthcare">Healthcare & Hospital OS</option>
+                  <option value="Professional Services">Professional Services & Consulting OS</option>
+                  <option value="Retail & Local">E-Commerce & Retail OS</option>
+                  <option value="Finance & Banking">Finance & Accounting OS</option>
+                  <option value="SaaS">SaaS & Platform OS</option>
+                </select>
+              </div>
+
+              {importSource === 'file' && (
+                <div>
+                  <label className="text-xs font-bold text-zinc-300 block mb-1.5">Upload Workspace Backup (.json or .chatr)</label>
+                  <div className="p-4 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 text-center space-y-2">
+                    <FolderOpen size={24} className="mx-auto text-indigo-400" />
+                    <p className="text-xs text-zinc-400">
+                      {importFile ? importFile.name : 'Click to select or drag backup file here'}
+                    </p>
+                    <input
+                      type="file"
+                      accept=".json,.chatr"
+                      onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="import-file-input"
+                    />
+                    <label htmlFor="import-file-input" className="inline-block px-3 py-1.5 rounded-lg bg-zinc-800 text-xs text-white font-bold cursor-pointer hover:bg-zinc-700">
+                      Choose File
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {importSource === 'provider' && (
+                <div>
+                  <label className="text-xs font-bold text-zinc-300 block mb-1.5">Select External Integration Provider</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Google Workspace', 'Microsoft 365', 'Salesforce CRM', 'SAP ERP'].map(p => (
+                      <div key={p} className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/50 text-xs font-bold text-zinc-300 flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-emerald-400" />
+                        <span>{p}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-3 flex justify-end gap-3 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setShowImportModal(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Import & Launch Business OS</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -2174,13 +2684,13 @@ export default function BusinessOS() {
  React.useEffect(() => {
  AutomationEngine.initialize();
  }, []);
-
+// ...
  const [appState, setAppState] = useState<AppState>('os');
  const [activeView, setActiveView] = useState<ViewMode>('home');
- const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(() => resolveTemplate('Professional Services') || TEMPLATES[0]);
+ const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(() => resolveTemplate(localStorage.getItem('chatr_active_domain') || 'Professional Services') || TEMPLATES[0]);
  const [activeProfile, setActiveProfile] = useState<any>(() => ({
-   name: 'TalentXcel Services Inc.',
-   industry: 'Professional Services',
+   name: localStorage.getItem('chatr_company_name') || localStorage.getItem('chatr_org_name') || localStorage.getItem('user_workspace_name') || (localStorage.getItem('chatr_user_name') ? `${localStorage.getItem('chatr_user_name')}'s Workspace` : 'CHATR Business OS'),
+   industry: localStorage.getItem('chatr_active_domain') || 'Professional Services',
    dept: ['Executive Office', 'Sales', 'Recruitment', 'Delivery', 'Finance'],
    tech: ['Microsoft 365', 'Supabase', 'Gemini AI', 'Stripe'],
    teamSize: '11-50',
@@ -2223,26 +2733,8 @@ export default function BusinessOS() {
  rating: catalogItem?.rating || 4.0,
  installs: catalogItem?.installs || 0,
  tags: catalogItem?.tags || [],
- objects: (catalogItem as any)?.objectSchemas?.map((s: any) => ({
- name: s.name,
- pluralName: s.pluralName,
- icon: s.icon,
- titleField: s.titleField,
- statusField: s.statusField,
- fields: s.fields || [],
- relations: [],
- features: {},
- })) || [],
- views: [
- { id: 'dashboard', label: 'Dashboard', icon: '📊', type: 'dashboard', isDefault: true },
- ...((catalogItem as any)?.objectSchemas || []).map((s: any) => ({
- id: s.name.toLowerCase(),
- label: s.pluralName || s.name,
- icon: s.icon || '📋',
- type: 'grid',
- object: s.name,
- })),
- ],
+ objects: [],
+ views: [],
  dashboards: [],
  reports: [],
  ai: { skills: [] },
@@ -2277,7 +2769,9 @@ export default function BusinessOS() {
 
  if (appState === 'onboarding') {
  return <AIBusinessSetup onComplete={(template, profile) => {
- setActiveTemplate(template);
+  if (profile?.name) localStorage.setItem('chatr_company_name', profile.name);
+  if (profile?.industry) localStorage.setItem('chatr_active_domain', profile.industry);
+  setActiveTemplate(template);
  setActiveProfile(profile);
  setAppState('os');
  }} />;

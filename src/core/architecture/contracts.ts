@@ -188,3 +188,81 @@ export interface IChangeIntelligence {
 export interface ITelemetryStore {
   recordTrace(trace: ExecutionTrace): Promise<void>;
 }
+
+// ─── 7. UNIVERSAL BUSINESS OBJECT MODEL (9 CANONICAL TYPES) ───────────────────
+export type UniversalObjectType =
+  | 'Person'        // Patient, Candidate, Customer, Employee, Contact
+  | 'Organization'  // Hospital, Client, Vendor, Supplier, Department
+  | 'Conversation'  // Chat, Call, Email, Meeting, Note
+  | 'Document'      // Medical EHR, Resume, Invoice, Contract, Report
+  | 'WorkItem'      // Task, Ticket, QueueItem, Appointment, Project
+  | 'Asset'         // Machine, Room, Bed, Vehicle, InventoryItem
+  | 'Transaction'   // Invoice, PurchaseOrder, Payment, Salary, Bill
+  | 'Event'         // CheckIn, SLA_Breach, PolicyTriggered, Admission
+  | 'Knowledge';    // RAG Graph Node, Article, SOP, Recommendation
+
+export interface UniversalBusinessObject {
+  id: string;
+  type: UniversalObjectType;
+  packId: string; // e.g. 'pack.healthcare'
+  schemaId: string; // Dynamic schema from Configuration Pack
+  title: string;
+  state: RuntimeProcessState;
+  metadata: Record<string, any>;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// ─── 8. RUNTIME PROCESS STATES (11 OS STATES) ─────────────────────────────────
+export type RuntimeProcessState =
+  | 'Created'
+  | 'Queued'
+  | 'Running'
+  | 'Sleeping'
+  | 'Waiting'
+  | 'NeedsApproval'
+  | 'Retrying'
+  | 'Blocked'
+  | 'Completed'
+  | 'Cancelled'
+  | 'Failed'
+  | 'Learning';
+
+// ─── 9. CONFIGURATION PACK (THREE-LAYER ARCHITECTURE) ─────────────────────────
+export interface ConfigurationPackV2 {
+  id: string; // e.g. 'pack.healthcare'
+  name: string;
+  version: string;
+  
+  // Layer A: Business Schema
+  schemas: Record<string, any>; // Mappings to UniversalObjectType
+  
+  // Layer B: Business Vocabulary
+  vocabulary: {
+    objectAliases: Record<string, string>; // e.g. Person -> 'Patient', Transaction -> 'Medical Bill'
+    actionAliases: Record<string, string>; // e.g. Execute -> 'Admit Patient'
+  };
+  
+  // Layer C: Business Policies
+  policies: {
+    compliance: string[]; // e.g. ['HIPAA', 'GDPR']
+    approvalGates: Record<string, any>; // Gate rules per capability
+    permissions: Record<string, string[]>; // Role-based access control
+  };
+}
+
+// ─── 10. FOUR-LAYER KERNEL SPECIFICATION ──────────────────────────────────────
+export interface IUniversalBusinessKernel {
+  // Layer 1: Experience Layer (Driven by BusinessOS.tsx)
+  getOperatingSurfaceState(): Promise<{ activePack: string; healthScore: number }>;
+  
+  // Layer 2: Intent Layer (Parser, Context, Planner)
+  parseIntent(rawText: string, contextId: string): Promise<{ intentId: string; confidence: number }>;
+  
+  // Layer 3: Execution Layer (Execution Graph, Scheduler, Engine, Capabilities)
+  executeGraph(graphId: string, inputs: Record<string, any>): Promise<{ processId: string; state: RuntimeProcessState }>;
+  
+  // Layer 4: Foundation Layer (Memory, Event Bus, Health, Packs)
+  recordEvent(event: IEvent): Promise<void>;
+  getHealthScore(): Promise<{ score: number; bottlenecks: string[]; activeServices: number }>;
+}

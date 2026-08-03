@@ -44,8 +44,6 @@ perf.mark('process-start');
 app.commandLine.appendSwitch('enable-gpu-rasterization');
 app.commandLine.appendSwitch('enable-zero-copy');
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
-// Prevent jank during heavy background work
-app.commandLine.appendSwitch('disable-renderer-backgrounding');
 // Smooth scrolling
 app.commandLine.appendSwitch('enable-smooth-scrolling');
 
@@ -1684,6 +1682,7 @@ function createWindow() {
       enableRemoteModule: false,    // DEPRECATED but ensure disabled
       webSecurity: true,            // Enforces same-origin policy
       allowRunningInsecureContent: false,
+      plugins: true,                // CRITICAL: Enables built-in PDF viewer
     },
   });
 
@@ -1693,15 +1692,15 @@ function createWindow() {
       responseHeaders: {
         ...details.responseHeaders,
         'Content-Security-Policy': [
-          "default-src 'self';" +
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://cdn.jsdelivr.net;" +
+          "default-src 'self' blob: chrome-extension:;" +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' chrome-extension: https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://cdn.jsdelivr.net;" +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
           "font-src 'self' https://fonts.gstatic.com data:;" +
-          "img-src 'self' data: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat https://www.transparenttextures.com blob:;" +
-          "connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net https://api.bigdatacloud.net;" +
-          "worker-src 'self' blob:;" +
-          "frame-src 'self' blob: https://www.google.com/recaptcha/ https://recaptcha.net/;" +
-          "object-src 'self' blob:;"
+          "img-src 'self' data: blob: chrome-extension: https://*.supabase.co https://*.googleusercontent.com https://chatr.chat https://www.transparenttextures.com;" +
+          "connect-src 'self' blob: chrome-extension: ws: wss: http://localhost:* http://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://*.firebaseapp.com https://cdn.jsdelivr.net https://api.bigdatacloud.net;" +
+          "worker-src 'self' blob: chrome-extension:;" +
+          "frame-src 'self' blob: chrome-extension: https://www.google.com/recaptcha/ https://recaptcha.net/;" +
+          "object-src 'self' blob: chrome-extension:;"
         ]
       }
     });
@@ -1733,25 +1732,44 @@ function createWindow() {
     }
   });
 
+  // ── Document IPC Path Sandbox ────────────────────────────────────────────
+  // SECURITY: All file paths from the renderer must be validated before use.
+  // - Resolve to absolute path to prevent ../ traversal
+  // - Restrict to user home directory to prevent access to system files
+  // If the resolved path escapes the boundary, the request is rejected.
+  const USER_HOME = app.getPath('home');
+  const resolveAndValidatePath = (rawPath) => {
+    if (!rawPath || typeof rawPath !== 'string') {
+      throw new Error('Invalid file path: path must be a non-empty string.');
+    }
+    const resolved = path.resolve(rawPath);
+    if (!resolved.startsWith(USER_HOME)) {
+      throw new Error(`Access denied: path '${resolved}' is outside the allowed directory.`);
+    }
+    return resolved;
+  };
+
   ipcMain.handle('documents:read', async (event, { filePath }) => {
     try {
-      return await parserRegistry.parse(filePath);
+      const safePath = resolveAndValidatePath(filePath);
+      return await parserRegistry.parse(safePath);
     } catch (err) {
-      log.error('[documents:read] Error:', err);
+      log.error('[documents:read] Error:', err.message);
       return { text: '', metadata: { success: false, error: err.message } };
     }
   });
 
   ipcMain.handle('documents:open', async (event, { filePath }) => {
     try {
-      const error = await shell.openPath(filePath);
+      const safePath = resolveAndValidatePath(filePath);
+      const error = await shell.openPath(safePath);
       if (error) {
         log.error('[documents:open] OpenPath error:', error);
         return { success: false, error };
       }
       return { success: true };
     } catch (err) {
-      log.error('[documents:open] Error:', err);
+      log.error('[documents:open] Error:', err.message);
       return { success: false, error: err.message };
     }
   });
@@ -1815,11 +1833,14 @@ function createWindow() {
     log.info('Loading Desktop Vite Dev Server (port 8086)');
     mainWindow.loadURL('http://localhost:8086');
   } else {
-    log.info('Loading Live Vercel Sync Engine');
-    const LIVE_URL = 'https://busineess-os.vercel.app/#/desktop/home';
-    mainWindow.loadURL(LIVE_URL).catch((err) => {
-      log.warn('[Main] Live Vercel loading failed or offline, loading local bundle:', err.message);
-      mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html'));
+    // SECURITY: Production MUST always load from the local signed bundle.
+    // Remote URL loading is prohibited — it allows arbitrary remote code to run
+    // inside a privileged Electron shell with access to IPC, filesystem, and payments.
+    // If you need to display remote content, use an isolated BrowserWindow with
+    // nodeIntegration:false and no preload script attached.
+    log.info('[Main] Loading local signed bundle (production mode).');
+    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html')).catch((err) => {
+      log.error('[Main] Failed to load local bundle — dist-desktop/index.desktop.html may be missing. Run: npm run build:desktop', err.message);
     });
   }
 

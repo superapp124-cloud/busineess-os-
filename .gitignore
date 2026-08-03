@@ -75,3 +75,71 @@ vite.config.ts.timestamp-*.mjs
 
 # Local config overrides
 *.local
+
+# ─── SECURITY & HYGIENE ADDITIONS ────────────────────────────────────────────
+# Backup files (use git branches instead of .bak files)
+*.bak
+*.backup
+
+# Root-level debug screenshots and PNGs (not source assets)
+android-*.png
+chatr-*.png
+bench-*.png
+cdp-*.png
+chattrr-*.png
+
+# Root-level scratch/debug scripts
+scratch_log.py
+check.js
+check_signals.js
+check_signals.ts
+capture_logs.cjs
+chat_dev.js
+find-live-model.cjs
+monitor_calls.mjs
+take-screenshot.mjs
+take_screenshot.cjs
+e2e-login-test.cjs
+e2e-webaudio-test.cjs
+test-ai-button.cjs
+test-ai-call.js
+test-ai-webrtc.cjs
+test-auth-login.mjs
+test-auth.mjs
+test-gemini-audio.cjs
+test-gemini.cjs
+test-layer-4.cjs
+test-logs.js
+test-planner.ts
+test-runner.cjs
+test.cjs
+test_*.cjs
+test_*.js
+test_*.ts
+run_tests.cjs
+
+# SQL dump files (never commit raw DB dumps to source control)
+dump.sql
+*.sql.bak
+
+# Large data / debug outputs
+*.patch
+diff.patch
+decision_debug.log
+cdp-screenshot-response.json
+browser-logs.txt
+
+# APK decompilation tooling (should never be in the repo)
+apktool.jar
+jadx.zip
+
+# Log files that leak PII (belt-and-suspenders, in addition to existing rules)
+call_logs*.txt
+logcat*.txt
+*.out.log
+*.err.log
+main.log
+vite.out.log
+vite.err.log
+search-server.out.log
+search-server.err.log

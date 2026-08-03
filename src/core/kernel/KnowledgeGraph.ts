@@ -18,7 +18,15 @@ export interface GraphEdge {
   properties: Record<string, any>;
 }
 
+/**
+ * @deprecated Use EnterpriseGraph and EnterpriseKnowledgeRuntime instead.
+ * Legacy Supabase adapter for Knowledge Graph.
+ */
 export class IntentKnowledgeGraph {
+  
+  constructor() {
+    console.warn('[DEPRECATED] IntentKnowledgeGraph is deprecated. Use EnterpriseGraph/EnterpriseKnowledgeRuntime.');
+  }
   
   /**
    * Upsert a node into the graph.

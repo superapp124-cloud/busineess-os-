@@ -12,7 +12,7 @@ import '@fontsource/geist-mono/500.css';
 import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./services/AuthProvider";
-
+import { bootKernel } from "./core/runtime/boot";
 import { DesignSystemProvider } from "./contexts/DesignSystemContext";
 
 console.log("🚀 [Main] Starting React mount...");
@@ -25,6 +25,7 @@ if (!rootElement) {
 
 console.log("🚀 [Main] Root element found, rendering App...");
 AuthProvider.setupSessionSync();
+bootKernel().catch(err => console.error("❌ [Main] Kernel Boot Error:", err));
 createRoot(rootElement).render(
  <DesignSystemProvider>
  <App />

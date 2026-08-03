@@ -71,6 +71,7 @@ import ExecutionDashboard from "./components/dev/ExecutionDashboard";
 const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m => ({ default: m.AdminLayout })));
 import DesktopLayout from "./layouts/DesktopLayout";
 const WorkspaceSetup = React.lazy(() => import("./pages/desktop/WorkspaceSetup").then(m => ({ default: m.WorkspaceSetup })));
+const OAuthCallback = React.lazy(() => import("./pages/desktop/OAuthCallback"));
 const KernelDashboard = React.lazy(() => import("./pages/desktop/KernelDashboard").then(m => ({ default: m.KernelDashboard })));
 const WorkflowInspectorPage = React.lazy(() => import("./pages/desktop/WorkflowInspector").then(m => ({ default: m.WorkflowInspector })));
 const EngineHealthDashboardPage = React.lazy(() => import("./pages/desktop/EngineHealthDashboard").then(m => ({ default: m.EngineHealthDashboard })));
@@ -188,8 +189,8 @@ const SubdomainRedirect = () => {
 };
 
 // Local Error Boundary to catch stale Vercel deployment chunk errors during route navigation
-class StaleChunkErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
-  state = { hasError: false };
+class StaleChunkErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error?: Error }> {
+  state: { hasError: boolean, error?: Error } = { hasError: false, error: undefined };
   static getDerivedStateFromError(error: Error) {
     const isChunkError = error?.message?.includes('Failed to fetch dynamically imported module') ||
                          error?.message?.includes('Importing a module script failed') ||
@@ -204,16 +205,23 @@ class StaleChunkErrorBoundary extends React.Component<{ children: React.ReactNod
         window.location.reload();
       }
     }
-    return { hasError: true };
+    return { hasError: true, error };
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
           <div className="text-sm font-bold text-slate-700 mb-2">Updating CHATR with latest features...</div>
+          {/* Only show raw error details in development — never expose in production */}
+          {process.env.NODE_ENV === 'development' && this.state.error && (
+            <div className="mt-4 p-4 bg-red-50 rounded text-left overflow-auto max-w-2xl max-h-96">
+              <div className="font-bold text-red-700 text-sm">{this.state.error.message}</div>
+              <pre className="text-xs text-red-500 mt-2">{this.state.error.stack}</pre>
+            </div>
+          )}
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow"
+            className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow mt-4"
           >
             Refresh Now
           </button>
@@ -262,6 +270,15 @@ const NativeStartupRouteGate = ({ children }: { children: React.ReactNode }) => 
         window.history.replaceState(null, '', `${window.location.origin}/#${hashTarget}`);
       }
       navigate(hashTarget, { replace: true });
+      setIsReady(true);
+      return;
+    }
+
+    // Intercept Google OAuth Implicit Flow callback (e.g. #state=...&access_token=...)
+    // Google doesn't allow # in redirect URIs, so it redirects to root, appending the token as a hash
+    if (window.location.hash.includes('access_token=') || window.location.hash.includes('error=')) {
+      // Re-route the hash to our dedicated OAuth callback component
+      navigate(`/oauth/callback${window.location.hash}`, { replace: true });
       setIsReady(true);
       return;
     }
@@ -499,6 +516,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Routes>
   {/* Developer Routes */}
   <Route path="/dev" element={<ExecutionDashboard />} />
+  <Route path="/oauth/callback" element={<Suspense fallback={<PageLoader message="Authenticating..." />}><OAuthCallback /></Suspense>} />
   <Route path="/design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
  {/* Desktop Platform Routes */}
   <Route path="/desktop">

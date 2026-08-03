@@ -179,7 +179,13 @@ class MessagingServiceClass implements IService {
         })
       );
 
-      return hydratedRooms;
+      const uniqueMap = new Map<string, Room>();
+      for (const room of hydratedRooms) {
+        if (!uniqueMap.has(room.id)) {
+          uniqueMap.set(room.id, room);
+        }
+      }
+      return Array.from(uniqueMap.values());
     } catch (err) {
       Logger.error('[MessagingService] getRooms failed', err);
       return [];

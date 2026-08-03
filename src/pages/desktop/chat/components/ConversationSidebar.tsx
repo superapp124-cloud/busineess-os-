@@ -23,8 +23,33 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
   setShowCreateModal
 }) => {
   const channels = rooms.filter(r => r.type === 'channel');
-  const dms = rooms.filter(r => r.type === 'dm');
   const selectedRoom = rooms.find(r => r.id === selectedId);
+
+  const uniqueDms = React.useMemo(() => {
+    const rawDms = rooms.filter(r => r.type === 'dm' && r.name !== 'AI Assistant' && r.name !== 'CHATR AI' && r.id !== 'chatr-ai-room');
+    const seenNames = new Set<string>();
+    const seenIds = new Set<string>();
+    const result: Room[] = [];
+
+    for (const dm of rawDms) {
+      const normalizedName = dm.name ? dm.name.trim().toLowerCase() : dm.id;
+      if (seenIds.has(dm.id) || seenNames.has(normalizedName)) {
+        continue;
+      }
+      seenIds.add(dm.id);
+      if (dm.name) seenNames.add(normalizedName);
+      result.push(dm);
+    }
+    return result;
+  }, [rooms]);
+
+  const formatDisplayName = (name?: string) => {
+    if (!name) return 'Unknown Contact';
+    if (name.startsWith('+')) {
+      return name.replace(/^(\+\d{2})(\d{5})(\d{5})$/, '$1 $2 $3');
+    }
+    return name.split(' ').map(w => w.length > 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ');
+  };
 
   return (
     <div className="w-72 shrink-0 border-r flex flex-col relative z-20" style={{ background: 'hsl(var(--sidebar-background))', borderColor: 'hsl(var(--sidebar-border))' }}>
@@ -111,12 +136,12 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
               <Plus className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40" />
             </div>
             <div className="space-y-0.5">
-              {dms.filter(dm => dm.name !== 'AI Assistant' && dm.name !== 'CHATR AI' && dm.id !== 'chatr-ai-room').length === 0 ? (
+              {uniqueDms.length === 0 ? (
                 <div className="px-2 py-2 text-label text-white/30 flex items-center justify-between">
                   <span>No contacts yet</span>
                   <button onClick={() => setShowNewDmModal(true)} className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300">Add</button>
                 </div>
-              ) : dms.filter(dm => dm.name !== 'AI Assistant' && dm.name !== 'CHATR AI' && dm.id !== 'chatr-ai-room').map(dm => (
+              ) : uniqueDms.map(dm => (
                 <button key={dm.id} onClick={() => setSelectedId(dm.id)} className={cn(
                   'w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg transition-colors text-left group relative',
                   selectedId === dm.id ? 'bg-violet-600/20' : 'hover:bg-white/[0.04]'
@@ -134,7 +159,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                       />
                     ) : (
                       <div className={cn("w-6 h-6 rounded-[6px] bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-white")}>
-                        {dm.name?.slice(0, 2).toUpperCase() || '?'}
+                        {formatDisplayName(dm.name)?.slice(0, 2).toUpperCase() || '?'}
                       </div>
                     )}
                     <div className="absolute -bottom-0.5 -right-0.5 border-2 border-[#0b0b14] rounded-full">
@@ -144,7 +169,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <span className={cn("text-[13px] truncate", selectedId === dm.id ? "font-semibold text-violet-300" : (dm.unreadCount || 0) > 0 ? "font-semibold text-white" : "text-white/80")}>
-                        {dm.name}
+                        {formatDisplayName(dm.name)}
                       </span>
                       {(dm.unreadCount || 0) > 0 && (
                         <span className="w-4 h-4 rounded-full bg-violet-500 text-white text-[9px] font-black flex items-center justify-center shrink-0">

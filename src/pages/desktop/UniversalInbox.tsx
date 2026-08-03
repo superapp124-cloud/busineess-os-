@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Inbox, Mail, MessageSquare, Phone, Bell, Users, Search, Filter, 
   Star, Archive, Trash2, Reply, Forward, MoreHorizontal, ChevronDown, 
   Plus, Sparkles, CheckCircle, Clock, AlertTriangle, X, RefreshCw, 
   Settings, Linkedin, Github, Slack, Globe, Send, Paperclip, Smile, Bot, Zap,
-  Check, Lock, QrCode, Loader2, ShieldCheck, Server, AlertCircle
+  Check, Lock, QrCode, Loader2, ShieldCheck, Server, AlertCircle, ShieldOff
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+import { kernel } from '@/core/kernel/Kernel';
+import { IConnectorRuntime } from '@/core/contracts/connector/IConnectorRuntime';
+import { fetchGmailMessages, isGoogleAuthenticated, GmailMessage } from '@/core/connector/providers/GmailService';
+import { fetchWhatsAppMessages } from '@/core/connector/providers/WhatsAppService';
 import { toast } from 'sonner';
 
 // Types
@@ -59,24 +63,15 @@ const sourceConfig: Record<MessageSource, { color: string; code: string }> = {
   'Facebook': { color: '#1877F2', code: 'Fb' },
 };
 
-const initialMessages: Message[] = [
-  { id: '1', source: 'Gmail', sender: 'Amazon', subject: 'Invoice from Amazon - ₹4,599 due', preview: 'Please find attached your invoice for order #114-1234. Payment is due by...', time: '2m ago', priority: 'URGENT', category: 'Personal Mail', read: false, starred: false },
-  { id: '2', source: 'Outlook', sender: 'Satya Nadella', subject: 'Meeting with Microsoft Partnership Team', preview: 'Looking forward to our discussion about the integration roadmap tomorrow.', time: '15m ago', priority: 'ACTION', category: 'Professional Mail', read: false, starred: true },
-  { id: '3', source: 'LinkedIn', sender: 'Sarah Recruiter', subject: 'Recruiter: Senior role at Google', preview: 'Hi Arshid, I saw your profile and thought you might be a great fit for...', time: '32m ago', priority: 'ACTION', category: 'Professional Networks', read: false, starred: false },
-  { id: '4', source: 'WhatsApp', sender: 'Family Group', subject: 'Mama\'s birthday tomorrow!', preview: 'Don\'t forget we are meeting at 7PM for dinner at the usual place.', time: '1h ago', priority: 'FYI', category: 'Social Messages', read: true, starred: false },
-  { id: '5', source: 'Slack', sender: '#engineering', subject: 'Deploy failed on prod', preview: 'The latest build failed during the e2e test phase. Logs are attached.', time: '1h ago', priority: 'URGENT', category: 'Professional Networks', read: false, starred: false },
-  { id: '6', source: 'Teams', sender: 'HR Dept', subject: 'Policy update requires acknowledgment', preview: 'Please review and acknowledge the updated WFH policy by EOW.', time: '2h ago', priority: 'ACTION', category: 'Professional Networks', read: true, starred: false },
-  { id: '7', source: 'GitHub', sender: 'Gaurav Kumar', subject: 'PR #847: Review requested', preview: 'Added the new unified inbox components. Needs your review on the API integration.', time: '2h ago', priority: 'ACTION', category: 'Professional Networks', read: false, starred: true },
-  { id: '8', source: 'Twitter/X', sender: '@chatr_app', subject: 'Mentioned you in a thread', preview: 'Check out how @arshid is building the future of communication OS!', time: '3h ago', priority: 'FYI', category: 'Social Messages', read: true, starred: false },
-  { id: '9', source: 'Instagram', sender: '@arshid_design', subject: 'New DM received', preview: 'Love the new dark mode UI you posted! How did you handle the...', time: '3h ago', priority: 'FYI', category: 'Social Messages', read: true, starred: false },
-  { id: '10', source: 'Telegram', sender: 'Support Bot', subject: 'Customer Query: Order not received', preview: 'User ID 4432 reporting order #994 not delivered yet.', time: '4h ago', priority: 'URGENT', category: 'Support Tickets', read: false, starred: false },
-  { id: '11', source: 'Gmail', sender: 'IndiGo', subject: 'Flight booking confirmation: DEL → BOM', preview: 'Your flight is confirmed. PNR: XYZ123. Departure at 08:30 AM.', time: '4h ago', priority: 'FYI', category: 'Personal Mail', read: true, starred: false },
-  { id: '12', source: 'Discord', sender: 'CI Bot', subject: 'Build notification: CI passed ✓', preview: 'All tests passed on main branch. Ready for deployment.', time: '5h ago', priority: 'FYI', category: 'Professional Networks', read: true, starred: false },
-  { id: '13', source: 'Yahoo', sender: 'HDFC Bank', subject: 'Bank statement for June 2026', preview: 'Your monthly statement is attached as a password protected PDF.', time: '6h ago', priority: 'FYI', category: 'Personal Mail', read: true, starred: false },
-];
-
 export const UniversalInbox: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [kernelStatus, setKernelStatus] = useState<'booting' | 'ready' | 'error'>('booting');
+  const [kernelError, setKernelError] = useState<string | null>(null);
+  // Start with empty messages — real ones loaded from APIs
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isSyncingMessages, setIsSyncingMessages] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('All Messages');
   const [selectedMessageId, setSelectedMessageId] = useState<string>('1');
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,6 +101,8 @@ export const UniversalInbox: React.FC = () => {
   
   // WhatsApp QR State
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [whatsappPopup, setWhatsappPopup] = useState<Window | null>(null);
+  const [whatsappConnected, setWhatsappConnected] = useState(false);
 
   // Save connected accounts to localStorage
   useEffect(() => {
@@ -115,6 +112,145 @@ export const UniversalInbox: React.FC = () => {
       console.warn('Failed to save channels:', e);
     }
   }, [connectedAccounts]);
+
+  // Probe kernel health and check setup on mount
+  useEffect(() => {
+    let mounted = true;
+    const checkHealth = async () => {
+      // 1. Wait for Kernel to boot with polling (up to 3 seconds)
+      let isBooted = false;
+      for (let i = 0; i < 10; i++) {
+        try {
+          kernel.resolve<IConnectorRuntime>('IConnectorRuntime');
+          isBooted = true;
+          break;
+        } catch {
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+      
+      if (!mounted) return;
+
+      if (!isBooted) {
+        setKernelStatus('error');
+        setKernelError('ConnectorRuntime is not registered. Kernel may not have booted.');
+        console.error('[UniversalInbox] Kernel boot failed or timed out.');
+      } else {
+        setKernelStatus('ready');
+      }
+    };
+    checkHealth();
+    return () => { mounted = false; };
+  }, []);
+
+  // Fetch real messages from connected providers
+  const syncMessages = useCallback(async () => {
+    setIsSyncingMessages(true);
+    try {
+      const allUnifiedMsgs: Message[] = [];
+      
+      // 1. Fetch Gmail if connected
+      if (isGoogleAuthenticated()) {
+        try {
+          const gmailMsgs = await fetchGmailMessages(20);
+          allUnifiedMsgs.push(...gmailMsgs.map(gm => ({
+            id: gm.id,
+            source: 'Gmail' as const,
+            sender: gm.sender,
+            subject: gm.subject,
+            preview: gm.preview,
+            time: gm.time,
+            timestamp: gm.timestamp,
+            priority: 'FYI' as const,
+            category: 'Personal Mail' as const,
+            read: gm.isRead,
+            starred: gm.isStarred
+          })));
+        } catch (err: any) {
+          toast.error('Failed to sync Gmail: ' + err.message);
+        }
+      }
+
+      // 2. Fetch WhatsApp if connected
+      // In a real app this checks TokenVault, but here we check our local state
+      const isWaConnected = connectedAccounts.some(a => a.provider === 'WhatsApp');
+      if (isWaConnected) {
+        try {
+          const waMsgs = await fetchWhatsAppMessages();
+          allUnifiedMsgs.push(...waMsgs.map(wa => ({
+            id: wa.id,
+            source: 'WhatsApp' as const,
+            sender: wa.sender,
+            subject: wa.subject,
+            preview: wa.preview,
+            time: wa.time,
+            timestamp: wa.timestamp,
+            priority: 'ACTION' as const,
+            category: 'Social Messages' as const,
+            read: wa.isRead,
+            starred: wa.isStarred
+          })));
+        } catch (err: any) {
+          toast.error('Failed to sync WhatsApp: ' + err.message);
+        }
+      }
+      
+      // Sort all messages by timestamp descending (newest first)
+      allUnifiedMsgs.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
+      
+      setMessages(allUnifiedMsgs);
+      setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      
+      // Set the first message as selected if none is selected
+      if (allUnifiedMsgs.length > 0 && !selectedMessageId) {
+        setSelectedMessageId(allUnifiedMsgs[0].id);
+      }
+    } catch (err: any) {
+      toast.error('Failed to sync messages: ' + err.message);
+    } finally {
+      setIsSyncingMessages(false);
+    }
+  }, [selectedMessageId, connectedAccounts]);
+
+  // Initial sync on mount
+  useEffect(() => {
+    syncMessages();
+  }, [syncMessages]);
+
+  // Handle successful OAuth redirect back
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const connectedId = params.get('connected');
+    if (connectedId) {
+      const idToName: Record<string, string> = { 'google': 'Gmail', 'azure': 'Outlook', 'github': 'GitHub' };
+      const providerName = idToName[connectedId] || connectedId;
+      
+      const email = `user@${connectedId}.com`;
+      const newAcc: ConnectedAccount = {
+        id: Date.now().toString(),
+        provider: providerName as any,
+        accountName: `${providerName} (${email})`,
+        email: email,
+        status: 'connected',
+        connectedAt: 'Connected just now'
+      };
+
+      setConnectedAccounts(prev => {
+        if (prev.some(a => a.provider === providerName)) return prev;
+        return [...prev, newAcc];
+      });
+      
+      toast.success(`Successfully authenticated real connection to ${providerName}!`);
+      
+      // Clear URL params
+      navigate('/desktop/inbox', { replace: true });
+      
+      // Trigger a sync now that we are connected
+      if (providerName === 'Gmail') {
+        syncMessages();
+      }
+    }
+  }, [location, navigate, syncMessages]);
 
   const selectedMessage = messages.find(m => m.id === selectedMessageId);
 
@@ -149,61 +285,38 @@ export const UniversalInbox: React.FC = () => {
       return;
     }
 
-    // Handle OAuth Providers (Gmail, Outlook, GitHub, LinkedIn, Slack, Discord)
-    const oauthMap: Record<string, 'google' | 'azure' | 'github' | 'slack' | 'linkedin_oidc' | 'discord'> = {
-      'Gmail': 'google',
-      'Outlook': 'azure',
-      'GitHub': 'github',
-      'Slack': 'slack',
-      'LinkedIn': 'linkedin_oidc',
-      'Discord': 'discord'
-    };
+    // Resolve ConnectorRuntime from Kernel
+    let connectorRuntime;
+    try {
+      connectorRuntime = kernel.resolve<IConnectorRuntime>('IConnectorRuntime');
+    } catch (err) {
+      console.warn('[UniversalInbox] IConnectorRuntime not registered yet. Ensure Kernel is booted.');
+      toast.error('Kernel has not booted successfully. Cannot initiate connection.');
+      setConnectingProvider(null);
+      return;
+    }
 
-    const oauthProvider = oauthMap[providerName];
-
-    if (oauthProvider) {
-      try {
-        toast.info(`Redirecting to ${providerName} OAuth authorization server...`);
-        setConnectionStep(1);
-
-        const safeOrigin = window.location.origin.startsWith('file://')
-          ? 'https://busineess-os.vercel.app'
-          : window.location.origin;
-
-        // Perform authentic Supabase OAuth login but prevent window navigation
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: oauthProvider,
-          options: {
-            redirectTo: `${safeOrigin}/#/desktop/inbox?connected=${providerName.toLowerCase()}`,
-            skipBrowserRedirect: true
-          }
-        });
-        
-        // In a true desktop app, we would open data.url in a popup or system browser.
-        // For now, we simulate the connection if it's desktop or if there's an error.
-        if (error || data?.url) {
-          console.warn(`Supabase OAuth for ${providerName} failed/fallback:`, error.message);
-          // Fallback to direct OAuth PKCE window or instant session save
-          setConnectionStep(2);
-          setTimeout(() => setConnectionStep(3), 800);
-          setTimeout(() => {
-            completeConnection(providerName, emailInput || `arshid.${providerName.toLowerCase()}@user.com`);
-          }, 1500);
-          return;
-        }
-      } catch (err: any) {
-        console.error('OAuth Execution Error:', err);
-        // Save connection persistently
-        completeConnection(providerName, emailInput || `arshid.${providerName.toLowerCase()}@user.com`);
-      }
-    } else {
-      // Standard connection handshake
+    try {
       setConnectionStep(1);
-      setTimeout(() => setConnectionStep(2), 600);
-      setTimeout(() => setConnectionStep(3), 1200);
-      setTimeout(() => {
-        completeConnection(providerName, emailInput || `arshid.${providerName.toLowerCase()}@workspace.com`);
-      }, 1800);
+      toast.info(`Redirecting to ${providerName} authorization server...`);
+      // Map UI providerName to a normalized connectorId (e.g., 'Gmail' -> 'google')
+      const connectorIdMap: Record<string, string> = {
+        'Gmail': 'google',
+        'Outlook': 'azure',
+        'GitHub': 'github',
+        'Slack': 'slack',
+        'LinkedIn': 'linkedin_oidc',
+        'Discord': 'discord'
+      };
+      const connectorId = connectorIdMap[providerName] || providerName.toLowerCase();
+      
+      await connectorRuntime.authorize(connectorId);
+      
+      // If we reach here for an implicit/PKCE flow, the page is likely redirecting.
+      // Do NOT complete connection locally.
+    } catch (err: any) {
+      toast.error(`Failed to connect ${providerName}: ${err.message}`);
+      setConnectingProvider(null);
     }
   };
 
@@ -601,6 +714,29 @@ export const UniversalInbox: React.FC = () => {
                 <X size={20} />
               </button>
             </div>
+
+            {/* ── Setup Diagnostic Banner ── */}
+            {kernelStatus === 'error' && kernelError && (
+              <div className="mx-5 mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 flex items-start gap-3">
+                <ShieldOff size={18} className="text-amber-400 mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-amber-300 mb-1">OAuth Not Ready — Action Required</p>
+                  {kernelError.split(' | ').map((issue, i) => (
+                    <p key={i} className="text-xs text-amber-200/80">{issue}</p>
+                  ))}
+                  <p className="text-xs text-zinc-400 mt-2">
+                    Add your credentials to <code className="text-amber-300 bg-black/40 px-1 rounded">.env</code> and restart the dev server.
+                  </p>
+                </div>
+              </div>
+            )}
+            {kernelStatus === 'ready' && (
+              <div className="mx-5 mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5 flex items-center gap-2">
+                <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
+                <p className="text-xs text-emerald-300 font-medium">Kernel ready — Real OAuth connections enabled</p>
+              </div>
+            )}
+
             
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto space-y-6">
@@ -835,7 +971,9 @@ export const UniversalInbox: React.FC = () => {
                 Cancel
               </button>
               <button 
-                onClick={() => completeConnection('IMAP / POP3', imapForm.username || 'user@company.com')}
+                onClick={() => {
+                  toast.error("Real IMAP Integration is not implemented in this phase yet.");
+                }}
                 className="px-4 py-2 rounded-xl text-xs bg-violet-600 hover:bg-violet-500 text-white font-bold"
               >
                 Verify & Save Connection
@@ -848,31 +986,133 @@ export const UniversalInbox: React.FC = () => {
       {/* ── WhatsApp QR Modal ────────────────────────────────────────────── */}
       {isQrModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4 text-center">
-            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
               <h3 className="font-bold text-lg text-white flex items-center gap-2">
                 <Phone size={18} className="text-emerald-400" /> Pair {connectingProvider || 'WhatsApp'}
               </h3>
-              <button onClick={() => setIsQrModalOpen(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => { setIsQrModalOpen(false); setWhatsappPopup(null); setWhatsappConnected(false); }} className="text-zinc-400 hover:text-white transition-colors">
                 <X size={18} />
               </button>
             </div>
-            
-            <div className="flex flex-col items-center justify-center py-4 space-y-3">
-              <div className="w-44 h-44 bg-white p-3 rounded-2xl shadow-xl flex flex-col items-center justify-center border-4 border-emerald-500/30">
-                <QrCode size={140} className="text-zinc-900" />
+
+            {/* Body */}
+            <div className="p-6 space-y-4">
+
+              {/* Already logged in fast path */}
+              {!whatsappPopup && !whatsappConnected && (
+                <div className="rounded-xl border border-[#25D366]/30 bg-[#25D366]/5 p-3.5 flex items-center gap-3">
+                  <CheckCircle size={18} className="text-[#25D366] shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-[#25D366]">Already logged into WhatsApp Web?</p>
+                    <p className="text-[10px] text-zinc-400">If you're already signed in, just confirm below.</p>
+                  </div>
+                  <button
+                    onClick={() => setWhatsappConnected(true)}
+                    className="shrink-0 px-3 py-1.5 rounded-lg text-xs bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold transition-all"
+                  >
+                    I'm in ✓
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 text-zinc-600 text-[10px] font-semibold">
+                <div className="flex-1 h-px bg-zinc-800" />
+                {!whatsappPopup && !whatsappConnected ? 'OR CONNECT FOR THE FIRST TIME' : ''}
+                <div className="flex-1 h-px bg-zinc-800" />
               </div>
-              <p className="text-xs text-zinc-300 max-w-xs">
-                Open <strong>{connectingProvider}</strong> on your phone → Settings → Linked Devices → Point camera at this QR code.
-              </p>
+
+              {/* Confirmed state */}
+              {whatsappConnected ? (
+                <div className="space-y-3">
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-center gap-3">
+                    <CheckCircle size={24} className="text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="text-sm font-bold text-emerald-300">WhatsApp is ready!</p>
+                      <p className="text-xs text-zinc-400">Tap below to save this connection to CHATR.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newAcc: ConnectedAccount = {
+                        id: Date.now().toString(),
+                        provider: 'WhatsApp',
+                        accountName: `WhatsApp (Connected)`,
+                        status: 'connected',
+                        connectedAt: 'Connected just now'
+                      };
+                      setConnectedAccounts(prev => [...prev.filter(a => a.provider !== 'WhatsApp'), newAcc]);
+                      setIsQrModalOpen(false);
+                      setWhatsappPopup(null);
+                      setWhatsappConnected(false);
+                      setConnectingProvider(null);
+                      toast.success('WhatsApp linked to CHATR!');
+                    }}
+                    className="w-full py-3 rounded-xl text-sm bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle size={16} />
+                    Save WhatsApp Connection
+                  </button>
+                </div>
+              ) : whatsappPopup ? (
+                /* Popup opened — show confirm immediately, don't wait for close */
+                <div className="space-y-3">
+                  <div className="rounded-xl border border-zinc-700 bg-zinc-950 p-4 flex items-center gap-3">
+                    <Loader2 size={20} className="text-[#25D366] animate-spin shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-300">WhatsApp Web is open</p>
+                      <p className="text-xs text-zinc-500">Scan the QR code with your phone. Once signed in, tap Confirm below.</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => { whatsappPopup?.focus(); }}
+                      className="py-2.5 rounded-xl text-xs border border-zinc-700 hover:border-[#25D366]/50 text-zinc-300 hover:text-white transition-all"
+                    >
+                      Focus Window
+                    </button>
+                    <button
+                      onClick={() => setWhatsappConnected(true)}
+                      className="py-2.5 rounded-xl text-xs bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold transition-all"
+                    >
+                      I've Scanned ✓
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Initial state — open popup */
+                <div className="space-y-3">
+                  <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 flex items-center justify-center mx-auto">
+                      <MessageSquare size={28} className="text-[#25D366]" />
+                    </div>
+                    <p className="text-xs text-zinc-400">
+                      Opens WhatsApp Web in a dedicated window. Sign in with your phone's QR code scanner.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const popup = window.open(
+                        'https://web.whatsapp.com',
+                        'whatsapp_chatr',
+                        'width=1060,height=760,left=80,top=80,resizable=yes,scrollbars=yes'
+                      );
+                      setWhatsappPopup(popup);
+                    }}
+                    className="w-full py-3 rounded-xl text-sm bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2"
+                  >
+                    <Globe size={16} />
+                    Open WhatsApp Web
+                  </button>
+                </div>
+              )}
             </div>
 
-            <button 
-              onClick={() => completeConnection(connectingProvider || 'WhatsApp', '+91 98765 43210')}
-              className="w-full py-2.5 rounded-xl text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-lg shadow-emerald-900/30"
-            >
-              Confirm Linked Device Connection
-            </button>
+            {/* Footer */}
+            <div className="px-5 py-3 border-t border-white/5 bg-zinc-950 text-center">
+              <p className="text-[10px] text-zinc-600">CHATR does not store your messages — only connection status.</p>
+            </div>
           </div>
         </div>
       )}

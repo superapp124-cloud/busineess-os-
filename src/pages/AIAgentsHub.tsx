@@ -9,7 +9,7 @@ import {
   GraduationCap, Briefcase, ShoppingBag, Heart, Home, UtensilsCrossed, Factory,
   Sparkles, ArrowRight, CheckSquare, Play, Star, Plug, RefreshCw, Activity,
   Target, Coffee, DollarSign, Code2, Github, Store, Filter, ChevronDown,
-  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText, Settings, ShieldAlert, Layers, X, Calendar, UserCheck, PhoneCall, AlertTriangle, Stethoscope
+  ChevronUp, Plus, ExternalLink, Terminal, Rss, Grid, Package, Check, ShieldCheck, Clock, FileText, Settings, ShieldAlert, Layers, X, Calendar, UserCheck, PhoneCall, AlertTriangle, Stethoscope, BrainCircuit
 } from 'lucide-react';
 import { useAppearanceStore } from '@/hooks/useAppearanceStore';
 
@@ -206,6 +206,7 @@ export default function AIAgentsHub() {
 
   const [selectedGoals, setSelectedGoals] = useState<Set<string>>(new Set(['automate_ops', 'grow_traffic']));
   const [installedIds, setInstalledIds] = useState<Set<string>>(new Set(['ga4', 'gmail', 'google_calendar', 'linkedin', 'supabase', 'gemini']));
+  const [searchQuery, setSearchQuery] = useState('');
   const [isThinking, setIsThinking] = useState(false);
 
   // Healthcare Interactive Modals State
@@ -537,47 +538,156 @@ export default function AIAgentsHub() {
             </motion.div>
           )}
 
-          {/* ══ STEP 5 / DONE: CONFIGURED ACTIVE BUSINESS WORKSPACE DASHBOARD ══ */}
+          {/* ══ STEP 5 / DONE: CHATR INTENT-FIRST BUSINESS EXECUTION SURFACE ══ */}
           {step === 'done' && (
-            <motion.div key="sdone" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+            <motion.div key="sdone" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-6 max-w-4xl mx-auto">
               
-              {/* Active Workspace Header Banner */}
-              <div className="p-6 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm bg-card border-border">
-                <div className="flex items-center gap-4">
-                  <div className="p-3.5 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
-                    {selectedBizObj.icon}
+              {/* 1. CALM AI CONVERSATIONAL NARRATION BANNER */}
+              <div className="p-7 rounded-3xl border bg-gradient-to-br from-violet-950/30 via-card to-card border-violet-500/20 space-y-4 shadow-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-md shadow-emerald-400/50" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Operating Normally</span>
+                    <span className="text-xs text-muted-foreground">· Pack: {selectedBizObj.label}</span>
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                        Active Business OS
-                      </span>
-                      <span className="text-xs text-muted-foreground">· {selectedBizObj.badge}</span>
-                    </div>
-                    <h2 className="text-2xl font-black mt-0.5">{selectedBizObj.label} Workspace</h2>
-                    <p className="text-xs text-muted-foreground mt-1">{selectedBizObj.description}</p>
-                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">AI Handled 142 Tasks Overnight</span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => {
-                      if (selectedBusiness === 'recruitment') navigate('/desktop/recruitment');
-                      else setActiveModal('appointment');
-                    }}
-                    className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-primary/20 transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    <span>Launch Active App</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                <div>
+                  <h2 className="text-2xl font-black tracking-tight">Good Afternoon. Here is your business narration.</h2>
+                  <div className="mt-3 space-y-2 text-sm text-muted-foreground font-medium leading-relaxed">
+                    <div className="flex items-center gap-2 text-foreground">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>Operational execution on track across {selectedBizObj.previewStack.length} active capability queues.</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary shrink-0" />
+                      <span>AI completed automated background checks and context updates.</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>2 items require human approval gate confirmation before 4:00 PM.</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Active Domain Capabilities Grid */}
+              {/* 2. CORE 4-ANCHOR NAVIGATION */}
+              <div className="flex items-center justify-between p-1.5 rounded-2xl bg-muted/40 border border-border/60">
+                {[
+                  { name: 'Mission', icon: Target },
+                  { name: 'Chat', icon: MessageSquare },
+                  { name: 'Work', icon: Briefcase },
+                  { name: 'Organization', icon: Building2 }
+                ].map((anchor, idx) => {
+                  const Icon = anchor.icon;
+                  return (
+                    <button
+                      key={anchor.name}
+                      onClick={() => toast.info(`Switched to ${anchor.name} surface`)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                        idx === 0 ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' : 'text-muted-foreground hover:text-foreground hover:bg-card'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{anchor.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 3. HERO INTENT EXECUTION CANVAS (LIKE CHATGPT / CURSOR FOR BUSINESS) */}
+              <div className="p-8 rounded-3xl border bg-card border-border space-y-6 shadow-xl text-center">
+                <div className="space-y-2 max-w-xl mx-auto">
+                  <h3 className="text-xl md:text-2xl font-black tracking-tight">What would you like your business to accomplish?</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Type any business goal. CHATR parses context, composes execution graphs, and manages execution across capabilities.
+                  </p>
+                </div>
+
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  if (searchQuery.trim()) {
+                    setIsThinking(true);
+                    chatrOS.submitIntent(searchQuery);
+                    toast.success(`Planning execution graph for: "${searchQuery}"`);
+                    setTimeout(() => setIsThinking(false), 2500);
+                  }
+                }} className="relative max-w-2xl mx-auto">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="e.g. 'Hire two React developers', 'Collect overdue invoices', 'Prepare payroll'..."
+                    className="w-full px-6 py-5 rounded-2xl bg-background border-2 border-primary/30 text-sm focus:outline-none focus:border-primary text-foreground placeholder:text-muted-foreground shadow-2xl pr-32 font-medium"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isThinking}
+                    className="absolute right-3 top-3 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black hover:bg-primary/90 transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-primary/20"
+                  >
+                    {isThinking ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Thinking...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        <span>Execute</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                {/* Thinking Out Loud Progress Stream */}
+                {isThinking && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-xs space-y-2 max-w-xl mx-auto text-left">
+                    <div className="flex items-center gap-2 text-primary font-bold">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Thinking Out Loud — Executing Graph Pipeline...</span>
+                    </div>
+                    <div className="space-y-1 text-muted-foreground font-mono text-[11px]">
+                      <p>✓ 1. Resolving intent and organizational context...</p>
+                      <p>✓ 2. Consulting Capability Registry ({selectedBizObj.previewStack.length} capabilities active)...</p>
+                      <p>⏳ 3. Composing multi-capability execution graph...</p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Suggested Intent Chips */}
+                <div className="pt-2">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground block mb-3">Or choose a suggested business intent</span>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {[
+                      'Hire two React developers',
+                      'Collect overdue invoices',
+                      'Review today\'s priorities',
+                      'Prepare payroll',
+                      'Check patient wait times',
+                      'Launch marketing campaign'
+                    ].map((suggested, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setSearchQuery(suggested);
+                          chatrOS.submitIntent(suggested);
+                          toast.success(`Selected intent: "${suggested}"`);
+                        }}
+                        className="px-3.5 py-2 rounded-xl border bg-muted/30 border-border/80 hover:border-primary text-xs font-semibold hover:text-primary transition-all cursor-pointer"
+                      >
+                        {suggested}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. ACTIVE WORK QUEUES & RECENT EXECUTIONS */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Active Domain Capabilities & AI Workforce</h3>
-                  <span className="text-xs text-emerald-500 font-bold">● All Systems Operational</span>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Active Work Queues</h3>
+                  <span className="text-xs text-emerald-400 font-bold">● Capability Engine Standing By</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -587,46 +697,27 @@ export default function AIAgentsHub() {
                       <div
                         key={idx}
                         onClick={() => handleCardClick(app.id)}
-                        className="p-4 rounded-2xl border space-y-3 transition-all hover:scale-[1.02] bg-card border-border shadow-sm hover:border-primary cursor-pointer group"
+                        className="p-5 rounded-3xl border space-y-4 transition-all hover:scale-[1.02] bg-card border-border shadow-sm hover:border-primary cursor-pointer group text-left"
                       >
                         <div className="flex items-center justify-between">
-                          <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                             <Icon className="w-5 h-5" />
                           </div>
-                          <span className="text-[10px] font-bold text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                            Active
+                          <span className="text-[10px] font-bold text-emerald-500 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            Ready
                           </span>
                         </div>
                         <div>
                           <h4 className="text-sm font-bold group-hover:text-primary transition-colors">{app.name}</h4>
                           <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{app.detail}</p>
                         </div>
-                        <div className="pt-2 border-t border-border flex items-center justify-between text-xs">
-                          <span className="text-[10px] font-bold text-primary">Click to Launch →</span>
+                        <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
+                          <span className="text-[11px] font-extrabold text-primary">Open Work Queue →</span>
                           <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Active Integrations Telemetry */}
-              <div className="p-5 rounded-2xl border space-y-3 bg-card border-border shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Plug className="w-4 h-4 text-primary" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Active Integrations Telemetry</h3>
-                  </div>
-                  <span className="text-xs text-muted-foreground">6 connected services</span>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {['Google Analytics 4', 'Gmail & Calendar', 'LinkedIn B2B', 'Supabase Database', 'Google Gemini AI', 'Stripe Billing'].map((intName, idx) => (
-                    <span key={idx} className="px-3 py-1 rounded-lg border bg-card border-border text-card-foreground shadow-sm text-xs font-semibold flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>{intName}</span>
-                    </span>
-                  ))}
                 </div>
               </div>
 

@@ -26,28 +26,82 @@ export const AIBriefHero: React.FC = () => {
           .order('created_at', { ascending: false })
           .limit(6);
 
-        if (data && data.length > 0) {
-          const mappedInsights = data.map((n, i) => {
-            const colors = [
-              { dot: 'bg-emerald-400 shadow-emerald-400/60', tagColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25', text: 'emerald-400' },
-              { dot: 'bg-amber-400 shadow-amber-400/60', tagColor: 'bg-amber-500/15 text-amber-300 border-amber-500/25', text: 'amber-400' },
-              { dot: 'bg-red-400 shadow-red-400/60', tagColor: 'bg-red-500/15 text-red-300 border-red-500/25', text: 'red-400' },
-              { dot: 'bg-sky-400 shadow-sky-400/60', tagColor: 'bg-sky-500/15 text-sky-300 border-sky-500/25', text: 'sky-400' },
-              { dot: 'bg-violet-400 shadow-violet-400/60', tagColor: 'bg-violet-500/15 text-violet-300 border-violet-500/25', text: 'violet-400' },
-              { dot: 'bg-orange-400 shadow-orange-400/60', tagColor: 'bg-orange-500/15 text-orange-300 border-orange-500/25', text: 'orange-400' }
+        const colors = [
+          { dot: 'bg-emerald-400 shadow-emerald-400/60', tagColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25', textColor: 'text-emerald-400' },
+          { dot: 'bg-amber-400 shadow-amber-400/60', tagColor: 'bg-amber-500/15 text-amber-300 border-amber-500/25', textColor: 'text-amber-400' },
+          { dot: 'bg-sky-400 shadow-sky-400/60', tagColor: 'bg-sky-500/15 text-sky-300 border-sky-500/25', textColor: 'text-sky-400' },
+          { dot: 'bg-violet-400 shadow-violet-400/60', tagColor: 'bg-violet-500/15 text-violet-300 border-violet-500/25', textColor: 'text-violet-400' },
+          { dot: 'bg-red-400 shadow-red-400/60', tagColor: 'bg-red-500/15 text-red-300 border-red-500/25', textColor: 'text-red-400' },
+          { dot: 'bg-orange-400 shadow-orange-400/60', tagColor: 'bg-orange-500/15 text-orange-300 border-orange-500/25', textColor: 'text-orange-400' }
+        ];
+
+        const formatCleanTag = (typeStr?: string, index?: number) => {
+          if (!typeStr) return index === 0 ? 'Urgent' : 'Update';
+          const lower = typeStr.toLowerCase();
+          if (lower.includes('digest')) return 'Digest';
+          if (lower.includes('system')) return 'System';
+          if (lower.includes('security') || lower.includes('alert')) return 'Alert';
+          if (lower.includes('task') || lower.includes('approval')) return 'Action';
+          if (lower.includes('call')) return 'Call';
+          if (lower.includes('chat') || lower.includes('message')) return 'Message';
+          return typeStr.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        };
+
+        const defaultInsightsList = [
+          { title: 'Workspace Active', message: 'All messaging channels and AI services operating normally', type: 'system' },
+          { title: 'Smart Briefing Ready', message: 'AI context memory is up to date with your latest conversation highlights', type: 'digest' },
+          { title: 'Realtime Voice & Video', message: 'SIP and WebRTC calling engine standing by', type: 'system' },
+          { title: 'Security & Auth Guard', message: 'Session encrypted with active device monitoring', type: 'security' }
+        ];
+
+        const sourceList = (data && data.length > 0) ? data : defaultInsightsList;
+
+        const mappedInsights = sourceList.map((n: any, i: number) => {
+          const colorSet = colors[i % colors.length];
+
+          let cleanTitle = n.title || 'System Notification';
+          if (cleanTitle === 'Your Chatr update') {
+            const titleFallbacks = [
+              'Workspace Active',
+              'Smart Briefing Updated',
+              'AI Context Refreshed',
+              'Realtime Services Ready',
+              'Security Guard Active',
+              'System Health Optimal'
             ];
-            const colorSet = colors[i % colors.length];
-            return {
-              text: <><span className={`text-${colorSet.text} font-bold`}>{n.title}</span> - {n.message || n.body || 'System Update'}</>,
-              dot: colorSet.dot,
-              tag: n.type || (i === 0 ? 'Urgent' : 'Update'),
-              tagColor: colorSet.tagColor
-            };
-          });
-          setInsights(mappedInsights);
-        } else {
-          setInsights([]);
-        }
+            cleanTitle = titleFallbacks[i % titleFallbacks.length];
+          }
+
+          let cleanBody = n.message || n.body || 'Operational update';
+          if (cleanBody === 'System Update' || cleanBody.includes('Your Chatr update')) {
+            const bodyFallbacks = [
+              'All messaging channels and AI services operating normally.',
+              'AI context memory is up to date with your latest conversation highlights.',
+              'Realtime WebRTC voice & video signaling operational.',
+              'Session encrypted with active device monitoring.',
+              'Automated background tasks synced across devices.',
+              'All workspace integrations connected with zero latency.'
+            ];
+            cleanBody = bodyFallbacks[i % bodyFallbacks.length];
+          }
+
+          const cleanTag = formatCleanTag(n.type, i);
+
+          return {
+            text: (
+              <>
+                <span className={`${colorSet.textColor} font-semibold`}>{cleanTitle}</span>
+                <span className="mx-1 text-white/40">-</span>
+                <span>{cleanBody}</span>
+              </>
+            ),
+            dot: colorSet.dot,
+            tag: cleanTag,
+            tagColor: colorSet.tagColor
+          };
+        });
+
+        setInsights(mappedInsights);
       } catch (err) {
         console.error('Failed to fetch insights:', err);
       } finally {

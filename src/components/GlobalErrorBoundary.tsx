@@ -97,8 +97,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
  </p>
  </div>
 
- {/* Error Details (Always visible for debugging) */}
- {this.state.error && (
+ {/* Error Details — DEV ONLY. Never expose stack traces to production users. */}
+ {this.state.error && process.env.NODE_ENV === 'development' && (
  <div className="text-left bg-red-950/20 border border-red-900/50 rounded-lg p-4 text-label overflow-auto max-h-[400px]">
  <p className="text-red-400 font-bold mb-2">Error Message:</p>
  <p className="text-red-300 font-mono mb-4 whitespace-pre-wrap">{this.state.error.message}</p>

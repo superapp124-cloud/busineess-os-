@@ -62,6 +62,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['capacitor-native-biometric'],
+    include: ['pdfjs-dist'],
   },
   esbuild: {
     drop: process.env.NODE_ENV === 'production' ? ['debugger'] : [],
