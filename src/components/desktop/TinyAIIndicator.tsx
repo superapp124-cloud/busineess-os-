@@ -17,6 +17,10 @@ const LOCAL_OLLAMA_ENDPOINTS = [
 ];
 
 export const TinyAIIndicator = () => {
+  // Hide in production environment for non-admin sessions
+  if (import.meta.env.PROD || localStorage.getItem('hide_ai_indicator') === 'true') {
+    return null;
+  }
   const { theme } = useTheme();
   const isDark =
     theme === 'dark' ||

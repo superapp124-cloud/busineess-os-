@@ -69,7 +69,10 @@ const PHASE_CONFIG: Record<AIPhase, {
 };
 
 export const AIStatusBadge: React.FC = () => {
- const { status, isElectron, retrySetup } = useLocalAI();
+  if (import.meta.env.PROD || localStorage.getItem('hide_ai_indicator') === 'true') {
+    return null;
+  }
+  const { status, isElectron, retrySetup } = useLocalAI();
  const [visible, setVisible] = useState(false);
  const [expanded, setExpanded] = useState(false);
  const [dismissed, setDismissed] = useState(false);
