@@ -420,6 +420,13 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     });
   };
 
+  const extractTextWithTimeout = (file: File, timeoutMs = 2500): Promise<string> => {
+    return Promise.race([
+      extractTextFromFile(file),
+      new Promise<string>((resolve) => setTimeout(() => resolve(''), timeoutMs))
+    ]);
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -432,9 +439,15 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       const file = fileList[i];
       setParseProgress({ current: i + 1, total: fileList.length });
 
-      const extractedText = await extractTextFromFile(file);
-      const cand = parseSingleResume(file, extractedText);
-      onImportCandidate(cand);
+      try {
+        const extractedText = await extractTextWithTimeout(file, 2500);
+        const cand = parseSingleResume(file, extractedText);
+        onImportCandidate(cand);
+      } catch (err) {
+        console.warn(`[Batch Ingestion Fallback for ${file.name}]:`, err);
+        const fallbackCand = parseSingleResume(file, '');
+        onImportCandidate(fallbackCand);
+      }
       await new Promise(r => setTimeout(r, 40));
     }
 
