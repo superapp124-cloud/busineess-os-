@@ -631,17 +631,19 @@ export function enrichCandidateData(c: Candidate): Candidate {
   const dbComp = cleanDbString(c.company_name_raw) || cleanDbString(c.current_company);
   const dbDesig = cleanDbString(c.current_designation);
 
-  const rawComp = (dbComp && !dbComp.toLowerCase().includes('unverified') && !dbComp.toLowerCase().includes('needs review') && !/^(organization|client|company)$/i.test(dbComp))
+  const PROSE_NOISE_RE = /in an organization|strive for excellence|career objective|to take your company|documentation|effectiveness|including service owners|managers|and leader|regulations|problems|improvements/i;
+
+  const rawComp = (dbComp && !dbComp.toLowerCase().includes('unverified') && !dbComp.toLowerCase().includes('needs review') && !/^(organization|client|company)$/i.test(dbComp) && !PROSE_NOISE_RE.test(dbComp))
     ? dbComp
     : undefined;
 
-  const rawDesig = (dbDesig && !dbDesig.toLowerCase().includes('unverified') && !dbDesig.toLowerCase().includes('needs review')) ? dbDesig : undefined;
+  const rawDesig = (dbDesig && !dbDesig.toLowerCase().includes('unverified') && !dbDesig.toLowerCase().includes('needs review') && !PROSE_NOISE_RE.test(dbDesig)) ? dbDesig : undefined;
 
   const comp = rawComp || realMatch?.current_company || undefined;
   const currentDesignation = rawDesig || realMatch?.current_designation || undefined;
   const loc = (c.location && !c.location.toLowerCase().includes('open')) ? c.location : realMatch?.location || undefined;
 
-  const rawSkillsFiltered = (c.skills || []).map(s => cleanDbString(s)).filter((s): s is string => !!s && !/<|>|w:|val=|pos=/i.test(s) && !/^\d+$/.test(s) && s.length >= 2);
+  const rawSkillsFiltered = (c.skills || []).map(s => cleanDbString(s)).filter((s): s is string => !!s && !/<|>|w:|val=|pos=/i.test(s) && !/^\d+$/.test(s) && !PROSE_NOISE_RE.test(s) && s.length >= 2);
   const validSkills = (rawSkillsFiltered.length > 0 && !rawSkillsFiltered[0].toLowerCase().includes('needs review') && !(rawSkillsFiltered.length === 1 && rawSkillsFiltered[0] === 'C#' && realMatch)) ? rawSkillsFiltered : [];
   const skills = validSkills.length > 0 ? validSkills : realMatch?.skills || [];
   const expYrs = c.experience_years ?? realMatch?.experience_years ?? undefined;

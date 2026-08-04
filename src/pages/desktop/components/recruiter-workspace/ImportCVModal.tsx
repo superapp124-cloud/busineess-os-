@@ -198,13 +198,14 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     let detectedSkills: string[] = [];
     
     // Pattern A: Extract tokens directly from explicit Skills / Competencies section
+    const PROSE_NOISE_WORDS = /^(and|or|in|of|to|for|with|by|from|about|including|service|owners|managers|leader|regulations|problems|improvements|effectiveness|documentation|strive|excellence|organization|team|work|career|history|experience|summary|objective|responsibilities|knowledge|ability|capably|capabilities|understanding|skills)$/i;
     const skillsSectionMatch = sanitizedText.match(/(?:skills|key\s*skills|technical\s*skills|competencies|expertise|technologies)\s*[:\-]?\s*([^\n\r]+(?:\r?\n[^\n\r]+){0,3})/i);
     if (skillsSectionMatch) {
       const rawSkillsText = skillsSectionMatch[1];
       const extractedTokens = rawSkillsText
         .split(/[,•|/\n\r]/)
         .map(s => s.trim().replace(/^[-•*]\s*/, '').replace(/<[^>]+>/g, ''))
-        .filter(s => s.length >= 2 && s.length <= 35 && !/^\d+$/.test(s) && !/<|>|w:|val=|pos=/i.test(s) && !/skills|experience|summary|education|projects/i.test(s));
+        .filter(s => s.length >= 2 && s.length <= 35 && !/^\d+$/.test(s) && !/<|>|w:|val=|pos=/i.test(s) && !PROSE_NOISE_WORDS.test(s) && !/skills|experience|summary|education|projects/i.test(s));
       if (extractedTokens.length > 0) {
         detectedSkills = Array.from(new Set(extractedTokens));
       }
