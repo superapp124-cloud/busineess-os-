@@ -668,7 +668,6 @@ export function enrichCandidateData(c: Candidate): Candidate {
     resume_version: c.resume_version || 'v4.3.2',
     recruiter_owner: recruiterOwner,
     sla_days: slaDays,
-    current_designation: currentDesignation,
     ai_breakdown: {
       overall: overallRecruiterScore,
       technical: resumeQualityScore,
