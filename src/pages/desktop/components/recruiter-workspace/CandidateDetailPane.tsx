@@ -194,9 +194,83 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
                 Executive Profile Summary
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed font-normal bg-[#1a1e30] p-4 rounded-xl border border-slate-800/80">
-                Results-driven <strong>{targetRole}</strong> with <strong>{candidate.experience_years || 6.5} years</strong> of enterprise hands-on expertise. Currently employed at <strong>{company}</strong>. Proven track record in high-availability network infrastructure deployment, firewall security migration, and cross-functional technical support.
+                {candidate.executive_summary || (
+                  <>
+                    Results-driven <strong>{targetRole}</strong> with <strong>{candidate.experience_years || 6.5} years</strong> of enterprise hands-on expertise. Currently employed at <strong>{company}</strong>. Proven track record in high-availability network infrastructure deployment, firewall security migration, and cross-functional technical support.
+                  </>
+                )}
               </p>
             </div>
+
+            {/* RECRUITER INTELLIGENCE: PREVIOUS EMPLOYERS & MAJOR CLIENTS */}
+            {((candidate.previous_employers && candidate.previous_employers.length > 0) || (candidate.major_clients && candidate.major_clients.length > 0)) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {candidate.previous_employers && candidate.previous_employers.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-2 border-indigo-500 pl-2">
+                      Previous Employers
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-[#1a1e30] rounded-xl border border-slate-800">
+                      {candidate.previous_employers.map((emp, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-indigo-500/10 text-indigo-300 font-extrabold text-xs rounded-lg border border-indigo-500/20">
+                          🏢 {emp}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {candidate.major_clients && candidate.major_clients.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-2 border-emerald-500 pl-2">
+                      Major Client Accounts
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-[#1a1e30] rounded-xl border border-slate-800">
+                      {candidate.major_clients.map((cli, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-emerald-500/10 text-emerald-300 font-extrabold text-xs rounded-lg border border-emerald-500/20">
+                          🎯 {cli}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* RECRUITER INTELLIGENCE: INDUSTRY & PROJECT METHODOLOGIES */}
+            {((candidate.industry_focus && candidate.industry_focus.length > 0) || (candidate.project_types && candidate.project_types.length > 0)) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {candidate.industry_focus && candidate.industry_focus.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-2 border-amber-500 pl-2">
+                      Industry Classification
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-[#1a1e30] rounded-xl border border-slate-800">
+                      {candidate.industry_focus.map((ind, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-amber-500/10 text-amber-300 font-extrabold text-xs rounded-lg border border-amber-500/20">
+                          ⚡ {ind}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {candidate.project_types && candidate.project_types.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-2 border-cyan-500 pl-2">
+                      Project Types & Methodologies
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-[#1a1e30] rounded-xl border border-slate-800">
+                      {candidate.project_types.map((proj, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-cyan-500/10 text-cyan-300 font-extrabold text-xs rounded-lg border border-cyan-500/20">
+                          📌 {proj}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* PROFESSIONAL OVERVIEW GRID */}
             <div className="space-y-2">
@@ -277,7 +351,11 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                <strong>{full}</strong> is a <span className="text-emerald-400 font-bold">{candidate.experience_years || 6.5}-year {targetRole}</span> with a proven track record across <strong>{company}</strong> and BFSI enterprise client deployments. Strong domain alignment with low attrition risk.
+                {candidate.executive_summary || (
+                  <>
+                    <strong>{full}</strong> is a <span className="text-emerald-400 font-bold">{candidate.experience_years || 6.5}-year {targetRole}</span> with a proven track record across <strong>{company}</strong> and BFSI enterprise client deployments. Strong domain alignment with low attrition risk.
+                  </>
+                )}
               </p>
             </div>
 

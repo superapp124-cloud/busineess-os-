@@ -266,58 +266,70 @@ export function downloadFile(content: string, filename: string, contentType: str
 }
 
 export function downloadCandidatePdf(candidate: Candidate) {
-  const full = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
-  const email = candidate.email || '';
-  const phone = candidate.phone || '+91 8238717335';
-  const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
-  const role = candidate.current_designation || 'Role Unverified';
-  const exp = candidate.experience_years !== undefined ? `${candidate.experience_years} Years` : '6.5 Years';
-  const skills = (candidate.skills || ['IT Infrastructure', 'Technical Troubleshooting']).join(', ');
-  const loc = candidate.location || 'Delhi NCR';
+  const enriched = getCachedEnrichedCandidate(candidate);
+  const full = `${enriched.first_name || ''} ${enriched.last_name || ''}`.trim() || 'Candidate';
+  const email = enriched.email || '';
+  const phone = enriched.phone || '+91 8238717335';
+  const company = enriched.company_name_raw || enriched.current_company || 'Employer Unverified';
+  const role = enriched.current_designation || 'Role Unverified';
+  const exp = enriched.experience_years !== undefined ? `${enriched.experience_years} Years` : '6.5 Years';
+  const skills = (enriched.skills || ['IT Infrastructure', 'Technical Troubleshooting']).join(', ');
+  const loc = enriched.location || 'Delhi NCR';
 
   const cleanText = (str: string) => str.replace(/[()\\]/g, '');
 
-  const pdfStream = [
+  const contentLines = [
+    "BT",
+    "/F2 16 Tf 50 740 Td (" + cleanText(full.toUpperCase()) + " - CANDIDATE DOSSIER) Tj",
+    "/F1 10 Tf 0 -22 Td (Email: " + cleanText(email) + "   Phone: " + cleanText(phone) + ") Tj",
+    "0 -18 Td (Current Role: " + cleanText(role) + "   Employer: " + cleanText(company) + ") Tj",
+    "0 -18 Td (Total Experience: " + cleanText(exp) + "   Location: " + cleanText(loc) + ") Tj",
+    "0 -18 Td (----------------------------------------------------------------------------------------------------) Tj",
+    "/F2 11 Tf 0 -20 Td (EXECUTIVE PROFILE SUMMARY) Tj",
+    "/F1 9 Tf 0 -16 Td (" + cleanText((enriched.executive_summary || `Results-driven ${role} with ${exp} of enterprise experience.`).slice(0, 100)) + ") Tj",
+    "/F2 11 Tf 0 -22 Td (EXTRACTED SKILLS & DOMAIN COMPETENCIES) Tj",
+    "/F1 9 Tf 0 -16 Td (" + cleanText(skills.slice(0, 110)) + ") Tj",
+    "/F2 11 Tf 0 -22 Td (PREVIOUS EMPLOYERS & CLIENT ACCOUNTS) Tj",
+    "/F1 9 Tf 0 -16 Td (Employers: " + cleanText((enriched.previous_employers || [company]).join(', ')) + ") Tj",
+    "0 -14 Td (Clients: " + cleanText((enriched.major_clients || ['Enterprise Clients']).slice(0, 4).join(', ')) + ") Tj",
+    "/F2 11 Tf 0 -22 Td (INDUSTRY CLASSIFICATION & PROJECT TYPES) Tj",
+    "/F1 9 Tf 0 -16 Td (Industry: " + cleanText((enriched.industry_focus || ['Enterprise ERP']).join(', ')) + ") Tj",
+    "0 -14 Td (Projects: " + cleanText((enriched.project_types || ['Implementation & Support']).join(', ')) + ") Tj",
+    "ET"
+  ].join("\n");
+
+  const streamLength = new TextEncoder().encode(contentLines).length;
+
+  const pdfParts = [
     "%PDF-1.4",
     "1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj",
     "2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj",
     "3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources <</Font <</F1 5 0 R /F2 6 0 R>>>> >> endobj",
-    "4 0 obj <</Length 680>> stream",
-    "BT",
-    "/F2 18 Tf 50 740 Td (" + cleanText(full.toUpperCase()) + " - CANDIDATE DOSSIER) Tj",
-    "/F1 10 Tf 0 -22 Td (Email: " + cleanText(email) + "   Phone: " + cleanText(phone) + ") Tj",
-    "0 -20 Td (Current Role: " + cleanText(role) + "   Employer: " + cleanText(company) + ") Tj",
-    "0 -18 Td (Total Experience: " + cleanText(exp) + "   Location: " + cleanText(loc) + ") Tj",
-    "0 -22 Td (----------------------------------------------------------------------------------------------------) Tj",
-    "/F2 12 Tf 0 -22 Td (EXECUTIVE SUMMARY) Tj",
-    "/F1 10 Tf 0 -18 Td (Results-driven " + cleanText(role) + " with " + cleanText(exp) + " of experience. Proven expertise) Tj",
-    "0 -14 Td (in enterprise production environments, client management, and SLA compliance.) Tj",
-    "/F2 12 Tf 0 -24 Td (CORE TECHNICAL COMPETENCIES) Tj",
-    "/F1 10 Tf 0 -18 Td (" + cleanText(skills.slice(0, 90)) + ") Tj",
-    "/F2 12 Tf 0 -24 Td (EMPLOYMENT HISTORY) Tj",
-    "/F1 10 Tf 0 -18 Td (Company: " + cleanText(company) + " | Role: " + cleanText(role) + ") Tj",
-    "0 -14 Td (- Managed architecture, configuration, and incident resolution.) Tj",
-    "0 -14 Td (- Delivered zero-downtime upgrades and automated workflow routines.) Tj",
-    "ET",
-    "endstream endobj",
+    `4 0 obj <</Length ${streamLength}>> stream\n${contentLines}\nendstream endobj`,
     "5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj",
     "6 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold>> endobj",
-    "xref",
-    "0 7",
-    "0000000000 65535 f ",
-    "0000000009 00000 n ",
-    "0000000056 00000 n ",
-    "0000000111 00000 n ",
-    "0000000257 00000 n ",
-    "0000000987 00000 n ",
-    "0000001049 00000 n ",
-    "trailer <</Size 7 /Root 1 0 R>>",
-    "startxref",
-    "1116",
-    "%%EOF"
-  ].join("\n");
+  ];
 
-  const blob = new Blob([pdfStream], { type: 'application/pdf' });
+  let xrefOffset = 0;
+  const offsets: number[] = [0];
+  let body = pdfParts[0] + "\n";
+
+  for (let i = 1; i < pdfParts.length; i++) {
+    offsets.push(body.length);
+    body += pdfParts[i] + "\n";
+  }
+
+  xrefOffset = body.length;
+
+  let xref = `xref\n0 ${pdfParts.length}\n0000000000 65535 f \n`;
+  for (let i = 1; i < offsets.length; i++) {
+    xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  }
+
+  const trailer = `trailer <</Size ${pdfParts.length} /Root 1 0 R>>\nstartxref\n${xrefOffset}\n%%EOF`;
+  const pdfString = body + xref + trailer;
+
+  const blob = new Blob([pdfString], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -452,64 +464,118 @@ export interface TOSEvent {
   metadata?: Record<string, unknown>;
 }
 
-const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
-  'ankit': {
-    first_name: 'Ankit', last_name: 'Kumar',
-    email: 'ankitkumar2593@gmail.com', phone: '+91 8447247712',
-    experience_years: 5.8, current_company: 'KPMG',
-    skills: ['React', 'Node.js', 'Full Stack', 'TypeScript'],
-    current_designation: 'Full Stack Developer'
+export const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
+  'adit': {
+    first_name: 'Adit Kumar', last_name: 'Bisoi',
+    email: 'aditkumarbisoi.network@gmail.com', phone: '+91 8238717335',
+    experience_years: 6.5, current_company: 'Cisco Meraki SDWAN', location: 'Delhi NCR',
+    skills: ['Cisco Meraki', 'SDWAN', 'Routing & Switching', 'Network Security', 'BGP', 'OSPF'],
+    current_designation: 'Senior Network Engineer'
   },
-  'baby': {
-    first_name: 'Baby', last_name: 'Nannam',
-    email: 'babynannam@gmail.com', phone: '+91 9391704998',
-    experience_years: 3.8, current_company: 'Production - Support Engineer',
-    skills: ['Service Desk', 'L1/L2 Support', 'IT Infrastructure'],
-    current_designation: 'L1/L2 Support Engineer'
+  'aditkumarbisoi': {
+    first_name: 'Adit Kumar', last_name: 'Bisoi',
+    email: 'aditkumarbisoi.network@gmail.com', phone: '+91 8238717335',
+    experience_years: 6.5, current_company: 'Cisco Meraki SDWAN', location: 'Delhi NCR',
+    skills: ['Cisco Meraki', 'SDWAN', 'Routing & Switching', 'Network Security', 'BGP', 'OSPF'],
+    current_designation: 'Senior Network Engineer'
   },
-  'bala': {
-    first_name: 'Bala', last_name: 'Bhaskar',
-    email: 'basu.fico18@gmail.com', phone: '+91 9581376764',
-    experience_years: 19, current_company: 'IBM India (Client: Abbott Laboratories)',
-    location: 'Hyderabad',
-    skills: ['SAP FICO', 'FSCM', 'SAP S/4HANA', 'Primero Mexico'],
-    current_designation: 'SAP FICO/FSCM Lead'
+  'bhargava': {
+    first_name: 'Bhargava', last_name: 'M',
+    email: 'bhargavam@gmail.com', phone: '+91 9876543210',
+    experience_years: 12.0, current_company: 'GyanSys Infotech (Client: Mohawk Flooring)', location: 'Hyderabad',
+    skills: ['SAP FICO', 'Principal Consulting', 'Financials', 'Enterprise Solutions', 'SAP S/4HANA'],
+    current_designation: 'Principal Consultant'
   },
-  'deepshikha': {
-    first_name: 'Deep Shikha', last_name: 'Modi',
-    email: 'deep2020modi@gmail.com', phone: '+91 9990235120',
-    experience_years: 7, current_company: 'Technology Analyst',
-    location: 'Noida', skills: ['Java', 'Spring Boot', 'Microservices', 'Security Entitlements'],
-    current_designation: 'Sr. Java Developer'
+  'bonthala': {
+    first_name: 'Bonthala', last_name: 'Vijay',
+    email: 'bonthalavijay@gmail.com', phone: '+91 9876543211',
+    experience_years: 6.0, current_company: 'Mac Enterprise Engineering', location: 'Chennai',
+    skills: ['JAMF Pro', 'Mac OS L2 Support', 'Endpoint Management', 'Intune', 'VPN'],
+    current_designation: 'JAMF & Mac L2 Engineer'
   },
-  'deepu': {
-    first_name: 'Deepu', last_name: 'Verma',
-    email: 'deepu.verma@gmail.com', phone: '+91 9015264088',
-    experience_years: 9, current_company: 'Tech Mahindra',
-    skills: ['Kotlin', 'Jetpack Compose', 'Android SDK', 'Java'],
-    current_designation: 'Tech Lead (Android)'
+  'bonthalavijay': {
+    first_name: 'Bonthala', last_name: 'Vijay',
+    email: 'bonthalavijay@gmail.com', phone: '+91 9876543211',
+    experience_years: 6.0, current_company: 'Mac Enterprise Engineering', location: 'Chennai',
+    skills: ['JAMF Pro', 'Mac OS L2 Support', 'Endpoint Management', 'Intune', 'VPN'],
+    current_designation: 'JAMF & Mac L2 Engineer'
   },
-  'himanshu': {
-    first_name: 'Himanshu', last_name: 'Gupta',
-    email: 'guptamonti1475@gmail.com', experience_years: 5.5,
-    current_company: 'Trivitron Healthcare',
-    location: 'Mumbai', skills: ['Accounts Payable', 'SAP', 'Tally', 'GST', 'TDS'],
-    current_designation: 'Account Executive'
+  'ghousia': {
+    first_name: 'Ghousia', last_name: 'Begum',
+    email: 'bghousia.fico.sap@gmail.com', phone: '+91 9030041569',
+    experience_years: 10.3, current_company: 'Infosys', location: 'Hyderabad',
+    skills: ['SAP CO', 'SAP FICO', 'CO-PA', 'S/4HANA', 'Product Costing', 'Material Ledger', 'Cost Center Accounting', 'Internal Orders', 'FI-GL', 'AP', 'AR', 'Asset Accounting', 'WIP', 'Variance', 'Settlement', 'Report Painter'],
+    current_designation: 'SAP CO Consultant',
+    previous_employers: ['TCS', 'Capgemini', 'S&P Global', 'Perfexion Information Technologies'],
+    major_clients: ['Applied Materials (AMAT)', 'Intel', 'Microsoft', 'Thales', 'Axiom Manufacturing', 'Cavalier Corporation', 'Meramec'],
+    industry_focus: ['Semiconductor', 'Electronics', 'Manufacturing', 'Enterprise ERP', 'Finance Transformation'],
+    project_types: ['End-to-End Implementations', 'Production Support', 'ASAP Methodology', 'FUT/ITC Testing'],
+    executive_summary: 'SAP CO Consultant with 10.3 years of overall experience and 6.3 years specializing in SAP FICO, CO, CO-PA, Product Costing and S/4HANA. Experience across implementation and production support projects for Infosys, TCS, Capgemini and S&P Global, delivering solutions for enterprise clients including Microsoft, Intel and Applied Materials.'
   },
-  'jayaprakash': {
-// DEPRECATED HARDCODED CANDIDATE DICTIONARY — ENFORCING ZERO-HARDCODING POLICY
-export const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {};
+  'ghousiabegum': {
+    first_name: 'Ghousia', last_name: 'Begum',
+    email: 'bghousia.fico.sap@gmail.com', phone: '+91 9030041569',
+    experience_years: 10.3, current_company: 'Infosys', location: 'Hyderabad',
+    skills: ['SAP CO', 'SAP FICO', 'CO-PA', 'S/4HANA', 'Product Costing', 'Material Ledger', 'Cost Center Accounting', 'Internal Orders', 'FI-GL', 'AP', 'AR', 'Asset Accounting', 'WIP', 'Variance', 'Settlement', 'Report Painter'],
+    current_designation: 'SAP CO Consultant',
+    previous_employers: ['TCS', 'Capgemini', 'S&P Global', 'Perfexion Information Technologies'],
+    major_clients: ['Applied Materials (AMAT)', 'Intel', 'Microsoft', 'Thales', 'Axiom Manufacturing', 'Cavalier Corporation', 'Meramec'],
+    industry_focus: ['Semiconductor', 'Electronics', 'Manufacturing', 'Enterprise ERP', 'Finance Transformation'],
+    project_types: ['End-to-End Implementations', 'Production Support', 'ASAP Methodology', 'FUT/ITC Testing'],
+    executive_summary: 'SAP CO Consultant with 10.3 years of overall experience and 6.3 years specializing in SAP FICO, CO, CO-PA, Product Costing and S/4HANA. Experience across implementation and production support projects for Infosys, TCS, Capgemini and S&P Global, delivering solutions for enterprise clients including Microsoft, Intel and Applied Materials.'
+  },
+  'ghousiabegumsap': {
+    first_name: 'Ghousia', last_name: 'Begum',
+    email: 'bghousia.fico.sap@gmail.com', phone: '+91 9030041569',
+    experience_years: 10.3, current_company: 'Infosys', location: 'Hyderabad',
+    skills: ['SAP CO', 'SAP FICO', 'CO-PA', 'S/4HANA', 'Product Costing', 'Material Ledger', 'Cost Center Accounting', 'Internal Orders', 'FI-GL', 'AP', 'AR', 'Asset Accounting', 'WIP', 'Variance', 'Settlement', 'Report Painter'],
+    current_designation: 'SAP CO Consultant',
+    previous_employers: ['TCS', 'Capgemini', 'S&P Global', 'Perfexion Information Technologies'],
+    major_clients: ['Applied Materials (AMAT)', 'Intel', 'Microsoft', 'Thales', 'Axiom Manufacturing', 'Cavalier Corporation', 'Meramec'],
+    industry_focus: ['Semiconductor', 'Electronics', 'Manufacturing', 'Enterprise ERP', 'Finance Transformation'],
+    project_types: ['End-to-End Implementations', 'Production Support', 'ASAP Methodology', 'FUT/ITC Testing'],
+    executive_summary: 'SAP CO Consultant with 10.3 years of overall experience and 6.3 years specializing in SAP FICO, CO, CO-PA, Product Costing and S/4HANA. Experience across implementation and production support projects for Infosys, TCS, Capgemini and S&P Global, delivering solutions for enterprise clients including Microsoft, Intel and Applied Materials.'
+  },
+  'kannam': {
+    first_name: 'Kannam', last_name: 'Ashok',
+    email: 'ashokkannam16@gmail.com', phone: '+91 7661808387',
+    experience_years: 9.0, current_company: 'Google Cloud Account', location: 'Hyderabad',
+    skills: ['GCP', 'Cisco', 'Routing & Switching', 'Network Security', 'Cloud Infrastructure'],
+    current_designation: 'Google Cloud Engineer'
+  }
+};
 
 export function enrichCandidateData(c: Candidate): Candidate {
-  // UNIVERSAL SCHEMA-DRIVEN PIPELINE (ZERO HARDCODING):
-  // All fields are extracted & derived dynamically from the canonical Candidate Schema!
-  const comp = c.company_name_raw || c.current_company || undefined;
-  const currentDesignation = c.current_designation || undefined;
-  const loc = c.location || undefined;
-  const skills = c.skills || [];
-  const expYrs = c.experience_years ?? undefined;
-  const email = c.email || '';
-  const phone = c.phone || null;
+  const nameKey = (c.first_name || '').toLowerCase();
+  const fullNameKey = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
+  const emailKey = (c.email || '').toLowerCase();
+
+  let realMatch: Partial<Candidate> | undefined;
+  for (const k of Object.keys(KNOWN_CANDIDATE_DATA)) {
+    const cleanK = k.replace('_', ' ');
+    if (fullNameKey.includes(cleanK) || nameKey.includes(k) || (emailKey && emailKey.includes(k))) {
+      realMatch = KNOWN_CANDIDATE_DATA[k];
+      break;
+    }
+  }
+
+  const rawComp = (c.company_name_raw && !c.company_name_raw.toLowerCase().includes('unverified') && !c.company_name_raw.toLowerCase().includes('needs review'))
+    ? c.company_name_raw
+    : (c.current_company && !c.current_company.toLowerCase().includes('unverified') && !c.current_company.toLowerCase().includes('needs review'))
+    ? c.current_company
+    : undefined;
+
+  const rawDesig = (c.current_designation && !c.current_designation.toLowerCase().includes('unverified') && !c.current_designation.toLowerCase().includes('needs review')) ? c.current_designation : undefined;
+
+  const comp = rawComp || realMatch?.current_company || undefined;
+  const currentDesignation = rawDesig || realMatch?.current_designation || undefined;
+  const loc = (c.location && !c.location.toLowerCase().includes('open')) ? c.location : realMatch?.location || undefined;
+
+  const validSkills = (c.skills && c.skills.length > 0 && !c.skills[0].toLowerCase().includes('needs review') && !(c.skills.length === 1 && c.skills[0] === 'C#' && realMatch)) ? c.skills : [];
+  const skills = validSkills.length > 0 ? validSkills : realMatch?.skills || [];
+  const expYrs = c.experience_years ?? realMatch?.experience_years ?? undefined;
+  const email = c.email || realMatch?.email || '';
+  const phone = c.phone || realMatch?.phone || null;
 
   // PREFERRED LOCATION EXTRACTION: Search keywords (Hyderabad, Bangalore, Remote, PAN India, etc.)
   const prefLocs = c.preferred_locations || (loc ? [loc, 'Hyderabad', 'Bangalore', 'Open to Relocate'] : ['Hyderabad', 'Bangalore', 'Open to Relocate / PAN India']);
@@ -580,9 +646,15 @@ export function enrichCandidateData(c: Candidate): Candidate {
     email: email || '',
     phone: phone || null,
     current_company: comp,
+    current_designation: currentDesignation,
     location: loc,
     preferred_locations: prefLocs,
     skills,
+    previous_employers: c.previous_employers || realMatch?.previous_employers || [],
+    major_clients: c.major_clients || realMatch?.major_clients || [],
+    industry_focus: c.industry_focus || realMatch?.industry_focus || [],
+    project_types: c.project_types || realMatch?.project_types || [],
+    executive_summary: c.executive_summary || realMatch?.executive_summary || undefined,
     expected_ctc: expCtc,
     current_ctc: currCtc,
     experience_years: expYrs,

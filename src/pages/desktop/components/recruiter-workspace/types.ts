@@ -217,6 +217,11 @@ export interface Candidate {
   source_channel?: 'Naukri' | 'LinkedIn' | 'Referral' | 'Official Email' | 'Database';
   resume_version?: string;
   ai_recommendation?: string;
+  previous_employers?: string[];
+  major_clients?: string[];
+  industry_focus?: string[];
+  project_types?: string[];
+  executive_summary?: string;
   recruiter_owner?: string;
   sla_days?: number;
   sla_overdue?: boolean;

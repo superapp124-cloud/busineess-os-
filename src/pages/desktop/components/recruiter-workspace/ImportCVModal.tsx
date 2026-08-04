@@ -42,12 +42,10 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
           .trim()
       : '';
 
-    const isBinary = rawText && (rawText.startsWith('PK') || rawText.startsWith('%PDF') || /[\x00-\x08\x0E-\x1F]/.test(rawText.slice(0, 100)));
-
-    if (!isBinary && rawText && rawText.trim().length > 0) {
+    if (rawText && rawText.trim().length > 0) {
       const printableLines = rawText
         .split('\n')
-        .map(l => l.replace(/[^\x20-\x7E]/g, '').trim())
+        .map(l => l.trim())
         .filter(l => l.length > 2 && !l.includes('[Content_Types]') && !l.includes('PK') && !l.includes('xml'));
 
       if (printableLines.length > 0) {
@@ -72,8 +70,8 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
 
         const emailMatch = rawText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
         if (emailMatch) email = emailMatch[0].trim();
-        const phoneMatch = rawText.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-        if (phoneMatch) phone = phoneMatch[0];
+        const phoneMatch = rawText.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+        if (phoneMatch) phone = phoneMatch[0].trim();
       }
     }
 
@@ -115,41 +113,67 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       email = `${cleanF}${cleanL ? '.' + cleanL : ''}@gmail.com`;
     }
 
-    // 1. UNIVERSAL CONTEXTUAL DESIGNATION EXTRACTOR
+    // 1. STRUCTURAL SENTENCE-BOUNDED DESIGNATION EXTRACTOR
     let detectedDesignation: string | undefined = undefined;
-    const desigMatch = textToScan.match(/(?:title|role|designation|position)\s*[:\-]?\s*([A-Za-z0-9\s/&()-]{3,40})/i)
-      || textToScan.match(/\b(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)\s+[A-Za-z0-9\s/&()-]{2,30}\b/i);
-    if (desigMatch) {
-      detectedDesignation = desigMatch[1] ? desigMatch[1].trim() : desigMatch[0].trim();
+
+    // Direct section prefix matcher hard-stopped at line breaks and punctuation
+    const desigPrefixMatch = textToScan.match(/(?:title|role|designation|position)\s*[:\-]?\s*([^.,;:\n\r|•]+)/i);
+    if (desigPrefixMatch && desigPrefixMatch[1]) {
+      const cleanVal = desigPrefixMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
+      if (cleanVal.length >= 3 && cleanVal.length <= 45) {
+        detectedDesignation = cleanVal;
+      }
     }
 
-    // 2. UNIVERSAL STRUCTURAL & TIMELINE COMPANY EXTRACTOR (ZERO HARDCODING)
+    // Compound title regex capturing up to 3 preceding modifier words + trigger keyword + up to 2 trailing title words
+    if (!detectedDesignation) {
+      const compoundTitleMatch = textToScan.match(/\b((?:[A-Z0-9][A-Za-z0-9/&'-]+\s+){0,3}(?:senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)(?:\s+[A-Za-z0-9/&'-]+){0,2})\b/i);
+      if (compoundTitleMatch && compoundTitleMatch[1]) {
+        const titleVal = compoundTitleMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
+        if (titleVal.length >= 3 && titleVal.length <= 45) {
+          detectedDesignation = titleVal;
+        }
+      }
+    }
+
+    // 2. STRUCTURAL SENTENCE-BOUNDED COMPANY EXTRACTOR WITH NON-DISCLOSURE BLOCKLIST
     let detectedCompany: string | undefined = undefined;
     
-    // Pattern A: Contextual Prefix Match ("at <Company>", "employer: <Company>", "working with <Company>")
-    const companyPrefixMatch = textToScan.match(/(?:at|company|employer|working\s+with|current\s+company|organization|client)\s*[:\-]?\s*([a-zA-Z0-9][A-Za-z0-9\s&.,'()-]{2,35})/i);
+    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords)$/i;
+    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience)$/i;
+    const NON_DISCLOSURE_BLOCKLIST = /\b(not disclosed|confidential|undisclosed|per nda|nda|n\/a|none|unknown|private)\b/i;
+
+    // Pattern A: Contextual Prefix Match ("at <Company>", "with <Company>", "employer: <Company>")
+    // Hard-stopped at sentence delimiters (. , ; : \n | •) and prepositions (from/since/in/location)
+    const companyPrefixMatch = textToScan.match(/\b(?:at|company|employer|with|working\s+with|current\s+company|organization|client)\s*[:\-]?\s*([^.,;:\n\r|•]{2,35})/i);
     if (companyPrefixMatch) {
-      detectedCompany = companyPrefixMatch[1].trim().replace(/\s+(?:from|since|in|location|india|llp|pvt|ltd|inc|corp).*$/i, '');
+      const rawOrg = companyPrefixMatch[1].trim();
+      const candidateOrg = rawOrg.replace(/\s+(?:from|since|in|location|india|llp|pvt|ltd|inc|corp|per).*$/i, '');
+      const tokens = candidateOrg.split(/\s+/);
+      
+      const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
+        || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
+        || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg);
+
+      if (!isNoise && candidateOrg.length >= 2) {
+        detectedCompany = candidateOrg;
+      }
     }
 
     // Pattern B: Timeline Proximity Match with Multi-Match Prioritization & Strict Noise Guard
-    // Supports lowercase companies ("eBay", "iGate", "trivago", "monday.com")
-    // Prioritizes "Present" / "Current" ongoing roles over older historical jobs on chronological CVs
     if (!detectedCompany) {
-      const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i;
-      const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience)$/i;
-
-      const timelineRegex = /([a-zA-Z0-9][A-Za-z0-9\s&.,'-]{2,30})\s*(?:[|\-•]\s*)?(?:\d{4}|\w{3}\s*\d{4})\s*(?:[-–to\s]+)\s*(present|current|ongoing|\d{4})/gi;
+      const timelineRegex = /([a-zA-Z0-9][^.,;:\n\r|•]{2,30})\s*(?:[|\-•]\s*)?(?:\d{4}|\w{3}\s*\d{4})\s*(?:[-–to\s]+)\s*(present|current|ongoing|\d{4})/gi;
       const matches = Array.from(textToScan.matchAll(timelineRegex));
       
       if (matches.length > 0) {
-        // Find ongoing/present role first, else take top entry
         const ongoingMatch = matches.find(m => /present|current|ongoing/i.test(m[2])) || matches[0];
         const candidateOrg = ongoingMatch[1].trim();
         const tokens = candidateOrg.split(/\s+/);
         
-        // Test both individual tokens and full phrase against noise guard
-        const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) || tokens.some(t => NON_COMPANY_KEYWORDS.test(t));
+        const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
+          || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
+          || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg);
+
         if (!isNoise && candidateOrg.length >= 2) {
           detectedCompany = candidateOrg;
         }
@@ -236,6 +260,133 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     };
   };
 
+  // Robust In-Browser Native DOCX Zip Inflater & Table Harvester
+  const extractTextFromFile = async (file: File): Promise<string> => {
+    const fileName = file.name.toLowerCase();
+
+    // 1. DOCX Extraction Pipeline (Native Zip Inflater + DecompressionStream('deflate-raw'))
+    if (fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
+      try {
+        const buffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+
+        // Robust ZIP Central Directory Harvester (Handles Bit 3 Streaming & Standard ZIPs)
+        let docXmlLocalOffset = -1;
+        let docXmlCompSize = 0;
+        let docXmlCompMethod = 8;
+
+        // 1. Scan Central Directory Headers (Signature: 0x02014b50 -> "PK\x01\x02")
+        // Central Directory ALWAYS contains real compSize & localHeaderOffset even when Local Header has 0-size Bit 3 Streaming!
+        for (let i = 0; i < bytes.length - 46; i++) {
+          if (bytes[i] === 0x50 && bytes[i + 1] === 0x4b && bytes[i + 2] === 0x01 && bytes[i + 3] === 0x02) {
+            const compMethod = bytes[i + 10] | (bytes[i + 11] << 8);
+            const compSize = bytes[i + 20] | (bytes[i + 21] << 8) | (bytes[i + 22] << 16) | (bytes[i + 23] << 24);
+            const fileNameLen = bytes[i + 28] | (bytes[i + 29] << 8);
+            const extraLen = bytes[i + 30] | (bytes[i + 31] << 8);
+            const localHeaderOffset = bytes[i + 42] | (bytes[i + 43] << 8) | (bytes[i + 44] << 16) | (bytes[i + 45] << 24);
+
+            const nameBytes = bytes.subarray(i + 46, i + 46 + fileNameLen);
+            const name = new TextDecoder().decode(nameBytes);
+
+            if (name === 'word/document.xml') {
+              docXmlLocalOffset = localHeaderOffset;
+              docXmlCompSize = compSize;
+              docXmlCompMethod = compMethod;
+              break;
+            }
+          }
+        }
+
+        // 2. Fallback to Local Header scan if Central Directory was missing
+        if (docXmlLocalOffset === -1) {
+          for (let i = 0; i < bytes.length - 30; i++) {
+            if (bytes[i] === 0x50 && bytes[i + 1] === 0x4b && bytes[i + 2] === 0x03 && bytes[i + 3] === 0x04) {
+              const compMethod = bytes[i + 8] | (bytes[i + 9] << 8);
+              const compSize = bytes[i + 18] | (bytes[i + 19] << 8) | (bytes[i + 20] << 16) | (bytes[i + 21] << 24);
+              const fileNameLen = bytes[i + 26] | (bytes[i + 27] << 8);
+              const nameBytes = bytes.subarray(i + 30, i + 30 + fileNameLen);
+              const name = new TextDecoder().decode(nameBytes);
+
+              if (name === 'word/document.xml') {
+                docXmlLocalOffset = i;
+                docXmlCompSize = compSize;
+                docXmlCompMethod = compMethod;
+                break;
+              }
+            }
+          }
+        }
+
+        if (docXmlLocalOffset !== -1) {
+          const lhFileNameLen = bytes[docXmlLocalOffset + 26] | (bytes[docXmlLocalOffset + 27] << 8);
+          const lhExtraLen = bytes[docXmlLocalOffset + 28] | (bytes[docXmlLocalOffset + 29] << 8);
+          const payloadOffset = docXmlLocalOffset + 30 + lhFileNameLen + lhExtraLen;
+
+          const compressedSlice = bytes.subarray(payloadOffset, payloadOffset + (docXmlCompSize || (bytes.length - payloadOffset)));
+          let rawXmlString = '';
+
+          if (docXmlCompMethod === 0) {
+            // Uncompressed Store
+            rawXmlString = new TextDecoder('utf-8').decode(compressedSlice);
+          } else if (docXmlCompMethod === 8 && typeof DecompressionStream !== 'undefined') {
+            // DEFLATE-Compressed -> Decompress natively via Web API DecompressionStream('deflate-raw')
+            const ds = new DecompressionStream('deflate-raw');
+            const writer = ds.writable.getWriter();
+            writer.write(compressedSlice);
+            writer.close();
+            const response = new Response(ds.readable);
+            const decompressedBuffer = await response.arrayBuffer();
+            rawXmlString = new TextDecoder('utf-8').decode(decompressedBuffer);
+          }
+
+          if (rawXmlString.length > 0) {
+            // Format XML tags for paragraph, table cell, and text box boundaries
+            const parsedXml = rawXmlString
+              .replace(/<\/w:tc>/gi, ' \t ')
+              .replace(/<\/w:tr>/gi, '\n')
+              .replace(/<\/w:p>/gi, '\n')
+              .replace(/<\/w:txbxContent>/gi, '\n');
+
+            // Harvest text inside all <w:t> tags
+            const textMatches: string[] = [];
+            const wtRegex = /<w:t[^>]*>(.*?)<\/w:t>/gi;
+            let match;
+            while ((match = wtRegex.exec(parsedXml)) !== null) {
+              if (match[1]) {
+                const cleanText = match[1]
+                  .replace(/&amp;/g, '&')
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&quot;/g, '"')
+                  .replace(/&#39;/g, "'");
+                textMatches.push(cleanText);
+              }
+            }
+
+            const extractedDocxText = textMatches.join(' ').replace(/\s+/g, ' ').trim();
+            if (extractedDocxText.length > 20) {
+              return extractedDocxText;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[DOCX Inflater Engine Error]:', err);
+      }
+    }
+
+    // 2. Standard Plain Text Extractor for TXT / RTF / HTML
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const raw = (evt.target?.result as string) || '';
+        const printable = raw.replace(/[^\x20-\x7E\n\r]/g, ' ').replace(/\s+/g, ' ');
+        resolve(printable);
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsText(file);
+    });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -248,18 +399,9 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       const file = fileList[i];
       setParseProgress({ current: i + 1, total: fileList.length });
 
-      await new Promise<void>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const raw = (evt.target?.result as string) || '';
-          const printableText = raw.replace(/[^\x20-\x7E\n\r]/g, ' ').replace(/\s+/g, ' ');
-          const cand = parseSingleResume(file, printableText);
-          onImportCandidate(cand);
-          resolve();
-        };
-        reader.onerror = () => resolve();
-        reader.readAsText(file);
-      });
+      const extractedText = await extractTextFromFile(file);
+      const cand = parseSingleResume(file, extractedText);
+      onImportCandidate(cand);
       await new Promise(r => setTimeout(r, 40));
     }
 

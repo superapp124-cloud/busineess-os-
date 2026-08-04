@@ -456,7 +456,8 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
             </div>
 
             <div className="divide-y divide-slate-800/50">
-              {primaryCandidates.slice(0, visibleCount).map(c => {
+              {primaryCandidates.slice(0, visibleCount).map(rawC => {
+                const c = getCachedEnrichedCandidate(rawC);
                 const { full, first, last } = sanitizeCandidateName(c.first_name, c.last_name);
                 const isSelected = ((activeSplitCandidateId || primaryCandidates[0]?.id) === c.id);
                 const candSkills = c.skills && c.skills.length > 0 ? c.skills : [];
@@ -586,7 +587,8 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-              {primaryCandidates.slice(0, visibleCount).map(c => {
+              {primaryCandidates.slice(0, visibleCount).map(rawC => {
+                const c = getCachedEnrichedCandidate(rawC);
                 const { full, first, last } = sanitizeCandidateName(c.first_name, c.last_name);
                 const email = sanitizeCandidateEmail(c.email, c.first_name, c.last_name);
                 const candSkills = c.skills && c.skills.length > 0 ? c.skills : [];

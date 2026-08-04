@@ -122,7 +122,16 @@ export const RecruiterWorkspace: React.FC = () => {
             email: c.email, phone: c.phone, status: c.stage,
             applied_for: c.job_id, created_at: c.created_at,
             ai_match: c.ai_score, priority: 'High' as const, risk: 'Low' as const,
-            salary_fit: 'Within Band' as const, current_company: c.current_company,
+            salary_fit: 'Within Band' as const,
+            current_company: c.current_company,
+            current_designation: c.current_designation,
+            location: c.location,
+            skills: c.skills || [],
+            experience_years: c.experience_years,
+            expected_ctc: c.expected_ctc,
+            current_ctc: c.current_ctc,
+            notice_days: c.notice_days,
+            serving_notice: c.serving_notice,
           }));
         setCandidates(fetched);
       }
@@ -238,9 +247,12 @@ export const RecruiterWorkspace: React.FC = () => {
       phone: candidateData.phone || null,
       status: 'Applied', applied_for: candidateData.applied_for || null,
       current_company: company,
+      current_designation: candidateData.current_designation || undefined,
       experience_years: exp,
       expected_ctc: candidateData.expected_ctc,
+      current_ctc: candidateData.current_ctc,
       notice_days: candidateData.notice_days,
+      serving_notice: candidateData.serving_notice,
       location: loc,
       skills: candidateData.skills || [],
       ai_match: candidateData.ai_match || undefined,
@@ -262,6 +274,11 @@ export const RecruiterWorkspace: React.FC = () => {
       first_name: newCand.first_name, last_name: newCand.last_name,
       email: newCand.email, phone: newCand.phone,
       stage: 'Applied', source: 'Import',
+      current_company: newCand.current_company,
+      current_designation: newCand.current_designation,
+      location: newCand.location,
+      skills: newCand.skills,
+      experience_years: newCand.experience_years,
     });
     toast.success(`CV Parsed & Imported: ${newCand.first_name} ${newCand.last_name} (${newCand.email})`);
   }, []);
