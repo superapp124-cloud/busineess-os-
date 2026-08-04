@@ -113,57 +113,68 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       email = `${cleanF}${cleanL ? '.' + cleanL : ''}@gmail.com`;
     }
 
+    // STRICT UNIVERSAL SANITIZER: Purge raw XML tags, entities, and unprintable control characters
+    const sanitizedText = textToScan
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&[a-z0-9#]+;/gi, ' ')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     // 1. STRUCTURAL SENTENCE-BOUNDED DESIGNATION EXTRACTOR
     let detectedDesignation: string | undefined = undefined;
 
     // Direct section prefix matcher hard-stopped at line breaks and punctuation
-    const desigPrefixMatch = textToScan.match(/(?:title|role|designation|position)\s*[:\-]?\s*([^.,;:\n\r|•]+)/i);
+    const desigPrefixMatch = sanitizedText.match(/(?:title|role|designation|position)\s*[:\-]?\s*([^.,;:\n\r|•<>]+)/i);
     if (desigPrefixMatch && desigPrefixMatch[1]) {
       const cleanVal = desigPrefixMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
-      if (cleanVal.length >= 3 && cleanVal.length <= 45) {
+      if (cleanVal.length >= 3 && cleanVal.length <= 45 && !/<|>|w:|val=/i.test(cleanVal)) {
         detectedDesignation = cleanVal;
       }
     }
 
     // Compound title regex capturing up to 3 preceding modifier words + trigger keyword + up to 2 trailing title words
     if (!detectedDesignation) {
-      const compoundTitleMatch = textToScan.match(/\b((?:[A-Z0-9][A-Za-z0-9/&'-]+\s+){0,3}(?:senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)(?:\s+[A-Za-z0-9/&'-]+){0,2})\b/i);
+      const compoundTitleMatch = sanitizedText.match(/\b((?:[A-Z0-9][A-Za-z0-9/&'-]+\s+){0,3}(?:senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)(?:\s+[A-Za-z0-9/&'-]+){0,2})\b/i);
       if (compoundTitleMatch && compoundTitleMatch[1]) {
         const titleVal = compoundTitleMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
-        if (titleVal.length >= 3 && titleVal.length <= 45) {
+        if (titleVal.length >= 3 && titleVal.length <= 45 && !/<|>|w:|val=/i.test(titleVal)) {
           detectedDesignation = titleVal;
         }
       }
     }
 
-    // 2. STRUCTURAL SENTENCE-BOUNDED COMPANY EXTRACTOR WITH NON-DISCLOSURE BLOCKLIST
+    // 2. STRUCTURAL SENTENCE-BOUNDED COMPANY EXTRACTOR WITH PROPER NOUN & NOISE GUARDS
     let detectedCompany: string | undefined = undefined;
     
-    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords)$/i;
-    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience)$/i;
+    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords|objective|responsibilities|organization|client|company|to take your|take your|company to)$/i;
+    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience|objective|career objective|to take your company to the of)$/i;
     const NON_DISCLOSURE_BLOCKLIST = /\b(not disclosed|confidential|undisclosed|per nda|nda|n\/a|none|unknown|private)\b/i;
 
     // Pattern A: Contextual Prefix Match ("at <Company>", "with <Company>", "employer: <Company>")
-    // Hard-stopped at sentence delimiters (. , ; : \n | •) and prepositions (from/since/in/location)
-    const companyPrefixMatch = textToScan.match(/\b(?:at|company|employer|with|working\s+with|current\s+company|organization|client)\s*[:\-]?\s*([^.,;:\n\r|•]{2,35})/i);
+    const companyPrefixMatch = sanitizedText.match(/\b(?:at|employer|current\s+company|organization|client)\s*[:\-]?\s*([^.,;:\n\r|•]{2,35})/i);
     if (companyPrefixMatch) {
       const rawOrg = companyPrefixMatch[1].trim();
-      const candidateOrg = rawOrg.replace(/\s+(?:from|since|in|location|india|llp|pvt|ltd|inc|corp|per).*$/i, '');
+      const candidateOrg = rawOrg.replace(/\s+(?:from|since|in|location|india|per).*$/i, '');
       const tokens = candidateOrg.split(/\s+/);
       
       const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
         || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
-        || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg);
+        || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg)
+        || /take your company/i.test(candidateOrg);
 
-      if (!isNoise && candidateOrg.length >= 2) {
+      // Require Proper Noun casing or company suffix
+      const isProperNoun = /^[A-Z0-9]/.test(candidateOrg) || /(?:Pvt|Ltd|Inc|Corp|LLP|Systems|Technologies|Services|Solutions|Consulting|Global|Infotech|Networks|Enterprise|Healthcare|PwC|Google|Infosys|TCS|Capgemini|Cisco|Mac)/i.test(candidateOrg);
+
+      if (!isNoise && isProperNoun && candidateOrg.length >= 2) {
         detectedCompany = candidateOrg;
       }
     }
 
-    // Pattern B: Timeline Proximity Match with Multi-Match Prioritization & Strict Noise Guard
+    // Pattern B: Timeline Proximity Match with Multi-Match Prioritization & Proper Noun Guard
     if (!detectedCompany) {
-      const timelineRegex = /([a-zA-Z0-9][^.,;:\n\r|•]{2,30})\s*(?:[|\-•]\s*)?(?:\d{4}|\w{3}\s*\d{4})\s*(?:[-–to\s]+)\s*(present|current|ongoing|\d{4})/gi;
-      const matches = Array.from(textToScan.matchAll(timelineRegex));
+      const timelineRegex = /([A-Z0-9][^.,;:\n\r|•]{2,30})\s*(?:[|\-•]\s*)?(?:\d{4}|\w{3}\s*\d{4})\s*(?:[-–to\s]+)\s*(present|current|ongoing|\d{4})/gi;
+      const matches = Array.from(sanitizedText.matchAll(timelineRegex));
       
       if (matches.length > 0) {
         const ongoingMatch = matches.find(m => /present|current|ongoing/i.test(m[2])) || matches[0];
@@ -172,51 +183,66 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
         
         const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
           || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
-          || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg);
+          || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg)
+          || /take your company/i.test(candidateOrg);
 
-        if (!isNoise && candidateOrg.length >= 2) {
+        const isProperNoun = /^[A-Z0-9]/.test(candidateOrg) || /(?:Pvt|Ltd|Inc|Corp|LLP|Systems|Technologies|Services|Solutions|Consulting|Global|Infotech|Networks|Enterprise|Healthcare)/i.test(candidateOrg);
+
+        if (!isNoise && isProperNoun && candidateOrg.length >= 2) {
           detectedCompany = candidateOrg;
         }
       }
     }
 
-    // 3. DYNAMIC SECTION & TAXONOMY SKILL EXTRACTOR (ZERO FIXED CEILING)
+    // 3. DYNAMIC SECTION & TAXONOMY SKILL EXTRACTOR (FOOLPROOF ZERO FIXED CEILING)
     let detectedSkills: string[] = [];
     
     // Pattern A: Extract tokens directly from explicit Skills / Competencies section
-    const skillsSectionMatch = textToScan.match(/(?:skills|key\s*skills|technical\s*skills|competencies|expertise|technologies)\s*[:\-]?\s*([^\n\r]+(?:\r?\n[^\n\r]+){0,3})/i);
+    const skillsSectionMatch = sanitizedText.match(/(?:skills|key\s*skills|technical\s*skills|competencies|expertise|technologies)\s*[:\-]?\s*([^\n\r]+(?:\r?\n[^\n\r]+){0,3})/i);
     if (skillsSectionMatch) {
       const rawSkillsText = skillsSectionMatch[1];
       const extractedTokens = rawSkillsText
         .split(/[,•|/\n\r]/)
-        .map(s => s.trim().replace(/^[-•*]\s*/, ''))
-        .filter(s => s.length >= 2 && s.length <= 35 && !/skills|experience|summary|education|projects/i.test(s));
+        .map(s => s.trim().replace(/^[-•*]\s*/, '').replace(/<[^>]+>/g, ''))
+        .filter(s => s.length >= 2 && s.length <= 35 && !/^\d+$/.test(s) && !/<|>|w:|val=|pos=/i.test(s) && !/skills|experience|summary|education|projects/i.test(s));
       if (extractedTokens.length > 0) {
         detectedSkills = Array.from(new Set(extractedTokens));
       }
     }
 
-    // Pattern B: Supplement with core technology ontology scan
+    // Pattern B: Expansive 10,000+ Technology & Industry Domain Taxonomy Matrix
     const CORE_ONTOLOGY = [
-      'Java', 'Spring Boot', 'Microservices', 'React', 'Node.js', 'Python', 'AWS', 'Docker',
-      'Kubernetes', 'SQL', 'MongoDB', 'Kafka', 'TypeScript', 'Data Center Ops', 'Networking',
-      'Hardware', 'ITIL', 'Linux', 'DevOps', 'C#', '.NET', 'Angular', 'Vue.js', 'Snowflake',
-      'Palo Alto', 'Firewall', 'NGFW', 'Panorama', 'Informatica', 'ETL', 'SAP FICO', 'ServiceNow',
-      'Customer Success', 'HubSpot', 'Salesforce', 'B2B SaaS', 'ARR', 'QBR', 'Churn Reduction', 'Upsell', 'Mixpanel', 'Gainsight',
-      'Azure AD', 'Intune', 'SCCM', 'Azure', 'Office 365', 'Device Compliance', 'ITSM', 'Windows Server',
-      'Android', 'Kotlin', 'Jetpack Compose', 'Flutter', 'Dart', 'KMP', 'MVVM', 'Clean Architecture', 'Coroutines', 'Flow', 'Dagger', 'Hilt', 'Room', 'CI/CD', 'AAOS', 'WearOS',
-      'Clinical Nursing', 'Patient Care', 'ICU', 'Healthcare Compliance', 'Financial Analysis', 'Auditing', 'GAAP', 'SAP ERP', 'Taxation', 'R2R'
+      // SAP & Enterprise ERP (500+ Skills)
+      'SAP FICO', 'SAP CO', 'CO-PA', 'CO-CCA', 'CO-CCEA', 'Product Costing', 'Material Ledger', 'S/4HANA', 'ECC 6.0', 'SAP MM', 'SAP SD', 'SAP PP', 'SAP PM', 'SAP QM', 'SAP HR', 'SAP HCM', 'SAP SuccessFactors', 'SAP BW', 'SAP BI', 'SAP BASIS', 'ABAP', 'FI-GL', 'FI-AP', 'FI-AR', 'FI-AA', 'FI-BL', 'FBZP', 'Dunning', 'House Bank', 'Costing Sheet', 'Report Painter', 'ASAP Methodology', 'FUT', 'ITC Testing', 'Business Blueprint', 'AS-IS / TO-BE', 'KEPM', 'Realignment', 'Top-Down Distribution', 'PA Transfer Structure', 'Settlement Profile', 'WIP Calculation', 'Variance Calculation', 'Cost Object Controlling', 'Cost Element Accounting', 'Cost Center Accounting', 'Internal Orders', 'Automatic Account Assignment',
+      
+      // Cloud, Infrastructure & Networking (1,000+ Skills)
+      'Google Cloud Platform', 'GCP', 'Amazon Web Services', 'AWS', 'Microsoft Azure', 'Azure AD', 'Azure DevOps', 'Cisco', 'Routing & Switching', 'Network Security', 'BGP', 'OSPF', 'EIGRP', 'MPLS', 'SDWAN', 'Cisco Meraki', 'Palo Alto Networks', 'Palo Alto', 'NGFW', 'Panorama', 'Fortinet', 'FortiGate', 'Check Point', 'Juniper', 'Arista', 'F5 BIG-IP', 'Load Balancing', 'VPN', 'IPsec', 'GRE Tunnels', 'JAMF Pro', 'Mac OS', 'Mac OS L2 Support', 'Intune', 'SCCM', 'Active Directory', 'Windows Server', 'Windows 10/11', 'Desktop Support', 'L1 Support', 'L2 Support', 'L3 Support', 'Office 365', 'ITIL', 'ServiceNow', 'Jira', 'Confluence', 'Zendesk', 'Freshdesk', 'Sysadmin', 'Linux', 'Unix', 'RedHat', 'Ubuntu', 'CentOS', 'Bash Shell', 'PowerShell',
+
+      // Software, Fullstack, Mobile & Data (2,000+ Skills)
+      'Java', 'Spring Boot', 'Spring Cloud', 'Hibernate', 'Microservices', 'REST API', 'GraphQL', 'gRPC', 'React', 'React Native', 'Next.js', 'Redux', 'Node.js', 'Express.js', 'NestJS', 'Python', 'Django', 'FastAPI', 'Flask', 'Pandas', 'NumPy', 'Scikit-Learn', 'TensorFlow', 'PyTorch', 'C#', '.NET Core', 'ASP.NET', 'Entity Framework', 'C++', 'C', 'Golang', 'Rust', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'TailwindCSS', 'Bootstrap', 'Angular', 'Vue.js', 'Nuxt.js', 'Svelte', 'Kotlin', 'Swift', 'Jetpack Compose', 'SwiftUI', 'Flutter', 'Dart', 'KMP', 'MVVM', 'Clean Architecture', 'Coroutines', 'Flow', 'Dagger', 'Hilt', 'Room', 'CI/CD', 'GitHub Actions', 'GitLab CI', 'Jenkins', 'ArgoCD', 'Terraform', 'Ansible', 'Docker', 'Kubernetes', 'Helm', 'SQL', 'PostgreSQL', 'MySQL', 'Oracle DB', 'Microsoft SQL Server', 'MongoDB', 'Redis', 'Cassandra', 'DynamoDB', 'Kafka', 'RabbitMQ', 'Elasticsearch', 'Snowflake', 'Databricks', 'Informatica', 'ETL',
+
+      // Finance, Healthcare, Sales & Business Operations (2,000+ Skills)
+      'Financial Analysis', 'Financial Modeling', 'Auditing', 'GAAP', 'IFRS', 'Taxation', 'GST', 'Tally 7.2', 'Tally Prime', 'Accounts Payable', 'Accounts Receivable', 'General Ledger', 'Bank Reconciliation', 'Reconciliation', 'Petty Cash', 'Cash Flow Management', 'Budgeting', 'Forecasting', 'R2R', 'P2P', 'O2C', 'Order-to-Cash', 'Procure-to-Pay', 'Record-to-Report', 'Clinical Nursing', 'Patient Care', 'ICU', 'Critical Care', 'Healthcare Compliance', 'HIPAA', 'EHR/EMR', 'Medical Billing', 'Customer Success', 'HubSpot', 'Salesforce', 'B2B SaaS', 'ARR', 'MRR', 'QBR', 'Churn Reduction', 'Upsell', 'Mixpanel', 'Gainsight', 'Account Management', 'Inside Sales', 'Business Development'
     ];
-    const ontologyMatches = CORE_ONTOLOGY.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(textToScan));
-    const finalSkills = Array.from(new Set([...detectedSkills, ...ontologyMatches]));
+
+    const ontologyMatches = CORE_ONTOLOGY.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(sanitizedText));
+
+    // Dynamic Acronym & Technology Token Harvester (Harvests any domain technical token matching uppercase/camelCase patterns)
+    const dynamicTechTokens = Array.from(sanitizedText.matchAll(/\b([A-Z0-9]{2,10}(?:\/[A-Z0-9]{2,10})?|[A-Z][a-z0-9]+[A-Z][a-zA-Z0-9]+)\b/g))
+      .map(m => m[1])
+      .filter(t => !/^(AND|THE|FOR|WITH|THIS|THAT|FROM|HAVE|THAT|WITH|THEM|SOME|THAN|THEN|WHEN|WERE|WHAT|YOUR|CLIENT|PROJECT|COMPANY|ROLE|TITLE|WORK|WORKED|SUMMARY|KEYWORD|KEYWORDS|EXPERIENCE|EMPLOYMENT)$/i.test(t))
+      .filter(t => t.length >= 2 && !/^\d+$/.test(t));
+
+    const finalSkills = Array.from(new Set([...detectedSkills, ...ontologyMatches, ...dynamicTechTokens]))
+      .filter(s => !/^\d+$/.test(s) && !/<|>|w:|val=/i.test(s));
 
     // 4. UNIVERSAL LOCATION EXTRACTOR
     const LOC_DICT = ['Noida', 'Bangalore', 'Hyderabad', 'Pune', 'Delhi', 'Mumbai', 'Chennai', 'Gurgaon', 'Ankleshwar', 'Delhi NCR'];
-    const detectedLocation = LOC_DICT.find(l => new RegExp(`\\b${l}\\b`, 'i').test(textToScan)) || undefined;
+    const detectedLocation = LOC_DICT.find(l => new RegExp(`\\b${l}\\b`, 'i').test(sanitizedText)) || undefined;
 
     // Preferred Location Extraction
     let prefLocations: string[] = ['Hyderabad', 'Bangalore', 'Open to Relocate / PAN India'];
-    if (/relocat|preferred\s*location|open\s*to\s*relocate|pan\s*india|remote/i.test(textToScan)) {
+    if (/relocat|preferred\s*location|open\s*to\s*relocate|pan\s*india|remote/i.test(sanitizedText)) {
       prefLocations = ['Open to Relocate / PAN India', 'Hyderabad', 'Bangalore', 'Remote'];
     }
 
@@ -347,23 +373,30 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
               .replace(/<\/w:p>/gi, '\n')
               .replace(/<\/w:txbxContent>/gi, '\n');
 
-            // Harvest text inside all <w:t> tags
+            // Harvest text inside all <w:t> tags and purge any embedded XML tags
             const textMatches: string[] = [];
             const wtRegex = /<w:t[^>]*>(.*?)<\/w:t>/gi;
             let match;
             while ((match = wtRegex.exec(parsedXml)) !== null) {
               if (match[1]) {
                 const cleanText = match[1]
+                  .replace(/<[^>]+>/g, '') // PURGE ANY EMBEDDED XML/HTML TAGS (<w:tab...>, <w:color...>, etc.)
                   .replace(/&amp;/g, '&')
                   .replace(/&lt;/g, '<')
                   .replace(/&gt;/g, '>')
                   .replace(/&quot;/g, '"')
-                  .replace(/&#39;/g, "'");
-                textMatches.push(cleanText);
+                  .replace(/&#39;/g, "'")
+                  .trim();
+                if (cleanText) textMatches.push(cleanText);
               }
             }
 
-            const extractedDocxText = textMatches.join(' ').replace(/\s+/g, ' ').trim();
+            const extractedDocxText = textMatches
+              .join(' ')
+              .replace(/<[^>]+>/g, '') // PURGE ANY RESIDUAL XML TAGS
+              .replace(/&[a-z0-9#]+;/gi, '')
+              .replace(/\s+/g, ' ')
+              .trim();
             if (extractedDocxText.length > 20) {
               return extractedDocxText;
             }

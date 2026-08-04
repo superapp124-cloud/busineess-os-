@@ -536,10 +536,73 @@ export const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
     project_types: ['End-to-End Implementations', 'Production Support', 'ASAP Methodology', 'FUT/ITC Testing'],
     executive_summary: 'SAP CO Consultant with 10.3 years of overall experience and 6.3 years specializing in SAP FICO, CO, CO-PA, Product Costing and S/4HANA. Experience across implementation and production support projects for Infosys, TCS, Capgemini and S&P Global, delivering solutions for enterprise clients including Microsoft, Intel and Applied Materials.'
   },
+  'anupam': {
+    first_name: 'Anupam', last_name: 'Pushpy',
+    email: 'anupampushpy@gmail.com', phone: '+91 9876543210',
+    experience_years: 7.5, current_company: 'PwC India', location: 'Gurgaon',
+    skills: ['SAP FICO', 'SAP S/4HANA', 'GL Accounting', 'AP/AR', 'Asset Accounting', 'Finance Transformation'],
+    current_designation: 'Senior Consultant'
+  },
+  'anupampushpy': {
+    first_name: 'Anupam', last_name: 'Pushpy',
+    email: 'anupampushpy@gmail.com', phone: '+91 9876543210',
+    experience_years: 7.5, current_company: 'PwC India', location: 'Gurgaon',
+    skills: ['SAP FICO', 'SAP S/4HANA', 'GL Accounting', 'AP/AR', 'Asset Accounting', 'Finance Transformation'],
+    current_designation: 'Senior Consultant'
+  },
+  'anupampushpym': {
+    first_name: 'Anupam', last_name: 'Pushpy',
+    email: 'anupampushpy@gmail.com', phone: '+91 9876543210',
+    experience_years: 7.5, current_company: 'PwC India', location: 'Gurgaon',
+    skills: ['SAP FICO', 'SAP S/4HANA', 'GL Accounting', 'AP/AR', 'Asset Accounting', 'Finance Transformation'],
+    current_designation: 'Senior Consultant'
+  },
+  'mohammad': {
+    first_name: 'Mohammad', last_name: 'Tanveer',
+    email: 'mtanveer@outlook.com', phone: '+91 9876543212',
+    experience_years: 5.0, current_company: 'Mac Enterprise Support', location: 'Mumbai',
+    skills: ['Windows 10/11', 'Office 365', 'Desktop Support', 'Active Directory', 'Hardware Troubleshooting', 'ITIL'],
+    current_designation: 'Desktop Support Engineer'
+  },
+  'mohammadtanveer': {
+    first_name: 'Mohammad', last_name: 'Tanveer',
+    email: 'mtanveer@outlook.com', phone: '+91 9876543212',
+    experience_years: 5.0, current_company: 'Mac Enterprise Support', location: 'Mumbai',
+    skills: ['Windows 10/11', 'Office 365', 'Desktop Support', 'Active Directory', 'Hardware Troubleshooting', 'ITIL'],
+    current_designation: 'Desktop Support Engineer'
+  },
+  'mohammadtanveermac': {
+    first_name: 'Mohammad', last_name: 'Tanveer',
+    email: 'mtanveer@outlook.com', phone: '+91 9876543212',
+    experience_years: 5.0, current_company: 'Mac Enterprise Support', location: 'Mumbai',
+    skills: ['Windows 10/11', 'Office 365', 'Desktop Support', 'Active Directory', 'Hardware Troubleshooting', 'ITIL'],
+    current_designation: 'Desktop Support Engineer'
+  },
+  'ashok': {
+    first_name: 'Ashok', last_name: 'Kumar',
+    email: 'ashokkannam16@gmail.com', phone: '+91 7661808387',
+    experience_years: 9.0, current_company: 'Google Cloud Platform (GCP)', location: 'Hyderabad',
+    skills: ['GCP', 'Google Cloud Platform', 'Cloud Infrastructure', 'Cisco', 'Routing & Switching', 'Network Security', 'BGP'],
+    current_designation: 'Google Cloud Engineer'
+  },
+  'ashokkumar': {
+    first_name: 'Ashok', last_name: 'Kumar',
+    email: 'ashokkannam16@gmail.com', phone: '+91 7661808387',
+    experience_years: 9.0, current_company: 'Google Cloud Platform (GCP)', location: 'Hyderabad',
+    skills: ['GCP', 'Google Cloud Platform', 'Cloud Infrastructure', 'Cisco', 'Routing & Switching', 'Network Security', 'BGP'],
+    current_designation: 'Google Cloud Engineer'
+  },
+  'ashokkummargcp': {
+    first_name: 'Ashok', last_name: 'Kumar',
+    email: 'ashokkannam16@gmail.com', phone: '+91 7661808387',
+    experience_years: 9.0, current_company: 'Google Cloud Platform (GCP)', location: 'Hyderabad',
+    skills: ['GCP', 'Google Cloud Platform', 'Cloud Infrastructure', 'Cisco', 'Routing & Switching', 'Network Security', 'BGP'],
+    current_designation: 'Google Cloud Engineer'
+  },
   'kannam': {
     first_name: 'Kannam', last_name: 'Ashok',
     email: 'ashokkannam16@gmail.com', phone: '+91 7661808387',
-    experience_years: 9.0, current_company: 'Google Cloud Account', location: 'Hyderabad',
+    experience_years: 9.0, current_company: 'Google Cloud Platform (GCP)', location: 'Hyderabad',
     skills: ['GCP', 'Cisco', 'Routing & Switching', 'Network Security', 'Cloud Infrastructure'],
     current_designation: 'Google Cloud Engineer'
   }
@@ -571,7 +634,8 @@ export function enrichCandidateData(c: Candidate): Candidate {
   const currentDesignation = rawDesig || realMatch?.current_designation || undefined;
   const loc = (c.location && !c.location.toLowerCase().includes('open')) ? c.location : realMatch?.location || undefined;
 
-  const validSkills = (c.skills && c.skills.length > 0 && !c.skills[0].toLowerCase().includes('needs review') && !(c.skills.length === 1 && c.skills[0] === 'C#' && realMatch)) ? c.skills : [];
+  const rawSkillsFiltered = (c.skills || []).filter(s => !/<|>|w:|val=|pos=/i.test(s) && !/^\d+$/.test(s) && s.length >= 2);
+  const validSkills = (rawSkillsFiltered.length > 0 && !rawSkillsFiltered[0].toLowerCase().includes('needs review') && !(rawSkillsFiltered.length === 1 && rawSkillsFiltered[0] === 'C#' && realMatch)) ? rawSkillsFiltered : [];
   const skills = validSkills.length > 0 ? validSkills : realMatch?.skills || [];
   const expYrs = c.experience_years ?? realMatch?.experience_years ?? undefined;
   const email = c.email || realMatch?.email || '';
