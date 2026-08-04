@@ -115,25 +115,82 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       email = `${cleanF}${cleanL ? '.' + cleanL : ''}@gmail.com`;
     }
 
-    // Extract real Technical Skills from CV text
-    const SKILL_DICT = [
+    // 1. UNIVERSAL CONTEXTUAL DESIGNATION EXTRACTOR
+    let detectedDesignation: string | undefined = undefined;
+    const desigMatch = textToScan.match(/(?:title|role|designation|position)\s*[:\-]?\s*([A-Za-z0-9\s/&()-]{3,40})/i)
+      || textToScan.match(/\b(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)\s+[A-Za-z0-9\s/&()-]{2,30}\b/i);
+    if (desigMatch) {
+      detectedDesignation = desigMatch[1] ? desigMatch[1].trim() : desigMatch[0].trim();
+    }
+
+    // 2. UNIVERSAL STRUCTURAL & TIMELINE COMPANY EXTRACTOR (ZERO HARDCODING)
+    let detectedCompany: string | undefined = undefined;
+    
+    // Pattern A: Contextual Prefix Match ("at <Company>", "employer: <Company>", "working with <Company>")
+    const companyPrefixMatch = textToScan.match(/(?:at|company|employer|working\s+with|current\s+company|organization|client)\s*[:\-]?\s*([a-zA-Z0-9][A-Za-z0-9\s&.,'()-]{2,35})/i);
+    if (companyPrefixMatch) {
+      detectedCompany = companyPrefixMatch[1].trim().replace(/\s+(?:from|since|in|location|india|llp|pvt|ltd|inc|corp).*$/i, '');
+    }
+
+    // Pattern B: Timeline Proximity Match with Multi-Match Prioritization & Strict Noise Guard
+    // Supports lowercase companies ("eBay", "iGate", "trivago", "monday.com")
+    // Prioritizes "Present" / "Current" ongoing roles over older historical jobs on chronological CVs
+    if (!detectedCompany) {
+      const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i;
+      const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience)$/i;
+
+      const timelineRegex = /([a-zA-Z0-9][A-Za-z0-9\s&.,'-]{2,30})\s*(?:[|\-•]\s*)?(?:\d{4}|\w{3}\s*\d{4})\s*(?:[-–to\s]+)\s*(present|current|ongoing|\d{4})/gi;
+      const matches = Array.from(textToScan.matchAll(timelineRegex));
+      
+      if (matches.length > 0) {
+        // Find ongoing/present role first, else take top entry
+        const ongoingMatch = matches.find(m => /present|current|ongoing/i.test(m[2])) || matches[0];
+        const candidateOrg = ongoingMatch[1].trim();
+        const tokens = candidateOrg.split(/\s+/);
+        
+        // Test both individual tokens and full phrase against noise guard
+        const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) || tokens.some(t => NON_COMPANY_KEYWORDS.test(t));
+        if (!isNoise && candidateOrg.length >= 2) {
+          detectedCompany = candidateOrg;
+        }
+      }
+    }
+
+    // 3. DYNAMIC SECTION & TAXONOMY SKILL EXTRACTOR (ZERO FIXED CEILING)
+    let detectedSkills: string[] = [];
+    
+    // Pattern A: Extract tokens directly from explicit Skills / Competencies section
+    const skillsSectionMatch = textToScan.match(/(?:skills|key\s*skills|technical\s*skills|competencies|expertise|technologies)\s*[:\-]?\s*([^\n\r]+(?:\r?\n[^\n\r]+){0,3})/i);
+    if (skillsSectionMatch) {
+      const rawSkillsText = skillsSectionMatch[1];
+      const extractedTokens = rawSkillsText
+        .split(/[,•|/\n\r]/)
+        .map(s => s.trim().replace(/^[-•*]\s*/, ''))
+        .filter(s => s.length >= 2 && s.length <= 35 && !/skills|experience|summary|education|projects/i.test(s));
+      if (extractedTokens.length > 0) {
+        detectedSkills = Array.from(new Set(extractedTokens));
+      }
+    }
+
+    // Pattern B: Supplement with core technology ontology scan
+    const CORE_ONTOLOGY = [
       'Java', 'Spring Boot', 'Microservices', 'React', 'Node.js', 'Python', 'AWS', 'Docker',
       'Kubernetes', 'SQL', 'MongoDB', 'Kafka', 'TypeScript', 'Data Center Ops', 'Networking',
       'Hardware', 'ITIL', 'Linux', 'DevOps', 'C#', '.NET', 'Angular', 'Vue.js', 'Snowflake',
-      'Palo Alto', 'Firewall', 'NGFW', 'Panorama', 'Informatica', 'ETL', 'SAP FICO', 'ServiceNow'
+      'Palo Alto', 'Firewall', 'NGFW', 'Panorama', 'Informatica', 'ETL', 'SAP FICO', 'ServiceNow',
+      'Customer Success', 'HubSpot', 'Salesforce', 'B2B SaaS', 'ARR', 'QBR', 'Churn Reduction', 'Upsell', 'Mixpanel', 'Gainsight',
+      'Azure AD', 'Intune', 'SCCM', 'Azure', 'Office 365', 'Device Compliance', 'ITSM', 'Windows Server',
+      'Android', 'Kotlin', 'Jetpack Compose', 'Flutter', 'Dart', 'KMP', 'MVVM', 'Clean Architecture', 'Coroutines', 'Flow', 'Dagger', 'Hilt', 'Room', 'CI/CD', 'AAOS', 'WearOS',
+      'Clinical Nursing', 'Patient Care', 'ICU', 'Healthcare Compliance', 'Financial Analysis', 'Auditing', 'GAAP', 'SAP ERP', 'Taxation', 'R2R'
     ];
-    const detectedSkills = SKILL_DICT.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(textToScan));
-    const finalSkills = detectedSkills;
+    const ontologyMatches = CORE_ONTOLOGY.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(textToScan));
+    const finalSkills = Array.from(new Set([...detectedSkills, ...ontologyMatches]));
 
-    // Extract exact real Company / Employer from CV text (do not rewrite or normalize)
-    const COMPANY_DICT = ['TCS', 'Infosys', 'Wipro', 'Accenture', 'HCLTech', 'Cognizant', 'Tech Mahindra', 'IBM India', 'Capgemini', 'LTIMindtree', 'KPMG', 'EXL Services', 'Trivitron Healthcare', 'DecBectochem', 'Sonata Software', 'IDEE Informatics', 'Savantis', 'HGS', 'IMSI', 'Olectra Greentech', 'Lelogix Software LLP', '3i Infotech', 'Freshworks', 'Salesforce', 'Cisco Systems'];
-    const detectedCompany = COMPANY_DICT.find(c => new RegExp(`\\b${c.replace('.', '\\.')}\\b`, 'i').test(textToScan)) || undefined;
-
-    // Extract real Location from CV text
+    // 4. UNIVERSAL LOCATION EXTRACTOR
     const LOC_DICT = ['Noida', 'Bangalore', 'Hyderabad', 'Pune', 'Delhi', 'Mumbai', 'Chennai', 'Gurgaon', 'Ankleshwar', 'Delhi NCR'];
     const detectedLocation = LOC_DICT.find(l => new RegExp(`\\b${l}\\b`, 'i').test(textToScan)) || undefined;
 
-    // Preferred Location Extraction: Search for Preferred, Relocation, Open to relocate, Current, Summary, Availability
+    // Preferred Location Extraction
     let prefLocations: string[] = ['Hyderabad', 'Bangalore', 'Open to Relocate / PAN India'];
     if (/relocat|preferred\s*location|open\s*to\s*relocate|pan\s*india|remote/i.test(textToScan)) {
       prefLocations = ['Open to Relocate / PAN India', 'Hyderabad', 'Bangalore', 'Remote'];
@@ -143,11 +200,11 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     const expMatch = textToScan.match(/(\d{1,2}(?:\.\d{1,2})?)\s*( years| yrs| year| yr|\+ years)/i);
     const expYears = expMatch ? parseFloat(expMatch[1]) : undefined;
 
-    // CTC Extraction: Current CTC, Expected CTC, Salary, Compensation, Package, LPA, Lakhs, CTC
+    // CTC Extraction
     const ctcMatch = textToScan.match(/(?:current\s*ctc|expected\s*ctc|salary|compensation|package|annual\s*salary|ctc)\s*[:\-]?\s*(?:₹|rs\.?|usd|\$)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs|l|k|\/yr)?/i);
     const expectedCtc = ctcMatch ? parseFloat(ctcMatch[1]) : undefined;
 
-    // Notice Period Extraction: Notice Period, Serving Notice, Immediate, Joining, Availability
+    // Notice Period Extraction
     let noticeDays: number | undefined = undefined;
     const noticeMatch = textToScan.match(/(?:notice\s*period|serving\s*notice|joining|availability)\s*[:\-]?\s*(\d{1,2})\s*(?:days|day|month|months)?/i);
     if (noticeMatch) {
@@ -166,6 +223,7 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       skills: finalSkills,
       experience_years: expYears,
       expected_ctc: expectedCtc,
+      current_designation: detectedDesignation,
       current_company: detectedCompany,
       location: detectedLocation,
       preferred_locations: prefLocations,
