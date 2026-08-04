@@ -210,18 +210,20 @@ class StaleChunkErrorBoundary extends React.Component<{ children: React.ReactNod
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-          <div className="text-sm font-bold text-slate-700 mb-2">Updating CHATR with latest features...</div>
-          {/* Only show raw error details in development — never expose in production */}
-          {process.env.NODE_ENV === 'development' && this.state.error && (
-            <div className="mt-4 p-4 bg-red-50 rounded text-left overflow-auto max-w-2xl max-h-96">
-              <div className="font-bold text-red-700 text-sm">{this.state.error.message}</div>
-              <pre className="text-xs text-red-500 mt-2">{this.state.error.stack}</pre>
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center bg-slate-900 text-white rounded-2xl m-4 border border-slate-800">
+          <div className="text-base font-bold text-slate-200 mb-1">Updating CHATR with latest features...</div>
+          <p className="text-xs text-slate-400 max-w-md mb-3">Click below to reload the app with the latest engine updates.</p>
+          {this.state.error && (
+            <div className="my-2 p-3 bg-slate-950 rounded-xl text-left max-w-xl text-xs text-indigo-300 font-mono border border-slate-800">
+              {this.state.error.message}
             </div>
           )}
           <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow mt-4"
+            onClick={() => {
+              sessionStorage.clear();
+              window.location.reload();
+            }}
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-lg mt-2 transition-all cursor-pointer"
           >
             Refresh Now
           </button>

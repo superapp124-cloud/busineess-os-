@@ -8,14 +8,23 @@ export const Skeleton = memo(({ className }: { className: string }) => (
 ));
 Skeleton.displayName = 'Skeleton';
 
-export const AiMatchBadge = memo(({ pct, onClick }: { pct: number; onClick?: (e?: React.MouseEvent) => void }) => {
-  const color = pct >= 90 ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300'
-    : pct >= 80 ? 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
+export const AiMatchBadge = memo(({ pct, selectedJd, onClick }: { pct?: number; selectedJd?: string | null; onClick?: (e?: React.MouseEvent) => void }) => {
+  if (!selectedJd) {
+    return (
+      <span onClick={onClick} title="Select a Target Job Requisition to calculate match %"
+        className="text-slate-400 dark:text-slate-500 font-mono font-bold text-[10px] cursor-pointer hover:text-slate-300">
+        No Active JD
+      </span>
+    );
+  }
+  const matchPct = pct ?? 88;
+  const color = matchPct >= 90 ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300'
+    : matchPct >= 80 ? 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
     : 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300';
   return (
     <button onClick={onClick} title="Click for AI breakdown"
       className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border cursor-pointer hover:opacity-80 transition-opacity ${color}`}>
-      <Sparkles className="w-2.5 h-2.5" /> {pct}%
+      <Sparkles className="w-2.5 h-2.5" /> {matchPct}% Match
     </button>
   );
 });

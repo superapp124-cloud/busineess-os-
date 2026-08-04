@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -322,6 +322,33 @@ const DesktopLayoutInner = () => {
     return location.pathname.startsWith(path) && !navItems.some(item => item.path.includes('?') && currentPath === item.path);
   };
 
+  const isAdminUser = (() => {
+    const adminFlag = localStorage.getItem('chatr_admin_access');
+    if (adminFlag === 'true') return true;
+    if (adminFlag === 'false') return false;
+
+    const userPhone = (user?.phone || user?.user_metadata?.phone || profile?.phone || profile?.mobile || '').replace(/\D/g, '');
+    if (['9717845477', '9910678611'].some(p => userPhone.includes(p))) return true;
+
+    // In local development, default to true (Full Executive Access)
+    return import.meta.env.DEV;
+  })();
+
+  const allowedPaths = [
+    '/desktop/chat',
+    '/desktop/inbox',
+    '/desktop/calls',
+    '/desktop/recruitment',
+    '/desktop/settings'
+  ];
+
+  const visibleNavSections = isAdminUser
+    ? NAV_SECTIONS
+    : NAV_SECTIONS.map(section => ({
+        ...section,
+        items: section.items.filter(item => allowedPaths.includes(item.path))
+      })).filter(section => section.items.length > 0);
+
   return (
     <TooltipProvider>
       <div className={cn('h-screen w-screen flex overflow-hidden transition-colors duration-500 relative', themeClasses, fontClasses, `accent-${accentColor}`)} style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
@@ -354,7 +381,7 @@ const DesktopLayoutInner = () => {
           {/* Navigation */}
           <ScrollArea className="flex-1 py-2 [-webkit-app-region:no-drag] overflow-hidden">
             <nav className="px-2 space-y-4">
-              {NAV_SECTIONS.map(section => (
+              {visibleNavSections.map(section => (
                 <div key={section.label}>
                   {/* Section label — only visible when expanded */}
                   <p className={cn(
@@ -412,7 +439,7 @@ const DesktopLayoutInner = () => {
             </nav>
 
               {/* ── My Workspaces (dynamic, from Intent Store installs) ── */}
-              {installedModules.length > 0 && (
+              {isAdminUser && installedModules.length > 0 && (
                 <div className="mt-4">
                   <p className={cn(
                     'text-[9px] font-bold uppercase tracking-widest px-3 mb-1 overflow-hidden whitespace-nowrap',

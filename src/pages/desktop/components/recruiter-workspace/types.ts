@@ -178,6 +178,9 @@ export interface Candidate {
   applied_for: string | null;
   created_at?: string;
   current_company?: string;
+  company_name_raw?: string;
+  company_name_normalized?: string;
+  company_id?: string;
   experience_years?: number;
   notice_days?: number;
   expected_ctc?: number;
@@ -218,6 +221,10 @@ export interface Candidate {
   sla_days?: number;
   sla_overdue?: boolean;
   current_designation?: string;
+
+  is_primary_duplicate?: boolean;
+  duplicate_count?: number;
+  duplicate_profiles?: Candidate[];
   passport_v3?: CandidatePassportV3;
 
   ai_breakdown?: {

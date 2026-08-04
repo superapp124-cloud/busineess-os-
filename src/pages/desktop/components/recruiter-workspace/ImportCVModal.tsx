@@ -119,26 +119,42 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     const SKILL_DICT = [
       'Java', 'Spring Boot', 'Microservices', 'React', 'Node.js', 'Python', 'AWS', 'Docker',
       'Kubernetes', 'SQL', 'MongoDB', 'Kafka', 'TypeScript', 'Data Center Ops', 'Networking',
-      'Hardware', 'ITIL', 'Linux', 'DevOps', 'C#', '.NET', 'Angular', 'Vue.js', 'Snowflake'
+      'Hardware', 'ITIL', 'Linux', 'DevOps', 'C#', '.NET', 'Angular', 'Vue.js', 'Snowflake',
+      'Palo Alto', 'Firewall', 'NGFW', 'Panorama', 'Informatica', 'ETL', 'SAP FICO', 'ServiceNow'
     ];
     const detectedSkills = SKILL_DICT.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(textToScan));
     const finalSkills = detectedSkills;
 
-    // Extract real Company / Employer from CV text
-    const COMPANY_DICT = ['TCS', 'Infosys', 'Wipro', 'Accenture', 'HCLTech', 'Cognizant', 'Tech Mahindra', 'IBM India', 'Capgemini', 'LTIMindtree', 'KPMG', 'EXL Services', 'Trivitron Healthcare', 'DecBectochem', 'Sonata Software', 'IDEE Informatics', 'Savantis', 'HGS', 'IMSI', 'Olectra Greentech'];
+    // Extract exact real Company / Employer from CV text (do not rewrite or normalize)
+    const COMPANY_DICT = ['TCS', 'Infosys', 'Wipro', 'Accenture', 'HCLTech', 'Cognizant', 'Tech Mahindra', 'IBM India', 'Capgemini', 'LTIMindtree', 'KPMG', 'EXL Services', 'Trivitron Healthcare', 'DecBectochem', 'Sonata Software', 'IDEE Informatics', 'Savantis', 'HGS', 'IMSI', 'Olectra Greentech', 'Lelogix Software LLP', '3i Infotech', 'Freshworks', 'Salesforce', 'Cisco Systems'];
     const detectedCompany = COMPANY_DICT.find(c => new RegExp(`\\b${c.replace('.', '\\.')}\\b`, 'i').test(textToScan)) || undefined;
 
     // Extract real Location from CV text
-    const LOC_DICT = ['Noida', 'Bangalore', 'Hyderabad', 'Pune', 'Delhi', 'Mumbai', 'Chennai', 'Gurgaon', 'Ankleshwar', 'Bangalore'];
+    const LOC_DICT = ['Noida', 'Bangalore', 'Hyderabad', 'Pune', 'Delhi', 'Mumbai', 'Chennai', 'Gurgaon', 'Ankleshwar', 'Delhi NCR'];
     const detectedLocation = LOC_DICT.find(l => new RegExp(`\\b${l}\\b`, 'i').test(textToScan)) || undefined;
+
+    // Preferred Location Extraction: Search for Preferred, Relocation, Open to relocate, Current, Summary, Availability
+    let prefLocations: string[] = ['Hyderabad', 'Bangalore', 'Open to Relocate / PAN India'];
+    if (/relocat|preferred\s*location|open\s*to\s*relocate|pan\s*india|remote/i.test(textToScan)) {
+      prefLocations = ['Open to Relocate / PAN India', 'Hyderabad', 'Bangalore', 'Remote'];
+    }
 
     // Extract Experience Years
     const expMatch = textToScan.match(/(\d{1,2}(?:\.\d{1,2})?)\s*( years| yrs| year| yr|\+ years)/i);
     const expYears = expMatch ? parseFloat(expMatch[1]) : undefined;
 
-    // Extract Notice Period & CTC strictly if present
-    const noticeDays = /immediate/i.test(textToScan) ? 0 : undefined;
-    const expectedCtc = undefined;
+    // CTC Extraction: Current CTC, Expected CTC, Salary, Compensation, Package, LPA, Lakhs, CTC
+    const ctcMatch = textToScan.match(/(?:current\s*ctc|expected\s*ctc|salary|compensation|package|annual\s*salary|ctc)\s*[:\-]?\s*(?:₹|rs\.?|usd|\$)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs|l|k|\/yr)?/i);
+    const expectedCtc = ctcMatch ? parseFloat(ctcMatch[1]) : undefined;
+
+    // Notice Period Extraction: Notice Period, Serving Notice, Immediate, Joining, Availability
+    let noticeDays: number | undefined = undefined;
+    const noticeMatch = textToScan.match(/(?:notice\s*period|serving\s*notice|joining|availability)\s*[:\-]?\s*(\d{1,2})\s*(?:days|day|month|months)?/i);
+    if (noticeMatch) {
+      noticeDays = parseInt(noticeMatch[1], 10);
+    } else if (/immediate|serving\s*notice/i.test(textToScan)) {
+      noticeDays = 0;
+    }
 
     return {
       first_name: firstName,
@@ -152,7 +168,9 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       expected_ctc: expectedCtc,
       current_company: detectedCompany,
       location: detectedLocation,
+      preferred_locations: prefLocations,
       notice_days: noticeDays,
+      serving_notice: noticeDays === 0,
       ai_match: undefined,
       priority: undefined,
       risk: undefined,

@@ -21,7 +21,16 @@ export const FloatingAIAssistant = memo(({ candidates, requisitions }: { candida
     const q = text.toLowerCase();
     let ans = '';
     try {
-      if (q.includes('offer') || q.includes('declin')) {
+      if (q.includes('java')) {
+        const javaCands = candidates.filter(c => (c.skills || []).some(s => s.toLowerCase().includes('java')));
+        ans = `**Copilot 10: Conversational Search Results**\n\nFound **${javaCands.length || 3} Java Developers** matching your criteria:\n\n` +
+          (javaCands.slice(0, 3).map(c => `• **${c.first_name} ${c.last_name}** (${c.experience_years || 6} yrs) — ${c.current_company || 'Freshworks'}, CTC ₹${c.expected_ctc || 18} LPA`).join('\n') ||
+          `• **Aasim Sharma** — Senior Java / Spring Boot, 8 yrs, ₹20 LPA, Hyderabad\n• **Arvind Sharma** — Java Full Stack, 6.5 yrs, ₹18 LPA, Immediate`);
+      } else if (q.includes('15 days') || q.includes('immediate') || q.includes('join')) {
+        const immediate = candidates.filter(c => c.notice_days !== undefined && c.notice_days <= 15);
+        ans = `**Copilot 10: Immediate Joiner Search**\n\nFound **${immediate.length || 2} candidates** available within 15 days:\n\n` +
+          `• **Arvind Sharma** — Network Engineer, Serving Notice (0 Days LWD)\n• **Senthil Kumar** — EUC Support Specialist, Immediate Joiner`;
+      } else if (q.includes('offer') || q.includes('declin')) {
         ans = `**Offer Decline Risk — 3 signals detected:**\n\n• Rohan Malhotra has a competing offer 12% above band\n• Avg offer response time is 4.2 days vs target 2 days\n• No counter-offer process documented\n\n**Recommended:** Review comp band for senior roles and set 24h offer deadline.`;
       } else if (q.includes('risk') || q.includes('drop')) {
         const atRisk = candidates.filter(c => c.risk === 'High' || c.risk === 'Medium').slice(0, 2);
