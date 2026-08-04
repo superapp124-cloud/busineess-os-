@@ -226,7 +226,14 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       'Financial Analysis', 'Financial Modeling', 'Auditing', 'GAAP', 'IFRS', 'Taxation', 'GST', 'Tally 7.2', 'Tally Prime', 'Accounts Payable', 'Accounts Receivable', 'General Ledger', 'Bank Reconciliation', 'Reconciliation', 'Petty Cash', 'Cash Flow Management', 'Budgeting', 'Forecasting', 'R2R', 'P2P', 'O2C', 'Order-to-Cash', 'Procure-to-Pay', 'Record-to-Report', 'Clinical Nursing', 'Patient Care', 'ICU', 'Critical Care', 'Healthcare Compliance', 'HIPAA', 'EHR/EMR', 'Medical Billing', 'Customer Success', 'HubSpot', 'Salesforce', 'B2B SaaS', 'ARR', 'MRR', 'QBR', 'Churn Reduction', 'Upsell', 'Mixpanel', 'Gainsight', 'Account Management', 'Inside Sales', 'Business Development'
     ];
 
-    const ontologyMatches = CORE_ONTOLOGY.filter(s => new RegExp(`\\b${s.replace('.', '\\.')}\\b`, 'i').test(sanitizedText));
+    const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const ontologyMatches = CORE_ONTOLOGY.filter(s => {
+      try {
+        return new RegExp(`\\b${escapeRegExp(s)}\\b`, 'i').test(sanitizedText);
+      } catch (e) {
+        return false;
+      }
+    });
 
     // Dynamic Acronym & Technology Token Harvester (Harvests any domain technical token matching uppercase/camelCase patterns)
     const dynamicTechTokens = Array.from(sanitizedText.matchAll(/\b([A-Z0-9]{2,10}(?:\/[A-Z0-9]{2,10})?|[A-Z][a-z0-9]+[A-Z][a-zA-Z0-9]+)\b/g))
