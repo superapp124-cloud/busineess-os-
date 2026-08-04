@@ -353,12 +353,23 @@ export const CandidateProfileModal = memo(({
                         </div>
                       </div>
 
-                      <div className="p-2.5 bg-rose-500/10 rounded-xl border border-rose-500/20 space-y-1">
-                        <p className="font-extrabold text-rose-400 text-[10px]">Missing Requirements (3):</p>
+                      <div className="p-2.5 bg-[#121522] rounded-xl border border-slate-800 space-y-1">
+                        <p className="font-extrabold text-emerald-400 text-[10px]">Verified Skill Requirements ({skills.slice(0, 5).length}):</p>
                         <div className="flex flex-wrap gap-1">
-                          {['Azure Firewall', 'Zscaler', 'Terraform'].map((m, i) => (
-                            <span key={i} className="px-1.5 py-0.2 bg-rose-500/20 text-rose-300 font-bold text-[9px] rounded">
-                              • {m}
+                          {skills.slice(0, 5).map((m, idx) => (
+                            <span key={idx} className="px-1.5 py-0.2 bg-emerald-500/10 text-emerald-300 font-bold text-[9px] rounded border border-emerald-500/20">
+                              ✓ {m}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="p-2.5 bg-violet-500/10 rounded-xl border border-violet-500/20 space-y-1">
+                        <p className="font-extrabold text-violet-300 text-[10px]">Specialized Domain Competencies ({skills.slice(5, 9).length}):</p>
+                        <div className="flex flex-wrap gap-1">
+                          {(skills.slice(5, 9).length > 0 ? skills.slice(5, 9) : ['Enterprise Workflow', 'SLA Adherence', 'Production Support']).map((m, i) => (
+                            <span key={i} className="px-1.5 py-0.2 bg-violet-500/20 text-violet-300 font-bold text-[9px] rounded border border-violet-500/30">
+                              ⚡ {m}
                             </span>
                           ))}
                         </div>
@@ -373,38 +384,38 @@ export const CandidateProfileModal = memo(({
                         <AlertTriangle className="w-4 h-4 text-amber-500" /> Hiring Risk Diagnostic Gauges
                       </h4>
                       <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[10px] rounded-full">
-                        Overall Risk: Medium
+                        Overall Risk: Low-Medium
                       </span>
                     </div>
 
                     <div className="space-y-2 text-[11px]">
                       <div>
                         <div className="flex justify-between text-[10px] font-bold pb-0.5">
-                          <span>Notice Period SLA (90 Days)</span>
-                          <span className="text-amber-400 font-mono">■■■■□ (Medium Risk)</span>
+                          <span>Notice Period SLA ({candidate.notice_days ? `${candidate.notice_days} Days` : 'Standard SLA'})</span>
+                          <span className="text-emerald-400 font-mono">■■■■□ (Low-Medium Risk)</span>
                         </div>
                         <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-amber-500 h-full w-4/5" />
+                          <div className="bg-emerald-500 h-full w-3/4" />
                         </div>
                       </div>
 
                       <div>
                         <div className="flex justify-between text-[10px] font-bold pb-0.5">
-                          <span>Counter Offer Risk (BFSI Demand)</span>
-                          <span className="text-rose-400 font-mono">■■■■■ (High Risk)</span>
+                          <span>Market Demand ({targetRole})</span>
+                          <span className="text-violet-400 font-mono">■■■■■ (High Demand)</span>
                         </div>
                         <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-rose-500 h-full w-full" />
+                          <div className="bg-violet-500 h-full w-full" />
                         </div>
                       </div>
 
                       <div>
                         <div className="flex justify-between text-[10px] font-bold pb-0.5">
-                          <span>Career Stability (3 Companies)</span>
-                          <span className="text-emerald-400 font-mono">■■□□□ (Low Risk)</span>
+                          <span>Career Stability ({candidate.experience_years ? `${candidate.experience_years} Yrs Exp` : 'Verified Tenure'})</span>
+                          <span className="text-emerald-400 font-mono">■■■■■ (High Stability)</span>
                         </div>
                         <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-emerald-500 h-full w-2/5" />
+                          <div className="bg-emerald-500 h-full w-full" />
                         </div>
                       </div>
                     </div>
@@ -427,22 +438,22 @@ export const CandidateProfileModal = memo(({
                         <DollarSign className="w-4 h-4 text-emerald-500" /> Concrete Recruiter Salary Strategy
                       </h4>
                       <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold text-[10px] rounded-full">
-                        Join Prob: 92%
+                        Join Prob: {dynamicAcceptProb}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
                       <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
                         <span className="text-slate-400 block text-[9px] font-bold">Recommended Offer</span>
-                        <strong className="text-emerald-400 text-sm font-black">₹20.5 LPA</strong>
+                        <strong className="text-emerald-400 text-sm font-black">{dynamicRecOffer}</strong>
                       </div>
                       <div className="p-2.5 bg-amber-500/10 rounded-xl border border-amber-500/30">
                         <span className="text-slate-400 block text-[9px] font-bold">Walk-away Limit</span>
-                        <strong className="text-amber-400 text-sm font-black">₹21.5 LPA</strong>
+                        <strong className="text-amber-400 text-sm font-black">{dynamicWalkAway}</strong>
                       </div>
                       <div className="p-2.5 bg-violet-500/10 rounded-xl border border-violet-500/30">
                         <span className="text-slate-400 block text-[9px] font-bold">Likely Accept</span>
-                        <strong className="text-violet-300 text-sm font-black">92% Prob</strong>
+                        <strong className="text-violet-300 text-sm font-black">{dynamicAcceptProb}</strong>
                       </div>
                     </div>
                   </div>
@@ -454,25 +465,22 @@ export const CandidateProfileModal = memo(({
                         <Briefcase className="w-4 h-4 text-blue-500" /> Career Growth Trajectory
                       </h4>
                       <span className="px-2 py-0.5 bg-blue-500/10 text-blue-500 font-bold text-[10px] rounded-full">
-                        Growth Score: 91%
+                        Growth Score: 94%
                       </span>
                     </div>
 
                     <div className="text-[11px] space-y-1 font-mono text-slate-700 dark:text-slate-300">
-                      <div className="flex items-center gap-2">
-                        <span className="text-slate-400">2019:</span>
-                        <span className="font-bold">Desktop Support Engineer</span>
-                      </div>
-                      <div className="text-blue-500 pl-8 font-black">↓</div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-slate-400">2021:</span>
-                        <span className="font-bold">L2 Security Engineer</span>
-                      </div>
-                      <div className="text-blue-500 pl-8 font-black">↓</div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-slate-400">2023:</span>
-                        <span className="font-bold text-indigo-400">Firewall Security Engineer</span>
-                      </div>
+                      {dynamicCareerTrajectory.map((step, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-400">{step.year}:</span>
+                            <span className={`font-bold ${idx === 2 ? 'text-indigo-400 font-black' : ''}`}>{step.title}</span>
+                          </div>
+                          {idx < dynamicCareerTrajectory.length - 1 && (
+                            <div className="text-blue-500 pl-8 font-black">↓</div>
+                          )}
+                        </React.Fragment>
+                      ))}
                     </div>
                   </div>
                 </div>

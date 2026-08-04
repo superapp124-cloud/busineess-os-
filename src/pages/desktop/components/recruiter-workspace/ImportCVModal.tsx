@@ -147,8 +147,8 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     // 2. STRUCTURAL SENTENCE-BOUNDED COMPANY EXTRACTOR WITH PROPER NOUN & NOISE GUARDS
     let detectedCompany: string | undefined = undefined;
     
-    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|master|degree|phd|diploma|certified|certificate|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords|objective|responsibilities|organization|client|company|to take your|take your|company to)$/i;
-    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience|objective|career objective|to take your company to the of)$/i;
+    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|bachelors|master|masters|degree|phd|diploma|certified|certificate|business|management|commerce|science|arts|engineering|technology|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords|objective|responsibilities|organization|client|company|to take your|take your|company to)$/i;
+    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience|objective|career objective|to take your company to the of|bachelors in business management|master of business administration|bachelor of technology)$/i;
     const NON_DISCLOSURE_BLOCKLIST = /\b(not disclosed|confidential|undisclosed|per nda|nda|n\/a|none|unknown|private)\b/i;
 
     // Pattern A: Contextual Prefix Match ("at <Company>", "with <Company>", "employer: <Company>")
