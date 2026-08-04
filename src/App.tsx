@@ -19,8 +19,7 @@ import { SplashScreen } from "@capacitor/splash-screen";
 import { HelmetProvider } from 'react-helmet-async';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { NativeAppProvider } from "./components/NativeAppProvider";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { LocationProvider } from "./contexts/LocationContext";
 import { initializeCapabilities } from "./core/capabilities/init";
 
 // Initialize the Outcome Engine Capabilities
@@ -961,8 +960,6 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  </SocketProvider>
  </QueryClientProvider>
  </HelmetProvider>
- <Analytics />
- <SpeedInsights />
  </GlobalErrorBoundary>
  </CrashlyticsErrorBoundary>
  </div>
