@@ -621,7 +621,7 @@ export const PremiumKanbanCard = memo(({ candidate, stage, requisitions, onDragS
   onDragStart: (e: React.DragEvent, id: string) => void;
   onClick: () => void; onExplainAI: () => void;
 }) => {
-  const enriched = enrichCandidateData(candidate);
+  const enriched = typeof enrichCandidateData === 'function' ? enrichCandidateData(candidate) : candidate;
   const match = enriched.ai_match ?? 75;
   const palette = getAIPalette(candidate.id);
   const m = STAGE_META[stage];

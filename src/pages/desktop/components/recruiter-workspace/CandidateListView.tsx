@@ -47,7 +47,10 @@ const safeFormatNotice = typeof formatNoticePeriodDisplay === 'function' ? forma
 // High-Performance Fresh Enriched Candidate Function
 function getCachedEnrichedCandidate(c: Candidate): Candidate {
   if (!c || !c.id) return c;
-  return enrichCandidateData(c);
+  if (typeof enrichCandidateData === 'function') {
+    return enrichCandidateData(c);
+  }
+  return c;
 }
 
 export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading, onPositiveResponse, onInterviewScheduled, automationBusy, onOpenImportCv, onSelectCandidate }: CandidatesTabProps) => {
