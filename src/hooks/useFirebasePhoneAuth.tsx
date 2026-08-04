@@ -1,58 +1,106 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { 
- RecaptchaVerifier, 
- signInWithPhoneNumber, 
- ConfirmationResult,
+  RecaptchaVerifier, 
+  signInWithPhoneNumber, 
+  ConfirmationResult,
 } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
 import { auth } from '@/firebase';
 import { supabase } from '@/integrations/supabase/client';
 
+// On native (Android/iOS) Firebase verifies the phone number through
+// Play Integrity / APNs — NO web reCAPTCHA and NO authorized-domain check required.
+// On web/desktop we keep the invisible reCAPTCHA flow.
+const isNative = Capacitor.isNativePlatform();
 
 export type PhoneAuthStep = 'phone' | 'otp' | 'syncing';
 
 interface UseFirebasePhoneAuthReturn {
- step: PhoneAuthStep;
- loading: boolean;
- error: string | null;
- countdown: number;
- checkPhoneAndProceed: (phoneNumber: string) => Promise<boolean>;
- verifyOTP: (otp: string) => Promise<boolean>;
- resendOTP: () => Promise<boolean>;
- reset: () => void;
- phoneNumber: string;
- isExistingUser: boolean;
- recaptchaReady: boolean;
+  step: PhoneAuthStep;
+  loading: boolean;
+  error: string | null;
+  countdown: number;
+  checkPhoneAndProceed: (phoneNumber: string) => Promise<boolean>;
+  verifyOTP: (otp: string) => Promise<boolean>;
+  resendOTP: () => Promise<boolean>;
+  reset: () => void;
+  phoneNumber: string;
+  isExistingUser: boolean;
+  recaptchaReady: boolean;
 }
 
 export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
- 
- const [step, setStep] = useState<PhoneAuthStep>('phone');
- const [loading, setLoading] = useState(false);
- const [error, setError] = useState<string | null>(null);
- const [countdown, setCountdown] = useState(0);
- const [phoneNumber, setPhoneNumber] = useState('');
- const [failedAttempts, setFailedAttempts] = useState(0);
- const [isExistingUser, setIsExistingUser] = useState(false);
- const [recaptchaReady, setRecaptchaReady] = useState(false);
- 
- const confirmationResultRef = useRef<ConfirmationResult | null>(null);
- const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  
+  const [step, setStep] = useState<PhoneAuthStep>('phone');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(0);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isExistingUser, setIsExistingUser] = useState(false);
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
+  
+  // Web flow ref
+  const confirmationResultRef = useRef<ConfirmationResult | null>(null);
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  // Native flow ref
+  const verificationIdRef = useRef<string | null>(null);
 
- // NOTE: We no longer pre-initialize RecaptchaVerifier in a useEffect.
- // Pre-initializing invisible recaptcha in React causes MALFORMED errors if the component 
- // unmounts/remounts because .clear() corrupts the Google reCAPTCHA scripts in the head.
- // We will initialize it lazily and globally in sendOTP instead.
+  // Pre-initialize reCAPTCHA status check for web / native
+  useEffect(() => {
+    if (isNative) {
+      setRecaptchaReady(true);
+      return;
+    }
 
- useEffect(() => {
- if (countdown > 0) {
- const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
- return () => clearTimeout(timer);
- }
- }, [countdown]);
+    const initRecaptcha = async () => {
+      try {
+        const container = document.getElementById('recaptcha-container');
+        if (container && !recaptchaVerifierRef.current && !(window as any).recaptchaVerifier) {
+          container.innerHTML = '';
+          const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            size: 'invisible',
+          });
+          recaptchaVerifierRef.current = verifier;
+          (window as any).recaptchaVerifier = verifier;
+          await verifier.render();
+          setRecaptchaReady(true);
+        }
+      } catch (err) {
+        console.warn('[reCAPTCHA] Pre-init failed, will retry on send:', err);
+      }
+    };
+    
+    const timer = setTimeout(initRecaptcha, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
- /**
- * INSTANT CHECK: 1-second timeout for existing user check
- */
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  /**
+   * Helper: Dynamically get Native FirebaseAuthentication plugin if available
+   */
+  const getNativeAuthPlugin = async () => {
+    if (!isNative) return null;
+    try {
+      const pluginName = '@capacitor-firebase/authentication';
+      const mod = await import(/* @vite-ignore */ pluginName);
+      return mod?.FirebaseAuthentication || null;
+    } catch {
+      console.warn('[Auth] @capacitor-firebase/authentication plugin not loaded');
+      return null;
+    }
+  };
+
+
+  /**
+   * INSTANT CHECK: 1-second timeout for existing user check
+   */
   const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
@@ -84,182 +132,291 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     return await sendOTP(phone);
   }, []);
 
-  const sendOTP = async (phone: string): Promise<boolean> => {
-  try {
-  // Lazily initialize recaptcha globally on the window object.
-  // This guarantees exactly ONE instance for the entire browser session,
-  // completely bypassing React's strict mode lifecycle re-render bugs.
-  if (!(window as any).recaptchaVerifier) {
-    const container = document.getElementById('recaptcha-container');
-    if (container) container.innerHTML = '';
-    
-    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: failedAttempts >= 2 ? 'normal' : 'invisible',
-    });
-  }
+  /**
+   * Native phone verification (Android/iOS) — uses device's native Firebase SDK (Play Integrity/APNs)
+   */
+  const sendOTPNative = async (phone: string): Promise<boolean> => {
+    try {
+      const NativeAuth = await getNativeAuthPlugin();
+      if (!NativeAuth) {
+        // Fallback to web flow if plugin is missing on native target
+        return sendOTPWeb(phone);
+      }
 
-  const confirmationResult = await signInWithPhoneNumber(auth, phone, (window as any).recaptchaVerifier);
- confirmationResultRef.current = confirmationResult;
- 
- setStep('otp');
- setCountdown(30); // Reduced from 60s
- setLoading(false);
- 
- console.log('📱 [Auth] OTP sent successfully');
+      const verificationId = await new Promise<string>(async (resolve, reject) => {
+        let codeListener: { remove: () => Promise<void> } | null = null;
+        try {
+          codeListener = await NativeAuth.addListener(
+            'phoneCodeSent',
+            async (event: { verificationId: string }) => {
+              await codeListener?.remove();
+              resolve(event.verificationId);
+            }
+          );
 
- return true;
- } catch (err: any) {
- console.error('[Firebase] OTP error:', err);
- setFailedAttempts(prev => prev + 1);
- 
- let msg = 'Failed to send OTP';
- let waitTime = 0;
- 
-  if (err.code === 'auth/invalid-phone-number') {
-    msg = 'Invalid phone number';
-  } else if (err.code === 'auth/unauthorized-domain') {
-    msg = 'Domain not authorized. Please add this domain to Firebase Console.';
-  } else if (err.code === 'auth/too-many-requests') {
-    msg = 'Too many attempts. Please wait or use Google login.';
-    waitTime = 180;
-  } else if (err.message?.includes('Hostname') || err.message?.includes('unauthorized')) {
-    msg = 'Domain not authorized. Please add chatrchat.in to Firebase Console.';
-  } else if (err.message?.includes('reCAPTCHA Timeout') || err.message?.includes('reCAPTCHA')) {
-    msg = 'Security check timed out. Please try again.';
-  } else {
-    // Show exact firebase error to help debug
-    msg = err.message || 'Failed to send OTP';
-  }
-  
-  setError(msg);
-  if (waitTime > 0) setCountdown(waitTime);
-  setStep('phone');
-  setLoading(false);
-  
-  // Do NOT clear or nullify recaptchaVerifierRef here. 
-  // Firebase requires reusing the same instance, otherwise it throws MALFORMED.
-  
-  return false;
- }
- };
+          await NativeAuth.signInWithPhoneNumber({ phoneNumber: phone });
+        } catch (e) {
+          await codeListener?.remove();
+          reject(e);
+        }
+      });
 
- const verifyOTP = useCallback(async (otp: string): Promise<boolean> => {
- if (!confirmationResultRef.current) {
- setError('Session expired. Please try again.');
- return false;
- }
+      verificationIdRef.current = verificationId;
+      setStep('otp');
+      setCountdown(30);
+      setLoading(false);
+      console.log('📱 [Auth] OTP sent successfully (native)');
+      return true;
+    } catch (err: any) {
+      console.error('[Firebase Native] OTP error:', err);
+      setFailedAttempts(prev => prev + 1);
 
- setLoading(true);
- setError(null);
+      let msg = 'Failed to send OTP';
+      const code: string = err?.code || err?.message || '';
+      if (/invalid.*phone|phone.*invalid/i.test(code)) {
+        msg = 'Invalid phone number';
+      } else if (/too-many|quota/i.test(code)) {
+        msg = 'Too many attempts. Please wait and try again.';
+        setCountdown(180);
+      } else if (/network/i.test(code)) {
+        msg = 'Network error. Check your connection and try again.';
+      }
 
- try {
- // Step 1: Verify OTP with Firebase (~1-2s)
- const result = await confirmationResultRef.current.confirm(otp);
- const firebaseUser = result.user;
- 
- const normalizedPhone = phoneNumber.replace(/\s/g, '');
-
- // Step 2: Use edge function to handle Supabase auth (handles password mismatch)
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
-  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
-
-  const response = await fetch(
-    `${supabaseUrl}/functions/v1/firebase-phone-auth`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
-      body: JSON.stringify({
-        phone_number: normalizedPhone,
-        firebase_uid: firebaseUser.uid,
-      }),
+      setError(msg);
+      setStep('phone');
+      setLoading(false);
+      return false;
     }
-  );
+  };
 
-  const responseText = await response.text();
-  let data: any = {};
-  try {
-    data = responseText ? JSON.parse(responseText) : {};
-  } catch (e) {
-    console.error('[OTP Verify] Edge function non-JSON response:', responseText);
-    throw new Error(`Authentication server error (${response.status}). Please try again.`);
-  }
+  /**
+   * Web phone verification — uses Firebase Web SDK with invisible reCAPTCHA
+   */
+  const sendOTPWeb = async (phone: string): Promise<boolean> => {
+    try {
+      if (!(window as any).recaptchaVerifier && !recaptchaVerifierRef.current) {
+        const container = document.getElementById('recaptcha-container');
+        if (container) container.innerHTML = '';
+        
+        const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: failedAttempts >= 2 ? 'normal' : 'invisible',
+        });
+        recaptchaVerifierRef.current = verifier;
+        (window as any).recaptchaVerifier = verifier;
+      }
 
-  let session = data?.session;
+      const activeVerifier = recaptchaVerifierRef.current || (window as any).recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(auth, phone, activeVerifier);
+      confirmationResultRef.current = confirmationResult;
+      
+      setStep('otp');
+      setCountdown(30);
+      setLoading(false);
+      
+      console.log('📱 [Auth] OTP sent successfully (web)');
+      return true;
+    } catch (err: any) {
+      console.error('[Firebase Web] OTP error:', err);
+      setFailedAttempts(prev => prev + 1);
+      
+      let msg = 'Failed to send OTP';
+      let waitTime = 0;
+      
+      if (err.code === 'auth/invalid-phone-number') {
+        msg = 'Invalid phone number';
+      } else if (err.code === 'auth/unauthorized-domain') {
+        msg = 'Domain not authorized. Please add this domain to Firebase Console.';
+      } else if (err.code === 'auth/too-many-requests') {
+        msg = 'Too many attempts. Please wait and try again.';
+        waitTime = 180;
+      } else if (
+        err.code === 'auth/captcha-check-failed' ||
+        err.message?.includes('Hostname') ||
+        err.message?.includes('unauthorized')
+      ) {
+        msg = `Domain (${window.location.hostname}) is not authorized for OTP in Firebase Console.`;
+      } else if (err.code === 'auth/network-request-failed') {
+        msg = 'Network error. Check your connection and try again.';
+      } else {
+        msg = err.message || 'Failed to send OTP';
+      }
+      
+      setError(msg);
+      if (waitTime > 0) setCountdown(waitTime);
+      setStep('phone');
+      setLoading(false);
+      return false;
+    }
+  };
 
-  if (!session) {
-    // Fallback: Direct Supabase authentication after Firebase OTP succeeds
-    const email = `${normalizedPhone.replace(/\+/g, '')}@chatr.local`;
-    const { data: signInData } = await supabase.auth.signInWithPassword({
-      email,
-      password: normalizedPhone,
-    });
-    if (signInData?.session) {
-      session = signInData.session;
-    } else {
-      const { data: signUpData } = await supabase.auth.signUp({
+  const sendOTP = async (phone: string): Promise<boolean> => {
+    if (isNative) {
+      return sendOTPNative(phone);
+    }
+    return sendOTPWeb(phone);
+  };
+
+  /**
+   * Exchange a verified Firebase UID for a Supabase session via Edge Function or fallback
+   */
+  const completeSupabaseSession = async (firebaseUid: string): Promise<boolean> => {
+    const normalizedPhone = phoneNumber.replace(/\s/g, '');
+    const cleanDigits = normalizedPhone.replace(/\+/g, '');
+    const email = `${cleanDigits}@chatr.local`;
+
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
+    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    let session: { access_token?: string; refresh_token?: string } | null = null;
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        const response = await fetch(
+          `${supabaseUrl}/functions/v1/firebase-phone-auth`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseKey}`,
+              'apikey': supabaseKey,
+            },
+            body: JSON.stringify({
+              phone_number: normalizedPhone,
+              firebase_uid: firebaseUid,
+            }),
+          }
+        );
+
+        const responseText = await response.text();
+        if (responseText) {
+          const data = JSON.parse(responseText);
+          if (data?.session?.access_token && data?.session?.refresh_token) {
+            session = data.session;
+          }
+        }
+      } catch (e) {
+        console.warn('[Auth Exchange] Edge function call failed, attempting direct Supabase fallback:', e);
+      }
+    }
+
+    // Direct fallback if edge function is unavailable or didn't return a session
+    if (!session) {
+      const { data: signInData } = await supabase.auth.signInWithPassword({
         email,
         password: normalizedPhone,
-        options: { data: { phone_number: normalizedPhone } }
       });
-      session = signUpData?.session;
+
+      if (signInData?.session) {
+        session = signInData.session;
+      } else {
+        const { data: signUpData } = await supabase.auth.signUp({
+          email,
+          password: normalizedPhone,
+          options: { data: { phone_number: normalizedPhone } }
+        });
+        session = signUpData?.session || null;
+      }
     }
-  }
 
-  if (session) {
-    await supabase.auth.setSession({
-      access_token: session.access_token,
-      refresh_token: session.refresh_token,
-    });
-  }
+    if (session?.access_token && session?.refresh_token) {
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
+      return true;
+    }
 
- setLoading(false);
- return true;
- } catch (err: any) {
- console.error('[OTP Verify] Error:', err);
- const msg = err.code === 'auth/invalid-verification-code' 
- ? 'Invalid code. Please check and try again.' 
- : err.message || 'Verification failed';
- setError(msg);
- setLoading(false);
- return false;
- }
- }, [phoneNumber]);
+    throw new Error('Authentication completed but session creation failed. Please try again.');
+  };
+
+  /**
+   * Verify OTP entered by user (Native vs Web)
+   */
+  const verifyOTP = useCallback(async (otp: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      let firebaseUid: string | undefined;
+
+      if (isNative) {
+        if (!verificationIdRef.current) {
+          setError('Session expired. Please try again.');
+          setLoading(false);
+          return false;
+        }
+
+        const NativeAuth = await getNativeAuthPlugin();
+        if (NativeAuth) {
+          // Step 1: Confirm code with native Firebase SDK
+          await NativeAuth.confirmVerificationCode({
+            verificationId: verificationIdRef.current,
+            verificationCode: otp,
+          });
+          const { user } = await NativeAuth.getCurrentUser();
+          firebaseUid = user?.uid;
+        }
+      }
+
+      if (!firebaseUid && confirmationResultRef.current) {
+        // Web verification step
+        const result = await confirmationResultRef.current.confirm(otp);
+        firebaseUid = result.user.uid;
+      }
+
+      if (!firebaseUid) {
+        throw new Error('Verification failed. Please try requesting a new OTP.');
+      }
+
+      // Step 2: Exchange Firebase UID for Supabase session
+      await completeSupabaseSession(firebaseUid);
+
+      setLoading(false);
+      return true;
+    } catch (err: any) {
+      console.error('[OTP Verify] Error:', err);
+      const codeStr: string = err?.code || err?.message || '';
+      const msg = /invalid.*(verification|code)|code.*invalid/i.test(codeStr)
+        ? 'Invalid code. Please check and try again.'
+        : err.message || 'Verification failed';
+      setError(msg);
+      setLoading(false);
+      return false;
+    }
+  }, [phoneNumber]);
 
   const resendOTP = useCallback(async (): Promise<boolean> => {
-  if (countdown > 0) return false;
-  
-  // Do NOT clear recaptchaVerifierRef here to avoid MALFORMED errors on retry
-  
-  return sendOTP(phoneNumber);
+    if (countdown > 0) return false;
+    if (!isNative) {
+      recaptchaVerifierRef.current = null;
+      setRecaptchaReady(false);
+    }
+    return sendOTP(phoneNumber);
   }, [countdown, phoneNumber]);
 
   const reset = useCallback(() => {
-  setStep('phone');
-  setLoading(false);
-  setError(null);
-  setCountdown(0);
-  setPhoneNumber('');
-  setIsExistingUser(false);
-  setFailedAttempts(0);
-  confirmationResultRef.current = null;
-  
-  // Do NOT clear recaptchaVerifierRef here to avoid MALFORMED errors on retry
+    setStep('phone');
+    setLoading(false);
+    setError(null);
+    setCountdown(0);
+    setPhoneNumber('');
+    setIsExistingUser(false);
+    setFailedAttempts(0);
+    confirmationResultRef.current = null;
+    verificationIdRef.current = null;
   }, []);
 
- return {
- step,
- loading,
- error,
- countdown,
- checkPhoneAndProceed,
- verifyOTP,
- resendOTP,
- reset,
- phoneNumber,
- isExistingUser,
- recaptchaReady,
- };
+  return {
+    step,
+    loading,
+    error,
+    countdown,
+    checkPhoneAndProceed,
+    verifyOTP,
+    resendOTP,
+    reset,
+    phoneNumber,
+    isExistingUser,
+    recaptchaReady,
+  };
 };
