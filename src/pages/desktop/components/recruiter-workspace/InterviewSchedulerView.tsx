@@ -44,7 +44,7 @@ export const InterviewsTab = memo(({ candidates = [], requisitions = [], onSelec
     const cand = candidates.find(c => c.id === selectedCandId) || candidates[0];
     const { full } = sanitizeCandidateName(cand?.first_name, cand?.last_name);
     const candName = cand ? full : 'Candidate';
-    const candRole = cand?.current_designation ? `${cand.current_designation} (${cand.company_name_raw || cand.current_company || 'Lelogix Software LLP'})` : 'Network Engineer (Lelogix Software LLP)';
+    const candRole = cand?.current_designation ? `${cand.current_designation} (${cand.company_name_raw || cand.current_company || 'Employer Unverified'})` : 'Role Unverified';
 
     const newIv: InterviewItem = {
       id: `iv-${Date.now()}`,
@@ -180,8 +180,8 @@ export const InterviewsTab = memo(({ candidates = [], requisitions = [], onSelec
                   {candidates.length > 0 ? (
                     candidates.map(c => {
                       const { full } = sanitizeCandidateName(c.first_name, c.last_name);
-                      const role = c.current_designation || 'Network Engineer';
-                      const company = c.company_name_raw || c.current_company || 'Lelogix Software LLP';
+                      const role = c.current_designation || 'Role Unverified';
+                      const company = c.company_name_raw || c.current_company || 'Employer Unverified';
                       return (
                         <option key={c.id} value={c.id}>
                           {full} — {role} ({company})

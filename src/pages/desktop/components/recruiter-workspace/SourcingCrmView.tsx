@@ -182,8 +182,8 @@ export const SourcingCrmView = memo(({ candidates, requisitions, onOpenImportCv,
                 const { full, first, last } = sanitizeCandidateName(c.first_name, c.last_name);
                 const email = sanitizeCandidateEmail(c.email, c.first_name, c.last_name);
                 const isChecked = selectedCandidates.has(c.id);
-                const role = c.current_designation || 'Network Engineer';
-                const company = c.company_name_raw || c.current_company || 'Lelogix Software LLP';
+                const role = c.current_designation || 'Role Unverified';
+                const company = c.company_name_raw || c.current_company || 'Employer Unverified';
 
                 return (
                   <tr

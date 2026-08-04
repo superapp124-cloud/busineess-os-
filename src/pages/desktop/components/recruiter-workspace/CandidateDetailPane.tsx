@@ -25,8 +25,8 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
   const { full, first, last } = sanitizeCandidateName(candidate.first_name, candidate.last_name);
   const email = sanitizeCandidateEmail(candidate.email, candidate.first_name, candidate.last_name);
   const phone = candidate.phone || '+91 8238717335';
-  const targetRole = candidate.current_designation || 'Specialist';
-  const company = candidate.company_name_raw || candidate.current_company || 'Lelogix Software LLP';
+  const targetRole = candidate.current_designation || 'Role Unverified';
+  const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
   const skills = candidate.skills || ['IT Infrastructure', 'Palo Alto', 'NGFW', 'Firewall Migration', 'VPN Tunnels'];
 
   return (

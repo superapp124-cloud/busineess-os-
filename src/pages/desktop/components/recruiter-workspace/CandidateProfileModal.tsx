@@ -114,11 +114,11 @@ export const CandidateProfileModal = memo(({
               </div>
               <p className="text-xs text-slate-400 font-mono font-medium">{email} · {candidate.phone || '+91 8238717335'}</p>
               <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium pt-0.5 flex-wrap">
-                <span>Current Employer: <strong className="text-slate-800 dark:text-white font-black">{candidate.company_name_raw || candidate.current_company || 'Lelogix Software LLP'}</strong></span>
+                <span>Current Employer: <strong className="text-slate-800 dark:text-white font-black">{candidate.company_name_raw || candidate.current_company || 'Employer Unverified'}</strong></span>
                 <span>•</span>
                 <span>Target Role: <strong className="text-[#5c22ff] dark:text-indigo-400 font-black">{targetRole}</strong></span>
                 <span>•</span>
-                <span>Pref Location: <strong className="text-emerald-600 dark:text-emerald-400 font-black">{candidate.preferred_locations?.join(', ') || 'Delhi NCR, Hyderabad, Bangalore, Open to Relocate'}</strong></span>
+                <span>Pref Location: <strong className="text-emerald-600 dark:text-emerald-400 font-black">{candidate.preferred_locations?.join(', ') || 'Open to Relocate / PAN India'}</strong></span>
               </div>
             </div>
           </div>
@@ -933,8 +933,8 @@ export const CandidateProfileModal = memo(({
                     {
                       period: '2023–Present',
                       designation: candidate.current_designation || targetRole,
-                      company: candidate.current_company || 'Lelogix Software LLP',
-                      location: candidate.location || 'Delhi NCR',
+                      company: candidate.current_company || 'Employer Unverified',
+                      location: candidate.location || 'Location Open',
                     },
                     {
                       period: '2021–2023',
@@ -1065,12 +1065,12 @@ export const CandidateProfileModal = memo(({
                     <div className="bg-slate-950 text-slate-200 p-3 rounded-lg text-[10px] font-mono leading-relaxed space-y-1">
                       <p className="text-slate-400 font-bold border-b border-slate-800 pb-1 mb-1">Extracted Resume Text & Provenance:</p>
                       <p>Candidate: {full}</p>
-                      <p>Current Designation: {candidate.current_designation || 'Network Engineer'}</p>
-                      <p>Current Employer: {candidate.company_name_raw || candidate.current_company || 'Lelogix Software LLP'}</p>
-                      <p>Location: {candidate.location || 'Delhi NCR'}</p>
-                      <p>Preferred Location: {candidate.preferred_locations?.join(', ') || 'Delhi NCR, Hyderabad, Bangalore, Open to Relocate'}</p>
-                      <p>Extracted Skills: {(candidate.skills || []).join(', ') || 'Palo Alto, Firewall, NGFW, React, Node'}</p>
-                      <p>Experience: {candidate.experience_years !== undefined ? `${candidate.experience_years} Years` : '6.5 Years'}</p>
+                      <p>Current Designation: {candidate.current_designation || 'Role Unverified'}</p>
+                      <p>Current Employer: {candidate.company_name_raw || candidate.current_company || 'Employer Unverified'}</p>
+                      <p>Location: {candidate.location || 'Location Open'}</p>
+                      <p>Preferred Location: {candidate.preferred_locations?.join(', ') || 'Open to Relocate / PAN India'}</p>
+                      <p>Extracted Skills: {(candidate.skills || []).join(', ') || 'None Extracted'}</p>
+                      <p>Experience: {candidate.experience_years !== undefined ? `${candidate.experience_years} Years` : 'Timeline Not Specified'}</p>
                     </div>
                   </div>
 

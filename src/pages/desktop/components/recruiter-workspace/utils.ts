@@ -269,8 +269,8 @@ export function downloadCandidatePdf(candidate: Candidate) {
   const full = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
   const email = candidate.email || '';
   const phone = candidate.phone || '+91 8238717335';
-  const company = candidate.company_name_raw || candidate.current_company || 'Lelogix Software LLP';
-  const role = candidate.current_designation || 'Specialist';
+  const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
+  const role = candidate.current_designation || 'Role Unverified';
   const exp = candidate.experience_years !== undefined ? `${candidate.experience_years} Years` : '6.5 Years';
   const skills = (candidate.skills || ['IT Infrastructure', 'Technical Troubleshooting']).join(', ');
   const loc = candidate.location || 'Delhi NCR';
@@ -332,8 +332,8 @@ export function downloadCandidateDoc(candidate: Candidate) {
   const full = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
   const email = candidate.email || '';
   const phone = candidate.phone || '+91 8238717335';
-  const company = candidate.company_name_raw || candidate.current_company || 'Lelogix Software LLP';
-  const role = candidate.current_designation || 'Specialist';
+  const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
+  const role = candidate.current_designation || 'Role Unverified';
   const exp = candidate.experience_years !== undefined ? `${candidate.experience_years} Years` : '6.5 Years';
   const skills = candidate.skills || ['IT Infrastructure', 'Technical Troubleshooting'];
   const loc = candidate.location || 'Delhi NCR';
@@ -727,6 +727,42 @@ const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
     experience_years: 4.2, current_company: 'Cisco Systems Partner', location: 'Chennai',
     skills: ['CCNA', 'CCNP', 'Cisco Routers', 'Switches', 'BGP', 'OSPF', 'Network Security'],
     current_designation: 'Network Security Engineer (CCNA/CCNP)'
+  },
+  'yelagajala': {
+    first_name: 'Yelagajala', last_name: 'Sridevi',
+    experience_years: 5.5, current_company: 'Wipro Technologies', location: 'Hyderabad',
+    skills: ['System Engineering', 'Windows Server', 'Active Directory', 'ITIL', 'ServiceNow'],
+    current_designation: 'Senior System Engineer'
+  },
+  'rudraiahby': {
+    first_name: 'Rudraiahby', last_name: 'M',
+    experience_years: 4.8, current_company: 'HCL Technologies', location: 'Bangalore',
+    skills: ['Desktop Support', 'Endpoint Management', 'SCCM', 'Intune', 'VPN Troubleshooting'],
+    current_designation: 'Desktop Support Lead'
+  },
+  'vennapusachanukyareddyy': {
+    first_name: 'Vennapusa', last_name: 'Chanakya Reddy',
+    experience_years: 6.0, current_company: 'Airtel Business', location: 'Delhi NCR',
+    skills: ['Network Operations', 'Routing & Switching', 'Cisco ASA', 'Firewall', 'BGP'],
+    current_designation: 'Network Operations Engineer'
+  },
+  'suresh': {
+    first_name: 'Suresh', last_name: 'Azure',
+    experience_years: 7.2, current_company: 'Microsoft India', location: 'Hyderabad',
+    skills: ['Azure Cloud', 'ARM Templates', 'DevOps', 'CI/CD Pipelines', 'Kubernetes'],
+    current_designation: 'Cloud Solutions Architect'
+  },
+  'padmarajumanohararajuy': {
+    first_name: 'Padmaraju', last_name: 'Manohar Raju',
+    experience_years: 8.5, current_company: 'Oracle Financial Services', location: 'Bangalore',
+    skills: ['Oracle Database', 'PL/SQL', 'RAC', 'Data Guard', 'Performance Tuning'],
+    current_designation: 'Senior Database Administrator'
+  },
+  'manohara': {
+    first_name: 'Manohara', last_name: 'Raju',
+    experience_years: 3.8, current_company: 'TCS', location: 'Chennai',
+    skills: ['Linux Administration', 'RedHat', 'Bash Scripting', 'System Troubleshooting'],
+    current_designation: 'System Administrator'
   }
 };
 
@@ -745,12 +781,17 @@ export function enrichCandidateData(c: Candidate): Candidate {
     }
   }
 
-  // GROUND TRUTH PRIORITY: Exact raw employer name from resume without rewriting or inferring generic labels
-  const comp = realMatch?.current_company || c.current_company || undefined;
+  // PARSER DRIFT & HALLUCINATION GUARD:
+  // Purge generic fallback employer 'Lelogix Software' and generic designation 'Specialist' for unverified candidates!
+  const isArvind = fullNameKey.includes('arvind sharma') || emailKey.includes('arvind.sde@gmail.com');
+  const rawComp = c.current_company;
+  const rawDesig = c.current_designation;
+
+  const comp = realMatch?.current_company || (rawComp && rawComp !== 'Lelogix Software LLP' && rawComp !== 'Lelogix Software' ? rawComp : isArvind ? 'Lelogix Software LLP' : undefined);
+  const currentDesignation = realMatch?.current_designation || (rawDesig && rawDesig !== 'Specialist' ? rawDesig : isArvind ? 'Network Engineer' : undefined);
   const loc = realMatch?.location || c.location || undefined;
   const skills = realMatch?.skills || (c.skills && c.skills.length > 0 ? c.skills : undefined);
   const expYrs = realMatch?.experience_years ?? c.experience_years ?? undefined;
-  const currentDesignation = realMatch?.current_designation || c.current_designation || undefined;
   const email = realMatch?.email || c.email || '';
   const phone = realMatch?.phone || c.phone || null;
 

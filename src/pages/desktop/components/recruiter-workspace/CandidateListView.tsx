@@ -462,11 +462,11 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                 const candSkills = c.skills && c.skills.length > 0 ? c.skills : [];
                 const aiRec = getDynamicAiRecommendation(c);
                 const missingSummary = getMissingDetailsSummary(c);
-                const expYears = c.experience_years !== undefined ? `${c.experience_years} Yrs` : '6.5 Yrs';
+                 const expYears = c.experience_years !== undefined && c.experience_years !== null ? `${c.experience_years} Yrs` : 'Exp Unverified';
                 const skillsLine = candSkills.slice(0, 3).join(' • ') + (candSkills.length > 3 ? ` (+${candSkills.length - 3})` : '');
-                const role = c.current_designation || 'Network Engineer';
-                const company = c.company_name_raw || c.current_company || 'Lelogix Software LLP';
-                const location = c.location || 'Delhi NCR';
+                const role = c.current_designation || 'Role Unverified';
+                const company = c.company_name_raw || c.current_company || 'Employer Unverified';
+                const location = c.location || 'Location Open';
 
                 return (
                   <div
@@ -638,9 +638,9 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                       </td>
 
                       <td className="px-3 py-2.5 text-slate-600 dark:text-slate-300 font-medium" onClick={() => handleCandidateClick(c)}>
-                        <p className="font-extrabold text-slate-900 dark:text-white text-xs">{c.current_designation || 'Specialist'}</p>
+                        <p className="font-extrabold text-slate-900 dark:text-white text-xs">{c.current_designation || 'Role Unverified'}</p>
                         <p className="text-[10px] text-slate-400 font-medium">
-                          {c.company_name_raw || c.current_company || 'Lelogix Software'} • {c.location || 'Delhi NCR'}
+                          {c.company_name_raw || c.current_company || 'Employer Unverified'} • {c.location || 'Location Open'}
                         </p>
                       </td>
 
