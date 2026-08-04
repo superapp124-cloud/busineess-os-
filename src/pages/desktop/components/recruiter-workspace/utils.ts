@@ -609,6 +609,12 @@ export const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
 };
 
 export function enrichCandidateData(c: Candidate): Candidate {
+  const cleanDbString = (str?: string) => {
+    if (!str) return undefined;
+    const cleaned = str.replace(/<[^>]+>/g, '').replace(/&[a-z0-9#]+;/gi, '').replace(/\s+/g, ' ').trim();
+    return (cleaned.length >= 2 && !/<|>|w:|val=/i.test(cleaned)) ? cleaned : undefined;
+  };
+
   const nameKey = (c.first_name || '').toLowerCase();
   const fullNameKey = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
   const emailKey = (c.email || '').toLowerCase();
@@ -622,19 +628,20 @@ export function enrichCandidateData(c: Candidate): Candidate {
     }
   }
 
-  const rawComp = (c.company_name_raw && !c.company_name_raw.toLowerCase().includes('unverified') && !c.company_name_raw.toLowerCase().includes('needs review'))
-    ? c.company_name_raw
-    : (c.current_company && !c.current_company.toLowerCase().includes('unverified') && !c.current_company.toLowerCase().includes('needs review'))
-    ? c.current_company
+  const dbComp = cleanDbString(c.company_name_raw) || cleanDbString(c.current_company);
+  const dbDesig = cleanDbString(c.current_designation);
+
+  const rawComp = (dbComp && !dbComp.toLowerCase().includes('unverified') && !dbComp.toLowerCase().includes('needs review') && !/^(organization|client|company)$/i.test(dbComp))
+    ? dbComp
     : undefined;
 
-  const rawDesig = (c.current_designation && !c.current_designation.toLowerCase().includes('unverified') && !c.current_designation.toLowerCase().includes('needs review')) ? c.current_designation : undefined;
+  const rawDesig = (dbDesig && !dbDesig.toLowerCase().includes('unverified') && !dbDesig.toLowerCase().includes('needs review')) ? dbDesig : undefined;
 
   const comp = rawComp || realMatch?.current_company || undefined;
   const currentDesignation = rawDesig || realMatch?.current_designation || undefined;
   const loc = (c.location && !c.location.toLowerCase().includes('open')) ? c.location : realMatch?.location || undefined;
 
-  const rawSkillsFiltered = (c.skills || []).filter(s => !/<|>|w:|val=|pos=/i.test(s) && !/^\d+$/.test(s) && s.length >= 2);
+  const rawSkillsFiltered = (c.skills || []).map(s => cleanDbString(s)).filter((s): s is string => !!s && !/<|>|w:|val=|pos=/i.test(s) && !/^\d+$/.test(s) && s.length >= 2);
   const validSkills = (rawSkillsFiltered.length > 0 && !rawSkillsFiltered[0].toLowerCase().includes('needs review') && !(rawSkillsFiltered.length === 1 && rawSkillsFiltered[0] === 'C#' && realMatch)) ? rawSkillsFiltered : [];
   const skills = validSkills.length > 0 ? validSkills : realMatch?.skills || [];
   const expYrs = c.experience_years ?? realMatch?.experience_years ?? undefined;
