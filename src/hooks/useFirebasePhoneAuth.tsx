@@ -97,41 +97,6 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     }
   };
 
-
-  /**
-   * INSTANT CHECK: 1-second timeout for existing user check
-   */
-  const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-    setPhoneNumber(phone);
-
-    const normalizedPhone = phone.replace(/\s/g, '');
-    const cleanDigits = normalizedPhone.replace(/\+/g, '');
-    const email = `${cleanDigits}@chatr.local`;
-
-    try {
-      // Instant login check for existing users
-      const { data } = await supabase.auth.signInWithPassword({
-        email,
-        password: normalizedPhone,
-      });
-      
-      if (data?.session) {
-        setIsExistingUser(true);
-        console.log('✅ [Auth] Existing user authenticated instantly');
-        setLoading(false);
-        return true;
-      }
-    } catch {
-      // Continue to OTP verification for new users
-    }
-
-    // New user - send verification OTP immediately
-    setIsExistingUser(false);
-    return await sendOTP(phone);
-  }, []);
-
   /**
    * Native phone verification (Android/iOS) — uses device's native Firebase SDK (Play Integrity/APNs)
    */
@@ -224,23 +189,29 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       
       if (err.code === 'auth/invalid-phone-number') {
         msg = 'Invalid phone number';
-      } else if (err.code === 'auth/unauthorized-domain') {
-        msg = 'Domain not authorized. Please add this domain to Firebase Console.';
+      } else if (
+        err.code === 'auth/unauthorized-domain' || 
+        err.message?.includes('Hostname') ||
+        (err.message?.includes('unauthorized') && !err.message?.includes('captcha'))
+      ) {
+        msg = `Domain (${window.location.hostname}) is not authorized for OTP in Firebase Console.`;
       } else if (err.code === 'auth/too-many-requests') {
         msg = 'Too many attempts. Please wait and try again.';
         waitTime = 180;
-      } else if (
-        err.code === 'auth/captcha-check-failed' ||
-        err.message?.includes('Hostname') ||
-        err.message?.includes('unauthorized')
-      ) {
-        msg = `Domain (${window.location.hostname}) is not authorized for OTP in Firebase Console.`;
+      } else if (err.code === 'auth/captcha-check-failed' || err.message?.includes('reCAPTCHA')) {
+        msg = 'Security check (reCAPTCHA) failed or timed out. Please try again.';
+        // Reset verifier so next click creates a fresh reCAPTCHA instance
+        recaptchaVerifierRef.current = null;
+        if ((window as any).recaptchaVerifier) {
+          try { (window as any).recaptchaVerifier.clear(); } catch {}
+          (window as any).recaptchaVerifier = null;
+        }
       } else if (err.code === 'auth/network-request-failed') {
         msg = 'Network error. Check your connection and try again.';
       } else {
         msg = err.message || 'Failed to send OTP';
       }
-      
+
       setError(msg);
       if (waitTime > 0) setCountdown(waitTime);
       setStep('phone');
@@ -255,6 +226,40 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     }
     return sendOTPWeb(phone);
   };
+
+  /**
+   * INSTANT CHECK: 1-second timeout for existing user check
+   */
+  const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    setPhoneNumber(phone);
+
+    const normalizedPhone = phone.replace(/\s/g, '');
+    const cleanDigits = normalizedPhone.replace(/\+/g, '');
+    const email = `${cleanDigits}@chatr.local`;
+
+    try {
+      // Instant login check for existing users
+      const { data } = await supabase.auth.signInWithPassword({
+        email,
+        password: normalizedPhone,
+      });
+      
+      if (data?.session) {
+        setIsExistingUser(true);
+        console.log('✅ [Auth] Existing user authenticated instantly');
+        setLoading(false);
+        return true;
+      }
+    } catch {
+      // Continue to OTP verification for new users
+    }
+
+    // New user - send verification OTP immediately
+    setIsExistingUser(false);
+    return await sendOTP(phone);
+  }, []);
 
   /**
    * Exchange a verified Firebase UID for a Supabase session via Edge Function or fallback
