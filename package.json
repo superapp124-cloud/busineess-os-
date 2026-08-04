@@ -111,6 +111,7 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/canvas-confetti": "^1.9.0",
     "@use-gesture/react": "^10.3.1",
+    "@vercel/analytics": "^1.4.0",
     "@vercel/speed-insights": "^1.2.0",
     "@xyflow/react": "^12.11.2",
     "axios": "^1.16.1",
