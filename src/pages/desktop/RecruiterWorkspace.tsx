@@ -219,6 +219,17 @@ export const RecruiterWorkspace: React.FC = () => {
     const exp = candidateData.experience_years;
     const loc = candidateData.location || undefined;
 
+    const dynamicHistory = candidateData.work_history || [
+      {
+        company: company || 'Current Employer',
+        role: candidateData.current_designation || 'Specialist',
+        start_year: '2023',
+        end_year: 'Present',
+        ctc: candidateData.current_ctc ? `₹${candidateData.current_ctc} LPA` : 'Not Specified',
+        reason_for_leaving: 'Career Growth'
+      }
+    ];
+
     const newCand: Candidate = {
       id: `cand-${Date.now()}`,
       first_name: fname,
