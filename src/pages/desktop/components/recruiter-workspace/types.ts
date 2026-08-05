@@ -279,10 +279,13 @@ export interface FieldTraceability {
   field_name: string;
   original_text: string;
   normalized_value: string;
+  canonical_id?: string;
   confidence_score: number;
   source_span?: string;
   source_page?: number;
+  source_section?: string;
   extraction_engine: string;
+  contradiction_status?: 'Verified (No Conflict)' | 'Conflict Detected (Manual Review Recommended)';
   normalization_history?: string[];
 }
 
