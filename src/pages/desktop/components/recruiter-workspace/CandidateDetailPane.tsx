@@ -241,10 +241,13 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({ candid
               <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 font-bold">Workflow Intelligence Next Best Action:</span>
-                  <span className="text-slate-200 font-medium">Schedule Technical Interview with Hiring Lead.</span>
+                  <span className="text-slate-200 font-medium">Generate Executive Client Submission Package.</span>
                 </div>
-                <button className="px-3 py-1 bg-violet-600 hover:bg-violet-500 text-white font-bold text-[11px] rounded-lg transition-colors shrink-0">
-                  Execute Action &rarr;
+                <button
+                  onClick={() => toast.success('Generated Executive Client Submission Dossier! Ready to send to Client X.')}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" /> Submit Dossier to Client &rarr;
                 </button>
               </div>
 
@@ -623,11 +626,48 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({ candid
         )}
 
         {activePaneTab === 'interview' && (
-          <div className="max-w-3xl mx-auto p-6 bg-[#141724] border border-slate-800 rounded-2xl space-y-4">
-            <h3 className="text-sm font-black text-white flex items-center gap-2">
-              <Target className="w-4 h-4 text-violet-400" /> Interview Evaluation Rubric & Question Kit
-            </h3>
-            <p className="text-xs text-slate-400">Technical and scenario evaluation rubric tailored for {targetRole}.</p>
+          <div className="max-w-3xl mx-auto p-6 bg-[#141724] border border-slate-800 rounded-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-sm font-black text-white flex items-center gap-2">
+                  <Target className="w-4 h-4 text-violet-400" /> Evidence-Driven Interview Question Kit
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Questions linked directly to verified graph nodes with expected candidate response evidence.</p>
+              </div>
+              <span className="px-2.5 py-1 bg-violet-500/10 text-violet-300 font-bold text-xs rounded-full border border-violet-500/30">
+                Rubric Tailored for {targetRole}
+              </span>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-4 bg-[#1a1e30] rounded-xl border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-violet-300">Q1. Deep Dive: S/4HANA Migration & Architecture</span>
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold rounded">Verified node: 6 Yrs SAP Stack</span>
+                </div>
+                <p className="text-slate-200 font-medium bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                  "Walk us through your configuration of Costing Variants, PA Assessment structures, and period-end closing during your migration project at Equinix UK."
+                </p>
+                <div className="p-2.5 bg-violet-950/30 rounded border border-violet-500/20 text-[11px]">
+                  <strong className="text-violet-300 block mb-0.5">Expected Candidate Response Evidence:</strong>
+                  <span className="text-slate-300">Must mention Material Ledger actual costing, WIP variance calculations, and Universal Journal (ACDOCA) integration.</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-[#1a1e30] rounded-xl border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-amber-300">Q2. Verification Probe: Missing Evidence Clarification</span>
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold rounded">Unverified: AWS Lambda</span>
+                </div>
+                <p className="text-slate-200 font-medium bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                  "While your CV highlights extensive EC2, S3, and IAM architecture, could you detail any hands-on experience building serverless event pipelines using AWS Lambda?"
+                </p>
+                <div className="p-2.5 bg-amber-950/30 rounded border border-amber-500/20 text-[11px]">
+                  <strong className="text-amber-300 block mb-0.5">Expected Candidate Response Evidence:</strong>
+                  <span className="text-slate-300">Should describe event triggers (S3 upload / DynamoDB streams), execution timeouts, and memory allocation settings.</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
