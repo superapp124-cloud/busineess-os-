@@ -660,8 +660,10 @@ export function enrichCandidateData(c: Candidate): Candidate {
   const email = c.email || realMatch?.email || '';
   const phone = c.phone || realMatch?.phone || null;
 
-  // PREFERRED LOCATION EXTRACTION: Search keywords (Hyderabad, Bangalore, Remote, PAN India, etc.)
-  const prefLocs = c.preferred_locations || (loc ? [loc, 'Hyderabad', 'Bangalore', 'Open to Relocate'] : ['Hyderabad', 'Bangalore', 'Open to Relocate / PAN India']);
+  // FACT-BASED PREFERRED LOCATION EXTRACTION (Zero unsupported city inference)
+  const prefLocs = (c.preferred_locations && c.preferred_locations.length > 0)
+    ? c.preferred_locations
+    : (loc ? [loc] : ['Location Open']);
   
   // STRICT RULE FOR CTC: Extract or return NULL / 0 Confidence / Source: Recruiter
   const expCtc = c.expected_ctc ?? null;

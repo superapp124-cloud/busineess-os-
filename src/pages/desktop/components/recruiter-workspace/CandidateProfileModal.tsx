@@ -280,19 +280,19 @@ export const CandidateProfileModal = memo(({
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
                     <div className="p-2 bg-slate-900/60 rounded-xl border border-slate-800">
                       <span className="text-slate-400 block text-[9px]">Role & Exp</span>
-                      <strong className="text-white">{targetRole} ({candidate.experience_years || 6.5} Yrs)</strong>
+                      <strong className="text-white">{targetRole} ({candidate.experience_years || 10} Yrs)</strong>
                     </div>
                     <div className="p-2 bg-slate-900/60 rounded-xl border border-slate-800">
                       <span className="text-slate-400 block text-[9px]">Specialization</span>
-                      <strong className="text-emerald-400">Palo Alto & NGFW</strong>
+                      <strong className="text-emerald-400">{dynamicSpecialization}</strong>
                     </div>
                     <div className="p-2 bg-slate-900/60 rounded-xl border border-slate-800">
                       <span className="text-slate-400 block text-[9px]">Domain Focus</span>
-                      <strong className="text-blue-400">BFSI (Banking & Finance)</strong>
+                      <strong className="text-blue-400">{dynamicDomain}</strong>
                     </div>
                     <div className="p-2 bg-slate-900/60 rounded-xl border border-slate-800">
                       <span className="text-slate-400 block text-[9px]">Best Project Fit</span>
-                      <strong className="text-violet-300">SOC & Migration</strong>
+                      <strong className="text-violet-300">{dynamicProjectFit}</strong>
                     </div>
                   </div>
 
@@ -300,7 +300,7 @@ export const CandidateProfileModal = memo(({
                     <div className="p-2.5 bg-emerald-950/30 rounded-xl border border-emerald-800/40 space-y-1">
                       <span className="text-emerald-400 font-extrabold block text-[10px]">Key Strengths (Verified):</span>
                       <div className="flex flex-wrap gap-1">
-                        {['Palo Alto NGFW', 'Panorama', 'BFSI Domain', 'Stable Career'].map((s, idx) => (
+                        {dynamicStrengths.map((s, idx) => (
                           <span key={idx} className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] rounded-md border border-emerald-500/30">
                             ✔ {s}
                           </span>
@@ -311,7 +311,7 @@ export const CandidateProfileModal = memo(({
                     <div className="p-2.5 bg-rose-950/30 rounded-xl border border-rose-800/40 space-y-1">
                       <span className="text-rose-400 font-extrabold block text-[10px]">Identified Risks:</span>
                       <div className="flex flex-wrap gap-1">
-                        {['Cloud Security Gap', 'Missing Azure Firewall', 'Missing AWS Security'].map((r, idx) => (
+                        {dynamicRisks.map((r, idx) => (
                           <span key={idx} className="px-2 py-0.5 bg-rose-500/20 text-rose-300 font-extrabold text-[10px] rounded-md border border-rose-500/30">
                             ⚠ {r}
                           </span>

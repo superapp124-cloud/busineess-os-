@@ -27,7 +27,7 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
   const phone = candidate.phone || '+91 8238717335';
   const targetRole = candidate.current_designation || 'Role Unverified';
   const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
-  const skills = candidate.skills || ['IT Infrastructure', 'Palo Alto', 'NGFW', 'Firewall Migration', 'VPN Tunnels'];
+  const skills = (candidate.skills && candidate.skills.length > 0) ? candidate.skills : ['.NET Core', 'C#', 'ASP.NET Core', 'Web API', 'SQL Server'];
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#0B0D14] border-l border-slate-800/80 overflow-hidden">
@@ -196,7 +196,7 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
               <p className="text-xs text-slate-300 leading-relaxed font-normal bg-[#1a1e30] p-4 rounded-xl border border-slate-800/80">
                 {candidate.executive_summary || (
                   <>
-                    Results-driven <strong>{targetRole}</strong> with <strong>{candidate.experience_years || 6.5} years</strong> of enterprise hands-on expertise. Currently employed at <strong>{company}</strong>. Proven track record in high-availability network infrastructure deployment, firewall security migration, and cross-functional technical support.
+                    Senior <strong>{targetRole}</strong> with <strong>{candidate.experience_years || 10} years</strong> of experience in enterprise application development{company && company !== 'Employer Unverified' ? <> at <strong>{company}</strong></> : ''}. Core technology stack includes <strong>{skills.slice(0, 5).join(', ')}</strong>. Proven track record in building scalable solutions and delivering enterprise projects across multi-functional domains.
                   </>
                 )}
               </p>
