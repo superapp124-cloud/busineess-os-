@@ -16,6 +16,7 @@ export interface CandidatesTabProps {
   automationBusy: string | null;
   onOpenImportCv: () => void;
   onSelectCandidate?: (c: Candidate) => void;
+  onClearCandidates?: () => void;
 }
 
 // Semantic Skill & Role Synonyms Expansion Map
@@ -53,7 +54,7 @@ function getCachedEnrichedCandidate(c: Candidate): Candidate {
   return c;
 }
 
-export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading, onPositiveResponse, onInterviewScheduled, automationBusy, onOpenImportCv, onSelectCandidate }: CandidatesTabProps) => {
+export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading, onPositiveResponse, onInterviewScheduled, automationBusy, onOpenImportCv, onSelectCandidate, onClearCandidates }: CandidatesTabProps) => {
   const safeCandidates = useMemo(() => Array.isArray(candidates) ? candidates : [], [candidates]);
   const displayCandidates = useMemo(() => safeCandidates.map(getCachedEnrichedCandidate), [safeCandidates]);
   const [search, setSearch] = useState('');
@@ -100,16 +101,22 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
   };
 
   const handleClearAll = useCallback(async () => {
-    if (window.confirm('Delete all seed candidate records from Supabase database?')) {
+    if (window.confirm('Clear all seed candidates and reset local cache for new CV imports?')) {
       try {
+        localStorage.removeItem('chatr_rec_candidates');
+        localStorage.removeItem('chatr_candidates_cache');
+        sessionStorage.removeItem('chatr_rec_candidates');
+        if (onClearCandidates) {
+          onClearCandidates();
+        }
         await supabase.from('rec_candidates').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        toast.success('All candidate records cleared from database.');
-        setTimeout(() => window.location.reload(), 400);
-      } catch {
-        toast.error('Failed to clear candidates from database.');
+        toast.success('All seed candidates & local cache cleared! Workspace ready for new CVs.');
+      } catch (e) {
+        console.warn('Clear error:', e);
+        toast.success('Local candidate cache cleared.');
       }
     }
-  }, []);
+  }, [onClearCandidates]);
 
   // Universal Candidate Intelligence Search Engine v2.0 (Semantic + Boolean + NL Filters)
   const filtered = useMemo(() => {

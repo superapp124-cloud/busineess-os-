@@ -318,6 +318,16 @@ export const RecruiterWorkspace: React.FC = () => {
     toast.success(`CV Parsed & Imported: ${newCand.first_name} ${newCand.last_name} (${newCand.email})`);
   }, []);
 
+  const handleClearCandidates = useCallback(() => {
+    setCandidates([]);
+    try {
+      localStorage.removeItem('chatr_rec_candidates');
+    } catch (e) {
+      console.warn('Failed to clear candidate local cache', e);
+    }
+    toast.success('Cleared candidate seed data & local cache! Ready for fresh CV imports.');
+  }, []);
+
   const handlePositiveResponse = useCallback(async (candidate: Candidate) => {
     setAutomationBusy(`positive-${candidate.id}`);
     try {
@@ -379,7 +389,7 @@ export const RecruiterWorkspace: React.FC = () => {
         {activeTab === 'clients' && <ClientWorkspacesView candidates={candidates} requisitions={requisitions} activeClientFilter={activeClientFilter} onSelectClientWorkspace={id => setActiveClientFilter(id)} />}
         {activeTab === 'sourcing' && <SourcingCrmView candidates={candidates} requisitions={requisitions} onOpenImportCv={() => setImportCvOpen(true)} onSelectCandidate={c => setSelectedCandidate(c)} />}
         {activeTab === 'pipeline' && <PipelineTab candidates={candidates} requisitions={requisitions} loading={loading} onStageChange={handleStageChange} onViewCandidate={c => setSelectedCandidate(c)} onOpenImportCv={() => setImportCvOpen(true)} />}
-        {activeTab === 'candidates' && <CandidateListView candidates={candidates} requisitions={requisitions} loading={loading} onPositiveResponse={handlePositiveResponse} onInterviewScheduled={handleInterviewScheduled} automationBusy={automationBusy} onOpenImportCv={() => setImportCvOpen(true)} />}
+        {activeTab === 'candidates' && <CandidateListView candidates={candidates} requisitions={requisitions} loading={loading} onPositiveResponse={handlePositiveResponse} onInterviewScheduled={handleInterviewScheduled} automationBusy={automationBusy} onOpenImportCv={() => setImportCvOpen(true)} onClearCandidates={handleClearCandidates} />}
         {activeTab === 'interviews' && <InterviewSchedulerView candidates={candidates} onSelectCandidate={c => setSelectedCandidate(c)} />}
         {activeTab === 'jobs' && <JobRequisitionsView requisitions={requisitions} candidates={candidates} loading={loading} onCreate={handleCreateRequisition} onOpenImportJob={() => setImportJobOpen(true)} />}
         {activeTab === 'offers' && <OfferManagementView candidates={candidates} requisitions={requisitions} onSelectCandidate={c => setSelectedCandidate(c)} />}
