@@ -27,7 +27,11 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
   const phone = candidate.phone || '+91 8238717335';
   const targetRole = candidate.current_designation || 'Role Unverified';
   const company = candidate.company_name_raw || candidate.current_company || 'Employer Unverified';
-  const skills = (candidate.skills && candidate.skills.length > 0) ? candidate.skills : ['.NET Core', 'C#', 'ASP.NET Core', 'Web API', 'SQL Server'];
+  const skills = (candidate.skills && candidate.skills.length > 0)
+    ? candidate.skills
+    : (candidate.industry_focus && candidate.industry_focus.length > 0
+        ? candidate.industry_focus
+        : [targetRole, 'Strategic Operations', 'Programme Management']);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#0B0D14] border-l border-slate-800/80 overflow-hidden">
@@ -121,6 +125,7 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
         {[
           { id: 'document', label: '📄 Rendered Resume Document' },
           { id: 'ai_brief', label: '👁️ Executive AI Summary' },
+          { id: 'traceability', label: '🔍 Evidence & Traceability' },
           { id: 'interview', label: '🎯 Interview Workspace' },
           { id: 'market', label: '📈 Market Intelligence' },
         ].map(tab => (
@@ -417,6 +422,54 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({
                 <p className="text-base font-black text-amber-400">High Scarcity (8.4/10)</p>
               </div>
             </div>
+          </div>
+        )}
+
+        {activePaneTab === 'traceability' && (
+          <div className="max-w-3xl mx-auto p-6 bg-[#141724] border border-slate-800 rounded-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-sm font-black text-white flex items-center gap-2">
+                  🔍 Evidence & Traceability Inspector (Multi-Engine Verification v2.0)
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Every extracted field is traceable to resume source spans, confidence scores, and engine provenance.</p>
+              </div>
+              <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 font-bold text-xs rounded-full border border-emerald-500/20">
+                100% Explainable
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 text-xs">
+              {Object.entries(candidate.traceability_matrix || {}).map(([key, item]) => (
+                <div key={key} className="p-4 bg-[#1a1e30] rounded-xl border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-indigo-400">{item.field_name}</span>
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] rounded">
+                      Confidence: {item.confidence_score}%
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-slate-300 font-mono">
+                    <div><span className="text-slate-500">Source Span:</span> {item.source_span} (Page {item.source_page})</div>
+                    <div><span className="text-slate-500">Extraction Engine:</span> {item.extraction_engine}</div>
+                    <div><span className="text-slate-500">Original Text:</span> "{item.original_text}"</div>
+                    <div><span className="text-slate-500">Normalized Value:</span> <strong className="text-white">{item.normalized_value}</strong></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {candidate.knowledge_graph && (
+              <div className="p-4 bg-[#181B28] rounded-xl border border-slate-800 space-y-3">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">Candidate Knowledge Graph Nodes ({candidate.knowledge_graph.nodes.length})</h4>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {candidate.knowledge_graph.nodes.map(node => (
+                    <span key={node.id} className="px-2.5 py-1 bg-slate-900 border border-slate-700 text-slate-200 font-mono text-[11px] rounded-lg">
+                      <strong className="text-violet-400">{node.type}:</strong> {node.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

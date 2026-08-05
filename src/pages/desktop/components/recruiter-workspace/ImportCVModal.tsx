@@ -207,6 +207,7 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     const GARBAGE_PROJECT_NOISE = /^(mid-day meal|district wise|teacher wise|student login|day wise|class time table|dob|oct|url|us|ksa|core|entity|framework|2005\/2008|12\/13|uptu|dlf|benecalc|auto offset|exams|curriculum)$/i;
 
     const CANONICAL_MAP: Record<string, string> = {
+      // Software Engineering & Cloud
       'c#': 'C#', 'csharp': 'C#',
       '.net': '.NET Core', '.net core': '.NET Core', 'core': '.NET Core',
       'asp.net core': 'ASP.NET Core', 'asp.net': 'ASP.NET', 'asp.net mvc': 'ASP.NET MVC', 'mvc': 'ASP.NET MVC',
@@ -221,11 +222,30 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       'kafka': 'Kafka', 'rabbitmq': 'RabbitMQ', 'redis': 'Redis',
       'sql server': 'SQL Server', 'sql server 2008': 'SQL Server', 'sql server 2012': 'SQL Server', 'sql server 2018': 'SQL Server',
       'postgresql': 'PostgreSQL', 'mongodb': 'MongoDB', 'mysql': 'MySQL', 'redshift': 'AWS Redshift',
-      'ibm watson': 'IBM Watson', 'google dialogflow': 'Google Dialogflow'
+      'ibm watson': 'IBM Watson', 'google dialogflow': 'Google Dialogflow',
+
+      // Humanitarian & International Development (NGO / UN / Agriculture)
+      'food security': 'Food Security',
+      'cluster coordination': 'Cluster Coordination',
+      'humanitarian response': 'Humanitarian Response',
+      'livelihoods': 'Livelihoods',
+      'disaster risk reduction': 'Disaster Risk Reduction',
+      'resilience programming': 'Resilience Programming',
+      'grant management': 'Grant Management',
+      'donor relations': 'Donor Relations',
+      'policy advocacy': 'Policy Advocacy',
+      'meal': 'MEAL',
+      'ipc analysis': 'IPC Analysis',
+      'emergency response': 'Emergency Response',
+      'monitoring & evaluation': 'Monitoring & Evaluation',
+      'government liaison': 'Government Liaison',
+      'stakeholder management': 'Stakeholder Management',
+      'programme management': 'Programme Management',
+      'capacity building': 'Capacity Building'
     };
 
-    const extractedSkillTokens = Array.from(sanitizedText.matchAll(/\b([A-Za-z0-9+#./]{2,25})\b/g))
-      .map(m => m[1].toLowerCase())
+    const extractedSkillTokens = Array.from(sanitizedText.matchAll(/\b([A-Za-z0-9+#./\s-]{2,30})\b/g))
+      .map(m => m[1].trim().toLowerCase())
       .filter(t => CANONICAL_MAP[t])
       .map(t => CANONICAL_MAP[t]);
 
@@ -235,6 +255,9 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     const detectedDomains: string[] = [];
     const textLower = sanitizedText.toLowerCase();
 
+    if (/unfao|fao|wfp|usaid|humanitarian|food\s*security|cluster\s*coordinator|resilience|livelihood|ngo|disaster/i.test(textLower)) {
+      detectedDomains.push('Humanitarian & International Development', 'Food Security', 'Agriculture', 'Disaster Risk Reduction');
+    }
     if (/hr|benefits|recruitment|leave\s*management|contractor\s*management|payroll|hrms/i.test(textLower)) {
       detectedDomains.push('HR & Benefits', 'Recruitment', 'Contractor Management');
     }

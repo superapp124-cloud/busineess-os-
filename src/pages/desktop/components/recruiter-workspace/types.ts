@@ -255,6 +255,26 @@ export interface Candidate {
   vendor_id?: string;
   vendor_name?: string;
   rtr_status?: boolean;
+
+  // v2.0 MULTI-ENGINE TRACEABILITY & KNOWLEDGE GRAPH PIPELINE
+  traceability_matrix?: Record<string, FieldTraceability>;
+  knowledge_graph?: CandidateKnowledgeGraph;
+}
+
+export interface FieldTraceability {
+  field_name: string;
+  original_text: string;
+  normalized_value: string;
+  confidence_score: number;
+  source_span?: string;
+  source_page?: number;
+  extraction_engine: string;
+  normalization_history?: string[];
+}
+
+export interface CandidateKnowledgeGraph {
+  nodes: Array<{ id: string; label: string; type: 'Candidate' | 'Employer' | 'Designation' | 'Skill' | 'Domain' | 'Project' | 'Location' }>;
+  edges: Array<{ from: string; to: string; relation: string }>;
 }
 
 export interface Requisition {
