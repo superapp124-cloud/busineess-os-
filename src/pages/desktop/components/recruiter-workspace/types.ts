@@ -259,6 +259,20 @@ export interface Candidate {
   // v2.0 MULTI-ENGINE TRACEABILITY & KNOWLEDGE GRAPH PIPELINE
   traceability_matrix?: Record<string, FieldTraceability>;
   knowledge_graph?: CandidateKnowledgeGraph;
+
+  // v2.0.1 MEASURABLE COVERAGE & TRUTH METRICS
+  truth_score?: number;
+  schema_coverage_pct?: number;
+  evidence_coverage_pct?: number;
+  hallucination_rate_pct?: number;
+  engine_provenance?: {
+    engine_version: string;
+    extraction_model: string;
+    ontology_version: string;
+    normalization_version: string;
+    ocr_strategy: string;
+    llm_prompt: string;
+  };
 }
 
 export interface FieldTraceability {
