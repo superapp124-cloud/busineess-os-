@@ -1,21 +1,24 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useMemo } from 'react';
 import { Upload, X, FileText, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { Candidate, Requisition } from './types';
+import { ResumeIntelligencePipeline } from './resumeIntelligence';
 
 interface ImportCvModalProps {
   open: boolean;
   onClose: () => void;
-  onImportCandidate: (candidate: Partial<Candidate>) => void;
+  onImportCandidate: (candidate: Partial<Candidate>, originalFile?: File) => void;
+  onImportBatchCandidates?: (candidates: Array<{ candidateData: Partial<Candidate>; originalFile?: File }>) => void;
   requisitions: Requisition[];
 }
 
-const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: ImportCvModalProps) => {
+const ImportCvModal = memo(({ open, onClose, onImportCandidate, onImportBatchCandidates, requisitions }: ImportCvModalProps) => {
   const [activeTab, setActiveTab] = useState<'upload' | 'email'>('upload');
   const [parsing, setParsing] = useState(false);
   const [parseProgress, setParseProgress] = useState<{ current: number; total: number } | null>(null);
   const [selectedRole, setSelectedRole] = useState('');
   const [cvText, setCvText] = useState('');
+  const pipeline = useMemo(() => new ResumeIntelligencePipeline(), []);
 
   // Email Inbox Sync State
   const [emailProvider, setEmailProvider] = useState<'outlook' | 'gmail' | 'imap'>('outlook');
@@ -25,321 +28,21 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
 
   if (!open) return null;
 
-  const parseSingleResume = (file?: File, rawText?: string): Partial<Candidate> => {
-    let firstName = '';
-    let lastName = '';
-    let email = '';
-    let phone = '';
-
-    const textToScan = (rawText || '') + ' ' + (file ? file.name : '');
-
-    // Strip Job Portal & System Prefixes from name
-    const cleanFileName = file
-      ? file.name
-          .replace(/\.(pdf|docx|doc|txt)$/i, '')
-          .replace(/[-_]/g, ' ')
-          .replace(/\b(naukri|monster|linkedin|timesjobs|shine|foundit|resume|cv|profile|bio|dossier|application)\b/gi, '')
-          .trim()
-      : '';
-
-    if (rawText && rawText.trim().length > 0) {
-      const printableLines = rawText
-        .split('\n')
-        .map(l => l.trim())
-        .filter(l => l.length > 2 && !l.includes('[Content_Types]') && !l.includes('PK') && !l.includes('xml'));
-
-      if (printableLines.length > 0) {
-        const nameLine = printableLines[0]
-          .replace(/\b(naukri|monster|linkedin|timesjobs|shine|foundit|resume|cv|profile|bio|dossier)\b/gi, '')
-          .trim();
-
-        const words = nameLine.split(/\s+/).filter(Boolean);
-        const nameTokens: string[] = [];
-        for (const w of words) {
-          const cleanW = w.replace(/[^a-zA-Z]/g, '');
-          if (!cleanW) continue;
-          if (/^(Fullstack|Frontend|Backend|Engineer|Developer|Architect|Savantis|Bangalore|Hyderabad|Mumbai|Delhi|Noida|Pune|Chennai|Senior|Lead|Manager|Specialist|Consultant|Associate)$/i.test(cleanW)) {
-            break;
-          }
-          if (nameTokens.length < 2) nameTokens.push(cleanW);
-        }
-        if (nameTokens.length > 0) {
-          firstName = nameTokens[0];
-          lastName = nameTokens.slice(1).join(' ');
-        }
-
-        const emailMatch = rawText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-        if (emailMatch) email = emailMatch[0].trim();
-        const phoneMatch = rawText.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-        if (phoneMatch) phone = phoneMatch[0].trim();
-      }
-    }
-
-    if (!firstName || firstName.toLowerCase().includes('naukri') || firstName.includes('PK') || firstName.includes('Content_Types') || firstName.length > 20) {
-      const fileParts = cleanFileName.split(/\s+/).filter(Boolean);
-      const nameTokens: string[] = [];
-      for (const w of fileParts) {
-        const cleanW = w.replace(/[^a-zA-Z]/g, '');
-        if (!cleanW) continue;
-        if (/^(Naukri|Monster|Fullstack|Frontend|Backend|Engineer|Developer|Architect|Savantis|Bangalore|Hyderabad|Mumbai|Delhi|Noida|Pune|Chennai|Senior|Lead|Manager|Specialist|Consultant|Associate)$/i.test(cleanW)) {
-          break;
-        }
-        if (nameTokens.length < 2) nameTokens.push(cleanW);
-      }
-      firstName = nameTokens[0] || 'Candidate';
-      lastName = nameTokens.slice(1).join(' ') || '';
-    }
-
-    firstName = firstName.replace(/[^a-zA-Z]/g, '');
-    if (!firstName || firstName.toLowerCase() === 'naukri') firstName = 'Candidate';
-    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-
-    lastName = lastName.replace(/[^a-zA-Z ]/g, '').trim();
-    if (lastName) {
-      lastName = lastName.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()).join(' ');
-    } else {
-      lastName = '';
-    }
-
-    if (!email && rawText) {
-      const emailMatch = rawText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i);
-      if (emailMatch) email = emailMatch[0].trim();
-    }
-
-    // Realistic personal candidate email if missing
-    if (!email) {
-      const cleanF = firstName.toLowerCase().replace(/[^a-z]/g, '');
-      const cleanL = lastName.toLowerCase().replace(/[^a-z]/g, '');
-      email = `${cleanF}${cleanL ? '.' + cleanL : ''}@gmail.com`;
-    }
-
-    // STRICT UNIVERSAL SANITIZER: Purge raw XML tags, entities, and unprintable control characters
-    const sanitizedText = textToScan
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/&[a-z0-9#]+;/gi, ' ')
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    // 1. STRUCTURAL SENTENCE-BOUNDED DESIGNATION EXTRACTOR
-    let detectedDesignation: string | undefined = undefined;
-
-    // Direct section prefix matcher hard-stopped at line breaks and punctuation
-    const desigPrefixMatch = sanitizedText.match(/(?:title|role|designation|position)\s*[:\-]?\s*([^.,;:\n\r|•<>]+)/i);
-    if (desigPrefixMatch && desigPrefixMatch[1]) {
-      const cleanVal = desigPrefixMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
-      if (cleanVal.length >= 3 && cleanVal.length <= 45 && !/<|>|w:|val=/i.test(cleanVal)) {
-        detectedDesignation = cleanVal;
-      }
-    }
-
-    // Compound title regex capturing up to 3 preceding modifier words + trigger keyword + up to 2 trailing title words
-    if (!detectedDesignation) {
-      const compoundTitleMatch = sanitizedText.match(/\b((?:[A-Z0-9][A-Za-z0-9/&'-]+\s+){0,3}(?:senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief)(?:\s+[A-Za-z0-9/&'-]+){0,2})\b/i);
-      if (compoundTitleMatch && compoundTitleMatch[1]) {
-        const titleVal = compoundTitleMatch[1].trim().replace(/\s+(?:at|with|in|for|from|location|present|current|\d{4}).*$/i, '');
-        if (titleVal.length >= 3 && titleVal.length <= 45 && !/<|>|w:|val=/i.test(titleVal)) {
-          detectedDesignation = titleVal;
-        }
-      }
-    }    // 2. STRUCTURAL SENTENCE-BOUNDED COMPANY & TIMELINE HARVESTER WITH CONFIDENCE SCORING
-    let detectedCompany: string | undefined = undefined;
-    let employerConfidence: number = 0;
-    let employerDetectionReason: string = 'No employment records found';
-    let extractedPreviousEmployers: string[] = [];
-    
-    const NON_COMPANY_KEYWORDS = /^(senior|lead|principal|head|director|manager|specialist|analyst|engineer|developer|architect|consultant|administrator|executive|trainee|associate|vp|chief|bachelor|bachelors|master|masters|degree|phd|diploma|certified|certificate|business|management|commerce|science|arts|engineering|technology|location|remote|present|current|experience|employment|education|skills|summary|projects|work|career|history|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|keyword|keywords|objective|responsibilities|organization|client|company|to take your|take your|company to)$/i;
-    const FULL_NOISE_PHRASES = /^(work history|career history|professional experience|employment history|work experience|objective|career objective|to take your company to the of|bachelors in business management|master of business administration|bachelor of technology)$/i;
-    const NON_DISCLOSURE_BLOCKLIST = /\b(not disclosed|confidential|undisclosed|per nda|nda|n\/a|none|unknown|private)\b/i;
-
-    // Timeline Company Scanner: Extracts explicit company names with suffixes
-    const companyBlockRegex = /\b([A-Z0-9][A-Za-z0-9\s&.,'()-]{2,40}(?:Pvt\s+Ltd|Ltd|Inc|Corp|LLP|Solutions|Software|Technology|Technologies|Analytics|Center|Systems|Services|Consulting|Group|Pvt|Limited))\b/gi;
-    const timelineMatches = Array.from(sanitizedText.matchAll(companyBlockRegex));
-    const timelineEmployers: string[] = [];
-
-    for (const m of timelineMatches) {
-      const rawOrg = m[1].trim();
-      const candidateOrg = rawOrg.replace(/\s+(?:from|since|in|location|india|per).*$/i, '');
-      const tokens = candidateOrg.split(/\s+/);
-      
-      const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
-        || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
-        || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg)
-        || /bachelor|master|university|college|school|institute/i.test(candidateOrg);
-
-      const isProperNoun = /^[A-Z0-9]/.test(candidateOrg) && candidateOrg.length >= 3;
-
-      if (!isNoise && isProperNoun && !timelineEmployers.includes(candidateOrg)) {
-        timelineEmployers.push(candidateOrg);
-      }
-    }
-
-    if (timelineEmployers.length > 0) {
-      detectedCompany = timelineEmployers[0];
-      extractedPreviousEmployers = timelineEmployers.slice(1);
-      employerConfidence = 92;
-      employerDetectionReason = 'Latest employment period detected (Apr 2024 – Oct 2024)';
-    }
-
-    // Fallback Pattern A: Contextual Prefix Match ("at <Company>", "with <Company>", "employer: <Company>")
-    if (!detectedCompany) {
-      const companyPrefixMatch = sanitizedText.match(/\b(?:at|employer|current\s+company|organization|client)\s*[:\-]?\s*([^.,;:\n\r|•]{2,35})/i);
-      if (companyPrefixMatch) {
-        const rawOrg = companyPrefixMatch[1].trim();
-        const candidateOrg = rawOrg.replace(/\s+(?:from|since|in|location|india|per).*$/i, '');
-        const tokens = candidateOrg.split(/\s+/);
-        
-        const isNoise = FULL_NOISE_PHRASES.test(candidateOrg) 
-          || tokens.some(t => NON_COMPANY_KEYWORDS.test(t))
-          || NON_DISCLOSURE_BLOCKLIST.test(candidateOrg);
-
-        const isProperNoun = /^[A-Z0-9]/.test(candidateOrg) || /(?:Pvt|Ltd|Inc|Corp|LLP|Systems|Technologies|Services|Solutions|Consulting|Global|Infotech|Networks|Enterprise|Healthcare|PwC|Google|Infosys|TCS|Capgemini|Cisco|Mac|Cignex|Quinnox)/i.test(candidateOrg);
-
-        if (!isNoise && isProperNoun && candidateOrg.length >= 2) {
-          detectedCompany = candidateOrg;
-          employerConfidence = 85;
-          employerDetectionReason = 'Extracted from employer prefix statement in document text';
-        }
-      }
-    }
-
-    // 3. CANONICAL ENTITY CLASSIFICATION & ONTOLOGY NORMALIZER PIPELINE
-    const GARBAGE_PROJECT_NOISE = /^(mid-day meal|district wise|teacher wise|student login|day wise|class time table|dob|oct|url|us|ksa|core|entity|framework|2005\/2008|12\/13|uptu|dlf|benecalc|auto offset|exams|curriculum)$/i;
-
-    const CANONICAL_MAP: Record<string, string> = {
-      // Software Engineering & Cloud
-      'c#': 'C#', 'csharp': 'C#',
-      '.net': '.NET Core', '.net core': '.NET Core', 'core': '.NET Core',
-      'asp.net core': 'ASP.NET Core', 'asp.net': 'ASP.NET', 'asp.net mvc': 'ASP.NET MVC', 'mvc': 'ASP.NET MVC',
-      'web api': 'Web API', 'microservices': 'Microservices', 'micro services': 'Microservices',
-      'entity framework': 'Entity Framework', 'entity framework core': 'Entity Framework', 'ef': 'Entity Framework',
-      'dapper': 'Dapper', 'dapper.net': 'Dapper',
-      'linq': 'LINQ', 'ado.net': 'ADO.NET', 'cqrs': 'CQRS',
-      'angular': 'Angular', 'angular 12': 'Angular', 'angular 13': 'Angular', 'angular 12/13': 'Angular',
-      'react': 'React', 'html': 'HTML5', 'css': 'CSS3', 'javascript': 'JavaScript', 'jquery': 'jQuery',
-      'aws': 'AWS', 's3': 'AWS S3', 'aws sqs': 'AWS SQS',
-      'azure': 'Azure', 'azure devops': 'Azure DevOps', 'azure ci/cd': 'Azure DevOps', 'blob storage': 'Azure Blob Storage',
-      'kafka': 'Kafka', 'rabbitmq': 'RabbitMQ', 'redis': 'Redis',
-      'sql server': 'SQL Server', 'sql server 2008': 'SQL Server', 'sql server 2012': 'SQL Server', 'sql server 2018': 'SQL Server',
-      'postgresql': 'PostgreSQL', 'mongodb': 'MongoDB', 'mysql': 'MySQL', 'redshift': 'AWS Redshift',
-      'ibm watson': 'IBM Watson', 'google dialogflow': 'Google Dialogflow',
-
-      // Humanitarian & International Development (NGO / UN / Agriculture)
-      'food security': 'Food Security',
-      'cluster coordination': 'Cluster Coordination',
-      'humanitarian response': 'Humanitarian Response',
-      'livelihoods': 'Livelihoods',
-      'disaster risk reduction': 'Disaster Risk Reduction',
-      'resilience programming': 'Resilience Programming',
-      'grant management': 'Grant Management',
-      'donor relations': 'Donor Relations',
-      'policy advocacy': 'Policy Advocacy',
-      'meal': 'MEAL',
-      'ipc analysis': 'IPC Analysis',
-      'emergency response': 'Emergency Response',
-      'monitoring & evaluation': 'Monitoring & Evaluation',
-      'government liaison': 'Government Liaison',
-      'stakeholder management': 'Stakeholder Management',
-      'programme management': 'Programme Management',
-      'capacity building': 'Capacity Building'
-    };
-
-    const extractedSkillTokens = Array.from(sanitizedText.matchAll(/\b([A-Za-z0-9+#./\s-]{2,30})\b/g))
-      .map(m => m[1].trim().toLowerCase())
-      .filter(t => CANONICAL_MAP[t])
-      .map(t => CANONICAL_MAP[t]);
-
-    const finalSkills = Array.from(new Set(extractedSkillTokens)).filter(s => !GARBAGE_PROJECT_NOISE.test(s));
-
-    // 4. FUNCTIONAL DOMAIN EXPERIENCE & LEADERSHIP DETECTOR
-    const detectedDomains: string[] = [];
-    const textLower = sanitizedText.toLowerCase();
-
-    if (/unfao|fao|wfp|usaid|humanitarian|food\s*security|cluster\s*coordinator|resilience|livelihood|ngo|disaster/i.test(textLower)) {
-      detectedDomains.push('Humanitarian & International Development', 'Food Security', 'Agriculture', 'Disaster Risk Reduction');
-    }
-    if (/hr|benefits|recruitment|leave\s*management|contractor\s*management|payroll|hrms/i.test(textLower)) {
-      detectedDomains.push('HR & Benefits', 'Recruitment', 'Contractor Management');
-    }
-    if (/education|erp|school|university|student|campus/i.test(textLower)) {
-      detectedDomains.push('Education ERP');
-    }
-    if (/inventory|warehouse|supply\s*chain|procurement/i.test(textLower)) {
-      detectedDomains.push('Inventory Management');
-    }
-    if (/food|beverage|analytics|dashboard|restaurant|f&b/i.test(textLower)) {
-      detectedDomains.push('Food & Beverage Analytics');
-    }
-
-    // 5. UNIVERSAL CITY/STATE/COUNTRY LOCATION EXTRACTOR (Reads OCR Header Spans)
-    const usCityMatch = sanitizedText.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?),\s*([A-Z]{2})\s*(\d{5})?\b/);
-    let detectedLocation: string = 'Location Unverified';
-    if (usCityMatch) {
-      detectedLocation = `${usCityMatch[1]}, ${usCityMatch[2]}`;
-    } else {
-      const LOC_DICT = ['Charlotte', 'Chicago', 'Washington', 'New York', 'London', 'Noida', 'Bangalore', 'Hyderabad', 'Pune', 'Delhi', 'Mumbai', 'Chennai', 'Gurgaon'];
-      const match = LOC_DICT.find(l => new RegExp(`\\b${l}\\b`, 'i').test(sanitizedText));
-      if (match) detectedLocation = match;
-    }
-    const prefLocations = [detectedLocation];
-
-    // Extract Experience Years
-    const expMatch = sanitizedText.match(/(\d{1,2}(?:\.\d{1,2})?)\s*( years| yrs| year| yr|\+ years)/i);
-    const expYears = expMatch ? parseFloat(expMatch[1]) : 25;
-
-    // CTC Extraction
-    const ctcMatch = sanitizedText.match(/(?:current\s*ctc|expected\s*ctc|salary|compensation|package|annual\s*salary|ctc)\s*[:\-]?\s*(?:₹|rs\.?|usd|\$)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs|l|k|\/yr)?/i);
-    const expectedCtc = ctcMatch ? parseFloat(ctcMatch[1]) : undefined;
-
-    // Notice Period Extraction
-    let noticeDays: number | undefined = undefined;
-    const noticeMatch = sanitizedText.match(/(?:notice\s*period|serving\s*notice|joining|availability)\s*[:\-]?\s*(\d{1,2})\s*(?:days|day|month|months)?/i);
-    if (noticeMatch) {
-      noticeDays = parseInt(noticeMatch[1], 10);
-    } else if (/immediate|serving\s*notice/i.test(sanitizedText)) {
-      noticeDays = 0;
-    }
-
-    const isHumanitarian = detectedDomains.includes('Humanitarian & International Development') || /unfao|fao|wfp|food\s*security|cluster/i.test(sanitizedText);
-    const finalDesignation = detectedDesignation || (isHumanitarian ? 'Cluster Coordinator – Food Security & Livelihood Cluster' : 'Specialist / Lead');
-    const finalCompany = detectedCompany || (isHumanitarian ? 'Food and Agriculture Organization of the United Nations (UNFAO)' : 'Employer Unverified');
-
-    // Build Fact-Grounded Evidence Executive Summary (Strict Zero-Hallucination Policy)
-    const topTechSummary = finalSkills.slice(0, 7).join(', ');
-    const domainSummary = detectedDomains.length > 0 ? detectedDomains.join(', ') : 'International Operations';
-    const prevEmployerSummary = extractedPreviousEmployers.length > 0 ? ` Employment timeline spans ${extractedPreviousEmployers.slice(0, 4).join(', ')}.` : '';
-
-    const autoExecutiveSummary = isHumanitarian
-      ? `Senior ${finalDesignation} with ${expYears}+ years of global experience in food security cluster coordination, disaster risk reduction, and resilience programming at ${finalCompany}. Core competencies include ${topTechSummary}. Proven track record coordinating 300+ international humanitarian partners, leading multi-million dollar donor programs, and executing policy advocacy across UN and NGO operations.${prevEmployerSummary}`
-      : `Senior ${finalDesignation} with ${expYears} years of experience at ${finalCompany}. Core skills include ${topTechSummary}. Experienced in leading teams, delivering projects across ${domainSummary} domains.${prevEmployerSummary}`;
-
+  const ingestDocument = async (file?: File, nativeText?: string): Promise<Partial<Candidate>> => {
+    const result = await pipeline.process({
+      name: file?.name || 'Pasted document',
+      mimeType: file?.type || 'text/plain',
+      nativeText,
+      receivedAt: new Date().toISOString()
+    });
     return {
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      phone: phone || null,
+      ...result.candidate,
       status: 'Applied',
-      applied_for: selectedRole || requisitions[0]?.id || null,
-      skills: finalSkills,
-      experience_years: expYears,
-      expected_ctc: expectedCtc,
-      current_designation: finalDesignation,
-      current_company: finalCompany,
-      previous_employers: extractedPreviousEmployers,
-      industry_focus: detectedDomains,
-      executive_summary: autoExecutiveSummary,
-      location: detectedLocation || 'Delhi',
-      preferred_locations: prefLocations,
-      notice_days: noticeDays,
-      serving_notice: noticeDays === 0,
-      ai_match: 94,
-      priority: 'High',
-      risk: 'Low',
-      salary_fit: 'Within Band',
+      applied_for: selectedRole || requisitions[0]?.id || null
     };
   };
 
-  // Robust In-Browser Native DOCX Zip Inflater & Table Harvester
+  // Native document extraction feeds the evidence-driven pipeline.\r\n  // Robust In-Browser Native DOCX Zip Inflater & Table Harvester
   const extractTextFromFile = async (file: File): Promise<string> => {
     const fileName = file.name.toLowerCase();
 
@@ -445,10 +148,9 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
             }
 
             const extractedDocxText = textMatches
-              .join(' ')
+              .join('\n')
               .replace(/<[^>]+>/g, '') // PURGE ANY RESIDUAL XML TAGS
               .replace(/&[a-z0-9#]+;/gi, '')
-              .replace(/\s+/g, ' ')
               .trim();
             if (extractedDocxText.length > 20) {
               return extractedDocxText;
@@ -487,6 +189,7 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
     const fileList = Array.from(files).slice(0, 500); // Support up to 500 files
     setParsing(true);
     setParseProgress({ current: 0, total: fileList.length });
+    const batchList: Array<{ candidateData: Partial<Candidate>; originalFile?: File }> = [];
 
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i];
@@ -494,14 +197,20 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
 
       try {
         const extractedText = await extractTextWithTimeout(file, 2500);
-        const cand = parseSingleResume(file, extractedText);
-        onImportCandidate(cand);
+        const cand = await ingestDocument(file, extractedText);
+        batchList.push({ candidateData: cand, originalFile: file });
+        onImportCandidate(cand, file);
       } catch (err) {
         console.warn(`[Batch Ingestion Fallback for ${file.name}]:`, err);
-        const fallbackCand = parseSingleResume(file, '');
-        onImportCandidate(fallbackCand);
+        const fallbackCand = await ingestDocument(file, '');
+        batchList.push({ candidateData: fallbackCand, originalFile: file });
+        onImportCandidate(fallbackCand, file);
       }
-      await new Promise(r => setTimeout(r, 40));
+      await new Promise(r => setTimeout(r, 15));
+    }
+
+    if (onImportBatchCandidates && batchList.length > 0) {
+      onImportBatchCandidates(batchList);
     }
 
     setParsing(false);
@@ -511,45 +220,15 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
   };
 
   const handleSyncOfficialEmailNow = () => {
-    setIsSyncingMail(true);
-    setTimeout(() => {
-      // Simulate fetching 3 incoming email resume attachments
-      const sampleInboundCandidates: Partial<Candidate>[] = [
-        {
-          first_name: 'Aarav', last_name: 'Deshmukh',
-          email: 'aarav.deshmukh@gmail.com', phone: '+91 98231 44102',
-          current_company: 'TCS', location: 'Noida',
-          skills: ['Java', 'Spring Boot', 'Kafka', 'Docker'],
-          experience_years: 6, expected_ctc: 18, notice_days: 15,
-        },
-        {
-          first_name: 'Pooja', last_name: 'Saxena',
-          email: 'pooja.saxena@outlook.com', phone: '+91 97182 30045',
-          current_company: 'Infosys', location: 'Bangalore',
-          skills: ['React', 'TypeScript', 'Next.js', 'Node.js'],
-          experience_years: 4, expected_ctc: 15, notice_days: 30,
-        },
-        {
-          first_name: 'Vikas', last_name: 'Nair',
-          email: 'vikas.nair@yahoo.com', phone: '+91 96541 22890',
-          current_company: 'Wipro', location: 'Hyderabad',
-          skills: ['AWS', 'Kubernetes', 'Terraform', 'DevOps'],
-          experience_years: 7, expected_ctc: 22, notice_days: 0,
-        },
-      ];
-
-      sampleInboundCandidates.forEach(cand => onImportCandidate(cand));
-      setIsSyncingMail(false);
-      toast.success(`📩 Official Inbox Sync Complete! 3 new CVs auto-ingested from ${inboxAddress}!`);
-      onClose();
-    }, 1200);
+    setIsSyncingMail(false);
+    toast.info(`Inbox ingestion for ${inboxAddress} requires a configured mail connector. No candidate data was created.`);
   };
 
   const handleSingleTextImport = () => {
     if (!cvText.trim()) return;
     setParsing(true);
-    setTimeout(() => {
-      const cand = parseSingleResume(undefined, cvText);
+    setTimeout(async () => {
+      const cand = await ingestDocument(undefined, cvText);
       onImportCandidate(cand);
       setParsing(false);
       toast.success(`CV Parsed! ${cand.first_name} ${cand.last_name} added to pipeline.`);
@@ -562,7 +241,7 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
       <div className="bg-white dark:bg-[#181B23] border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
           <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Upload className="w-4 h-4 text-[#5c22ff]" /> AI Candidate Ingestion & Auto-Parser
+            <Upload className="w-4 h-4 text-[#5c22ff]" /> Evidence-Driven Document Ingestion
           </h3>
           <button onClick={onClose}><X className="w-4 h-4 text-slate-400" /></button>
         </div>
@@ -643,7 +322,7 @@ const ImportCvModal = memo(({ open, onClose, onImportCandidate, requisitions }: 
               disabled={parsing || !cvText.trim()}
               className="w-full py-2.5 bg-[#5c22ff] text-white text-xs font-bold rounded-xl hover:bg-[#4b1ac4] disabled:opacity-40 flex items-center justify-center gap-2"
             >
-              {parsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Run AI CV Parser & Add Candidate
+              {parsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Extract Evidence & Add Document
             </button>
           </div>
         ) : (

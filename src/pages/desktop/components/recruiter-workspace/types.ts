@@ -70,8 +70,18 @@ export interface CandidateWorkHistory {
   role: string;
   start_year: string;
   end_year: string;
+  duration?: string;
   ctc: string;
   reason_for_leaving: string;
+}
+
+export interface CandidateAcademicProfile {
+  professional_categories: string[];
+  primary_domains: string[];
+  education: string[];
+  research: string[];
+  leadership: string[];
+  awards: string[];
 }
 
 export interface CandidateDoc {
@@ -79,6 +89,24 @@ export interface CandidateDoc {
   type: string;
   date: string;
   url?: string;
+}
+
+export interface CandidateSourceArtifact {
+  id: string;
+  original_file_name: string;
+  mime_type: string;
+  storage_path?: string;
+  native_text?: string;
+  ocr_output?: string;
+  layout_graph?: unknown;
+  knowledge_graph?: unknown;
+  parser_versions: Record<string, string>;
+  parsed_at: string;
+  parse_history: Array<{
+    parsed_at: string;
+    parser_versions: Record<string, string>;
+    knowledge_graph?: unknown;
+  }>;
 }
 
 export interface CandidatePassportV3 {
@@ -210,6 +238,15 @@ export interface Candidate {
   candidate_id_code?: string;
   health_score?: number;
   joining_probability?: number;
+
+  // Digital Presence & Academic Provenance
+  linkedin_url?: string;
+  github_url?: string;
+  portfolio_url?: string;
+  website_url?: string;
+  education_history?: string[];
+  certifications?: string[];
+  publications?: Array<{ title: string; url?: string; authors?: string }>;
   buyout_possible?: boolean;
   fixed_ctc?: number;
   variable_ctc?: number;
@@ -251,10 +288,22 @@ export interface Candidate {
   };
 
   work_history?: CandidateWorkHistory[];
+  academic_profile?: CandidateAcademicProfile;
+  source_artifact?: CandidateSourceArtifact;
   documents?: CandidateDoc[];
   vendor_id?: string;
   vendor_name?: string;
   rtr_status?: boolean;
+
+  /** Evidence gate result. Resume intelligence must not be generated when false. */
+  evidence_sufficiency?: {
+    is_sufficient: boolean;
+    document_type: 'Resume' | 'Academic CV' | 'Email Signature / Contact Card' | 'Unknown';
+    verified_evidence: string[];
+    missing_evidence: string[];
+    reason: string;
+    classification_confidence?: number;
+  };
 
   // v2.0 MULTI-ENGINE TRACEABILITY & KNOWLEDGE GRAPH PIPELINE
   traceability_matrix?: Record<string, FieldTraceability>;
@@ -392,4 +441,3 @@ export const AVATAR_PALETTES = [
 ];
 
 export const DEMO_CANDIDATES: Candidate[] = [];
-

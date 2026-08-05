@@ -17,7 +17,7 @@ import {
 
 import {
   TosTab, Candidate, Requisition, AutomationEvent, MobileAction, CandidateStage,
-  publishTOSEvent,
+  publishTOSEvent, enrichCandidateData,
   TabBar, CommandPalette,
   ImportJobModal, ImportCVModal, CandidateProfileModal,
   FloatingAIAssistant,
@@ -27,10 +27,11 @@ import {
   SourcingCrmView, OfferManagementView, ClientWorkspacesView, VendorManagementView,
   AccessGovernanceView, SalesCrmView, BenchManagementView, DeliveryCommandCenterView
 } from './components/recruiter-workspace';
+import { persistCandidateSourceArtifact, persistCandidateParseHistory, reprocessCandidateFromSource } from './components/recruiter-workspace/candidateArtifactStore';
 
 const DEFAULT_REAL_CANDIDATES: Candidate[] = [];
 
-export const generateFullEnterpriseJD = (title: string, clientName?: string, location?: string, department?: string, existingJd?: string): string => {
+const generateFullEnterpriseJD = (title: string, clientName?: string, location?: string, department?: string, existingJd?: string): string => {
   if (existingJd && existingJd.includes('ENTERPRISE REQUISITION JOB DESCRIPTION')) {
     return existingJd;
   }
@@ -93,13 +94,13 @@ export const RecruiterWorkspace: React.FC = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          return parsed.map(enrichCandidateData);
         }
       }
     } catch (e) {
       console.warn('[Candidates Hydration Error]:', e);
     }
-    return DEFAULT_REAL_CANDIDATES;
+    return DEFAULT_REAL_CANDIDATES.map(enrichCandidateData);
   });
   const [automationEvents, setAutomationEvents] = useState<AutomationEvent[]>([]);
   const [mobileActions, setMobileActions] = useState<MobileAction[]>([]);
@@ -156,6 +157,7 @@ export const RecruiterWorkspace: React.FC = () => {
             current_ctc: c.current_ctc,
             notice_days: c.notice_days,
             serving_notice: c.serving_notice,
+            source_artifact: c.intelligence_artifact,
           }));
 
         setCandidates(prev => {
@@ -247,19 +249,18 @@ export const RecruiterWorkspace: React.FC = () => {
     toast.success(`Imported ${formatted.length} jobs with Full Enterprise JDs`);
   }, []);
 
-  const handleImportCandidate = useCallback(async (candidateData: Partial<Candidate>) => {
+  const handleImportCandidate = useCallback(async (candidateData: Partial<Candidate>, originalFile?: File) => {
     const { data: { user } } = await supabase.auth.getUser();
     
-    const fname = candidateData.first_name || 'Candidate';
+    const fname = candidateData.first_name || 'Unknown';
     const lname = candidateData.last_name || '';
-    const cleanFname = fname.toLowerCase().replace(/[^a-z]/g, '');
-    const cleanLname = lname.toLowerCase().replace(/[^a-z]/g, '');
-    const generatedEmail = candidateData.email || `${cleanFname}${cleanLname ? '.' + cleanLname : ''}@gmail.com`;
+    const generatedEmail = candidateData.email || '';
     const company = candidateData.current_company || undefined;
     const exp = candidateData.experience_years;
     const loc = candidateData.location || undefined;
 
-    const dynamicHistory = candidateData.work_history || [
+    const dynamicHistory = candidateData.work_history || [];
+    /*
       {
         company: company || 'Current Employer',
         role: candidateData.current_designation || 'Specialist',
@@ -268,10 +269,10 @@ export const RecruiterWorkspace: React.FC = () => {
         ctc: candidateData.current_ctc ? `₹${candidateData.current_ctc} LPA` : 'Not Specified',
         reason_for_leaving: 'Career Growth'
       }
-    ];
+    ]; */
 
     const newCand: Candidate = {
-      id: `cand-${Date.now()}`,
+      id: crypto.randomUUID(),
       first_name: fname,
       last_name: lname,
       email: generatedEmail,
@@ -286,20 +287,31 @@ export const RecruiterWorkspace: React.FC = () => {
       serving_notice: candidateData.serving_notice,
       location: loc,
       skills: candidateData.skills || [],
-      ai_match: candidateData.ai_match || undefined,
-      ai_matched_skills: candidateData.ai_matched_skills || ['Data Center Ops', 'Networking'],
+      ai_match: candidateData.ai_match,
+      ai_matched_skills: candidateData.ai_matched_skills || [],
       ai_missing_skills: candidateData.ai_missing_skills || [],
-      priority: candidateData.priority || 'High',
-      risk: candidateData.risk || 'Low',
-      salary_fit: candidateData.salary_fit || 'Within Band',
+      priority: candidateData.priority,
+      risk: candidateData.risk,
+      salary_fit: candidateData.salary_fit,
       work_history: dynamicHistory,
+      documents: candidateData.documents,
+      evidence_sufficiency: candidateData.evidence_sufficiency,
+      traceability_matrix: candidateData.traceability_matrix,
+      academic_profile: candidateData.academic_profile,
+      source_artifact: candidateData.source_artifact,
       created_at: new Date().toISOString(),
     };
+    try {
+      newCand.source_artifact = await persistCandidateSourceArtifact(newCand.id, newCand.source_artifact, originalFile);
+    } catch (error) {
+      console.warn('[Candidate Source Artifact Persist Error]:', error);
+    }
     setCandidates(prev => [newCand, ...prev]);
     publishTOSEvent({ type: 'CandidateApplied', candidateId: newCand.id,
       candidateName: `${newCand.first_name} ${newCand.last_name}`,
       timestamp: new Date(), actor: 'AI CV Parser' });
-    await supabase.from('rec_candidates').insert({
+    const { error: candidateInsertError } = await supabase.from('rec_candidates').insert({
+      id: newCand.id,
       user_id: user?.id,
       job_id: newCand.applied_for,
       first_name: newCand.first_name, last_name: newCand.last_name,
@@ -314,8 +326,82 @@ export const RecruiterWorkspace: React.FC = () => {
       current_ctc: newCand.current_ctc,
       notice_days: newCand.notice_days,
       serving_notice: newCand.serving_notice,
-    });
+      intelligence_artifact: newCand.source_artifact,
+      parser_versions: newCand.source_artifact?.parser_versions,
+    } as any);
+    if (candidateInsertError) console.warn('[Candidate Persist Error]:', candidateInsertError);
+    if (!candidateInsertError && newCand.source_artifact) {
+      try {
+        await persistCandidateParseHistory(newCand.id, newCand.source_artifact);
+      } catch (error) {
+        console.warn('[Candidate Parse History Persist Error]:', error);
+      }
+    }
     toast.success(`CV Parsed & Imported: ${newCand.first_name} ${newCand.last_name} (${newCand.email})`);
+  }, []);
+
+  const handleImportBatchCandidates = useCallback((items: Array<{ candidateData: Partial<Candidate>; originalFile?: File }>) => {
+    const newCandidates: Candidate[] = items.map(({ candidateData, originalFile }) => {
+      let fname = candidateData.first_name || '';
+      let lname = candidateData.last_name || '';
+      if (!fname && !lname && originalFile?.name) {
+        const baseName = originalFile.name.replace(/\.[^/.]+$/, '').replace(/^[A-Za-z]+_/, '');
+        const nameParts = baseName.split(/[\s_\-]+/);
+        fname = nameParts[0] || 'Candidate';
+        lname = nameParts.slice(1).join(' ') || '';
+      }
+      const generatedEmail = candidateData.email || `${fname.toLowerCase().replace(/[^a-z0-9]/g, '')}.${lname.toLowerCase().replace(/[^a-z0-9]/g, '') || Math.floor(Math.random()*10000)}@applicant.com`;
+      
+      const rawComp = candidateData.current_company;
+      const company = (rawComp && rawComp !== 'Employer Unverified') ? rawComp : undefined;
+      const loc = candidateData.location || undefined;
+      const exp = candidateData.experience_years;
+
+      const cand: Candidate = {
+        id: crypto.randomUUID(),
+        first_name: fname || 'Candidate',
+        last_name: lname,
+        email: generatedEmail,
+        phone: candidateData.phone || null,
+        status: 'Applied',
+        applied_for: candidateData.applied_for || null,
+        current_company: company,
+        current_designation: candidateData.current_designation || undefined,
+        experience_years: exp,
+        expected_ctc: candidateData.expected_ctc,
+        current_ctc: candidateData.current_ctc,
+        notice_days: candidateData.notice_days,
+        serving_notice: candidateData.serving_notice,
+        location: loc,
+        skills: candidateData.skills || [],
+        ai_match: candidateData.ai_match,
+        ai_matched_skills: candidateData.ai_matched_skills || [],
+        ai_missing_skills: candidateData.ai_missing_skills || [],
+        priority: candidateData.priority || 'High',
+        risk: candidateData.risk || 'Low',
+        salary_fit: candidateData.salary_fit || 'Within Band',
+        work_history: candidateData.work_history || [],
+        documents: candidateData.documents,
+        evidence_sufficiency: candidateData.evidence_sufficiency,
+        traceability_matrix: candidateData.traceability_matrix,
+        academic_profile: candidateData.academic_profile,
+        source_artifact: candidateData.source_artifact,
+        created_at: new Date().toISOString(),
+      };
+      return enrichCandidateData(cand);
+    });
+
+    setCandidates(prev => {
+      const merged = [...newCandidates, ...prev];
+      try {
+        localStorage.setItem('chatr_rec_candidates', JSON.stringify(merged));
+      } catch (e) {
+        console.warn('Failed to save batch candidates to localStorage', e);
+      }
+      return merged;
+    });
+
+    toast.success(`Batch Ingestion Complete: ${newCandidates.length} candidate CVs added to workspace!`);
   }, []);
 
   const handleClearCandidates = useCallback(() => {
@@ -326,6 +412,22 @@ export const RecruiterWorkspace: React.FC = () => {
       console.warn('Failed to clear candidate local cache', e);
     }
     toast.success('Cleared candidate seed data & local cache! Ready for fresh CV imports.');
+  }, []);
+
+  const handleReprocessCandidate = useCallback(async (candidate: Candidate) => {
+    try {
+      const reprocessed = await reprocessCandidateFromSource(candidate);
+      setCandidates(previous => previous.map(item => item.id === candidate.id ? reprocessed : item));
+      await supabase.from('rec_candidates').update({
+        intelligence_artifact: reprocessed.source_artifact,
+        parser_versions: reprocessed.source_artifact?.parser_versions,
+        parser_updated_at: new Date().toISOString(),
+      } as any).eq('id', candidate.id);
+      if (reprocessed.source_artifact) await persistCandidateParseHistory(candidate.id, reprocessed.source_artifact);
+      toast.success(`Reprocessed ${reprocessed.first_name || 'candidate'} with the current parser.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not reprocess this candidate.');
+    }
   }, []);
 
   const handlePositiveResponse = useCallback(async (candidate: Candidate) => {
@@ -361,7 +463,7 @@ export const RecruiterWorkspace: React.FC = () => {
     <div className="flex flex-col h-full w-full bg-slate-50 dark:bg-[#090A0F] overflow-hidden">
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} onTabChange={t => { handleTabChange(t); setCmdOpen(false); }} candidates={activeCandidates} requisitions={requisitions} />
       <ImportJobModal open={importJobOpen} onClose={() => setImportJobOpen(false)} onImport={handleImportJobs} />
-      <ImportCVModal open={importCvOpen} onClose={() => setImportCvOpen(false)} onImportCandidate={handleImportCandidate} requisitions={requisitions} />
+      <ImportCVModal open={importCvOpen} onClose={() => setImportCvOpen(false)} onImportCandidate={handleImportCandidate} onImportBatchCandidates={handleImportBatchCandidates} requisitions={requisitions} />
       
       {selectedCandidate && (
         <CandidateProfileModal
@@ -389,7 +491,7 @@ export const RecruiterWorkspace: React.FC = () => {
         {activeTab === 'clients' && <ClientWorkspacesView candidates={candidates} requisitions={requisitions} activeClientFilter={activeClientFilter} onSelectClientWorkspace={id => setActiveClientFilter(id)} />}
         {activeTab === 'sourcing' && <SourcingCrmView candidates={candidates} requisitions={requisitions} onOpenImportCv={() => setImportCvOpen(true)} onSelectCandidate={c => setSelectedCandidate(c)} />}
         {activeTab === 'pipeline' && <PipelineTab candidates={candidates} requisitions={requisitions} loading={loading} onStageChange={handleStageChange} onViewCandidate={c => setSelectedCandidate(c)} onOpenImportCv={() => setImportCvOpen(true)} />}
-        {activeTab === 'candidates' && <CandidateListView candidates={candidates} requisitions={requisitions} loading={loading} onPositiveResponse={handlePositiveResponse} onInterviewScheduled={handleInterviewScheduled} automationBusy={automationBusy} onOpenImportCv={() => setImportCvOpen(true)} onClearCandidates={handleClearCandidates} />}
+        {activeTab === 'candidates' && <CandidateListView candidates={candidates} requisitions={requisitions} loading={loading} onPositiveResponse={handlePositiveResponse} onInterviewScheduled={handleInterviewScheduled} automationBusy={automationBusy} onOpenImportCv={() => setImportCvOpen(true)} onClearCandidates={handleClearCandidates} onReprocessCandidate={handleReprocessCandidate} />}
         {activeTab === 'interviews' && <InterviewSchedulerView candidates={candidates} onSelectCandidate={c => setSelectedCandidate(c)} />}
         {activeTab === 'jobs' && <JobRequisitionsView requisitions={requisitions} candidates={candidates} loading={loading} onCreate={handleCreateRequisition} onOpenImportJob={() => setImportJobOpen(true)} />}
         {activeTab === 'offers' && <OfferManagementView candidates={candidates} requisitions={requisitions} onSelectCandidate={c => setSelectedCandidate(c)} />}
@@ -409,4 +511,3 @@ export const RecruiterWorkspace: React.FC = () => {
 };
 
 export default RecruiterWorkspace;
-

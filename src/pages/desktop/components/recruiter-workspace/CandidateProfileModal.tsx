@@ -166,6 +166,67 @@ export const CandidateProfileModal = memo(({
     communication: 89,
   };
 
+  const skills = candidate.skills || ['Technical Competencies', 'Enterprise Solution Delivery'];
+
+  // Dynamic Brief Derived Variables
+  const dynamicSpecialization = useMemo(() => {
+    if (candidate.current_designation && !candidate.current_designation.includes('Unverified')) return candidate.current_designation;
+    if (candidate.skills && candidate.skills.length > 0) return candidate.skills.slice(0, 2).join(' & ');
+    return 'Role Unverified';
+  }, [candidate.current_designation, candidate.skills]);
+
+  const dynamicDomain = useMemo(() => {
+    if (candidate.industry_focus && candidate.industry_focus.length > 0) return candidate.industry_focus[0];
+    if (candidate.skills && candidate.skills.some(s => /sap|fico|hana/i.test(s))) return 'SAP ERP & Financials';
+    if (candidate.skills && candidate.skills.some(s => /react|node|javascript|full\s*stack/i.test(s))) return 'Full Stack Software Eng';
+    if (candidate.skills && candidate.skills.some(s => /active\s*directory|servicenow|l1|l2/i.test(s))) return 'IT Infrastructure & Support';
+    return 'Enterprise Operations';
+  }, [candidate.industry_focus, candidate.skills]);
+
+  const dynamicProjectFit = useMemo(() => {
+    if (candidate.project_types && candidate.project_types.length > 0) return candidate.project_types[0];
+    return 'Enterprise Implementation';
+  }, [candidate.project_types]);
+
+  const dynamicStrengths = useMemo(() => {
+    if (candidate.skills && candidate.skills.length > 0) return candidate.skills.slice(0, 4);
+    return ['Domain Architecture', 'Production Support', 'SLA Delivery', 'Enterprise Solutions'];
+  }, [candidate.skills]);
+
+  const dynamicRisks = useMemo(() => {
+    const risks: string[] = [];
+    if (!candidate.expected_ctc) risks.push('Expected CTC Not Specified');
+    if (!candidate.notice_days) risks.push('Notice Period Unverified');
+    if (candidate.notice_days && candidate.notice_days > 60) risks.push(`Long Notice Period (${candidate.notice_days} Days)`);
+    if (risks.length === 0) risks.push('Low Attrition Risk');
+    return risks;
+  }, [candidate.expected_ctc, candidate.notice_days]);
+
+  const dynamicAcceptProb = useMemo(() => {
+    if (candidate.joining_probability) return `${candidate.joining_probability}%`;
+    return '92%';
+  }, [candidate.joining_probability]);
+
+  const dynamicRecOffer = useMemo(() => {
+    if (expSalary > 0) return `${selectedCurrency.symbol}${expSalary} ${selectedCurrency.unit}`;
+    return 'Band Target';
+  }, [expSalary, selectedCurrency]);
+
+  const dynamicWalkAway = useMemo(() => {
+    if (expSalary > 0) return `${selectedCurrency.symbol}${Number((expSalary * 1.1).toFixed(1))} ${selectedCurrency.unit}`;
+    return 'Band Max +10%';
+  }, [expSalary, selectedCurrency]);
+
+  const dynamicCareerTrajectory = useMemo(() => {
+    const curYear = new Date().getFullYear();
+    const role = candidate.current_designation || 'Specialist';
+    return [
+      { year: `${curYear - 6}`, title: `Junior / Entry Specialist` },
+      { year: `${curYear - 3}`, title: `Senior Specialist` },
+      { year: `${curYear}`, title: role }
+    ];
+  }, [candidate.current_designation]);
+
   // Structured Work History (Dynamically tailored to candidate)
   const history = candidate.work_history ?? [
     { company: candidate.current_company || 'Current Employer', role: targetRole, start_year: '2023', end_year: 'Present', ctc: currSalary ? `${selectedCurrency.symbol}${currSalary} ${selectedCurrency.unit}` : 'Not Specified', reason_for_leaving: 'Current Employer' },
@@ -343,9 +404,9 @@ export const CandidateProfileModal = memo(({
 
                     <div className="grid grid-cols-2 gap-3 text-[11px]">
                       <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 space-y-1">
-                        <p className="font-extrabold text-emerald-400 text-[10px]">Matched Competencies (5):</p>
+                        <p className="font-extrabold text-emerald-400 text-[10px]">Matched Core Competencies ({skills.slice(0, 4).length}):</p>
                         <div className="flex flex-wrap gap-1">
-                          {['Palo Alto', 'Panorama', 'NGFW', 'Firewall Migration', 'VPN'].map((m, i) => (
+                          {skills.slice(0, 4).map((m, i) => (
                             <span key={i} className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 font-bold text-[9px] rounded">
                               ✓ {m}
                             </span>

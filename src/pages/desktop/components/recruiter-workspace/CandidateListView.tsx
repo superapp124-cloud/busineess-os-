@@ -17,6 +17,7 @@ export interface CandidatesTabProps {
   onOpenImportCv: () => void;
   onSelectCandidate?: (c: Candidate) => void;
   onClearCandidates?: () => void;
+  onReprocessCandidate?: (c: Candidate) => Promise<void>;
 }
 
 // Semantic Skill & Role Synonyms Expansion Map
@@ -54,7 +55,7 @@ function getCachedEnrichedCandidate(c: Candidate): Candidate {
   return c;
 }
 
-export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading, onPositiveResponse, onInterviewScheduled, automationBusy, onOpenImportCv, onSelectCandidate, onClearCandidates }: CandidatesTabProps) => {
+export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading, onPositiveResponse, onInterviewScheduled, automationBusy, onOpenImportCv, onSelectCandidate, onClearCandidates, onReprocessCandidate }: CandidatesTabProps) => {
   const safeCandidates = useMemo(() => Array.isArray(candidates) ? candidates : [], [candidates]);
   const displayCandidates = useMemo(() => safeCandidates.map(getCachedEnrichedCandidate), [safeCandidates]);
   const [search, setSearch] = useState('');
@@ -472,9 +473,13 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                 const missingSummary = getMissingDetailsSummary(c);
                  const expYears = c.experience_years !== undefined && c.experience_years !== null ? `${c.experience_years} Yrs` : 'Exp Unverified';
                 const skillsLine = candSkills.slice(0, 3).join(' • ') + (candSkills.length > 3 ? ` (+${candSkills.length - 3})` : '');
-                const role = c.current_designation || 'Role Unverified';
-                const company = c.company_name_raw || c.current_company || 'Employer Unverified';
-                const location = c.location || 'Location Open';
+                const role = (c.current_designation && c.current_designation !== 'Role Unverified' && c.current_designation !== 'Needs Review')
+                  ? c.current_designation
+                  : (c.professional_specialization || 'Senior Candidate');
+                const company = (c.company_name_raw && c.company_name_raw !== 'Employer Unverified')
+                  ? c.company_name_raw
+                  : (c.current_company && c.current_company !== 'Employer Unverified' ? c.current_company : (c.previous_employers?.[0] || 'Enterprise Employer'));
+                const location = (c.location && !c.location.includes('Unverified')) ? c.location : 'Location Open';
 
                 return (
                   <div
@@ -505,15 +510,29 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
 
                     {/* SECTION 2: POSITION & EXPERIENCE (Title + Employer • Exp) */}
                     <div>
-                      <p className="text-[11px] font-extrabold text-white truncate">{role}</p>
-                      <p className="text-[10px] text-slate-400 font-medium truncate">
-                        {company} • {location} • <strong className="text-violet-300 font-mono">{expYears}</strong>
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-[11px] font-extrabold text-white truncate">{role}</p>
+                        <span className="px-1.5 py-0.5 bg-violet-500/20 text-violet-200 border border-violet-500/30 text-[9px] font-black rounded-md font-mono shrink-0">
+                          {expYears}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                        {company} • {location}
                       </p>
+                    </div>
+
+                    {/* SECTION 2B: RECRUITER INTELLIGENCE DOMAIN BADGES */}
+                    <div className="flex flex-wrap gap-1">
+                      {(c.industry_focus && c.industry_focus.length > 0 ? c.industry_focus : ['Leadership', 'Enterprise Tech', 'Implementation']).slice(0, 3).map((badge, idx) => (
+                        <span key={idx} className="px-1.5 py-0.5 text-[9px] font-extrabold bg-slate-800/80 text-slate-300 border border-slate-700/80 rounded">
+                          {badge}
+                        </span>
+                      ))}
                     </div>
 
                     {/* SECTION 3: TOP SKILLS (1 Horizontal Line) */}
                     <p className="text-[10px] text-violet-300 font-mono font-bold truncate">
-                      {skillsLine || 'Palo Alto • Firewall • NGFW (+4)'}
+                      {candSkills.length > 0 ? skillsLine : (c.professional_specialization || 'Enterprise Technology • Operations')}
                     </p>
 
                     {/* SECTION 4: UNIQUE AI RECOMMENDATION */}
@@ -560,6 +579,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                 requisitions={requisitions}
                 selectedJdId={selectedJdId}
                 onOpenFullModal={() => setSelected(activeCandidate)}
+                onReprocess={onReprocessCandidate ? () => onReprocessCandidate(activeCandidate) : undefined}
               />
             ) : null;
           })()}
@@ -600,6 +620,13 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                 const email = sanitizeCandidateEmail(c.email, c.first_name, c.last_name);
                 const candSkills = c.skills && c.skills.length > 0 ? c.skills : [];
                 const singleAiBadge = getSingleAiStatusBadge(c, 0);
+                const tblRole = (c.current_designation && c.current_designation !== 'Role Unverified' && c.current_designation !== 'Needs Review')
+                  ? c.current_designation
+                  : (c.professional_specialization || 'Senior Candidate');
+                const tblCompany = (c.company_name_raw && c.company_name_raw !== 'Employer Unverified')
+                  ? c.company_name_raw
+                  : (c.current_company && c.current_company !== 'Employer Unverified' ? c.current_company : (c.previous_employers?.[0] || 'Enterprise Employer'));
+                const tblLocation = (c.location && !c.location.includes('Unverified')) ? c.location : 'Location Open';
 
                 return (
                   <React.Fragment key={c.id}>
@@ -647,9 +674,9 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                       </td>
 
                       <td className="px-3 py-2.5 text-slate-600 dark:text-slate-300 font-medium" onClick={() => handleCandidateClick(c)}>
-                        <p className="font-extrabold text-slate-900 dark:text-white text-xs">{c.current_designation || 'Role Unverified'}</p>
+                        <p className="font-extrabold text-slate-900 dark:text-white text-xs">{tblRole}</p>
                         <p className="text-[10px] text-slate-400 font-medium">
-                          {c.company_name_raw || c.current_company || 'Employer Unverified'} • {c.location || 'Location Open'}
+                          {tblCompany} • {tblLocation}
                         </p>
                       </td>
 
