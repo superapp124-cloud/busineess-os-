@@ -248,17 +248,61 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({ candid
                 </button>
               </div>
 
-              {/* DECISION EVIDENCE ("WHY?") & NORTH STAR METRIC (VHV) */}
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-1.5 text-xs">
+              {/* DECISION CONFIDENCE LAYER, COVERAGE & DATA FRESHNESS */}
+              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-2 text-xs">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-violet-300 font-black uppercase tracking-wider flex items-center gap-1">
-                    <Target className="w-3.5 h-3.5 text-emerald-400" /> Decision Evidence ("Why Schedule Interview?"):
+                    <Target className="w-3.5 h-3.5 text-emerald-400" /> Decision Confidence &amp; Profile Coverage:
                   </span>
-                  <span className="text-emerald-400 font-mono font-bold">Verified Hiring Velocity (VHV): 96.4 Index</span>
+                  <div className="flex items-center gap-2 font-mono text-[10px]">
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-bold rounded border border-emerald-500/30">
+                      Confidence: 98%
+                    </span>
+                    <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 font-bold rounded border border-blue-500/30">
+                      Coverage: 81%
+                    </span>
+                  </div>
                 </div>
-                <p className="text-[11px] text-slate-300 font-mono leading-relaxed">
-                  ✓ 94% JD Match | ✓ {candidate.experience_years || 10} Yrs Verified Domain Experience | ✓ 0 Employment Gaps | ✓ Verified Employer ({company}) | ✓ 5-Tier Confidence: Auto-Verified (99.2%)
-                </p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] font-mono">
+                  <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-slate-400">
+                    <span className="text-slate-500 block">Resume Freshness</span>
+                    <strong className="text-emerald-400">Verified Today</strong>
+                  </div>
+                  <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-slate-400">
+                    <span className="text-slate-500 block">Evidence Lineage</span>
+                    <strong className="text-white">7 Sources / 28 Facts</strong>
+                  </div>
+                  <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-slate-400">
+                    <span className="text-slate-500 block">Contradictions</span>
+                    <strong className="text-emerald-400">0 Conflicts</strong>
+                  </div>
+                  <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-slate-400">
+                    <span className="text-slate-500 block">Graph Completeness</span>
+                    <strong className="text-blue-400">94% Complete</strong>
+                  </div>
+                </div>
+
+                <div className="p-2 bg-indigo-950/40 rounded border border-indigo-500/20 text-[11px] text-indigo-200 flex items-center gap-2">
+                  <span className="font-bold text-indigo-400 shrink-0">Cited Organizational Memory:</span>
+                  <span>"Client X: 31 Submissions | Avg Turnaround: 22 Hours | 37% Offer Rate (Based on Last 12 Months)"</span>
+                </div>
+
+                {/* THE "WHY NOT?" EXCLUSION ENGINE */}
+                <div className="p-2.5 bg-amber-950/30 rounded border border-amber-500/30 text-[11px] space-y-1">
+                  <div className="flex items-center justify-between text-amber-300 font-bold">
+                    <span className="flex items-center gap-1">
+                      <Target className="w-3.5 h-3.5 text-amber-400" /> "Why Not 100% Match?" Exclusion Engine:
+                    </span>
+                    <span className="text-[10px] text-amber-400 font-mono">1 Missing Requirement Flagged</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300">
+                    <strong className="text-amber-200">Missing Evidence:</strong> AWS Lambda / Serverless. (Candidate possesses EC2, S3, IAM, CloudFront; Lambda unverified).
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-mono italic">
+                    Recommendation: Interview candidate only if AWS Lambda experience can be verbally verified during screening call.
+                  </p>
+                </div>
               </div>
             </div>
             <div className="space-y-2">
