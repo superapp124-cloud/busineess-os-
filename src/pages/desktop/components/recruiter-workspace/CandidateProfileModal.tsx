@@ -168,25 +168,24 @@ export const CandidateProfileModal = memo(({
 
   const skills = candidate.skills || ['Technical Competencies', 'Enterprise Solution Delivery'];
 
-  // Dynamic Brief Derived Variables
-  const dynamicSpecialization = useMemo(() => {
-    if (candidate.current_designation && !candidate.current_designation.includes('Unverified')) return candidate.current_designation;
-    if (candidate.skills && candidate.skills.length > 0) return candidate.skills.slice(0, 2).join(' & ');
-    return 'Role Unverified';
-  }, [candidate.current_designation, candidate.skills]);
+  // Dynamic Brief Derived Variables (Bulletproof Inline Guards)
+  const dynamicSpecialization = (candidate.current_designation && !candidate.current_designation.includes('Unverified'))
+    ? candidate.current_designation
+    : (candidate.skills && candidate.skills.length > 0 ? candidate.skills.slice(0, 2).join(' & ') : 'Role Unverified');
 
-  const dynamicDomain = useMemo(() => {
-    if (candidate.industry_focus && candidate.industry_focus.length > 0) return candidate.industry_focus[0];
-    if (candidate.skills && candidate.skills.some(s => /sap|fico|hana/i.test(s))) return 'SAP ERP & Financials';
-    if (candidate.skills && candidate.skills.some(s => /react|node|javascript|full\s*stack/i.test(s))) return 'Full Stack Software Eng';
-    if (candidate.skills && candidate.skills.some(s => /active\s*directory|servicenow|l1|l2/i.test(s))) return 'IT Infrastructure & Support';
-    return 'Enterprise Operations';
-  }, [candidate.industry_focus, candidate.skills]);
+  const dynamicDomain = (candidate.industry_focus && candidate.industry_focus.length > 0)
+    ? candidate.industry_focus[0]
+    : (candidate.skills && candidate.skills.some(s => /sap|fico|hana/i.test(s)))
+      ? 'SAP ERP & Financials'
+      : (candidate.skills && candidate.skills.some(s => /react|node|javascript|full\s*stack/i.test(s)))
+        ? 'Full Stack Software Eng'
+        : (candidate.skills && candidate.skills.some(s => /active\s*directory|servicenow|l1|l2/i.test(s)))
+          ? 'IT Infrastructure & Support'
+          : 'Enterprise Operations';
 
-  const dynamicProjectFit = useMemo(() => {
-    if (candidate.project_types && candidate.project_types.length > 0) return candidate.project_types[0];
-    return 'Enterprise Implementation';
-  }, [candidate.project_types]);
+  const dynamicProjectFit = (candidate.project_types && candidate.project_types.length > 0)
+    ? candidate.project_types[0]
+    : 'Enterprise Implementation';
 
   const dynamicStrengths = useMemo(() => {
     if (candidate.skills && candidate.skills.length > 0) return candidate.skills.slice(0, 4);
