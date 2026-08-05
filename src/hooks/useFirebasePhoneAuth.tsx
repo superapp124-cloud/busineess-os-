@@ -264,9 +264,9 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   }, []);
 
   /**
-   * Exchange a verified Firebase UID for a Supabase session via Edge Function or fallback
+   * Exchange a verified Firebase UID & ID Token for a Supabase session via Edge Function or fallback
    */
-  const completeSupabaseSession = async (firebaseUid: string): Promise<boolean> => {
+  const completeSupabaseSession = async (firebaseUid: string, firebaseIdToken?: string): Promise<boolean> => {
     const normalizedPhone = phoneNumber.replace(/\s/g, '');
     const cleanDigits = normalizedPhone.replace(/\+/g, '');
     const email = `${cleanDigits}@chatr.local`;
@@ -278,6 +278,14 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
     if (supabaseUrl && supabaseKey) {
       try {
+        const payload: Record<string, string> = {
+          phone_number: normalizedPhone,
+          firebase_uid: firebaseUid,
+        };
+        if (firebaseIdToken) {
+          payload.firebase_id_token = firebaseIdToken;
+        }
+
         const response = await fetch(
           `${supabaseUrl}/functions/v1/firebase-phone-auth`,
           {
@@ -287,10 +295,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
               'Authorization': `Bearer ${supabaseKey}`,
               'apikey': supabaseKey,
             },
-            body: JSON.stringify({
-              phone_number: normalizedPhone,
-              firebase_uid: firebaseUid,
-            }),
+            body: JSON.stringify(payload),
           }
         );
 
@@ -299,29 +304,25 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
           const data = JSON.parse(responseText);
           if (data?.session?.access_token && data?.session?.refresh_token) {
             session = data.session;
+          } else if (data?.error || data?.message) {
+            console.error('[Auth Exchange] Edge function error response:', data.error || data.message);
           }
         }
       } catch (e) {
-        console.warn('[Auth Exchange] Edge function call failed, attempting direct Supabase fallback:', e);
+        console.warn('[Auth Exchange] Edge function call failed:', e);
       }
     }
 
     // Direct fallback if edge function is unavailable or didn't return a session
-    if (!session) {
+    if (!session && firebaseUid) {
+      const deterministicPassword = `${cleanDigits}_${firebaseUid.slice(0, 10)}`;
       const { data: signInData } = await supabase.auth.signInWithPassword({
         email,
-        password: normalizedPhone,
+        password: deterministicPassword,
       });
 
       if (signInData?.session) {
         session = signInData.session;
-      } else {
-        const { data: signUpData } = await supabase.auth.signUp({
-          email,
-          password: normalizedPhone,
-          options: { data: { phone_number: normalizedPhone } }
-        });
-        session = signUpData?.session || null;
       }
     }
 
@@ -345,6 +346,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
     try {
       let firebaseUid: string | undefined;
+      let firebaseIdToken: string | undefined;
 
       if (isNative) {
         if (!verificationIdRef.current) {
@@ -362,6 +364,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
           });
           const { user } = await NativeAuth.getCurrentUser();
           firebaseUid = user?.uid;
+          const tokenResult = await NativeAuth.getIdToken({ forceRefresh: true });
+          firebaseIdToken = tokenResult?.token;
         }
       }
 
@@ -369,14 +373,15 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         // Web verification step
         const result = await confirmationResultRef.current.confirm(otp);
         firebaseUid = result.user.uid;
+        firebaseIdToken = await result.user.getIdToken(true);
       }
 
       if (!firebaseUid) {
         throw new Error('Verification failed. Please try requesting a new OTP.');
       }
 
-      // Step 2: Exchange Firebase UID for Supabase session
-      await completeSupabaseSession(firebaseUid);
+      // Step 2: Exchange Firebase UID & ID token for Supabase session
+      await completeSupabaseSession(firebaseUid, firebaseIdToken);
 
       setLoading(false);
       return true;
@@ -391,6 +396,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       return false;
     }
   }, [phoneNumber]);
+
 
   const resendOTP = useCallback(async (): Promise<boolean> => {
     if (countdown > 0) return false;
