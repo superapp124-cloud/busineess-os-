@@ -87,11 +87,35 @@ export const RecruiterWorkspace: React.FC = () => {
   const [activeClientFilter, setActiveClientFilter] = useState<string | null>(null);
 
   const [requisitions, setRequisitions] = useState<Requisition[]>([]);
-  const [candidates, setCandidates] = useState<Candidate[]>(DEFAULT_REAL_CANDIDATES);
+  const [candidates, setCandidates] = useState<Candidate[]>(() => {
+    try {
+      const saved = localStorage.getItem('chatr_rec_candidates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('[Candidates Hydration Error]:', e);
+    }
+    return DEFAULT_REAL_CANDIDATES;
+  });
   const [automationEvents, setAutomationEvents] = useState<AutomationEvent[]>([]);
   const [mobileActions, setMobileActions] = useState<MobileAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [automationBusy, setAutomationBusy] = useState<string | null>(null);
+
+  // Auto-persist candidates state to localStorage whenever candidates change
+  useEffect(() => {
+    try {
+      if (candidates && candidates.length > 0) {
+        localStorage.setItem('chatr_rec_candidates', JSON.stringify(candidates));
+      }
+    } catch (e) {
+      console.warn('[Candidates Persist Error]:', e);
+    }
+  }, [candidates]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -114,12 +138,12 @@ export const RecruiterWorkspace: React.FC = () => {
         setRequisitions([]);
       }
 
-      if (candsRes.data) {
+      if (candsRes.data && candsRes.data.length > 0) {
         const fetched = candsRes.data
           .filter((c: any) => c.email && !c.email.includes('@example.com'))
           .map((c: any) => ({
             id: c.id, first_name: c.first_name, last_name: c.last_name,
-            email: c.email, phone: c.phone, status: c.stage,
+            email: c.email, phone: c.phone, status: c.stage || 'Applied',
             applied_for: c.job_id, created_at: c.created_at,
             ai_match: c.ai_score, priority: 'High' as const, risk: 'Low' as const,
             salary_fit: 'Within Band' as const,
@@ -133,7 +157,14 @@ export const RecruiterWorkspace: React.FC = () => {
             notice_days: c.notice_days,
             serving_notice: c.serving_notice,
           }));
-        setCandidates(fetched);
+
+        setCandidates(prev => {
+          const fetchedEmails = new Set(fetched.map((f: Candidate) => (f.email || '').toLowerCase()));
+          const localOnly = prev.filter(p => p.email && !fetchedEmails.has(p.email.toLowerCase()));
+          const merged = [...fetched, ...localOnly];
+          try { localStorage.setItem('chatr_rec_candidates', JSON.stringify(merged)); } catch {}
+          return merged;
+        });
       }
     } finally { setLoading(false); }
   }, []);
@@ -279,6 +310,10 @@ export const RecruiterWorkspace: React.FC = () => {
       location: newCand.location,
       skills: newCand.skills,
       experience_years: newCand.experience_years,
+      expected_ctc: newCand.expected_ctc,
+      current_ctc: newCand.current_ctc,
+      notice_days: newCand.notice_days,
+      serving_notice: newCand.serving_notice,
     });
     toast.success(`CV Parsed & Imported: ${newCand.first_name} ${newCand.last_name} (${newCand.email})`);
   }, []);
