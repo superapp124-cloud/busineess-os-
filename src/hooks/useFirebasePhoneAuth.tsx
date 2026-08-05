@@ -38,7 +38,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isExistingUser, setIsExistingUser] = useState(false);
-  const [recaptchaReady, setRecaptchaReady] = useState(false);
+  const [recaptchaReady, setRecaptchaReady] = useState(true);
   
   // Web flow ref
   const confirmationResultRef = useRef<ConfirmationResult | null>(null);
@@ -46,41 +46,22 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   // Native flow ref
   const verificationIdRef = useRef<string | null>(null);
 
-  // Pre-initialize reCAPTCHA status check for web / native
-  useEffect(() => {
-    if (isNative) {
-      setRecaptchaReady(true);
-      return;
-    }
-
-    const initRecaptcha = async () => {
-      try {
-        const container = document.getElementById('recaptcha-container');
-        if (container && !recaptchaVerifierRef.current && !(window as any).recaptchaVerifier) {
-          container.innerHTML = '';
-          const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            size: 'invisible',
-          });
-          recaptchaVerifierRef.current = verifier;
-          (window as any).recaptchaVerifier = verifier;
-          await verifier.render();
-          setRecaptchaReady(true);
-        }
-      } catch (err) {
-        console.warn('[reCAPTCHA] Pre-init failed, will retry on send:', err);
-      }
-    };
-    
-    const timer = setTimeout(initRecaptcha, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     }
   }, [countdown]);
+
+  // Clean up reCAPTCHA verifier on unmount
+  useEffect(() => {
+    return () => {
+      if (recaptchaVerifierRef.current) {
+        try { recaptchaVerifierRef.current.clear(); } catch {}
+        recaptchaVerifierRef.current = null;
+      }
+    };
+  }, []);
 
   /**
    * Helper: Dynamically get Native FirebaseAuthentication plugin if available
@@ -155,23 +136,40 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   };
 
   /**
-   * Web phone verification — uses Firebase Web SDK with invisible reCAPTCHA
+   * Web phone verification — uses fresh Firebase Web SDK RecaptchaVerifier
    */
   const sendOTPWeb = async (phone: string): Promise<boolean> => {
     try {
-      if (!(window as any).recaptchaVerifier && !recaptchaVerifierRef.current) {
-        const container = document.getElementById('recaptcha-container');
-        if (container) container.innerHTML = '';
-        
-        const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: failedAttempts >= 2 ? 'normal' : 'invisible',
-        });
-        recaptchaVerifierRef.current = verifier;
-        (window as any).recaptchaVerifier = verifier;
+      // Clear any existing verifier to guarantee fresh DOM binding
+      if (recaptchaVerifierRef.current) {
+        try { recaptchaVerifierRef.current.clear(); } catch {}
+        recaptchaVerifierRef.current = null;
+      }
+      if ((window as any).recaptchaVerifier) {
+        try { (window as any).recaptchaVerifier.clear(); } catch {}
+        (window as any).recaptchaVerifier = null;
       }
 
-      const activeVerifier = recaptchaVerifierRef.current || (window as any).recaptchaVerifier;
-      const confirmationResult = await signInWithPhoneNumber(auth, phone, activeVerifier);
+      const container = document.getElementById('recaptcha-container');
+      if (container) {
+        container.innerHTML = '';
+      }
+
+      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: failedAttempts >= 2 ? 'normal' : 'invisible',
+        callback: () => {
+          console.log('📱 [Auth] reCAPTCHA solve completed');
+        },
+        'expired-callback': () => {
+          console.warn('⚠️ [Auth] reCAPTCHA expired');
+        }
+      });
+
+      await verifier.render();
+      recaptchaVerifierRef.current = verifier;
+      (window as any).recaptchaVerifier = verifier;
+
+      const confirmationResult = await signInWithPhoneNumber(auth, phone, verifier);
       confirmationResultRef.current = confirmationResult;
       
       setStep('otp');
@@ -181,8 +179,18 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       console.log('📱 [Auth] OTP sent successfully (web)');
       return true;
     } catch (err: any) {
-      console.error('[Firebase Web] OTP error:', err);
+      console.error('[Firebase Web] OTP error detail:', err.code, err.message, err);
       setFailedAttempts(prev => prev + 1);
+
+      // Clean up verifier on error so subsequent clicks retry cleanly
+      if (recaptchaVerifierRef.current) {
+        try { recaptchaVerifierRef.current.clear(); } catch {}
+        recaptchaVerifierRef.current = null;
+      }
+      if ((window as any).recaptchaVerifier) {
+        try { (window as any).recaptchaVerifier.clear(); } catch {}
+        (window as any).recaptchaVerifier = null;
+      }
       
       let msg = 'Failed to send OTP';
       let waitTime = 0;
@@ -199,13 +207,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         msg = 'Too many attempts. Please wait and try again.';
         waitTime = 180;
       } else if (err.code === 'auth/captcha-check-failed' || err.message?.includes('reCAPTCHA')) {
-        msg = 'Security check (reCAPTCHA) failed or timed out. Please try again.';
-        // Reset verifier so next click creates a fresh reCAPTCHA instance
-        recaptchaVerifierRef.current = null;
-        if ((window as any).recaptchaVerifier) {
-          try { (window as any).recaptchaVerifier.clear(); } catch {}
-          (window as any).recaptchaVerifier = null;
-        }
+        msg = 'Security check (reCAPTCHA) failed. Please click Continue to try again.';
       } else if (err.code === 'auth/network-request-failed') {
         msg = 'Network error. Check your connection and try again.';
       } else {
@@ -228,7 +230,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
   };
 
   /**
-   * INSTANT CHECK: 1-second timeout for existing user check
+   * INSTANT CHECK: Fast login check for existing users
    */
   const checkPhoneAndProceed = useCallback(async (phone: string): Promise<boolean> => {
     setLoading(true);
