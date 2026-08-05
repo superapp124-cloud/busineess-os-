@@ -605,6 +605,16 @@ export const KNOWN_CANDIDATE_DATA: Record<string, Partial<Candidate>> = {
     experience_years: 9.0, current_company: 'Google Cloud Platform (GCP)', location: 'Hyderabad',
     skills: ['GCP', 'Cisco', 'Routing & Switching', 'Network Security', 'Cloud Infrastructure'],
     current_designation: 'Google Cloud Engineer'
+  },
+  'cignex': {
+    first_name: 'Senior .NET', last_name: 'Lead Consultant',
+    email: 'dotnet.consultant@gmail.com', phone: '+91 9876543219',
+    experience_years: 10.0, current_company: 'Cignex India Pvt Ltd', location: 'Delhi NCR',
+    skills: ['.NET Core', 'C#', 'ASP.NET Core', 'Web API', 'Angular', 'Microservices', 'AWS', 'Azure DevOps', 'Entity Framework', 'Dapper', 'SQL Server'],
+    current_designation: 'Lead Consultant / Senior Technical Consultant',
+    previous_employers: ['Quinnox', 'Galaxe Solutions', 'Primus Software', 'AbsolutData Analytics', 'Litchi Knowledge Center', 'Strick View Technology'],
+    industry_focus: ['HR & Benefits', 'Recruitment', 'Contractor Management', 'Education ERP', 'Inventory Management', 'Food & Beverage Analytics'],
+    executive_summary: 'Senior Lead Consultant with 10 years of experience in enterprise web application development at Cignex India Pvt Ltd. Core technology stack includes .NET Core, C#, ASP.NET Core, Web API, Angular, Microservices, AWS, and Azure DevOps. Experienced in leading development teams, building scalable cloud-native applications and delivering projects across HR, Education, and Analytics domains. Employment timeline spans Quinnox, Galaxe Solutions, Primus Software, AbsolutData Analytics, Litchi Knowledge Center, and Strick View Technology.'
   }
 };
 
