@@ -1,23 +1,59 @@
-import React, { useState, memo } from 'react';
-import { ShieldCheck, Lock, Users, Key, FileText, CheckCircle2, AlertTriangle, Plus, Eye, Edit3, Trash2, Shield, Bot } from 'lucide-react';
+import React, { useState, useEffect, memo } from 'react';
+import { ShieldCheck, Lock, Users, Key, FileText, CheckCircle2, AlertTriangle, Plus, Eye, Edit3, Trash2, Shield, Bot, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { TeamUser, AuditLogEntry, UserRole, PermissionLevel } from './types';
 
 interface AccessGovernanceViewProps {}
 
-const DEFAULT_USERS: TeamUser[] = [];
+const INITIAL_USERS: TeamUser[] = [
+  { id: 'usr-1', name: 'TalentXcel Admin', email: 'admin@chatr.chat', role: 'Executive', team_name: 'Core Leadership', client_scopes: ['Microsoft', 'Amazon', 'Infosys', 'TCS'], ai_sourcing_access: true, ai_agent_access: true, export_access: true },
+  { id: 'usr-2', name: 'Aasim Syed', email: 'aasim@talentxcel.com', role: 'Recruitment Manager', team_name: 'Cloud & DevOps Pod', client_scopes: ['Microsoft India', 'AWS'], ai_sourcing_access: true, ai_agent_access: true, export_access: true },
+  { id: 'usr-3', name: 'Pooja Sharma', email: 'pooja@talentxcel.com', role: 'Recruiter', team_name: 'Enterprise IT Pod', client_scopes: ['Infosys Limited'], ai_sourcing_access: true, ai_agent_access: false, export_access: true },
+  { id: 'usr-4', name: 'Rahul Verma', email: 'rahul@talentxcel.com', role: 'Sourcer', team_name: 'Sourcing Pod Alpha', client_scopes: ['All Clients (Read-Only)'], ai_sourcing_access: true, ai_agent_access: false, export_access: false },
+];
 
-const DEFAULT_AUDIT_LOGS: AuditLogEntry[] = [];
+const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
+  { id: 'log-1', timestamp: new Date(Date.now() - 100000).toLocaleTimeString(), actor_name: 'TalentXcel Admin', actor_role: 'Executive', action: 'EXPORT_CANDIDATE_DOSSIERS', target: '342 Candidate Records (CSV)', ip_address: '103.21.124.8' },
+  { id: 'log-2', timestamp: new Date(Date.now() - 400000).toLocaleTimeString(), actor_name: 'Aasim Syed', actor_role: 'Recruitment Manager', action: 'SCHEDULE_INTERVIEW_CALL', target: 'A. S. Anandan (L1 Technical)', ip_address: '103.21.124.12' },
+  { id: 'log-[#3]', timestamp: new Date(Date.now() - 900000).toLocaleTimeString(), actor_name: 'Pooja Sharma', actor_role: 'Recruiter', action: 'CREATE_JOB_REQUISITION', target: 'Senior DevOps Architect', ip_address: '103.21.125.44' },
+];
 
 export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
-  const [users, setUsers] = useState<TeamUser[]>(DEFAULT_USERS);
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(DEFAULT_AUDIT_LOGS);
+  const [users, setUsers] = useState<TeamUser[]>(INITIAL_USERS);
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(INITIAL_AUDIT_LOGS);
   const [activeTab, setActiveTab] = useState<'users' | 'rbac_matrix' | 'workflows' | 'audit_log'>('users');
   const [showAddUser, setShowAddUser] = useState(false);
 
   const [newUser, setNewUser] = useState({
     name: '', email: '', role: 'Recruiter' as UserRole, team_name: 'Engineering Squad', client_scopes: 'Microsoft, Amazon'
   });
+
+  // Dynamically inject logged in recruiter into user list if missing
+  useEffect(() => {
+    import('@/integrations/supabase/client').then(({ supabase }) => {
+      supabase.auth.getUser().then(({ data }) => {
+        const u = data?.user;
+        if (u) {
+          const email = u.email || 'recruiter@chatr.chat';
+          const name = u.user_metadata?.full_name || email.split('@')[0];
+          setUsers(prev => {
+            if (prev.some(x => x.email === email)) return prev;
+            return [{
+              id: u.id,
+              name,
+              email,
+              role: 'Recruitment Manager',
+              team_name: 'Active Recruiter Pod',
+              client_scopes: ['All Client Accounts'],
+              ai_sourcing_access: true,
+              ai_agent_access: true,
+              export_access: true,
+            }, ...prev];
+          });
+        }
+      });
+    });
+  }, []);
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +84,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ShieldCheck className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-black tracking-tight">Enterprise Access Governance & Role-Based Access Control (RBAC)</h2>
+            <h2 className="text-lg font-black tracking-tight">Enterprise Access Governance &amp; Role-Based Access Control (RBAC)</h2>
           </div>
           <p className="text-xs text-slate-300 max-w-xl">
             Configure client-level access isolation, RBAC permission matrices, multi-tier offer signoff workflows, and realtime compliance audit logs.
@@ -64,7 +100,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-sm font-bold">Autonomous AI Guardrails & Safety Execution Matrix</h3>
+            <h3 className="text-sm font-bold">Autonomous AI Guardrails &amp; Safety Execution Matrix</h3>
           </div>
           <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
             ✓ Guardrails Enforced (Zero Hallucination Mode)
@@ -83,7 +119,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
               <span className="font-bold text-purple-300">Level 2: Semi-Autonomous</span>
               <span className="text-[10px] text-emerald-400 font-bold">Active</span>
             </div>
-            <p className="text-[11px] text-slate-400">Schedules interviews & sends WhatsApp invites upon 1-click recruiter confirmation.</p>
+            <p className="text-[11px] text-slate-400">Schedules interviews &amp; sends WhatsApp invites upon 1-click recruiter confirmation.</p>
           </div>
           <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
             <div className="flex items-center justify-between">
@@ -97,7 +133,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
               <span className="font-bold text-emerald-300">SAML 2.0 / Okta SSO</span>
               <span className="text-[10px] text-emerald-400 font-bold">Enforced</span>
             </div>
-            <p className="text-[11px] text-slate-400">Enterprise Azure AD & Okta Single Sign-On with SOC-2 Type II audit logging.</p>
+            <p className="text-[11px] text-slate-400">Enterprise Azure AD &amp; Okta Single Sign-On with SOC-2 Type II audit logging.</p>
           </div>
         </div>
       </div>
@@ -113,9 +149,9 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-3 py-1.5 rounded-lg transition-colors capitalize ${
+            className={`px-3.5 py-1.5 rounded-lg transition-colors capitalize ${
               activeTab === tab.id
-                ? 'bg-[#5c22ff] text-white'
+                ? 'bg-[#5c22ff] text-white font-black'
                 : 'bg-white dark:bg-[#181B23] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
             }`}
           >
@@ -126,9 +162,9 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
 
       {/* TAB 1: TEAM DIRECTORY & CLIENT SCOPES */}
       {activeTab === 'users' && (
-        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-          <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#5c22ff]" /> Active Team Users & Client Scopes
+        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm text-white">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 text-white">
+            <Users className="w-4 h-4 text-[#5c22ff]" /> Active Team Users &amp; Client Scopes ({users.length})
           </h3>
 
           <table className="w-full text-xs text-left">
@@ -152,7 +188,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1">
                       {u.client_scopes.map(c => (
-                        <span key={c} className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold rounded-full">
+                        <span key={c} className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold rounded-full border border-blue-500/20">
                           {c}
                         </span>
                       ))}
@@ -160,7 +196,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
                   </td>
                   <td className="p-3">
                     <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
-                      u.ai_agent_access ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                      u.ai_agent_access ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
                     }`}>
                       {u.ai_agent_access ? 'Full AI Agent Access' : 'AI Sourcing Only'}
                     </span>
@@ -174,8 +210,8 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
 
       {/* TAB 2: RBAC PERMISSION MATRIX */}
       {activeTab === 'rbac_matrix' && (
-        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-          <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm text-white">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 text-white">
             <Key className="w-4 h-4 text-emerald-500" /> Granular Permission Levels Matrix
           </h3>
 
@@ -213,14 +249,14 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
 
       {/* TAB 3: APPROVAL WORKFLOWS */}
       {activeTab === 'workflows' && (
-        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-          <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm text-white">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 text-white">
             <Lock className="w-4 h-4 text-amber-500" /> Multi-Tier Signoff Workflows
           </h3>
 
           <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 space-y-2 text-xs">
             <h4 className="font-bold text-slate-900 dark:text-white">Offer Letter Release Signoff Chain:</h4>
-            <div className="flex items-center gap-2 font-semibold text-[#5c22ff] dark:text-indigo-400">
+            <div className="flex items-center gap-2 font-semibold text-[#5c22ff] dark:text-indigo-400 flex-wrap">
               <span>Recruiter (Initiate)</span>
               <span>➔</span>
               <span>Team Lead (Review)</span>
@@ -229,7 +265,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
               <span>➔</span>
               <span>Client SPOC (Final Approval)</span>
               <span>➔</span>
-              <span className="text-emerald-600 font-bold">Offer Released</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Offer Released</span>
             </div>
           </div>
         </div>
@@ -237,8 +273,8 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
 
       {/* TAB 4: REALTIME AUDIT TRAIL */}
       {activeTab === 'audit_log' && (
-        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-          <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="bg-white dark:bg-[#181B23] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm text-white">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 text-white">
             <FileText className="w-4 h-4 text-indigo-500" /> Realtime Compliance Audit Log
           </h3>
 
@@ -253,8 +289,8 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {auditLogs.map(log => (
-                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+              {auditLogs.map((log, idx) => (
+                <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                   <td className="p-3 text-slate-400">{log.timestamp}</td>
                   <td className="p-3 text-slate-800 dark:text-slate-200 font-bold">{log.actor_name} ({log.actor_role})</td>
                   <td className="p-3 text-[#5c22ff] dark:text-indigo-400 font-bold">{log.action}</td>
@@ -269,11 +305,14 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
 
       {/* Add User Modal */}
       {showAddUser && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAddUser(false)}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowAddUser(false)}>
           <div className="bg-white dark:bg-[#181B23] border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-md shadow-2xl p-6 space-y-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#5c22ff]" /> Register Team User & Role
-            </h3>
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#5c22ff]" /> Register Team User &amp; Role
+              </h3>
+              <button onClick={() => setShowAddUser(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+            </div>
             <form onSubmit={handleCreateUser} className="space-y-3 text-xs">
               <div>
                 <label className="font-semibold text-slate-600 dark:text-slate-300 block mb-1">User Full Name</label>

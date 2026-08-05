@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { DollarSign, Building2, TrendingUp, FileText, CheckCircle2, AlertCircle, Plus, Filter } from 'lucide-react';
+import { DollarSign, Building2, TrendingUp, FileText, CheckCircle2, AlertCircle, Plus, Filter, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { downloadFile } from './utils';
 
@@ -14,13 +14,18 @@ interface Opportunity {
   spoc: string;
 }
 
-const DEFAULT_OPPORTUNITIES: Opportunity[] = [];
+const INITIAL_OPPORTUNITIES: Opportunity[] = [
+  { id: 'opp-1', client_name: 'Microsoft India', deal_name: 'Fullstack Squad Staffing 2026', value_inr_lakhs: 140, probability: 90, stage: 'Contract', expected_close: '2026-09-01', spoc: 'Anil Mehta (Director TA)' },
+  { id: 'opp-2', client_name: 'Amazon Web Services', deal_name: 'DevOps & Cloud Architect Pod', value_inr_lakhs: 220, probability: 85, stage: 'Proposal', expected_close: '2026-09-15', spoc: 'Priya Sundaram (Vendor Lead)' },
+  { id: 'opp-3', client_name: 'Infosys Limited', deal_name: 'SAP S/4HANA Migration Contract', value_inr_lakhs: 350, probability: 95, stage: 'Closed Won', expected_close: '2026-08-20', spoc: 'Rajesh Kumar (Partner)' },
+  { id: 'opp-4', client_name: 'TCS Digital', deal_name: 'GenAI & Machine Learning Squad', value_inr_lakhs: 180, probability: 70, stage: 'Prospect', expected_close: '2026-10-01', spoc: 'Sunil Rao (Head Sourcing)' },
+];
 
 export const SalesCrmView = memo(() => {
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(DEFAULT_OPPORTUNITIES);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(INITIAL_OPPORTUNITIES);
   const [filterStage, setFilterStage] = useState<string>('ALL');
   const [showModal, setShowModal] = useState(false);
-  const [newDeal, setNewDeal] = useState({ client_name: '', deal_name: '', value_inr_lakhs: 500, probability: 75, stage: 'Prospect' as const, spoc: 'HR Lead' });
+  const [newDeal, setNewDeal] = useState({ client_name: '', deal_name: '', value_inr_lakhs: 150, probability: 75, stage: 'Prospect' as const, spoc: 'HR Lead' });
 
   const handleGenerateInvoice = () => {
     const invoiceData = `=====================================================
@@ -86,14 +91,14 @@ STATUS: APPROVED & SIGNED VIA CHATR RECRUITMENTOS
       
       {/* New Opportunity Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-[#141721] border border-slate-700 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
+          <div className="bg-[#141721] border border-slate-700 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-400" />
                 <span>New Enterprise Opportunity</span>
               </h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
             <form onSubmit={handleCreateDeal} className="space-y-3 text-xs">
               <div>
@@ -152,7 +157,7 @@ STATUS: APPROVED & SIGNED VIA CHATR RECRUITMENTOS
         <div>
           <h1 className="text-xl font-black flex items-center gap-2">
             <DollarSign className="w-6 h-6 text-emerald-400" />
-            Agency Sales CRM & Deal Pipeline
+            Agency Sales CRM &amp; Deal Pipeline
           </h1>
           <p className="text-xs text-slate-400 mt-1">
             Track enterprise staffing deals, MSAs, rate cards, and revenue forecasts.
@@ -185,7 +190,7 @@ STATUS: APPROVED & SIGNED VIA CHATR RECRUITMENTOS
         </div>
         <div className="p-4 bg-[#141721] border border-slate-800 rounded-2xl">
           <p className="text-[11px] font-bold text-slate-400 uppercase">Weighted Revenue</p>
-          <p className="text-2xl font-black text-indigo-400 mt-1">₹{(totalPipeline * 0.75 / 100).toFixed(2)} Cr</p>
+          <p className="text-2xl font-black text-indigo-400 mt-1">₹{(totalPipeline * 0.82 / 100).toFixed(2)} Cr</p>
           <span className="text-[10px] text-slate-500">Probability weighted</span>
         </div>
         <div className="p-4 bg-[#141721] border border-slate-800 rounded-2xl">
@@ -205,7 +210,7 @@ STATUS: APPROVED & SIGNED VIA CHATR RECRUITMENTOS
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-amber-400" />
-            <h3 className="text-sm font-bold">Recruiter Commission & Gross Margin Split Engine</h3>
+            <h3 className="text-sm font-bold">Recruiter Commission &amp; Gross Margin Split Engine</h3>
           </div>
           <button
             onClick={() => toast.success('Recruiter Monthly Commission Pool calculated & exported to Payroll!')}
@@ -238,7 +243,7 @@ STATUS: APPROVED & SIGNED VIA CHATR RECRUITMENTOS
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold flex items-center gap-2">
             <Building2 className="w-4 h-4 text-emerald-400" />
-            <span>Active Enterprise Deals</span>
+            <span>Active Enterprise Deals ({filtered.length})</span>
           </h2>
           <div className="flex items-center gap-2 text-xs">
             <Filter className="w-3.5 h-3.5 text-slate-400" />
