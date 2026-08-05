@@ -18,8 +18,6 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 
 // Firebase services
 export const auth = getAuth(app);
-// Disable reCAPTCHA for local network testing (requires using test phone numbers)
-auth.settings.appVerificationDisabledForTesting = true;
 
 // Configure Google Provider with better settings
 export const googleProvider = new GoogleAuthProvider();
