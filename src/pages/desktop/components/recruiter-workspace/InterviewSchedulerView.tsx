@@ -46,7 +46,7 @@ export const InterviewsTab = memo(({ candidates = [], requisitions = [], onSelec
     const candName = cand ? full : 'Candidate';
     const candRole = cand?.current_designation ? `${cand.current_designation} (${cand.company_name_raw || cand.current_company || 'Employer Unverified'})` : 'Role Unverified';
 
-    const newIv: InterviewItem = {
+    const newIv: InterviewItem & { candidateAuthUrl?: string } = {
       id: `iv-${Date.now()}`,
       candidateName: candName,
       type: roundType,
@@ -55,6 +55,7 @@ export const InterviewsTab = memo(({ candidates = [], requisitions = [], onSelec
       interviewer: interviewerName,
       channel: '💬 CHATR Live Call Room',
       meetingUrl: 'https://chatrchat.in/desktop/calls',
+      candidateAuthUrl: 'https://chatr.chat/auth'
     };
 
     const updated = [newIv, ...interviews];
@@ -64,7 +65,7 @@ export const InterviewsTab = memo(({ candidates = [], requisitions = [], onSelec
     } catch {}
 
     setShowModal(false);
-    toast.success(`Scheduled ${roundType} for ${candName} on ${dateStr} via CHATR Calls!`);
+    toast.success(`Scheduled ${roundType} for ${candName} via chatrchat.in (Candidate Auth: chatr.chat/auth)!`);
   };
 
   return (

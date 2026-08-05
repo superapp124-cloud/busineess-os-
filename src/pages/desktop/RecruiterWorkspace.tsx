@@ -460,7 +460,7 @@ export const RecruiterWorkspace: React.FC = () => {
   const activeCandidates = candidates;
 
   return (
-    <div className="flex flex-col h-full w-full bg-slate-50 dark:bg-[#090A0F] overflow-hidden">
+    <div className="flex-1 min-h-0 h-full w-full bg-slate-50 dark:bg-[#090A0F] overflow-hidden flex flex-col relative">
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} onTabChange={t => { handleTabChange(t); setCmdOpen(false); }} candidates={activeCandidates} requisitions={requisitions} />
       <ImportJobModal open={importJobOpen} onClose={() => setImportJobOpen(false)} onImport={handleImportJobs} />
       <ImportCVModal open={importCvOpen} onClose={() => setImportCvOpen(false)} onImportCandidate={handleImportCandidate} onImportBatchCandidates={handleImportBatchCandidates} requisitions={requisitions} />

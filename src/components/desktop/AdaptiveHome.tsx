@@ -315,9 +315,8 @@ export const AdaptiveHome: React.FC = () => {
  return () => unsub?.();
  }, [isReady, activityService]);
 
- const hour = currentTime.getHours();
- const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
- const firstName = (profile?.full_name || profile?.display_name || profile?.username || 'Arshid').split(' ')[0].replace(/\?/g, '') || 'Arshid';
+  const userEmailName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || localStorage.getItem('chatr_user_name') || 'Recruiter';
+  const firstName = (profile?.full_name || profile?.display_name || profile?.username || userEmailName).split(' ')[0].replace(/\?/g, '') || 'Recruiter';
  const timeStr = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
  const totalUnread = RECENT_CONVERSATIONS.reduce((sum, c) => sum + c.unread, 0);
 

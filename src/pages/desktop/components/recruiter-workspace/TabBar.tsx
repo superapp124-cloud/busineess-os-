@@ -59,7 +59,7 @@ export const TabBar = memo(({
   }, [activeTab]);
 
   return (
-    <div className="flex items-center justify-between px-4 h-12 bg-[#0B0D12] border-b border-slate-800/80 shrink-0 text-white select-none backdrop-blur-md z-30">
+    <div className="sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-[#0B0D12] border-b border-slate-800/80 shrink-0 text-white select-none backdrop-blur-md shadow-md">
       
       {/* Scrollable Tab Strip */}
       <div className="flex items-center gap-1 overflow-hidden h-full flex-1 mr-3">

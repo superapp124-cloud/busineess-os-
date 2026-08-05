@@ -257,6 +257,13 @@ export const IntentOSHome: React.FC = () => {
  `;
  document.head.appendChild(style);
  }
+ import('@/integrations/supabase/client').then(({ supabase }) => {
+   supabase.auth.getUser().then(({ data }) => {
+     const u = data?.user;
+     const name = u?.user_metadata?.full_name || u?.email?.split('@')[0] || localStorage.getItem('chatr_user_name') || 'Recruiter';
+     setActiveUserName(name.split(' ')[0]);
+   });
+ });
  return () => { document.getElementById(styleId)?.remove(); };
  }, []);
 
