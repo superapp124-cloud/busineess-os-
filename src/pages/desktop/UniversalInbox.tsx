@@ -286,23 +286,26 @@ export const UniversalInbox: React.FC = () => {
       return;
     }
 
-    const providerConfigs: Record<string, { sbProvider?: string; authUrl: string; defaultDomain: string }> = {
-      'Gmail': { sbProvider: 'google', authUrl: 'https://accounts.google.com/o/oauth2/v2/auth', defaultDomain: 'gmail.com' },
-      'Outlook': { sbProvider: 'azure', authUrl: 'https://login.microsoftonline.com/', defaultDomain: 'outlook.com' },
-      'Yahoo': { authUrl: 'https://login.yahoo.com/', defaultDomain: 'yahoo.com' },
-      'iCloud': { authUrl: 'https://appleid.apple.com/', defaultDomain: 'icloud.com' },
-      'ProtonMail': { authUrl: 'https://account.proton.me/login', defaultDomain: 'proton.me' },
-      'Slack': { sbProvider: 'slack', authUrl: 'https://slack.com/signin', defaultDomain: 'slack.com' },
-      'Teams': { sbProvider: 'azure', authUrl: 'https://teams.microsoft.com/', defaultDomain: 'teams.microsoft.com' },
-      'LinkedIn': { sbProvider: 'linkedin_oidc', authUrl: 'https://www.linkedin.com/login', defaultDomain: 'linkedin.com' },
-      'Discord': { sbProvider: 'discord', authUrl: 'https://discord.com/login', defaultDomain: 'discord.com' },
-      'GitHub': { sbProvider: 'github', authUrl: 'https://github.com/login', defaultDomain: 'github.com' }
+    const providerConfigs: Record<string, { authUrl: string; defaultDomain: string }> = {
+      'Gmail': { authUrl: 'https://mail.google.com/', defaultDomain: 'gmail.com' },
+      'Outlook': { authUrl: 'https://outlook.live.com/', defaultDomain: 'outlook.com' },
+      'Yahoo': { authUrl: 'https://mail.yahoo.com/', defaultDomain: 'yahoo.com' },
+      'iCloud': { authUrl: 'https://www.icloud.com/mail', defaultDomain: 'icloud.com' },
+      'ProtonMail': { authUrl: 'https://mail.proton.me/', defaultDomain: 'proton.me' },
+      'Slack': { authUrl: 'https://app.slack.com/', defaultDomain: 'slack.com' },
+      'Teams': { authUrl: 'https://teams.microsoft.com/', defaultDomain: 'teams.microsoft.com' },
+      'LinkedIn': { authUrl: 'https://www.linkedin.com/feed/', defaultDomain: 'linkedin.com' },
+      'X (Twitter)': { authUrl: 'https://x.com/', defaultDomain: 'x.com' },
+      'Facebook': { authUrl: 'https://www.facebook.com/', defaultDomain: 'facebook.com' },
+      'Instagram': { authUrl: 'https://www.instagram.com/', defaultDomain: 'instagram.com' },
+      'Discord': { authUrl: 'https://discord.com/channels/@me', defaultDomain: 'discord.com' },
+      'GitHub': { authUrl: 'https://github.com/', defaultDomain: 'github.com' }
     };
 
     const cfg = providerConfigs[providerName] || { authUrl: `https://${providerName.toLowerCase().replace(/\s+/g, '')}.com`, defaultDomain: `${providerName.toLowerCase().replace(/\s+/g, '')}.com` };
 
     setConnectionStep(1);
-    toast.info(`Opening ${providerName} authorization site...`);
+    toast.info(`Opening ${providerName}...`);
 
     let runtimeSuccess = false;
 
@@ -322,13 +325,9 @@ export const UniversalInbox: React.FC = () => {
       console.log(`[UniversalInbox] Native connector notice for ${providerName}:`, e);
     }
 
-    // Open official provider authorization site directly
+    // Open direct web application site
     if (!runtimeSuccess) {
-      let targetUrl = cfg.authUrl;
-      if (providerName === 'Gmail') {
-        targetUrl = 'https://accounts.google.com/';
-      }
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      window.open(cfg.authUrl, '_blank', 'noopener,noreferrer');
     }
 
     // Auto-configure connection so it immediately transitions to Connected ✓

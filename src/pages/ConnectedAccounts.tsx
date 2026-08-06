@@ -25,26 +25,26 @@ interface AccountProvider {
 }
 
 const providers: AccountProvider[] = [
- { id: 'google', name: 'Google Workspace', category: 'Mail, Calendar, Drive', icon: <Mail className="h-5 w-5" />, color: 'bg-rose-500', loginUrl: 'https://accounts.google.com/' },
- { id: 'microsoft', name: 'Microsoft 365', category: 'Outlook, Teams, OneDrive', icon: <Mail className="h-5 w-5" />, color: 'bg-blue-600', loginUrl: 'https://login.microsoftonline.com/' },
- { id: 'slack', name: 'Slack', category: 'Work chat', icon: <MessageSquare className="h-5 w-5" />, color: 'bg-purple-600', loginUrl: 'https://slack.com/signin' },
- { id: 'github', name: 'GitHub', category: 'Code and issues', icon: <Github className="h-5 w-5" />, color: 'bg-slate-700', loginUrl: 'https://github.com/login' },
- { id: 'linkedin', name: 'LinkedIn', category: 'Professional network', icon: <Link className="h-5 w-5" />, color: 'bg-sky-600', loginUrl: 'https://www.linkedin.com/login' },
- { id: 'salesforce', name: 'Salesforce', category: 'CRM', icon: <Link className="h-5 w-5" />, color: 'bg-cyan-600', loginUrl: 'https://login.salesforce.com/' },
+  { id: 'google', name: 'Google Workspace', category: 'Mail, Calendar, Drive', icon: <Mail className="h-5 w-5" />, color: 'bg-rose-500', loginUrl: 'https://mail.google.com/' },
+  { id: 'microsoft', name: 'Microsoft 365', category: 'Outlook, Teams, OneDrive', icon: <Mail className="h-5 w-5" />, color: 'bg-blue-600', loginUrl: 'https://outlook.live.com/' },
+  { id: 'slack', name: 'Slack', category: 'Work chat', icon: <MessageSquare className="h-5 w-5" />, color: 'bg-purple-600', loginUrl: 'https://app.slack.com/' },
+  { id: 'github', name: 'GitHub', category: 'Code and issues', icon: <Github className="h-5 w-5" />, color: 'bg-slate-700', loginUrl: 'https://github.com/' },
+  { id: 'linkedin', name: 'LinkedIn', category: 'Professional network', icon: <Link className="h-5 w-5" />, color: 'bg-sky-600', loginUrl: 'https://www.linkedin.com/feed/' },
+  { id: 'salesforce', name: 'Salesforce', category: 'CRM', icon: <Link className="h-5 w-5" />, color: 'bg-cyan-600', loginUrl: 'https://login.salesforce.com/' },
 ];
 
 const openBrowserAuth = async (mode: AuthMode) => {
- const electronAuth = (window as any).electronAPI?.auth;
+  const electronAuth = (window as any).electronAPI?.auth;
 
- if (electronAuth) {
- return mode === 'signup' ? electronAuth.openSignup() : electronAuth.openLogin();
- }
+  if (electronAuth) {
+    return mode === 'signup' ? electronAuth.openSignup() : electronAuth.openLogin();
+  }
 
- const url = new URL('/auth', 'https://chatr.chat');
- url.searchParams.set('mode', mode);
- url.searchParams.set('source', 'desktop');
- window.open(url.toString(), '_blank', 'noopener,noreferrer');
- return { ok: true, url: url.toString() };
+  const url = new URL('/auth', 'https://chatr.chat');
+  url.searchParams.set('mode', mode);
+  url.searchParams.set('source', 'desktop');
+  window.open(url.toString(), '_blank', 'noopener,noreferrer');
+  return { ok: true, url: url.toString() };
 };
 
 const openProviderLogin = async (provider: AccountProvider) => {
@@ -52,33 +52,6 @@ const openProviderLogin = async (provider: AccountProvider) => {
 
   if (electronAuth?.openProviderLogin) {
     return electronAuth.openProviderLogin(provider.id);
-  }
-
-  // Attempt authentic Supabase OAuth redirect if supported provider
-  const supabaseProviders: Record<string, any> = {
-    google: 'google',
-    microsoft: 'azure',
-    github: 'github',
-    slack: 'slack',
-    linkedin: 'linkedin_oidc'
-  };
-
-  const sbProvider = supabaseProviders[provider.id];
-  if (sbProvider) {
-    const { supabase } = await import('@/integrations/supabase/client');
-    const safeOrigin = window.location.origin.startsWith('file://')
-      ? 'https://busineess-os.vercel.app'
-      : window.location.origin;
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: sbProvider,
-      options: {
-        redirectTo: `${safeOrigin}/#/desktop/settings?connected=${provider.id}`,
-        skipBrowserRedirect: true
-      }
-    });
-
-    if (error || data?.url) { return { ok: true, url: 'supabase_oauth' }; }
   }
 
   window.open(provider.loginUrl, '_blank', 'noopener,noreferrer');
