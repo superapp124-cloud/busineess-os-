@@ -20,14 +20,14 @@ export function ModelStatusIndicator({ primaryProvider, activeProviders, status 
  };
 
  const getLabel = (provider: string) => {
- switch (provider.toLowerCase()) {
- case "gemini": return "Gemini Flash";
- case "groq": return "Groq Llama 3.3";
- case "together": return "Llama 3.3 Turbo";
- case "ipl_2026_fallback": return "Bharat Engine (Local)";
- default: return provider;
- }
- };
+    switch (provider.toLowerCase()) {
+      case "gemini": return "System Synthesis Engine";
+      case "groq": return "Business Telemetry Engine";
+      case "together": return "Executive Intelligence Substrate";
+      case "ipl_2026_fallback": return "Local Enterprise Engine";
+      default: return "Enterprise Intelligence";
+    }
+  };
 
  return (
  <div className="flex flex-wrap gap-2 items-center text-label font-mono">

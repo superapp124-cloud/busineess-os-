@@ -86,6 +86,15 @@ const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCal
 const ChiefOfStaffHome = React.lazy(() => import("./pages/desktop/ChiefOfStaffHome").then(m => ({ default: m.ChiefOfStaffHome })));
 const UniversalInbox = React.lazy(() => import("./pages/desktop/UniversalInbox").then(m => ({ default: m.UniversalInbox })));
 
+// Executive & Product Suite Dashboards
+const ExecutiveHomeLanding = React.lazy(() => import("./components/ExecutiveHomeLanding").then(m => ({ default: m.ExecutiveHomeLanding })));
+const GrowthOSDashboard = React.lazy(() => import("./components/GrowthOSDashboard").then(m => ({ default: m.GrowthOSDashboard })));
+const RevenueOSDashboard = React.lazy(() => import("./components/RevenueOSDashboard").then(m => ({ default: m.RevenueOSDashboard })));
+const CustomerSuccessOSDashboard = React.lazy(() => import("./components/CustomerSuccessOSDashboard").then(m => ({ default: m.CustomerSuccessOSDashboard })));
+const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
+const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
+
+
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
  default: module.FeatureEngagementTracker,
@@ -540,8 +549,14 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <WorkflowInspectorPage />
  </Suspense>
  } />
- <Route path="finance" element={<LazyRoute component={LazyPages.FinanceWorkspace} />} />
- <Route path="growth" element={<LazyRoute component={LazyPages.GrowthWorkspace} />} />
+  <Route path="finance" element={<LazyRoute component={LazyPages.FinanceWorkspace} />} />
+  <Route path="growth" element={<LazyRoute component={LazyPages.GrowthWorkspace} />} />
+  <Route path="executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
+  <Route path="growth-os" element={<LazyRoute component={GrowthOSDashboard} />} />
+  <Route path="revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
+  <Route path="customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
+  <Route path="business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
+  <Route path="knowledge" element={<LazyRoute component={ExecutiveAICopilotDashboard} />} />
  <Route path="legal" element={<LazyRoute component={LazyPages.LegalWorkspace} />} />
  <Route path="health" element={
  <Suspense fallback={<PageLoader message="Loading Engine Health..." />}>
@@ -671,6 +686,15 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/join" element={<LazyRoute component={LazyPages.JoinInvite} />} />
  <Route path="/web" element={<LazyRoute component={LazyPages.ChatrWeb} />} />
  <Route path="/docs" element={<ProtectedLazyRoute component={CHATRWorkspace} />} />
+
+  {/* CHATR Product OS Clean Top-Level Routes */}
+  <Route path="/executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
+  <Route path="/growth" element={<LazyRoute component={GrowthOSDashboard} />} />
+  <Route path="/knowledge" element={<LazyRoute component={ExecutiveAICopilotDashboard} />} />
+  <Route path="/revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
+  <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
+  <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
+
 
  <Route path="/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />

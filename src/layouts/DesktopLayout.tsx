@@ -84,16 +84,27 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Product OS Suites',
+    items: [
+      { icon: Shield,        label: 'Executive Home',        subtitle: 'Executive Operating Center & Industry Switcher', path: '/desktop/executive' },
+      { icon: Sparkles,      label: 'Growth OS',             subtitle: 'Growth & Lead Telemetry',                         path: '/desktop/growth-os' },
+      { icon: Building2,     label: 'Revenue OS',            subtitle: 'Pipeline & Proposal Engine',                       path: '/desktop/revenue' },
+      { icon: Users,         label: 'Customer Operations',   subtitle: 'Deployments & Retention Health',                      path: '/desktop/customer-success' },
+      { icon: Activity,      label: 'Business Intelligence', subtitle: 'Cashflow & Executive Financials',                 path: '/desktop/business-intelligence' },
+      { icon: BrainCircuit,  label: 'Knowledge OS & AI',     subtitle: 'Enterprise Memory & Intelligence',                path: '/desktop/knowledge' },
+    ],
+  },
+  {
     label: 'Productivity & OS',
     items: [
-      { icon: UserPlus,      label: 'Recruitment',  subtitle: 'Talent OS & ATS Engine',            path: '/desktop/recruitment' },
-      { icon: Layers,        label: 'Business OS',  subtitle: 'Executive Control & IDE',            path: '/desktop/business-os' },
-      { icon: Shield,        label: 'Enterprise',   subtitle: 'Enterprise Security & Scale',        path: '/enterprise' },
-      { icon: Calendar,      label: 'Calendar',     subtitle: 'Schedules & Meetings',              path: '/desktop/calendar' },
-      { icon: CheckSquare,   label: 'Tasks',        subtitle: 'Tasks & Workflows',                 path: '/desktop/workspace' },
-      { icon: Building2,     label: 'CRM',          subtitle: 'Customers & Deals',                 path: '/desktop/pro/business' },
-      { icon: Hash,          label: 'Tickets',      subtitle: 'Service Desk',                      path: '/desktop/tickets' },
-      { icon: FolderOpen,    label: 'Files',        subtitle: 'Documents & Media',                 path: '/desktop/files' },
+      { icon: UserPlus,      label: 'Personnel & Capacity', subtitle: 'Personnel Capacity & Substrate OS',               path: '/desktop/recruitment' },
+      { icon: Layers,        label: 'Business OS',          subtitle: 'Executive Control & IDE',                         path: '/desktop/business-os' },
+      { icon: Shield,        label: 'Enterprise',           subtitle: 'Enterprise Security & Scale',                     path: '/enterprise' },
+      { icon: Calendar,      label: 'Calendar',             subtitle: 'Schedules & Meetings',                           path: '/desktop/calendar' },
+      { icon: CheckSquare,   label: 'Tasks',                subtitle: 'Tasks & Workflows',                              path: '/desktop/workspace' },
+      { icon: Building2,     label: 'CRM',                  subtitle: 'Customers & Deals',                              path: '/desktop/pro/business' },
+      { icon: Hash,          label: 'Tickets',              subtitle: 'Service Desk',                                   path: '/desktop/tickets' },
+      { icon: FolderOpen,    label: 'Files',                subtitle: 'Documents & Media',                              path: '/desktop/files' },
     ],
   },
   {
@@ -108,6 +119,7 @@ const NAV_SECTIONS = [
     ],
   },
 ];
+
 
 
 // Flatten for routing
@@ -339,8 +351,15 @@ const DesktopLayoutInner = () => {
     '/desktop/inbox',
     '/desktop/calls',
     '/desktop/recruitment',
-    '/desktop/settings'
+    '/desktop/settings',
+    '/desktop/executive',
+    '/desktop/growth-os',
+    '/desktop/revenue',
+    '/desktop/customer-success',
+    '/desktop/business-intelligence',
+    '/desktop/knowledge'
   ];
+
 
   const visibleNavSections = isAdminUser
     ? NAV_SECTIONS

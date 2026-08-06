@@ -511,3 +511,5 @@ export const RecruiterWorkspace: React.FC = () => {
 };
 
 export default RecruiterWorkspace;
+
+
