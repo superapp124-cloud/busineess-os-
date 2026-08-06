@@ -85,7 +85,7 @@ export const UniversalInbox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSyncingMessages, setIsSyncingMessages] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('All Messages');
-  const [selectedMessageId, setSelectedMessageId] = useState<string>('gm-1-1');
+  const [selectedMessageId, setSelectedMessageId] = useState<string>('');
   const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
@@ -110,10 +110,7 @@ export const UniversalInbox: React.FC = () => {
     } catch (e) {
       console.warn('Failed to parse saved channels:', e);
     }
-    return [
-      { id: '1', provider: 'Gmail', accountName: 'Arshid Wani (Gmail)', email: 'arsh.wani@gmail.com', status: 'connected', connectedAt: 'Active' },
-      { id: '2', provider: 'iCloud', accountName: 'iCloud Mail', email: 'arshid@icloud.com', status: 'connected', connectedAt: 'Active' }
-    ];
+    return [];
   });
 
   const [connectingProvider, setConnectingProvider] = useState<string | null>(null);
@@ -150,11 +147,11 @@ export const UniversalInbox: React.FC = () => {
         const token = decodeURIComponent(match[1]);
         storeGoogleToken(token);
         toast.success('Google OAuth connected! Syncing live Gmail inbox...');
-        // Clean URL fragment while preserving hash routing
         if (window.location.hash.includes('#/')) {
           const cleanHash = window.location.hash.split('&')[0].split('#access_token')[0];
           window.history.replaceState(null, '', window.location.pathname + cleanHash);
         }
+        syncMessages();
       }
     }
   }, []);
@@ -168,241 +165,7 @@ export const UniversalInbox: React.FC = () => {
     }
   }, [connectedAccounts]);
 
-  // Helper to generate realistic incoming stream for connected accounts matching user's actual emails
-  const generateAccountMessages = (acc: ConnectedAccount): Message[] => {
-    const emailStr = acc.email || 'arsh.wani@gmail.com';
-    const p = acc.provider;
-
-    if (p === 'Gmail') {
-      return [
-        { 
-          id: `gm-1-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'brpl.ecare',
-          senderEmail: 'brpl.ecare@bsesdelhi.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Payment Confirmation for CA No.-153700769', 
-          preview: 'Dear Customer, We have received a sum of INR 4790.00 towards payment for your electricity account CA No.-153700769.', 
-          time: 'Aug 5', 
-          exactTime: 'Aug 5, 2026 at 14:02 PM',
-          priority: 'ACTION', 
-          category: 'Bills & Receipts', 
-          read: false, 
-          starred: false,
-          hasAttachment: true,
-          attachmentName: 'Electricity_Receipt_CA153700769.pdf',
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 98,
-          extractedEntities: [
-            { label: 'Amount Paid', value: 'INR 4,790.00' },
-            { label: 'CA Account Number', value: '153700769' },
-            { label: 'Payment Gateway', value: 'BSES Delhi Direct' }
-          ],
-          contextMemory: {
-            relatedCount: 14,
-            lastPayment: 'INR 4790 on Aug 5',
-            openTasks: ['Verify monthly utility ledger']
-          }
-        },
-        { 
-          id: `gm-2-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'Jaypee Helpdesk 2', 
-          senderEmail: 'fmg.helpdesk@jaypeegroup.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Main Power Restore - Dear Resident', 
-          preview: 'Main Power Restore Now. Regards FMG Facility Management Team.', 
-          time: 'Aug 4', 
-          exactTime: 'Aug 4, 2026 at 18:30 PM',
-          priority: 'FYI', 
-          category: 'Personal Mail', 
-          read: true, 
-          starred: false,
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 94,
-          extractedEntities: [
-            { label: 'Facility', value: 'FMG Resident Operations' },
-            { label: 'Status', value: 'Main Power Restored' }
-          ]
-        },
-        { 
-          id: `gm-3-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'credit_cards', 
-          senderEmail: 'creditcard.service@icicibank.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Payment received on your ICICI Bank Credit Card', 
-          preview: 'Dear Customer, Aug 03, 2026 Greetings from ICICI Bank! We have received payment toward your credit card statement.', 
-          time: 'Aug 3', 
-          exactTime: 'Aug 3, 2026 at 11:15 AM',
-          priority: 'FYI', 
-          category: 'Bills & Receipts', 
-          read: true, 
-          starred: false,
-          hasAttachment: true,
-          attachmentName: 'ICICI_Statement_Aug2026.pdf',
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 99,
-          extractedEntities: [
-            { label: 'Bank', value: 'ICICI Bank' },
-            { label: 'Type', value: 'Credit Card Payment' }
-          ]
-        },
-        { 
-          id: `gm-4-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'creditcard.alerts@indusind.com', 
-          senderEmail: 'creditcard.alerts@indusind.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Payment Confirmation on your IndusInd Bank Credit Card', 
-          preview: 'Thank you for your Payment of INR 20369.00 towards your IndusInd Bank Credit Card. Transaction reference verified.', 
-          time: 'Aug 1', 
-          exactTime: 'Aug 1, 2026 at 09:45 AM',
-          priority: 'ACTION', 
-          category: 'Bills & Receipts', 
-          read: false, 
-          starred: true,
-          hasAttachment: true,
-          attachmentName: 'IndusInd_Receipt_20369.pdf',
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 97,
-          extractedEntities: [
-            { label: 'Amount', value: 'INR 20,369.00' },
-            { label: 'Bank', value: 'IndusInd Bank' }
-          ]
-        },
-        { 
-          id: `gm-5-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'HDFC Bank InstaAlerts', 
-          senderEmail: 'instaalerts@hdfcbank.net',
-          recipient: `To: ${emailStr}`,
-          subject: '! You have done a UPI txn. Check details!', 
-          preview: 'Dear Customer, Greetings from HDFC Bank! We are sharing this alert to confirm your recent UPI transfer.', 
-          time: 'Jul 18', 
-          exactTime: 'Jul 18, 2026 at 16:22 PM',
-          priority: 'URGENT', 
-          category: 'Needs Attention', 
-          read: false, 
-          starred: true,
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 99,
-          extractedEntities: [
-            { label: 'Txn Type', value: 'UPI Debit Alert' },
-            { label: 'Bank', value: 'HDFC Bank' }
-          ]
-        },
-        { 
-          id: `gm-6-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'Zerodha', 
-          senderEmail: 'reports@zerodha.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Coin by Zerodha - Redemption report - 14-07-2026', 
-          preview: 'Hi Arshid (XX6459), Here are your latest mutual fund updates, NAV valuations, and portfolio redemption reports.', 
-          time: 'Jul 14', 
-          exactTime: 'Jul 14, 2026 at 20:05 PM',
-          priority: 'FYI', 
-          category: 'Personal Mail', 
-          read: true, 
-          starred: false,
-          hasAttachment: true,
-          attachmentName: 'Zerodha_Coin_Redemption_Report.pdf',
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 96,
-          extractedEntities: [
-            { label: 'Account', value: 'XX6459' },
-            { label: 'Product', value: 'Coin Mutual Funds' }
-          ]
-        },
-        { 
-          id: `gm-7-${acc.id}`, 
-          source: 'Gmail', 
-          sender: 'RegisterKaro 20', 
-          senderEmail: 'compliance@registerkaro.in',
-          recipient: `To: ${emailStr}`,
-          subject: '(#N/A) Your Service: Private Limited Company', 
-          preview: 'Action required: complete your pending compliance filings and board resolutions for Private Limited Company.', 
-          time: 'Jul 14', 
-          exactTime: 'Jul 14, 2026 at 15:40 PM',
-          priority: 'ACTION', 
-          category: 'Needs Attention', 
-          read: false, 
-          starred: false,
-          accountBadge: 'Personal Gmail',
-          confidenceScore: 95,
-          extractedEntities: [
-            { label: 'Service', value: 'Private Limited Company' },
-            { label: 'Action Needed', value: 'Board Resolution Filing' }
-          ]
-        }
-      ];
-    }
-    if (p === 'Outlook') {
-      return [
-        { 
-          id: `ol-1-${acc.id}`, 
-          source: 'Outlook', 
-          sender: 'Microsoft 365 Team', 
-          senderEmail: 'no-reply@microsoft.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'Welcome to Outlook & Microsoft 365 Sync', 
-          preview: `Outlook mail (${emailStr}), contacts, and calendar commitments are now synchronized with CHATR Command Center.`, 
-          time: '15m ago', 
-          exactTime: 'Today at 13:30 PM',
-          priority: 'ACTION', 
-          category: 'Professional Mail', 
-          read: false, 
-          starred: true,
-          accountBadge: 'Work Outlook',
-          confidenceScore: 97
-        }
-      ];
-    }
-    if (p === 'LinkedIn') {
-      return [
-        { 
-          id: `li-1-${acc.id}`, 
-          source: 'LinkedIn', 
-          sender: 'Sarah Jenkins (Talent Partner)', 
-          senderEmail: 'messages-noreply@linkedin.com',
-          recipient: `To: ${emailStr}`,
-          subject: 'InMail: Senior AI Systems Architect Opportunity', 
-          preview: 'Hi Arshid, I was impressed by your work on CHATR OS. We are looking for an AI Engineering Director...', 
-          time: '30m ago', 
-          exactTime: 'Today at 13:15 PM',
-          priority: 'ACTION', 
-          category: 'Professional Networks', 
-          read: false, 
-          starred: true,
-          accountBadge: 'LinkedIn',
-          confidenceScore: 96
-        }
-      ];
-    }
-
-    return [
-      { 
-        id: `gen-1-${acc.id}`, 
-        source: (sourceConfig[p as MessageSource] ? p : 'Gmail') as MessageSource, 
-        sender: `${p} Sync Engine`, 
-        senderEmail: `sync@${p.toLowerCase()}.com`,
-        recipient: `To: ${emailStr}`,
-        subject: `${p} Connected: ${emailStr}`, 
-        preview: `All messages, notifications, and updates from ${p} (${emailStr}) are synchronized in real-time.`, 
-        time: 'Just now', 
-        exactTime: 'Today at 13:50 PM',
-        priority: 'ACTION', 
-        category: 'Notifications', 
-        read: false, 
-        starred: true,
-        accountBadge: `${p} Account`,
-        confidenceScore: 99
-      }
-    ];
-  };
-
-  // Fetch real messages from connected providers (Priority: Live Google REST API)
+  // Fetch REAL messages from connected providers (Priority: Live Google REST API)
   const syncMessages = useCallback(async () => {
     setIsSyncingMessages(true);
     try {
@@ -439,31 +202,18 @@ export const UniversalInbox: React.FC = () => {
           }
         } catch (err: any) {
           console.warn('[UniversalInbox] Gmail REST API sync notice:', err);
-          toast.error('Gmail API: ' + err.message);
+          toast.error('Gmail API notice: ' + err.message);
         }
       }
 
-      // 2. Fallback to active streams
-      const allUnifiedMsgs: Message[] = [];
-      connectedAccounts.forEach(acc => {
-        const accMsgs = generateAccountMessages(acc);
-        accMsgs.forEach(m => {
-          if (!allUnifiedMsgs.some(existing => existing.id === m.id)) {
-            allUnifiedMsgs.push(m);
-          }
-        });
-      });
-      
-      setMessages(allUnifiedMsgs);
-      if (allUnifiedMsgs.length > 0 && !selectedMessageId) {
-        setSelectedMessageId(allUnifiedMsgs[0].id);
-      }
+      // No mock fallback! Real empty array when no token / real messages exist
+      setMessages([]);
     } catch (err: any) {
       toast.error('Failed to sync messages: ' + err.message);
     } finally {
       setIsSyncingMessages(false);
     }
-  }, [selectedMessageId, connectedAccounts]);
+  }, [selectedMessageId]);
 
   // Initial sync & periodic background polling (every 15s)
   useEffect(() => {
@@ -474,7 +224,7 @@ export const UniversalInbox: React.FC = () => {
     return () => clearInterval(interval);
   }, [syncMessages]);
 
-  const selectedMessage = messages.find(m => m.id === selectedMessageId) || messages[0];
+  const selectedMessage = messages.find(m => m.id === selectedMessageId) || (messages.length > 0 ? messages[0] : null);
 
   // Save manual OAuth Access Token
   const handleSaveGoogleToken = (token: string) => {
@@ -486,85 +236,6 @@ export const UniversalInbox: React.FC = () => {
     setIsTokenModalOpen(false);
     toast.success('Google OAuth Token connected! Syncing live Gmail inbox...');
     syncMessages();
-  };
-
-  // Google OAuth 1-Click Redirect with clean origin URL (no hash fragment to comply with Google policy)
-  const handleGoogleOAuthRedirect = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1084224098929-798m23t0pfs8h87019j69p55h3a1q886.apps.googleusercontent.com';
-    // Clean origin URL without # hash fragment
-    const redirectUri = window.location.origin;
-    const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/gmail.readonly');
-    const state = 'chatr_gmail_sync';
-    
-    sessionStorage.setItem('oauth_state', state);
-    sessionStorage.setItem('oauth_provider', 'google');
-
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}&state=${state}&include_granted_scopes=true`;
-
-    window.location.href = authUrl;
-  };
-
-  // Initiate Connection Action
-  const initiateConnect = async (providerName: string) => {
-    setConnectingProvider(providerName);
-    
-    if (providerName === 'Gmail') {
-      setIsTokenModalOpen(true);
-      return;
-    }
-
-    if (['WhatsApp', 'Signal', 'Telegram'].includes(providerName)) {
-      setIsQrModalOpen(true);
-      return;
-    }
-
-    if (providerName === 'IMAP / POP3') {
-      setIsImapModalOpen(true);
-      return;
-    }
-
-    const providerConfigs: Record<string, { authUrl: string; defaultDomain: string }> = {
-      'Gmail': { authUrl: 'https://mail.google.com/', defaultDomain: 'gmail.com' },
-      'Outlook': { authUrl: 'https://outlook.live.com/', defaultDomain: 'outlook.com' },
-      'Yahoo': { authUrl: 'https://mail.yahoo.com/', defaultDomain: 'yahoo.com' },
-      'iCloud': { authUrl: 'https://www.icloud.com/mail', defaultDomain: 'icloud.com' },
-      'ProtonMail': { authUrl: 'https://mail.proton.me/', defaultDomain: 'proton.me' },
-      'Slack': { authUrl: 'https://app.slack.com/', defaultDomain: 'slack.com' },
-      'Teams': { authUrl: 'https://teams.microsoft.com/', defaultDomain: 'teams.microsoft.com' },
-      'LinkedIn': { authUrl: 'https://www.linkedin.com/feed/', defaultDomain: 'linkedin.com' },
-      'X (Twitter)': { authUrl: 'https://x.com/', defaultDomain: 'x.com' },
-      'Facebook': { authUrl: 'https://www.facebook.com/', defaultDomain: 'facebook.com' },
-      'Instagram': { authUrl: 'https://www.instagram.com/', defaultDomain: 'instagram.com' },
-      'Discord': { authUrl: 'https://discord.com/channels/@me', defaultDomain: 'discord.com' },
-      'GitHub': { authUrl: 'https://github.com/', defaultDomain: 'github.com' }
-    };
-
-    const cfg = providerConfigs[providerName] || { authUrl: `https://${providerName.toLowerCase().replace(/\s+/g, '')}.com`, defaultDomain: `${providerName.toLowerCase().replace(/\s+/g, '')}.com` };
-
-    toast.info(`Opening ${providerName}...`);
-
-    let runtimeSuccess = false;
-    try {
-      const connectorRuntime = kernel.resolve<IConnectorRuntime>('IConnectorRuntime');
-      const connectorIdMap: Record<string, string> = {
-        'Gmail': 'google', 'Outlook': 'azure', 'GitHub': 'github',
-        'Slack': 'slack', 'LinkedIn': 'linkedin_oidc', 'Discord': 'discord'
-      };
-      const connectorId = connectorIdMap[providerName] || providerName.toLowerCase();
-      if (connectorRuntime && connectorRuntime.getConnector(connectorId)) {
-        await connectorRuntime.authorize(connectorId);
-        runtimeSuccess = true;
-      }
-    } catch (e) {
-      console.log(`[UniversalInbox] Native connector notice for ${providerName}:`, e);
-    }
-
-    if (!runtimeSuccess) {
-      window.open(cfg.authUrl, '_blank', 'noopener,noreferrer');
-    }
-
-    const userEmail = emailInput.trim() || `arsh.wani@${cfg.defaultDomain}`;
-    completeConnection(providerName, userEmail);
   };
 
   // Complete Connection and add to persistent state
@@ -584,7 +255,11 @@ export const UniversalInbox: React.FC = () => {
       return [...prev, newAcc];
     });
 
-    toast.success(`Connected ${providerName} (${email}) successfully!`);
+    if (providerName === 'Gmail') {
+      setIsTokenModalOpen(true);
+    } else {
+      toast.success(`Connected ${providerName} (${email}) successfully!`);
+    }
   };
 
   // Bulk Selection Logic
@@ -744,14 +419,14 @@ export const UniversalInbox: React.FC = () => {
           />
         </div>
 
-        {/* Add Account Button (Positioned safely above bottom dock) */}
+        {/* Add Account Button */}
         <div className="p-3 border-t border-white/10 bg-zinc-900/90 pb-8">
           <button 
-            onClick={() => setIsAddAccountOpen(true)}
+            onClick={() => setIsTokenModalOpen(true)}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition-all shadow-lg shadow-violet-900/30 active:scale-95 cursor-pointer border border-violet-400/20"
           >
-            <Plus size={16} />
-            <span>Add Account ({connectedAccounts.length})</span>
+            <Key size={16} />
+            <span>Connect Live Gmail Token</span>
           </button>
         </div>
       </div>
@@ -828,14 +503,20 @@ export const UniversalInbox: React.FC = () => {
         {/* Message List */}
         <div className="flex-1 overflow-y-auto">
           {filteredMessages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8">
-              <Inbox size={48} className="mb-4 opacity-20 text-zinc-600" />
-              <p className="text-sm font-medium">No messages found in this category.</p>
+            <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8 text-center">
+              <div className="w-16 h-16 rounded-3xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-4 shadow-xl">
+                <Mail size={32} />
+              </div>
+              <h3 className="text-base font-bold text-white mb-1">No Real Messages Found</h3>
+              <p className="text-xs text-zinc-400 max-w-sm mb-6 leading-relaxed">
+                Connect your real Google OAuth Access Token below to stream your live Gmail inbox directly into CHATR OS.
+              </p>
+              
               <button 
                 onClick={() => setIsTokenModalOpen(true)} 
-                className="mt-3 text-xs text-violet-400 hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg shadow-violet-900/30 cursor-pointer flex items-center gap-2"
               >
-                <Key size={14} /> Connect Real Live Gmail API
+                <Key size={16} /> Connect Real Live Gmail API
               </button>
             </div>
           ) : (
@@ -1040,53 +721,12 @@ export const UniversalInbox: React.FC = () => {
               <p className="text-xs text-zinc-300 leading-relaxed">
                 This message regarding <strong className="text-white">{selectedMessage.subject}</strong> is marked as <strong className="text-amber-300">{selectedMessage.priority}</strong>. The sender is requesting prompt verification and account reconciliation.
               </p>
-
-              {/* Extracted Entities Grid */}
-              {selectedMessage.extractedEntities && selectedMessage.extractedEntities.length > 0 && (
-                <div className="pt-2 border-t border-white/10">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-2">Extracted Entities & Metadata</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {selectedMessage.extractedEntities.map((ent, idx) => (
-                      <div key={idx} className="bg-black/50 p-2 rounded-lg border border-white/5">
-                        <span className="text-[10px] text-zinc-400 block">{ent.label}</span>
-                        <span className="text-xs font-semibold text-white font-mono truncate block">{ent.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Context Memory Card */}
-            <div className="bg-black/40 p-4 rounded-2xl border border-white/10 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-white">
-                <Database size={14} className="text-indigo-400" />
-                <span>Context Memory & Interactions</span>
-              </div>
-              <div className="text-xs text-zinc-400 space-y-1 font-mono">
-                <div>• 14 previous transactions recorded with sender</div>
-                <div>• Last ledger payment: {selectedMessage.contextMemory?.lastPayment || 'INR 4790 on Aug 5'}</div>
-                <div>• Open tasks: {selectedMessage.contextMemory?.openTasks?.[0] || 'Reconcile ledger'}</div>
-              </div>
-            </div>
-
-            {/* Smart Reply Suggestions */}
-            <div className="space-y-2 pt-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Suggested Smart Actions</span>
-              <div className="flex flex-wrap gap-2">
-                <button onClick={() => toast.success('Generated response: Confirmed receipt.')} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-xs text-zinc-200 rounded-xl border border-white/10 transition-all cursor-pointer">
-                  "Confirmed receipt, thank you!"
-                </button>
-                <button onClick={() => toast.success('Task created from thread.')} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-xs text-zinc-200 rounded-xl border border-white/10 transition-all cursor-pointer">
-                  "Add to finance tasks"
-                </button>
-              </div>
             </div>
 
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8">
-            <Inbox size={48} className="mb-4 opacity-20" />
+          <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8 text-center">
+            <Inbox size={48} className="mb-4 opacity-20 text-zinc-600" />
             <p className="text-sm font-medium">Select a message to view details</p>
           </div>
         )}
@@ -1110,24 +750,12 @@ export const UniversalInbox: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {/* Option A: 1-Click Authorize with Google (Clean Redirect URI without hash fragment) */}
-              <div className="bg-emerald-950/30 border border-emerald-500/30 p-4 rounded-2xl space-y-2">
-                <span className="text-xs font-bold text-emerald-300 block">Option 1: 1-Click Google Authorization</span>
-                <p className="text-xs text-zinc-300 leading-relaxed">
-                  Authorizes CHATR to read your Gmail Inbox directly via Google OAuth 2.0.
-                </p>
-                <button 
-                  onClick={handleGoogleOAuthRedirect}
-                  className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-bold rounded-xl text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Mail size={16} />
-                  <span>Authorize Google Account in 1-Click</span>
-                </button>
-              </div>
-
-              {/* Option B: Manual Access Token Input */}
+              {/* Enter Google Access Token */}
               <div className="bg-black/40 border border-white/10 p-4 rounded-2xl space-y-3">
-                <span className="text-xs font-bold text-white block">Option 2: Enter Google Access Token</span>
+                <span className="text-xs font-bold text-white block">Enter Google Access Token (`ya29...`)</span>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Paste your Google OAuth Access Token to sync your 100% real live Gmail Inbox directly via official Google REST API (`gmail.googleapis.com`).
+                </p>
                 <input 
                   type="text"
                   placeholder="Paste access token (e.g. ya29.a0...)"
@@ -1137,19 +765,19 @@ export const UniversalInbox: React.FC = () => {
                 />
                 <button 
                   onClick={() => handleSaveGoogleToken(googleTokenInput)}
-                  className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md"
+                  className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md"
                 >
-                  Save & Sync Live Gmail Inbox
+                  Save & Sync Real Live Gmail Inbox
                 </button>
               </div>
 
               {isGoogleAuthenticated() && (
                 <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-xs text-emerald-400 font-medium">✓ Active Google Token Found in Storage</span>
+                  <span className="text-xs text-emerald-400 font-medium">✓ Active Google Token Connected</span>
                   <button 
                     onClick={() => {
                       clearGoogleToken();
-                      toast.info('Google token removed.');
+                      toast.info('Google token disconnected.');
                       syncMessages();
                     }}
                     className="text-xs text-red-400 hover:underline cursor-pointer"
@@ -1199,12 +827,6 @@ export const UniversalInbox: React.FC = () => {
                 subtitle="Automatically extract invoices and send receipt notifications" 
                 onClick={() => { setIsCommandPaletteOpen(false); setIsWorkflowModalOpen(true); }}
               />
-              <CommandItem 
-                icon={<Phone size={16} className="text-pink-400" />} 
-                title="/call — Initiate VoIP Call" 
-                subtitle="Place instant web voice call" 
-                onClick={() => { setIsCommandPaletteOpen(false); toast.info('Starting VoIP call...'); }}
-              />
             </div>
           </div>
         </div>
@@ -1227,83 +849,24 @@ export const UniversalInbox: React.FC = () => {
             <div className="space-y-4 text-xs">
               <div className="bg-black/50 p-3 rounded-xl border border-white/10 space-y-1">
                 <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">TRIGGER</span>
-                <p className="text-white font-medium">When new email arrives from <span className="text-violet-300">{workflowMessage?.sender || 'brpl.ecare'}</span></p>
+                <p className="text-white font-medium">When new email arrives from <span className="text-violet-300">{workflowMessage?.sender || 'Sender'}</span></p>
               </div>
 
               <div className="bg-black/50 p-3 rounded-xl border border-white/10 space-y-1">
-                <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">AUTOMATED ACTION 1</span>
-                <p className="text-white font-medium">Extract amount & CA account number into Finance Ledger</p>
-              </div>
-
-              <div className="bg-black/50 p-3 rounded-xl border border-white/10 space-y-1">
-                <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">AUTOMATED ACTION 2</span>
-                <p className="text-white font-medium">Save PDF receipt attachment directly to Cloud Storage</p>
+                <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">AUTOMATED ACTION</span>
+                <p className="text-white font-medium">Save attachment directly to Cloud Storage & Notify Finance</p>
               </div>
             </div>
 
             <button 
               onClick={() => {
                 setIsWorkflowModalOpen(false);
-                toast.success('Workflow activated! Invoices from this sender will now be processed automatically.');
+                toast.success('Workflow activated!');
               }}
               className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-bold rounded-xl text-xs transition-all shadow-lg shadow-amber-900/30 cursor-pointer"
             >
               Activate Automated Workflow
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Modal 4: Add Account Dialog ─────────────────────────────────── */}
-      {isAddAccountOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="w-[520px] bg-zinc-900 border border-white/15 rounded-3xl shadow-2xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div>
-                <h2 className="font-bold text-base text-white">Connect Communication Channel</h2>
-                <p className="text-xs text-zinc-400">Bring all your email and work chat into CHATR OS.</p>
-              </div>
-              <button onClick={() => setIsAddAccountOpen(false)} className="p-1 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white cursor-pointer">
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3 text-zinc-400" size={16} />
-                <input 
-                  type="email"
-                  placeholder="Enter your email address (e.g. john@gmail.com)"
-                  value={emailInput}
-                  onChange={e => {
-                    setEmailInput(e.target.value);
-                    const domain = e.target.value.split('@')[1]?.toLowerCase() || '';
-                    if (domain.includes('gmail')) setDetectedProvider('Gmail');
-                    else if (domain.includes('outlook')) setDetectedProvider('Outlook');
-                    else setDetectedProvider(null);
-                  }}
-                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 transition-all font-medium"
-                />
-              </div>
-
-              {detectedProvider && (
-                <div className="p-3 bg-violet-600/15 border border-violet-500/30 rounded-xl flex items-center justify-between text-xs text-violet-200">
-                  <span>Detected Provider: <strong>{detectedProvider}</strong></span>
-                  <button onClick={() => initiateConnect(detectedProvider)} className="px-3 py-1 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-lg cursor-pointer">
-                    Connect {detectedProvider}
-                  </button>
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-2 pt-2">
-                <ProviderButton name="Gmail" icon={<Mail />} onClick={() => initiateConnect('Gmail')} />
-                <ProviderButton name="Outlook" icon={<Mail />} onClick={() => initiateConnect('Outlook')} />
-                <ProviderButton name="iCloud" icon={<Globe />} onClick={() => initiateConnect('iCloud')} />
-                <ProviderButton name="Slack" icon={<Slack />} onClick={() => initiateConnect('Slack')} />
-                <ProviderButton name="LinkedIn" icon={<Linkedin />} onClick={() => initiateConnect('LinkedIn')} />
-                <ProviderButton name="X (Twitter)" icon={<Share2 />} onClick={() => initiateConnect('X (Twitter)')} />
-              </div>
-            </div>
           </div>
         </div>
       )}
@@ -1358,13 +921,6 @@ const CommandItem: React.FC<{ icon: React.ReactNode; title: string; subtitle: st
       <p className="text-[11px] text-zinc-400">{subtitle}</p>
     </div>
   </div>
-);
-
-const ProviderButton: React.FC<{ name: string; icon: React.ReactNode; onClick: () => void }> = ({ name, icon, onClick }) => (
-  <button onClick={onClick} className="p-3 bg-black/40 hover:bg-white/10 border border-white/10 rounded-xl flex flex-col items-center gap-2 text-xs font-semibold text-white transition-all cursor-pointer">
-    {icon}
-    <span>{name}</span>
-  </button>
 );
 
 export default UniversalInbox;
