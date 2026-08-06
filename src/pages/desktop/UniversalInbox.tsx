@@ -17,7 +17,7 @@ import { IConnectorRuntime } from '@/core/contracts/connector/IConnectorRuntime'
 import { fetchGmailMessages, isGoogleAuthenticated, storeGoogleToken, clearGoogleToken, GmailMessage } from '@/core/connector/providers/GmailService';
 import { fetchWhatsAppMessages } from '@/core/connector/providers/WhatsAppService';
 import { DirectoryMarketplaceModal } from '@/components/desktop/DirectoryMarketplaceModal';
-import { invokeConnectorHub } from '@/core/connector/SupabaseConnectorHub';
+import { invokeConnectorHub, startConnectorOAuth } from '@/core/connector/SupabaseConnectorHub';
 import { toast } from 'sonner';
 
 // Types
@@ -669,18 +669,20 @@ export const UniversalInbox: React.FC = () => {
                 Connect your Google OAuth Access Token (`ya29...`) or browse the <strong>Directory Marketplace</strong> to connect external tools (Gmail, Outlook, LinkedIn, Slack, Drive).
               </p>
               
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
                 <button 
-                  onClick={() => setIsTokenModalOpen(true)}
-                  className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-bold rounded-xl text-xs transition-all shadow-lg cursor-pointer flex items-center gap-2"
+                  onClick={() => startConnectorOAuth('gmail')}
+                  className="px-6 py-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 hover:brightness-110 text-white font-extrabold rounded-xl text-xs transition-all shadow-xl shadow-violet-950/50 cursor-pointer flex items-center gap-2 border border-violet-400/30 active:scale-95"
                 >
-                  <Key size={16} /> 🔑 Connect Live Gmail Token
+                  <Sparkles size={16} className="text-amber-300 animate-pulse" /> 
+                  <span>⚡ 1-Click Connect Gmail (Google OAuth)</span>
                 </button>
                 <button 
                   onClick={() => setIsDirectoryModalOpen(true)} 
-                  className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-2"
                 >
-                  <Grid size={14} /> Directory Marketplace (100+)
+                  <Grid size={14} className="text-teal-400" /> 
+                  <span>Directory Marketplace (100+)</span>
                 </button>
               </div>
             </div>
