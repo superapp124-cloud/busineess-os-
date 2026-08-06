@@ -191,6 +191,24 @@ export const UniversalInbox: React.FC = () => {
         }];
       });
 
+      // ⚡ IMMEDIATE INITIAL SYNC TRIGGER!
+      (async () => {
+        try {
+          const { data: conns } = await supabase.from('connector_connections' as any).select('*').eq('connector_id', connectorId);
+          if (conns && conns.length > 0) {
+            for (const c of conns) {
+              toast.info(`Syncing initial messages from ${providerName}...`);
+              const res = await invokeConnectorHub('sync', { connection_id: c.id });
+              console.log('[InitialSync] Result:', res);
+            }
+          }
+        } catch (e: any) {
+          console.warn('[InitialSync] notice:', e);
+        } finally {
+          syncMessages();
+        }
+      })();
+
       // Clean up URL parameter
       if (window.location.hash.includes('?')) {
         const cleanRoute = window.location.hash.split('?')[0];
@@ -227,13 +245,15 @@ export const UniversalInbox: React.FC = () => {
     try {
       const liveMsgs: Message[] = [];
 
-      // 1. Trigger Edge Function sync for all active connections in connector_connections table
+      // 1. Trigger Edge Function sync for all connections in connector_connections table
       try {
-        const { data: activeConns } = await supabase.from('connector_connections' as any).select('*').eq('status', 'connected');
+        const { data: activeConns } = await supabase.from('connector_connections' as any).select('*');
         if (activeConns && Array.isArray(activeConns) && activeConns.length > 0) {
           for (const conn of activeConns) {
             try {
-              await invokeConnectorHub('sync', { connection_id: conn.id });
+              console.log('[UniversalInbox] Triggering connector-hub sync for connection:', conn.id, conn.connector_id);
+              const syncRes = await invokeConnectorHub('sync', { connection_id: conn.id });
+              console.log('[UniversalInbox] sync action response:', syncRes);
             } catch (syncErr) {
               console.warn('[UniversalInbox] connector-hub sync notice:', syncErr);
             }
@@ -247,11 +267,12 @@ export const UniversalInbox: React.FC = () => {
       try {
         const { data: records } = await supabase.from('connector_records' as any).select('*').order('updated_at', { ascending: false }).limit(50);
         if (records && Array.isArray(records) && records.length > 0) {
+          console.log('[UniversalInbox] Fetched connector_records count:', records.length);
           liveMsgs.push(...records.map((r: any) => ({
             id: r.external_id || r.id || String(Date.now()),
             source: (r.connector_id === 'gmail' ? 'Gmail' : r.connector_id === 'outlook' ? 'Outlook' : 'Gmail') as MessageSource,
             sender: r.title || 'Connected Message',
-            senderEmail: r.author || 'connector@supabase.co',
+            senderEmail: r.author || (r.metadata?.from?.emailAddress?.address) || 'gmail@google.com',
             recipient: 'To: me',
             subject: r.title || '(No Subject)',
             preview: r.body || r.title || '',
