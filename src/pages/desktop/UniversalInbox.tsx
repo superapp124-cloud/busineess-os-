@@ -290,33 +290,39 @@ export const UniversalInbox: React.FC = () => {
         // Table not present or unauthenticated
       }
 
-      // 3. Fetch real Gmail messages via Google REST API if token is set
-      if (isGoogleAuthenticated()) {
-        try {
-          const gmailMsgs = await fetchGmailMessages(25);
-          if (gmailMsgs && gmailMsgs.length > 0) {
-            liveMsgs.push(...gmailMsgs.map(gm => ({
-              id: gm.id,
-              source: 'Gmail' as const,
-              sender: gm.sender,
-              senderEmail: gm.senderEmail,
-              recipient: 'To: me',
-              subject: gm.subject,
-              preview: gm.preview,
-              time: gm.time,
-              exactTime: gm.time,
-              priority: (gm.subject.toLowerCase().includes('urgent') || gm.subject.toLowerCase().includes('alert') ? 'URGENT' : gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('action') ? 'ACTION' : 'FYI') as Priority,
-              category: (gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('bill') ? 'Bills & Receipts' : 'Personal Mail') as Category,
-              read: gm.isRead,
-              starred: gm.isStarred,
-              hasAttachment: gm.subject.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('attached'),
-              accountBadge: 'Live Gmail API',
-              confidenceScore: 100
-            })));
-          }
-        } catch (err: any) {
-          console.warn('[UniversalInbox] Gmail REST API sync notice:', err);
+      // 3. Fetch real Gmail messages via direct Google REST API (reads Vault & local storage)
+      try {
+        const gmailMsgs = await fetchGmailMessages(25);
+        if (gmailMsgs && gmailMsgs.length > 0) {
+          liveMsgs.push(...gmailMsgs.map(gm => ({
+            id: gm.id,
+            source: 'Gmail' as const,
+            sender: gm.sender,
+            senderEmail: gm.senderEmail,
+            recipient: 'To: me',
+            subject: gm.subject,
+            preview: gm.preview,
+            time: gm.time,
+            exactTime: gm.time,
+            priority: (gm.subject.toLowerCase().includes('urgent') || gm.subject.toLowerCase().includes('alert') ? 'URGENT' : gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('action') ? 'ACTION' : 'FYI') as Priority,
+            category: (gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('bill') ? 'Bills & Receipts' : 'Personal Mail') as Category,
+            read: gm.isRead,
+            starred: gm.isStarred,
+            hasAttachment: gm.subject.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('attached'),
+            accountBadge: 'Live Gmail API',
+            confidenceScore: 100
+          })));
         }
+      } catch (err: any) {
+        console.warn('[UniversalInbox] Gmail REST API sync notice:', err);
+      }
+
+      // Deduplicate messages by ID
+      const uniqueMsgs = Array.from(new Map(liveMsgs.map(m => [m.id, m])).values());
+
+      setMessages(uniqueMsgs);
+      if (uniqueMsgs.length > 0 && !selectedMessageId) {
+        setSelectedMessageId(uniqueMsgs[0].id);
       }
 
       // 3. Fetch real messages from Supabase emails table if present

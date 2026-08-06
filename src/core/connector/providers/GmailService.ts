@@ -22,9 +22,19 @@ export interface GmailMessage {
 
 const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1';
 
+export const GOOGLE_CLIENT_ID = '839345688435-fjn24m8n7fecdus5knelebg1cnjiqt2n.apps.googleusercontent.com';
+
+export function launchGoogleOAuthFlow(): void {
+  const redirectUri = window.location.origin + '/#/oauth/callback';
+  const scope = encodeURIComponent('https://www.googleapis.com/auth/gmail.readonly');
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}`;
+  window.open(authUrl, '_blank', 'width=600,height=700');
+}
+
+import { supabase } from '@/integrations/supabase/client';
+
 /**
- * Get the stored Google access token from sessionStorage or localStorage.
- * OAuthCallback stores it under 'chatr_token_google'.
+ * Get stored token synchronously or from Supabase Vault asynchronously.
  */
 function getGoogleToken(): string | null {
   return (
@@ -32,6 +42,28 @@ function getGoogleToken(): string | null {
     localStorage.getItem('chatr_token_google') ||
     null
   );
+}
+
+export async function getGoogleTokenAsync(): Promise<string | null> {
+  const local = getGoogleToken();
+  if (local) return local;
+
+  try {
+    const { data } = await supabase
+      .from('connector_credentials' as any)
+      .select('access_token')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (data?.access_token) {
+      storeGoogleToken(data.access_token);
+      return data.access_token;
+    }
+  } catch (e) {
+    console.warn('[GmailService] connector_credentials lookup:', e);
+  }
+  return null;
 }
 
 /**
@@ -145,9 +177,9 @@ function formatRelativeTime(timestamp: number): string {
  * Returns an empty array if not authenticated.
  */
 export async function fetchGmailMessages(maxResults = 20): Promise<GmailMessage[]> {
-  const token = getGoogleToken();
+  const token = await getGoogleTokenAsync();
   if (!token) {
-    console.log('[GmailService] No Google token found. User not authenticated.');
+    console.log('[GmailService] No Google token found in local storage or Supabase Vault.');
     return [];
   }
 
