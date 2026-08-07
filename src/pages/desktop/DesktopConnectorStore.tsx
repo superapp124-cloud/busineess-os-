@@ -317,154 +317,160 @@ export default function DesktopConnectorStore() {
         </div>
 
         {/* ── Connector Cards Grid ───────────────────────────────────────── */}
-        <div className="space-y-4 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
           {filteredConnectors.map(conn => (
             <div
               key={conn.id}
               className={cn(
-                "group relative bg-zinc-900/70 backdrop-blur-xl border rounded-3xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-violet-500/40 space-y-4 overflow-hidden",
+                "group relative bg-gradient-to-b from-zinc-900/90 via-zinc-900/70 to-black/80 backdrop-blur-2xl border rounded-3xl p-5 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-violet-950/40 hover:-translate-y-1 flex flex-col justify-between overflow-hidden",
                 conn.status === 'connected'
-                  ? "border-emerald-500/30 bg-emerald-950/10"
+                  ? "border-emerald-500/40 hover:border-emerald-400/60"
                   : conn.status === 'error'
-                  ? "border-red-500/30 bg-red-950/10"
-                  : "border-white/10"
+                  ? "border-red-500/40 hover:border-red-400/60"
+                  : "border-white/10 hover:border-violet-500/50"
               )}
             >
-              {/* Card Header: Icon, Name, Badges, Rate Limit */}
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4 min-w-0">
-                  {/* Brand Avatar Icon */}
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-base shadow-lg shrink-0 border border-white/15 relative overflow-hidden group-hover:scale-105 transition-transform"
-                    style={{ backgroundColor: conn.brandColor }}
-                  >
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {conn.iconCode || conn.name.substring(0, 2).toUpperCase()}
-                  </div>
+              {/* Subtle brand color top accent line */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1 opacity-60 group-hover:opacity-100 transition-opacity"
+                style={{ background: `linear-gradient(to right, ${conn.brandColor}, transparent)` }}
+              />
 
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-extrabold text-lg text-white group-hover:text-violet-300 transition-colors">
+              <div className="space-y-4">
+                {/* Card Header: Icon, Title, Badges */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow-xl shrink-0 border border-white/20 relative overflow-hidden group-hover:scale-105 transition-transform"
+                      style={{ backgroundColor: conn.brandColor }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-white/20" />
+                      <span className="relative z-10">{conn.iconCode || conn.name.substring(0, 2).toUpperCase()}</span>
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="font-extrabold text-base text-white group-hover:text-violet-300 transition-colors truncate">
                         {conn.name}
                       </h3>
-                      <BadgePill connector={conn} />
-                      {conn.status === 'connected' && (
-                        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-inner">
-                          <CheckCircle size={12} /> Connected
+                      {conn.rateLimitPerMinute && (
+                        <span className="text-[10px] font-mono text-zinc-500 flex items-center gap-1 mt-0.5">
+                          <Activity size={10} className="text-violet-400" />
+                          <span>{conn.rateLimitPerMinute} req/min</span>
                         </span>
                       )}
                     </div>
-
-                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{conn.summary}</p>
-
-                    {/* Capability Chips */}
-                    <div className="flex items-center gap-1.5 mt-3 flex-wrap">
-                      {conn.capabilities.map((cap, i) => (
-                        <span
-                          key={i}
-                          title={PermissionManager.describe(cap as Capability)}
-                          className="text-[10px] bg-white/5 hover:bg-white/10 text-zinc-300 px-2.5 py-1 rounded-xl border border-white/10 font-mono transition-colors cursor-help flex items-center gap-1"
-                        >
-                          <Check size={10} className="text-emerald-400" />
-                          <span>{PermissionManager.describe(cap as Capability)}</span>
-                        </span>
-                      ))}
-
-                      {conn.roadmap?.v2?.map((cap, i) => (
-                        <span
-                          key={`v2-${i}`}
-                          className="text-[10px] bg-violet-950/40 text-violet-400 px-2.5 py-1 rounded-xl border border-violet-800/40 font-mono flex items-center gap-1 opacity-80"
-                        >
-                          <span>{cap}</span>
-                          <span className="text-[9px] font-bold bg-violet-500/20 text-violet-300 px-1 rounded">v2</span>
-                        </span>
-                      ))}
-                    </div>
                   </div>
+
+                  {conn.status === 'connected' ? (
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 shadow-inner">
+                      <CheckCircle size={11} /> Connected
+                    </span>
+                  ) : (
+                    <BadgePill connector={conn} />
+                  )}
                 </div>
 
-                {/* Rate Limit Tag */}
-                {conn.rateLimitPerMinute && (
-                  <div className="text-[11px] font-mono text-zinc-500 shrink-0 bg-white/5 border border-white/5 px-2.5 py-1 rounded-xl flex items-center gap-1">
-                    <Activity size={11} className="text-violet-400" />
-                    <span>{conn.rateLimitPerMinute}/min</span>
+                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed font-normal">{conn.summary}</p>
+
+                {/* Capability Chips */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-500">Capabilities</span>
+                  <div className="flex items-center gap-1.5 flex-wrap max-h-24 overflow-hidden">
+                    {conn.capabilities.map((cap, i) => (
+                      <span
+                        key={i}
+                        title={PermissionManager.describe(cap as Capability)}
+                        className="text-[10px] bg-white/5 hover:bg-white/10 text-zinc-300 px-2 py-0.5 rounded-lg border border-white/10 font-mono transition-colors cursor-help flex items-center gap-1"
+                      >
+                        <Check size={9} className="text-emerald-400 shrink-0" />
+                        <span className="truncate max-w-[120px]">{PermissionManager.describe(cap as Capability)}</span>
+                      </span>
+                    ))}
+
+                    {conn.roadmap?.v2?.map((cap, i) => (
+                      <span
+                        key={`v2-${i}`}
+                        className="text-[10px] bg-violet-950/40 text-violet-400 px-2 py-0.5 rounded-lg border border-violet-800/40 font-mono flex items-center gap-1 opacity-70"
+                      >
+                        <span className="truncate max-w-[100px]">{cap}</span>
+                        <span className="text-[8px] font-bold bg-violet-500/30 text-violet-200 px-1 rounded">v2</span>
+                      </span>
+                    ))}
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* Status Bar */}
-              <div className={cn(
-                "p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between text-xs border gap-2 backdrop-blur-md",
-                conn.status === 'connected'
-                  ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-300"
-                  : conn.status === 'error'
-                  ? "bg-red-950/30 border-red-500/30 text-red-300"
-                  : conn.status === 'connecting'
-                  ? "bg-amber-950/30 border-amber-500/30 text-amber-300"
-                  : "bg-black/40 border-white/5 text-zinc-400"
-              )}>
-                <div className="flex items-center gap-2.5">
-                  <span className={cn(
-                    "w-2.5 h-2.5 rounded-full shrink-0 shadow-sm",
-                    conn.status === 'connected' ? "bg-emerald-400 shadow-emerald-500/50 animate-pulse"
-                      : conn.status === 'connecting' ? "bg-amber-400 animate-ping"
-                      : conn.status === 'error' ? "bg-red-400"
-                      : "bg-zinc-600"
-                  )} />
-                  <span className="font-semibold text-white">
-                    {conn.status === 'connected'
-                      ? conn.displayName ? `Connected: ${conn.displayName}` : '✓ Authorized & Active'
-                      : conn.status === 'connecting' ? 'Initiating OAuth Authorization…'
-                      : conn.status === 'error' ? 'Authentication error — reconnect account'
-                      : `Connect account to enable ${PermissionManager.describe(conn.capabilities[0])}`}
-                  </span>
-                </div>
+              {/* Card Footer: Status Bar & Actions */}
+              <div className="pt-4 mt-4 border-t border-white/10 space-y-3">
+                <div className={cn(
+                  "p-2.5 rounded-xl flex items-center justify-between text-[11px] border font-mono",
+                  conn.status === 'connected'
+                    ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-300"
+                    : conn.status === 'error'
+                    ? "bg-red-950/40 border-red-500/30 text-red-300"
+                    : conn.status === 'connecting'
+                    ? "bg-amber-950/40 border-amber-500/30 text-amber-300"
+                    : "bg-black/50 border-white/5 text-zinc-500"
+                )}>
+                  <div className="flex items-center gap-2 truncate">
+                    <span className={cn(
+                      "w-2 h-2 rounded-full shrink-0 shadow-sm",
+                      conn.status === 'connected' ? "bg-emerald-400 shadow-emerald-500/50 animate-pulse"
+                        : conn.status === 'connecting' ? "bg-amber-400 animate-ping"
+                        : conn.status === 'error' ? "bg-red-400"
+                        : "bg-zinc-600"
+                    )} />
+                    <span className="truncate font-sans font-semibold">
+                      {conn.status === 'connected'
+                        ? conn.displayName ? conn.displayName : 'Active Stream'
+                        : conn.status === 'connecting' ? 'Authorizing…'
+                        : conn.status === 'error' ? 'Connection Error'
+                        : 'Setup Required'}
+                    </span>
+                  </div>
 
-                <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
                   {conn.lastSyncedAt && (
-                    <span>
-                      Synced {new Date(conn.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <span className="shrink-0 text-[10px] text-zinc-400">
+                      {new Date(conn.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
-                  <span>{conn.capabilities.length} capabilities</span>
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-3 pt-1">
-                {conn.status !== 'connected' ? (
-                  <button
-                    onClick={() => handleConnect(conn)}
-                    disabled={conn.status === 'connecting'}
-                    className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-60 text-white font-extrabold rounded-2xl text-xs transition-all cursor-pointer shadow-lg shadow-violet-950/50 flex items-center gap-2 hover:scale-[1.02] active:scale-98 border border-white/10"
-                  >
-                    {conn.status === 'connecting'
-                      ? <><Loader2 size={14} className="animate-spin" /> Authorizing…</>
-                      : <><Zap size={14} /> Connect Account</>
-                    }
-                  </button>
-                ) : null}
-
-                {conn.status === 'connected' && (
-                  <button
-                    onClick={() => handleSyncNow(conn)}
-                    disabled={syncing === conn.id}
-                    className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold rounded-2xl text-xs transition-all cursor-pointer border border-white/15 flex items-center gap-2 disabled:opacity-60 hover:scale-[1.02] active:scale-98 shadow-sm"
-                  >
-                    {syncing === conn.id
-                      ? <><Loader2 size={13} className="animate-spin text-teal-400" /> Syncing Live Data…</>
-                      : <><RefreshCw size={13} className="text-teal-400" /> Sync Now</>
-                    }
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleDisconnect(conn)}
-                  className="px-4 py-2.5 hover:bg-red-500/20 text-zinc-400 hover:text-red-300 font-bold rounded-2xl text-xs transition-all cursor-pointer flex items-center gap-1.5 ml-auto border border-transparent hover:border-red-500/30"
-                >
-                  <Unplug size={14} />
-                  <span>Disconnect</span>
-                </button>
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  {conn.status !== 'connected' ? (
+                    <button
+                      onClick={() => handleConnect(conn)}
+                      disabled={conn.status === 'connecting'}
+                      className="w-full py-2.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 hover:from-violet-500 hover:to-teal-400 disabled:opacity-60 text-white font-extrabold rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-violet-950/50 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-98 border border-white/10"
+                    >
+                      {conn.status === 'connecting'
+                        ? <><Loader2 size={13} className="animate-spin" /> Authorizing…</>
+                        : <><Zap size={13} /> Connect & Authorize</>
+                      }
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleSyncNow(conn)}
+                        disabled={syncing === conn.id}
+                        className="flex-1 py-2 bg-white/10 hover:bg-white/15 text-white font-bold rounded-xl text-xs transition-all cursor-pointer border border-white/15 flex items-center justify-center gap-1.5 disabled:opacity-60 hover:scale-[1.01] active:scale-98 shadow-sm"
+                      >
+                        {syncing === conn.id
+                          ? <><Loader2 size={12} className="animate-spin text-teal-400" /> Syncing…</>
+                          : <><RefreshCw size={12} className="text-teal-400" /> Sync Now</>
+                        }
+                      </button>
+                      <button
+                        onClick={() => handleDisconnect(conn)}
+                        className="px-3 py-2 hover:bg-red-500/20 text-zinc-400 hover:text-red-300 font-bold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-1 border border-transparent hover:border-red-500/30"
+                        title="Disconnect connector"
+                      >
+                        <Unplug size={13} />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
 
             </div>
