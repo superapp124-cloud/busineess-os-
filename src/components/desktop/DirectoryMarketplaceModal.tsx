@@ -12,6 +12,10 @@ import { startConnectorOAuth } from '@/core/connector/SupabaseConnectorHub';
 import { launchGoogleOAuthFlow } from '@/core/connector/providers/GmailService';
 import { toast } from 'sonner';
 
+import { CONNECTOR_CATALOG, GROUP_TO_CATEGORY } from '@/core/connector/catalog';
+import { PermissionManager } from '@/core/connector/permissions';
+import type { ConnectorDefinition } from '@/core/connector/types';
+
 type PillarType = 'connectors' | 'agents' | 'apps' | 'automations' | 'knowledge';
 type CategoryFilter = 'All' | 'Communication' | 'Professional' | 'Social' | 'Cloud Storage' | 'Business' | 'Developer' | 'Finance' | 'AI' | 'Health' | 'Education';
 
@@ -36,103 +40,28 @@ export interface MarketplaceItem {
 
 const STORAGE_KEY = 'chatr_connected_channels_v1';
 
-const INITIAL_CATALOG: MarketplaceItem[] = [
-  // 🔌 CONNECTORS
-  {
-    id: 'gmail',
+// Convert catalog connectors into MarketplaceItems
+const DYNAMIC_CONNECTOR_ITEMS: MarketplaceItem[] = CONNECTOR_CATALOG.map((c) => {
+  const catName = (GROUP_TO_CATEGORY[c.groups[0]] || 'Business') as CategoryFilter;
+  return {
+    id: c.id,
     pillar: 'connectors',
-    name: 'Gmail',
-    category: 'Communication',
-    rating: 4.9,
-    reviewsCount: 12400,
-    iconBg: '#EA4335',
-    iconCode: 'Gm',
-    description: 'Read, compose, label, summarize, and search emails directly via official REST API.',
-    capabilities: ['Read Mail', 'Send Mail', 'Search Mailbox', 'Custom Labels', 'AI Executive Summary'],
-    recommendedReason: 'Because your work email uses Google Workspace',
-    loginUrl: 'https://mail.google.com/',
-    isPopular: true,
-    installed: true
-  },
-  {
-    id: 'outlook',
-    pillar: 'connectors',
-    name: 'Microsoft Outlook / 365',
-    category: 'Communication',
-    rating: 4.8,
-    reviewsCount: 9800,
-    iconBg: '#0078D4',
-    iconCode: 'Ol',
-    description: 'Synchronize Exchange mail, contacts, and calendar commitments into Universal Context Graph.',
-    capabilities: ['Read Emails', 'Send Mail', 'Calendar Sync', 'Contacts Indexing', 'AI Meeting Digest'],
-    recommendedReason: 'Recommended for Enterprise Workspace',
-    loginUrl: 'https://outlook.live.com/',
-    isPopular: true,
-    installed: false
-  },
-  {
-    id: 'linkedin',
-    pillar: 'connectors',
-    name: 'LinkedIn',
-    category: 'Professional',
-    rating: 4.7,
-    reviewsCount: 8100,
-    iconBg: '#0A66C2',
-    iconCode: 'Li',
-    description: 'Index professional profile, connection network, and Direct Messages for candidate sourcing.',
-    capabilities: ['Profile Insights', 'Network Connections', 'Direct Messages', 'InMail Notifications'],
-    recommendedReason: 'Because you imported candidate contacts',
-    loginUrl: 'https://www.linkedin.com/feed/',
-    isPopular: true,
-    installed: false
-  },
-  {
-    id: 'slack',
-    pillar: 'connectors',
-    name: 'Slack Workspaces',
-    category: 'Communication',
-    rating: 4.9,
-    reviewsCount: 15300,
-    iconBg: '#4A154B',
-    iconCode: 'Sl',
-    description: 'Unify channel discussions, direct mentions, and file sharing in real-time stream.',
-    capabilities: ['Read Channels', 'Direct Messages', 'Post Replies', 'File Attachments', 'AI Thread Summary'],
-    loginUrl: 'https://app.slack.com/',
-    isPopular: true,
-    installed: false
-  },
-  {
-    id: 'gdrive',
-    pillar: 'connectors',
-    name: 'Google Drive',
-    category: 'Cloud Storage',
-    rating: 4.8,
-    reviewsCount: 11200,
-    iconBg: '#34A853',
-    iconCode: 'GD',
-    description: 'Search, read, and index document context directly into CHATR Knowledge Vault.',
-    capabilities: ['Search Files', 'Read Documents', 'Upload Files', 'AI Semantic Indexing'],
-    recommendedReason: 'Because you connected Google Calendar',
-    loginUrl: 'https://drive.google.com/',
-    isTrending: true,
-    installed: false
-  },
-  {
-    id: 'github',
-    pillar: 'connectors',
-    name: 'GitHub',
-    category: 'Developer',
-    rating: 4.9,
-    reviewsCount: 14100,
-    iconBg: '#24292E',
-    iconCode: 'GH',
-    description: 'Index pull requests, commit histories, and issue notifications for engineering teams.',
-    capabilities: ['PR Reviews', 'Issue Tracking', 'Commit Logs', 'Release Alerts'],
-    loginUrl: 'https://github.com/',
-    isNew: true,
-    installed: false
-  },
+    name: c.name,
+    category: catName === 'Messaging & Email' ? 'Communication' : catName === 'Work & Code' ? 'Developer' : catName === 'Files & Storage' ? 'Cloud Storage' : catName,
+    rating: 4.8 + (c.name.length % 3) * 0.1,
+    reviewsCount: 3000 + (c.name.charCodeAt(0) * 100),
+    iconBg: c.brandColor || '#64748B',
+    iconCode: c.iconCode || c.name.slice(0, 2).toUpperCase(),
+    description: c.summary,
+    capabilities: PermissionManager.describeAll(c.capabilities),
+    recommendedReason: c.groups.includes('communication') ? 'Essential for Unified Inbox' : c.groups.includes('storage') ? 'Knowledge Vault Sync' : undefined,
+    isPopular: c.availability === 'available',
+    loginUrl: c.apiBase,
+    installed: false,
+  };
+});
 
+const STATIC_NON_CONNECTOR_ITEMS: MarketplaceItem[] = [
   // 🤖 AI AGENTS
   {
     id: 'agent-recruiter',
@@ -225,6 +154,8 @@ const INITIAL_CATALOG: MarketplaceItem[] = [
   }
 ];
 
+const INITIAL_CATALOG: MarketplaceItem[] = [...DYNAMIC_CONNECTOR_ITEMS, ...STATIC_NON_CONNECTOR_ITEMS];
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -239,21 +170,42 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
   const [searchQuery, setSearchQuery] = useState('');
   const [catalog, setCatalog] = useState<MarketplaceItem[]>(INITIAL_CATALOG);
 
-  // Sync installed state with real localStorage connected accounts
+  // Sync installed state with Supabase connector_connections + localStorage
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const connectedAccs = JSON.parse(saved);
-        const names = connectedAccs.map((a: any) => a.provider?.toLowerCase() || '');
-        setCatalog(prev => prev.map(item => ({
-          ...item,
-          installed: names.includes(item.name.toLowerCase()) || names.includes(item.id.toLowerCase()) || item.installed
-        })));
+    if (!isOpen) return;
+
+    async function syncInstalledState() {
+      try {
+        const { data: dbConnections } = await supabase
+          .from('connector_connections' as any)
+          .select('connector_id, status')
+          .eq('status', 'connected');
+
+        const dbConnectedIds = (dbConnections as any[])?.map((c) => c.connector_id?.toLowerCase()) || [];
+
+        let localConnectedNames: string[] = [];
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            localConnectedNames = parsed.map((a: any) => a.provider?.toLowerCase() || '');
+          }
+        } catch (_) {}
+
+        setCatalog(prev => prev.map(item => {
+          const isDbConnected = dbConnectedIds.includes(item.id.toLowerCase());
+          const isLocalConnected = localConnectedNames.some(name => name.includes(item.id.toLowerCase()) || name.includes(item.name.toLowerCase()));
+          return {
+            ...item,
+            installed: isDbConnected || isLocalConnected || item.installed
+          };
+        }));
+      } catch (err) {
+        console.warn('Failed to query connector_connections:', err);
       }
-    } catch (e) {
-      console.warn('Failed to sync directory state:', e);
     }
+
+    syncInstalledState();
   }, [isOpen]);
 
   if (!isOpen) return null;

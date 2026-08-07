@@ -2095,28 +2095,83 @@ app.whenReady().then(() => {
     log.warn('Could not set login item settings:', e.message);
   }
 
-  // 1. System Tray
+  // 1. System Tray & Jump Lists
   const iconPath = path.join(__dirname, '../public/favicon.png');
   try {
     if (fs.existsSync(iconPath)) {
       tray = new Tray(iconPath);
-      const contextMenu = Menu.buildFromTemplate([
-        { label: 'Open CHATR', click: () => mainWindow && mainWindow.show() },
-        { type: 'separator' },
-        { 
-          label: 'Quit', 
-          click: () => {
-            isQuitting = true;
-            app.quit();
-          } 
+      const updateTrayMenu = () => {
+        const loginSettings = app.getLoginItemSettings();
+        const contextMenu = Menu.buildFromTemplate([
+          { label: 'Open CHATR OS', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); } } },
+          { label: 'Universal Inbox', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('navigate', '/inbox'); } } },
+          { label: 'AI Assistant (Ctrl+Space)', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('global-shortcut'); } } },
+          { type: 'separator' },
+          {
+            label: 'Start CHATR OS on Windows Startup',
+            type: 'checkbox',
+            checked: loginSettings.openAtLogin,
+            click: (item) => {
+              app.setLoginItemSettings({
+                openAtLogin: item.checked,
+                openAsHidden: true,
+                name: 'CHATR Desktop'
+              });
+            }
+          },
+          { type: 'separator' },
+          { 
+            label: 'Quit CHATR OS', 
+            click: () => {
+              isQuitting = true;
+              app.quit();
+            } 
+          }
+        ]);
+        tray.setContextMenu(contextMenu);
+      };
+
+      tray.setToolTip('CHATR Desktop — Operating Environment');
+      updateTrayMenu();
+      tray.on('click', () => {
+        if (mainWindow) {
+          if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
+            mainWindow.focus();
+          } else {
+            mainWindow.show();
+            mainWindow.focus();
+          }
         }
-      ]);
-      tray.setToolTip('CHATR Desktop');
-      tray.setContextMenu(contextMenu);
-      tray.on('click', () => mainWindow && mainWindow.show());
+      });
     }
   } catch (err) {
     log.error('Failed to create tray', err);
+  }
+
+  // Windows Taskbar Jump Lists (Right-click icon on Taskbar)
+  if (process.platform === 'win32' && app.setUserTasks) {
+    try {
+      app.setUserTasks([
+        {
+          program: process.execPath,
+          arguments: '--open-inbox',
+          iconPath: process.execPath,
+          iconIndex: 0,
+          title: 'Universal Inbox',
+          description: 'Open CHATR Universal Inbox'
+        },
+        {
+          program: process.execPath,
+          arguments: '--open-ai',
+          iconPath: process.execPath,
+          iconIndex: 0,
+          title: 'AI Assistant',
+          description: 'Launch CHATR AI Assistant'
+        }
+      ]);
+    } catch (e) {
+      log.warn('Could not set Windows Jump List user tasks:', e.message);
+    }
   }
 
   // 2. Global Shortcut
@@ -2137,10 +2192,16 @@ app.whenReady().then(() => {
     log.error('Global shortcut registration failed');
   }
 
-  // 3. Taskbar Badges
+  // 3. Taskbar Badges & Download Progress Bar
   ipcMain.on('set-badge-count', (event, count) => {
     if (app.setBadgeCount) {
       app.setBadgeCount(count || 0);
+    }
+  });
+
+  ipcMain.on('set-progress-bar', (event, progress) => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setProgressBar(typeof progress === 'number' ? progress : -1);
     }
   });
 

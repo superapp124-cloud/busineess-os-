@@ -42,6 +42,17 @@ protocols:
   schemes:
     - chatr
 
+fileAssociations:
+  - ext: chatr
+    name: CHATR OS Workspace
+    role: Editor
+  - ext: workflow
+    name: CHATR Automation Workflow
+    role: Editor
+  - ext: memory
+    name: CHATR AI Memory Pack
+    role: Viewer
+
 mac:
   target:
     - dmg

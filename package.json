@@ -2,6 +2,8 @@
   "name": "chatr-desktop",
   "private": true,
   "version": "0.9.0-rc",
+  "description": "CHATR OS Desktop Platform",
+  "author": "CHATR Team",
   "type": "module",
   "main": "electron/main.cjs",
   "workspaces": [
@@ -16,7 +18,7 @@
     "kill:electron": "node -e \"const { execSync } = require('child_process'); try { execSync('taskkill /IM electron.exe /F'); console.log('Killed electron.exe'); } catch(e) { console.log('No electron process'); }\"",
     "dev:fresh": "npm run kill:electron && npm run kill:port && npm run electron:dev",
     "electron:dev": "cross-env NODE_ENV=development concurrently \"npm run dev:desktop\" \"wait-on http://localhost:8086 && electron .\"",
-    "electron:build": "npm run build:desktop && electron-builder && node scripts/copy-built-installer.cjs",
+    "electron:build": "npm run kill:electron && npm run build:desktop && electron-builder && node scripts/copy-built-installer.cjs",
     "electron:release": "npm run build:desktop && electron-builder --publish always",
     "start:desktop": "cross-env NODE_ENV=production electron .",
     "build": "vite build",
