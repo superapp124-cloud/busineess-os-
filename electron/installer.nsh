@@ -1,10 +1,15 @@
 ; CHATR Desktop — NSIS Custom Installer Script
-; Creates Documents\CHATR\Transcripts and Documents\CHATR\Call Recordings on install
+; Registers Windows Taskbar Shortcuts, Start Menu, and Workspace Folders
 
 !include "MUI2.nsh"
 
+!macro customInstall
+  SetShellVarContext current
+  CreateShortCut "$DESKTOP\CHATR OS.lnk" "$appExe" "" "$appExe" 0
+  CreateShortCut "$SMPROGRAMS\CHATR OS.lnk" "$appExe" "" "$appExe" 0
+!macroend
+
 Section "Create CHATR Workspace Folders" SecFolders
-  ; Create in the current user's Documents folder
   SetShellVarContext current
   
   CreateDirectory "$DOCUMENTS\CHATR Workspace"
@@ -12,7 +17,6 @@ Section "Create CHATR Workspace Folders" SecFolders
   CreateDirectory "$DOCUMENTS\CHATR Workspace\Call Recordings"
   CreateDirectory "$DOCUMENTS\CHATR Workspace\AI Summaries"
   
-  ; Write a README so users know what these folders are for
   FileOpen $0 "$DOCUMENTS\CHATR Workspace\README.txt" w
   FileWrite $0 "CHATR Workspace Folders$\r$\n"
   FileWrite $0 "========================$\r$\n$\r$\n"

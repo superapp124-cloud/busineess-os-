@@ -21,7 +21,7 @@ win:
     - target: nsis
       arch:
         - x64
-  icon: public/favicon.ico
+  icon: public/icon.ico
   artifactName: chatr-desktop-setup.${ext}
 
 nsis:
@@ -29,6 +29,9 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
   allowElevation: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: CHATR OS
   include: electron/installer.nsh
 
 protocols:
@@ -51,3 +54,12 @@ mac:
   target:
     - dmg
     - zip
+  icon: public/icons/icon-512x512.png
+  category: public.app-category.productivity
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: public/icons/icon-512x512.png
+  category: Utility

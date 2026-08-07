@@ -25,6 +25,9 @@ if (fs.existsSync(distReleaseDir)) {
 console.log('[Build] Running Vite Desktop Build...');
 execSync('npm run build:desktop', { stdio: 'inherit', cwd: rootDir });
 
+console.log('[Build] Generating valid Windows ICO icon...');
+execSync('node scripts/generate-ico.cjs', { stdio: 'inherit', cwd: rootDir });
+
 console.log('[Build] Patching electron-builder EPERM handling...');
 execSync('node scripts/patch-electron-builder.cjs', { stdio: 'inherit', cwd: rootDir });
 

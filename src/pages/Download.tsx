@@ -116,7 +116,7 @@ export default function Download() {
             {/* Primary Download CTAs */}
             <div className="space-y-3">
               <Button
-                onClick={() => handleDownloadExecutable('chatr-desktop-setup.cmd', 'Windows')}
+                onClick={() => handleDownloadExecutable('chatr-desktop-setup.exe', 'Windows')}
                 className="w-full sm:w-auto px-8 py-6 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-bold text-sm shadow-xl flex items-center justify-center gap-3 transition-all"
               >
                 <DownloadIcon className="w-5 h-5 text-slate-900" />

@@ -2096,56 +2096,65 @@ app.whenReady().then(() => {
   }
 
   // 1. System Tray & Jump Lists
-  const iconPath = path.join(__dirname, '../public/favicon.png');
-  try {
-    if (fs.existsSync(iconPath)) {
-      tray = new Tray(iconPath);
-      const updateTrayMenu = () => {
-        const loginSettings = app.getLoginItemSettings();
-        const contextMenu = Menu.buildFromTemplate([
-          { label: 'Open CHATR OS', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); } } },
-          { label: 'Universal Inbox', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('navigate', '/inbox'); } } },
-          { label: 'AI Assistant (Ctrl+Space)', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('global-shortcut'); } } },
-          { type: 'separator' },
-          {
-            label: 'Start CHATR OS on Windows Startup',
-            type: 'checkbox',
-            checked: loginSettings.openAtLogin,
-            click: (item) => {
-              app.setLoginItemSettings({
-                openAtLogin: item.checked,
-                openAsHidden: true,
-                name: 'CHATR Desktop'
-              });
-            }
-          },
-          { type: 'separator' },
-          { 
-            label: 'Quit CHATR OS', 
-            click: () => {
-              isQuitting = true;
-              app.quit();
-            } 
-          }
-        ]);
-        tray.setContextMenu(contextMenu);
-      };
+  const candidateIconPaths = [
+    path.join(__dirname, '../public/icons/icon-512x512.png'),
+    path.join(__dirname, '../public/favicon.png'),
+    path.join(process.resourcesPath, 'public/icons/icon-512x512.png'),
+    path.join(process.resourcesPath, 'public/favicon.png'),
+    path.join(process.resourcesPath, 'app.asar/public/icons/icon-512x512.png'),
+    path.join(process.resourcesPath, 'app.asar/public/favicon.png')
+  ];
 
-      tray.setToolTip('CHATR Desktop — Operating Environment');
-      updateTrayMenu();
-      tray.on('click', () => {
-        if (mainWindow) {
-          if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
-            mainWindow.focus();
-          } else {
-            mainWindow.show();
-            mainWindow.focus();
+  let iconPath = candidateIconPaths.find(p => fs.existsSync(p)) || candidateIconPaths[0];
+
+  try {
+    tray = new Tray(iconPath);
+    const updateTrayMenu = () => {
+      const loginSettings = app.getLoginItemSettings();
+      const contextMenu = Menu.buildFromTemplate([
+        { label: 'Open CHATR OS', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); } } },
+        { label: 'Universal Inbox', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('navigate', '/inbox'); } } },
+        { label: 'AI Assistant (Ctrl+Space)', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('global-shortcut'); } } },
+        { type: 'separator' },
+        {
+          label: 'Start CHATR OS on System Startup',
+          type: 'checkbox',
+          checked: loginSettings.openAtLogin,
+          click: (item) => {
+            app.setLoginItemSettings({
+              openAtLogin: item.checked,
+              openAsHidden: true,
+              name: 'CHATR Desktop'
+            });
           }
+        },
+        { type: 'separator' },
+        { 
+          label: 'Quit CHATR OS', 
+          click: () => {
+            isQuitting = true;
+            app.quit();
+          } 
         }
-      });
-    }
+      ]);
+      tray.setContextMenu(contextMenu);
+    };
+
+    tray.setToolTip('CHATR Desktop — Operating Environment');
+    updateTrayMenu();
+    tray.on('click', () => {
+      if (mainWindow) {
+        if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
+          mainWindow.focus();
+        } else {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    });
+    log.info('System Tray initialized successfully with icon:', iconPath);
   } catch (err) {
-    log.error('Failed to create tray', err);
+    log.error('Failed to create tray:', err);
   }
 
   // Windows Taskbar Jump Lists (Right-click icon on Taskbar)
