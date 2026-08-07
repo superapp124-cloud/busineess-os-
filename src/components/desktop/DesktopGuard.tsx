@@ -70,12 +70,17 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
       filename = 'chatr-desktop.AppImage';
     }
 
-    const downloadUrl = `/download/${filename}`;
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/latest/download/chatr-desktop-setup.exe';
+    const downloadUrl = (isLocal || filename !== 'chatr-desktop-setup.exe')
+      ? `/download/${filename}`
+      : GITHUB_RELEASE_DOWNLOAD_URL;
 
     try {
       // Direct fetch to blob to ensure executable binary download without SPA navigation
       const res = await fetch(downloadUrl);
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && !contentType.includes('text/html')) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -93,8 +98,9 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Direct link trigger fallback
+    const targetUrl = (filename === 'chatr-desktop-setup.exe' && !isLocal) ? GITHUB_RELEASE_DOWNLOAD_URL : downloadUrl;
     const link = document.createElement('a');
-    link.href = downloadUrl;
+    link.href = targetUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();

@@ -26,15 +26,22 @@ export default function Download() {
   const [downloadingOS, setDownloadingOS] = useState<string | null>(null);
   const [showInstallerModal, setShowInstallerModal] = useState<boolean>(false);
 
+  const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/latest/download/chatr-desktop-setup.exe';
+
   const handleDownloadExecutable = async (filename: string, osLabel: string) => {
     setDownloadingOS(osLabel);
     setShowInstallerModal(true);
 
-    const downloadUrl = `/download/${filename}`;
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    const downloadUrl = (isLocal || filename !== 'chatr-desktop-setup.exe')
+      ? `/download/${filename}`
+      : GITHUB_RELEASE_DOWNLOAD_URL;
 
     try {
       const res = await fetch(downloadUrl);
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      // Ensure we received a real binary file, not an HTML 404 fallback page
+      if (res.ok && !contentType.includes('text/html')) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -51,9 +58,10 @@ export default function Download() {
       console.warn('[Download] Blob download fallback:', e);
     }
 
-    // Direct trigger fallback
+    // Direct CDN / link trigger fallback
+    const targetUrl = (filename === 'chatr-desktop-setup.exe' && !isLocal) ? GITHUB_RELEASE_DOWNLOAD_URL : downloadUrl;
     const link = document.createElement('a');
-    link.href = downloadUrl;
+    link.href = targetUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();

@@ -19,6 +19,8 @@ dist-ssr
 dist-electron
 win-unpacked
 *.exe
+public/download/*.exe
+public/download/*.cmd
 
 # Editor directories and files
 .vscode/*
