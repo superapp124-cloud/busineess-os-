@@ -13,6 +13,8 @@ class UpdateService {
     this.isDev = options.isDev ?? false;
     this.mainWindow = null;
     this.autoUpdater = autoUpdater;
+    this.autoUpdater.allowPrerelease = true;
+    this.autoUpdater.allowDowngrade = true;
     
     // Configure logging
     this.autoUpdater.logger = log;

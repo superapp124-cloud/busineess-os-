@@ -17,7 +17,12 @@ files:
   - "!dist-desktop/**/*.exe"
   - "!dist-desktop/**/*.dmg"
   - "!dist-desktop/**/*.AppImage"
+  - "!dist-desktop/**/*.map"
   - electron/**/*
+  - "!electron/**/__tests__/**/*"
+  - "!electron/**/*.test.*"
+  - "!electron/**/*.spec.*"
+  - "!electron/**/*.md"
   - package.json
 
 win:
