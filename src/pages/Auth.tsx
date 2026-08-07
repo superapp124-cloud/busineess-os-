@@ -257,9 +257,8 @@ const Auth = () => {
           userId={userId}
           onComplete={async () => {
             await onboarding.completeOnboarding();
-            const redirectPath = sessionStorage.getItem('auth_redirect');
-            sessionStorage.removeItem('auth_redirect');
-            navigate(redirectPath || '/', { replace: true });
+            // New user first-run: Welcome → Workspace Connector → Desktop
+            navigate('/onboarding/welcome', { replace: true });
           }}
           onSkip={async () => {
             toast({

@@ -72,6 +72,8 @@ const AdminLayout = React.lazy(() => import("./components/AdminLayout").then(m =
 import DesktopLayout from "./layouts/DesktopLayout";
 const WorkspaceSetup = React.lazy(() => import("./pages/desktop/WorkspaceSetup").then(m => ({ default: m.WorkspaceSetup })));
 const OAuthCallback = React.lazy(() => import("./pages/desktop/OAuthCallback"));
+const WelcomePage = React.lazy(() => import("./pages/onboarding/WelcomePage"));
+const ConnectWorkspacePage = React.lazy(() => import("./pages/onboarding/ConnectWorkspacePage"));
 const KernelDashboard = React.lazy(() => import("./pages/desktop/KernelDashboard").then(m => ({ default: m.KernelDashboard })));
 const WorkflowInspectorPage = React.lazy(() => import("./pages/desktop/WorkflowInspector").then(m => ({ default: m.WorkflowInspector })));
 const EngineHealthDashboardPage = React.lazy(() => import("./pages/desktop/EngineHealthDashboard").then(m => ({ default: m.EngineHealthDashboard })));
@@ -525,8 +527,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <FloatingHomeFab />
  <ChatrAIFab />
  <Routes>
-  {/* Developer Routes */}
+  {/* Developer & Direct Integrations Routes */}
   <Route path="/dev" element={<ExecutionDashboard />} />
+  <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
   <Route path="/oauth/callback" element={<Suspense fallback={<PageLoader message="Authenticating..." />}><OAuthCallback /></Suspense>} />
   <Route path="/design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
  {/* Desktop Platform Routes */}
@@ -598,6 +601,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
  <Route path="intent-store" element={<LazyRoute component={LazyPages.IntentStore} />} />
  <Route path="connector-store" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
+ <Route path="connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
+ <Route path="settings/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="agent/:id" element={<LazyRoute component={LazyPages.AgentWorkspace} />} />
  <Route path="studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
  <Route path="business-os" element={<LazyRoute component={LazyPages.BusinessOS} />} />
@@ -676,6 +681,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
  <Route path="/install" element={<LazyRoute component={LazyPages.Install} />} />
  <Route path="/onboarding" element={<LazyRoute component={LazyPages.Onboarding} />} />
+ <Route path="/onboarding/welcome" element={<React.Suspense fallback={null}><WelcomePage /></React.Suspense>} />
+ <Route path="/onboarding/connect-workspace" element={<React.Suspense fallback={null}><ConnectWorkspacePage /></React.Suspense>} />
  <Route path="/about" element={<LazyRoute component={LazyPages.About} />} />
  <Route path="/help" element={<LazyRoute component={LazyPages.Help} />} />
  <Route path="/contact" element={<LazyRoute component={LazyPages.Contact} />} />

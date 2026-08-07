@@ -52,7 +52,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({ isDark }) => {
 
   return (
     <div 
-      className="fixed right-3 top-1/2 -translate-y-1/2 z-40 pointer-events-auto"
+      className="fixed right-0 top-32 z-30 pointer-events-auto"
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >

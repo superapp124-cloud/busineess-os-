@@ -1,1 +1,1 @@
-export { default } from "@/business/integrations/IntegrationsPage";
+export { default } from "@/pages/desktop/DesktopConnectorStore";

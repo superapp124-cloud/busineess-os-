@@ -22,27 +22,23 @@ export const OnboardingDialog = ({ isOpen, userId, onComplete, onSkip }: Onboard
  const [uploading, setUploading] = useState(false);
  const { toast } = useToast();
 
- // Load existing profile data
- useEffect(() => {
- const loadProfile = async () => {
- const { data: { user } } = await supabase.auth.getUser();
- const googleData = user?.user_metadata;
- 
- const { data: existingUser } = await supabase
- .from('users')
- .select('full_name, avatar_url')
- .eq('id', userId)
- .maybeSingle();
+  // Load existing profile data — CHATR Identity only.
+  // Name and avatar come from the user's own prior input, never from OAuth provider metadata.
+  useEffect(() => {
+  const loadProfile = async () => {
+  const { data: existingUser } = await supabase
+  .from('users')
+  .select('full_name, avatar_url')
+  .eq('id', userId)
+  .maybeSingle();
 
- const finalName = existingUser?.full_name || googleData?.full_name || googleData?.name || "";
- const finalAvatar = existingUser?.avatar_url || googleData?.avatar_url || googleData?.picture || "";
-
- if (finalName) setFullName(finalName);
- if (finalAvatar) setAvatarUrl(finalAvatar);
- };
- 
- if (userId && isOpen) loadProfile();
- }, [userId, isOpen]);
+  // Only pre-fill if the user previously saved a name themselves
+  if (existingUser?.full_name) setFullName(existingUser.full_name);
+  if (existingUser?.avatar_url) setAvatarUrl(existingUser.avatar_url);
+  };
+  
+  if (userId && isOpen) loadProfile();
+  }, [userId, isOpen]);
 
  const handlePhotoUpload = async (fromCamera: boolean) => {
  try {

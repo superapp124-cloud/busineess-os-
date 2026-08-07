@@ -265,24 +265,24 @@ export const UniversalInbox: React.FC = () => {
 
       // 2. Fetch real records from Supabase connector_records table
       try {
-        const { data: records } = await supabase.from('connector_records' as any).select('*').order('updated_at', { ascending: false }).limit(50);
+        const { data: records } = await supabase.from('connector_records' as any).select('*').order('occurred_at', { ascending: false }).limit(50);
         if (records && Array.isArray(records) && records.length > 0) {
           console.log('[UniversalInbox] Fetched connector_records count:', records.length);
           liveMsgs.push(...records.map((r: any) => ({
             id: r.external_id || r.id || String(Date.now()),
             source: (r.connector_id === 'gmail' ? 'Gmail' : r.connector_id === 'outlook' ? 'Outlook' : 'Gmail') as MessageSource,
-            sender: r.title || 'Connected Message',
-            senderEmail: r.author || (r.metadata?.from?.emailAddress?.address) || 'gmail@google.com',
+            sender: r.metadata?.from?.name || r.metadata?.headers?.From?.split('<')[0]?.trim() || r.title || 'Gmail Message',
+            senderEmail: r.metadata?.from?.emailAddress?.address || r.metadata?.headers?.From?.match(/<(.+?)>/)?.[1] || '',
             recipient: 'To: me',
-            subject: r.title || '(No Subject)',
-            preview: r.body || r.title || '',
+            subject: r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '(No Subject)',
+            preview: r.metadata?.snippet || r.body || r.title || '',
             time: r.occurred_at ? new Date(r.occurred_at).toLocaleTimeString() : 'Just now',
             exactTime: r.occurred_at ? new Date(r.occurred_at).toLocaleString() : 'Just now',
             priority: (r.title?.toLowerCase().includes('urgent') ? 'URGENT' : 'FYI') as Priority,
             category: 'Personal Mail' as Category,
             read: false,
             starred: false,
-            accountBadge: 'Supabase Connector Hub',
+            accountBadge: '',
             confidenceScore: 100
           })));
         }
@@ -309,7 +309,7 @@ export const UniversalInbox: React.FC = () => {
             read: gm.isRead,
             starred: gm.isStarred,
             hasAttachment: gm.subject.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('attached'),
-            accountBadge: 'Live Gmail API',
+            accountBadge: '',
             confidenceScore: 100
           })));
         }
@@ -325,40 +325,12 @@ export const UniversalInbox: React.FC = () => {
         setSelectedMessageId(uniqueMsgs[0].id);
       }
 
-      // 3. Fetch real messages from Supabase emails table if present
-      try {
-        const { data: dbEmails } = await supabase.from('emails' as any).select('*').limit(25);
-        if (dbEmails && Array.isArray(dbEmails) && dbEmails.length > 0) {
-          liveMsgs.push(...dbEmails.map((e: any) => ({
-            id: e.id || String(Date.now()),
-            source: (e.source || 'Gmail') as MessageSource,
-            sender: e.sender || e.from || 'Sender',
-            senderEmail: e.sender_email || e.from_email || '',
-            recipient: e.recipient || 'To: me',
-            subject: e.subject || '(no subject)',
-            preview: e.body || e.preview || '',
-            time: e.created_at ? new Date(e.created_at).toLocaleTimeString() : 'Just now',
-            priority: (e.priority || 'FYI') as Priority,
-            category: (e.category || 'Personal Mail') as Category,
-            read: !!e.is_read,
-            starred: !!e.is_starred,
-            accountBadge: 'Supabase DB'
-          })));
-        }
-      } catch (dbErr) {
-        // Table not present
-      }
-
-      setMessages(liveMsgs);
-      if (liveMsgs.length > 0 && !selectedMessageId) {
-        setSelectedMessageId(liveMsgs[0].id);
-      }
     } catch (err: any) {
-      toast.error('Failed to sync messages: ' + err.message);
-    } fontally: {
+      console.warn('[UniversalInbox] Sync error:', err.message);
+    } finally {
       setIsSyncingMessages(false);
     }
-  }, [selectedMessageId]);
+  }, []);
 
   // Initial sync & periodic background polling (every 15s)
   useEffect(() => {

@@ -141,7 +141,6 @@ export const RecruiterWorkspace: React.FC = () => {
 
       if (candsRes.data && candsRes.data.length > 0) {
         const fetched = candsRes.data
-          .filter((c: any) => c.email && !c.email.includes('@example.com'))
           .map((c: any) => ({
             id: c.id, first_name: c.first_name, last_name: c.last_name,
             email: c.email, phone: c.phone, status: c.stage || 'Applied',
@@ -158,11 +157,12 @@ export const RecruiterWorkspace: React.FC = () => {
             notice_days: c.notice_days,
             serving_notice: c.serving_notice,
             source_artifact: c.intelligence_artifact,
-          }));
+          })).map(enrichCandidateData);
 
         setCandidates(prev => {
-          const fetchedEmails = new Set(fetched.map((f: Candidate) => (f.email || '').toLowerCase()));
-          const localOnly = prev.filter(p => p.email && !fetchedEmails.has(p.email.toLowerCase()));
+          const fetchedIds = new Set(fetched.map((f: Candidate) => f.id));
+          // Keep localStorage-only candidates that haven't been saved to Supabase yet
+          const localOnly = prev.filter(p => !fetchedIds.has(p.id));
           const merged = [...fetched, ...localOnly];
           try { localStorage.setItem('chatr_rec_candidates', JSON.stringify(merged)); } catch {}
           return merged;
@@ -400,6 +400,43 @@ export const RecruiterWorkspace: React.FC = () => {
       }
       return merged;
     });
+
+    // ✅ PERSIST TO SUPABASE so data survives refresh
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const CHUNK_SIZE = 50;
+        for (let i = 0; i < newCandidates.length; i += CHUNK_SIZE) {
+          const chunk = newCandidates.slice(i, i + CHUNK_SIZE);
+          const rows = chunk.map((c) => ({
+            id: c.id,
+            user_id: user?.id,
+            job_id: c.applied_for || null,
+            first_name: c.first_name,
+            last_name: c.last_name,
+            email: c.email,
+            phone: c.phone || null,
+            stage: 'Applied',
+            source: 'Import',
+            current_company: c.current_company || null,
+            current_designation: c.current_designation || null,
+            location: c.location || null,
+            skills: c.skills || [],
+            experience_years: c.experience_years || null,
+            expected_ctc: c.expected_ctc || null,
+            current_ctc: c.current_ctc || null,
+            notice_days: c.notice_days || null,
+            serving_notice: c.serving_notice || null,
+            intelligence_artifact: c.source_artifact || null,
+          }));
+          const { error } = await supabase.from('rec_candidates').upsert(rows as any, { onConflict: 'id' });
+          if (error) console.warn(`[BatchImport] Supabase upsert chunk ${i / CHUNK_SIZE + 1} error:`, error.message);
+        }
+        console.log(`[BatchImport] ✅ Persisted ${newCandidates.length} candidates to Supabase.`);
+      } catch (e) {
+        console.warn('[BatchImport] Supabase persist error:', e);
+      }
+    })();
 
     toast.success(`Batch Ingestion Complete: ${newCandidates.length} candidate CVs added to workspace!`);
   }, []);

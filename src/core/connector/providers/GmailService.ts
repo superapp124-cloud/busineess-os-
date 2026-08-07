@@ -1,9 +1,10 @@
 /**
  * GmailService — fetches real messages from Gmail REST API.
- * 
+ *
  * This service reads the access token stored in sessionStorage by OAuthCallback.ts
  * and calls the Gmail API directly. No mocks, no hardcoded data.
  */
+import { supabase } from '@/integrations/supabase/client';
 
 export interface GmailMessage {
   id: string;
@@ -31,7 +32,6 @@ export function launchGoogleOAuthFlow(): void {
   window.open(authUrl, '_blank', 'width=600,height=700');
 }
 
-import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Get stored token synchronously or from Supabase Vault asynchronously.
