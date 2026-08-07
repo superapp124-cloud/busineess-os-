@@ -202,6 +202,7 @@ const sourceConfig: Record<MessageSource, { color: string; code: string }> = {
 export const UniversalInbox: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const composerRef = React.useRef<HTMLTextAreaElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSyncingMessages, setIsSyncingMessages] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('All Messages');
@@ -989,9 +990,13 @@ export const UniversalInbox: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => handleGenerateAiDraft('custom')}
+                  onClick={() => {
+                    composerRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    composerRef.current?.focus();
+                    if (!replyText) handleGenerateAiDraft('custom');
+                  }}
                   className="p-2 hover:bg-violet-500/20 text-violet-300 hover:text-white rounded-xl transition-all cursor-pointer flex items-center gap-1 text-xs font-semibold"
-                  title="Reply with AI"
+                  title="Reply to message"
                 >
                   <Reply size={16} /> Reply
                 </button>
@@ -1242,6 +1247,7 @@ export const UniversalInbox: React.FC = () => {
               </div>
 
               <textarea
+                ref={composerRef}
                 value={replyText}
                 onChange={e => setReplyText(e.target.value)}
                 placeholder={`Type your reply or click "Draft with AI" to generate a response...`}

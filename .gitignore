@@ -12,10 +12,13 @@ node_modules
 
 # Build output
 dist
+dist-release
 dist-desktop
 dist-mobile
 dist-ssr
 dist-electron
+win-unpacked
+*.exe
 
 # Editor directories and files
 .vscode/*
