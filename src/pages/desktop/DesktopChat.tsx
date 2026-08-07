@@ -453,14 +453,20 @@ export default function DesktopChat() {
  />
 
  <NewChatSheet
- userId={currentUserId || ''}
- open={showNewDmModal}
- onOpenChange={setShowNewDmModal}
- onSelectContact={(contactUserId) => {
- setShowNewDmModal(false);
- toast.success('Chat created (mock)');
- }}
- />
+    userId={currentUserId || ''}
+    open={showNewDmModal}
+    onOpenChange={setShowNewDmModal}
+    onSelectContact={(contactUserId) => {
+      setShowNewDmModal(false);
+      const existing = rooms.find(r => r.id === contactUserId || (r as any).peerId === contactUserId);
+      if (existing) {
+        setSelectedId(existing.id);
+      } else {
+        setSelectedId(contactUserId);
+      }
+      toast.success('Chat selected');
+    }}
+  />
 
  <ForwardModal 
  forwardMessage={forwardMessage}
