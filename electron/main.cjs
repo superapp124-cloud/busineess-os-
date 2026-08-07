@@ -1664,12 +1664,12 @@ function createWindow() {
     height: 800,
     center: true,
     show: false, // Hidden until ready-to-show fires — eliminates white flash
-    backgroundColor: '#09090b', // zinc-950
+    backgroundColor: '#0d0d18',
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: '#ffffff',
-      symbolColor: '#000000',
-      height: 60
+      color: '#0d0d18',
+      symbolColor: '#ffffff',
+      height: 36
     },
     autoHideMenuBar: true,
     webPreferences: {
@@ -1912,12 +1912,12 @@ function createWindow() {
 
   // Dynamic Window Theme IPC
   ipcMain.on('window:update-theme', (event, theme) => {
-    if (mainWindow) {
-      const isDark = theme === 'dark';
+    if (mainWindow && typeof mainWindow.setTitleBarOverlay === 'function') {
+      const isDark = theme !== 'light';
       mainWindow.setTitleBarOverlay({
-        color: isDark ? '#09090b' : '#ffffff', // matches tailwind background/card color
-        symbolColor: isDark ? '#ffffff' : '#000000',
-        height: 60
+        color: isDark ? '#0d0d18' : '#ffffff',
+        symbolColor: isDark ? '#ffffff' : '#18181b',
+        height: 36
       });
     }
   });
