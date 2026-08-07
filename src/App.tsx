@@ -581,6 +581,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="intent-debugger" element={<LazyRoute component={LazyPages.IntentDebugger} />} />
  <Route path="execution-inspector" element={<LazyRoute component={LazyPages.ExecutionInspector} />} />
  <Route path="workflow-studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
+ <Route path="connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="marketplace" element={<LazyRoute component={LazyPages.DesktopMarketplace} />} />
  <Route path="workspace" element={<LazyRoute component={LazyPages.DesktopWorkspace} />} />
  <Route path="calendar" element={<LazyRoute component={LazyPages.DesktopCalendar} />} />

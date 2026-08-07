@@ -686,7 +686,7 @@ export const UniversalInbox: React.FC = () => {
 
           {/* 🔌 CHATR Directory Marketplace Launcher */}
           <button 
-            onClick={() => setIsDirectoryModalOpen(true)}
+            onClick={() => navigate('/desktop/connectors')}
             className="w-full bg-gradient-to-r from-violet-900/60 via-indigo-900/60 to-teal-900/60 hover:brightness-125 border border-violet-500/40 rounded-xl py-2 px-3 flex items-center justify-between text-xs text-white font-bold transition-all shadow-md cursor-pointer group"
           >
             <span className="flex items-center gap-2 truncate">
@@ -726,7 +726,7 @@ export const UniversalInbox: React.FC = () => {
         {/* Manage & Add Account Button */}
         <div className="p-3 border-t border-white/10 bg-zinc-900/90 pb-8">
           <button 
-            onClick={() => setIsManageAccountsOpen(true)}
+            onClick={() => navigate('/desktop/connectors')}
             className="w-full flex items-center justify-between bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-3 rounded-xl text-xs transition-all shadow-lg shadow-violet-900/30 active:scale-95 cursor-pointer border border-violet-400/20"
           >
             <span className="flex items-center gap-2 truncate">
@@ -757,7 +757,7 @@ export const UniversalInbox: React.FC = () => {
           {/* OS System Health & Live API Connector Button */}
           <div className="flex items-center gap-3 text-xs">
             <button 
-              onClick={() => setIsDirectoryModalOpen(true)}
+              onClick={() => navigate('/desktop/connectors')}
               className="flex items-center gap-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 text-white border border-white/15 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm"
             >
               <Grid size={13} className="text-teal-400" />

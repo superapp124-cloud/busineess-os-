@@ -321,8 +321,16 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Installed vs Discover Tab Selector */}
+            <button
+              onClick={() => {
+                onClose();
+                navigate('/desktop/connectors');
+              }}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+            >
+              <Globe size={14} />
+              <span>Connectors Store</span>
+            </button>
             <div className="bg-black/60 p-1 rounded-2xl border border-white/10 flex items-center gap-1 text-xs">
               <button 
                 onClick={() => setActiveTab('discover')}
@@ -360,10 +368,13 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
             
             <PillarNavItem 
               active={activePillar === 'connectors'} 
-              onClick={() => setActivePillar('connectors')} 
+              onClick={() => {
+                onClose();
+                navigate('/desktop/connectors');
+              }} 
               icon={<Globe size={18} className="text-blue-400" />} 
               label="🔌 Connectors" 
-              subtitle="Gmail, Outlook, Slack..." 
+              subtitle="Open Connectors Store" 
             />
             <PillarNavItem 
               active={activePillar === 'agents'} 
