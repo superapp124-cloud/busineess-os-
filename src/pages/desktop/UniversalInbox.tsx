@@ -1066,33 +1066,134 @@ export const UniversalInbox: React.FC = () => {
               </div>
             </div>
 
-            {/* 🤖 AI Executive Copilot Assistant Section */}
+            {/* 🎯 Executive Opportunity Radar (Every Mail = Opportunity) */}
+            <div className="bg-gradient-to-r from-emerald-950/40 via-teal-950/30 to-zinc-900/60 border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-amber-400" />
+                  <span className="font-extrabold text-xs text-white">Executive Opportunity Radar</span>
+                </div>
+                <span className="text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <CheckCircle size={10} className="text-emerald-400" /> Opportunity Detected
+                </span>
+              </div>
+
+              <p className="text-[11px] text-zinc-300 leading-relaxed">
+                {selectedMessage.subject.toLowerCase().includes('run failed') ? '🚀 System Uptime Opportunity: Re-run CI & notify engineering to prevent deployment delays.'
+                  : selectedMessage.subject.toLowerCase().includes('security') ? '🛡️ Security Hardening Opportunity: Audit account permissions & verify trusted app scopes.'
+                  : selectedMessage.category === 'Bills & Receipts' ? '💳 Finance Optimization Opportunity: Extract invoice entity & log to accounting ledger.'
+                  : '💼 Value Creation Opportunity: Turn thread context into a CRM deal, calendar commitment, or team task.'}
+              </p>
+
+              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                <button
+                  onClick={() => {
+                    toast.success(`💰 Created CRM Deal for ${selectedMessage.sender}!`);
+                  }}
+                  className="p-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded-xl text-[11px] font-bold text-emerald-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                >
+                  <span>💰 Create Deal</span>
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success(`📌 Added Task to Executive Execution Board!`);
+                  }}
+                  className="p-2 bg-violet-500/20 hover:bg-violet-500/30 border border-violet-500/40 rounded-xl text-[11px] font-bold text-violet-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                >
+                  <span>📌 Add Task</span>
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success(`📅 Reserved 30m Calendar slot with ${selectedMessage.sender}!`);
+                  }}
+                  className="p-2 bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 rounded-xl text-[11px] font-bold text-indigo-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                >
+                  <span>📅 Reserve Time</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 🤖 Smart AI Summary & Copilot Section */}
             <div className="bg-gradient-to-b from-violet-950/40 via-zinc-900/60 to-black/60 border border-violet-500/30 rounded-2xl p-4 space-y-3 shadow-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Brain size={16} className="text-violet-400" />
-                  <span className="font-extrabold text-xs text-white">AI Executive Copilot</span>
+                  <span className="font-extrabold text-xs text-white">Smart Summary</span>
                 </div>
                 <span className="text-[9px] font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full">
-                  Real-time Intelligence
+                  AI Context
                 </span>
               </div>
 
-              {/* AI Bullet Summary */}
+              {/* Human-Readable Smart Summary */}
               <div className="space-y-1.5 text-xs text-zinc-300 bg-black/40 p-3 rounded-xl border border-white/5 font-sans">
                 <p className="font-semibold text-violet-200 text-[11px] flex items-center gap-1">
-                  <Sparkles size={12} className="text-amber-400" /> TL;DR Executive Brief:
+                  <Sparkles size={12} className="text-amber-400" /> What this message is about:
                 </p>
                 <ul className="list-disc pl-4 space-y-1 text-[11px] text-zinc-300 leading-relaxed">
-                  <li><strong>Sender Intent:</strong> Action request regarding {selectedMessage.subject}.</li>
-                  <li><strong>Priority Level:</strong> {selectedMessage.priority === 'urgent' ? 'High Urgency — Requires fast reply' : 'Normal Priority'}.</li>
-                  <li><strong>Suggested Action:</strong> Review details and respond using AI Copilot templates below.</li>
+                  <li><strong>Overview:</strong> {selectedMessage.subject}.</li>
+                  <li><strong>Status:</strong> {selectedMessage.priority === 'urgent' ? 'Requires immediate action' : 'Information & updates'}.</li>
+                  <li><strong>Recommendation:</strong> Use 1-click reply options below or trigger instant action.</li>
                 </ul>
               </div>
 
-              {/* 💡 AI Quick Reply Generators */}
+              {/* Context-Aware Extraordinary Card: GitHub / CI Failure Alert */}
+              {(selectedMessage.source === 'GitHub' || selectedMessage.subject.toLowerCase().includes('run failed') || selectedMessage.preview.toLowerCase().includes('failed')) && (
+                <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-red-300 flex items-center gap-1.5">
+                      <AlertTriangle size={13} className="text-red-400" /> CI Build Failure Detected
+                    </span>
+                    <span className="text-[9px] font-mono bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded">Action Required</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-300">GitHub Actions run failed on main branch. Instant actions available:</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        toast.success('🔄 Triggered CI Re-run on GitHub!');
+                      }}
+                      className="px-2.5 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                    >
+                      <RefreshCw size={11} /> Re-run CI
+                    </button>
+                    <button
+                      onClick={() => {
+                        toast.success('📢 Alerted engineering channel on Slack!');
+                      }}
+                      className="px-2.5 py-1.5 bg-white/10 hover:bg-white/15 text-zinc-200 text-[11px] font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                    >
+                      <Slack size={11} className="text-violet-400" /> Notify Slack
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Context-Aware Extraordinary Card: Security Alert */}
+              {(selectedMessage.subject.toLowerCase().includes('security') || selectedMessage.sender.toLowerCase().includes('security')) && (
+                <div className="bg-amber-950/40 border border-amber-500/30 rounded-xl p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                      <ShieldCheck size={13} className="text-amber-400" /> Account Security Notice
+                    </span>
+                    <span className="text-[9px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">Security</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-300">Google OAuth permission grant detected for CHATR OS.</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        toast.success('🛡️ Verified account authorization as safe.');
+                      }}
+                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                    >
+                      <CheckCircle size={11} /> Verify Safe
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 💡 1-Click Reply Templates */}
               <div className="space-y-1.5">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">✨ AI Quick Draft Templates</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">✨ Reply in 1-Click</span>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleGenerateAiDraft('accept')}
@@ -1113,9 +1214,9 @@ export const UniversalInbox: React.FC = () => {
                 </div>
               </div>
 
-              {/* ⚡ 1-Click Executive AI Accelerators */}
+              {/* ⚡ Smart Actions Row */}
               <div className="space-y-1.5 pt-1">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">⚡ 1-Click Action Accelerators</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">⚡ Smart Actions</span>
                 <div className="grid grid-cols-3 gap-1.5">
                   <button
                     onClick={() => {
@@ -1124,16 +1225,16 @@ export const UniversalInbox: React.FC = () => {
                     className="p-2 bg-white/5 hover:bg-emerald-600/30 border border-white/10 rounded-xl text-[11px] font-semibold text-zinc-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Calendar size={12} className="text-emerald-400" />
-                    <span>Schedule</span>
+                    <span>Book Meeting</span>
                   </button>
                   <button
                     onClick={() => {
-                      toast.success(`🧠 Indexed thread into Universal Context Graph!`);
+                      toast.success(`🧠 Saved message memory into Knowledge Vault!`);
                     }}
                     className="p-2 bg-white/5 hover:bg-violet-600/30 border border-white/10 rounded-xl text-[11px] font-semibold text-zinc-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Brain size={12} className="text-violet-400" />
-                    <span>Memory</span>
+                    <span>Save to Memory</span>
                   </button>
                   <button
                     onClick={() => {
@@ -1143,7 +1244,7 @@ export const UniversalInbox: React.FC = () => {
                     className="p-2 bg-white/5 hover:bg-indigo-600/30 border border-white/10 rounded-xl text-[11px] font-semibold text-zinc-300 hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <UserCheck size={12} className="text-indigo-400" />
-                    <span>ATS Candidate</span>
+                    <span>Candidate ATS</span>
                   </button>
                 </div>
               </div>

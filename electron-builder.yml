@@ -1,6 +1,7 @@
 appId: chat.chatr.desktop
 productName: CHATR Desktop
 npmRebuild: false
+includeSubNodeModules: false
 directories:
   output: dist-release
   buildResources: build
@@ -13,6 +14,15 @@ files:
   - dist-desktop/**/*
   - electron/**/*
   - node_modules/**/*
+  - "!node_modules/@vercel/**"
+  - "!node_modules/@capacitor/**"
+  - "!node_modules/@capacitor-community/**"
+  - "!node_modules/@capacitor-firebase/**"
+  - "!node_modules/@ionic/**"
+  - "!node_modules/@testing-library/**"
+  - "!node_modules/@types/**"
+  - "!node_modules/playwright/**"
+  - "!node_modules/puppeteer/**"
   - package.json
 
 win:
