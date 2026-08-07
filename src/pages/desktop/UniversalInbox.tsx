@@ -813,14 +813,6 @@ export const UniversalInbox: React.FC = () => {
           <div className="flex items-center gap-3 text-xs">
             <button 
               onClick={() => navigate('/desktop/connectors')}
-              className="flex items-center gap-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 text-white border border-white/15 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm"
-            >
-              <Grid size={13} className="text-teal-400" />
-              <span>Directory Marketplace</span>
-            </button>
-
-            <button 
-              onClick={() => setIsManageAccountsOpen(true)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm border",
                 connectedAccounts.length > 0 || isGoogleAuthenticated()
@@ -828,13 +820,13 @@ export const UniversalInbox: React.FC = () => {
                   : "bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-violet-400/30 hover:brightness-110"
               )}
             >
-              {connectedAccounts.length > 0 || isGoogleAuthenticated() ? <CheckCircle size={13} className="text-emerald-400" /> : <Key size={13} />}
+              {connectedAccounts.length > 0 || isGoogleAuthenticated() ? <CheckCircle size={13} className="text-emerald-400" /> : <Globe size={13} />}
               <span>
                 {connectedAccounts.length > 0 
                   ? `${connectedAccounts[0].provider} Connected ✓` 
                   : isGoogleAuthenticated() 
-                    ? 'Live Gmail API Connected ✓' 
-                    : '🔑 Connect Live Gmail / Connectors'}
+                    ? 'Gmail Stream Active ✓' 
+                    : 'Connect Workspace Channels'}
               </span>
             </button>
 
@@ -854,48 +846,31 @@ export const UniversalInbox: React.FC = () => {
           </div>
         </div>
 
-        {/* Live Token Status Banner */}
-        {!isGoogleAuthenticated() && connectedAccounts.length === 0 && (
-          <div className="bg-amber-950/60 border-b border-amber-500/30 px-5 py-2 flex items-center justify-between text-xs text-amber-200">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={15} className="text-amber-400 shrink-0" />
-              <span>Connect Google OAuth Token (`ya29...`) to stream your 100% real live Gmail messages directly from Google API.</span>
-            </div>
-            <button 
-              onClick={() => setIsTokenModalOpen(true)}
-              className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition-all cursor-pointer shadow-sm flex items-center gap-1"
-            >
-              <Key size={12} /> Connect Live Token
-            </button>
-          </div>
-        )}
-
         {/* Message List */}
         <div className="flex-1 overflow-y-auto">
           {filteredMessages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8 text-center">
-              <div className="w-16 h-16 rounded-3xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-4 shadow-xl">
-                <Mail size={32} />
+            <div className="flex flex-col items-center justify-center h-full text-zinc-500 p-8 text-center space-y-4">
+              <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-violet-600/20 via-indigo-600/20 to-teal-500/20 border border-violet-500/30 flex items-center justify-center text-violet-300 shadow-2xl">
+                <Inbox size={32} />
               </div>
-              <h3 className="text-base font-bold text-white mb-1">No Real Messages Synced Yet</h3>
-              <p className="text-xs text-zinc-400 max-w-sm mb-6 leading-relaxed">
-                Connect your Google OAuth Access Token (`ya29...`) or browse the <strong>Directory Marketplace</strong> to connect external tools (Gmail, Outlook, LinkedIn, Slack, Drive).
-              </p>
-              
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <button 
-                  onClick={() => startConnectorOAuth('gmail')}
-                  className="px-6 py-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 hover:brightness-110 text-white font-extrabold rounded-xl text-xs transition-all shadow-xl shadow-violet-950/50 cursor-pointer flex items-center gap-2 border border-violet-400/30 active:scale-95"
+              <div className="space-y-1 max-w-md">
+                <h3 className="text-lg font-extrabold text-white tracking-tight">Connect Your Work Channels</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Stream your emails, messages, alerts, and notifications from Gmail, Outlook, Slack, LinkedIn, and GitHub into one unified executive inbox.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => navigate('/desktop/connectors')}
+                  className="px-5 py-2.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 hover:from-violet-500 hover:to-teal-400 text-white font-extrabold rounded-2xl text-xs transition-all shadow-xl shadow-violet-950/50 flex items-center gap-2 hover:scale-[1.02] active:scale-98 cursor-pointer border border-white/10"
                 >
-                  <Sparkles size={16} className="text-amber-300 animate-pulse" /> 
-                  <span>⚡ 1-Click Connect Gmail (Google OAuth)</span>
+                  <Zap size={14} /> Connect Workspace Channels
                 </button>
-                <button 
-                  onClick={() => setIsDirectoryModalOpen(true)} 
-                  className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-2"
+                <button
+                  onClick={() => navigate('/desktop/connectors')}
+                  className="px-4 py-2.5 bg-white/5 hover:bg-white/10 text-zinc-200 font-bold rounded-2xl text-xs transition-all border border-white/15 flex items-center gap-2 cursor-pointer"
                 >
-                  <Grid size={14} className="text-teal-400" /> 
-                  <span>Directory Marketplace (100+)</span>
+                  <Grid size={14} className="text-teal-400" /> Browse 28+ Connectors
                 </button>
               </div>
             </div>

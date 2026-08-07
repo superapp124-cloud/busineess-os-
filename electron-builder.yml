@@ -1,7 +1,6 @@
 appId: chat.chatr.desktop
 productName: CHATR Desktop
 npmRebuild: false
-includeSubNodeModules: false
 directories:
   output: dist-release
   buildResources: build
