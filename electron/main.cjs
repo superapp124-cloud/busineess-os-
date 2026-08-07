@@ -1664,10 +1664,10 @@ function createWindow() {
     height: 800,
     center: true,
     show: false, // Hidden until ready-to-show fires — eliminates white flash
-    backgroundColor: '#0d0d18',
+    backgroundColor: '#07070f',
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: '#0d0d18',
+      color: 'rgba(0,0,0,0)',
       symbolColor: '#ffffff',
       height: 36
     },
@@ -1915,7 +1915,7 @@ function createWindow() {
     if (mainWindow && typeof mainWindow.setTitleBarOverlay === 'function') {
       const isDark = theme !== 'light';
       mainWindow.setTitleBarOverlay({
-        color: isDark ? '#0d0d18' : '#ffffff',
+        color: isDark ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
         symbolColor: isDark ? '#ffffff' : '#18181b',
         height: 36
       });
