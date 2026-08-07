@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ArrowLeft, Search, Zap, RefreshCw, Unplug, CheckCircle, 
   Sparkles, Mail, Check, AlertTriangle, Loader2, ExternalLink,
-  Webhook, Activity
+  Webhook, Activity, ShieldCheck, Database, Layers, Radio, Globe,
+  Cpu, Sliders, ArrowUpRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -25,7 +26,6 @@ interface ConnectorWithStatus extends ConnectorDefinition {
   displayName?: string;
 }
 
-// Map catalog groups → display category labels
 const CATEGORIES = [
   'All',
   'Messaging & Email',
@@ -48,22 +48,22 @@ function BadgePill({ connector }: { connector: ConnectorDefinition }) {
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
       <span className={cn(
-        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono border",
+        "text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono border backdrop-blur-sm shadow-sm",
         mStyle.bg, mStyle.text, mStyle.border
       )}>
         {MATURITY_LABEL[maturity]}
       </span>
       <span className={cn(
-        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono border",
+        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono border backdrop-blur-sm",
         connector.auth === 'oauth2'
-          ? "bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800"
-          : "bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+          ? "bg-violet-950/60 text-violet-300 border-violet-800/60"
+          : "bg-amber-950/60 text-amber-300 border-amber-800/60"
       )}>
         {connector.auth === 'oauth2' ? 'OAuth 2.0' : connector.auth === 'api_key' ? 'API Key' : connector.auth.toUpperCase()}
       </span>
       {connector.webhooks && (
-        <span className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400 flex items-center gap-1">
-          <Webhook size={10} className="text-teal-500" /> Webhooks
+        <span className="text-[10px] font-semibold text-teal-400 bg-teal-950/40 border border-teal-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
+          <Webhook size={10} className="text-teal-400" /> Webhooks
         </span>
       )}
     </div>
@@ -90,7 +90,6 @@ export default function DesktopConnectorStore() {
         .order('created_at', { ascending: false });
 
       setConnectors(prev => prev.map(c => {
-        // Gmail can also be authenticated via direct token
         if (c.id === 'gmail' && isGoogleAuthenticated()) {
           return { ...c, status: 'connected' };
         }
@@ -109,7 +108,7 @@ export default function DesktopConnectorStore() {
         };
       }));
     } catch (e) {
-      // Not authenticated or table not found — show defaults
+      // Defaults retained if table or auth uninitialized
     } finally {
       setLoadingStatus(false);
     }
@@ -121,7 +120,6 @@ export default function DesktopConnectorStore() {
     setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'connecting' } : c));
     try {
       await startConnectorOAuth(conn.id);
-      // Status will be updated via the OAuth callback redirect
     } catch (e: any) {
       setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'setup_required' } : c));
     }
@@ -136,7 +134,7 @@ export default function DesktopConnectorStore() {
     try {
       const results = await syncConnection(conn.connectionId);
       const total = (results ?? []).reduce((sum: number, r: any) => sum + (r.upserted ?? 0), 0);
-      toast.success(`Synced ${conn.name}: ${total} records updated`);
+      toast.success(`Synced ${conn.name}: ${total} live records updated`);
       await loadConnectionStatuses();
     } catch (e: any) {
       toast.error(`Sync failed: ${e.message}`);
@@ -173,195 +171,276 @@ export default function DesktopConnectorStore() {
   });
 
   const connectedCount = connectors.filter(c => c.status === 'connected').length;
+  const totalCapabilitiesCount = connectors.reduce((acc, c) => acc + c.capabilities.length, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 font-sans p-6 md:p-10">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-violet-500 selection:text-white relative overflow-x-hidden">
+      
+      {/* Ambient Radial Background Glows */}
+      <div className="fixed top-0 left-1/4 w-[600px] h-[400px] bg-violet-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="fixed top-1/3 right-10 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="fixed bottom-10 left-10 w-[450px] h-[450px] bg-teal-600/10 rounded-full blur-[150px] pointer-events-none" />
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      {/* ── Main Container ──────────────────────────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-8 relative z-10">
+
+        {/* ── Top Header Navigation Bar ──────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              className="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer shadow-lg active:scale-95"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                Integrations
-              </h1>
-              <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium mt-0.5">
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{connectedCount} connected</span>
-                {' '}• {connectors.length} available
-                {loadingStatus && <span className="ml-2 text-zinc-500 animate-pulse">Checking status…</span>}
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+                  CHATR Connector Hub
+                </h1>
+                <span className="text-[10px] font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2.5 py-0.5 rounded-full shadow-inner">
+                  v2.4 Universal Runtime
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-1 flex items-center gap-2">
+                <span>Enterprise API Connectors & Real-Time Data Streams</span>
+                {loadingStatus && (
+                  <span className="text-violet-400 animate-pulse flex items-center gap-1 font-mono text-[11px]">
+                    <Loader2 size={12} className="animate-spin" /> Verifying connections…
+                  </span>
+                )}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Actions */}
+          <div className="flex items-center gap-3">
             <button
               onClick={loadConnectionStatuses}
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
-              title="Refresh statuses"
+              className="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer shadow-sm active:scale-95"
+              title="Refresh all statuses"
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={16} className={cn(loadingStatus && "animate-spin text-violet-400")} />
             </button>
             <button
               onClick={() => navigate('/desktop/inbox')}
-              className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-2"
+              className="px-5 py-2.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 hover:from-violet-500 hover:to-teal-400 text-white font-extrabold rounded-2xl text-xs transition-all cursor-pointer shadow-xl shadow-violet-950/50 flex items-center gap-2 hover:scale-[1.02] active:scale-98 border border-white/10"
             >
               <Mail size={16} />
-              <span>📥 Open Universal Inbox</span>
+              <span>📥 Universal Inbox</span>
             </button>
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-          <input
-            type="text"
-            placeholder="Search connectors or capabilities…"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-2xl py-3.5 pl-10 pr-5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 transition-all shadow-sm"
-          />
+        {/* ── KPI Stats Dashboard Bar ────────────────────────────────────── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-b from-zinc-900/90 to-black/80 border border-white/10 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
+              <span className="font-semibold">Connected Streams</span>
+              <Radio size={14} className="text-emerald-400 animate-pulse" />
+            </div>
+            <div className="text-2xl font-extrabold text-white font-mono flex items-baseline gap-1.5">
+              <span>{connectedCount}</span>
+              <span className="text-xs text-zinc-500 font-sans font-normal">/ {connectors.length} active</span>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-b from-zinc-900/90 to-black/80 border border-white/10 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
+              <span className="font-semibold">Platform Capabilities</span>
+              <Cpu size={14} className="text-violet-400" />
+            </div>
+            <div className="text-2xl font-extrabold text-white font-mono">
+              {totalCapabilitiesCount}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-b from-zinc-900/90 to-black/80 border border-white/10 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
+              <span className="font-semibold">Vault Token Security</span>
+              <ShieldCheck size={14} className="text-teal-400" />
+            </div>
+            <div className="text-sm font-bold text-teal-300 mt-1 font-mono flex items-center gap-1">
+              <span>Encrypted Vault</span>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-b from-zinc-900/90 to-black/80 border border-white/10 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
+              <span className="font-semibold">Sync Architecture</span>
+              <Activity size={14} className="text-amber-400" />
+            </div>
+            <div className="text-sm font-bold text-amber-300 mt-1 font-mono flex items-center gap-1">
+              <span>Webhooks & REST</span>
+            </div>
+          </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 text-xs">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full font-semibold shrink-0 transition-all cursor-pointer",
-                activeCategory === cat
-                  ? "bg-violet-600 text-white shadow-sm"
-                  : "bg-slate-200/60 dark:bg-white/5 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-white/10"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* ── Search Input & Filter Bar ─────────────────────────────────── */}
+        <div className="space-y-4">
+          <div className="relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+            <input
+              type="text"
+              placeholder="Search by provider name, capability, or protocol (e.g. Gmail, OAuth, email.read, REST)…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full bg-zinc-900/80 border border-white/15 focus:border-violet-500/80 rounded-2xl py-4 pl-12 pr-12 text-sm text-white placeholder:text-zinc-500 focus:outline-none transition-all shadow-2xl backdrop-blur-xl"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono text-zinc-400 hover:text-white bg-white/10 px-2 py-0.5 rounded-lg"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 text-xs scrollbar-none">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "px-4 py-2 rounded-2xl font-bold shrink-0 transition-all cursor-pointer border backdrop-blur-md shadow-sm",
+                  activeCategory === cat
+                    ? "bg-violet-600 text-white border-violet-400/50 shadow-violet-900/40 shadow-lg"
+                    : "bg-zinc-900/60 border-white/10 text-zinc-400 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Connector Cards */}
-        <div className="space-y-3 pt-1">
+        {/* ── Connector Cards Grid ───────────────────────────────────────── */}
+        <div className="space-y-4 pt-2">
           {filteredConnectors.map(conn => (
             <div
               key={conn.id}
               className={cn(
-                "bg-white dark:bg-zinc-900/90 border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all space-y-3.5",
+                "group relative bg-zinc-900/70 backdrop-blur-xl border rounded-3xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-violet-500/40 space-y-4 overflow-hidden",
                 conn.status === 'connected'
-                  ? "border-emerald-200 dark:border-emerald-800/40"
+                  ? "border-emerald-500/30 bg-emerald-950/10"
                   : conn.status === 'error'
-                  ? "border-red-200 dark:border-red-800/40"
-                  : "border-slate-200/80 dark:border-white/10"
+                  ? "border-red-500/30 bg-red-950/10"
+                  : "border-white/10"
               )}
             >
-              {/* Card Top */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3.5">
-                  {/* Brand Avatar */}
+              {/* Card Header: Icon, Name, Badges, Rate Limit */}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  {/* Brand Avatar Icon */}
                   <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-extrabold text-sm shadow-sm shrink-0"
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-base shadow-lg shrink-0 border border-white/15 relative overflow-hidden group-hover:scale-105 transition-transform"
                     style={{ backgroundColor: conn.brandColor }}
                   >
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     {conn.iconCode || conn.name.substring(0, 2).toUpperCase()}
                   </div>
+
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white">{conn.name}</h3>
+                      <h3 className="font-extrabold text-lg text-white group-hover:text-violet-300 transition-colors">
+                        {conn.name}
+                      </h3>
                       <BadgePill connector={conn} />
                       {conn.status === 'connected' && (
-                        <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <CheckCircle size={11} /> Connected
+                        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-inner">
+                          <CheckCircle size={12} /> Connected
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">{conn.summary}</p>
-                    {/* Capability chips */}
-                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{conn.summary}</p>
+
+                    {/* Capability Chips */}
+                    <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                       {conn.capabilities.map((cap, i) => (
                         <span
                           key={i}
                           title={PermissionManager.describe(cap as Capability)}
-                          className="text-[10px] bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-zinc-300 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-white/5 font-mono cursor-help"
+                          className="text-[10px] bg-white/5 hover:bg-white/10 text-zinc-300 px-2.5 py-1 rounded-xl border border-white/10 font-mono transition-colors cursor-help flex items-center gap-1"
                         >
-                          {PermissionManager.describe(cap as Capability)}
+                          <Check size={10} className="text-emerald-400" />
+                          <span>{PermissionManager.describe(cap as Capability)}</span>
                         </span>
                       ))}
+
                       {conn.roadmap?.v2?.map((cap, i) => (
                         <span
                           key={`v2-${i}`}
-                          className="text-[10px] bg-violet-50 dark:bg-violet-950/30 text-violet-500 dark:text-violet-400 px-2 py-0.5 rounded-md border border-violet-200/50 dark:border-violet-800/30 font-mono"
+                          className="text-[10px] bg-violet-950/40 text-violet-400 px-2.5 py-1 rounded-xl border border-violet-800/40 font-mono flex items-center gap-1 opacity-80"
                         >
-                          {cap} <span className="opacity-60">v2</span>
+                          <span>{cap}</span>
+                          <span className="text-[9px] font-bold bg-violet-500/20 text-violet-300 px-1 rounded">v2</span>
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Rate limit badge */}
+                {/* Rate Limit Tag */}
                 {conn.rateLimitPerMinute && (
-                  <span className="text-[10px] font-mono text-zinc-400 shrink-0 mt-1">
-                    <Activity size={10} className="inline mr-0.5" />{conn.rateLimitPerMinute}/min
-                  </span>
+                  <div className="text-[11px] font-mono text-zinc-500 shrink-0 bg-white/5 border border-white/5 px-2.5 py-1 rounded-xl flex items-center gap-1">
+                    <Activity size={11} className="text-violet-400" />
+                    <span>{conn.rateLimitPerMinute}/min</span>
+                  </div>
                 )}
               </div>
 
               {/* Status Bar */}
               <div className={cn(
-                "p-3 rounded-xl flex items-center justify-between text-xs border",
+                "p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between text-xs border gap-2 backdrop-blur-md",
                 conn.status === 'connected'
-                  ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200/60 dark:border-emerald-800/30"
+                  ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-300"
                   : conn.status === 'error'
-                  ? "bg-red-50 dark:bg-red-950/20 border-red-200/60 dark:border-red-800/30"
+                  ? "bg-red-950/30 border-red-500/30 text-red-300"
                   : conn.status === 'connecting'
-                  ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30"
-                  : "bg-slate-50 dark:bg-black/40 border-slate-200/60 dark:border-white/5"
+                  ? "bg-amber-950/30 border-amber-500/30 text-amber-300"
+                  : "bg-black/40 border-white/5 text-zinc-400"
               )}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span className={cn(
-                    "w-2 h-2 rounded-full shrink-0",
-                    conn.status === 'connected' ? "bg-emerald-500"
-                      : conn.status === 'connecting' ? "bg-amber-400 animate-pulse"
-                      : conn.status === 'error' ? "bg-red-500"
-                      : "bg-slate-300 dark:bg-zinc-600"
+                    "w-2.5 h-2.5 rounded-full shrink-0 shadow-sm",
+                    conn.status === 'connected' ? "bg-emerald-400 shadow-emerald-500/50 animate-pulse"
+                      : conn.status === 'connecting' ? "bg-amber-400 animate-ping"
+                      : conn.status === 'error' ? "bg-red-400"
+                      : "bg-zinc-600"
                   )} />
-                  <span className="text-slate-600 dark:text-zinc-300 font-medium">
+                  <span className="font-semibold text-white">
                     {conn.status === 'connected'
-                      ? conn.displayName ? `✓ ${conn.displayName}` : '✓ Connected & Active'
-                      : conn.status === 'connecting' ? 'Connecting…'
-                      : conn.status === 'error' ? 'Connection error — reconnect'
-                      : `Connect to enable ${conn.capabilities[0] ?? 'sync'}`}
+                      ? conn.displayName ? `Connected: ${conn.displayName}` : '✓ Authorized & Active'
+                      : conn.status === 'connecting' ? 'Initiating OAuth Authorization…'
+                      : conn.status === 'error' ? 'Authentication error — reconnect account'
+                      : `Connect account to enable ${PermissionManager.describe(conn.capabilities[0])}`}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
                   {conn.lastSyncedAt && (
-                    <span className="text-[10px] font-mono text-zinc-400">
+                    <span>
                       Synced {new Date(conn.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
-                  <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500">
-                    {conn.capabilities.length} capabilities
-                  </span>
+                  <span>{conn.capabilities.length} capabilities</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2.5 pt-0.5">
+              <div className="flex items-center gap-3 pt-1">
                 {conn.status !== 'connected' ? (
                   <button
                     onClick={() => handleConnect(conn)}
                     disabled={conn.status === 'connecting'}
-                    className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-60 text-white font-extrabold rounded-2xl text-xs transition-all cursor-pointer shadow-lg shadow-violet-950/50 flex items-center gap-2 hover:scale-[1.02] active:scale-98 border border-white/10"
                   >
                     {conn.status === 'connecting'
-                      ? <><Loader2 size={13} className="animate-spin" /> Connecting…</>
-                      : <><Zap size={13} /> Connect</>
+                      ? <><Loader2 size={14} className="animate-spin" /> Authorizing…</>
+                      : <><Zap size={14} /> Connect Account</>
                     }
                   </button>
                 ) : null}
@@ -370,34 +449,36 @@ export default function DesktopConnectorStore() {
                   <button
                     onClick={() => handleSyncNow(conn)}
                     disabled={syncing === conn.id}
-                    className="px-3.5 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer border border-slate-200 dark:border-white/10 flex items-center gap-1.5 disabled:opacity-60"
+                    className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold rounded-2xl text-xs transition-all cursor-pointer border border-white/15 flex items-center gap-2 disabled:opacity-60 hover:scale-[1.02] active:scale-98 shadow-sm"
                   >
                     {syncing === conn.id
-                      ? <><Loader2 size={12} className="animate-spin" /> Syncing…</>
-                      : <><RefreshCw size={12} /> Sync now</>
+                      ? <><Loader2 size={13} className="animate-spin text-teal-400" /> Syncing Live Data…</>
+                      : <><RefreshCw size={13} className="text-teal-400" /> Sync Now</>
                     }
                   </button>
                 )}
 
                 <button
                   onClick={() => handleDisconnect(conn)}
-                  className="px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-1.5 ml-auto"
+                  className="px-4 py-2.5 hover:bg-red-500/20 text-zinc-400 hover:text-red-300 font-bold rounded-2xl text-xs transition-all cursor-pointer flex items-center gap-1.5 ml-auto border border-transparent hover:border-red-500/30"
                 >
-                  <Unplug size={13} />
+                  <Unplug size={14} />
                   <span>Disconnect</span>
                 </button>
               </div>
+
             </div>
           ))}
 
           {filteredConnectors.length === 0 && (
-            <div className="text-center py-16 text-zinc-500">
-              <Sparkles size={32} className="mx-auto mb-3 text-violet-400" />
-              <p className="font-semibold">No connectors match "{searchQuery}"</p>
-              <p className="text-xs mt-1">Try searching by capability, e.g. "email" or "files"</p>
+            <div className="text-center py-20 text-zinc-500 bg-zinc-900/40 border border-white/10 rounded-3xl space-y-3">
+              <Sparkles size={36} className="mx-auto text-violet-400 opacity-60" />
+              <p className="text-base font-bold text-white">No connectors match "{searchQuery}"</p>
+              <p className="text-xs text-zinc-400">Try searching by provider name or capability (e.g., "Gmail", "email.read", "OAuth")</p>
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

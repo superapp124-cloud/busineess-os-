@@ -412,7 +412,7 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
                   <Sparkles size={14} className="text-amber-400" /> Open Connector Standard
                 </span>
                 <p className="text-[11px] text-zinc-400 leading-relaxed">
-                  Third-party developers can publish connectors that implement CHATR's Universal Runtime specs.
+                  Third-party developers can publish connectors that implement CHATR&apos;s Universal Runtime specs.
                 </p>
               </div>
             </div>
