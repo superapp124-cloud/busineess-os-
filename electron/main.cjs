@@ -1667,7 +1667,7 @@ function createWindow() {
     backgroundColor: '#07070f',
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: 'rgba(0,0,0,0)',
+      color: '#07070f',
       symbolColor: '#ffffff',
       height: 36
     },
@@ -1915,7 +1915,7 @@ function createWindow() {
     if (mainWindow && typeof mainWindow.setTitleBarOverlay === 'function') {
       const isDark = theme !== 'light';
       mainWindow.setTitleBarOverlay({
-        color: isDark ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0)',
+        color: isDark ? '#07070f' : '#ffffff',
         symbolColor: isDark ? '#ffffff' : '#18181b',
         height: 36
       });
