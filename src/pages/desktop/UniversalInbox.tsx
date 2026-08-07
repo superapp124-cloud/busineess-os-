@@ -376,43 +376,70 @@ export const UniversalInbox: React.FC = () => {
       }
 
       // 2. Fetch real records from Supabase connector_records table
+      // connector-hub stores: title=subject, body=snippet, author="Name <email>", metadata={thread_id, label_ids}
       try {
-        const { data: records } = await supabase.from('connector_records' as any).select('*').order('occurred_at', { ascending: false }).limit(50);
+        const { data: records } = await supabase
+          .from('connector_records' as any)
+          .select('*')
+          .order('occurred_at', { ascending: false })
+          .limit(100);
+
         if (records && Array.isArray(records) && records.length > 0) {
-          console.log('[UniversalInbox] Fetched connector_records count:', records.length);
+          console.log('[UniversalInbox] connector_records count:', records.length, 'sample:', records[0]);
           const mapped = records
             .filter((r: any) => {
-              const subj = r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '';
-              return subj && subj !== 'Email' && subj !== '(No Subject)';
+              // Filter blank rows where title was set to "Email" (no subject header)
+              const subj = r.title || '';
+              return subj && subj !== 'Email' && subj.length > 2;
             })
             .map((r: any) => {
-              const senderEmail = r.metadata?.from?.emailAddress?.address || r.metadata?.headers?.From?.match(/<(.+?)>/)?.[1] || '';
-              const subject = r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '(No Subject)';
-              const preview = decodeHTMLEntities(r.metadata?.snippet || r.body || r.title || '');
-              const sender = r.metadata?.from?.name || r.metadata?.headers?.From?.split('<')[0]?.trim() || senderEmail.split('@')[0] || 'Gmail Message';
+              // r.author = "Display Name <email@domain.com>" or just "email@domain.com"
+              const authorRaw: string = r.author || '';
+              const emailMatch = authorRaw.match(/<(.+?)>/);
+              const senderEmail = emailMatch?.[1] || (authorRaw.includes('@') ? authorRaw : '');
+              const senderName = emailMatch
+                ? authorRaw.split('<')[0].trim().replace(/^["']|["']$/g, '')
+                : (authorRaw.split('@')[0] || 'Unknown');
+
+              const subject = r.title || '(No Subject)';
+              const preview = decodeHTMLEntities(r.body || '');
+              const threadId = r.metadata?.thread_id;
+              const url = r.url || (threadId ? `https://mail.google.com/mail/u/0/#inbox/${threadId}` : undefined);
+
               const { category, priority } = classifyMessage(subject, senderEmail, preview);
+
               return {
-                id: r.external_id || r.id || String(Date.now()),
-                source: (r.connector_id === 'gmail' ? 'Gmail' : r.connector_id === 'outlook' ? 'Outlook' : 'Gmail') as MessageSource,
-                sender,
+                id: r.external_id || r.id,
+                source: (r.connector_id === 'gmail' || r.connector_id === 'google_calendar'
+                  ? 'Gmail'
+                  : r.connector_id === 'outlook' || r.connector_id === 'outlook_calendar'
+                  ? 'Outlook'
+                  : r.connector_id === 'github' ? 'GitHub'
+                  : r.connector_id === 'slack' ? 'Slack'
+                  : r.connector_id === 'linkedin' ? 'LinkedIn'
+                  : 'Gmail') as MessageSource,
+                sender: senderName || senderEmail || 'Unknown Sender',
                 senderEmail,
                 recipient: 'To: me',
                 subject,
                 preview,
-                time: r.occurred_at ? new Date(r.occurred_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now',
+                url,
+                time: r.occurred_at
+                  ? new Date(r.occurred_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : 'Just now',
                 exactTime: r.occurred_at ? new Date(r.occurred_at).toLocaleString() : 'Just now',
                 priority,
                 category,
-                read: false,
-                starred: false,
+                read: (r.metadata?.label_ids || []).indexOf('UNREAD') === -1,
+                starred: (r.metadata?.label_ids || []).includes('STARRED'),
                 accountBadge: '',
-                confidenceScore: 100
+                confidenceScore: 100,
               };
             });
           liveMsgs.push(...mapped);
         }
       } catch (dbErr) {
-        // Table not present or unauthenticated
+        console.warn('[UniversalInbox] connector_records query error:', dbErr);
       }
 
       // 3. Fetch real Gmail messages via direct Google REST API (reads Vault & local storage)

@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipb
 const path = require('path');
 const fs = require('fs');
 const log = require('electron-log');
-const { autoUpdater } = require('electron-updater');
+const UpdateService = require('./services/UpdateService.cjs');
 const { execFile } = require('child_process');
 const ollamaEngine = require('./ollama.cjs');
 const runtimeOrchestrator = require('./runtime/LocalRuntimeOrchestrator.cjs');
@@ -2144,9 +2144,9 @@ app.whenReady().then(() => {
     }
   });
 
-  // --- Auto Updater (Core OS) ---
-  autoUpdater.logger = log;
-  autoUpdater.logger.transports.file.level = 'info';
+  // --- Core Executable Update Service ---
+  const updateService = new UpdateService({ isDev });
+  updateService.init(mainWindow, ipcMain);
 
   // --- Capability Manager (Thin Kernel Plugins & Models) ---
   const capabilityDir = path.join(app.getPath('userData'), 'capabilities');
@@ -2167,13 +2167,6 @@ app.whenReady().then(() => {
   ipcMain.handle('capability:list', async () => {
     return global.capabilityManager.installed;
   });
-
-  if (!isDev) {
-    // Check for updates shortly after startup
-    setTimeout(() => {
-      autoUpdater.checkForUpdatesAndNotify();
-    }, 10000);
-  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

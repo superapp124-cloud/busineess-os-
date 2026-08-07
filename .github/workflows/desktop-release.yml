@@ -38,7 +38,7 @@ jobs:
           WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
           WIN_CSC_SUBJECT_NAME: ${{ secrets.WIN_CSC_SUBJECT_NAME }}
           WIN_CSC_SHA1: ${{ secrets.WIN_CSC_SHA1 }}
-        run: npx electron-builder --win --config electron-builder.yml
+        run: npx electron-builder --win --config electron-builder.yml --publish always
 
       - name: Verify Signed Installer Executable
         run: node scripts/verify-signed-installer.cjs

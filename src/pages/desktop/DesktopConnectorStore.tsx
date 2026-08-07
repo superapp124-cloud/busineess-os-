@@ -1,187 +1,174 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ArrowLeft, Search, Zap, RefreshCw, Unplug, CheckCircle, 
-  Sparkles, Lock, ShieldCheck, Mail, Calendar, FileText, Code, 
-  Users, Check, ExternalLink, Plus
+  Sparkles, Mail, Check, AlertTriangle, Loader2, ExternalLink,
+  Webhook, Activity
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
-import { startConnectorOAuth } from '@/core/connector/SupabaseConnectorHub';
-import { storeGoogleToken, isGoogleAuthenticated, launchGoogleOAuthFlow } from '@/core/connector/providers/GmailService';
+import { startConnectorOAuth, invokeConnectorHub, syncConnection } from '@/core/connector/SupabaseConnectorHub';
+import { isGoogleAuthenticated } from '@/core/connector/providers/GmailService';
+import { CONNECTOR_CATALOG, GROUP_TO_CATEGORY } from '@/core/connector/catalog';
+import type { ConnectorDefinition, Capability } from '@/core/connector/types';
+import { maturityOf, MATURITY_LABEL, MATURITY_STYLE } from '@/core/connector/maturity';
+import { PermissionManager } from '@/core/connector/permissions';
 
-export interface IntegrationConnector {
-  id: string;
-  name: string;
-  badge: 'Production' | 'Preview' | 'Beta';
-  certified: boolean;
-  category: 'Messaging & Email' | 'Calendar & Meetings' | 'Files & Storage' | 'Work & Code' | 'Customers & Sales' | 'Notes & Tasks' | 'Payments & Business';
-  iconBg: string;
-  iconCode: string;
-  description: string;
-  capabilities: string[];
-  statusText: string;
-  capabilityCount: number;
-  loginUrl?: string;
-  status: 'connected' | 'setup_required' | 'connecting';
+type ConnectorStatus = 'connected' | 'setup_required' | 'connecting' | 'error';
+
+interface ConnectorWithStatus extends ConnectorDefinition {
+  status: ConnectorStatus;
+  connectionId?: string;
+  lastSyncedAt?: string;
+  health?: string;
+  displayName?: string;
 }
 
-const INITIAL_CONNECTORS: IntegrationConnector[] = [
-  {
-    id: 'gmail',
-    name: 'Gmail',
-    badge: 'Production',
-    certified: true,
-    category: 'Messaging & Email',
-    iconBg: '#EA4335',
-    iconCode: 'G',
-    description: 'Read, search and send email from your Google account.',
-    capabilities: ['Read your email', 'Send email on your behalf'],
-    statusText: 'Connect to enable email, calendar and AI capabilities.',
-    capabilityCount: 2,
-    loginUrl: 'https://mail.google.com/',
-    status: 'setup_required'
-  },
-  {
-    id: 'outlook',
-    name: 'Outlook / Microsoft 365',
-    badge: 'Production',
-    certified: true,
-    category: 'Messaging & Email',
-    iconBg: '#0078D4',
-    iconCode: 'O',
-    description: 'Work mail and contacts from Microsoft 365.',
-    capabilities: ['Read your email', 'Send email on your behalf', 'Read your contacts'],
-    statusText: 'Connect to enable email, calendar and AI capabilities.',
-    capabilityCount: 3,
-    loginUrl: 'https://outlook.live.com/',
-    status: 'setup_required'
-  },
-  {
-    id: 'imap',
-    name: 'IMAP / SMTP',
-    badge: 'Preview',
-    certified: true,
-    category: 'Messaging & Email',
-    iconBg: '#475569',
-    iconCode: 'I',
-    description: 'Connect any mailbox that speaks IMAP and SMTP.',
-    capabilities: ['Read your email', 'Send email on your behalf'],
-    statusText: 'Finishing authorisation with the provider.',
-    capabilityCount: 2,
-    status: 'connecting'
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    badge: 'Production',
-    certified: true,
-    category: 'Messaging & Email',
-    iconBg: '#4A154B',
-    iconCode: 'S',
-    description: 'Read channels and post messages to your workspace.',
-    capabilities: ['Read channels', 'Post messages', 'User mentions'],
-    statusText: 'Connect to enable chat & message index.',
-    capabilityCount: 3,
-    loginUrl: 'https://app.slack.com/',
-    status: 'setup_required'
-  },
-  {
-    id: 'gdrive',
-    name: 'Google Drive',
-    badge: 'Production',
-    certified: true,
-    category: 'Files & Storage',
-    iconBg: '#34A853',
-    iconCode: 'GD',
-    description: 'Search, read, and upload files from your Google Drive.',
-    capabilities: ['Search files', 'Read documents', 'Upload files'],
-    statusText: 'Connect to enable document intelligence.',
-    capabilityCount: 3,
-    loginUrl: 'https://drive.google.com/',
-    status: 'setup_required'
-  },
-  {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    badge: 'Production',
-    certified: true,
-    category: 'Work & Code',
-    iconBg: '#0A66C2',
-    iconCode: 'Li',
-    description: 'Work profile and network connections from LinkedIn.',
-    capabilities: ['Read profile', 'Read connections', 'Direct messages'],
-    statusText: 'Connect to enable candidate sourcing.',
-    capabilityCount: 3,
-    loginUrl: 'https://www.linkedin.com/feed/',
-    status: 'setup_required'
-  },
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp Business',
-    badge: 'Production',
-    certified: true,
-    category: 'Messaging & Email',
-    iconBg: '#25D366',
-    iconCode: 'WA',
-    description: 'Connect WhatsApp Web or Meta Business API to sync chat conversations.',
-    capabilities: ['Read chats', 'Send messages', 'Media attachments'],
-    statusText: 'Connect to enable messaging graph.',
-    capabilityCount: 3,
-    loginUrl: 'https://web.whatsapp.com/',
-    status: 'setup_required'
-  }
+// Map catalog groups → display category labels
+const CATEGORIES = [
+  'All',
+  'Messaging & Email',
+  'Calendar & Meetings',
+  'Files & Storage',
+  'Work & Code',
+  'Customers & Sales',
+  'Notes & Tasks',
+  'Payments & Business',
 ];
+
+function getCategory(connector: ConnectorDefinition): string {
+  const primaryGroup = connector.groups[0];
+  return GROUP_TO_CATEGORY[primaryGroup] ?? 'Other';
+}
+
+function BadgePill({ connector }: { connector: ConnectorDefinition }) {
+  const maturity = maturityOf(connector);
+  const mStyle = MATURITY_STYLE[maturity];
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      <span className={cn(
+        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono border",
+        mStyle.bg, mStyle.text, mStyle.border
+      )}>
+        {MATURITY_LABEL[maturity]}
+      </span>
+      <span className={cn(
+        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono border",
+        connector.auth === 'oauth2'
+          ? "bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800"
+          : "bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+      )}>
+        {connector.auth === 'oauth2' ? 'OAuth 2.0' : connector.auth === 'api_key' ? 'API Key' : connector.auth.toUpperCase()}
+      </span>
+      {connector.webhooks && (
+        <span className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400 flex items-center gap-1">
+          <Webhook size={10} className="text-teal-500" /> Webhooks
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function DesktopConnectorStore() {
   const navigate = useNavigate();
-  const [connectors, setConnectors] = useState<IntegrationConnector[]>(INITIAL_CONNECTORS);
+  const [connectors, setConnectors] = useState<ConnectorWithStatus[]>(() =>
+    CONNECTOR_CATALOG.map(c => ({ ...c, status: 'setup_required' as ConnectorStatus }))
+  );
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [syncing, setSyncing] = useState<string | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
-  // Update status from localStorage or token presence
-  useEffect(() => {
-    if (isGoogleAuthenticated()) {
-      setConnectors(prev => prev.map(c => c.id === 'gmail' ? { ...c, status: 'connected' } : c));
+  // Load real connection statuses from Supabase
+  const loadConnectionStatuses = useCallback(async () => {
+    try {
+      setLoadingStatus(true);
+      const { data: connections } = await supabase
+        .from('connector_connections' as any)
+        .select('connector_id, id, status, health, last_synced_at, display_name')
+        .order('created_at', { ascending: false });
+
+      setConnectors(prev => prev.map(c => {
+        // Gmail can also be authenticated via direct token
+        if (c.id === 'gmail' && isGoogleAuthenticated()) {
+          return { ...c, status: 'connected' };
+        }
+        const match = (connections as any[])?.find((conn: any) => conn.connector_id === c.id);
+        if (!match) return c;
+        return {
+          ...c,
+          status: match.status === 'connected' ? 'connected'
+            : match.status === 'connecting' ? 'connecting'
+            : match.status === 'error' ? 'error'
+            : 'setup_required',
+          connectionId: match.id,
+          lastSyncedAt: match.last_synced_at,
+          health: match.health,
+          displayName: match.display_name,
+        };
+      }));
+    } catch (e) {
+      // Not authenticated or table not found — show defaults
+    } finally {
+      setLoadingStatus(false);
     }
   }, []);
 
-  const handleConnect = async (conn: IntegrationConnector) => {
+  useEffect(() => { loadConnectionStatuses(); }, [loadConnectionStatuses]);
+
+  const handleConnect = async (conn: ConnectorWithStatus) => {
+    setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'connecting' } : c));
     try {
       await startConnectorOAuth(conn.id);
-      setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'connected' } : c));
+      // Status will be updated via the OAuth callback redirect
     } catch (e: any) {
-      if (conn.loginUrl) window.open(conn.loginUrl, '_blank');
+      setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'setup_required' } : c));
     }
   };
 
-  const handleSyncNow = (conn: IntegrationConnector) => {
-    toast.success(`Syncing ${conn.name} streams in real-time...`);
+  const handleSyncNow = async (conn: ConnectorWithStatus) => {
+    if (!conn.connectionId) {
+      toast.warning('Connect the account first before syncing.');
+      return;
+    }
+    setSyncing(conn.id);
+    try {
+      const results = await syncConnection(conn.connectionId);
+      const total = (results ?? []).reduce((sum: number, r: any) => sum + (r.upserted ?? 0), 0);
+      toast.success(`Synced ${conn.name}: ${total} records updated`);
+      await loadConnectionStatuses();
+    } catch (e: any) {
+      toast.error(`Sync failed: ${e.message}`);
+    } finally {
+      setSyncing(null);
+    }
   };
 
-  const handleDisconnect = (conn: IntegrationConnector) => {
-    setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'setup_required' } : c));
-    toast.info(`Disconnected ${conn.name}`);
+  const handleDisconnect = async (conn: ConnectorWithStatus) => {
+    if (!conn.connectionId) {
+      setConnectors(prev => prev.map(c => c.id === conn.id ? { ...c, status: 'setup_required' } : c));
+      return;
+    }
+    try {
+      await invokeConnectorHub('disconnect', { connection_id: conn.connectionId });
+      setConnectors(prev => prev.map(c => c.id === conn.id
+        ? { ...c, status: 'setup_required', connectionId: undefined, lastSyncedAt: undefined }
+        : c
+      ));
+      toast.info(`Disconnected ${conn.name}`);
+    } catch (e: any) {
+      toast.error(`Disconnect failed: ${e.message}`);
+    }
   };
-
-  const categories = [
-    'All', 
-    'Messaging & Email', 
-    'Calendar & Meetings', 
-    'Files & Storage', 
-    'Work & Code', 
-    'Customers & Sales', 
-    'Notes & Tasks', 
-    'Payments & Business'
-  ];
 
   const filteredConnectors = connectors.filter(c => {
-    const matchesCategory = activeCategory === 'All' || c.category === activeCategory;
-    const matchesSearch = searchQuery === '' || 
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      c.description.toLowerCase().includes(searchQuery.toLowerCase());
-
+    const cat = getCategory(c);
+    const matchesCategory = activeCategory === 'All' || cat === activeCategory;
+    const matchesSearch = searchQuery === '' ||
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.capabilities.some(cap => cap.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -189,53 +176,69 @@ export default function DesktopConnectorStore() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 font-sans p-6 md:p-10">
-      
-      {/* Top Header & Back Button */}
       <div className="max-w-5xl mx-auto space-y-6">
+
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            >
               <ArrowLeft size={20} />
             </button>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Integrations</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                Integrations
+              </h1>
               <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium mt-0.5">
-                <span className="font-semibold text-slate-700 dark:text-zinc-200">{connectedCount} connected</span> • {connectors.length} available • 0 coming soon
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{connectedCount} connected</span>
+                {' '}• {connectors.length} available
+                {loadingStatus && <span className="ml-2 text-zinc-500 animate-pulse">Checking status…</span>}
               </p>
             </div>
           </div>
-
-          <button 
-            onClick={() => navigate('/desktop/inbox')}
-            className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-2"
-          >
-            <Mail size={16} />
-            <span>📥 Open Universal Inbox</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadConnectionStatuses}
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
+              title="Refresh statuses"
+            >
+              <RefreshCw size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/desktop/inbox')}
+              className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-2"
+            >
+              <Mail size={16} />
+              <span>📥 Open Universal Inbox</span>
+            </button>
+          </div>
         </div>
 
-        {/* Action Prompt Search Input */}
+        {/* Search */}
         <div className="relative">
-          <input 
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
+          <input
             type="text"
-            placeholder="What do you want to do? e.g. read email, see files"
+            placeholder="Search connectors or capabilities…"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-2xl py-3.5 px-5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 transition-all shadow-sm"
+            className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-2xl py-3.5 pl-10 pr-5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 transition-all shadow-sm"
           />
         </div>
 
         {/* Category Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-2 text-xs">
-          {categories.map(cat => (
+          {CATEGORIES.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={cn(
                 "px-3.5 py-1.5 rounded-full font-semibold shrink-0 transition-all cursor-pointer",
-                activeCategory === cat 
-                  ? "bg-violet-600 text-white shadow-sm" 
-                  : "bg-slate-200/60 dark:bg-white/5 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
+                activeCategory === cat
+                  ? "bg-violet-600 text-white shadow-sm"
+                  : "bg-slate-200/60 dark:bg-white/5 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-white/10"
               )}
             >
               {cat}
@@ -243,97 +246,159 @@ export default function DesktopConnectorStore() {
           ))}
         </div>
 
-        {/* Integrations Cards List */}
-        <div className="space-y-4 pt-2">
+        {/* Connector Cards */}
+        <div className="space-y-3 pt-1">
           {filteredConnectors.map(conn => (
-            <div key={conn.id} className="bg-white dark:bg-zinc-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all space-y-4">
-              
-              {/* Card Top: Icon, Title, Badges */}
-              <div className="flex items-start justify-between">
+            <div
+              key={conn.id}
+              className={cn(
+                "bg-white dark:bg-zinc-900/90 border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all space-y-3.5",
+                conn.status === 'connected'
+                  ? "border-emerald-200 dark:border-emerald-800/40"
+                  : conn.status === 'error'
+                  ? "border-red-200 dark:border-red-800/40"
+                  : "border-slate-200/80 dark:border-white/10"
+              )}
+            >
+              {/* Card Top */}
+              <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-extrabold text-base shadow-sm shrink-0" style={{ backgroundColor: conn.iconBg }}>
-                    {conn.iconCode}
+                  {/* Brand Avatar */}
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-extrabold text-sm shadow-sm shrink-0"
+                    style={{ backgroundColor: conn.brandColor }}
+                  >
+                    {conn.iconCode || conn.name.substring(0, 2).toUpperCase()}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-bold text-base text-slate-900 dark:text-white">{conn.name}</h3>
-                      <span className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-full font-mono",
-                        conn.badge === 'Production' ? "bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800" : "bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400"
-                      )}>
-                        {conn.badge}
-                      </span>
-                      {conn.certified && (
-                        <span className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400 flex items-center gap-1">
-                          <CheckCircle size={12} className="text-emerald-500" /> Certified
+                      <BadgePill connector={conn} />
+                      {conn.status === 'connected' && (
+                        <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                          <CheckCircle size={11} /> Connected
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">{conn.description}</p>
-
-                    {/* Capability Pills */}
-                    <div className="flex items-center gap-2 mt-2 flex-wrap">
-                      {conn.capabilities.map((cap, idx) => (
-                        <span key={idx} className="text-[11px] bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-zinc-300 px-2.5 py-0.5 rounded-md border border-slate-200/60 dark:border-white/5 font-medium">
-                          {cap}
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">{conn.summary}</p>
+                    {/* Capability chips */}
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                      {conn.capabilities.map((cap, i) => (
+                        <span
+                          key={i}
+                          title={PermissionManager.describe(cap as Capability)}
+                          className="text-[10px] bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-zinc-300 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-white/5 font-mono cursor-help"
+                        >
+                          {PermissionManager.describe(cap as Capability)}
+                        </span>
+                      ))}
+                      {conn.roadmap?.v2?.map((cap, i) => (
+                        <span
+                          key={`v2-${i}`}
+                          className="text-[10px] bg-violet-50 dark:bg-violet-950/30 text-violet-500 dark:text-violet-400 px-2 py-0.5 rounded-md border border-violet-200/50 dark:border-violet-800/30 font-mono"
+                        >
+                          {cap} <span className="opacity-60">v2</span>
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
+
+                {/* Rate limit badge */}
+                {conn.rateLimitPerMinute && (
+                  <span className="text-[10px] font-mono text-zinc-400 shrink-0 mt-1">
+                    <Activity size={10} className="inline mr-0.5" />{conn.rateLimitPerMinute}/min
+                  </span>
+                )}
               </div>
 
-              {/* Status Banner */}
-              <div className="p-3 bg-slate-50 dark:bg-black/40 border border-slate-200/60 dark:border-white/5 rounded-xl flex items-center justify-between text-xs">
+              {/* Status Bar */}
+              <div className={cn(
+                "p-3 rounded-xl flex items-center justify-between text-xs border",
+                conn.status === 'connected'
+                  ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200/60 dark:border-emerald-800/30"
+                  : conn.status === 'error'
+                  ? "bg-red-50 dark:bg-red-950/20 border-red-200/60 dark:border-red-800/30"
+                  : conn.status === 'connecting'
+                  ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30"
+                  : "bg-slate-50 dark:bg-black/40 border-slate-200/60 dark:border-white/5"
+              )}>
                 <div className="flex items-center gap-2">
                   <span className={cn(
-                    "w-2 h-2 rounded-full",
-                    conn.status === 'connected' ? "bg-emerald-500" : conn.status === 'connecting' ? "bg-amber-400 animate-pulse" : "bg-amber-500"
+                    "w-2 h-2 rounded-full shrink-0",
+                    conn.status === 'connected' ? "bg-emerald-500"
+                      : conn.status === 'connecting' ? "bg-amber-400 animate-pulse"
+                      : conn.status === 'error' ? "bg-red-500"
+                      : "bg-slate-300 dark:bg-zinc-600"
                   )} />
                   <span className="text-slate-600 dark:text-zinc-300 font-medium">
-                    {conn.status === 'connected' ? '✓ Connected & Active' : conn.statusText}
+                    {conn.status === 'connected'
+                      ? conn.displayName ? `✓ ${conn.displayName}` : '✓ Connected & Active'
+                      : conn.status === 'connecting' ? 'Connecting…'
+                      : conn.status === 'error' ? 'Connection error — reconnect'
+                      : `Connect to enable ${conn.capabilities[0] ?? 'sync'}`}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500">
-                  {conn.capabilityCount} capabilities
-                </span>
+                <div className="flex items-center gap-2">
+                  {conn.lastSyncedAt && (
+                    <span className="text-[10px] font-mono text-zinc-400">
+                      Synced {new Date(conn.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+                  <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500">
+                    {conn.capabilities.length} capabilities
+                  </span>
+                </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 pt-1">
+              <div className="flex items-center gap-2.5 pt-0.5">
                 {conn.status !== 'connected' ? (
-                  <button 
+                  <button
                     onClick={() => handleConnect(conn)}
-                    className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                    disabled={conn.status === 'connecting'}
+                    className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                   >
-                    <Zap size={14} />
-                    <span>Connect</span>
+                    {conn.status === 'connecting'
+                      ? <><Loader2 size={13} className="animate-spin" /> Connecting…</>
+                      : <><Zap size={13} /> Connect</>
+                    }
                   </button>
                 ) : null}
 
-                <button 
-                  onClick={() => handleSyncNow(conn)}
-                  className="px-3.5 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer border border-slate-200 dark:border-white/10 flex items-center gap-1.5"
-                >
-                  <RefreshCw size={13} />
-                  <span>Sync now</span>
-                </button>
+                {conn.status === 'connected' && (
+                  <button
+                    onClick={() => handleSyncNow(conn)}
+                    disabled={syncing === conn.id}
+                    className="px-3.5 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl text-xs transition-all cursor-pointer border border-slate-200 dark:border-white/10 flex items-center gap-1.5 disabled:opacity-60"
+                  >
+                    {syncing === conn.id
+                      ? <><Loader2 size={12} className="animate-spin" /> Syncing…</>
+                      : <><RefreshCw size={12} /> Sync now</>
+                    }
+                  </button>
+                )}
 
-                <button 
+                <button
                   onClick={() => handleDisconnect(conn)}
-                  className="px-3.5 py-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-1.5 ml-auto"
+                  className="px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-semibold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-1.5 ml-auto"
                 >
-                  <Unplug size={14} />
+                  <Unplug size={13} />
                   <span>Disconnect</span>
                 </button>
               </div>
-
             </div>
           ))}
+
+          {filteredConnectors.length === 0 && (
+            <div className="text-center py-16 text-zinc-500">
+              <Sparkles size={32} className="mx-auto mb-3 text-violet-400" />
+              <p className="font-semibold">No connectors match "{searchQuery}"</p>
+              <p className="text-xs mt-1">Try searching by capability, e.g. "email" or "files"</p>
+            </div>
+          )}
         </div>
-
       </div>
-
     </div>
   );
 }
