@@ -4,6 +4,8 @@ const path = require('path');
 
 const rootDir = path.join(__dirname, '..');
 const distReleaseDir = path.join(rootDir, 'dist-release');
+const distDesktopDir = path.join(rootDir, 'dist-desktop');
+const publicDownloadDir = path.join(rootDir, 'public', 'download');
 
 console.log('[Build] Cleaning up background processes...');
 try {
@@ -13,12 +15,37 @@ try {
   execSync('taskkill /F /IM "CHATR Desktop.exe"', { stdio: 'ignore' });
 } catch (e) {}
 
+// Clean cached installers in public/download so Vite doesn't recursively copy 700MB into dist-desktop
+console.log('[Build] Cleaning public/download installer caches...');
+if (fs.existsSync(publicDownloadDir)) {
+  const files = fs.readdirSync(publicDownloadDir);
+  for (const f of files) {
+    if (f.endsWith('.exe') || f.endsWith('.dmg') || f.endsWith('.AppImage') || f.endsWith('.blockmap')) {
+      try {
+        fs.unlinkSync(path.join(publicDownloadDir, f));
+        console.log(`[Build] Cleared cached binary: public/download/${f}`);
+      } catch (err) {
+        console.warn(`[Build Warning] Could not remove cached ${f}:`, err.message);
+      }
+    }
+  }
+}
+
 if (fs.existsSync(distReleaseDir)) {
   console.log('[Build] Removing old dist-release directory...');
   try {
     fs.rmSync(distReleaseDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
   } catch (err) {
     console.warn('[Build] Warning removing dist-release:', err.message);
+  }
+}
+
+if (fs.existsSync(distDesktopDir)) {
+  console.log('[Build] Removing old dist-desktop directory...');
+  try {
+    fs.rmSync(distDesktopDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+  } catch (err) {
+    console.warn('[Build] Warning removing dist-desktop:', err.message);
   }
 }
 

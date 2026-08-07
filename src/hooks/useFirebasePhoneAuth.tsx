@@ -203,6 +203,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         (err.message?.includes('unauthorized') && !err.message?.includes('captcha'))
       ) {
         msg = `Domain (${window.location.hostname}) is not authorized for OTP in Firebase Console.`;
+      } else if (err.code === 'auth/internal-error') {
+        msg = 'Firebase Auth internal error. Please click Continue to try again.';
       } else if (err.code === 'auth/too-many-requests') {
         msg = 'Too many attempts. Please wait and try again.';
         waitTime = 180;

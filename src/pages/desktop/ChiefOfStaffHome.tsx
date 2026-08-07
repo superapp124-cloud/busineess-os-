@@ -172,15 +172,23 @@ export const ChiefOfStaffHome: React.FC = () => {
     else setGreeting('Good evening');
     const t = setInterval(() => setCurrentTime(new Date()), 60000);
 
-    const loadUserProfile = async () => {
+    const loadUserProfile = async (userObj?: any) => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        let user = userObj;
+        if (!user) {
+          const { data: sessionData } = await supabase.auth.getSession();
+          user = sessionData?.session?.user;
+        }
+        if (!user) {
+          const { data: userData } = await supabase.auth.getUser();
+          user = userData?.user;
+        }
         if (!user) return;
 
-        // Fetch from Supabase profiles table
+        // Fetch from Supabase profiles table using select('*') to avoid bad column errors
         const { data: profile } = await (supabase as any)
           .from('profiles')
-          .select('full_name, username, display_name')
+          .select('*')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -188,13 +196,14 @@ export const ChiefOfStaffHome: React.FC = () => {
           profile?.full_name ||
           profile?.display_name ||
           profile?.username ||
+          profile?.first_name ||
+          profile?.name ||
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
           user.user_metadata?.username ||
           (user.email ? user.email.split('@')[0] : '');
 
         const cleaned = (candidateName || '').trim();
-        // Check if pure numbers or phone format
         const isNumericPhone = !cleaned || /^\+?[0-9\s\-]+$/.test(cleaned);
 
         if (isNumericPhone) {
@@ -210,7 +219,16 @@ export const ChiefOfStaffHome: React.FC = () => {
 
     loadUserProfile();
 
-    return () => clearInterval(t);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadUserProfile(session.user);
+      }
+    });
+
+    return () => {
+      clearInterval(t);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {

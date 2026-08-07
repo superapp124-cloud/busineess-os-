@@ -1894,8 +1894,8 @@ function createWindow() {
 
     findFreePort().then((port) => {
       localServer.listen(port, '127.0.0.1', () => {
-        log.info(`[Main] Local bundle server running at http://127.0.0.1:${port}`);
-        mainWindow.loadURL(`http://127.0.0.1:${port}/`).catch((err) => {
+        log.info(`[Main] Local bundle server running at http://localhost:${port}`);
+        mainWindow.loadURL(`http://localhost:${port}/`).catch((err) => {
           log.error('[Main] Failed to load from local server:', err.message);
         });
       });

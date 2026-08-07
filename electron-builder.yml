@@ -13,8 +13,11 @@ publish:
 
 files:
   - dist-desktop/**/*
+  - "!dist-desktop/download/**/*"
+  - "!dist-desktop/**/*.exe"
+  - "!dist-desktop/**/*.dmg"
+  - "!dist-desktop/**/*.AppImage"
   - electron/**/*
-  - node_modules/**/*
   - package.json
 
 win:
@@ -24,7 +27,6 @@ win:
         - x64
   icon: public/icon.ico
   artifactName: chatr-desktop-setup.${ext}
-  publisherName: "TalentXcel Services Pvt Ltd"
 
 nsis:
   oneClick: false
