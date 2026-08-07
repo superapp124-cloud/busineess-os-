@@ -1,7 +1,8 @@
 appId: chat.chatr.desktop
 productName: CHATR Desktop
+npmRebuild: false
 directories:
-  output: dist-electron
+  output: dist-release
   buildResources: build
 publish:
   provider: github

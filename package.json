@@ -212,45 +212,5 @@
     "vite": "^5.4.19",
     "vitest": "^4.1.10",
     "wait-on": "^9.0.10"
-  },
-  "build": {
-    "appId": "chat.chatr.desktop",
-    "productName": "CHATR Desktop",
-    "directories": {
-      "output": "dist-electron"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "chatr-workspace",
-        "repo": "chatr-desktop"
-      }
-    ],
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "allowElevation": true,
-      "include": "electron/installer.nsh"
-    },
-    "protocols": {
-      "name": "chatr-deep-link",
-      "schemes": [
-        "chatr"
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "public/favicon.ico",
-      "artifactName": "chatr-desktop-setup.${ext}"
-    },
-    "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ]
-    }
   }
 }

@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: chatr-desktop-windows-signed
-          path: dist-electron/*.exe
+          path: dist-release/*.exe

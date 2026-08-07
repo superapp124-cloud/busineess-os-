@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.join(__dirname, '..');
-const distElectronDir = path.join(rootDir, 'dist-electron');
+const distReleaseDir = path.join(rootDir, 'dist-release');
 
 console.log('[Build] Cleaning up background processes...');
 try {
@@ -13,12 +13,12 @@ try {
   execSync('taskkill /F /IM "CHATR Desktop.exe"', { stdio: 'ignore' });
 } catch (e) {}
 
-if (fs.existsSync(distElectronDir)) {
-  console.log('[Build] Removing old dist-electron directory...');
+if (fs.existsSync(distReleaseDir)) {
+  console.log('[Build] Removing old dist-release directory...');
   try {
-    fs.rmSync(distElectronDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    fs.rmSync(distReleaseDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
   } catch (err) {
-    console.warn('[Build] Warning removing dist-electron:', err.message);
+    console.warn('[Build] Warning removing dist-release:', err.message);
   }
 }
 
@@ -37,9 +37,9 @@ while (attempts < 3 && !success) {
     success = true;
   } catch (err) {
     console.error(`[Build] Attempt ${attempts} failed. Retrying in 2 seconds...`);
-    if (fs.existsSync(path.join(distElectronDir, 'win-unpacked.tmp'))) {
+    if (fs.existsSync(path.join(distReleaseDir, 'win-unpacked.tmp'))) {
       try {
-        fs.rmSync(path.join(distElectronDir, 'win-unpacked.tmp'), { recursive: true, force: true });
+        fs.rmSync(path.join(distReleaseDir, 'win-unpacked.tmp'), { recursive: true, force: true });
       } catch (e) {}
     }
     if (attempts === 3) {
