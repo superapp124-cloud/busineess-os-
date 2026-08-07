@@ -26,7 +26,7 @@ export default function Download() {
   const [downloadingOS, setDownloadingOS] = useState<string | null>(null);
   const [showInstallerModal, setShowInstallerModal] = useState<boolean>(false);
 
-  const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/latest/download/chatr-desktop-setup.exe';
+  const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/download/v0.9.0-rc1/chatr-desktop-setup.exe';
 
   const handleDownloadExecutable = async (filename: string, osLabel: string) => {
     setDownloadingOS(osLabel);

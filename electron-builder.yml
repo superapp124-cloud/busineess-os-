@@ -7,8 +7,8 @@ directories:
   buildResources: build
 publish:
   provider: github
-  owner: chatr-workspace
-  repo: chatr-desktop
+  owner: superapp124-cloud
+  repo: busineess-os-
 
 files:
   - dist-desktop/**/*

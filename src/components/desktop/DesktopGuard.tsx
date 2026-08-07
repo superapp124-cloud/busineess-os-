@@ -71,7 +71,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-    const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/latest/download/chatr-desktop-setup.exe';
+    const GITHUB_RELEASE_DOWNLOAD_URL = 'https://github.com/superapp124-cloud/busineess-os-/releases/download/v0.9.0-rc1/chatr-desktop-setup.exe';
     const downloadUrl = (isLocal || filename !== 'chatr-desktop-setup.exe')
       ? `/download/${filename}`
       : GITHUB_RELEASE_DOWNLOAD_URL;
