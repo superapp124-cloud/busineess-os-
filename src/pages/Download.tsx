@@ -69,9 +69,16 @@ export default function Download() {
   const [showInstallerModal, setShowInstallerModal] = useState(false);
   const [platform] = useState(detectPlatform);
 
-  // ─── AUTO-DOWNLOAD on mount — fires immediately after login redirect ───
+  // AUTO-DOWNLOAD on mount — fires ONCE per session immediately after login redirect
   useEffect(() => {
+    const hasDownloaded = sessionStorage.getItem('chatr_auto_download_started');
+    if (hasDownloaded) {
+      setDownloadState('done');
+      return;
+    }
+
     const run = async () => {
+      sessionStorage.setItem('chatr_auto_download_started', 'true');
       setDownloadState('downloading');
       setShowInstallerModal(true);
       await triggerDownload(platform.filename);

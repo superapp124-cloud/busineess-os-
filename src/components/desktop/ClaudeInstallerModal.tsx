@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import logo from '@/assets/chatr-logo.png';
-import { Download as DownloadIcon, CheckCircle2, X } from 'lucide-react';
+import logo from '@/assets/chatr-icon-logo.png';
+import { CheckCircle2, X } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface Props {
 export const ClaudeInstallerModal: React.FC<Props> = ({ isOpen, onClose, osName = 'Windows' }) => {
   const [progress, setProgress] = useState(0);
   const [megabytes, setMegabytes] = useState(0);
-  const totalMB = 246;
+  const totalMB = 145;
 
   useEffect(() => {
     if (!isOpen) {
@@ -20,7 +20,6 @@ export const ClaudeInstallerModal: React.FC<Props> = ({ isOpen, onClose, osName 
       return;
     }
 
-    // Simulate authentic installer download progress matching Claude Desktop installer UI
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -40,114 +39,84 @@ export const ClaudeInstallerModal: React.FC<Props> = ({ isOpen, onClose, osName 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-[9999] flex items-center justify-center p-4 selection:bg-cyan-500 selection:text-black">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4 selection:bg-violet-500 selection:text-white">
       
-      {/* Background Guidance Modal (Behind Installer Window) */}
-      <div className="bg-white text-slate-900 rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border border-slate-200 overflow-hidden text-center">
+      {/* Dark Glassmorphism Modal */}
+      <div className="bg-[#0d0d1f]/95 text-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border border-white/10 overflow-hidden text-center backdrop-blur-2xl">
         
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+          className="absolute top-4 right-4 text-white/40 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-slate-900 mb-1">
-          Install and open the app
+        <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">
+          Install and open CHATR OS
         </h2>
-        <p className="text-xs text-slate-500 mb-8">
-          The desktop app should have downloaded automatically. Follow the steps below:
+        <p className="text-xs text-white/40 mb-8">
+          The installer should have downloaded automatically. Follow the steps below to finish:
         </p>
 
-        {/* Step Cards */}
-        <div className="grid md:grid-cols-2 gap-6 text-left mb-8">
+        {/* 2 Step Install Guide */}
+        <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
           
           {/* Step 1 */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">
-              Step 1
-            </div>
-            <h3 className="font-bold text-slate-900 text-sm mb-1">Open Installer</h3>
-            <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              Open the <span className="font-mono text-slate-900 font-medium">chatr-desktop-setup.exe</span> file from your downloads list at the top right of your browser.
+          <div className="bg-white/4 border border-white/8 p-4 rounded-2xl space-y-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-violet-400">Step 1</span>
+            <h3 className="font-semibold text-sm text-white">Open Installer File</h3>
+            <p className="text-xs text-white/50 leading-relaxed">
+              Open <strong className="text-white/80">chatr-desktop-setup.exe</strong> from your Downloads folder or browser downloads bar.
             </p>
-            <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3 text-xs">
-              <div className="p-2 rounded-lg bg-cyan-50 text-cyan-600 font-bold">EXE</div>
-              <div className="truncate">
-                <p className="font-semibold text-slate-800 text-xs">chatr-desktop-setup.exe</p>
-                <p className="text-[10px] text-emerald-600 font-medium">Download complete</p>
-              </div>
-            </div>
           </div>
 
           {/* Step 2 */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">
-              Step 2
-            </div>
-            <h3 className="font-bold text-slate-900 text-sm mb-1">Open from Taskbar</h3>
-            <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              Open CHATR anytime from your Windows taskbar whenever you need local AI and offline memory.
+          <div className="bg-white/4 border border-white/8 p-4 rounded-2xl space-y-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400">Step 2</span>
+            <h3 className="font-semibold text-sm text-white">Run Setup & Pin to Taskbar</h3>
+            <p className="text-xs text-white/50 leading-relaxed">
+              Follow the installer. CHATR OS will launch automatically and pin to your Taskbar.
             </p>
-            <div className="p-3 bg-slate-900 rounded-xl flex items-center justify-center gap-3">
-              <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg text-white text-xs font-semibold">
-                <img src={logo} className="h-4 w-4 object-contain" alt="" />
-                <span>CHATR</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-mono">Pinned on Taskbar</span>
-            </div>
           </div>
 
         </div>
 
-        {/* Foreground Installer Window (Matching Claude Screenshot exact style) */}
-        <div className="fixed inset-0 flex items-center justify-center pointer-events-none p-4 z-50">
-          <div className="bg-[#f5f2eb] text-slate-900 border border-slate-300 rounded-2xl p-8 max-w-sm w-full shadow-2xl pointer-events-auto text-center space-y-6 animate-scale-in">
-            
-            {/* Centered Brand Header */}
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <img src={logo} alt="CHATR Logo" className="h-10 w-10 object-contain shadow-sm" />
-              <span className="text-3xl font-black tracking-tight text-slate-900 font-serif">CHATR</span>
-            </div>
-
-            {/* Title */}
-            <div>
-              <h3 className="text-base font-semibold text-slate-800">
-                {progress < 100 ? 'Installing CHATR' : 'CHATR Ready!'}
-              </h3>
-              <p className="text-xs text-slate-600 font-mono mt-1">
-                {progress < 100
-                  ? `Downloading CHATR... ${progress}% (${megabytes} / ${totalMB} MB)`
-                  : 'CHATR Desktop launched on Taskbar'}
-              </p>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden p-0.5 border border-slate-300/80">
-                <div
-                  className="h-full bg-cyan-600 rounded-full transition-all duration-300 shadow-sm"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {progress === 100 && (
-              <div className="pt-2">
-                <button
-                  onClick={onClose}
-                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-colors shadow-md"
-                >
-                  Open CHATR Workspace
-                </button>
-              </div>
-            )}
-
+        {/* Inner Dark Floating Status Window */}
+        <div className="max-w-md mx-auto bg-[#070712] rounded-2xl p-6 border border-white/10 shadow-xl space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <img src={logo} alt="CHATR" className="h-9 w-9 object-contain" />
+            <span className="text-2xl font-black tracking-tight text-white">CHATR OS</span>
           </div>
+
+          <div>
+            <h4 className="text-base font-bold text-white">
+              {progress < 100 ? 'CHATR OS Desktop Downloading…' : 'CHATR OS Ready!'}
+            </h4>
+            <p className="text-xs text-white/40 mt-0.5">
+              {progress < 100 
+                ? `Downloading... ${progress}% (${megabytes} / ${totalMB} MB)`
+                : 'Run chatr-desktop-setup.exe to launch'
+              }
+            </p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden border border-white/8">
+            <div 
+              className="bg-gradient-to-r from-violet-500 to-cyan-500 h-full rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 bg-white text-zinc-950 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-colors shadow-lg cursor-pointer"
+          >
+            {progress < 100 ? 'Downloading in background...' : 'Open CHATR Workspace'}
+          </button>
         </div>
 
       </div>
-
     </div>
   );
 };

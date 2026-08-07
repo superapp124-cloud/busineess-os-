@@ -465,7 +465,7 @@ export const ChiefOfStaffHome: React.FC = () => {
         </main>
 
         {/* ── RIGHT COLUMN: Selected Item Action Context ────────────────────── */}
-        <aside className="w-[320px] border-l border-white/5 flex flex-col shrink-0 bg-[#0d0d18]/60 overflow-y-auto">
+        <aside className="w-[320px] border-l border-white/5 flex flex-col shrink-0 bg-[#0d0d18]/60 overflow-y-auto pb-24">
           {selectedItem ? (
             <>
               {/* Header */}
