@@ -569,6 +569,15 @@ const DesktopLayoutInner = () => {
                       </button>
                     );
                   })}
+                  <div className="border-t border-white/10 pt-1">
+                    <button
+                      onClick={() => { setStatusMenuOpen(false); handleLogout(); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors text-left font-semibold"
+                    >
+                      <LogOut className="w-4 h-4 text-red-400" />
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -651,23 +660,38 @@ const DesktopLayoutInner = () => {
 
               {/* User + presence */}
               <div className={cn('flex items-center gap-2.5 pl-4 border-l', isDark ? 'border-white/8' : 'border-zinc-200')}>
-                <div className="hidden sm:flex flex-col items-end">
-                  <span className={cn('text-[12px] font-bold leading-tight', isDark ? 'text-white' : 'text-zinc-900')}>
-                    {displayName.split(' ')[0]}
-                  </span>
-                  <span className={cn('text-[10px]', isDark ? 'text-white/40' : 'text-zinc-400')}>
-                    {getStatusLabel(myStatus)}
-                  </span>
-                </div>
-                <div className="relative">
-                  <Avatar className={cn('w-7 h-7 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-zinc-200')}>
-                    <AvatarImage src={profile?.avatar_url} />
-                    <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-violet-100 text-violet-700')}>
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <PresenceDot status={myStatus} />
-                </div>
+                <button
+                  onClick={() => setStatusMenuOpen(prev => !prev)}
+                  className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+                  title="Profile & Sign Out"
+                >
+                  <div className="hidden sm:flex flex-col items-end">
+                    <span className={cn('text-[12px] font-bold leading-tight', isDark ? 'text-white' : 'text-zinc-900')}>
+                      {displayName.split(' ')[0]}
+                    </span>
+                    <span className={cn('text-[10px]', isDark ? 'text-white/40' : 'text-zinc-400')}>
+                      {getStatusLabel(myStatus)}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <Avatar className={cn('w-7 h-7 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-zinc-200')}>
+                      <AvatarImage src={profile?.avatar_url} />
+                      <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-violet-100 text-violet-700')}>
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <PresenceDot status={myStatus} />
+                  </div>
+                </button>
+                
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-semibold transition-all ml-1"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Sign Out</span>
+                </button>
               </div>
             </div>
           </header>

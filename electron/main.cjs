@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage, utilityProcess } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const net = require('net');
 const log = require('electron-log');
 const UpdateService = require('./services/UpdateService.cjs');
 const { execFile } = require('child_process');
@@ -1833,14 +1835,75 @@ function createWindow() {
     log.info('Loading Desktop Vite Dev Server (port 8086)');
     mainWindow.loadURL('http://localhost:8086');
   } else {
-    // SECURITY: Production MUST always load from the local signed bundle.
-    // Remote URL loading is prohibited — it allows arbitrary remote code to run
-    // inside a privileged Electron shell with access to IPC, filesystem, and payments.
-    // If you need to display remote content, use an isolated BrowserWindow with
-    // nodeIntegration:false and no preload script attached.
-    log.info('[Main] Loading local signed bundle (production mode).');
-    mainWindow.loadFile(path.join(__dirname, '../dist-desktop/index.desktop.html')).catch((err) => {
-      log.error('[Main] Failed to load local bundle — dist-desktop/index.desktop.html may be missing. Run: npm run build:desktop', err.message);
+    // SECURITY: Serve the production bundle via a loopback HTTP server so that
+    // Firebase Phone Auth (reCAPTCHA) works — Firebase refuses file:// origins.
+    // localhost is always pre-authorized in every Firebase project.
+    // The server is bound ONLY to 127.0.0.1 — no external network exposure.
+    log.info('[Main] Starting local bundle HTTP server (Firebase auth compat).');
+    const distDir = path.join(__dirname, '../dist-desktop');
+    const mimeTypes = {
+      '.html': 'text/html; charset=utf-8',
+      '.js':   'application/javascript',
+      '.mjs':  'application/javascript',
+      '.css':  'text/css',
+      '.png':  'image/png',
+      '.jpg':  'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.gif':  'image/gif',
+      '.svg':  'image/svg+xml',
+      '.ico':  'image/x-icon',
+      '.woff': 'font/woff',
+      '.woff2':'font/woff2',
+      '.ttf':  'font/ttf',
+      '.json': 'application/json',
+      '.webp': 'image/webp',
+      '.mp4':  'video/mp4',
+      '.webm': 'video/webm',
+    };
+    const localServer = http.createServer((req, res) => {
+      // Strip query string
+      let urlPath = req.url.split('?')[0].split('#')[0];
+      // Decode URI
+      try { urlPath = decodeURIComponent(urlPath); } catch {}
+      // Resolve to file
+      let filePath = path.join(distDir, urlPath === '/' ? 'index.desktop.html' : urlPath);
+      // SPA fallback — serve index for any non-asset route
+      if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(distDir, 'index.desktop.html');
+      }
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = mimeTypes[ext] || 'application/octet-stream';
+      try {
+        const content = fs.readFileSync(filePath);
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      } catch (e) {
+        res.writeHead(404);
+        res.end('Not found');
+      }
+    });
+
+    // Find a free port on 127.0.0.1, then listen and load
+    const findFreePort = () => new Promise((resolve) => {
+      const s = net.createServer();
+      s.listen(0, '127.0.0.1', () => {
+        const { port } = s.address();
+        s.close(() => resolve(port));
+      });
+    });
+
+    findFreePort().then((port) => {
+      localServer.listen(port, '127.0.0.1', () => {
+        log.info(`[Main] Local bundle server running at http://127.0.0.1:${port}`);
+        mainWindow.loadURL(`http://127.0.0.1:${port}/`).catch((err) => {
+          log.error('[Main] Failed to load from local server:', err.message);
+        });
+      });
+      // Shut down the server when the app quits
+      app.on('before-quit', () => {
+        localServer.close();
+        log.info('[Main] Local bundle server shut down.');
+      });
     });
   }
 

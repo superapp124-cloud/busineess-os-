@@ -42,9 +42,9 @@ export const EnterpriseOperatingCenter: React.FC<EnterpriseOperatingCenterProps>
               {currentComposition.badge}
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mt-1">Good Morning, Arshid</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white mt-1">Universal Operating Center</h1>
           <p className="text-zinc-300 text-sm">
-            Industry-neutral operational status across all universal enterprise domains.
+            Operational status across all enterprise domains.
           </p>
         </div>
 

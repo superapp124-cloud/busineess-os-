@@ -2,8 +2,8 @@
   "name": "chatr-desktop",
   "private": true,
   "version": "0.9.0-rc",
-  "description": "CHATR OS Desktop Platform",
-  "author": "CHATR Team",
+  "description": "CHATR OS — Universal Communication & Business Operating System",
+  "author": "TalentXcel Services Pvt Ltd",
   "type": "module",
   "main": "electron/main.cjs",
   "workspaces": [

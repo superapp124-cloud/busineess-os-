@@ -30,7 +30,7 @@ export const QuestionBasedOperatingCenter: React.FC<{
             <Sparkles className="w-3.5 h-3.5" />
             <span>Universal Coordination Platform • Level 3 Experience</span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Good Morning, Arshid</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Universal Coordination Hub</h1>
           <p className="text-zinc-300 text-sm">
             Question-driven operational substrate across all system entities.
           </p>

@@ -70,15 +70,15 @@ const TIMELINE_ITEMS: TimelineItem[] = [
   { id: '1', source: 'slack',    sender: '#engineering', subject: 'Deploy failed on prod',          preview: 'The latest deployment to production failed at 08:41. Rollback initiated.',  time: '1h ago',   priority: 'urgent',  category: 'Engineering', read: false },
   { id: '2', source: 'gmail',    sender: 'Amazon',       subject: 'Invoice ₹4,599 due',             preview: 'Your invoice #INV-2026-4891 for ₹4,599 is due in 3 days.',              time: '2h ago',   priority: 'urgent',  category: 'Finance',     read: false },
   { id: '3', source: 'teams',    sender: 'HR Dept',      subject: 'Policy update: Acknowledge',     preview: 'New remote work policy effective Aug 1. Requires your digital signature.', time: '2h ago',   priority: 'action',  category: 'Internal',    read: false },
-  { id: '4', source: 'linkedin', sender: 'Priya S.',     subject: 'Recruiter: Senior role @ FAANG', preview: 'Hi Arshid, we have a senior engineering role that perfectly matches...',    time: '32m ago',  priority: 'action',  category: 'Hiring',      read: false },
+  { id: '4', source: 'linkedin', sender: 'Priya S.',     subject: 'Recruiter: Senior role @ FAANG', preview: 'We have a senior engineering role that matches your profile...', time: '32m ago',  priority: 'action',  category: 'Hiring',      read: false },
   { id: '5', source: 'github',   sender: 'Gaurav B.',    subject: 'PR #847 review requested',       preview: 'Gaurav requested your review on: feat/universal-inbox-v2',               time: '2h ago',   priority: 'action',  category: 'Engineering', read: false },
   { id: '6', source: 'outlook',  sender: 'Microsoft',    subject: 'Partnership meeting confirmed',  preview: 'Your meeting "Q3 Partnership Sync" with Microsoft is confirmed for 3PM.', time: '15m ago',  priority: 'action',  category: 'Sales',       read: false },
   { id: '7', source: 'telegram', sender: 'Customer',     subject: 'Order not received',             preview: 'Hello, I placed order #88234 5 days ago and still haven\'t received it.', time: '4h ago',   priority: 'urgent',  category: 'Support',     read: false },
-  { id: '8', source: 'whatsapp', sender: 'Family Group', subject: "Mama's birthday tomorrow!",     preview: 'Don\'t forget — cake from Karachi Bakery, flowers from the garden!',       time: '1h ago',   priority: 'fyi',     category: 'Family',      read: true  },
-  { id: '9', source: 'twitter',  sender: '@techcrunch',  subject: 'Mentioned you in a post',        preview: '@arshid_wani — great thread on Communication OS design patterns!',        time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
+  { id: '8', source: 'whatsapp', sender: 'Family Group', subject: "Mama's birthday tomorrow!",     preview: 'Don\'t forget — cake from bakery, flowers from the garden!',       time: '1h ago',   priority: 'fyi',     category: 'Family',      read: true  },
+  { id: '9', source: 'twitter',  sender: '@techcrunch',  subject: 'Mentioned you in a post',        preview: 'Great thread on Communication OS design patterns!',                      time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
   { id: '10',source: 'gmail',    sender: 'Indigo',       subject: 'Flight DEL → BOM tomorrow',     preview: 'Your flight 6E-2241 departs at 06:30 AM. Check-in opens now.',           time: '4h ago',   priority: 'fyi',     category: 'Travel',      read: true  },
   { id: '11',source: 'discord',  sender: '#builds',      subject: 'CI Pipeline passed ✓',          preview: 'Build #2041: All 247 tests passed. Coverage: 94.2%',                    time: '5h ago',   priority: 'fyi',     category: 'Engineering', read: true  },
-  { id: '12',source: 'instagram',sender: 'arshid_design',subject: 'New DM',                        preview: 'Hey! Loved the new CHATR UI. Can we collaborate?',                      time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
+  { id: '12',source: 'instagram',sender: 'design_lead',  subject: 'New DM',                        preview: 'Hey! Loved the new CHATR UI. Can we collaborate?',                      time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
 ];
 
 // ── AI Brief summary ─────────────────────────────────────────────────────────
@@ -124,9 +124,14 @@ const PriorityBadge: React.FC<{ priority: TimelineItem['priority'] }> = ({ prior
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+import chatrLogo from '@/assets/chatr-icon-logo.png';
+import { supabase } from '@/integrations/supabase/client';
+import { LogOut } from 'lucide-react';
+
 export const ChiefOfStaffHome: React.FC = () => {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState('Good morning');
+  const [userName, setUserName] = useState('User');
   const [selectedItem, setSelectedItem] = useState<TimelineItem | null>(TIMELINE_ITEMS[0]);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'action'>('all');
   const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
@@ -138,8 +143,22 @@ export const ChiefOfStaffHome: React.FC = () => {
     else if (h < 17) setGreeting('Good afternoon');
     else setGreeting('Good evening');
     const t = setInterval(() => setCurrentTime(new Date()), 60000);
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        const rawName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User';
+        const formatted = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+        setUserName(formatted);
+      }
+    });
+
     return () => clearInterval(t);
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   const filteredItems = TIMELINE_ITEMS.filter(item => {
     if (filter === 'all') return true;
@@ -154,9 +173,12 @@ export const ChiefOfStaffHome: React.FC = () => {
       {/* ── Top Header ────────────────────────────────────────────────────── */}
       <header className="h-[60px] border-b border-white/5 px-6 flex items-center justify-between shrink-0 bg-[#0d0d18]">
         <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center p-1.5 shadow-md border border-white/10 shrink-0">
+            <img src={chatrLogo} alt="CHATR OS" className="w-full h-full object-contain" />
+          </div>
           <div className="flex flex-col">
             <span className="text-lg font-bold text-white leading-tight">
-              {greeting}, <span className="text-violet-400">Arshid</span> 👋
+              {greeting}, <span className="text-violet-400">{userName}</span> 👋
             </span>
             <span className="text-[11px] text-zinc-500">
               {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })} · AI processed {TIMELINE_ITEMS.length} events today
@@ -182,6 +204,15 @@ export const ChiefOfStaffHome: React.FC = () => {
             <Inbox className="w-4 h-4" />
             Universal Inbox
             <span className="bg-white/20 text-xs font-bold px-1.5 py-0.5 rounded-full">286</span>
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl px-3.5 py-2 text-sm font-semibold transition-all shadow-sm cursor-pointer ml-1"
+            title="Sign Out of CHATR OS"
+          >
+            <LogOut className="w-4 h-4 text-red-400" />
+            <span>Sign Out</span>
           </button>
         </div>
       </header>

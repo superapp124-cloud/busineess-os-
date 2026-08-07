@@ -32,21 +32,11 @@
     <!-- Favicon & Icons -->
     <link rel="icon" href="https://chatr.chat/favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="https://chatr.chat/assets/chatrplus-logo512.png">
-    <link rel="manifest" href="/manifest.json">
     
     <!-- Theme Colors -->
     <meta name="theme-color" content="#0066FF">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
     <meta name="msapplication-TileColor" content="#0066FF">
-    
-    <!-- iOS PWA Support -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Chatr+" />
-    <link rel="apple-touch-startup-image" href="/chatr-logo.png" />
-    
-    <!-- Android PWA Support -->
-    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="applicable-device" content="pc, mobile, tv">
     
     <!-- Open Graph / Facebook / WhatsApp -->
@@ -217,110 +207,13 @@
     <!-- CRITICAL: Load main script with high priority -->
     <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
     
-    <!-- Service Worker Registration - PWA Compliant with Ultra-Resilient Error Handling -->
+    <!-- Service Worker: Unregister all existing SWs (PWA removed) -->
     <script>
-      (function() {
-        // Wrap entire SW logic to prevent ANY errors from causing blank screen
-        if (!('serviceWorker' in navigator)) return;
-        if (window.location.origin.includes('localhost') || window.location.protocol === 'file:') {
-          // Skipping SW registration in native shell/dev
-          return;
-        }
-        
-        window.addEventListener('load', function() {
-          // Use setTimeout to ensure React has fully mounted first
-          setTimeout(function() {
-            registerSW().catch(function() {});
-          }, 1000);
-        });
-        
-        async function registerSW() {
-          try {
-            const existing = await navigator.serviceWorker.getRegistration('/').catch(function() { return null; });
-            if (existing) {
-              // Silently update - never throw
-              existing.update().catch(function() {});
-              setupSWListeners(existing);
-              return;
-            }
-            
-            // Check if sw.js exists - use timeout to prevent hanging
-            const controller = new AbortController();
-            const timeoutId = setTimeout(function() { controller.abort(); }, 3000);
-            
-            const swCheck = await fetch('/sw.js', { 
-              method: 'HEAD',
-              signal: controller.signal 
-            }).catch(function() { return null; });
-            
-            clearTimeout(timeoutId);
-            
-            if (!swCheck || !swCheck.ok) {
-              return;
-            }
-            
-            const registration = await navigator.serviceWorker.register('/sw.js', {
-              scope: '/',
-              updateViaCache: 'none'
-            }).catch(function(err) {
-              return null;
-            });
-            
-            if (!registration) return;
-            setupSWListeners(registration);
-            
-          } catch (err) {
-            // Silently fail - SW is optional, never crash the app
-          }
-        }
-        
-        function setupSWListeners(registration) {
-          try {
-            // Silent periodic updates
-            setInterval(function() {
-              registration.update().catch(function() {});
-            }, 60000);
-            
-            // Request notification permission
-            if ('Notification' in window && Notification.permission === 'default') {
-              Notification.requestPermission().catch(function() {});
-            }
-            
-            // Register periodic sync (optional)
-            if ('periodicSync' in registration) {
-              registration.periodicSync.register('sync', {
-                minInterval: 24 * 60 * 60 * 1000
-              }).catch(function() {});
-            }
-            
-            // Listen for updates
-            registration.addEventListener('updatefound', function() {
-              var newWorker = registration.installing;
-              if (newWorker) {
-                newWorker.addEventListener('statechange', function() {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    window.location.reload();
-                  }
-                });
-              }
-            });
-            
-            // Handle controller change
-            var refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', function() {
-              if (!refreshing) {
-                refreshing = true;
-                window.location.reload();
-              }
-            });
-          } catch (err) {
-            // Silently ignore listener setup errors
-          }
-        }
-      })();
-      
-
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          registrations.forEach(function(reg) { reg.unregister(); });
+        }).catch(function() {});
+      }
     </script>
   </body>
 </html>
