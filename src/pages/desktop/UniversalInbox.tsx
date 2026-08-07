@@ -68,6 +68,118 @@ const launchOAuthPlayground = () => {
   window.open('https://developers.google.com/oauthplayground/', '_blank');
 };
 
+// ── Enhancement 2: HTML Entity Decoder ──────────────────────────────────
+function decodeHTMLEntities(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#\d+;/g, (match) => {
+      const code = parseInt(match.replace(/[^\d]/g, ''), 10);
+      return String.fromCharCode(code);
+    });
+}
+
+// ── Enhancement 3: Sender Domain Favicon URL ────────────────────────────
+function getSenderFaviconUrl(email: string): string | null {
+  if (!email || !email.includes('@')) return null;
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return null;
+  return `https://www.google.com/s2/favicons?sz=32&domain=${domain}`;
+}
+
+// ── Enhancement 1: Smart Auto-Categorization + Priority Engine ──────────
+function classifyMessage(subject: string, senderEmail: string, preview: string): {
+  category: Category;
+  priority: Priority;
+} {
+  const subj = (subject || '').toLowerCase();
+  const email = (senderEmail || '').toLowerCase();
+  const prev = (preview || '').toLowerCase();
+  const combined = subj + ' ' + prev;
+
+  // Priority: URGENT
+  if (
+    subj.includes('security alert') ||
+    subj.includes('unusual sign') ||
+    subj.includes('action required') ||
+    subj.includes('urgent') ||
+    subj.includes('verify your') ||
+    subj.includes('your account') ||
+    subj.includes('suspicious') ||
+    subj.includes('unauthorized')
+  ) return { category: 'Needs Attention', priority: 'URGENT' };
+
+  // Priority: ACTION (bills, payments, receipts)
+  if (
+    subj.includes('invoice') ||
+    subj.includes('payment') ||
+    subj.includes('receipt') ||
+    subj.includes('statement') ||
+    subj.includes('bill ') ||
+    subj.includes('due date') ||
+    subj.includes('subscription') ||
+    email.includes('billing@') ||
+    email.includes('invoice@') ||
+    email.includes('payments@') ||
+    email.includes('noreply@hdfcbank') ||
+    email.includes('alerts@') ||
+    email.includes('@paytm') ||
+    email.includes('@razorpay') ||
+    email.includes('@stripe')
+  ) return { category: 'Bills & Receipts', priority: 'ACTION' };
+
+  // GitHub CI/Actions notifications
+  if (
+    email.includes('@github.com') ||
+    email.includes('noreply@github') ||
+    subj.includes('run failed') ||
+    subj.includes('workflow run') ||
+    subj.includes('github actions') ||
+    subj.includes('[github]')
+  ) return { category: 'Notifications', priority: 'FYI' };
+
+  // LinkedIn
+  if (email.includes('@linkedin.com') || email.includes('linkedin'))
+    return { category: 'Professional Networks', priority: 'FYI' };
+
+  // Newsletter / Marketing
+  if (
+    email.includes('newsletter@') ||
+    email.includes('noreply@') ||
+    email.includes('no-reply@') ||
+    email.includes('marketing@') ||
+    email.includes('promo@') ||
+    combined.includes('unsubscribe') ||
+    combined.includes('click here to view')
+  ) return { category: 'Notifications', priority: 'FYI' };
+
+  // Calendar / Meeting invites
+  if (
+    subj.includes('invitation') ||
+    subj.includes('meeting') ||
+    subj.includes('calendar') ||
+    subj.includes('interview') ||
+    subj.includes('scheduled')
+  ) return { category: 'Waiting For Me', priority: 'ACTION' };
+
+  // Professional mail (work domains)
+  if (
+    email.includes('.co.in') ||
+    email.includes('.org') ||
+    email.includes('hr@') ||
+    email.includes('support@') ||
+    email.includes('admin@') ||
+    email.includes('team@')
+  ) return { category: 'Professional Mail', priority: 'FYI' };
+
+  return { category: 'Personal Mail', priority: 'FYI' };
+}
+
 // Source Configurations
 const sourceConfig: Record<MessageSource, { color: string; code: string }> = {
   'Gmail': { color: '#EA4335', code: 'Gm' },
@@ -268,23 +380,36 @@ export const UniversalInbox: React.FC = () => {
         const { data: records } = await supabase.from('connector_records' as any).select('*').order('occurred_at', { ascending: false }).limit(50);
         if (records && Array.isArray(records) && records.length > 0) {
           console.log('[UniversalInbox] Fetched connector_records count:', records.length);
-          liveMsgs.push(...records.map((r: any) => ({
-            id: r.external_id || r.id || String(Date.now()),
-            source: (r.connector_id === 'gmail' ? 'Gmail' : r.connector_id === 'outlook' ? 'Outlook' : 'Gmail') as MessageSource,
-            sender: r.metadata?.from?.name || r.metadata?.headers?.From?.split('<')[0]?.trim() || r.title || 'Gmail Message',
-            senderEmail: r.metadata?.from?.emailAddress?.address || r.metadata?.headers?.From?.match(/<(.+?)>/)?.[1] || '',
-            recipient: 'To: me',
-            subject: r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '(No Subject)',
-            preview: r.metadata?.snippet || r.body || r.title || '',
-            time: r.occurred_at ? new Date(r.occurred_at).toLocaleTimeString() : 'Just now',
-            exactTime: r.occurred_at ? new Date(r.occurred_at).toLocaleString() : 'Just now',
-            priority: (r.title?.toLowerCase().includes('urgent') ? 'URGENT' : 'FYI') as Priority,
-            category: 'Personal Mail' as Category,
-            read: false,
-            starred: false,
-            accountBadge: '',
-            confidenceScore: 100
-          })));
+          const mapped = records
+            .filter((r: any) => {
+              const subj = r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '';
+              return subj && subj !== 'Email' && subj !== '(No Subject)';
+            })
+            .map((r: any) => {
+              const senderEmail = r.metadata?.from?.emailAddress?.address || r.metadata?.headers?.From?.match(/<(.+?)>/)?.[1] || '';
+              const subject = r.metadata?.subject || r.metadata?.headers?.Subject || r.title || '(No Subject)';
+              const preview = decodeHTMLEntities(r.metadata?.snippet || r.body || r.title || '');
+              const sender = r.metadata?.from?.name || r.metadata?.headers?.From?.split('<')[0]?.trim() || senderEmail.split('@')[0] || 'Gmail Message';
+              const { category, priority } = classifyMessage(subject, senderEmail, preview);
+              return {
+                id: r.external_id || r.id || String(Date.now()),
+                source: (r.connector_id === 'gmail' ? 'Gmail' : r.connector_id === 'outlook' ? 'Outlook' : 'Gmail') as MessageSource,
+                sender,
+                senderEmail,
+                recipient: 'To: me',
+                subject,
+                preview,
+                time: r.occurred_at ? new Date(r.occurred_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now',
+                exactTime: r.occurred_at ? new Date(r.occurred_at).toLocaleString() : 'Just now',
+                priority,
+                category,
+                read: false,
+                starred: false,
+                accountBadge: '',
+                confidenceScore: 100
+              };
+            });
+          liveMsgs.push(...mapped);
         }
       } catch (dbErr) {
         // Table not present or unauthenticated
@@ -294,24 +419,31 @@ export const UniversalInbox: React.FC = () => {
       try {
         const gmailMsgs = await fetchGmailMessages(25);
         if (gmailMsgs && gmailMsgs.length > 0) {
-          liveMsgs.push(...gmailMsgs.map(gm => ({
-            id: gm.id,
-            source: 'Gmail' as const,
-            sender: gm.sender,
-            senderEmail: gm.senderEmail,
-            recipient: 'To: me',
-            subject: gm.subject,
-            preview: gm.preview,
-            time: gm.time,
-            exactTime: gm.time,
-            priority: (gm.subject.toLowerCase().includes('urgent') || gm.subject.toLowerCase().includes('alert') ? 'URGENT' : gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('action') ? 'ACTION' : 'FYI') as Priority,
-            category: (gm.subject.toLowerCase().includes('payment') || gm.subject.toLowerCase().includes('bill') ? 'Bills & Receipts' : 'Personal Mail') as Category,
-            read: gm.isRead,
-            starred: gm.isStarred,
-            hasAttachment: gm.subject.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('pdf') || gm.preview.toLowerCase().includes('attached'),
-            accountBadge: '',
-            confidenceScore: 100
-          })));
+          liveMsgs.push(...gmailMsgs
+            .filter(gm => gm.subject && gm.subject !== 'Email' && gm.subject !== '(no subject)')
+            .map(gm => {
+              const preview = decodeHTMLEntities(gm.preview);
+              const { category, priority } = classifyMessage(gm.subject, gm.senderEmail, preview);
+              return {
+                id: gm.id,
+                source: 'Gmail' as const,
+                sender: gm.sender,
+                senderEmail: gm.senderEmail,
+                recipient: 'To: me',
+                subject: gm.subject,
+                preview,
+                time: gm.time,
+                exactTime: gm.time,
+                priority,
+                category,
+                read: gm.isRead,
+                starred: gm.isStarred,
+                hasAttachment: gm.subject.toLowerCase().includes('pdf') || preview.toLowerCase().includes('attached'),
+                accountBadge: '',
+                confidenceScore: 100
+              };
+            })
+          );
         }
       } catch (err: any) {
         console.warn('[UniversalInbox] Gmail REST API sync notice:', err);
@@ -690,53 +822,80 @@ export const UniversalInbox: React.FC = () => {
               {filteredMessages.map(msg => {
                 const isSelected = selectedMessageId === msg.id;
                 const isChecked = selectedMessageIds.includes(msg.id);
+                const faviconUrl = getSenderFaviconUrl(msg.senderEmail || '');
 
                 return (
                   <div 
                     key={msg.id}
                     onClick={() => setSelectedMessageId(msg.id)}
                     className={cn(
-                      "p-4 cursor-pointer transition-all flex flex-col gap-2 relative group",
+                      "px-4 py-3 cursor-pointer transition-all flex flex-col gap-1.5 relative group",
                       isSelected 
                         ? "bg-violet-600/15 border-l-4 border-violet-500 pl-3" 
                         : msg.read 
-                          ? "hover:bg-white/[0.02] border-l-4 border-transparent pl-3 opacity-90"
-                          : "bg-violet-950/20 border-l-4 border-indigo-400 pl-3 font-semibold shadow-[inset_4px_0_0_0_#6366f1]"
+                          ? "hover:bg-white/[0.03] border-l-4 border-transparent pl-3 opacity-90"
+                          : "bg-violet-950/20 border-l-4 border-indigo-400 pl-3 font-semibold"
                     )}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <button onClick={(e) => toggleSelectMessage(msg.id, e)} className="text-zinc-500 hover:text-violet-400 transition-colors cursor-pointer shrink-0">
-                          {isChecked ? <CheckSquare size={16} className="text-violet-400" /> : <Square size={16} />}
+                          {isChecked ? <CheckSquare size={15} className="text-violet-400" /> : <Square size={15} />}
                         </button>
 
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-sm" style={{ backgroundColor: sourceConfig[msg.source]?.color || '#666' }}>
-                          {sourceConfig[msg.source]?.code || msg.source.substring(0, 2)}
+                        {/* Enhancement 3: Sender favicon or colored initial */}
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-sm overflow-hidden relative" style={{ backgroundColor: faviconUrl ? 'transparent' : (sourceConfig[msg.source]?.color || '#666') }}>
+                          {faviconUrl ? (
+                            <img 
+                              src={faviconUrl} 
+                              alt={msg.sender} 
+                              className="w-5 h-5 object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement!.style.backgroundColor = sourceConfig[msg.source]?.color || '#666';
+                                (e.target as HTMLImageElement).parentElement!.textContent = sourceConfig[msg.source]?.code || msg.source.substring(0, 2);
+                              }}
+                            />
+                          ) : (
+                            <span className="text-[10px] font-bold text-white">{sourceConfig[msg.source]?.code || msg.source.substring(0, 2)}</span>
+                          )}
                         </div>
 
-                        <span className={cn("text-sm truncate max-w-[180px]", !msg.read ? "font-bold text-white" : "font-medium text-zinc-300")}>
+                        <span className={cn("text-sm truncate max-w-[160px]", !msg.read ? "font-bold text-white" : "font-medium text-zinc-300")}>
                           {msg.sender}
                         </span>
-
-                        {msg.accountBadge && (
-                          <span className="text-[10px] font-mono bg-white/5 text-zinc-400 px-1.5 py-0.5 rounded border border-white/5 shrink-0">
-                            {msg.accountBadge}
-                          </span>
-                        )}
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={cn("text-xs font-mono", msg.read ? "text-zinc-500" : "text-violet-300 font-semibold")}>
+                        {/* Enhancement 4: Inline quick actions — revealed on hover */}
+                        <div className="hidden group-hover:flex items-center gap-0.5 mr-1">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.map(m => m.id === msg.id ? {...m, read: true} : m)); }}
+                            title="Mark as read"
+                            className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-zinc-500 hover:text-emerald-400 transition-all cursor-pointer"
+                          ><CheckSquare size={13} /></button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.map(m => m.id === msg.id ? {...m, starred: !m.starred} : m)); }}
+                            title="Star"
+                            className={cn("p-1.5 rounded-lg transition-all cursor-pointer", msg.starred ? "text-amber-400" : "text-zinc-500 hover:text-amber-400 hover:bg-amber-500/10")}
+                          ><Star size={13} /></button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.filter(m => m.id !== msg.id)); toast.success('Archived'); }}
+                            title="Archive"
+                            className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-500 hover:text-zinc-200 transition-all cursor-pointer"
+                          ><Archive size={13} /></button>
+                        </div>
+                        <span className={cn("text-[11px] font-mono", msg.read ? "text-zinc-500" : "text-violet-300 font-semibold")}>
                           {msg.time}
                         </span>
                         <PriorityBadge priority={msg.priority} />
                       </div>
                     </div>
 
-                    <div className="pl-9">
+                    <div className="pl-[38px]">
                       <div className="flex items-center gap-2">
-                        {!msg.read && <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse shrink-0" />}
-                        <h3 className={cn("text-xs truncate", !msg.read ? "font-bold text-white" : "text-zinc-200")}>
+                        {!msg.read && <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0" />}
+                        <h3 className={cn("text-xs truncate", !msg.read ? "font-semibold text-white" : "text-zinc-300")}>
                           {msg.subject}
                         </h3>
                         {msg.hasAttachment && (
@@ -744,8 +903,15 @@ export const UniversalInbox: React.FC = () => {
                             <Paperclip size={10} className="text-violet-400" /> PDF
                           </span>
                         )}
+                        {/* Enhancement: category chip */}
+                        {msg.category === 'Notifications' && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-white/5 shrink-0 font-mono uppercase tracking-wide">notify</span>
+                        )}
+                        {msg.category === 'Bills & Receipts' && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 shrink-0 font-mono uppercase tracking-wide">₹</span>
+                        )}
                       </div>
-                      <p className="text-xs text-zinc-400 line-clamp-1 mt-0.5 font-normal">
+                      <p className="text-[11px] text-zinc-500 line-clamp-1 mt-0.5 font-normal leading-relaxed">
                         {msg.preview}
                       </p>
                     </div>
