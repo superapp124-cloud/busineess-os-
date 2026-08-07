@@ -14,9 +14,11 @@ import {
   AlertCircle, TrendingUp, Users, Phone, FileText,
   Github, Linkedin, Bell, Globe, RefreshCw, Filter,
   Brain, Target, Shield, Layers, BarChart2, Send,
-  ChevronDown, MoreHorizontal, Plus, Briefcase,
+  ChevronDown, MoreHorizontal, Plus, Briefcase, LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import chatrLogo from '@/assets/chatr-icon-logo.png';
+import { supabase } from '@/integrations/supabase/client';
 
 // ── Source badge helper ──────────────────────────────────────────────────────
 
@@ -35,10 +37,11 @@ const SOURCE_CONFIG: Record<string, { color: string; bg: string; label: string }
   telegram: { color: '#ffffff', bg: '#0088CC', label: 'Tg' },
   signal:   { color: '#ffffff', bg: '#3A76F0', label: 'Si' },
   facebook: { color: '#ffffff', bg: '#1877F2', label: 'Fb' },
+  system:   { color: '#ffffff', bg: '#8B5CF6', label: 'OS' },
 };
 
 const SourceBadge: React.FC<{ source: string; size?: 'sm' | 'md' }> = ({ source, size = 'sm' }) => {
-  const cfg = SOURCE_CONFIG[source] || { color: '#fff', bg: '#555', label: '?' };
+  const cfg = SOURCE_CONFIG[source] || SOURCE_CONFIG['system'];
   return (
     <span
       className={cn(
@@ -52,7 +55,7 @@ const SourceBadge: React.FC<{ source: string; size?: 'sm' | 'md' }> = ({ source,
   );
 };
 
-// ── Mock timeline data ───────────────────────────────────────────────────────
+// ── Clean Starter Timeline Items ────────────────────────────────────────────────
 
 interface TimelineItem {
   id: string;
@@ -66,55 +69,83 @@ interface TimelineItem {
   read: boolean;
 }
 
-const TIMELINE_ITEMS: TimelineItem[] = [
-  { id: '1', source: 'slack',    sender: '#engineering', subject: 'Deploy failed on prod',          preview: 'The latest deployment to production failed at 08:41. Rollback initiated.',  time: '1h ago',   priority: 'urgent',  category: 'Engineering', read: false },
-  { id: '2', source: 'gmail',    sender: 'Amazon',       subject: 'Invoice ₹4,599 due',             preview: 'Your invoice #INV-2026-4891 for ₹4,599 is due in 3 days.',              time: '2h ago',   priority: 'urgent',  category: 'Finance',     read: false },
-  { id: '3', source: 'teams',    sender: 'HR Dept',      subject: 'Policy update: Acknowledge',     preview: 'New remote work policy effective Aug 1. Requires your digital signature.', time: '2h ago',   priority: 'action',  category: 'Internal',    read: false },
-  { id: '4', source: 'linkedin', sender: 'Priya S.',     subject: 'Recruiter: Senior role @ FAANG', preview: 'We have a senior engineering role that matches your profile...', time: '32m ago',  priority: 'action',  category: 'Hiring',      read: false },
-  { id: '5', source: 'github',   sender: 'Gaurav B.',    subject: 'PR #847 review requested',       preview: 'Gaurav requested your review on: feat/universal-inbox-v2',               time: '2h ago',   priority: 'action',  category: 'Engineering', read: false },
-  { id: '6', source: 'outlook',  sender: 'Microsoft',    subject: 'Partnership meeting confirmed',  preview: 'Your meeting "Q3 Partnership Sync" with Microsoft is confirmed for 3PM.', time: '15m ago',  priority: 'action',  category: 'Sales',       read: false },
-  { id: '7', source: 'telegram', sender: 'Customer',     subject: 'Order not received',             preview: 'Hello, I placed order #88234 5 days ago and still haven\'t received it.', time: '4h ago',   priority: 'urgent',  category: 'Support',     read: false },
-  { id: '8', source: 'whatsapp', sender: 'Family Group', subject: "Mama's birthday tomorrow!",     preview: 'Don\'t forget — cake from bakery, flowers from the garden!',       time: '1h ago',   priority: 'fyi',     category: 'Family',      read: true  },
-  { id: '9', source: 'twitter',  sender: '@techcrunch',  subject: 'Mentioned you in a post',        preview: 'Great thread on Communication OS design patterns!',                      time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
-  { id: '10',source: 'gmail',    sender: 'Indigo',       subject: 'Flight DEL → BOM tomorrow',     preview: 'Your flight 6E-2241 departs at 06:30 AM. Check-in opens now.',           time: '4h ago',   priority: 'fyi',     category: 'Travel',      read: true  },
-  { id: '11',source: 'discord',  sender: '#builds',      subject: 'CI Pipeline passed ✓',          preview: 'Build #2041: All 247 tests passed. Coverage: 94.2%',                    time: '5h ago',   priority: 'fyi',     category: 'Engineering', read: true  },
-  { id: '12',source: 'instagram',sender: 'design_lead',  subject: 'New DM',                        preview: 'Hey! Loved the new CHATR UI. Can we collaborate?',                      time: '3h ago',   priority: 'fyi',     category: 'Social',      read: true  },
+const DEFAULT_TIMELINE_ITEMS: TimelineItem[] = [
+  {
+    id: '1',
+    source: 'system',
+    sender: 'CHATR OS Core',
+    subject: 'Universal Operating Center initialized',
+    preview: 'Your sovereign AI workspace is active. Local AI models, file intelligence, and security shields are operational.',
+    time: 'Just now',
+    priority: 'action',
+    category: 'System',
+    read: false,
+  },
+  {
+    id: '2',
+    source: 'system',
+    sender: 'AI Executive Assistant',
+    subject: 'Daily Brief & Context Engine ready',
+    preview: 'AI assistant is standing by to summarize communications, automate tasks, and organize your workspace.',
+    time: '5m ago',
+    priority: 'action',
+    category: 'AI Assistant',
+    read: false,
+  },
+  {
+    id: '3',
+    source: 'system',
+    sender: 'Security Center',
+    subject: 'Sovereign privacy & encryption active',
+    preview: 'Zero-cloud data exposure enabled. All private memory and local search indexes are encrypted on device.',
+    time: '15m ago',
+    priority: 'fyi',
+    category: 'Security',
+    read: true,
+  },
+  {
+    id: '4',
+    source: 'system',
+    sender: 'Workspace Engine',
+    subject: 'Connect your channels & tools',
+    preview: 'Add email accounts, messaging platforms, and local storage folders to enable full cross-platform AI indexing.',
+    time: '1h ago',
+    priority: 'action',
+    category: 'Workspace',
+    read: true,
+  },
 ];
 
-// ── AI Brief summary ─────────────────────────────────────────────────────────
+// ── AI Brief Summary ────────────────────────────────────────────────────────
 
 const AI_BRIEF = {
-  urgent: 3,
-  action: 8,
-  canWait: 14,
-  fyi: 261,
-  total: 286,
+  urgent: 0,
+  action: 3,
+  canWait: 1,
+  fyi: 5,
+  total: 9,
   topActions: [
-    { id: 'a1', label: 'Approve Payroll', category: 'Finance',     icon: CheckCircle2, urgent: true  },
-    { id: 'a2', label: 'Reply to CEO',    category: 'Internal',    icon: Send,         urgent: true  },
-    { id: 'a3', label: 'Review PR #847',  category: 'Engineering', icon: Github,       urgent: false },
-    { id: 'a4', label: 'Interview Call',  category: 'Hiring',      icon: Phone,        urgent: false },
-    { id: 'a5', label: 'Pay Electricity', category: 'Finance',     icon: Zap,          urgent: false },
+    { id: 'a1', label: 'Explore AI Models', category: 'AI Assistant', icon: Sparkles, urgent: false },
+    { id: 'a2', label: 'Connect Communications', category: 'Workspace', icon: Inbox, urgent: false },
+    { id: 'a3', label: 'Review Security Settings', category: 'Security', icon: Shield, urgent: false },
   ],
   categories: [
-    { name: 'Hiring',      count: 4,  color: 'bg-violet-500' },
-    { name: 'Finance',     count: 6,  color: 'bg-amber-500'  },
-    { name: 'Engineering', count: 8,  color: 'bg-cyan-500'   },
-    { name: 'Travel',      count: 2,  color: 'bg-emerald-500'},
-    { name: 'Family',      count: 3,  color: 'bg-pink-500'   },
-    { name: 'Support',     count: 5,  color: 'bg-red-500'    },
+    { name: 'System', count: 2, color: 'bg-violet-500' },
+    { name: 'AI Assistant', count: 3, color: 'bg-cyan-500' },
+    { name: 'Workspace', count: 2, color: 'bg-emerald-500' },
+    { name: 'Security', count: 2, color: 'bg-amber-500' },
   ],
 };
 
-// ── Running agents mock ──────────────────────────────────────────────────────
+// ── Running Agents ────────────────────────────────────────────────────────────
 
 const RUNNING_AGENTS = [
-  { id: '1', name: 'Sales Automation',  status: 'running', progress: 72 },
-  { id: '2', name: 'Invoice Processor', status: 'running', progress: 45 },
-  { id: '3', name: 'Candidate Screen',  status: 'waiting', progress: 0  },
+  { id: '1', name: 'Context Indexer', status: 'running', progress: 100 },
+  { id: '2', name: 'Local AI Engine', status: 'running', progress: 100 },
+  { id: '3', name: 'Task Orchestrator', status: 'waiting', progress: 0 },
 ];
 
-// ── Priority badge ────────────────────────────────────────────────────────────
+// ── Priority Badge ────────────────────────────────────────────────────────────
 
 const PriorityBadge: React.FC<{ priority: TimelineItem['priority'] }> = ({ priority }) => {
   if (priority === 'urgent') return <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">URGENT</span>;
@@ -122,17 +153,14 @@ const PriorityBadge: React.FC<{ priority: TimelineItem['priority'] }> = ({ prior
   return <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-700/50 text-zinc-400 border border-zinc-700">FYI</span>;
 };
 
-// ── Main component ────────────────────────────────────────────────────────────
-
-import chatrLogo from '@/assets/chatr-icon-logo.png';
-import { supabase } from '@/integrations/supabase/client';
-import { LogOut } from 'lucide-react';
+// ── Main Component ────────────────────────────────────────────────────────────
 
 export const ChiefOfStaffHome: React.FC = () => {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState('Good morning');
   const [userName, setUserName] = useState('User');
-  const [selectedItem, setSelectedItem] = useState<TimelineItem | null>(TIMELINE_ITEMS[0]);
+  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>(DEFAULT_TIMELINE_ITEMS);
+  const [selectedItem, setSelectedItem] = useState<TimelineItem | null>(DEFAULT_TIMELINE_ITEMS[0]);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'action'>('all');
   const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -144,13 +172,43 @@ export const ChiefOfStaffHome: React.FC = () => {
     else setGreeting('Good evening');
     const t = setInterval(() => setCurrentTime(new Date()), 60000);
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        const rawName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User';
-        const formatted = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-        setUserName(formatted);
+    const loadUserProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Fetch from Supabase profiles table
+        const { data: profile } = await (supabase as any)
+          .from('profiles')
+          .select('full_name, username, display_name')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        const candidateName =
+          profile?.full_name ||
+          profile?.display_name ||
+          profile?.username ||
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.user_metadata?.username ||
+          (user.email ? user.email.split('@')[0] : '');
+
+        const cleaned = (candidateName || '').trim();
+        // Check if pure numbers or phone format
+        const isNumericPhone = !cleaned || /^\+?[0-9\s\-]+$/.test(cleaned);
+
+        if (isNumericPhone) {
+          setUserName('User');
+        } else {
+          const firstName = cleaned.split(' ')[0];
+          setUserName(firstName.charAt(0).toUpperCase() + firstName.slice(1));
+        }
+      } catch (err) {
+        console.warn('[ChiefOfStaffHome] Profile query error:', err);
       }
-    });
+    };
+
+    loadUserProfile();
 
     return () => clearInterval(t);
   }, []);
@@ -160,7 +218,7 @@ export const ChiefOfStaffHome: React.FC = () => {
     navigate('/auth');
   };
 
-  const filteredItems = TIMELINE_ITEMS.filter(item => {
+  const filteredItems = timelineItems.filter(item => {
     if (filter === 'all') return true;
     if (filter === 'urgent') return item.priority === 'urgent';
     if (filter === 'action') return item.priority === 'action';
@@ -181,7 +239,7 @@ export const ChiefOfStaffHome: React.FC = () => {
               {greeting}, <span className="text-violet-400">{userName}</span> 👋
             </span>
             <span className="text-[11px] text-zinc-500">
-              {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })} · AI processed {TIMELINE_ITEMS.length} events today
+              {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })} · AI processed {timelineItems.length} events today
             </span>
           </div>
         </div>
@@ -203,7 +261,6 @@ export const ChiefOfStaffHome: React.FC = () => {
           >
             <Inbox className="w-4 h-4" />
             Universal Inbox
-            <span className="bg-white/20 text-xs font-bold px-1.5 py-0.5 rounded-full">286</span>
           </button>
 
           <button
@@ -226,7 +283,7 @@ export const ChiefOfStaffHome: React.FC = () => {
         <div className="w-px h-4 bg-white/10" />
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-sm">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-red-500" />
             <span className="font-bold text-red-400">{AI_BRIEF.urgent}</span>
             <span className="text-zinc-500">Urgent</span>
           </span>
@@ -363,7 +420,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                       : 'text-zinc-500 hover:text-white hover:bg-white/5'
                   )}
                 >
-                  {f === 'all' ? `All (${TIMELINE_ITEMS.length})` : f === 'urgent' ? `Urgent (${AI_BRIEF.urgent})` : `Action (${AI_BRIEF.action})`}
+                  {f === 'all' ? `All (${timelineItems.length})` : f === 'urgent' ? `Urgent (${AI_BRIEF.urgent})` : `Action (${AI_BRIEF.action})`}
                 </button>
               ))}
             </div>
@@ -425,7 +482,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                 className="text-xs text-violet-400 hover:text-violet-300 transition-colors font-semibold flex items-center gap-1.5 mx-auto"
               >
                 <Inbox className="w-3.5 h-3.5" />
-                View all 286 items in Universal Inbox
+                View all items in Universal Inbox
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -487,11 +544,11 @@ export const ChiefOfStaffHome: React.FC = () => {
 
               {/* Related items */}
               <div className="p-4 border-b border-white/5">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Related</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-zinc-500 mb-2">System Status</div>
                 <div className="space-y-1.5">
                   {[
-                    { icon: FileText, label: 'Q3 Proposal.pdf',    sub: 'Shared 2 days ago' },
-                    { icon: Calendar, label: 'Sync Meeting — 3PM', sub: 'Today' },
+                    { icon: Shield, label: 'Local Security Shield', sub: 'Active' },
+                    { icon: Sparkles, label: 'On-Device AI Engine', sub: 'Ready' },
                   ].map(r => (
                     <div key={r.label} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all">
                       <r.icon className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />

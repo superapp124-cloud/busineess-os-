@@ -25,7 +25,6 @@ win:
   icon: public/icon.ico
   artifactName: chatr-desktop-setup.${ext}
   publisherName: "TalentXcel Services Pvt Ltd"
-  verifyUpdateCodeSignature: false
 
 nsis:
   oneClick: false
@@ -36,8 +35,6 @@ nsis:
   createStartMenuShortcut: true
   shortcutName: CHATR OS
   include: electron/installer.nsh
-  installerIcon: public/icon.ico
-  uninstallerIcon: public/icon.ico
 
 protocols:
   name: chatr-deep-link

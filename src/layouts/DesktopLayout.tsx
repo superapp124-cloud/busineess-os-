@@ -326,8 +326,10 @@ const DesktopLayoutInner = () => {
   const textPrimary = isDark ? 'text-white/90' : 'text-zinc-900';
   const hoverBg = isDark ? 'hover:bg-white/[0.06]' : 'hover:bg-zinc-100';
 
-  const displayName = profile?.full_name || profile?.display_name || profile?.username || 'User';
-  const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+  const rawDisplayName = profile?.full_name || profile?.display_name || profile?.username || user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email ? user.email.split('@')[0] : '') || 'User';
+  const cleanDisplayName = rawDisplayName.trim();
+  const displayName = (!cleanDisplayName || /^\+?[0-9\s\-]+$/.test(cleanDisplayName)) ? 'User' : cleanDisplayName;
+  const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
   const currentPath = `${location.pathname}${location.search}`;
   const isNavItemActive = (path: string) => {
     if (path.includes('?')) return currentPath === path;
