@@ -69,6 +69,7 @@ const NAV_SECTIONS = [
     items: [
       { icon: MessageSquare, label: 'Chat',            subtitle: 'Messages & Conversations',         path: '/desktop/chat' },
       { icon: Inbox,         label: 'Universal Inbox', subtitle: 'All Channels · One Place',         path: '/desktop/inbox' },
+      { icon: FileText,      label: 'Docs Workspace',  subtitle: 'Document Intelligence & Verdicts', path: '/desktop/docs' },
       { icon: Phone,         label: 'Calls',           subtitle: 'Voice & Video Calls',              path: '/desktop/calls' },
     ],
   },

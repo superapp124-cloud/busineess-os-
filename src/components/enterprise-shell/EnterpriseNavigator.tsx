@@ -39,6 +39,7 @@ export const EnterpriseNavigator: React.FC<Props> = ({
       items: [
         { id: 'chat', label: 'Chat', icon: MessageSquare },
         { id: 'inbox', label: 'Inbox', icon: Inbox },
+        { id: 'docs', label: 'Docs Workspace', icon: FileText },
         { id: 'calls', label: 'Calls', icon: Phone },
       ]
     },
