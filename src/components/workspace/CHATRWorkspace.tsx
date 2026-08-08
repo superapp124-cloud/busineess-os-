@@ -431,97 +431,115 @@ function inferMission(item: WorkspaceItem): MissionExecutionContext {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+import { DocumentStore } from './services/documentStore';
+import { DocumentIntelligenceService } from './services/documentIntelligenceService';
+
 export const CHATRWorkspace: React.FC = () => {
   const [classifying, setClassifying] = useState<Set<string>>(new Set());
+  const [items, setItems] = useState<WorkspaceItem[]>([]);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const [items, setItems] = useState<WorkspaceItem[]>([
-    // ── TIER-1: Legal / Contract
-    { id: '1',  sourceUri: 'Addendum to Professional Service Agreement _Volume and tenure.pdf', typeHint: 'pdf',  rawFile: new File([], 'Addendum to Professional Service Agreement _Volume and tenure.pdf') },
-    { id: '8',  sourceUri: 'Master_Service_Agreement.pdf',                                      typeHint: 'pdf',  rawFile: new File([], 'Master_Service_Agreement.pdf') },
-    // ── TIER-1: Finance / Tax
-    { id: '3',  sourceUri: '5983042622654.pdf',                                                 typeHint: 'pdf',  rawFile: new File([], '5983042622654.pdf') },
-    { id: '6',  sourceUri: 'XXXPW9619X_2025-26_AIS.pdf',                                       typeHint: 'pdf',  rawFile: new File([], 'XXXPW9619X_2025-26_AIS.pdf') },
-    // ── TIER-1: Insurance
-    { id: '7',  sourceUri: 'HDFC_Brezza_Motor_Policy.pdf',                                      typeHint: 'pdf',  rawFile: new File([], 'HDFC_Brezza_Motor_Policy.pdf') },
-    // ── TIER-1: Healthcare Intelligence (NEW)
-    { id: '9',  sourceUri: 'Prescription_Dr_Kumar_T2DM_Apollo_2026.pdf',                        typeHint: 'pdf',  rawFile: new File([], 'Prescription_Dr_Kumar_T2DM_Apollo_2026.pdf') },
-    { id: '10', sourceUri: 'Pathology_Lab_Report_CBC_HbA1c_Lal_PathLabs.pdf',                  typeHint: 'pdf',  rawFile: new File([], 'Pathology_Lab_Report_CBC_HbA1c_Lal_PathLabs.pdf') },
-    { id: '11', sourceUri: 'Discharge_Summary_Fortis_Hospital_Rajesh_Kumar.pdf',                typeHint: 'pdf',  rawFile: new File([], 'Discharge_Summary_Fortis_Hospital_Rajesh_Kumar.pdf') },
-    // ── TIER-1: Talent Intelligence (NEW)
-    { id: '12', sourceUri: 'Resume_Deepu_Singh_Senior_Platform_Engineer.pdf',                   typeHint: 'pdf',  rawFile: new File([], 'Resume_Deepu_Singh_Senior_Platform_Engineer.pdf') },
-    { id: '13', sourceUri: 'Job_Description_L5_Platform_Engineer_2026.pdf',                     typeHint: 'pdf',  rawFile: new File([], 'Job_Description_L5_Platform_Engineer_2026.pdf') },
-    { id: '14', sourceUri: 'Interview_Feedback_Panel_Round2_Deepu_Singh.pdf',                   typeHint: 'pdf',  rawFile: new File([], 'Interview_Feedback_Panel_Round2_Deepu_Singh.pdf') },
-    // ── Other
-    { id: '2',  sourceUri: 'LinkedIn Profile optimisation.docx',                                typeHint: 'word', rawFile: new File([], 'LinkedIn Profile optimisation.docx') },
-    { id: '4',  sourceUri: 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf',                  typeHint: 'pdf',  rawFile: new File([], 'GRADE III, SUMMER ENGAGEMENT PROGRAMME 26-27.pdf') },
-    { id: '5',  sourceUri: '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx',                        typeHint: 'pdf',  rawFile: new File([], '2747177d-9902-4def-bf31-1b3c8bc2c79a.docx') },
-  ]);
-
-  const [activeItemId, setActiveItemId] = useState<string | null>('9'); // Default: Healthcare prescription
+  // ─── 1. Load Stored Documents on Mount ──────────────────────────────────────
+  useEffect(() => {
+    DocumentStore.getAllDocuments()
+      .then(storedItems => {
+        if (storedItems && storedItems.length > 0) {
+          setItems(storedItems);
+          setActiveItemId(storedItems[0].id);
+        }
+        setIsLoaded(true);
+      })
+      .catch(err => {
+        console.warn('[CHATRWorkspace] Failed to load stored items:', err);
+        setIsLoaded(true);
+      });
+  }, []);
 
   const activeItem = items.find(i => i.id === activeItemId) || null;
 
-  // ─── Run Classification ─────────────────────────────────────────────────────
-  const runClassification = useCallback((item: WorkspaceItem) => {
+  // ─── 2. Real Document Classification & Analysis ────────────────────────────
+  const runClassification = useCallback(async (item: WorkspaceItem) => {
     if ((item as any).__workSession__) return;
 
-    console.log(`[CHATRWorkspace] Classifying: ${item.sourceUri}`);
+    console.log(`[CHATRWorkspace] Analyzing document: ${item.sourceUri}`);
     setClassifying(prev => new Set(prev).add(item.id));
 
-    const delay = 1500 + Math.random() * 1000;
-
-    setTimeout(() => {
-      const missionContext = inferMission(item);
+    try {
+      const missionContext = await DocumentIntelligenceService.analyzeDocument(item);
       console.log(`[CHATRWorkspace] Mission → ${missionContext.mission}`);
 
-      setItems(prev =>
-        prev.map(i => i.id === item.id ? { ...i, __workSession__: missionContext } : i)
-      );
+      const updatedItem = { ...item, __workSession__: missionContext };
 
+      setItems(prev => prev.map(i => (i.id === item.id ? updatedItem : i)));
+      await DocumentStore.saveDocument(updatedItem);
+    } catch (err) {
+      console.error('[CHATRWorkspace] Intelligence processing failed:', err);
+    } finally {
       setClassifying(prev => {
         const next = new Set(prev);
         next.delete(item.id);
         return next;
       });
-    }, delay);
+    }
   }, []);
 
-  // ─── Auto-classify on active item change ────────────────────────────────────
+  // ─── 3. Auto-classify active item if unanalyzed ─────────────────────────────
   useEffect(() => {
     if (!activeItem) return;
     if (!(activeItem as any).__workSession__ && !classifying.has(activeItem.id)) {
       runClassification(activeItem);
     }
-  }, [activeItemId]);
+  }, [activeItemId, activeItem, classifying, runClassification]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ─── 4. Real File Upload Handler ────────────────────────────────────────────
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // File size check (Max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      alert('File size exceeds the 50MB public limit.');
+      return;
+    }
+
     const newItem: WorkspaceItem = {
-      id: `item_${Date.now()}`,
+      id: `item_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       sourceUri: file.name,
       rawFile: file,
-      typeHint: 'pdf',
+      typeHint: file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'word',
     };
 
     setItems(prev => [newItem, ...prev]);
     setActiveItemId(newItem.id);
-    runClassification(newItem);
+
+    await DocumentStore.saveDocument(newItem);
+    await runClassification(newItem);
+
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleRemoveItem = (e: React.MouseEvent, id: string) => {
+  // ─── 5. Document Removal Handler ──────────────────────────────────────────
+  const handleRemoveItem = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     setItems(prev => prev.filter(item => item.id !== id));
-    if (activeItemId === id) setActiveItemId(null);
+    await DocumentStore.deleteDocument(id);
+    if (activeItemId === id) {
+      setActiveItemId(items.find(i => i.id !== id)?.id || null);
+    }
   };
 
   return (
     <>
-      <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,.eml,.msg,image/*" />
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileUpload}
+        accept=".pdf,.doc,.docx,.txt,.json,.csv,.xml,.eml,.msg,image/*"
+      />
       <EnterpriseShell
         missionContext={(activeItem as any)?.__workSession__ ?? null}
         isProcessing={!!activeItem && classifying.has(activeItem.id)}
@@ -534,3 +552,4 @@ export const CHATRWorkspace: React.FC = () => {
     </>
   );
 };
+

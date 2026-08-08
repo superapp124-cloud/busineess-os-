@@ -19,6 +19,7 @@ const validInvokeChannels = [
   'context:get-idle-time',
   'context:get-power-state',
   'context:get-clipboard-text',
+  'system:get-os-user',
   // Auto Updater
   'updater:check',
   'updater:install',
@@ -213,6 +214,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onGlobalShortcut: (callback) => {
     ipcRenderer.on('global-shortcut', () => callback());
   },
+
+  /** Get system OS user name */
+  getOsUser: () => ipcRenderer.invoke('system:get-os-user'),
 
   runtime: {
     getStatus: () => ipcRenderer.invoke('chatr:runtime-status'),

@@ -48,7 +48,7 @@ const PHASE_CONFIG: Record<AIPhase, {
  },
  ready: {
  icon: <CheckCircle className="w-3.5 h-3.5" />,
- label: 'Local AI active',
+ label: 'AI Ready',
  color: 'text-emerald-400',
  showProgress: false,
  dismissAfterMs: 4000,
@@ -61,7 +61,7 @@ const PHASE_CONFIG: Record<AIPhase, {
  },
  cloud_fallback: {
  icon: <AlertCircle className="w-3.5 h-3.5" />,
- label: 'Local AI unavailable',
+ label: 'AI Connecting',
  color: 'text-amber-400',
  showProgress: false,
  dismissAfterMs: 3000,

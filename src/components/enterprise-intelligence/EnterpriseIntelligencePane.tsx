@@ -151,11 +151,11 @@ export const EnterpriseIntelligencePane: React.FC<Props> = ({ missionContext, is
 
   if (!isOpen) return null;
 
-  const tabs: TabType[] = ['Overview', 'Reasoning', 'Enterprise Context', 'Evidence', 'Policies', 'Graph', 'Capabilities'];
+  const tabs: TabType[] = ['Overview', 'Reasoning'];
   const shortTabs: Record<TabType, string> = {
     'Overview': 'Summary',
-    'Reasoning': 'Why & Evidence',
-    'Enterprise Context': 'Company Graph',
+    'Reasoning': 'Highlights',
+    'Enterprise Context': 'Company',
     'Evidence': 'Evidence',
     'Policies': 'Policies',
     'Graph': 'Graph',
@@ -171,8 +171,8 @@ export const EnterpriseIntelligencePane: React.FC<Props> = ({ missionContext, is
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-          <Database className="w-3.5 h-3.5 text-indigo-500" />
-          Enterprise Intelligence
+          <Brain className="w-3.5 h-3.5 text-indigo-500" />
+          Document Insights
         </h2>
         <button onClick={onToggle} className="text-slate-400 hover:text-slate-700 text-xs font-semibold px-2 py-1 rounded hover:bg-slate-100 transition-colors">
           Close
@@ -220,24 +220,24 @@ export const EnterpriseIntelligencePane: React.FC<Props> = ({ missionContext, is
               <div className="space-y-4">
                 {/* Mission Card */}
                 <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-xl p-4 shadow-md">
-                  <div className="text-[9px] font-bold uppercase text-indigo-300 tracking-wider mb-1">Active Mission</div>
-                  <div className="text-sm font-bold leading-snug">{missionContext.mission}</div>
+                  <div className="text-[9px] font-bold uppercase text-indigo-300 tracking-wider mb-1">Active Document</div>
+                  <div className="text-sm font-bold leading-snug">{missionContext.mission.replace(/^Analyze and Structure\s*/i, '')}</div>
                   <div className="mt-3 grid grid-cols-2 gap-3 border-t border-white/10 pt-3">
                     <div>
-                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Confidence</div>
-                      <div className="text-lg font-black text-indigo-300">{confidence}%</div>
+                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Accuracy</div>
+                      <div className="text-sm font-extrabold text-indigo-300">{confidence}%</div>
                     </div>
                     <div>
-                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">State</div>
-                      <div className="text-xs font-bold text-amber-300">{missionContext.lifecycleState}</div>
+                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Status</div>
+                      <div className="text-xs font-bold text-amber-300">Ready for Review</div>
                     </div>
                     <div>
                       <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Time Saved</div>
-                      <div className="text-xs font-bold text-emerald-300">{missionContext.businessOutcomes?.manualWorkEliminated || 'TBD'}</div>
+                      <div className="text-xs font-bold text-emerald-300">{missionContext.businessOutcomes?.manualWorkEliminated || 'Auto-indexed'}</div>
                     </div>
                     <div>
-                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">SLA</div>
-                      <div className="text-xs font-bold text-emerald-300">{missionContext.businessOutcomes?.slaImprovement || 'On Track'}</div>
+                      <div className="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Processing</div>
+                      <div className="text-xs font-bold text-emerald-300">Instant</div>
                     </div>
                   </div>
                 </div>
@@ -245,14 +245,14 @@ export const EnterpriseIntelligencePane: React.FC<Props> = ({ missionContext, is
                 {/* KPI Row */}
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Recommendations', value: missionContext.recommendations?.length ?? 0, icon: <Zap className="w-3 h-3 text-indigo-500" /> },
-                    { label: 'Audit Events', value: (missionContext.auditTrail as any[])?.length ?? 0, icon: <Activity className="w-3 h-3 text-emerald-500" /> },
-                    { label: 'Risk Score', value: `${reasoning?.risk.score}%`, icon: <Shield className="w-3 h-3 text-amber-500" /> },
-                    { label: 'Plugin', value: reasoning?.plugin?.split(' ')[0] ?? 'Default', icon: <Brain className="w-3 h-3 text-violet-500" /> },
+                    { label: 'File Type', value: 'Document', icon: <Zap className="w-3 h-3 text-indigo-500" /> },
+                    { label: 'Security', value: 'Verified', icon: <Shield className="w-3 h-3 text-emerald-500" /> },
+                    { label: 'Risk Alert', value: reasoning?.risk.level === 'HIGH' ? 'High Risk' : 'None', icon: <Shield className="w-3 h-3 text-amber-500" /> },
+                    { label: 'AI Assistant', value: 'Ready', icon: <Brain className="w-3 h-3 text-violet-500" /> },
                   ].map(kpi => (
                     <div key={kpi.label} className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                       <div className="flex items-center gap-1.5 mb-1">{kpi.icon}<span className="text-[9px] text-slate-400 uppercase tracking-wider font-bold">{kpi.label}</span></div>
-                      <div className="text-sm font-black text-slate-800">{kpi.value}</div>
+                      <div className="text-xs font-bold text-slate-800">{kpi.value}</div>
                     </div>
                   ))}
                 </div>

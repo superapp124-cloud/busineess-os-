@@ -94,7 +94,7 @@ export const TinyAIIndicator = () => {
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         <span className="font-bold tracking-tight">{pageAILabel}</span>
         <span className="text-[10px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded font-mono">
-          {aiMode === 'local' ? 'Local AI' : 'Cloud AI'}
+          Active
         </span>
       </button>
 

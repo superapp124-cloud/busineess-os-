@@ -51,7 +51,7 @@ import { Density, WorkspacePersona } from '@/hooks/useAdaptiveLayout';
 import { SectionCard } from '@/components/ui/SectionCard';
 
 export default function UniversalOS() {
- const [activeWorkspace, setActiveWorkspace] = useState('TalentXcel Services');
+ const [activeWorkspace, setActiveWorkspace] = useState('CHATR Enterprise');
  const [userDensity, setUserDensity] = useState<Density | 'auto'>('auto');
  const [userPersona, setUserPersona] = useState<WorkspacePersona>('standard');
  const [selectedIntent, setSelectedIntent] = useState<any>(null);
@@ -205,7 +205,7 @@ export default function UniversalOS() {
  <div>
  <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 px-2">Workspaces</div>
  <div className="space-y-1">
- <WorkspaceItem name="TalentXcel Services" active={activeWorkspace === 'TalentXcel Services'} onClick={() => setActiveWorkspace('TalentXcel Services')} />
+ <WorkspaceItem name="CHATR Enterprise" active={activeWorkspace === 'CHATR Enterprise'} onClick={() => setActiveWorkspace('CHATR Enterprise')} />
  <WorkspaceItem name="Sales" active={activeWorkspace === 'Sales'} onClick={() => setActiveWorkspace('Sales')} />
  <WorkspaceItem name="Finance" active={activeWorkspace === 'Finance'} onClick={() => setActiveWorkspace('Finance')} />
  <WorkspaceItem name="Procurement" active={activeWorkspace === 'Procurement'} onClick={() => setActiveWorkspace('Procurement')} />

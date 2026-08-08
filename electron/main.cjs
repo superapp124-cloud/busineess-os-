@@ -4,6 +4,7 @@ const fs = require('fs');
 const http = require('http');
 const net = require('net');
 const log = require('electron-log');
+const { autoUpdater } = require('electron-updater');
 const UpdateService = require('./services/UpdateService.cjs');
 const { execFile } = require('child_process');
 const ollamaEngine = require('./ollama.cjs');
@@ -524,7 +525,14 @@ function setupContextEngine(mainWindow) {
   ipcMain.handle('context:get-clipboard-text', () => {
     const text = clipboard.readText();
     // Return max 500 chars to avoid overwhelming context engine
-    return text ? text.substring(0, 500) : null;
+  // Expose System OS User
+  ipcMain.handle('system:get-os-user', () => {
+    try {
+      const os = require('os');
+      return os.userInfo()?.username || process.env.USERNAME || process.env.USER || '';
+    } catch (e) {
+      return process.env.USERNAME || process.env.USER || '';
+    }
   });
 
   // -------------------------------------------------------------

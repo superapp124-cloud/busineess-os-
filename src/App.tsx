@@ -524,8 +524,6 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <OfflineIndicator />
  <DeferredGlobalServices />
  <GlobalBackHandler />
- <FloatingHomeFab />
- <ChatrAIFab />
  <Routes>
   {/* Developer & Direct Integrations Routes */}
   <Route path="/dev" element={<ExecutionDashboard />} />

@@ -704,17 +704,11 @@ const DesktopLayoutInner = () => {
           </main>
         </div>
 
-        {/* ── Transparent Expandable Quick Actions Bar (Right Sidebar) ── */}
-        <QuickActionsBar isDark={isDark} />
-
         {/* ── Global Call Overlay (Top Right Notification) ── */}
         <GlobalCallOverlay />
 
         {/* ── Command Palette ──────────────────────────────────────────────── */}
         <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} userId={user?.id} />
-
-        {/* ── Productivity Dock ────────────────────────────────────────────── */}
-        <ProductivityDock />
 
         {/* ── Boot Status Indicator (non-blocking, auto-dismisses) ───────────────── */}
         <BootStatusIndicator />

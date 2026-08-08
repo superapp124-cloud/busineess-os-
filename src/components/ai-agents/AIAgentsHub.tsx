@@ -79,10 +79,10 @@ export const AIAgentsHub: React.FC = () => {
       }
 
       const storedName = cleanName(localStorage.getItem('chatr_user_name') || localStorage.getItem('user_name'));
-      if (storedName) {
+      if (storedName && storedName.toLowerCase() !== 'talentxcel' && storedName.toLowerCase() !== 'user' && storedName.toLowerCase() !== 'arshid') {
         setUserName(storedName);
       } else {
-        setUserName('TalentXcel');
+        setUserName('');
       }
     }
     fetchUser();

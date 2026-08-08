@@ -158,13 +158,13 @@ const PDFRenderer: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
           </div>
           <div className="text-center max-w-xs">
             <p className="text-slate-200 font-bold text-sm mb-1 truncate">{item.sourceUri}</p>
-            <p className="text-slate-500 text-xs leading-relaxed">
-              CHATR has analysed this filename and prepared your workspace.<br />
-              Upload the real PDF to render it here.
+            <p className="text-slate-400 text-xs leading-relaxed">
+              This document object has no binary data.<br />
+              Upload a valid PDF file to view pages and extract content.
             </p>
           </div>
-          <div className="text-[11px] text-slate-600 bg-white/5 border border-white/8 rounded-lg px-4 py-2">
-            Click <span className="font-bold text-slate-400">New Workspace Item</span> → select this file
+          <div className="text-[11px] text-slate-400 bg-white/5 border border-white/8 rounded-lg px-4 py-2">
+            Click <span className="font-bold text-indigo-400">New Item / Upload</span> to select a local PDF file.
           </div>
         </div>
       </div>

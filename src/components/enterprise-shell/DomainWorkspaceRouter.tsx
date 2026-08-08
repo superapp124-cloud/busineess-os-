@@ -3,7 +3,8 @@ import {
   MessageSquare, Inbox, Phone, FileText, Layout, Folder, Calendar, CheckSquare, Users, Ticket,
   Target, Bot, BarChart2, ShieldCheck, Store, Package, Hammer, Terminal, Activity,
   Key, HeartPulse, Settings, CheckCircle2, AlertTriangle, ArrowRight, UserCheck, Stethoscope, Briefcase, Award, Zap,
-  Search, Filter, Plus, ExternalLink, Download, Clock, DollarSign, ArrowUpRight, TrendingUp, ShieldAlert, FileSearch, Sparkles
+  Search, Filter, Plus, ExternalLink, Download, Clock, DollarSign, ArrowUpRight, TrendingUp, ShieldAlert, FileSearch, Sparkles,
+  ArrowLeft
 } from 'lucide-react';
 import { MissionExecutionContext } from '../../core/types';
 import { EnterpriseCanvas } from '../enterprise-canvas/EnterpriseCanvas';
@@ -20,7 +21,284 @@ interface Props {
   canvasMode: 'Review' | 'Decision' | 'Execution' | 'Audit';
   isProcessing?: boolean;
   onNavigate: (domain: string) => void;
+  onUploadClick?: () => void;
 }
+
+// ─── Sub-Workspace Components for Interactive Quick Actions ─────────────────
+
+const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome }) => {
+  const [messages, setMessages] = useState([
+    { id: '1', sender: 'ai', text: 'Hello! I am your CHATR AI Assistant. How can I help you summarize a document, draft an email, or automate a task today?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const userMsg = { id: Date.now().toString(), sender: 'user', text: input };
+    setMessages(prev => [...prev, userMsg]);
+    const query = input;
+    setInput('');
+    setIsTyping(true);
+
+    setTimeout(() => {
+      let aiText = "I'm analyzing your request. CHATR AI Document Intelligence can extract key clauses, verify invoice data against ERP, or generate automated summary reports for your files.";
+      const q = query.toLowerCase();
+      if (q.includes('summary') || q.includes('document') || q.includes('charles')) {
+        aiText = "Based on CHARLES HOPKINS.docx: This candidate is a Senior Platform Engineer with 8.3 years of experience. ATS Score is 92/100 (Exceeds L5 Hiring Threshold). Compensation expectation is within approved band.";
+      } else if (q.includes('invoice') || q.includes('supplier')) {
+        aiText = "Invoice INV-28491 from Supplier ACME Corp has been 3-way matched against SAP PO #88912. Total amount: ₹45,200. Tax reconciliation verified.";
+      } else if (q.includes('task') || q.includes('todo')) {
+        aiText = "Task created! I have added 'Review Executive Roadmap' to your task list due today at 5:00 PM.";
+      }
+      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), sender: 'ai', text: aiText }]);
+      setIsTyping(false);
+    }, 600);
+  };
+
+  return (
+    <div className="flex-1 flex flex-col bg-slate-50 h-full overflow-hidden">
+      <div className="bg-white border-b border-slate-200 p-4 flex justify-between items-center shadow-2xs shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBackToHome}
+            className="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer border border-slate-200 shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Back to Home</span>
+          </button>
+          <div className="h-4 w-px bg-slate-200" />
+          <div className="flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-indigo-600" />
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">CHATR AI Assistant</h2>
+              <p className="text-[11px] text-slate-500">Ask questions about your documents, tasks, or workflows</p>
+            </div>
+          </div>
+        </div>
+        <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> AI Active
+        </span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {messages.map(m => (
+          <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-xl p-4 rounded-2xl text-xs leading-relaxed shadow-2xs ${
+              m.sender === 'user'
+                ? 'bg-indigo-600 text-white rounded-br-none'
+                : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none'
+            }`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white border border-slate-200 p-3 rounded-2xl text-xs text-slate-400 flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
+              <span>CHATR AI is thinking...</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="p-4 bg-white border-t border-slate-200 flex items-center gap-3 shrink-0">
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
+          placeholder="Ask AI anything about your files, tasks, or contracts..."
+          className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+        />
+        <button
+          onClick={handleSend}
+          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const TaskTrackerWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome }) => {
+  const [tasks, setTasks] = useState([
+    { id: '1', title: 'Review CHARLES HOPKINS.docx Candidate Resume', done: false, category: 'Document Analysis' },
+    { id: '2', title: 'Verify ACME Corp Supplier Invoice INV-28491', done: true, category: 'Finance' },
+    { id: '3', title: 'Finalize Q3 Roadmap & Executive Strategy Align', done: false, category: 'Executive' },
+    { id: '4', title: 'Schedule Candidate Technical Interview', done: false, category: 'Talent' },
+  ]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+
+  const addTask = () => {
+    if (!newTaskTitle.trim()) return;
+    setTasks(prev => [{ id: Date.now().toString(), title: newTaskTitle, done: false, category: 'General' }, ...prev]);
+    setNewTaskTitle('');
+  };
+
+  const toggleTask = (id: string) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  };
+
+  return (
+    <div className="flex-1 bg-slate-50 p-6 overflow-y-auto space-y-6 max-w-5xl mx-auto w-full">
+      <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBackToHome}
+            className="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer border border-slate-200 shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Back to Home</span>
+          </button>
+          <div className="h-4 w-px bg-slate-200" />
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <CheckSquare className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-slate-900">Task Tracker & To-Do List</h1>
+            <p className="text-xs text-slate-500">Organize follow-up actions and team tasks</p>
+          </div>
+        </div>
+        <span className="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200">
+          {tasks.filter(t => !t.done).length} Pending Tasks
+        </span>
+      </div>
+
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center gap-3">
+        <input
+          type="text"
+          value={newTaskTitle}
+          onChange={e => setNewTaskTitle(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && addTask()}
+          placeholder="Add a new task or follow-up item..."
+          className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+        />
+        <button
+          onClick={addTask}
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" /> Add Task
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Your Tasks</h2>
+        <div className="space-y-2">
+          {tasks.map(t => (
+            <div
+              key={t.id}
+              onClick={() => toggleTask(t.id)}
+              className={`p-3.5 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${
+                t.done ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-emerald-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                  t.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 bg-white'
+                }`}>
+                  {t.done && <CheckCircle2 className="w-3.5 h-3.5" />}
+                </div>
+                <span className={`text-xs font-semibold ${t.done ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                  {t.title}
+                </span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                {t.category}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CalendarWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome }) => {
+  const [events, setEvents] = useState([
+    { id: '1', title: 'Q3 Executive Strategy Align', time: '10:00 AM – 11:00 AM', location: 'Room 4B / Video Call', category: 'Executive' },
+    { id: '2', title: 'Candidate Evaluation Interview (Deepu Kumar)', time: '02:00 PM – 03:00 PM', location: 'Meet Link', category: 'Talent' },
+    { id: '3', title: 'Finance & Invoice Audit Review', time: '04:30 PM – 05:15 PM', location: 'Conference Room A', category: 'Finance' },
+  ]);
+  const [newEventTitle, setNewEventTitle] = useState('');
+
+  const addEvent = () => {
+    if (!newEventTitle.trim()) return;
+    setEvents(prev => [{ id: Date.now().toString(), title: newEventTitle, time: '05:30 PM – 06:00 PM', location: 'Office Room', category: 'General' }, ...prev]);
+    setNewEventTitle('');
+  };
+
+  return (
+    <div className="flex-1 bg-slate-50 p-6 overflow-y-auto space-y-6 max-w-5xl mx-auto w-full">
+      <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBackToHome}
+            className="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer border border-slate-200 shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Back to Home</span>
+          </button>
+          <div className="h-4 w-px bg-slate-200" />
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Calendar className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-slate-900">Calendar & Schedule Manager</h1>
+            <p className="text-xs text-slate-500">Organize meetings, interviews, and reviews</p>
+          </div>
+        </div>
+        <span className="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-200">
+          {events.length} Events Today
+        </span>
+      </div>
+
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center gap-3">
+        <input
+          type="text"
+          value={newEventTitle}
+          onChange={e => setNewEventTitle(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && addEvent()}
+          placeholder="Schedule a new meeting or event..."
+          className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-amber-500"
+        />
+        <button
+          onClick={addEvent}
+          className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" /> Schedule Meeting
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Today's Schedule</h2>
+        <div className="space-y-3">
+          {events.map(e => (
+            <div key={e.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-amber-50/30 transition-all flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                    {e.time}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500">{e.category}</span>
+                </div>
+                <h3 className="text-sm font-bold text-slate-900">{e.title}</h3>
+                <div className="text-xs text-slate-500 flex items-center gap-1">
+                  <span>Location:</span> <span className="font-semibold text-slate-700">{e.location}</span>
+                </div>
+              </div>
+              <button className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer">
+                Join Meeting
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const DomainWorkspaceRouter: React.FC<Props> = ({
   activeDomain,
@@ -28,175 +306,58 @@ export const DomainWorkspaceRouter: React.FC<Props> = ({
   canvasMode,
   isProcessing,
   onNavigate,
+  onUploadClick,
 }) => {
   const [inspectorPayload, setInspectorPayload] = useState<InspectorPayload | null>(null);
 
-  // Live Runtime Subsystem Singletons
-  const digitalWorkers = identityRuntime.getIdentitiesByType('DIGITAL_WORKER');
   const installedPacks = intentStore.listInstalledPacks();
-  const evaluationSections = customerEvidenceFramework.getEvaluationSections();
-  const maturityProgress = customerEvidenceFramework.getMaturityProgress();
 
-  // 1. Mission Center & Canvas
-  if (activeDomain === 'missions' || activeDomain === 'canvas') {
+  // 1. Mission Center & Canvas / Docs
+  if (activeDomain === 'missions' || activeDomain === 'canvas' || activeDomain === 'docs') {
     return (
       <EnterpriseCanvas
         missionContext={missionContext}
         mode={canvasMode}
         isProcessing={isProcessing}
+        onUploadClick={onUploadClick}
+        onBackToHome={() => onNavigate('home')}
       />
     );
   }
 
-  // 2. Health & Evaluation
+  // 2. Interactive AI Chat & Conversations (`chat`)
+  if (activeDomain === 'chat') {
+    return <AIChatWorkspace onBackToHome={() => onNavigate('home')} />;
+  }
+
+  // 3. Interactive Task Tracker (`tasks`)
+  if (activeDomain === 'tasks') {
+    return <TaskTrackerWorkspace onBackToHome={() => onNavigate('home')} />;
+  }
+
+  // 4. Interactive Calendar & Schedule (`calendar`)
+  if (activeDomain === 'calendar') {
+    return <CalendarWorkspace onBackToHome={() => onNavigate('home')} />;
+  }
+
+  // 5. Health & Evaluation
   if (activeDomain === 'health' || activeDomain === 'evaluation') {
     return <EnterpriseEvaluationDashboard />;
   }
 
-  // 3. CHATR Universal Business Runtime & AI Agents Hub (`agents` or `ai`)
+  // 6. CHATR Universal Business Runtime & AI Agents Hub (`agents` or `ai`)
   if (activeDomain === 'agents' || activeDomain === 'ai') {
     return <AIAgentsHub />;
   }
 
-  // 4. Intent Store & Installed Solution Packs (`intent_store` / `marketplace`) — Driven 100% by IntentStore
-  if (activeDomain === 'intent_store' || activeDomain === 'marketplace') {
-    return (
-      <div className="flex-1 bg-slate-50 p-6 overflow-y-auto space-y-6">
-        <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2">
-              <Store className="w-5 h-5 text-indigo-600" />
-              <h1 className="text-xl font-bold text-slate-900">Intent Store & Package Manager</h1>
-            </div>
-            <p className="text-xs text-slate-500 mt-1">
-              Live Subsystem 27 (`IntentStore`) · Installed Enterprise Solution Packs & Blueprints
-            </p>
-          </div>
-          <span className="text-xs font-bold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full border border-indigo-200">
-            {installedPacks.length} Installed Packages
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          {installedPacks.map((pack) => (
-            <div key={pack.id} className="p-5 bg-white border border-slate-200 rounded-2xl shadow-2xs space-y-3">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-sm font-bold text-slate-900">{pack.name}</div>
-                  <div className="text-xs text-slate-500 font-mono">{pack.id} · v{pack.version}</div>
-                </div>
-                <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
-                  {pack.trustLevel || 'Verified'}
-                </span>
-              </div>
-              <div className="text-xs text-slate-600 space-y-1">
-                <div>Publisher: <span className="font-semibold text-slate-800">{pack.publisher}</span></div>
-                <div>Domain: <span className="font-semibold text-slate-800">{pack.domain}</span></div>
-                <div>Capabilities: <span className="font-mono text-slate-500 text-[11px]">{pack.capabilities.join(', ')}</span></div>
-                <div>Connectors: <span className="font-mono text-indigo-600 text-[11px]">{pack.connectors.join(', ')}</span></div>
-              </div>
-              <div className="text-[10px] text-slate-400 font-mono border-t border-slate-100 pt-2 truncate">
-                Signature: {pack.signature}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // 5. Business OS Cockpit (`business_os`) — Driven 100% by EvaluationEngine & EvidenceFramework
-  if (activeDomain === 'business_os') {
-    return (
-      <>
-        <div className="flex-1 bg-slate-50 p-6 overflow-y-auto space-y-6">
-          <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
-            <div>
-              <div className="flex items-center gap-2">
-                <BarChart2 className="w-5 h-5 text-indigo-600" />
-                <h1 className="text-xl font-bold text-slate-900">Business OS Executive Cockpit</h1>
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Live Subsystem (`CustomerEvidenceFramework`) · Real-time enterprise maturity and evidence scorecards.
-              </p>
-            </div>
-            <button
-              onClick={() => setInspectorPayload({ title: 'Executive Control ROI Report', type: 'kpi_drilldown', data: { value: `${maturityProgress.overallConfidenceScore}% Confidence` } })}
-              className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-2xs cursor-pointer"
-            >
-              Export Readiness Audit
-            </button>
-          </div>
-
-          <div className="grid grid-cols-4 gap-4">
-            <button
-              onClick={() => setInspectorPayload({ title: 'Architecture Maturity', type: 'kpi_drilldown', data: { value: `${maturityProgress.architectureProgress}%` } })}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-300 transition-all text-left cursor-pointer"
-            >
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Architecture</div>
-              <div className="text-2xl font-bold text-slate-900 mt-1">{maturityProgress.architectureProgress}%</div>
-              <div className="text-[10px] text-emerald-600 font-semibold mt-1">Frozen v1.0 Kernel</div>
-            </button>
-
-            <button
-              onClick={() => setInspectorPayload({ title: 'Verification Progress', type: 'kpi_drilldown', data: { value: `${maturityProgress.verificationProgress}%` } })}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-300 transition-all text-left cursor-pointer"
-            >
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verification</div>
-              <div className="text-2xl font-bold text-indigo-600 mt-1">{maturityProgress.verificationProgress}%</div>
-              <div className="text-[10px] text-slate-500 mt-1">Phase B Verification</div>
-            </button>
-
-            <button
-              onClick={() => setInspectorPayload({ title: 'Overall Confidence Score', type: 'kpi_drilldown', data: { value: `${maturityProgress.overallConfidenceScore}%` } })}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-300 transition-all text-left cursor-pointer"
-            >
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Overall Readiness</div>
-              <div className="text-2xl font-bold text-emerald-600 mt-1">{maturityProgress.overallConfidenceScore}%</div>
-              <div className="text-[10px] text-emerald-600 font-semibold mt-1">High Confidence</div>
-            </button>
-
-            <button
-              onClick={() => setInspectorPayload({ title: 'Evaluated Sections', type: 'kpi_drilldown', data: { value: `${evaluationSections.length} Sections` } })}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-300 transition-all text-left cursor-pointer"
-            >
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Evaluated Sections</div>
-              <div className="text-2xl font-bold text-amber-600 mt-1">{evaluationSections.length}</div>
-              <div className="text-[10px] text-slate-500 mt-1">Auditable Evidence</div>
-            </button>
-          </div>
-        </div>
-
-        <UniversalInspectorModal
-          isOpen={Boolean(inspectorPayload)}
-          onClose={() => setInspectorPayload(null)}
-          payload={inspectorPayload}
-        />
-      </>
-    );
-  }
-
-  // Default Fallback: Render Canvas for any other domain
+  // Fallback default view: Canvas
   return (
-    <div className="flex-1 bg-white p-6 overflow-y-auto space-y-6">
-      <div className="flex justify-between items-center border-b border-slate-200 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <Layout className="w-5 h-5 text-indigo-600" />
-            <h1 className="text-xl font-bold text-slate-900 uppercase">{activeDomain} Workspace</h1>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">CHATR Enterprise Operating System · Live Runtime Active</p>
-        </div>
-        <button onClick={() => onNavigate('missions')} className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 cursor-pointer">
-          Open Mission Center
-        </button>
-      </div>
-
-      <EnterpriseCanvas
-        missionContext={missionContext}
-        mode={canvasMode}
-        isProcessing={isProcessing}
-      />
-    </div>
+    <EnterpriseCanvas
+      missionContext={missionContext}
+      mode={canvasMode}
+      isProcessing={isProcessing}
+      onUploadClick={onUploadClick}
+      onBackToHome={() => onNavigate('home')}
+    />
   );
 };
