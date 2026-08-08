@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage, utilityProcess } = require('electron');
+const { app, BrowserWindow, ipcMain, crashReporter, session, powerMonitor, clipboard, Tray, Menu, globalShortcut, shell, screen, safeStorage, utilityProcess, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -1654,11 +1654,14 @@ function saveWindowState() {
 function createWindow() {
   log.info('Creating main application window');
   
+  nativeTheme.themeSource = 'dark';
+  
   const state = getWindowState();
 
   const appIconPath = path.join(__dirname, '../public/chatr-icon-logo.png');
 
   mainWindow = new BrowserWindow({
+    darkTheme: true,
     icon: fs.existsSync(appIconPath) ? appIconPath : undefined,
     width: 1200,
     height: 800,
