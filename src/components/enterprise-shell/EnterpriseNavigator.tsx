@@ -46,7 +46,6 @@ export const EnterpriseNavigator: React.FC<Props> = ({
     {
       title: 'KNOWLEDGE',
       items: [
-        { id: 'docs', label: 'Documents', icon: FileText },
         { id: 'canvas', label: 'AI Canvas', icon: Layout },
         { id: 'files', label: 'Files', icon: Folder },
       ]
