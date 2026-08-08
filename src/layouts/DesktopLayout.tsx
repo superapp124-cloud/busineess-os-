@@ -351,6 +351,7 @@ const DesktopLayoutInner = () => {
   const allowedPaths = [
     '/desktop/chat',
     '/desktop/inbox',
+    '/desktop/docs',
     '/desktop/calls',
     '/desktop/recruitment',
     '/desktop/settings',
