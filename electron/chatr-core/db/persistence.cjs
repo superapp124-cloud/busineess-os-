@@ -31,7 +31,9 @@ class PersistenceInterface {
     
     try {
       this.db = new Database(this.dbPath);
-      this.db.pragma('journal_mode = WAL');
+      try {
+        this.db.pragma('journal_mode = WAL');
+      } catch (e) {}
       this._initializeSchema();
     } catch (err) {
       console.warn('[Persistence] Database init failed, attempting recovery:', err.message);

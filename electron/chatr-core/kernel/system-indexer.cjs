@@ -30,7 +30,9 @@ class SystemIndexer {
 
     try {
       this.db = new Database(this.dbPath);
-      this.db.pragma('journal_mode = WAL');
+      try {
+        this.db.pragma('journal_mode = WAL');
+      } catch (e) {}
 
       this.db.exec(`
         CREATE TABLE IF NOT EXISTS system_index (

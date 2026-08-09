@@ -15,7 +15,11 @@ class EventLedger {
 
     const dbPath = path.join(dataDir, 'event-ledger.sqlite');
     this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
+    try {
+      this.db.pragma('journal_mode = WAL');
+    } catch (e) {
+      console.warn('[EventLedger] SQLite WAL mode pragma warning:', e?.message || e);
+    }
 
     this._initializeTable();
 

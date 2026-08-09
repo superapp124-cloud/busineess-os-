@@ -12,7 +12,9 @@ class ExecutionMemory {
     
     const dbPath = path.join(dataDir, 'execution-memory.sqlite');
     this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
+    try {
+      this.db.pragma('journal_mode = WAL');
+    } catch (e) {}
     
     this._initSchema();
   }

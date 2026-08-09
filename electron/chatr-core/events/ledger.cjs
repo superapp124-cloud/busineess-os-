@@ -54,9 +54,11 @@ class EventLedger {
       this._db = new Database(dbPath);
       
       // Optimize SQLite for append-heavy write operations
-      this._db.pragma('journal_mode = WAL');
-      this._db.pragma('synchronous = NORMAL');
-      this._db.pragma('temp_store = MEMORY');
+      try {
+        this._db.pragma('journal_mode = WAL');
+        this._db.pragma('synchronous = NORMAL');
+        this._db.pragma('temp_store = MEMORY');
+      } catch (e) {}
 
       this._db.exec(`
         CREATE TABLE IF NOT EXISTS events (

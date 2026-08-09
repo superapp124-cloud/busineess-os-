@@ -15,7 +15,9 @@ class DocumentDatabase {
   }
 
   initSchema() {
-    this.db.pragma('journal_mode = WAL');
+    try {
+      this.db.pragma('journal_mode = WAL');
+    } catch (e) {}
     
     // Core document metadata table
     this.db.exec(`

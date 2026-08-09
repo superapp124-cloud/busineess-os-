@@ -26,7 +26,9 @@ class KnowledgeGraph {
       
       const dbPath = path.join(dataDir, 'knowledge_graph.db');
       this.db = new Database(dbPath);
-      this.db.pragma('journal_mode = WAL');
+      try {
+        this.db.pragma('journal_mode = WAL');
+      } catch (e) {}
 
       // Initialize Graph Schema
       this.db.exec(`
