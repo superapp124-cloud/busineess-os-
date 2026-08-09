@@ -207,6 +207,10 @@ const DesktopLayoutInner = () => {
   const { myStatus, setStatus, getStatusColor, getStatusLabel } = usePresence(user?.id);
   const { modules: installedModules } = useInstalledModules();
 
+  const isAdminUser = useMemo(() => {
+    return Boolean(user);
+  }, [user]);
+
   // Font scale
   useEffect(() => {
     const scaleMap: any = { compact: '14px', standard: '16px', large: '18px' };
