@@ -615,13 +615,34 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="production-validation" element={<LazyRoute component={LazyPages.ProductionValidationReport} />} />
  <Route path="pro" element={<LazyRoute component={LazyPages.ProUpgrade} />} />
  <Route path="design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
- {/* Business Platform Routes Nested in Desktop */}
+ {/* Business Platform Routes Nested in Desktop (supports /desktop/business and /desktop/pro/business) */}
+ <Route path="business" element={<Suspense fallback={<PageLoader />}><BusinessLayout /></Suspense>}>
+ <Route index element={<Navigate to="dashboard" replace />} />
+ <Route path="dashboard" element={<LazyRoute component={LazyPages.BusinessDashboard} />} />
+ <Route path="onboard" element={<LazyRoute component={LazyPages.BusinessOnboarding} />} />
+ <Route path="inbox" element={<LazyRoute component={LazyPages.BusinessInbox} />} />
+ <Route path="crm" element={<LazyRoute component={LazyPages.CRMPage} />} />
+ <Route path="crm/*" element={<LazyRoute component={LazyPages.CRMPage} />} />
+ <Route path="analytics" element={<LazyRoute component={LazyPages.BusinessAnalytics} />} />
+ <Route path="team" element={<LazyRoute component={LazyPages.BusinessTeam} />} />
+ <Route path="settings" element={<LazyRoute component={LazyPages.BusinessSettings} />} />
+ <Route path="catalog" element={<LazyRoute component={LazyPages.BusinessCatalog} />} />
+ <Route path="broadcasts" element={<LazyRoute component={LazyPages.BusinessBroadcasts} />} />
+ <Route path="groups" element={<LazyRoute component={LazyPages.BusinessGroups} />} />
+ <Route path="ai-roles" element={<LazyRoute component={LazyPages.AIRoles} />} />
+ <Route path="automations" element={<LazyRoute component={LazyPages.BusinessAutomations} />} />
+ <Route path="integrations" element={<LazyRoute component={LazyPages.Integrations} />} />
+ <Route path="phone" element={<LazyRoute component={LazyPages.PhoneSystem} />} />
+ <Route path="app-store" element={<LazyRoute component={LazyPages.AppStore} />} />
+ <Route path="developer" element={<LazyRoute component={LazyPages.DeveloperHub} />} />
+ </Route>
  <Route path="pro/business" element={<Suspense fallback={<PageLoader />}><BusinessLayout /></Suspense>}>
  <Route index element={<Navigate to="dashboard" replace />} />
  <Route path="dashboard" element={<LazyRoute component={LazyPages.BusinessDashboard} />} />
  <Route path="onboard" element={<LazyRoute component={LazyPages.BusinessOnboarding} />} />
  <Route path="inbox" element={<LazyRoute component={LazyPages.BusinessInbox} />} />
  <Route path="crm" element={<LazyRoute component={LazyPages.CRMPage} />} />
+ <Route path="crm/*" element={<LazyRoute component={LazyPages.CRMPage} />} />
  <Route path="analytics" element={<LazyRoute component={LazyPages.BusinessAnalytics} />} />
  <Route path="team" element={<LazyRoute component={LazyPages.BusinessTeam} />} />
  <Route path="settings" element={<LazyRoute component={LazyPages.BusinessSettings} />} />
@@ -702,8 +723,10 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
 
 
- <Route path="/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
- <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
+  <Route path="/business/crm" element={<LazyRoute component={LazyPages.CRMPage} />} />
+  <Route path="/business/crm/*" element={<LazyRoute component={LazyPages.CRMPage} />} />
+  <Route path="/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
+  <Route path="/desktop/business" element={<ProtectedLazyRoute component={BusinessOSWorkspace} />} />
  <Route path="/plugins" element={<ProtectedLazyRoute component={PluginMarketplaceWorkspace} />} />
  <Route path="/desktop/plugins" element={<ProtectedLazyRoute component={PluginMarketplaceWorkspace} />} />
  <Route path="/validation" element={<ProtectedLazyRoute component={CustomerValidationDashboard} />} />
