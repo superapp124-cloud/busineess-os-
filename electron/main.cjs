@@ -525,6 +525,8 @@ function setupContextEngine(mainWindow) {
   ipcMain.handle('context:get-clipboard-text', () => {
     const text = clipboard.readText();
     // Return max 500 chars to avoid overwhelming context engine
+    return text ? text.slice(0, 500) : '';
+  });
   // Expose System OS User
   ipcMain.handle('system:get-os-user', () => {
     try {
