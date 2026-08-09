@@ -14,6 +14,7 @@ import {
 import { LeadsList } from '@/business/crm/LeadsList';
 import { PipelineView } from '@/business/crm/PipelineView';
 import { CreateLeadDialog } from '@/business/crm/CreateLeadDialog';
+import { NextBestActionCard } from '@/business/crm/NextBestActionCard';
 
 interface CRMStats {
  total_leads: number;
@@ -185,6 +186,8 @@ export default function CRMPage() {
  </div>
 
  <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
+ {/* AI Next Best Action & Health Card */}
+ <NextBestActionCard businessId={businessId || undefined} />
  {/* Filters and View Toggle */}
  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
  <div className="flex-1 w-full md:w-auto">

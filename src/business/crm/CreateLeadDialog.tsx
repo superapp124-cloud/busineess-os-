@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { leadSchema, type LeadFormData } from '@/lib/validations/crm';
 import { Loader2 } from 'lucide-react';
+import { AgentTaskDispatcher } from '@/core/capabilities/crm/AgentTaskDispatcher';
+import { LeadEnrichmentWorker } from '@/core/capabilities/crm/LeadEnrichmentWorker';
 
 interface CreateLeadDialogProps {
  businessId: string;
@@ -48,7 +50,7 @@ export function CreateLeadDialog({ businessId, open, onOpenChange, onLeadCreated
  if (!user) throw new Error('Not authenticated');
 
  // Create lead
- const { error } = await supabase
+ const { data: createdLead, error } = await supabase
  .from('crm_leads')
  .insert([{
  business_id: businessId,
@@ -63,13 +65,28 @@ export function CreateLeadDialog({ businessId, open, onOpenChange, onLeadCreated
  probability: validatedData.probability || 0,
  notes: validatedData.notes || null,
  tags: validatedData.tags || []
- }]);
+ }])
+ .select('id')
+ .single();
 
  if (error) throw error;
 
+ // Enqueue AI Agent Enrichment Task asynchronously
+ if (createdLead?.id) {
+   AgentTaskDispatcher.enqueueTask(businessId, 'ENRICH_LEAD', createdLead.id, {
+     name: validatedData.name,
+     company: validatedData.company,
+     email: validatedData.email
+   }).then(task => {
+     if (task) {
+       LeadEnrichmentWorker.enrichLead(businessId, createdLead.id, task.id);
+     }
+   }).catch(err => console.error('Agent task error:', err));
+ }
+
  toast({
  title: 'Success',
- description: 'Lead created successfully'
+ description: 'Lead created successfully. AI Agent background research initiated.'
  });
 
  // Reset form

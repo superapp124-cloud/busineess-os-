@@ -5,9 +5,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone, Building2, Calendar, IndianRupee } from 'lucide-react';
+import { User, Mail, Phone, Building2, Calendar, IndianRupee, Sparkles } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { LeadDossierCard } from '@/business/crm/LeadDossierCard';
 
 interface Lead {
  id: string;
@@ -38,6 +39,7 @@ export function LeadsList({ businessId, filter, searchQuery, onLeadCreated }: Le
  const [leads, setLeads] = useState<Lead[]>([]);
  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
  const [loading, setLoading] = useState(true);
+ const [activeDossierLeadId, setActiveDossierLeadId] = useState<string | null>(null);
 
  useEffect(() => {
  loadLeads();
@@ -181,63 +183,86 @@ export function LeadsList({ businessId, filter, searchQuery, onLeadCreated }: Le
  </p>
  )}
  </div>
- <div className="flex items-center gap-2">
- <Badge variant={getPriorityVariant(lead.priority)} className="text-label">
- {lead.priority}
- </Badge>
- <div className={`h-3 w-3 rounded-full ${getStatusColor(lead.status)}`} />
- </div>
- </div>
+  <div className="flex items-center gap-2">
+  <Button
+  size="sm"
+  variant={activeDossierLeadId === lead.id ? 'default' : 'outline'}
+  onClick={(e) => {
+  e.stopPropagation();
+  setActiveDossierLeadId(activeDossierLeadId === lead.id ? null : lead.id);
+  }}
+  className="h-7 text-xs gap-1 border-indigo-500/40 text-indigo-400 hover:bg-indigo-950/40"
+  >
+  <Sparkles className="h-3 w-3" />
+  {activeDossierLeadId === lead.id ? 'Hide AI Dossier' : 'AI Dossier'}
+  </Button>
+  <Badge variant={getPriorityVariant(lead.priority)} className="text-label">
+  {lead.priority}
+  </Badge>
+  <div className={`h-3 w-3 rounded-full ${getStatusColor(lead.status)}`} />
+  </div>
+  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-secondary text-muted-foreground mb-2">
- {lead.email && (
- <div className="flex items-center gap-2">
- <Mail className="h-4 w-4" />
- <span className="truncate">{lead.email}</span>
- </div>
- )}
- {lead.phone && (
- <div className="flex items-center gap-2">
- <Phone className="h-4 w-4" />
- <span>{lead.phone}</span>
- </div>
- )}
- </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-secondary text-muted-foreground mb-2">
+  {lead.email && (
+  <div className="flex items-center gap-2">
+  <Mail className="h-4 w-4" />
+  <span className="truncate">{lead.email}</span>
+  </div>
+  )}
+  {lead.phone && (
+  <div className="flex items-center gap-2">
+  <Phone className="h-4 w-4" />
+  <span>{lead.phone}</span>
+  </div>
+  )}
+  </div>
 
- <div className="flex items-center justify-between flex-wrap gap-2">
- <div className="flex items-center gap-2 flex-wrap">
- <Badge variant="outline" className="text-label">
- {lead.status}
- </Badge>
- <Badge variant="outline" className="text-label">
- {lead.source}
- </Badge>
- {lead.tags.map((tag) => (
- <Badge key={tag} variant="secondary" className="text-label">
- {tag}
- </Badge>
- ))}
- </div>
+  <div className="flex items-center justify-between flex-wrap gap-2">
+  <div className="flex items-center gap-2 flex-wrap">
+  <Badge variant="outline" className="text-label">
+  {lead.status}
+  </Badge>
+  <Badge variant="outline" className="text-label">
+  {lead.source}
+  </Badge>
+  {lead.tags.map((tag) => (
+  <Badge key={tag} variant="secondary" className="text-label">
+  {tag}
+  </Badge>
+  ))}
+  </div>
 
- <div className="flex items-center gap-4 text-label text-muted-foreground">
- {lead.deal_value > 0 && (
- <div className="flex items-center gap-1">
- <IndianRupee className="h-3 w-3" />
- <span>{lead.deal_value.toLocaleString()}</span>
- </div>
- )}
- <div className="flex items-center gap-1">
- <Calendar className="h-3 w-3" />
- <span>
- {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
- </span>
- </div>
- </div>
- </div>
- </div>
- </div>
- </Card>
- ))
+  <div className="flex items-center gap-4 text-label text-muted-foreground">
+  {lead.deal_value > 0 && (
+  <div className="flex items-center gap-1">
+  <IndianRupee className="h-3 w-3" />
+  <span>{lead.deal_value.toLocaleString()}</span>
+  </div>
+  )}
+  <div className="flex items-center gap-1">
+  <Calendar className="h-3 w-3" />
+  <span>
+  {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
+  </span>
+  </div>
+  </div>
+  </div>
+
+  {/* Expandable Lead Dossier Card */}
+  {activeDossierLeadId === lead.id && (
+  <div className="mt-4 pt-3 border-t border-border" onClick={(e) => e.stopPropagation()}>
+  <LeadDossierCard
+  businessId={businessId}
+  leadId={lead.id}
+  companyName={lead.company || lead.name}
+  />
+  </div>
+  )}
+  </div>
+  </div>
+  </Card>
+  ))
  )}
  </div>
  );
