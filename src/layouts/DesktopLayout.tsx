@@ -336,40 +336,7 @@ const DesktopLayoutInner = () => {
     return location.pathname.startsWith(path) && !navItems.some(item => item.path.includes('?') && currentPath === item.path);
   };
 
-  const isAdminUser = (() => {
-    const adminFlag = localStorage.getItem('chatr_admin_access');
-    if (adminFlag === 'true') return true;
-    if (adminFlag === 'false') return false;
-
-    const userPhone = (user?.phone || user?.user_metadata?.phone || profile?.phone || profile?.mobile || '').replace(/\D/g, '');
-    if (['9717845477', '9910678611'].some(p => userPhone.includes(p))) return true;
-
-    // In local development, default to true (Full Executive Access)
-    return import.meta.env.DEV;
-  })();
-
-  const allowedPaths = [
-    '/desktop/chat',
-    '/desktop/inbox',
-    '/desktop/docs',
-    '/desktop/calls',
-    '/desktop/recruitment',
-    '/desktop/settings',
-    '/desktop/executive',
-    '/desktop/growth-os',
-    '/desktop/revenue',
-    '/desktop/customer-success',
-    '/desktop/business-intelligence',
-    '/desktop/knowledge'
-  ];
-
-
-  const visibleNavSections = isAdminUser
-    ? NAV_SECTIONS
-    : NAV_SECTIONS.map(section => ({
-        ...section,
-        items: section.items.filter(item => allowedPaths.includes(item.path))
-      })).filter(section => section.items.length > 0);
+  const visibleNavSections = NAV_SECTIONS;
 
   return (
     <TooltipProvider>
