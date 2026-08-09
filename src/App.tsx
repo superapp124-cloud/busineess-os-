@@ -610,7 +610,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="files" element={<LazyRoute component={LazyPages.DesktopFiles} />} />
  <Route path="connected-accounts" element={<LazyRoute component={LazyPages.ConnectedAccounts} />} />
  <Route path="processes" element={<LazyRoute component={LazyPages.ProcessMonitor} />} />
- <Route path="docs" element={<ProtectedLazyRoute component={CHATRWorkspace} />} />
+ <Route path="docs" element={<LazyRoute component={CHATRWorkspace} />} />
  <Route path="world" element={<LazyRoute component={LazyPages.WorldExplorer} />} />
  <Route path="production-validation" element={<LazyRoute component={LazyPages.ProductionValidationReport} />} />
  <Route path="pro" element={<LazyRoute component={LazyPages.ProUpgrade} />} />
@@ -691,7 +691,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/disclaimer" element={<LazyRoute component={LazyPages.Disclaimer} />} />
  <Route path="/join" element={<LazyRoute component={LazyPages.JoinInvite} />} />
  <Route path="/web" element={<LazyRoute component={LazyPages.ChatrWeb} />} />
- <Route path="/docs" element={<ProtectedLazyRoute component={CHATRWorkspace} />} />
+ <Route path="/docs" element={<LazyRoute component={CHATRWorkspace} />} />
 
   {/* CHATR Product OS Clean Top-Level Routes */}
   <Route path="/executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
