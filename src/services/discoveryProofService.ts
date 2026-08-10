@@ -233,10 +233,10 @@ export class DiscoveryProofService {
       },
       {
         stepNumber: 8,
-        name: 'Non-Brand Organic Discovery (Keyword Clusters)',
+        name: 'Non-Brand Organic Discovery (Problem Query Counter)',
         category: 'INDEXING_TELEMETRY',
         status: 'AWAITING_VERIFICATION',
-        evidence: 'NOT YET PROVEN — Awaiting Google ranking & impressions for problem-based queries (ai resume parser, universal inbox, etc.).',
+        evidence: 'NOT YET PROVEN — Queries: 0 | Impressions: 0 | Clicks: 0 | Active Pages: 0 | Best Position: — (Status transitions to DETECTED on first query).',
         lastChecked: timestamp
       },
 
