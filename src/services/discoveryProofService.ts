@@ -172,6 +172,7 @@ export class DiscoveryProofService {
     }
 
     const steps: DiscoveryProofStep[] = [
+      // === LAYER 1: TECHNICAL HEALTH ===
       {
         stepNumber: 1,
         name: 'URL Reachability — External Production HTTP Check',
@@ -204,6 +205,8 @@ export class DiscoveryProofService {
         evidence: '28 canonical URLs declared and crawlable with daily/weekly changefreq.',
         lastChecked: timestamp
       },
+
+      // === LAYER 2: GOOGLE DISCOVERY (BRAND vs NON-BRAND) ===
       {
         stepNumber: 5,
         name: 'GSC Sitemap Acceptance — Search Console Evidence',
@@ -222,23 +225,25 @@ export class DiscoveryProofService {
       },
       {
         stepNumber: 7,
-        name: 'Organic Impressions',
+        name: 'Brand Organic Discovery (Impressions & Clicks)',
         category: 'INDEXING_TELEMETRY',
         status: 'PASSED',
-        evidence: 'VERIFIED — 13,900+ total impressions (~89.7% brand search: "chatr" 12,254, "chatrr" 123, "chatrchat" 80).',
+        evidence: 'VERIFIED — 12,469+ brand impressions / 13 clicks ("chatr" 12,254, "chatr chat" 12 @ 25% CTR, "chatrchat" 80, brand variation "chatrr" 123).',
         lastChecked: timestamp
       },
       {
         stepNumber: 8,
-        name: 'Organic Clicks',
+        name: 'Non-Brand Organic Discovery (Keyword Clusters)',
         category: 'INDEXING_TELEMETRY',
-        status: 'PASSED',
-        evidence: 'VERIFIED — 16 total clicks (7 "chatr", 3 "chatr chat" @ 25% CTR, 2 "chatrchat" @ 2.5% CTR, 1 "chatrr").',
+        status: 'AWAITING_VERIFICATION',
+        evidence: 'NOT YET PROVEN — Awaiting Google ranking & impressions for problem-based queries (ai resume parser, universal inbox, etc.).',
         lastChecked: timestamp
       },
+
+      // === LAYER 3: FIRST-PARTY TELEMETRY (SITE CORRELATION) ===
       {
         stepNumber: 9,
-        name: 'growth_events Correlation',
+        name: 'growth_events Telemetry Correlation',
         category: 'ORGANIC_TRAFFIC',
         status: realOrganicVisitors > 0 ? 'PASSED' : 'AWAITING_VERIFICATION',
         evidence: `Session telemetry correlation: ${realOrganicVisitors} session-level matches in cc_logs.`,
@@ -246,11 +251,11 @@ export class DiscoveryProofService {
       },
       {
         stepNumber: 10,
-        name: 'First Verified Organic Session',
+        name: 'First Verified Organic Session (Phase 2 Gate)',
         category: 'ORGANIC_TRAFFIC',
         status: realOrganicVisitors > 0 ? 'PASSED' : 'LOCKED',
         evidence: realOrganicVisitors > 0
-          ? 'Empirical organic visitor detected in growth_events DB. Phase 2 UNLOCKED.'
+          ? 'Empirical non-synthetic organic visitor detected. Phase 2 UNLOCKED.'
           : '0 organic sessions. Phase 2 Web Distribution remains HARD-GATED.',
         lastChecked: timestamp
       }
