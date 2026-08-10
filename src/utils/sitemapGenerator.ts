@@ -35,6 +35,7 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/privacy-policy': 0.5,
   '/refund': 0.4,
   '/disclaimer': 0.4,
+  '/chatr/whatsapp-candidate-screening': 1.0,
 };
 
 // Route change frequency mapping

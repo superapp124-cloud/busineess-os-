@@ -95,6 +95,7 @@ const RevenueOSDashboard = React.lazy(() => import("./components/RevenueOSDashbo
 const CustomerSuccessOSDashboard = React.lazy(() => import("./components/CustomerSuccessOSDashboard").then(m => ({ default: m.CustomerSuccessOSDashboard })));
 const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
+const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));
 
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
@@ -721,6 +722,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
+  <Route path="/chatr/whatsapp-candidate-screening" element={<LazyRoute component={WhatsAppCandidateScreeningPage} />} />
 
 
   <Route path="/business/crm" element={<LazyRoute component={LazyPages.CRMPage} />} />
