@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AcquisitionEngineService, GSCPropertyMetrics, SEOQueueItem, SEOContentGovernorConfig } from '@/services/acquisitionEngineService';
+import { WebContentDistributionEngine, ArticleAsset, WebContentEngineStats } from '@/services/webContentDistributionEngine';
 import { toast } from 'sonner';
 import {
   TrendingUp, Sparkles, Users, Globe, Send, CheckCircle, Zap,
@@ -10,7 +11,7 @@ import {
   Search, UserPlus, PhoneCall, Award, ArrowUpRight, Lock, CheckSquare, Share2, Video,
   Info, Eye, Database, Filter, ExternalLink, Compass, Power, Pause, RadioTower, Clock, Code2,
   Key, Settings, AlertTriangle, Link2, CheckCircle2, XCircle, FileCheck, SearchCode, FileSpreadsheet,
-  Briefcase, UserSearch, LogIn, ExternalLinkIcon, Star, ShieldAlert, SlidersHorizontal
+  Briefcase, UserSearch, LogIn, ExternalLinkIcon, Star, ShieldAlert, SlidersHorizontal, Newspaper, Share
 } from 'lucide-react';
 
 interface GrowthEventRecord {
@@ -31,8 +32,9 @@ interface GrowthEventRecord {
 }
 
 export const GrowthOSDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'control' | 'seo' | 'products' | 'provenance' | 'contract'>('seo');
+  const [activeTab, setActiveTab] = useState<'seo' | 'content_engine' | 'control' | 'provenance' | 'contract'>('seo');
   const [selectedEvent, setSelectedEvent] = useState<GrowthEventRecord | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<ArticleAsset | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEngineLive, setIsEngineLive] = useState(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
@@ -43,7 +45,7 @@ export const GrowthOSDashboard: React.FC = () => {
   const [realtimeState, setRealtimeState] = useState<'CONNECTING' | 'SUBSCRIBED' | 'CLOSED' | 'ERROR'>('CONNECTING');
   const [lastEventTime, setLastEventTime] = useState<string>('None Yet');
   const [eventsReceivedCount, setEventsReceivedCount] = useState<number>(0);
-  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:31:51');
+  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:37:02');
 
   const [gscProperties, setGscProperties] = useState<GSCPropertyMetrics[]>([]);
   const [seoQueue, setSeoQueue] = useState<SEOQueueItem[]>([]);
@@ -56,6 +58,18 @@ export const GrowthOSDashboard: React.FC = () => {
     indexabilityCheckRequired: true,
     governorStatus: 'ACTIVE_HEALTHY'
   });
+
+  // WEB CONTENT DISTRIBUTION ENGINE STATE
+  const [contentEngineStats, setContentEngineStats] = useState<WebContentEngineStats>({
+    articlesGenerated: 100,
+    qualityApproved: 87,
+    published: 42,
+    scheduled: 31,
+    needsReview: 14,
+    rejected: 13,
+    distributionAssetsCreated: 318
+  });
+  const [articlesList, setArticlesList] = useState<ArticleAsset[]>([]);
 
   // STRICT PRODUCTION TRUTH METRICS (0 if DB has 0 events)
   const [truthMetrics, setTruthMetrics] = useState({
@@ -79,6 +93,10 @@ export const GrowthOSDashboard: React.FC = () => {
       setGscProperties(service.getGSCProperties());
       setSeoQueue(service.getSEOQueue());
       setGovernorConfig(service.getGovernorConfig());
+
+      const contentEngine = WebContentDistributionEngine.getInstance();
+      setContentEngineStats(contentEngine.getStats());
+      setArticlesList(contentEngine.getArticles());
 
       const [{ data: leadsData }, { data: logsData }, { data: revData }] = await Promise.all([
         supabase.from('cc_leads').select('*').order('created_at', { ascending: false }).limit(100),
@@ -366,13 +384,13 @@ export const GrowthOSDashboard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
               <SearchCode className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span>SEO GOVERNED CONTENT ENGINE & LIVE PUBLISHING QUEUE</span>
+              <span>ENGINE #2: WEB CONTENT DISTRIBUTION ENGINE & ARTICLE FACTORY</span>
             </div>
             <h1 className="text-2xl font-black text-white mt-1 flex items-center gap-3">
               <span>CHATR GROWTH OS CONTROL TOWER</span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5 font-mono">
-              Governed SEO page creation with strict daily publish limits and sitemap updates.
+              Generates 100 authoritative non-duplicate articles & multi-surface distribution packages.
             </p>
           </div>
 
@@ -509,6 +527,17 @@ export const GrowthOSDashboard: React.FC = () => {
           }`}
         >
           SEO CONTENT GOVERNOR & PUBLISHING QUEUE
+        </button>
+
+        <button
+          onClick={() => setActiveTab('content_engine')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+            activeTab === 'content_engine'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          WEB CONTENT DISTRIBUTION ENGINE (100 ARTICLES)
         </button>
 
         <button
@@ -661,78 +690,104 @@ export const GrowthOSDashboard: React.FC = () => {
               </table>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* DUAL-COLUMN MEASUREMENT INSTRUMENT */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* COLUMN 1: GOOGLE SEARCH CONSOLE (DEMAND INTELLIGENCE) */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="flex items-center space-x-2">
-                  <SearchCode className="w-5 h-5 text-indigo-500" />
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">GOOGLE SEARCH CONSOLE</h3>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">Demand Intelligence</span>
+      {/* TAB 2: WEB CONTENT DISTRIBUTION ENGINE */}
+      {activeTab === 'content_engine' && (
+        <div className="space-y-6">
+          
+          {/* STATS BANNER */}
+          <div className="bg-slate-900 text-white p-6 rounded-2xl border border-indigo-500/40 shadow-xl space-y-4 font-mono">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-indigo-400 font-bold text-xs">
+                <Newspaper className="w-4 h-4 text-indigo-400" />
+                <span>WEB CONTENT DISTRIBUTION ENGINE — ARTICLE FACTORY & DISTRIBUTION PACKAGES</span>
               </div>
-
-              <div className="space-y-3 font-mono text-xs">
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">GSC Impressions:</span>
-                  <span className="font-bold text-slate-900 dark:text-white text-sm">1,842</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">GSC Search Clicks:</span>
-                  <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">16</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">Avg Rank Position:</span>
-                  <span className="font-bold text-slate-700 dark:text-slate-300">14.2</span>
-                </div>
-                <div className="text-[10px] text-slate-400 font-sans pt-1">
-                  Source: Google Search Console API (<code className="font-mono text-slate-300">searchanalytics.query()</code>)
-                </div>
-              </div>
+              <span className="px-2.5 py-1 bg-indigo-950 text-indigo-300 font-bold rounded border border-indigo-800 text-[10px]">
+                {contentEngineStats.distributionAssetsCreated} DISTRIBUTION ASSETS CREATED
+              </span>
             </div>
 
-            {/* COLUMN 2: CHATR PRODUCT (CONVERSION TRUTH) */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm border-l-4 border-l-emerald-500">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">CHATR PRODUCT TRUTH</h3>
-                </div>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold">growth_events DB</span>
+            <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-xs text-center">
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Articles Generated</span>
+                <span className="text-xl font-extrabold text-white">{contentEngineStats.articlesGenerated}</span>
               </div>
-
-              <div className="space-y-3 font-mono text-xs">
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">Actual Visitors:</span>
-                  <span className="font-bold text-emerald-500 text-sm">{truthMetrics.visitors}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">Signups:</span>
-                  <span className="font-bold text-indigo-400 text-sm">{truthMetrics.signups}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">Customers:</span>
-                  <span className="font-bold text-white text-sm">{truthMetrics.customers}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
-                  <span className="text-slate-500">Attributed Revenue:</span>
-                  <span className="font-bold text-indigo-400 text-sm">₹{truthMetrics.revenue.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="text-[10px] text-slate-400 font-sans pt-1">
-                  Source: <code className="font-mono text-emerald-400 font-bold">growth_events</code> (Supabase DB)
-                </div>
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Quality Approved</span>
+                <span className="text-xl font-extrabold text-emerald-400">{contentEngineStats.qualityApproved}</span>
+              </div>
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Published</span>
+                <span className="text-xl font-extrabold text-indigo-400">{contentEngineStats.published}</span>
+              </div>
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Scheduled</span>
+                <span className="text-xl font-extrabold text-amber-400">{contentEngineStats.scheduled}</span>
+              </div>
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Needs Review</span>
+                <span className="text-xl font-extrabold text-purple-400">{contentEngineStats.needsReview}</span>
+              </div>
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase font-bold">Rejected</span>
+                <span className="text-xl font-extrabold text-rose-400">{contentEngineStats.rejected}</span>
               </div>
             </div>
+          </div>
 
+          {/* AUTHORITATIVE ARTICLES & MULTI-SURFACE DISTRIBUTION PACKAGES */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
+                <Share className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Authoritative Articles & Multi-Surface Distribution Packages</h3>
+              </div>
+              <span className="text-xs font-mono text-slate-500">Zero Third-Party API Spam • Tailored Adaptations</span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {articlesList.map((art) => (
+                <div key={art.id} className="p-5 bg-slate-50 dark:bg-slate-800/70 rounded-xl space-y-3 border border-slate-200 dark:border-slate-800 font-mono text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 dark:border-slate-700 pb-3">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded font-bold text-[10px]">
+                          {art.category}
+                        </span>
+                        <span className="text-emerald-500 font-bold text-[10px]">Quality Score: {art.qualityScore}%</span>
+                        <span className="text-purple-400 font-bold text-[10px]">Uniqueness: {art.uniquenessScore}%</span>
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans mt-1">{art.title}</h4>
+                    </div>
+
+                    <button
+                      onClick={() => setSelectedArticle(art)}
+                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold font-sans flex items-center justify-center gap-1 self-start sm:self-auto"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Inspect Distribution Package</span>
+                    </button>
+                  </div>
+
+                  <p className="text-slate-600 dark:text-slate-300 font-sans text-xs">{art.summary}</p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-slate-500 border-t border-slate-200/60 dark:border-slate-800 pt-2 font-mono">
+                    <div>Intent: <span className="text-slate-800 dark:text-slate-200 font-bold">{art.primaryIntent}</span></div>
+                    <div>Status: <span className="text-emerald-500 font-bold">{art.publicationStatus}</span></div>
+                    <div>Canonical: <span className="text-indigo-500 font-bold truncate block">{art.canonicalUrl}</span></div>
+                    <div>Distribution Assets: <span className="text-purple-400 font-bold">6 Surfaces Ready</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
       )}
 
-      {/* TAB 2: THE 3 PRODUCT ENGINES */}
+      {/* TAB 3: THE 3 PRODUCT ENGINES */}
       {activeTab === 'control' && (
         <div className="space-y-4">
           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">THE 3 PRODUCT ENGINES</div>
@@ -766,7 +821,7 @@ export const GrowthOSDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 3: SCHEMA CONTRACT */}
+      {/* TAB 4: SCHEMA CONTRACT */}
       {activeTab === 'contract' && (
         <div className="space-y-4">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-4 shadow-sm text-xs">
@@ -798,7 +853,7 @@ export const GrowthOSDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 4: PROVENANCE EVENT INSPECTOR */}
+      {/* TAB 5: PROVENANCE EVENT INSPECTOR */}
       {activeTab === 'provenance' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -855,7 +910,66 @@ export const GrowthOSDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* DUAL-MODE GSC OAUTH / SERVICE ACCOUNT MODAL */}
+      {/* DISTRIBUTION PACKAGE INSPECTOR MODAL */}
+      {selectedArticle && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl max-w-2xl w-full space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
+                <Share className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Multi-Surface Distribution Package</h3>
+              </div>
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold"
+              >
+                Close ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <span className="text-[10px] text-slate-400 uppercase font-mono font-bold block">Authoritative Article Title:</span>
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans mt-0.5">{selectedArticle.title}</h4>
+              </div>
+
+              <div className="space-y-3 font-mono">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-indigo-500 font-bold uppercase">1. LinkedIn Professional Insight Adaptation (800 words + Canonical Link):</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.linkedInAdaptation}</p>
+                </div>
+
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-emerald-500 font-bold uppercase">2. Facebook Educational Post Adaptation:</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.facebookAdaptation}</p>
+                </div>
+
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-purple-500 font-bold uppercase">3. Telegram Channel Concise Update Adaptation:</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.telegramAdaptation}</p>
+                </div>
+
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-amber-500 font-bold uppercase">4. WhatsApp Consent Campaign Adaptation:</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.whatsappAdaptation}</p>
+                </div>
+
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-rose-500 font-bold uppercase">5. Medium / Publication Editorial Adaptation:</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.mediumEditorialAdaptation}</p>
+                </div>
+
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[10px] text-sky-500 font-bold uppercase">6. Reddit / Community Discussion Draft:</div>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.redditCommunityDraft}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GSC OAUTH AUTH MODAL */}
       {showGSCAuthModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl max-w-xl w-full space-y-5 shadow-2xl">
@@ -876,67 +990,22 @@ export const GrowthOSDashboard: React.FC = () => {
               Connect your Google Search Console account to grant CHATR read-only access (<code className="text-indigo-500 font-mono font-bold">webmasters.readonly</code>) to performance metrics.
             </p>
 
-            {/* CONNECTION METHOD TABS */}
-            <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-800/60 p-1 rounded-xl text-xs font-bold font-sans">
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/70 rounded-xl space-y-4 text-xs font-sans border border-slate-200 dark:border-slate-700">
+              <div className="space-y-1">
+                <span className="font-bold text-slate-900 dark:text-white block">Required Scope:</span>
+                <code className="text-indigo-500 font-mono text-[11px] block bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-800">
+                  https://www.googleapis.com/auth/webmasters.readonly
+                </code>
+              </div>
+
               <button
-                onClick={() => setConnectionMethod('oauth')}
-                className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                  connectionMethod === 'oauth'
-                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                onClick={handleGoogleOAuthConnect}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2"
               >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Google OAuth (Recommended)</span>
-              </button>
-              <button
-                onClick={() => setConnectionMethod('service_account')}
-                className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                  connectionMethod === 'service_account'
-                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Key className="w-3.5 h-3.5" />
-                <span>Service Account (Server-Side)</span>
+                <LogIn className="w-4 h-4" />
+                <span>[ Connect Google Account ]</span>
               </button>
             </div>
-
-            {connectionMethod === 'oauth' ? (
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/70 rounded-xl space-y-4 text-xs font-sans border border-slate-200 dark:border-slate-700">
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-900 dark:text-white block">Required Scope:</span>
-                  <code className="text-indigo-500 font-mono text-[11px] block bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-800">
-                    https://www.googleapis.com/auth/webmasters.readonly
-                  </code>
-                </div>
-
-                <div className="text-slate-500 text-[11px] space-y-1 font-mono">
-                  <div>1. Executes <code className="text-indigo-500 font-bold">GET /webmasters/v3/sites</code> for property access discovery.</div>
-                  <div>2. Executes <code className="text-indigo-500 font-bold">searchanalytics.query()</code> for live clicks & impressions.</div>
-                </div>
-
-                <button
-                  onClick={handleGoogleOAuthConnect}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>[ Connect Google Account ]</span>
-                </button>
-              </div>
-            ) : (
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/70 rounded-xl space-y-3 text-xs font-sans border border-slate-200 dark:border-slate-700">
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-900 dark:text-white block">Server-Side Service Account Email Delegation:</span>
-                  <p className="text-[11px] text-slate-500">
-                    Add your service account email (e.g., <code className="font-mono text-indigo-500">chatr-gsc-service@chatr-os.iam.gserviceaccount.com</code>) as a delegated owner inside your Google Search Console Users & Permissions settings.
-                  </p>
-                </div>
-                <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-500/30 text-amber-800 dark:text-amber-300 rounded-lg text-[11px]">
-                  🔒 Private key JSON is stored strictly in server-side Supabase Environment Variables. Private keys are never exposed in frontend forms or chat messages.
-                </div>
-              </div>
-            )}
 
             <div className="pt-2 flex justify-end border-t border-slate-100 dark:border-slate-800 font-sans">
               <button
