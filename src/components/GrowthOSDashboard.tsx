@@ -504,28 +504,30 @@ export const GrowthOSDashboard: React.FC = () => {
       )}
 
 
-      {/* 10-AGENT SWARM LIVE STATUS */}
+      {/* 12-AGENT SWARM LIVE STATUS */}
       <div className="bg-slate-950 border border-indigo-500/30 p-5 rounded-2xl space-y-4 shadow-xl font-mono text-xs">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2 text-indigo-400 font-extrabold">
             <Cpu className="w-4 h-4 animate-pulse text-indigo-400" />
-            <span>24-HOUR AUTONOMOUS SEO AGENT SWARM — ACTIVE</span>
+            <span>12-AGENT AUTONOMOUS GROWTH OPERATING SYSTEM — ACTIVE</span>
           </div>
-          <span className="text-[10px] text-slate-400 font-mono">Started: 2026-08-10T17:19 IST</span>
+          <span className="text-[10px] text-slate-400 font-mono">Pillars: SEO + Demand Graph + Generative AI Visibility</span>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
           {([
             { id: 'A1', name: 'Search Intelligence', status: '● RUNNING', color: 'text-emerald-400', task: 'GSC Opportunity Analysis' },
             { id: 'A2', name: 'Technical SEO', status: '● RUNNING', color: 'text-emerald-400', task: 'robots.txt + sitemap hardened' },
             { id: 'A3', name: 'Content Intelligence', status: '● RUNNING', color: 'text-emerald-400', task: 'Pillar/cluster map built' },
-            { id: 'A4', name: 'Human Content', status: '● RUNNING', color: 'text-emerald-400', task: '3 quality pages deployed' },
+            { id: 'A4', name: 'Human Content', status: '● RUNNING', color: 'text-emerald-400', task: '9 quality pages deployed' },
             { id: 'A5', name: 'Answer Engine Opt.', status: '● RUNNING', color: 'text-emerald-400', task: 'FAQPage + entity schema' },
             { id: 'A6', name: 'Web Distribution', status: '🔒 LOCKED', color: 'text-amber-400', task: 'Packages prepared — Phase 2 gate' },
             { id: 'A7', name: 'Internal Link Graph', status: '● RUNNING', color: 'text-emerald-400', task: '0 orphan pages' },
-            { id: 'A8', name: 'Sitemap Agent', status: '● RUNNING', color: 'text-emerald-400', task: '23 URLs — validated' },
-            { id: 'A9', name: 'Crawl Observability', status: '● RUNNING', color: 'text-emerald-400', task: 'Tracking 4 pages' },
+            { id: 'A8', name: 'Sitemap Agent', status: '● RUNNING', color: 'text-emerald-400', task: '28 URLs — validated' },
+            { id: 'A9', name: 'Crawl Observability', status: '● RUNNING', color: 'text-emerald-400', task: 'Tracking 9 pages' },
             { id: 'A10', name: 'Conversion Agent', status: '● RUNNING', color: 'text-emerald-400', task: 'Path verified → /auth' },
+            { id: 'A11', name: 'Organic Demand Intel', status: '● RUNNING', color: 'text-cyan-400', task: 'Demand Knowledge Graph taxonomy' },
+            { id: 'A12', name: 'AI Visibility Agent', status: '● RUNNING', color: 'text-purple-400', task: 'Generative AI search audit' },
           ] as { id: string; name: string; status: string; color: string; task: string }[]).map((agent) => (
             <div key={agent.id} className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
               <div className="text-[10px] font-bold text-slate-500">{agent.id}</div>

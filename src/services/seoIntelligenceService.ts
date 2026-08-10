@@ -15,7 +15,8 @@ export type SEOOpportunityType =
   | 'LOW_CTR'            // Impressions but poor click-through
   | 'NEW_INTENT'         // Unaddressed search intent
   | 'ORPHAN_PAGE'        // Published but not internally linked
-  | 'TECHNICAL_ISSUE';   // Canonical, indexing, or meta issue
+  | 'TECHNICAL_ISSUE'    // Canonical, indexing, or meta issue
+  | 'AI_SEARCH_GAP';     // Missing citation footprint in ChatGPT/Gemini/Claude
 
 export type OpportunityStatus =
   | 'PUBLISHED'
@@ -32,6 +33,37 @@ export type IndexStatus =
   | 'WAITING_CRAWL'        // Submitted via sitemap, awaiting crawl
   | 'QUEUED'               // In sitemap, not yet submitted to GSC
   | 'NOT_VERIFIED';        // Cannot confirm index status
+
+/**
+ * DEMAND KNOWLEDGE GRAPH TAXONOMY (Agent 11 & Agent 12)
+ * 
+ * Replaces generic /blog with a structured Demand Knowledge Graph:
+ * - /problems/ (e.g. /problems/lost-leads, /problems/whatsapp-follow-up)
+ * - /industries/ (e.g. /industries/recruitment, /industries/real-estate)
+ * - /use-cases/ (e.g. /use-cases/universal-inbox, /use-cases/ai-business-agents)
+ * - /compare/ (e.g. /compare/chatr-vs-crm, /compare/chatr-vs-whatsapp-business)
+ * - /research/ (e.g. /research/lead-response, /research/ai-business-operations)
+ */
+export interface DemandKnowledgeGraphNode {
+  category: 'problems' | 'industries' | 'use-cases' | 'compare' | 'research';
+  slug: string;
+  title: string;
+  targetDomain: 'chatr.chat' | 'chatrchat.in' | 'talentxcel.in';
+  coreProblemAddressed: string;
+  associatedAgent: 'A11_OrganicDemandIntelligence' | 'A12_AIVisibility';
+}
+
+export const DEMAND_KNOWLEDGE_GRAPH: DemandKnowledgeGraphNode[] = [
+  { category: 'problems', slug: '/growth/problems/lost-leads', title: 'How Startups & SMEs Lose WhatsApp & Social Leads', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Unanswered incoming inquiries & lead response decay', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'problems', slug: '/growth/problems/whatsapp-follow-up', title: 'Automating WhatsApp Follow-Ups Without Spam Rate Risks', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Manual WhatsApp messaging & account blockage risks', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'problems', slug: '/growth/problems/lead-response-time', title: 'The 5-Minute Rule: Lead Response Time in B2B & Recruiting', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Slow response times costing customer acquisitions', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'industries', slug: '/growth/industries/recruitment', title: 'AI Business OS for Staffing & Recruitment Agencies', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High candidate volume & screening bottlenecks', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'industries', slug: '/growth/industries/real-estate', title: 'WhatsApp & AI Automation for Real Estate Brokers', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High property inquiry volume & manual site visit bookings', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'use-cases', slug: '/growth/use-cases/universal-inbox', title: 'Consolidating WhatsApp, Email, & CRM into One AI Inbox', targetDomain: 'chatr.chat', coreProblemAddressed: 'Fragmented team messaging tabs', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'use-cases', slug: '/growth/use-cases/ai-business-agents', title: 'Deploying Autonomous AI Agents for Customer Support & Ops', targetDomain: 'chatr.chat', coreProblemAddressed: '24/7 business availability without hiring night shifts', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'compare', slug: '/growth/compare/chatr-vs-crm', title: 'CHATR Business OS vs Traditional CRM: Why Messaging-First Wins', targetDomain: 'chatr.chat', coreProblemAddressed: 'Complex, unadopted legacy CRMs vs real-time chat OS', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'research', slug: '/growth/research/lead-response', title: '2026 Indian SME Business Messaging Benchmark Report', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Lack of empirical benchmark data for Indian business messaging', associatedAgent: 'A12_AIVisibility' }
+];
 
 export interface SEOOpportunity {
   id: string;
