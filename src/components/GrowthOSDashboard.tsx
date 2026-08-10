@@ -504,6 +504,43 @@ export const GrowthOSDashboard: React.FC = () => {
       )}
 
 
+      {/* GROWTH MISSION #001 — GOAL-DRIVEN REVENUE OPERATING LOOP */}
+      <div className="bg-gradient-to-r from-slate-950 via-indigo-950/60 to-slate-950 border border-indigo-500/40 p-5 rounded-2xl space-y-3 shadow-xl font-mono text-xs">
+        <div className="flex items-center justify-between border-b border-indigo-500/20 pb-2">
+          <div className="flex items-center gap-2 text-indigo-400 font-extrabold text-xs">
+            <Target className="w-4 h-4 text-indigo-400 animate-pulse" />
+            <span>GROWTH MISSION #001 — GROW CHATR (DOGFOODING REVENUE OPERATING LOOP)</span>
+          </div>
+          <span className="px-2.5 py-0.5 bg-indigo-950 text-indigo-300 font-bold rounded border border-indigo-700 text-[10px]">
+            ● ACTIVE REVENUE MISSION
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans text-slate-300 text-xs">
+          <div>
+            <div className="text-[10px] uppercase font-mono text-indigo-400 font-bold">Commercial Positioning</div>
+            <p className="font-bold text-white text-sm mt-0.5">
+              “Tell CHATR what you want to grow. CHATR builds and runs the work required to get there.”
+            </p>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase font-mono text-emerald-400 font-bold">Commercial Wedge (Recruiting)</div>
+            <p className="text-slate-300 text-xs mt-0.5 leading-relaxed font-mono">
+              “Fill jobs faster without running your business across WhatsApp, email, spreadsheets, ATS, and calendars.”
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 pt-2 border-t border-slate-800 text-[10px] font-mono">
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-indigo-400 font-bold block">1. GOAL</span>Acquire 50 ICP Customers</div>
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-indigo-400 font-bold block">2. DIAGNOSE</span>Recruiters & SME Founders</div>
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-cyan-400 font-bold block">3. FIND DEMAND</span>A11 Demand Graph</div>
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-emerald-400 font-bold block">4. ATTACK</span>9 Deployed SEO Cohort</div>
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-amber-400 font-bold block">5. CAPTURE</span>WhatsApp/Universal Inbox</div>
+          <div className="p-2 bg-slate-900/80 rounded border border-slate-800"><span className="text-purple-400 font-bold block">6. REVENUE</span>Attributed telemetry</div>
+        </div>
+      </div>
+
       {/* 12-AGENT SWARM LIVE STATUS */}
       <div className="bg-slate-950 border border-indigo-500/30 p-5 rounded-2xl space-y-4 shadow-xl font-mono text-xs">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">

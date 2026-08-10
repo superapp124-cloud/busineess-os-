@@ -1,14 +1,42 @@
 /**
- * SEO Opportunity Engine — Agent 1: SEARCH INTELLIGENCE AGENT
+ * GROWTH MISSION ARCHITECTURE — Goal-Driven Revenue Operating Loop
  * 
- * Maintains the live content map, pillar/cluster strategy, and opportunity queue.
- * Drives the 24-hour autonomous SEO operating loop.
- * 
- * Rules:
- * - Never fabricate GSC data
- * - Mark unverified data as NOT_VERIFIED
- * - Only promote items that pass quality gates
+ * Positioning: "Tell CHATR what you want to grow. CHATR builds and runs the work required to get there."
+ * Commercial Wedge: "One painful business outcome → one autonomous operating system."
  */
+export interface GrowthMission {
+  missionId: string;
+  title: string;
+  goal: string;
+  commercialPositioning: string;
+  commercialWedge: string;
+  loopStages: {
+    diagnose: string;
+    findDemand: string;
+    attack: string;
+    capture: string;
+    convert: string;
+    learn: string;
+  };
+  status: 'ACTIVE_OBSERVATION' | 'EXECUTING' | 'PAUSED';
+}
+
+export const MISSION_001_GROW_CHATR: GrowthMission = {
+  missionId: 'MISSION_001',
+  title: 'Mission #001 — Grow CHATR (Revenue Operating Loop)',
+  goal: 'Acquire first verified B2B customers for CHATR Business OS',
+  commercialPositioning: 'Tell CHATR what you want to grow. CHATR builds and runs the work required to get there.',
+  commercialWedge: 'Fill jobs & manage leads faster without running your business across WhatsApp, email, spreadsheets, ATS, and calendars.',
+  loopStages: {
+    diagnose: 'Identify highest-converting ICPs (Recruitment Agencies & SME Founders)',
+    findDemand: 'A11 Organic Demand Intel discovering problem search signals',
+    attack: 'Build Demand Knowledge Graph nodes (/problems, /industries, /use-cases, /compare)',
+    capture: 'Capture inbound inquiries & qualify via WhatsApp/Universal Inbox',
+    convert: 'Book demos & convert to paid CHATR Business OS subscriptions',
+    learn: 'Feed revenue & conversion telemetry back into Growth Brain to double down on winning channels'
+  },
+  status: 'ACTIVE_OBSERVATION'
+};
 
 export type SEOOpportunityType =
   | 'RANK_8_TO_20'       // Ranking 8-20, needs content improvement
