@@ -95,18 +95,18 @@ export class WebContentDistributionEngine {
         category: 'CHATR_CHAT',
         primaryIntent: 'whatsapp candidate screening',
         secondaryTopics: ['AI resume parsing', 'recruitment automation', 'universal inbox'],
-        canonicalUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening',
+        canonicalUrl: 'https://chatrchat.in/chatr/whatsapp-candidate-screening',
         internalLinks: ['/chatr/universal-inbox-ai', '/talentxcel/ai-resume-parser'],
         ctaText: 'Start Free Candidate Screening Trial on CHATR',
         schemaJsonLd: '{"@context":"https://schema.org","@type":"Article","headline":"WhatsApp Candidate Screening Guide"}',
         openGraphMetadata: {
           ogTitle: 'How WhatsApp Candidate Screening Accelerates Hiring Velocity',
           ogDescription: 'Automate candidate screening via WhatsApp Cloud API.',
-          ogUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening',
-          ogImage: 'https://chatr.chat/og-whatsapp-screening.png'
+          ogUrl: 'https://chatrchat.in/chatr/whatsapp-candidate-screening',
+          ogImage: 'https://chatrchat.in/og-whatsapp-screening.png'
         },
         campaignAttribution: {
-          product: 'chatr.chat',
+          product: 'chatrchat.in',
           channel: 'web_content_distribution',
           source: 'content_engine',
           campaignId: 'article_factory_001'

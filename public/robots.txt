@@ -1,4 +1,4 @@
-# CHATR Robots.txt
+# CHATR Business OS Robots.txt
 User-agent: Googlebot
 Allow: /
 
@@ -15,10 +15,18 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://chatr.chat/sitemap.xml
+Sitemap: https://chatrchat.in/sitemap.xml
 
-# Disallow admin and auth-protected routes
+# Disallow private application & admin routes
 Disallow: /admin
+Disallow: /auth
+Disallow: /chat
+Disallow: /contacts
+Disallow: /settings
+Disallow: /notifications
+Disallow: /call-history
+Disallow: /smart-inbox
+Disallow: /stories
 Disallow: /provider-portal
 Disallow: /provider-register
 Disallow: /device-management
@@ -27,18 +35,25 @@ Disallow: /onboarding
 Disallow: /account
 Disallow: /notification-settings
 Disallow: /geofence-history
+Disallow: /booking
+Disallow: /lab-reports
+Disallow: /wellness-tracking
+Disallow: /health-passport
+Disallow: /medicine-reminders
 
-# Allow main content
-Allow: /health
-Allow: /care
-Allow: /local-jobs
+# Allow main marketing & public content routes
+Allow: /
+Allow: /about
+Allow: /help
+Allow: /contact
+Allow: /terms
+Allow: /privacy-policy
+Allow: /marketplace
+Allow: /chatr/whatsapp-candidate-screening
 Allow: /ai-browser
 Allow: /communities
 Allow: /chatr-games
 Allow: /chatr-studio
-Allow: /marketplace
-Allow: /about
-Allow: /help
-Allow: /contact
 Allow: /chatr-wallet
 Allow: /chatr-world
+

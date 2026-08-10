@@ -1,4 +1,4 @@
-const PUBLIC_PROFILE_BASE_URL = 'https://chatr.chat';
+const PUBLIC_PROFILE_BASE_URL = 'https://chatrchat.in';
 
 export const normalizePublicHandle = (handle?: string | null) =>
   (handle || '').replace(/^@/, '').trim().toLowerCase();

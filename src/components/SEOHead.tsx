@@ -18,12 +18,12 @@ interface SEOHeadProps {
  breadcrumbList?: Array<{ name: string; url: string }>;
 }
 
-const BASE_URL = 'https://chatr.chat';
+const BASE_URL = 'https://chatrchat.in';
 
 export const SEOHead = ({
- title = 'Chatr - Universal Search | AI-Powered Multi-Source Search Engine',
- description = 'Discover Chatr\'s Universal Search - Find anything instantly across web, local services, jobs, healthcare, and marketplace. AI-powered search with GPS, visual search, and smart recommendations.',
- keywords = 'universal search, AI search, multi-source search, local search, GPS search, visual search, smart search, web search, perplexity, openai search, services search',
+ title = 'CHATR Business OS — Intent OS & AI Growth Platform',
+ description = 'CHATR Business OS (chatrchat.in) is the AI-powered Intent OS and Business Growth platform for enterprise communication, candidate screening, CRM, and automated workflows.',
+ keywords = 'CHATR Business OS, Intent OS, AI Candidate Screening, Business CRM, Enterprise Communication, TalentXcel, Business Automation, ChatrChat India',
  ogImage = '/og-image.jpg',
  ogUrl,
  canonicalUrl,
@@ -37,38 +37,32 @@ export const SEOHead = ({
  const canonical = canonicalUrl || fullUrl;
  const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${BASE_URL}${ogImage}`;
 
- // Default WebApplication schema
+ // Default SoftwareApplication schema
  const defaultSchema = {
  "@context": "https://schema.org",
- "@type": "WebApplication",
- "name": "Chatr",
- "alternateName": "Chatr+",
+ "@type": "SoftwareApplication",
+ "name": "CHATR Business OS",
+ "alternateName": "ChatrChat",
  "description": description,
  "url": fullUrl,
- "applicationCategory": "CommunicationApplication",
- "operatingSystem": "Web, Android, iOS",
+ "applicationCategory": "BusinessApplication",
+ "operatingSystem": "Web, Windows, macOS, Android, iOS",
  "offers": {
  "@type": "Offer",
  "price": "0",
  "priceCurrency": "INR"
  },
- "aggregateRating": {
- "@type": "AggregateRating",
- "ratingValue": "4.8",
- "reviewCount": "10000"
- },
  "featureList": [
- "AI-Powered Search",
- "Messaging & Calling",
- "Local Jobs Search",
- "Healthcare Booking",
- "Digital Wallet",
- "Games & Rewards"
+ "AI Candidate Screening & WhatsApp Automation",
+ "Business CRM & Intent Planning",
+ "Enterprise Communication & Calling",
+ "Access Governance & Recruiter Workspace",
+ "Web Content Distribution Engine"
  ],
  "author": {
  "@type": "Organization",
- "name": "Talentxcel Services Pvt Ltd",
- "url": "https://chatr.chat"
+ "name": "TalentXcel Services Pvt Ltd",
+ "url": "https://talentxcel.in"
  }
  };
 
@@ -76,18 +70,14 @@ export const SEOHead = ({
  const organizationSchema = {
  "@context": "https://schema.org",
  "@type": "Organization",
- "name": "Chatr",
+ "name": "CHATR Business OS",
  "url": BASE_URL,
- "logo": `${BASE_URL}/logo.png`,
+ "logo": `${BASE_URL}/assets/chatrplus-logo512.png`,
  "sameAs": [
- "https://twitter.com/chatrapp",
- "https://facebook.com/chatrapp",
- "https://instagram.com/chatrapp",
- "https://linkedin.com/company/chatr"
+ "https://linkedin.com/company/talentxcel"
  ],
  "contactPoint": {
  "@type": "ContactPoint",
- "telephone": "+91-XXXXXXXXXX",
  "contactType": "customer service",
  "availableLanguage": ["English", "Hindi"]
  }

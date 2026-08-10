@@ -40,10 +40,10 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
 
         await supabase.from('cc_logs').insert({
           agent: 'web_sensor',
-          action: `Organic Visit event on chatr.chat from ${attribution.source} for "whatsapp candidate screening"`,
+          action: `Organic Visit event on chatrchat.in from ${attribution.source} for "whatsapp candidate screening"`,
           level: 'info',
           details: {
-            domain: 'chatr.chat',
+            domain: 'chatrchat.in',
             channel: attribution.channel,
             source: attribution.source,
             landing_page: '/chatr/whatsapp-candidate-screening',
@@ -71,7 +71,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
         industry: 'Recruitment & HR Tech',
         status: 'new',
         source: attribution.channel,
-        target_domain: 'chatr.chat'
+        target_domain: 'chatrchat.in'
       });
       toast.success('Thank you! Your CHATR Universal Inbox & Candidate Screening workspace is ready.');
     } catch (e: any) {
@@ -82,17 +82,17 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500 selection:text-white">
       <Helmet>
-        <title>WhatsApp Candidate Screening & Universal Inbox AI | CHATR</title>
+        <title>WhatsApp Candidate Screening & Universal Inbox AI | CHATR Business OS</title>
 
         {/* SEO Meta Tags */}
         <meta name="description" content="Screen recruitment candidates automatically via WhatsApp Cloud API. Instant AI resume screening, automated candidate qualification, and universal inbox workspace for recruitment agencies." />
-        <link rel="canonical" href="https://chatr.chat/chatr/whatsapp-candidate-screening" />
+        <link rel="canonical" href="https://chatrchat.in/chatr/whatsapp-candidate-screening" />
         <meta name="robots" content="index, follow" />
 
         {/* Open Graph Tags */}
-        <meta property="og:title" content="WhatsApp Candidate Screening & Universal Inbox AI | CHATR" />
+        <meta property="og:title" content="WhatsApp Candidate Screening & Universal Inbox AI | CHATR Business OS" />
         <meta property="og:description" content="Screen recruitment candidates automatically via WhatsApp Cloud API with CHATR AI Universal Inbox." />
-        <meta property="og:url" content="https://chatr.chat/chatr/whatsapp-candidate-screening" />
+        <meta property="og:url" content="https://chatrchat.in/chatr/whatsapp-candidate-screening" />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -103,7 +103,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
             <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white text-lg shadow-lg">
               C
             </div>
-            <span className="font-extrabold text-lg tracking-tight">CHATR.CHAT</span>
+            <span className="font-extrabold text-lg tracking-tight">CHATR Business OS</span>
           </div>
           <button
             onClick={handleSignup}

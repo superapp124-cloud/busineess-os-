@@ -5,7 +5,7 @@
 
 import { VALID_ROUTES } from './deepLinkHandler';
 
-const BASE_URL = 'https://chatr.chat';
+const BASE_URL = 'https://chatrchat.in';
 
 interface SitemapEntry {
   loc: string;
@@ -17,16 +17,12 @@ interface SitemapEntry {
 // Route priority mapping
 const ROUTE_PRIORITIES: Record<string, number> = {
   '/': 1.0,
-  '/auth': 0.8,
-  '/chat': 0.9,
-  '/health': 0.9,
-  '/care': 0.9,
-  '/jobs': 0.9,
-  '/ai-browser': 0.9,
-  '/chatr-wallet': 0.8,
-  '/communities': 0.8,
-  '/chatr-games': 0.8,
-  '/chatr-studio': 0.8,
+  '/chatr/whatsapp-candidate-screening': 1.0,
+  '/ai-browser': 0.8,
+  '/communities': 0.7,
+  '/chatr-wallet': 0.7,
+  '/chatr-games': 0.7,
+  '/chatr-studio': 0.7,
   '/marketplace': 0.8,
   '/about': 0.7,
   '/help': 0.7,
@@ -35,28 +31,30 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/privacy-policy': 0.5,
   '/refund': 0.4,
   '/disclaimer': 0.4,
-  '/chatr/whatsapp-candidate-screening': 1.0,
 };
 
 // Route change frequency mapping
 const ROUTE_CHANGEFREQ: Record<string, SitemapEntry['changefreq']> = {
   '/': 'daily',
-  '/chat': 'always',
-  '/jobs': 'daily',
-  '/health': 'weekly',
-  '/care': 'weekly',
+  '/chatr/whatsapp-candidate-screening': 'daily',
   '/ai-browser': 'daily',
   '/communities': 'daily',
-  '/chatr-games': 'weekly',
-  '/stories': 'hourly',
   '/about': 'monthly',
   '/terms': 'yearly',
   '/privacy-policy': 'yearly',
 };
 
-// Routes to exclude from sitemap (auth-protected or dynamic)
+// Routes to exclude from sitemap (auth-protected, private app, or dynamic)
 const EXCLUDED_ROUTES = [
   '/admin',
+  '/auth',
+  '/chat',
+  '/contacts',
+  '/settings',
+  '/notifications',
+  '/call-history',
+  '/smart-inbox',
+  '/stories',
   '/provider-portal',
   '/provider-register',
   '/device-management',
@@ -65,6 +63,11 @@ const EXCLUDED_ROUTES = [
   '/account',
   '/qr-login',
   '/onboarding',
+  '/booking',
+  '/lab-reports',
+  '/wellness-tracking',
+  '/health-passport',
+  '/medicine-reminders',
 ];
 
 // Filter out dynamic routes (with :param)

@@ -4,8 +4,8 @@ export const useSubdomain = () => {
   const subdomain = useMemo(() => {
     const hostname = window.location.hostname;
     
-    // Check for web.chatr.chat subdomain
-    if (hostname === 'web.chatr.chat') {
+    // Check for web.chatr.chat or web.chatrchat.in subdomain
+    if (hostname === 'web.chatr.chat' || hostname === 'web.chatrchat.in') {
       return 'web';
     }
     
