@@ -50,6 +50,11 @@ Allow: /terms
 Allow: /privacy-policy
 Allow: /marketplace
 Allow: /chatr/whatsapp-candidate-screening
+Allow: /business-os
+Allow: /ai-business-os
+Allow: /ai-revenue-operations
+Allow: /ai-agents-for-business
+Allow: /business-automation
 Allow: /ai-browser
 Allow: /communities
 Allow: /chatr-games

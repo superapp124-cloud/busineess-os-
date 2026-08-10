@@ -18,6 +18,11 @@ interface SitemapEntry {
 const ROUTE_PRIORITIES: Record<string, number> = {
   '/': 1.0,
   '/chatr/whatsapp-candidate-screening': 1.0,
+  '/business-os': 1.0,
+  '/ai-business-os': 1.0,
+  '/ai-revenue-operations': 1.0,
+  '/ai-agents-for-business': 1.0,
+  '/business-automation': 1.0,
   '/ai-browser': 0.8,
   '/communities': 0.7,
   '/chatr-wallet': 0.7,
@@ -31,12 +36,6 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/privacy-policy': 0.5,
   '/refund': 0.4,
   '/disclaimer': 0.4,
-  '/chatr/whatsapp-candidate-screening': 1.0,
-  '/business-os': 1.0,
-  '/ai-business-os': 1.0,
-  '/ai-revenue-operations': 1.0,
-  '/ai-agents-for-business': 1.0,
-  '/business-automation': 1.0,
 };
 
 // Route change frequency mapping
