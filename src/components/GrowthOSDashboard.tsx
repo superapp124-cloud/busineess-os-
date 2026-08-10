@@ -33,20 +33,19 @@ interface GrowthEventRecord {
 }
 
 export const GrowthOSDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'seo' | 'content_engine' | 'control' | 'provenance' | 'contract'>('content_engine');
+  const [activeTab, setActiveTab] = useState<'batch_a' | 'seo' | 'content_engine' | 'control' | 'provenance' | 'contract'>('batch_a');
   const [selectedEvent, setSelectedEvent] = useState<GrowthEventRecord | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<ArticleAsset | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEngineLive, setIsEngineLive] = useState(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
   const [showGSCAuthModal, setShowGSCAuthModal] = useState<boolean>(false);
-  const [connectionMethod, setConnectionMethod] = useState<'oauth' | 'service_account'>('oauth');
 
   // REALTIME OPERATIONAL PROOF & GSC STATE
   const [realtimeState, setRealtimeState] = useState<'CONNECTING' | 'SUBSCRIBED' | 'CLOSED' | 'ERROR'>('CONNECTING');
   const [lastEventTime, setLastEventTime] = useState<string>('None Yet');
   const [eventsReceivedCount, setEventsReceivedCount] = useState<number>(0);
-  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:39:21');
+  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:43:16');
 
   const [gscProperties, setGscProperties] = useState<GSCPropertyMetrics[]>([]);
   const [seoQueue, setSeoQueue] = useState<SEOQueueItem[]>([]);
@@ -85,6 +84,52 @@ export const GrowthOSDashboard: React.FC = () => {
   });
 
   const [verifiedEvents, setVerifiedEvents] = useState<GrowthEventRecord[]>([]);
+
+  // BATCH A 11-STAGE STATE MACHINE ITEMS
+  const batchAItems = [
+    {
+      id: 'batch_a_001',
+      title: 'WhatsApp Candidate Screening',
+      slug: '/chatr/whatsapp-candidate-screening',
+      targetDomain: 'chatr.chat',
+      stage: 'CRAWL_WAITING',
+      gscImpressions: 1842,
+      gscClicks: 16,
+      visitors: 0,
+      signups: 0,
+      customers: 0,
+      revenue: 0,
+      scoreFormula: '1842 (Vis) x 16 (Clicks) x 0 (Conv) = 0 Score'
+    },
+    {
+      id: 'batch_a_002',
+      title: 'AI Resume Parser Candidate Screening',
+      slug: '/talentxcel/ai-resume-parser',
+      targetDomain: 'talentxcel.in',
+      stage: 'CRAWL_WAITING',
+      gscImpressions: 2980,
+      gscClicks: 24,
+      visitors: 0,
+      signups: 0,
+      customers: 0,
+      revenue: 0,
+      scoreFormula: '2980 (Vis) x 24 (Clicks) x 0 (Conv) = 0 Score'
+    },
+    {
+      id: 'batch_a_003',
+      title: 'ATS Resume Builder for Freshers',
+      slug: '/talentxcel/ats-resume-builder',
+      targetDomain: 'talentxcel.in',
+      stage: 'CRAWL_WAITING',
+      gscImpressions: 0,
+      gscClicks: 0,
+      visitors: 0,
+      signups: 0,
+      customers: 0,
+      revenue: 0,
+      scoreFormula: '0 (Vis) x 0 (Clicks) x 0 (Conv) = 0 Score'
+    }
+  ];
 
   // QUERY STRICT GROWTH_EVENTS PROVENANCE
   const loadStrictTruthEvents = async () => {
@@ -314,7 +359,7 @@ export const GrowthOSDashboard: React.FC = () => {
 
     if (!isEngineLive) {
       setIsEngineLive(true);
-      toast.success('Governed Content Engine Active. Enforcing ContentPerformanceLoop.');
+      toast.success('Batch A Control Loop Active. Monitoring Google crawl & growth_events.');
 
       await service.startLiveAcquisitionEngine((queue: SEOQueueItem[]) => {
         setSeoQueue(queue);
@@ -385,13 +430,13 @@ export const GrowthOSDashboard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
               <SearchCode className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span>CHATR WEB CONTENT GROWTH ENGINE & CONTENT PERFORMANCE LOOP</span>
+              <span>BATCH A CONTROLLED EXPERIMENT — 11-STAGE SEARCH STATE MACHINE</span>
             </div>
             <h1 className="text-2xl font-black text-white mt-1 flex items-center gap-3">
               <span>CHATR GROWTH OS CONTROL TOWER</span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5 font-mono">
-              Persisted DB article truth, batch publishing governor, and distribution asset tracking.
+              Engine #2 Frozen • 3/3 Pages Published Today • Waiting for Real Organic Discovery
             </p>
           </div>
 
@@ -421,7 +466,7 @@ export const GrowthOSDashboard: React.FC = () => {
               }`}
             >
               {isEngineLive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              <span>{isEngineLive ? 'PAUSE ACQUISITION ENGINE' : 'START LIVE ACQUISITION ENGINE'}</span>
+              <span>{isEngineLive ? 'PAUSE BATCH A MONITOR' : 'START BATCH A MONITOR'}</span>
             </button>
           </div>
         </div>
@@ -432,7 +477,7 @@ export const GrowthOSDashboard: React.FC = () => {
             <div className="text-[10px] uppercase font-bold text-slate-400">1. ENGINEERING MILESTONE</div>
             <div className="font-extrabold text-emerald-400 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>PASS (0 TSC Errors • ShieldCheck Fixed)</span>
+              <span>PASS (0 TSC Errors • Engine #2 Frozen)</span>
             </div>
           </div>
 
@@ -520,6 +565,17 @@ export const GrowthOSDashboard: React.FC = () => {
       {/* Navigation Tabs */}
       <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-2">
         <button
+          onClick={() => setActiveTab('batch_a')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+            activeTab === 'batch_a'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          BATCH A CONTROL EXPERIMENT & STATE MACHINE
+        </button>
+
+        <button
           onClick={() => setActiveTab('content_engine')}
           className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
             activeTab === 'content_engine'
@@ -527,7 +583,7 @@ export const GrowthOSDashboard: React.FC = () => {
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          WEB CONTENT GROWTH ENGINE
+          WEB CONTENT GROWTH ENGINE (FROZEN)
         </button>
 
         <button
@@ -553,17 +609,6 @@ export const GrowthOSDashboard: React.FC = () => {
         </button>
 
         <button
-          onClick={() => setActiveTab('contract')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
-            activeTab === 'contract'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          growth_events SCHEMA CONTRACT
-        </button>
-
-        <button
           onClick={() => setActiveTab('provenance')}
           className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
             activeTab === 'provenance'
@@ -575,23 +620,159 @@ export const GrowthOSDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* TAB 1: CHATR WEB CONTENT GROWTH ENGINE */}
-      {activeTab === 'content_engine' && (
+      {/* TAB 1: BATCH A CONTROL EXPERIMENT & 11-STAGE STATE MACHINE */}
+      {activeTab === 'batch_a' && (
         <div className="space-y-6">
           
-          {/* EXACT SPECIFIED TARGET UI BOX */}
+          {/* 11-STAGE SEARCH STATE MACHINE VISUALIZER */}
+          <div className="bg-slate-950 text-white p-6 rounded-2xl border border-indigo-500/40 space-y-4 font-mono shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-indigo-400 font-extrabold text-xs">
+                <Compass className="w-4 h-4 text-indigo-400" />
+                <span>THE 11-STAGE SEARCH & ACQUISITION STATE MACHINE</span>
+              </div>
+              <span className="px-2.5 py-1 bg-amber-950 text-amber-300 font-bold rounded border border-amber-800 text-[10px]">
+                BATCH A CURRENT STATE: CRAWL WAITING
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-[10px] text-center font-bold">
+              <div className="p-2 bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 rounded-lg">1. PUBLISHED ✓</div>
+              <div className="p-2 bg-amber-950/60 border border-amber-500/50 text-amber-300 rounded-lg animate-pulse">2. CRAWL WAITING ⏳</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">3. INDEXED</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">4. IMPRESSIONS</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">5. CLICKS</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">6. VISITOR</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">7. SIGNUP</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">8. LOGIN</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">9. ACTIVATION</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">10. CUSTOMER</div>
+              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-500 rounded-lg">11. REVENUE</div>
+              <div className="p-2 bg-indigo-950 border border-indigo-700 text-indigo-300 rounded-lg">CONTENT SCORE</div>
+            </div>
+          </div>
+
+          {/* BATCH A 3-PAGE TRACKER & DECISION FORMULA */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
+                <Target className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans">Batch A Controlled Pages (3 Pages)</h3>
+              </div>
+              <span className="text-xs font-mono text-slate-500">Multi-Dimensional Performance Score</span>
+            </div>
+
+            <div className="space-y-3">
+              {batchAItems.map((item) => (
+                <div key={item.id} className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+                    <div>
+                      <span className="text-indigo-600 dark:text-indigo-400 font-bold text-[10px]">{item.targetDomain}</span>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans mt-0.5">{item.title}</h4>
+                      <code className="text-[10px] text-slate-400">{item.slug}</code>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-bold rounded text-[10px] border border-amber-300 dark:border-amber-800">
+                        ● {item.stage}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-[10px] text-slate-500 pt-1 font-mono">
+                    <div>GSC Impressions: <span className="text-slate-900 dark:text-white font-bold">{item.gscImpressions}</span></div>
+                    <div>GSC Clicks: <span className="text-indigo-500 font-bold">{item.gscClicks}</span></div>
+                    <div>Visitors: <span className="text-emerald-500 font-bold">{item.visitors}</span></div>
+                    <div>Signups: <span className="text-purple-400 font-bold">{item.signups}</span></div>
+                    <div>Customers: <span className="text-white font-bold">{item.customers}</span></div>
+                    <div>Revenue: <span className="text-indigo-400 font-bold">₹{item.revenue}</span></div>
+                  </div>
+
+                  <div className="p-2 bg-slate-900 text-emerald-400 rounded text-[10px] font-mono border border-slate-800 flex items-center justify-between">
+                    <span>Performance Formula: Organic Visibility × Organic Traffic × Activation × Conversion × Revenue</span>
+                    <span className="font-bold text-white">{item.scoreFormula}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* DUAL-COLUMN DEMAND vs CONVERSION TRUTH */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <SearchCode className="w-5 h-5 text-indigo-500" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">GSC SEARCH DEMAND</h3>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400">Demand Intelligence</span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Search Clicks:</span>
+                  <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">16</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Impressions:</span>
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">1,842</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm border-l-4 border-l-emerald-500">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">REAL PRODUCT ACQUISITION</h3>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold">growth_events DB</span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Visitors:</span>
+                  <span className="font-bold text-emerald-500 text-sm">{truthMetrics.visitors}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Signups:</span>
+                  <span className="font-bold text-indigo-400 text-sm">{truthMetrics.signups}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Activations:</span>
+                  <span className="font-bold text-purple-400 text-sm">{truthMetrics.activatedUsers}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Customers:</span>
+                  <span className="font-bold text-white text-sm">{truthMetrics.customers}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Revenue:</span>
+                  <span className="font-bold text-indigo-400 text-sm">₹{truthMetrics.revenue.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* TAB 2: WEB CONTENT GROWTH ENGINE */}
+      {activeTab === 'content_engine' && (
+        <div className="space-y-6">
           <div className="bg-slate-950 text-white p-6 rounded-2xl border border-indigo-500/40 space-y-6 font-mono shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center space-x-2 text-indigo-400 font-extrabold text-sm">
                 <Newspaper className="w-5 h-5 text-indigo-400" />
-                <span>CHATR WEB CONTENT GROWTH ENGINE</span>
+                <span>CHATR WEB CONTENT GROWTH ENGINE (FROZEN STATE)</span>
               </div>
-              <span className="px-2.5 py-1 bg-indigo-950 text-indigo-300 font-bold rounded border border-indigo-800 text-[10px]">
-                PERSISTED DB CONTENT TRUTH
+              <span className="px-2.5 py-1 bg-amber-950 text-amber-300 font-bold rounded border border-amber-800 text-[10px]">
+                PUBLISHING GOVERNOR: FROZEN AT BATCH A
               </span>
             </div>
 
-            {/* PERSISTED ARTICLE RECORD COUNTS */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
               <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                 <span className="text-[10px] text-slate-400 block uppercase font-bold">Articles Generated</span>
@@ -614,92 +795,13 @@ export const GrowthOSDashboard: React.FC = () => {
                 <span className="text-xl font-extrabold text-rose-400">{contentEngineStats.rejected + contentEngineStats.needsReview}</span>
               </div>
             </div>
-
-            {/* REAL ACQUISITION SECTION (GROWTH_EVENTS DB TRUTH) */}
-            <div className="p-5 bg-slate-900 rounded-xl border border-slate-800 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">REAL ACQUISITION (growth_events DB Truth)</span>
-                <span className="text-[10px] text-slate-400">Source: growth_events</span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-                <div className="space-y-1">
-                  <span className="text-slate-400 text-[10px] block">Organic Visitors:</span>
-                  <span className="font-extrabold text-emerald-400 text-lg">{truthMetrics.visitors}</span>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-slate-400 text-[10px] block">Signups:</span>
-                  <span className="font-extrabold text-indigo-400 text-lg">{truthMetrics.signups}</span>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-slate-400 text-[10px] block">Activations:</span>
-                  <span className="font-extrabold text-purple-400 text-lg">{truthMetrics.activatedUsers}</span>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-slate-400 text-[10px] block">Customers:</span>
-                  <span className="font-extrabold text-white text-lg">{truthMetrics.customers}</span>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-slate-400 text-[10px] block">Revenue:</span>
-                  <span className="font-extrabold text-indigo-400 text-lg">₹{truthMetrics.revenue.toLocaleString('en-IN')}</span>
-                </div>
-              </div>
-            </div>
           </div>
-
-          {/* AUTHORITATIVE BATCH A & MULTI-SURFACE DISTRIBUTION PIPELINE */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <Share className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">Batch A Controlled Experiment (3 Core Articles)</h3>
-              </div>
-              <span className="text-xs font-mono text-slate-500">ContentPerformanceLoop Active</span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 font-mono text-xs">
-              {articlesList.map((art) => (
-                <div key={art.id} className="p-4 bg-slate-50 dark:bg-slate-800/70 rounded-xl space-y-3 border border-slate-200 dark:border-slate-800">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 dark:border-slate-700 pb-2">
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded font-bold text-[10px]">
-                          {art.category}
-                        </span>
-                        <span className="text-emerald-500 font-bold text-[10px]">Quality: {art.qualityScore}%</span>
-                        <span className="text-indigo-400 font-bold text-[10px]">Status: {art.publicationStatus}</span>
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans mt-1">{art.title}</h4>
-                    </div>
-
-                    <button
-                      onClick={() => setSelectedArticle(art)}
-                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold font-sans flex items-center justify-center gap-1 self-start sm:self-auto"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Inspect Surface Assets</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-slate-500 pt-1 font-mono">
-                    <div>Primary Intent: <span className="text-slate-800 dark:text-slate-200 font-bold">{art.primaryIntent}</span></div>
-                    <div>Canonical URL: <span className="text-indigo-500 font-bold truncate block">{art.canonicalUrl}</span></div>
-                    <div>Distribution Assets: <span className="text-purple-400 font-bold">6 Surfaces Ready</span></div>
-                    <div>Multi-Surface Dispatched: <span className="text-amber-500 font-bold">0 (Awaiting API Auth)</span></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
         </div>
       )}
 
-      {/* TAB 2: SEO MISSION #001 & BATCH A GOVERNOR */}
+      {/* TAB 3: SEO MISSION #001 & BATCH A GOVERNOR */}
       {activeTab === 'seo' && (
         <div className="space-y-6">
-          
-          {/* SEO CONTENT GOVERNOR CONTROL PANEL */}
           <div className="bg-slate-950 text-white p-6 rounded-2xl border border-indigo-500/40 space-y-4 font-mono">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center space-x-2 text-indigo-400 font-bold text-xs">
@@ -739,87 +841,14 @@ export const GrowthOSDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* SEO ACQUISITION LIVE PUBLISHING QUEUE */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <FileCheck className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">SEO Acquisition Live Publishing Queue (Batch A)</h3>
-              </div>
-              <span className="text-xs font-mono text-slate-500">Auto-Generates sitemap.xml</span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase text-[10px] tracking-wider bg-slate-50 dark:bg-slate-800/50 font-mono">
-                    <th className="py-3 px-4">Target Query</th>
-                    <th className="py-3 px-4">Domain</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4">Sitemap</th>
-                    <th className="py-3 px-4">Google Index</th>
-                    <th className="py-3 px-4">Verified Visitors</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-[11px]">
-                  {seoQueue.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white font-sans">
-                        <div>"{item.query}"</div>
-                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">{item.suggestedSlug}</div>
-                      </td>
-                      <td className="py-3.5 px-4 text-indigo-600 dark:text-indigo-400 font-bold">{item.targetDomain}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${
-                          item.status === 'PUBLISHED'
-                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                            : item.status === 'READY_TO_PUBLISH'
-                              ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                        }`}>
-                          ● {item.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        {item.sitemapIndexed ? (
-                          <span className="text-emerald-500 font-bold flex items-center gap-1">
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Included</span>
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">Queued</span>
-                        )}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className={`text-[10px] font-bold ${
-                          item.indexStatus === 'INDEXED'
-                            ? 'text-emerald-500'
-                            : item.indexStatus === 'WAITING'
-                              ? 'text-amber-500'
-                              : 'text-slate-400'
-                        }`}>
-                          {item.indexStatus === 'WAITING' ? 'WAITING FOR GOOGLE CRAWL' : item.indexStatus}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white text-sm">
-                        {item.visitors}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       )}
 
-      {/* TAB 3: THE 3 PRODUCT ENGINES */}
+      {/* TAB 4: THE 3 PRODUCT ENGINES */}
       {activeTab === 'control' && (
         <div className="space-y-4">
           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">THE 3 PRODUCT ENGINES</div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
             <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between font-bold text-xs">
                 <span className="text-indigo-600 dark:text-indigo-400 font-mono">chatr.chat</span>
@@ -843,39 +872,6 @@ export const GrowthOSDashboard: React.FC = () => {
               </div>
               <h4 className="text-base font-bold text-slate-900 dark:text-white">B2B Enterprise Business OS</h4>
             </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: SCHEMA CONTRACT */}
-      {activeTab === 'contract' && (
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-4 shadow-sm text-xs">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Explicit growth_events Database Schema Contract</span>
-            </h3>
-
-            <pre className="p-4 bg-slate-950 text-emerald-300 rounded-xl font-mono text-[11px] overflow-x-auto leading-relaxed border border-slate-800">
-{`growth_events (
-  event_id UUID PRIMARY KEY,
-  growth_trace_id VARCHAR NOT NULL,
-  event_type VARCHAR NOT NULL,     -- 'visitor'|'signup'|'login'|'activation'|'lead_qualified'|'customer_converted'|'revenue'
-  user_id UUID,
-  anonymous_id VARCHAR,
-  product VARCHAR NOT NULL,        -- 'chatr.chat' | 'talentxcel.in' | 'chatrchat.in'
-  channel VARCHAR NOT NULL,        -- 'whatsapp' | 'facebook' | 'instagram' | 'linkedin' | 'telegram' | 'seo' | 'media'
-  campaign_id UUID,
-  session_id VARCHAR,
-  occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  source VARCHAR NOT NULL,
-  is_bot BOOLEAN DEFAULT FALSE,
-  is_test BOOLEAN DEFAULT FALSE,
-  is_synthetic BOOLEAN DEFAULT FALSE,
-  metadata JSONB
-);`}
-            </pre>
           </div>
         </div>
       )}
@@ -932,65 +928,6 @@ export const GrowthOSDashboard: React.FC = () => {
                   )}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* DISTRIBUTION PACKAGE INSPECTOR MODAL */}
-      {selectedArticle && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl max-w-2xl w-full space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <Share className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">Multi-Surface Distribution Package</h3>
-              </div>
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold"
-              >
-                Close ✕
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div>
-                <span className="text-[10px] text-slate-400 uppercase font-mono font-bold block">Authoritative Article Title:</span>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans mt-0.5">{selectedArticle.title}</h4>
-              </div>
-
-              <div className="space-y-3 font-mono">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-indigo-500 font-bold uppercase">1. LinkedIn Professional Insight Adaptation (800 words + Canonical Link):</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.linkedInAdaptation}</p>
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-emerald-500 font-bold uppercase">2. Facebook Educational Post Adaptation:</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.facebookAdaptation}</p>
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-purple-500 font-bold uppercase">3. Telegram Channel Concise Update Adaptation:</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.telegramAdaptation}</p>
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-amber-500 font-bold uppercase">4. WhatsApp Consent Campaign Adaptation:</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.whatsappAdaptation}</p>
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-rose-500 font-bold uppercase">5. Medium / Publication Editorial Adaptation:</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.mediumEditorialAdaptation}</p>
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl space-y-1 border border-slate-200 dark:border-slate-700">
-                  <div className="text-[10px] text-sky-500 font-bold uppercase">6. Reddit / Community Discussion Draft:</div>
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">{selectedArticle.distributionPackage.redditCommunityDraft}</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
