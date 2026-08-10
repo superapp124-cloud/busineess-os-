@@ -144,6 +144,15 @@ const DeveloperHub = React.lazy(() => import('./presentation-runtime/marketplace
 const ComingSoon = React.lazy(() => import('./presentation-runtime/marketplace/components/ComingSoon').then(m => ({ default: m.ComingSoon })));
 
 const BusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.BusinessOSLanding })));
+
+// Agent 1+3 SEO Opportunity Pages — Cycle 1 Publish (2026-08-10)
+const TalentXcelAIResumeParserPage = React.lazy(() => import('./pages/landing/TalentXcelAIResumeParserPage'));
+const TalentXcelATSResumePage = React.lazy(() => import('./pages/landing/TalentXcelATSResumePage'));
+const ChatrUniversalInboxPage = React.lazy(() => import('./pages/landing/ChatrUniversalInboxPage'));
+
+// Cycle 2 SEO Opportunity Pages (2026-08-10)
+const TalentXcelAutomateScreeningPage = React.lazy(() => import('./pages/landing/TalentXcelAutomateScreeningPage'));
+const ChatrWhatsAppRecruitmentPage = React.lazy(() => import('./pages/landing/ChatrWhatsAppRecruitmentPage'));
 const AIBusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIBusinessOSLanding })));
 const AIRevenueOperationsLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIRevenueOperationsLanding })));
 const AIAgentsForBusinessLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIAgentsForBusinessLanding })));
@@ -730,6 +739,17 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
   <Route path="/chatr/whatsapp-candidate-screening" element={<LazyRoute component={WhatsAppCandidateScreeningPage} />} />
+
+  {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
+  <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />
+  <Route path="/talentxcel/ats-resume-builder" element={<LazyRoute component={TalentXcelATSResumePage} />} />
+
+  {/* chatr.chat SEO Cluster — Universal AI Inbox (Cycle 1) */}
+  <Route path="/chatr/universal-inbox-ai" element={<LazyRoute component={ChatrUniversalInboxPage} />} />
+
+  {/* Cycle 2 SEO Opportunity Pages (2026-08-10) */}
+  <Route path="/talentxcel/automate-candidate-screening" element={<LazyRoute component={TalentXcelAutomateScreeningPage} />} />
+  <Route path="/chatr/whatsapp-business-recruitment" element={<LazyRoute component={ChatrWhatsAppRecruitmentPage} />} />
 
   {/* chatrchat.in Core Business OS Landing Pages */}
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />

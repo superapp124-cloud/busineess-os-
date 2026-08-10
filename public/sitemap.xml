@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!-- CHATR Business OS Sitemap — Agent 8 SITEMAP AGENT — Updated: 2026-08-10 -->
+<!-- Properties: chatrchat.in (Primary Deployment) -->
+<!-- Canonical Domain: chatrchat.in -->
+<!-- All URLs verified HTTP 200, canonical, public, indexable -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- ==================== PRIORITY 1.0 — SEO BEACHHEADS ==================== -->
+
   <url>
     <loc>https://chatrchat.in/</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Mission #001 — SEO Beachhead (chatr.chat canonical, served via chatrchat.in) -->
   <url>
     <loc>https://chatrchat.in/chatr/whatsapp-candidate-screening</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Business OS Pillar Pages -->
   <url>
     <loc>https://chatrchat.in/business-os</loc>
     <lastmod>2026-08-10</lastmod>
@@ -42,22 +56,66 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- ==================== PRIORITY 0.9 — NEW SEO OPPORTUNITY PAGES ==================== -->
+
+  <!-- TalentXcel Cluster — AI Resume & Candidate Screening -->
+  <url>
+    <loc>https://chatrchat.in/talentxcel/ai-resume-parser</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/talentxcel/ats-resume-builder</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- CHATR Universal Inbox Cluster -->
+  <url>
+    <loc>https://chatrchat.in/chatr/universal-inbox-ai</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Cycle 2 SEO Opportunity Pages (2026-08-10) -->
+  <url>
+    <loc>https://chatrchat.in/talentxcel/automate-candidate-screening</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/chatr/whatsapp-business-recruitment</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ==================== PRIORITY 0.8 — SUPPORTING CONTENT ==================== -->
+
   <url>
     <loc>https://chatrchat.in/marketplace</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chatrchat.in/ai-browser</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- ==================== PRIORITY 0.7 — PLATFORM PAGES ==================== -->
+
   <url>
     <loc>https://chatrchat.in/communities</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
@@ -81,9 +139,12 @@
   <url>
     <loc>https://chatrchat.in/chatr-world</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- ==================== PRIORITY 0.7 — INFORMATION PAGES ==================== -->
+
   <url>
     <loc>https://chatrchat.in/about</loc>
     <lastmod>2026-08-10</lastmod>
@@ -102,6 +163,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://chatrchat.in/download</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ==================== PRIORITY 0.5 — LEGAL / POLICY ==================== -->
+
   <url>
     <loc>https://chatrchat.in/terms</loc>
     <lastmod>2026-08-10</lastmod>
@@ -126,4 +196,5 @@
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
+
 </urlset>

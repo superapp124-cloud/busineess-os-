@@ -23,6 +23,14 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/ai-revenue-operations': 1.0,
   '/ai-agents-for-business': 1.0,
   '/business-automation': 1.0,
+  // Cycle 1 — SEO Opportunity Pages (2026-08-10)
+  '/talentxcel/ai-resume-parser': 0.9,
+  '/talentxcel/ats-resume-builder': 0.9,
+  '/chatr/universal-inbox-ai': 0.9,
+  // Cycle 2 — SEO Article Pages (2026-08-10)
+  '/talentxcel/automate-candidate-screening': 0.85,
+  '/chatr/whatsapp-business-recruitment': 0.85,
+  // Supporting pages
   '/ai-browser': 0.8,
   '/communities': 0.7,
   '/chatr-wallet': 0.7,
@@ -32,6 +40,7 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/about': 0.7,
   '/help': 0.7,
   '/contact': 0.7,
+  '/download': 0.7,
   '/terms': 0.5,
   '/privacy-policy': 0.5,
   '/refund': 0.4,
@@ -47,13 +56,17 @@ const ROUTE_CHANGEFREQ: Record<string, SitemapEntry['changefreq']> = {
   '/ai-revenue-operations': 'daily',
   '/ai-agents-for-business': 'daily',
   '/business-automation': 'daily',
-
+  // Cycle 1 — SEO Opportunity Pages
+  '/talentxcel/ai-resume-parser': 'daily',
+  '/talentxcel/ats-resume-builder': 'daily',
+  '/chatr/universal-inbox-ai': 'daily',
   '/ai-browser': 'daily',
   '/communities': 'daily',
   '/about': 'monthly',
   '/terms': 'yearly',
   '/privacy-policy': 'yearly',
 };
+
 
 // Routes to exclude from sitemap (auth-protected, private app, or dynamic)
 const EXCLUDED_ROUTES = [
