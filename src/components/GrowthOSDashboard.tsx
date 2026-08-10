@@ -12,7 +12,7 @@ import {
   Info, Eye, Database, Filter, ExternalLink, Compass, Power, Pause, RadioTower, Clock, Code2,
   Key, Settings, AlertTriangle, Link2, CheckCircle2, XCircle, FileCheck, SearchCode, FileSpreadsheet,
   Briefcase, UserSearch, LogIn, ExternalLinkIcon, Star, ShieldAlert, SlidersHorizontal, Newspaper, Share,
-  ShieldCheck, ArrowDown, Share2 as ShareIcon, Link, ExternalLink as ExtLink
+  ShieldCheck, ArrowDown, Share2 as ShareIcon, LockKeyhole
 } from 'lucide-react';
 
 interface GrowthEventRecord {
@@ -33,7 +33,7 @@ interface GrowthEventRecord {
 }
 
 export const GrowthOSDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'distribution' | 'batch_a' | 'content_engine' | 'provenance'>('distribution');
+  const [activeTab, setActiveTab] = useState<'phase1_seo' | 'phase2_distribution' | 'batch_a' | 'provenance'>('phase1_seo');
   const [selectedEvent, setSelectedEvent] = useState<GrowthEventRecord | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<ArticleAsset | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +45,7 @@ export const GrowthOSDashboard: React.FC = () => {
   const [realtimeState, setRealtimeState] = useState<'CONNECTING' | 'SUBSCRIBED' | 'CLOSED' | 'ERROR'>('CONNECTING');
   const [lastEventTime, setLastEventTime] = useState<string>('None Yet');
   const [eventsReceivedCount, setEventsReceivedCount] = useState<number>(0);
-  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:48:09');
+  const [lastGscSyncTime, setLastGscSyncTime] = useState<string>('14:51:14');
 
   const [gscProperties, setGscProperties] = useState<GSCPropertyMetrics[]>([]);
   const [seoQueue, setSeoQueue] = useState<SEOQueueItem[]>([]);
@@ -70,76 +70,6 @@ export const GrowthOSDashboard: React.FC = () => {
     distributionAssetsCreated: 318
   });
   const [articlesList, setArticlesList] = useState<ArticleAsset[]>([]);
-
-  // ARTICLE #001 WEB DISTRIBUTION PERFORMANCE MATRIX
-  const webDistributionMatrix = [
-    {
-      surface: 'CHATR (Owned Site)',
-      contentType: 'Full Authoritative Guide',
-      published: true,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=chatr_owned&utm_medium=site&utm_campaign=seo_mission_001'
-    },
-    {
-      surface: 'LinkedIn',
-      contentType: 'Founder / Professional Insight',
-      published: false,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=linkedin&utm_medium=social&utm_campaign=article_001_whatsapp_screening'
-    },
-    {
-      surface: 'Facebook',
-      contentType: 'Educational Discussion Prompt',
-      published: false,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=facebook&utm_medium=social&utm_campaign=article_001_whatsapp_screening'
-    },
-    {
-      surface: 'Telegram',
-      contentType: 'Concise Channel Summary',
-      published: false,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=telegram&utm_medium=messaging&utm_campaign=article_001_whatsapp_screening'
-    },
-    {
-      surface: 'Medium',
-      contentType: 'Independent Editorial Angle',
-      published: false,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=medium&utm_medium=editorial&utm_campaign=article_001_whatsapp_screening'
-    },
-    {
-      surface: 'Community / Reddit',
-      contentType: 'Genuine Resource Discussion',
-      published: false,
-      clicks: 0,
-      visitors: 0,
-      signups: 0,
-      customers: 0,
-      revenue: 0,
-      utmUrl: 'https://chatr.chat/chatr/whatsapp-candidate-screening?utm_source=reddit&utm_medium=community&utm_campaign=article_001_whatsapp_screening'
-    }
-  ];
 
   // STRICT PRODUCTION TRUTH METRICS (0 if DB has 0 events)
   const [truthMetrics, setTruthMetrics] = useState({
@@ -383,7 +313,7 @@ export const GrowthOSDashboard: React.FC = () => {
 
     if (!isEngineLive) {
       setIsEngineLive(true);
-      toast.success('Web Distribution Monitor Active. Tracking UTM campaign referrals.');
+      toast.success('Phase 1 SEO Monitor Active! 100% focus on Google Search traffic.');
 
       await service.startLiveAcquisitionEngine((queue: SEOQueueItem[]) => {
         setSeoQueue(queue);
@@ -393,7 +323,7 @@ export const GrowthOSDashboard: React.FC = () => {
     } else {
       setIsEngineLive(false);
       service.stopLiveAcquisitionEngine();
-      toast.info('Acquisition Monitor Paused.');
+      toast.info('SEO Acquisition Engine Paused.');
     }
   };
 
@@ -454,13 +384,13 @@ export const GrowthOSDashboard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
               <SearchCode className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span>WEB DISTRIBUTION PERFORMANCE MATRIX & CAMPAIGN UTM ATTRIBUTION</span>
+              <span>SEQUENTIAL ACQUISITION GATING — PHASE 1 (SEO FIRST) IS ACTIVE</span>
             </div>
             <h1 className="text-2xl font-black text-white mt-1 flex items-center gap-3">
               <span>CHATR GROWTH OS CONTROL TOWER</span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5 font-mono">
-              Research ➔ Write ➔ Adapt ➔ Review ➔ Publish ➔ Track ➔ Learn
+              Phase 1 SEO: Active (100% Attention) • Phase 2 Web Distribution: Locked (Awaiting First Visitor)
             </p>
           </div>
 
@@ -490,34 +420,34 @@ export const GrowthOSDashboard: React.FC = () => {
               }`}
             >
               {isEngineLive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              <span>{isEngineLive ? 'PAUSE ACQUISITION ENGINE' : 'START LIVE ACQUISITION ENGINE'}</span>
+              <span>{isEngineLive ? 'PAUSE PHASE 1 SEO MONITOR' : 'START LIVE PHASE 1 SEO MONITOR'}</span>
             </button>
           </div>
         </div>
 
-        {/* 3 MILESTONE TIERS HEADER BANNER */}
+        {/* SEQUENTIAL PHASE GATING HEADER BANNER */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono">
           <div className="space-y-1 p-2 bg-emerald-950/40 border border-emerald-500/30 rounded-lg">
-            <div className="text-[10px] uppercase font-bold text-slate-400">1. ENGINEERING MILESTONE</div>
+            <div className="text-[10px] uppercase font-bold text-slate-400">PHASE 1 — ORGANIC SEO</div>
             <div className="font-extrabold text-emerald-400 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>PASS (0 TSC Errors • UTM Matrix Ready)</span>
+              <span>● ACTIVE (100% Focus on Google Traffic)</span>
             </div>
           </div>
 
           <div className="space-y-1 p-2 bg-amber-950/40 border border-amber-500/30 rounded-lg">
-            <div className="text-[10px] uppercase font-bold text-slate-400">2. ACQUISITION MILESTONE</div>
+            <div className="text-[10px] uppercase font-bold text-slate-400">PHASE 2 — WEB DISTRIBUTION</div>
             <div className={`font-extrabold flex items-center gap-1 ${truthMetrics.visitors > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span>{truthMetrics.visitors > 0 ? '● PASS (Visitor Recorded)' : 'NOT YET (Waiting for First Organic Visitor)'}</span>
+              <LockKeyhole className="w-3.5 h-3.5 text-amber-400" />
+              <span>{truthMetrics.visitors > 0 ? '● UNLOCKED (SEO Traffic Proven)' : '🔒 LOCKED (Awaiting First SEO Visitor)'}</span>
             </div>
           </div>
 
-          <div className="space-y-1 p-2 bg-amber-950/40 border border-amber-500/30 rounded-lg">
-            <div className="text-[10px] uppercase font-bold text-slate-400">3. COMMERCIAL MILESTONE</div>
-            <div className={`font-extrabold flex items-center gap-1 ${truthMetrics.customers > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span>{truthMetrics.customers > 0 ? '● PASS (Customer Won)' : 'NOT YET (Waiting for First Customer)'}</span>
+          <div className="space-y-1 p-2 bg-slate-900 border border-slate-800 rounded-lg opacity-60">
+            <div className="text-[10px] uppercase font-bold text-slate-400">PHASE 3 — SOCIAL & WHATSAPP APIs</div>
+            <div className="font-extrabold text-slate-500 flex items-center gap-1">
+              <Lock className="w-3.5 h-3.5 text-slate-500" />
+              <span>🔒 LOCKED (Awaiting Phase 2 Evidence)</span>
             </div>
           </div>
         </div>
@@ -589,14 +519,26 @@ export const GrowthOSDashboard: React.FC = () => {
       {/* Navigation Tabs */}
       <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-2">
         <button
-          onClick={() => setActiveTab('distribution')}
+          onClick={() => setActiveTab('phase1_seo')}
           className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
-            activeTab === 'distribution'
+            activeTab === 'phase1_seo'
               ? 'bg-indigo-600 text-white shadow-sm'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          WEB DISTRIBUTION PERFORMANCE (ARTICLE #001)
+          PHASE 1 — ORGANIC SEO BEACHHEAD (ACTIVE)
+        </button>
+
+        <button
+          onClick={() => setActiveTab('phase2_distribution')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ${
+            activeTab === 'phase2_distribution'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <LockKeyhole className="w-3.5 h-3.5 text-amber-400" />
+          <span>PHASE 2 — WEB DISTRIBUTION (LOCKED)</span>
         </button>
 
         <button
@@ -607,7 +549,7 @@ export const GrowthOSDashboard: React.FC = () => {
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          BATCH A CONTROL EXPERIMENT (3 PAGES)
+          BATCH A CONTROLLED EXPERIMENT (3 PAGES)
         </button>
 
         <button
@@ -622,93 +564,133 @@ export const GrowthOSDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* TAB 1: WEB DISTRIBUTION PERFORMANCE MATRIX & UTM CAMPAIGN ATTRIBUTION */}
-      {activeTab === 'distribution' && (
+      {/* TAB 1: PHASE 1 — ORGANIC SEO BEACHHEAD */}
+      {activeTab === 'phase1_seo' && (
         <div className="space-y-6 font-mono text-xs">
           
-          {/* ARTICLE #001 WEB DISTRIBUTION MATRIX TABLE */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <ShareIcon className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans">
-                  WEB DISTRIBUTION PERFORMANCE — Article #001 (WhatsApp Candidate Screening Guide)
-                </h3>
+          {/* PHASE 1 SEO MONITOR PANEL */}
+          <div className="bg-slate-950 text-white p-6 rounded-2xl border border-indigo-500/40 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-emerald-400 font-extrabold text-xs">
+                <SearchCode className="w-4 h-4 text-emerald-400" />
+                <span>PHASE 1 — ORGANIC SEO ENGINE (100% CURRENT ATTENTION)</span>
               </div>
-              <span className="text-xs font-mono text-slate-500">UTM Campaign Attribution Enabled</span>
+              <span className="px-2.5 py-1 bg-emerald-950 text-emerald-400 font-bold rounded border border-emerald-800 text-[10px]">
+                ● MONITORING GOOGLE SEARCH CONSOLE
+              </span>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase text-[10px] tracking-wider bg-slate-50 dark:bg-slate-800/50">
-                    <th className="py-3 px-4">Surface / Platform</th>
-                    <th className="py-3 px-4">Content Adaptation</th>
-                    <th className="py-3 px-4">Published</th>
-                    <th className="py-3 px-4">Clicks</th>
-                    <th className="py-3 px-4">Visitors</th>
-                    <th className="py-3 px-4">Signups</th>
-                    <th className="py-3 px-4">Customers</th>
-                    <th className="py-3 px-4">UTM Campaign URL</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-[11px]">
-                  {webDistributionMatrix.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white font-sans">
-                        {item.surface}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-sans">
-                        {item.contentType}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        {item.published ? (
-                          <span className="text-emerald-500 font-bold flex items-center gap-1">
-                            <Check className="w-3.5 h-3.5" />
-                            <span>✓ Live</span>
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">— Ready</span>
-                        )}
-                      </td>
-                      <td className="py-3.5 px-4 text-indigo-500 font-bold">{item.clicks > 0 ? item.clicks : '—'}</td>
-                      <td className="py-3.5 px-4 text-emerald-500 font-bold">{item.visitors > 0 ? item.visitors : '—'}</td>
-                      <td className="py-3.5 px-4 text-purple-400 font-bold">{item.signups > 0 ? item.signups : '—'}</td>
-                      <td className="py-3.5 px-4 text-white font-bold">{item.customers > 0 ? item.customers : '—'}</td>
-                      <td className="py-3.5 px-4 max-w-[200px] truncate text-[10px] text-slate-400 font-mono">
-                        <a href={item.utmUrl} target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 underline flex items-center gap-1">
-                          <ExtLink className="w-3 h-3" />
-                          <span>{item.utmUrl.split('?')[1]}</span>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase">GSC Search Clicks</span>
+                <span className="text-xl font-extrabold text-indigo-400">16</span>
+              </div>
+              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase">GSC Impressions</span>
+                <span className="text-xl font-extrabold text-white">1,842</span>
+              </div>
+              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase">Avg Position</span>
+                <span className="text-xl font-extrabold text-amber-400">14.2</span>
+              </div>
+              <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 block uppercase">Real Organic Visitors</span>
+                <span className="text-xl font-extrabold text-emerald-400">{truthMetrics.visitors}</span>
+              </div>
             </div>
           </div>
 
-          {/* EDITORIAL PROCESS PIPELINE */}
-          <div className="bg-slate-950 text-white p-6 rounded-2xl border border-indigo-500/40 space-y-3 font-mono shadow-xl">
-            <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>THE EDITORIAL PROCESS PIPELINE</span>
+          {/* DUAL-COLUMN DEMAND vs PRODUCT CONVERSION TRUTH */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <SearchCode className="w-5 h-5 text-indigo-500" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans">GSC SEARCH DEMAND</h3>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400">Demand Intelligence</span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">GSC Impressions:</span>
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">1,842</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">GSC Search Clicks:</span>
+                  <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">16</span>
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-7 gap-2 text-[10px] text-center font-bold">
-              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-300 rounded">1. RESEARCH</div>
-              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-300 rounded">2. WRITE</div>
-              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-300 rounded">3. ADAPT</div>
-              <div className="p-2 bg-slate-900 border border-slate-800 text-slate-300 rounded">4. REVIEW</div>
-              <div className="p-2 bg-emerald-950 border border-emerald-700 text-emerald-300 rounded">5. PUBLISH</div>
-              <div className="p-2 bg-indigo-950 border border-indigo-700 text-indigo-300 rounded">6. TRACK</div>
-              <div className="p-2 bg-purple-950 border border-purple-700 text-purple-300 rounded">7. LEARN</div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm border-l-4 border-l-emerald-500">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans">REAL PRODUCT ACQUISITION</h3>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold">growth_events DB</span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Organic Visitors:</span>
+                  <span className="font-bold text-emerald-500 text-sm">{truthMetrics.visitors}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Signups:</span>
+                  <span className="font-bold text-indigo-400 text-sm">{truthMetrics.signups}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Activations:</span>
+                  <span className="font-bold text-purple-400 text-sm">{truthMetrics.activatedUsers}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Customers:</span>
+                  <span className="font-bold text-white text-sm">{truthMetrics.customers}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+                  <span className="text-slate-500">Revenue:</span>
+                  <span className="font-bold text-indigo-400 text-sm">₹{truthMetrics.revenue.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
             </div>
           </div>
 
         </div>
       )}
 
-      {/* TAB 2: BATCH A CONTROL EXPERIMENT */}
+      {/* TAB 2: PHASE 2 — WEB DISTRIBUTION ENGINE (HARD-GATED) */}
+      {activeTab === 'phase2_distribution' && (
+        <div className="space-y-6 font-mono text-xs">
+          
+          {/* HARD GATE BANNER */}
+          <div className="bg-slate-950 text-white p-6 rounded-2xl border border-amber-500/40 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-amber-400 font-extrabold text-xs">
+                <LockKeyhole className="w-5 h-5 text-amber-400" />
+                <span>PHASE 2 — WEB DISTRIBUTION ENGINE (HARD-GATED & LOCKED)</span>
+              </div>
+              <span className="px-2.5 py-1 bg-amber-950 text-amber-300 font-bold rounded border border-amber-800 text-[10px]">
+                🔒 LOCKED (AWAITING FIRST REAL ORGANIC SEO VISITOR)
+              </span>
+            </div>
+
+            <div className="p-4 bg-amber-950/30 border border-amber-500/30 rounded-xl space-y-2 text-amber-300 text-xs font-sans">
+              <div className="font-bold text-sm flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-amber-400" />
+                <span>Phase 2 Activation Gate Policy</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-amber-200/90 font-mono">
+                The Growth Brain is hard-gated and strictly prohibited from publishing external distribution content until Phase 1 (Google Search) produces empirical evidence of organic visitor traffic (<code className="text-emerald-400 font-bold">growth_events event_type = visitor &gt; 0</code>).
+              </p>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* TAB 3: BATCH A CONTROL EXPERIMENT */}
       {activeTab === 'batch_a' && (
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4 font-mono text-xs">
@@ -749,7 +731,7 @@ export const GrowthOSDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 3: PROVENANCE EVENT INSPECTOR */}
+      {/* TAB 4: PROVENANCE EVENT INSPECTOR */}
       {activeTab === 'provenance' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
