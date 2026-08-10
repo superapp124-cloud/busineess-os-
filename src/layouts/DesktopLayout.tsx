@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { AIStatusBadge } from '@/components/desktop/AIStatusBadge';
@@ -344,6 +345,9 @@ const DesktopLayoutInner = () => {
 
   return (
     <TooltipProvider>
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <div className={cn('h-screen w-screen flex overflow-hidden transition-colors duration-500 relative', themeClasses, fontClasses, `accent-${accentColor}`)} style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
 
         {/* Ambient orb — dark mode only */}

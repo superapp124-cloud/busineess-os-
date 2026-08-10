@@ -19,6 +19,8 @@ Sitemap: https://chatrchat.in/sitemap.xml
 
 # Disallow private application & admin routes
 Disallow: /admin
+Disallow: /desktop
+Disallow: /desktop/*
 Disallow: /auth
 Disallow: /chat
 Disallow: /contacts
