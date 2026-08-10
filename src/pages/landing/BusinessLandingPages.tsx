@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Building2, Bot, Cpu, Zap, Shield, ArrowRight, CheckCircle2,
@@ -54,6 +53,49 @@ export const BusinessLandingPage: React.FC<BusinessLandingPageProps> = ({ pageTy
   const location = useLocation();
 
   useEffect(() => {
+    // Pure DOM Head Management (Zero External Dependency)
+    document.title = meta.title;
+
+    let descTag = document.querySelector('meta[name="description"]');
+    if (!descTag) {
+      descTag = document.createElement('meta');
+      descTag.setAttribute('name', 'description');
+      document.head.appendChild(descTag);
+    }
+    descTag.setAttribute('content', meta.description);
+
+    let canonicalTag = document.querySelector('link[rel="canonical"]');
+    if (!canonicalTag) {
+      canonicalTag = document.createElement('link');
+      canonicalTag.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalTag);
+    }
+    canonicalTag.setAttribute('href', meta.canonical);
+
+    const schemaJsonLd = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': meta.schemaType,
+      'name': meta.title,
+      'description': meta.description,
+      'url': meta.canonical,
+      'applicationCategory': 'BusinessApplication',
+      'operatingSystem': 'Web, Windows, macOS, Android, iOS',
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'CHATR Business OS',
+        'url': 'https://chatrchat.in'
+      }
+    });
+
+    let schemaTag = document.getElementById('jsonld-schema-landing');
+    if (!schemaTag) {
+      schemaTag = document.createElement('script');
+      schemaTag.setAttribute('type', 'application/ld+json');
+      schemaTag.setAttribute('id', 'jsonld-schema-landing');
+      document.head.appendChild(schemaTag);
+    }
+    schemaTag.textContent = schemaJsonLd;
+
     // Record real visitor event into cc_logs / growth_events DB
     const recordVisit = async () => {
       try {
@@ -82,36 +124,10 @@ export const BusinessLandingPage: React.FC<BusinessLandingPageProps> = ({ pageTy
     };
 
     recordVisit();
-  }, [pageType, location]);
-
-  const schemaJsonLd = JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': meta.schemaType,
-    'name': meta.title,
-    'description': meta.description,
-    'url': meta.canonical,
-    'applicationCategory': 'BusinessApplication',
-    'operatingSystem': 'Web, Windows, macOS, Android, iOS',
-    'publisher': {
-      '@type': 'Organization',
-      'name': 'CHATR Business OS',
-      'url': 'https://chatrchat.in'
-    }
-  });
+  }, [pageType, location, meta]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
-      <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <link rel="canonical" href={meta.canonical} />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:description" content={meta.description} />
-        <meta property="og:url" content={meta.canonical} />
-        <script type="application/ld+json">{schemaJsonLd}</script>
-      </Helmet>
-
       {/* Header Navigation */}
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
