@@ -30,6 +30,10 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   // Cycle 2 — SEO Article Pages (2026-08-10)
   '/talentxcel/automate-candidate-screening': 0.85,
   '/chatr/whatsapp-business-recruitment': 0.85,
+  // Cycle 3 — SEO Opportunity Pages (2026-08-10)
+  '/ai-business-os-for-startups': 0.82,
+  '/talentxcel/recruiter-productivity': 0.82,
+  '/chatr/ai-messaging-for-business': 0.82,
   // Supporting pages
   '/ai-browser': 0.8,
   '/communities': 0.7,

@@ -153,6 +153,11 @@ const ChatrUniversalInboxPage = React.lazy(() => import('./pages/landing/ChatrUn
 // Cycle 2 SEO Opportunity Pages (2026-08-10)
 const TalentXcelAutomateScreeningPage = React.lazy(() => import('./pages/landing/TalentXcelAutomateScreeningPage'));
 const ChatrWhatsAppRecruitmentPage = React.lazy(() => import('./pages/landing/ChatrWhatsAppRecruitmentPage'));
+
+// Cycle 3 SEO Opportunity Pages (2026-08-10)
+const AIBusinessOSStartupsPage = React.lazy(() => import('./pages/landing/AIBusinessOSStartupsPage'));
+const TalentXcelRecruiterProductivityPage = React.lazy(() => import('./pages/landing/TalentXcelRecruiterProductivityPage'));
+const ChatrAIMessagingPage = React.lazy(() => import('./pages/landing/ChatrAIMessagingPage'));
 const AIBusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIBusinessOSLanding })));
 const AIRevenueOperationsLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIRevenueOperationsLanding })));
 const AIAgentsForBusinessLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIAgentsForBusinessLanding })));
@@ -750,6 +755,11 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   {/* Cycle 2 SEO Opportunity Pages (2026-08-10) */}
   <Route path="/talentxcel/automate-candidate-screening" element={<LazyRoute component={TalentXcelAutomateScreeningPage} />} />
   <Route path="/chatr/whatsapp-business-recruitment" element={<LazyRoute component={ChatrWhatsAppRecruitmentPage} />} />
+
+  {/* Cycle 3 SEO Opportunity Pages (2026-08-10) */}
+  <Route path="/ai-business-os-for-startups" element={<LazyRoute component={AIBusinessOSStartupsPage} />} />
+  <Route path="/talentxcel/recruiter-productivity" element={<LazyRoute component={TalentXcelRecruiterProductivityPage} />} />
+  <Route path="/chatr/ai-messaging-for-business" element={<LazyRoute component={ChatrAIMessagingPage} />} />
 
   {/* chatrchat.in Core Business OS Landing Pages */}
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />

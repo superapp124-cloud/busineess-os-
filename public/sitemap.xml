@@ -95,7 +95,28 @@
     <priority>0.85</priority>
   </url>
 
+  <!-- Cycle 3 SEO Opportunity Pages (2026-08-10) -->
+  <url>
+    <loc>https://chatrchat.in/ai-business-os-for-startups</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/talentxcel/recruiter-productivity</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/chatr/ai-messaging-for-business</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+
   <!-- ==================== PRIORITY 0.8 — SUPPORTING CONTENT ==================== -->
+
 
   <url>
     <loc>https://chatrchat.in/marketplace</loc>

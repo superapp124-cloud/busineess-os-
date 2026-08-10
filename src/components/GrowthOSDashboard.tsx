@@ -557,8 +557,13 @@ export const GrowthOSDashboard: React.FC = () => {
             { mission: '#002', property: 'talentxcel.in', slug: '/talentxcel/ai-resume-parser', query: 'ai resume parser candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 94 },
             { mission: '#003', property: 'talentxcel.in', slug: '/talentxcel/ats-resume-builder', query: 'best ats resume builder for freshers', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 91 },
             { mission: '#004', property: 'chatr.chat', slug: '/chatr/universal-inbox-ai', query: 'universal inbox ai for business', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 88 },
-            { mission: '#005', property: 'ALL', slug: 'robots.txt', query: 'Technical SEO: GPTBot/ClaudeBot/anthropic-ai allowed', status: 'FIXED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
-            { mission: '#006', property: 'chatrchat.in', slug: 'sitemap.xml', query: 'Sitemap: 20 → 23 URLs, new SEO pages added', status: 'UPDATED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
+            { mission: '#005', property: 'talentxcel.in', slug: '/talentxcel/automate-candidate-screening', query: 'how to automate candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 87 },
+            { mission: '#006', property: 'chatr.chat', slug: '/chatr/whatsapp-business-recruitment', query: 'whatsapp business for recruitment agencies', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 85 },
+            { mission: '#007', property: 'chatrchat.in', slug: '/ai-business-os-for-startups', query: 'ai business operating system for startups', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 82 },
+            { mission: '#008', property: 'talentxcel.in', slug: '/talentxcel/recruiter-productivity', query: 'recruiter productivity tools', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#009', property: 'chatr.chat', slug: '/chatr/ai-messaging-for-business', query: 'ai messaging for small business', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 78 },
+            { mission: '#010', property: 'ALL', slug: 'robots.txt', query: 'Technical SEO: GPTBot/ClaudeBot/anthropic-ai allowed', status: 'FIXED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
+            { mission: '#011', property: 'chatrchat.in', slug: 'sitemap.xml', query: 'Sitemap: 20 → 28 URLs, new SEO pages added', status: 'UPDATED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
           ].map((item) => (
             <div key={item.mission} className="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-indigo-400 font-bold w-12 shrink-0">M{item.mission}</span>
@@ -729,6 +734,11 @@ export const GrowthOSDashboard: React.FC = () => {
                     { slug: '/talentxcel/ai-resume-parser', property: 'talentxcel.in', published: true, inSitemap: true },
                     { slug: '/talentxcel/ats-resume-builder', property: 'talentxcel.in', published: true, inSitemap: true },
                     { slug: '/chatr/universal-inbox-ai', property: 'chatr.chat', published: true, inSitemap: true },
+                    { slug: '/talentxcel/automate-candidate-screening', property: 'talentxcel.in', published: true, inSitemap: true },
+                    { slug: '/chatr/whatsapp-business-recruitment', property: 'chatr.chat', published: true, inSitemap: true },
+                    { slug: '/ai-business-os-for-startups', property: 'chatrchat.in', published: true, inSitemap: true },
+                    { slug: '/talentxcel/recruiter-productivity', property: 'talentxcel.in', published: true, inSitemap: true },
+                    { slug: '/chatr/ai-messaging-for-business', property: 'chatr.chat', published: true, inSitemap: true },
                     { slug: '/business-os', property: 'chatrchat.in', published: true, inSitemap: true },
                     { slug: '/ai-business-os', property: 'chatrchat.in', published: true, inSitemap: true },
                     { slug: '/ai-revenue-operations', property: 'chatrchat.in', published: true, inSitemap: true },
@@ -812,9 +822,14 @@ export const GrowthOSDashboard: React.FC = () => {
                 { num: 2, title: 'AI Resume Parser', domain: 'talentxcel.in', slug: '/talentxcel/ai-resume-parser', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
                 { num: 3, title: 'ATS Resume Builder for Freshers', domain: 'talentxcel.in', slug: '/talentxcel/ats-resume-builder', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
                 { num: 4, title: 'Universal AI Inbox for Business', domain: 'chatr.chat', slug: '/chatr/universal-inbox-ai', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
-                { num: 5, title: 'Automate Candidate Screening (How-To)', domain: 'talentxcel.in', slug: '/talentxcel/automate-candidate-screening', status: 'CYCLE 2 QUEUE', schema: 'Article + FAQPage' },
-                { num: 6, title: 'WhatsApp for Recruitment Agencies', domain: 'chatr.chat', slug: '/chatr/whatsapp-business-recruitment', status: 'CYCLE 2 QUEUE', schema: 'Article + FAQPage' },
-                { num: 7, title: 'AI Business OS for Startups', domain: 'chatrchat.in', slug: '/ai-business-os-for-startups', status: 'CYCLE 3 QUEUE', schema: 'WebApplication + FAQPage' },
+                { num: 5, title: 'Automate Candidate Screening (How-To)', domain: 'talentxcel.in', slug: '/talentxcel/automate-candidate-screening', status: 'PUBLISHED', schema: 'Article + FAQPage' },
+                { num: 6, title: 'WhatsApp for Recruitment Agencies', domain: 'chatr.chat', slug: '/chatr/whatsapp-business-recruitment', status: 'PUBLISHED', schema: 'Article + FAQPage' },
+                { num: 7, title: 'AI Business OS for Startups', domain: 'chatrchat.in', slug: '/ai-business-os-for-startups', status: 'PUBLISHED', schema: 'WebApplication + FAQPage' },
+                { num: 8, title: 'Recruiter Productivity Tools', domain: 'talentxcel.in', slug: '/talentxcel/recruiter-productivity', status: 'PUBLISHED', schema: 'SoftwareApplication + FAQPage' },
+                { num: 9, title: 'AI Messaging for Small Business', domain: 'chatr.chat', slug: '/chatr/ai-messaging-for-business', status: 'PUBLISHED', schema: 'SoftwareApplication + FAQPage' },
+                { num: 10, title: 'WhatsApp CRM for Sales Teams', domain: 'chatr.chat', slug: '/chatr/whatsapp-crm-sales', status: 'CYCLE 4 QUEUE', schema: 'Article + FAQPage' },
+                { num: 11, title: 'AI Hiring Tool for SMEs', domain: 'talentxcel.in', slug: '/talentxcel/ai-hiring-tool-sme', status: 'CYCLE 4 QUEUE', schema: 'SoftwareApplication + FAQPage' },
+                { num: 12, title: 'Business OS vs Project Management', domain: 'chatrchat.in', slug: '/business-os-vs-project-management', status: 'CYCLE 4 QUEUE', schema: 'Article + FAQPage' },
               ].map((page) => (
                 <div key={page.num} className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between items-center">
