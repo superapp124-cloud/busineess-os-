@@ -183,7 +183,14 @@ export const VALID_ROUTES = [
   '/refund',
   '/disclaimer',
   '/join',
+  '/business-os',
+  '/ai-business-os',
+  '/ai-revenue-operations',
+  '/ai-agents-for-business',
+  '/business-automation',
 ] as const;
+
+
 
 /**
  * Validate if route is supported

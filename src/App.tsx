@@ -143,6 +143,13 @@ const EnterpriseIntegrations = React.lazy(() => import('./presentation-runtime/m
 const DeveloperHub = React.lazy(() => import('./presentation-runtime/marketplace/components/DeveloperHub').then(m => ({ default: m.DeveloperHub })));
 const ComingSoon = React.lazy(() => import('./presentation-runtime/marketplace/components/ComingSoon').then(m => ({ default: m.ComingSoon })));
 
+const BusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.BusinessOSLanding })));
+const AIBusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIBusinessOSLanding })));
+const AIRevenueOperationsLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIRevenueOperationsLanding })));
+const AIAgentsForBusinessLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIAgentsForBusinessLanding })));
+const BusinessAutomationLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.BusinessAutomationLanding })));
+
+
 const queryClient = new QueryClient({
  defaultOptions: {
  queries: {
@@ -723,6 +730,14 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
   <Route path="/chatr/whatsapp-candidate-screening" element={<LazyRoute component={WhatsAppCandidateScreeningPage} />} />
+
+  {/* chatrchat.in Core Business OS Landing Pages */}
+  <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />
+  <Route path="/ai-business-os" element={<LazyRoute component={AIBusinessOSLanding} />} />
+  <Route path="/ai-revenue-operations" element={<LazyRoute component={AIRevenueOperationsLanding} />} />
+  <Route path="/ai-agents-for-business" element={<LazyRoute component={AIAgentsForBusinessLanding} />} />
+  <Route path="/business-automation" element={<LazyRoute component={BusinessAutomationLanding} />} />
+
 
 
   <Route path="/business/crm" element={<LazyRoute component={LazyPages.CRMPage} />} />

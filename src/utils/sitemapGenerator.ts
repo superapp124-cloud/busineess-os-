@@ -31,12 +31,24 @@ const ROUTE_PRIORITIES: Record<string, number> = {
   '/privacy-policy': 0.5,
   '/refund': 0.4,
   '/disclaimer': 0.4,
+  '/chatr/whatsapp-candidate-screening': 1.0,
+  '/business-os': 1.0,
+  '/ai-business-os': 1.0,
+  '/ai-revenue-operations': 1.0,
+  '/ai-agents-for-business': 1.0,
+  '/business-automation': 1.0,
 };
 
 // Route change frequency mapping
 const ROUTE_CHANGEFREQ: Record<string, SitemapEntry['changefreq']> = {
   '/': 'daily',
   '/chatr/whatsapp-candidate-screening': 'daily',
+  '/business-os': 'daily',
+  '/ai-business-os': 'daily',
+  '/ai-revenue-operations': 'daily',
+  '/ai-agents-for-business': 'daily',
+  '/business-automation': 'daily',
+
   '/ai-browser': 'daily',
   '/communities': 'daily',
   '/about': 'monthly',
