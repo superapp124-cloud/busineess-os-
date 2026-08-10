@@ -225,7 +225,7 @@ export class DiscoveryProofService {
         name: 'Organic Impressions',
         category: 'INDEXING_TELEMETRY',
         status: 'PASSED',
-        evidence: 'VERIFIED — 13,900+ total Google Search impressions (~98.5% homepage, 86.8% India).',
+        evidence: 'VERIFIED — 13,900+ total impressions (~89.7% brand search: "chatr" 12,254, "chatrr" 123, "chatrchat" 80).',
         lastChecked: timestamp
       },
       {
@@ -233,7 +233,7 @@ export class DiscoveryProofService {
         name: 'Organic Clicks',
         category: 'INDEXING_TELEMETRY',
         status: 'PASSED',
-        evidence: 'VERIFIED — 16 empirical Google search clicks (11 Mobile @ 0.57% CTR, 4 Desktop @ 0.034% CTR).',
+        evidence: 'VERIFIED — 16 total clicks (7 "chatr", 3 "chatr chat" @ 25% CTR, 2 "chatrchat" @ 2.5% CTR, 1 "chatrr").',
         lastChecked: timestamp
       },
       {
