@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- CHATR Business OS Sitemap -- Agent 8 SITEMAP AGENT -- Updated: 2026-08-11 -->
+<!-- CHATR Business OS Sitemap - Updated: 2026-08-11 -->
 <!-- Properties: chatrchat.in + chatr.chat ONLY -->
-<!-- talentxcel.in has its own sitemap in talentxcelpro/career-pathways-ai-builder -->
 <!-- All URLs verified HTTP 200, canonical, public, indexable -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- ==================== PRIORITY 1.0 -- SEO BEACHHEADS ==================== -->
+  <!-- PRIORITY 1.0 SEO BEACHHEADS -->
 
   <url>
     <loc>https://chatrchat.in/</loc>
@@ -29,263 +28,224 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/ai-business-os</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/ai-revenue-operations</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://chatrchat.in/ai-agents-for-business</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- PRIORITY 0.9 CORE PILLAR PAGES -->
+
   <url>
-    <loc>https://chatrchat.in/business-automation</loc>
+    <loc>https://chatrchat.in/features</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/use-cases</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/pricing</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/about</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <!-- ==================== PRIORITY 0.9 -- SEO OPPORTUNITY PAGES ==================== -->
+  <!-- RECENT EDITORIAL BLOG POSTS -->
 
-  <!-- chatrchat.in routes (served from this repo) -->
   <url>
-    <loc>https://chatrchat.in/chatr/universal-inbox-ai</loc>
+    <loc>https://chatrchat.in/blog</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/chatr/whatsapp-business-recruitment</loc>
+    <loc>https://chatrchat.in/blog/why-businesses-lose-whatsapp-leads</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/chatr/ai-messaging-for-business</loc>
+    <loc>https://chatrchat.in/blog/ai-lead-triage-guide</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.82</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/ai-business-os-for-startups</loc>
+    <loc>https://chatrchat.in/blog/universal-inbox-vs-switching-apps</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.82</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/blog/whatsapp-candidate-screening-recruitment</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/blog/running-business-on-whatsapp-email-excel</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/blog/what-is-a-communication-os</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <!-- TalentXcel landing pages served via chatrchat.in (canonical on chatrchat.in subdirectory) -->
+  <!-- RECENT PRESS ANNOUNCEMENTS AND NEWS -->
+
+  <url>
+    <loc>https://chatrchat.in/news</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/news/chatr-communication-os-launch</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/news/talentxcel-whatsapp-screening-live</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- TALENTXCEL AND CHATR LANDING PAGES -->
+
   <url>
     <loc>https://chatrchat.in/talentxcel/ai-resume-parser</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://chatrchat.in/talentxcel/ats-resume-builder</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/chatr/universal-inbox-ai</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://chatrchat.in/talentxcel/automate-candidate-screening</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/chatr/whatsapp-business-recruitment</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/ai-business-os-for-startups</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://chatrchat.in/talentxcel/recruiter-productivity</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.82</priority>
+    <priority>0.9</priority>
   </url>
 
-  <!-- ==================== PRIORITY 0.8 -- PUBLIC KNOWLEDGE HUB (Cycle 4 -- 2026-08-11) ==================== -->
+  <!-- EXPANSION ENGINE - PRODUCT FEATURES -->
 
-  <!-- Blog Hub (canonical: chatrchat.in) -->
-  <url>
-    <loc>https://chatrchat.in/blog</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Blog Posts (chatrchat.in canonical articles) -->
-  <url>
-    <loc>https://chatrchat.in/blog/why-businesses-lose-whatsapp-leads</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/blog/universal-inbox-vs-switching-apps</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/blog/whatsapp-candidate-screening-recruitment</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/blog/running-business-on-whatsapp-email-excel</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/blog/what-is-a-communication-os</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- News Hub -->
-  <url>
-    <loc>https://chatrchat.in/news</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/news/chatr-communication-os-launch</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/news/talentxcel-whatsapp-screening-live</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ==================== ENTITY & EDITORIAL TRUST LAYER (Phase A — 2026-08-11) ==================== -->
-
-  <url>
-    <loc>https://chatrchat.in/about</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/editorial-policy</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/authors</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/authors/sanobar-jahan</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/authors/chatr-product-team</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/authors/talentxcel-research</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/company-info</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ==================== PHASE B EXPANSION ENGINE (25 High-Authority Pages — 2026-08-11) ==================== -->
-
-  <url><loc>https://chatrchat.in/chatr/shared-team-inbox-whatsapp</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://chatrchat.in/chatr/ai-message-triage-routing</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://chatrchat.in/chatr/multi-channel-business-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://chatrchat.in/chatr/whatsapp-api-team-collaboration</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://chatrchat.in/chatr/ai-conversation-summarization</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-
-  <url><loc>https://chatrchat.in/problem/how-to-stop-losing-whatsapp-leads</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/problem/manage-multiple-whatsapp-business-accounts</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/problem/reduce-candidate-drop-off-recruitment</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/problem/fix-slow-customer-response-times</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/problem/eliminate-context-switching-inboxes</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-
-  <url><loc>https://chatrchat.in/workflow/whatsapp-lead-response-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/workflow/automated-candidate-screening-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/workflow/shared-inbox-assignment-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/workflow/recruitment-agency-follow-up-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/workflow/after-hours-business-messaging-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-
-  <url><loc>https://chatrchat.in/industries/recruitment-agencies</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/industries/real-estate-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/industries/healthcare-patient-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/industries/ecommerce-customer-support</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/industries/education-student-admissions</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-
-  <url><loc>https://chatrchat.in/comparison/chatr-vs-whatsapp-business-app</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/comparison/chatr-vs-traditional-crm</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/comparison/chatr-vs-shared-email-inboxes</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/comparison/chatr-vs-manual-recruitment-screening</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chatrchat.in/comparison/chatr-vs-fragmented-startup-tools</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-
-  <!-- ==================== WAVE 1 EXPANSION COHORT (PAGES 51 - 75 — 2026-08-11) ==================== -->
-
+  <url><loc>https://chatrchat.in/chatr/shared-team-inbox-whatsapp</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/chatr/ai-message-triage-routing</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/chatr/multi-channel-business-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/chatr/whatsapp-api-team-collaboration</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/chatr/ai-conversation-summarization</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/chatr/ai-phone-agent-calling</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/chatr/whatsapp-broadcast-campaigns</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/chatr/team-inbox-sla-monitoring</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/chatr/crm-contact-sync-whatsapp</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/chatr/ai-auto-responder-lead-capture</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- EXPANSION ENGINE - PROBLEM PAGES -->
+
+  <url><loc>https://chatrchat.in/problem/how-to-stop-losing-whatsapp-leads</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/problem/manage-multiple-whatsapp-business-accounts</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/problem/reduce-candidate-drop-off-recruitment</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/problem/fix-slow-customer-response-times</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/problem/eliminate-context-switching-inboxes</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/problem/how-to-manage-high-whatsapp-lead-volume</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/problem/fix-unassigned-customer-messages</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/problem/stop-candidate-ghosting-recruitment</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/problem/centralize-sales-team-whatsapp-threads</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/problem/reduce-customer-support-response-delay</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- EXPANSION ENGINE - WORKFLOW PAGES -->
+
+  <url><loc>https://chatrchat.in/workflow/whatsapp-lead-response-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/workflow/automated-candidate-screening-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/workflow/shared-inbox-assignment-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/workflow/recruitment-agency-follow-up-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/workflow/after-hours-business-messaging-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/workflow/whatsapp-broadcasting-lead-nurture-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/workflow/recruiter-interview-scheduling-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/workflow/lead-triage-and-sales-assignment-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/workflow/out-of-hours-lead-capture-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/workflow/candidate-screening-to-shortlist-workflow</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- EXPANSION ENGINE - INDUSTRY PAGES -->
+
+  <url><loc>https://chatrchat.in/industries/recruitment-agencies</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/industries/real-estate-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/industries/healthcare-patient-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/industries/ecommerce-customer-support</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/industries/education-student-admissions</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/industries/financial-services-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/industries/logistics-delivery-messaging</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/industries/travel-hospitality-booking</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/industries/automobile-dealership-sales</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/industries/fitness-wellness-membership</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- EXPANSION ENGINE - COMPARISON PAGES -->
+
+  <url><loc>https://chatrchat.in/comparison/chatr-vs-whatsapp-business-app</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/comparison/chatr-vs-traditional-crm</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/comparison/chatr-vs-shared-email-inboxes</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/comparison/chatr-vs-manual-recruitment-screening</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chatrchat.in/comparison/chatr-vs-fragmented-startup-tools</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/comparison/chatr-vs-intercom</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/comparison/chatr-vs-zendesk</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/comparison/chatr-vs-gallabox</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/comparison/chatr-vs-wati</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chatrchat.in/comparison/chatr-vs-aisensy</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
-  <!-- ==================== FIRST-PARTY RESEARCH LAB REPORTS (2026-08-11) ==================== -->
+  <!-- FIRST-PARTY RESEARCH LAB REPORTS (2026-08-11) -->
 
   <url><loc>https://chatrchat.in/research/india-recruitment-communication-benchmark-2026</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://chatrchat.in/research/whatsapp-lead-response-time-audit-2026</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://chatrchat.in/research/media-kit</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
-  <!-- ==================== PROGRAMMATIC LOCATION EXPANSION MATRIX (100 URLs) ==================== -->
+  <!-- PROGRAMMATIC LOCATION EXPANSION MATRIX (100 URLs) -->
+
   <url><loc>https://chatrchat.in/location/recruitment-agencies-mumbai</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chatrchat.in/location/whatsapp-business-api-mumbai</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chatrchat.in/location/hiring-automation-mumbai</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -387,7 +347,7 @@
   <url><loc>https://chatrchat.in/location/real-estate-lead-management-navi-mumbai</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chatrchat.in/location/healthcare-patient-messaging-navi-mumbai</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
-  <!-- ==================== PRIORITY 0.8 -- SUPPORTING CONTENT ==================== -->
+  <!-- PRIORITY 0.8 SUPPORTING CONTENT -->
 
   <url>
     <loc>https://chatrchat.in/marketplace</loc>
@@ -396,97 +356,57 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/ai-browser</loc>
+    <loc>https://chatrchat.in/editorial-policy</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
-  <!-- ==================== PRIORITY 0.7 -- PLATFORM PAGES ==================== -->
-
   <url>
-    <loc>https://chatrchat.in/communities</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/chatr-studio</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/chatr-games</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/chatr-wallet</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/chatr-world</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ==================== PRIORITY 0.7 -- INFORMATION PAGES ==================== -->
-
-  <url>
-    <loc>https://chatrchat.in/about</loc>
+    <loc>https://chatrchat.in/company-info</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/help</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/contact</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chatrchat.in/download</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ==================== PRIORITY 0.5 -- LEGAL / POLICY ==================== -->
-
-  <url>
-    <loc>https://chatrchat.in/terms</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chatrchat.in/privacy-policy</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/refund</loc>
+    <loc>https://chatrchat.in/terms-of-service</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chatrchat.in/disclaimer</loc>
+    <loc>https://chatrchat.in/authors</loc>
     <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://chatrchat.in/authors/sanobar-jahan</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors/chatr-product-team</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors/talentxcel-research</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/chatr/ai-messaging-for-business</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
