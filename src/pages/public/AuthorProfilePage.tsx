@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Tag, BookOpen, Building2 } from 'lucide-react';
 import { AUTHORS } from '@/data/authorsData';
@@ -9,16 +9,16 @@ export const AuthorProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (!author) return;
-    const pageTitle = ${author.name} —  | CHATR Communication OS;
+    const pageTitle = `${author.name} — ${author.role} | CHATR Communication OS`;
     document.title = pageTitle;
     
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', ${author.name} is  at . Bio: );
+    metaDesc.setAttribute('content', `${author.name} is ${author.role} at ${author.organization}. Bio: ${author.bio}`);
     
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', https://chatrchat.in/authors/);
+    canonical.setAttribute('href', `https://chatrchat.in/authors/${author.slug}`);
 
     const schema = document.createElement('script');
     schema.id = 'author-profile-schema';
@@ -34,7 +34,7 @@ export const AuthorProfilePage: React.FC = () => {
         url: author.organizationUrl,
       },
       description: author.bio,
-      url: https://chatrchat.in/authors/,
+      url: `https://chatrchat.in/authors/${author.slug}`,
     });
     if (!document.getElementById('author-profile-schema')) document.head.appendChild(schema);
     return () => { const s = document.getElementById('author-profile-schema'); if (s) s.remove(); };
