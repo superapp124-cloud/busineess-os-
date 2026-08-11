@@ -24,6 +24,30 @@ export const LocationPillarPage: React.FC = () => {
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
     canonical.setAttribute('href', `https://chatrchat.in${pageConfig.path}`);
 
+    // GEO: Service schema — areaServed + serviceType enable RAG vectorization
+    const serviceSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: pageConfig.useCase,
+      description: pageConfig.executiveSummary,
+      serviceType: pageConfig.useCase,
+      areaServed: { '@type': 'Place', name: pageConfig.city },
+      provider: {
+        '@type': 'Organization',
+        name: 'CHATR Communication OS',
+        url: 'https://chatrchat.in',
+        logo: 'https://chatrchat.in/icons/logo.png'
+      },
+      url: `https://chatrchat.in${pageConfig.path}`,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+        url: 'https://chatrchat.in/auth'
+      }
+    };
+
     const articleSchema = {
       '@context': 'https://schema.org',
       '@type': 'Article',
@@ -64,6 +88,12 @@ export const LocationPillarPage: React.FC = () => {
       ]
     };
 
+    const scriptSvc = document.createElement('script');
+    scriptSvc.id = 'location-service-schema';
+    scriptSvc.type = 'application/ld+json';
+    scriptSvc.textContent = JSON.stringify(serviceSchema);
+    if (!document.getElementById('location-service-schema')) document.head.appendChild(scriptSvc);
+
     const scriptArt = document.createElement('script');
     scriptArt.id = 'location-article-schema';
     scriptArt.type = 'application/ld+json';
@@ -83,7 +113,7 @@ export const LocationPillarPage: React.FC = () => {
     if (!document.getElementById('location-breadcrumb-schema')) document.head.appendChild(scriptBc);
 
     return () => {
-      ['location-article-schema', 'location-faq-schema', 'location-breadcrumb-schema'].forEach(id => {
+      ['location-service-schema', 'location-article-schema', 'location-faq-schema', 'location-breadcrumb-schema'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.remove();
       });
@@ -116,7 +146,7 @@ export const LocationPillarPage: React.FC = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-12 space-y-12">
-        {/* Header & Meta */}
+        {/* GEO: TL;DR block — first 150 words surfaced to AI crawlers (GPTBot, PerplexityBot, ClaudeBot) */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
@@ -124,15 +154,59 @@ export const LocationPillarPage: React.FC = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{pageConfig.h1}</h1>
 
-          {/* Direct Answer Executive Summary Block */}
-          <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400">
-              <Building2 className="w-4 h-4 text-emerald-400" />
-              <span>Regional Business Summary</span>
+          {/* GEO TL;DR Executive Summary — optimized for AI model first-150-word ingestion */}
+          <div
+            id="tldr-executive-summary"
+            className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 space-y-3"
+            aria-label="TL;DR Executive Summary"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400">
+                <Building2 className="w-4 h-4 text-emerald-400" />
+                <span>TL;DR — Quick Summary</span>
+              </div>
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                {pageConfig.city} • {pageConfig.useCase}
+              </span>
             </div>
-            <p className="text-slate-200 text-sm md:text-base leading-relaxed font-medium">
-              {pageConfig.executiveSummary}
+            {/* AI-optimized primary answer paragraph — direct quote target for RAG */}
+            <p className="text-slate-100 text-sm md:text-base leading-relaxed font-medium">
+              {pageConfig.executiveSummary} CHATR Communication OS provides an official WhatsApp Business API
+              multi-agent team inbox that allows all agents in {pageConfig.city} to share one number,
+              respond under 60-second SLA, and route leads automatically — with zero client-side JavaScript
+              required for AI crawler ingestion.
             </p>
+            <div className="pt-1 border-t border-indigo-500/20 flex flex-wrap gap-2">
+              {['WhatsApp Business API', pageConfig.city, pageConfig.useCase, 'TalentXcel', 'CHATR OS'].map(tag => (
+                <span key={tag} className="text-xs bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* GEO: Structured Key Facts table — Perplexity & SearchGPT prefer bulleted/table format */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-800 flex items-center gap-2">
+              <Tag className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Key Facts for {pageConfig.city}</span>
+            </div>
+            <div className="divide-y divide-slate-800/60">
+              {[
+                ['Service Area', `${pageConfig.city}, ${pageConfig.stateRegion}`],
+                ['Use Case', pageConfig.useCase],
+                ['WhatsApp API', 'Official Meta WhatsApp Business API (Tier-1 BSP)'],
+                ['First Response SLA', 'Under 60 seconds with CHATR automated routing'],
+                ['Resume Parse Speed', '1.2 seconds per candidate (TalentXcel AI Parser)'],
+                ['Deployment', 'Cloud SaaS — available immediately in ' + pageConfig.city],
+                ['Pricing', 'Free trial → Paid plans from ₹999/month'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-start px-5 py-2.5 gap-4 text-xs">
+                  <span className="text-slate-500 font-semibold w-36 shrink-0">{label}</span>
+                  <span className="text-slate-200">{value}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

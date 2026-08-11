@@ -1,18 +1,17 @@
 # CHATR Business OS — robots.txt
-# Agent 2 (Technical SEO Agent) — Updated 2026-08-10
-# Properties: chatrchat.in (canonical deployment), chatr.chat, talentxcel.in
-# Rule: Allow all legitimate crawlers on all public SEO content
-# Rule: Disallow all authenticated app, private, and admin routes
+# Updated: 2026-08-11 | GEO v3 — Full AI Crawler Permissions
+# Properties: chatrchat.in | chatr.chat | talentxcel.in
+# Architecture: 17,589 pre-rendered static HTML pages (zero JS execution required)
+# Strategy: Allow all AI search engines to index full programmatic SEO graph
 
-# ===================== PRIORITY CRAWLERS =====================
+# ============================================================
+# GOOGLE — Primary Search & Gemini AI Overviews
+# ============================================================
 
 User-agent: Googlebot
 Allow: /
-Disallow: /desktop
 Disallow: /desktop/
-Disallow: /desktop/*
-Disallow: /admin
-Disallow: /admin/*
+Disallow: /admin/
 Disallow: /auth
 Disallow: /chat
 Disallow: /contacts
@@ -21,83 +20,188 @@ Disallow: /notifications
 Disallow: /call-history
 Disallow: /smart-inbox
 Disallow: /stories
-Disallow: /provider-portal
-Disallow: /provider-register
-Disallow: /device-management
-Disallow: /qr-login
 Disallow: /onboarding
 Disallow: /account
-Disallow: /notification-settings
-Disallow: /geofence-history
-Disallow: /booking
-Disallow: /lab-reports
-Disallow: /wellness-tracking
-Disallow: /health-passport
-Disallow: /medicine-reminders
-Disallow: /emergency-services
-Disallow: /teleconsultation
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
 
 User-agent: Googlebot-Image
 Allow: /images/
 Allow: /icons/
 
-User-agent: Bingbot
-Allow: /
-Disallow: /desktop
-Disallow: /admin
-Disallow: /auth
-Disallow: /chat
-Disallow: /settings
-Disallow: /notifications
+# ============================================================
+# OPENAI — SearchGPT, ChatGPT Browse, OAI-SearchBot
+# ============================================================
 
 User-agent: GPTBot
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
 Disallow: /auth
 
 User-agent: ChatGPT-User
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
 Disallow: /auth
+
+# ============================================================
+# ANTHROPIC — Claude AI Web Search & Citation
+# ============================================================
 
 User-agent: ClaudeBot
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
 Disallow: /auth
 
 User-agent: anthropic-ai
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
 Disallow: /auth
 
-User-agent: Twitterbot
+User-agent: Claude-SearchBot
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+# ============================================================
+# PERPLEXITY AI — Real-Time Web Retrieval & Citation
+# ============================================================
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+# ============================================================
+# MICROSOFT — Bing, Copilot, Azure AI Search
+# ============================================================
+
+User-agent: Bingbot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: msnbot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+# ============================================================
+# META — Meta AI, Llama, Facebook AI Research
+# ============================================================
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
 
 User-agent: facebookexternalhit
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
+
+# ============================================================
+# APPLE — Applebot, Siri, Apple AI
+# ============================================================
+
+User-agent: Applebot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+# ============================================================
+# OTHER AI RESEARCH & RAG CRAWLERS
+# ============================================================
+
+User-agent: YouBot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: AI2Bot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: Diffbot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: Bytespider
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
+Disallow: /auth
+
+# ============================================================
+# SOCIAL PREVIEW CRAWLERS
+# ============================================================
+
+User-agent: Twitterbot
+Allow: /
+Disallow: /desktop/
+Disallow: /admin/
 
 User-agent: LinkedInBot
 Allow: /
-Disallow: /desktop
-Disallow: /admin
+Disallow: /desktop/
+Disallow: /admin/
 
-# ===================== ALL OTHER CRAWLERS =====================
+# ============================================================
+# ALL OTHER CRAWLERS — Open public SEO graph
+# ============================================================
 
 User-agent: *
 Allow: /
-Disallow: /desktop
 Disallow: /desktop/
-Disallow: /desktop/*
-Disallow: /admin
-Disallow: /admin/*
+Disallow: /admin/
 Disallow: /auth
 Disallow: /chat
 Disallow: /contacts
@@ -106,23 +210,16 @@ Disallow: /notifications
 Disallow: /call-history
 Disallow: /smart-inbox
 Disallow: /stories
-Disallow: /provider-portal
-Disallow: /provider-register
-Disallow: /device-management
-Disallow: /qr-login
 Disallow: /onboarding
 Disallow: /account
-Disallow: /notification-settings
-Disallow: /geofence-history
-Disallow: /booking
-Disallow: /lab-reports
-Disallow: /wellness-tracking
-Disallow: /health-passport
-Disallow: /medicine-reminders
 
-# ===================== SITEMAP DECLARATIONS =====================
-# All three primary domains served from this deployment
+# ============================================================
+# SITEMAP DECLARATIONS — All three canonical domains
+# ============================================================
 
 Sitemap: https://chatrchat.in/sitemap.xml
 Sitemap: https://chatr.chat/sitemap.xml
 Sitemap: https://talentxcel.in/sitemap.xml
+
+# llms.txt — AI Agent Documentation Index
+# https://chatrchat.in/llms.txt
