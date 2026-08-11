@@ -9,19 +9,29 @@ export interface AuthorEntity {
   avatarUrl: string;
   linkedinUrl?: string;
   publishedCount: number;
+  credentials?: string[];
+  organizationsWorkedWith?: string[];
+  leadershipPrinciples?: string[];
 }
 
 export const AUTHORS: Record<string, AuthorEntity> = {
   'sanobar-jahan': {
     slug: 'sanobar-jahan',
     name: 'Sanobar Jahan',
-    role: 'Editor-in-Chief & Lead Content Strategist',
-    bio: 'Editor-in-Chief of CHATR Communication OS and TalentXcel Knowledge Hub. Oversees editorial integrity, data verification standards, candidate screening analytics, and business messaging research.',
-    expertise: ['Editorial Governance', 'Business Messaging Research', 'Candidate Screening Analytics', 'Content Strategy'],
-    organization: 'CHATR Communication OS',
+    role: 'Founder, TalentXcel & CHATR | HR, Talent & Education Strategist',
+    bio: 'Sanobar Jahan is the Founder of TalentXcel and CHATR with more than 20 years of experience across human resources, talent acquisition, workforce development, corporate training, and education. She has worked with leading organizations including Fortis, Reliance, Savantis, and Evolve Services. Holds an MBA (HR & Marketing, Jamia Hamdard), B.Ed, M.Sc (Chemistry), M.A. (Education), and is pursuing a PhD in Education.',
+    expertise: ['Talent Acquisition & HR Strategy', 'AI-Enabled Candidate Screening', 'Workforce Capability Development', 'Education Technology & Learning Systems', 'People-First Technology Vision'],
+    organization: 'CHATR Communication OS & TalentXcel',
     organizationUrl: 'https://chatrchat.in',
-    avatarUrl: 'https://chatrchat.in/favicon.png',
-    publishedCount: 4,
+    avatarUrl: 'https://chatrchat.in/assets/chatrplus-logo512.png',
+    publishedCount: 12,
+    credentials: ['MBA (HR & Marketing) - Jamia Hamdard', 'B.Ed', 'M.Sc Chemistry', 'M.A. Education', 'PhD in Education (Pursuing)'],
+    organizationsWorkedWith: ['Fortis', 'Reliance', 'Savantis', 'Evolve Services'],
+    leadershipPrinciples: [
+      'People First: Technology should ultimately serve people and expand human potential.',
+      'Education Creates Opportunity: Skills and education must connect directly to real-world careers.',
+      'Technology Should Expand Human Potential: Digital platforms remove barriers and enable talent discovery at scale.'
+    ]
   },
   'chatr-product-team': {
     slug: 'chatr-product-team',

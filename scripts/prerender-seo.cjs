@@ -281,17 +281,30 @@ const PUBLIC_SEO_PAGES = [
   },
   {
     path: '/authors/sanobar-jahan',
-    title: 'Sanobar Jahan -- Editor-in-Chief | CHATR Communication OS',
-    description: 'Sanobar Jahan is Editor-in-Chief of CHATR Communication OS and TalentXcel Knowledge Hub. Oversees editorial integrity, data verification, and research.',
-    keywords: 'Sanobar Jahan, CHATR Editor-in-Chief, Communication OS Editorial Lead',
+    title: 'Sanobar Jahan -- Founder, TalentXcel & CHATR | HR, Talent & Education Strategist',
+    description: 'Sanobar Jahan is Founder of TalentXcel & CHATR with 20+ years HR, talent, training, and education experience across Fortis, Reliance, Savantis, and Evolve Services. MBA (Jamia Hamdard), B.Ed, M.Sc, M.A., PhD (Pursuing).',
+    keywords: 'Sanobar Jahan, Founder TalentXcel, Founder CHATR, HR Strategist, Education Technology Leader',
     canonical: DOMAIN + '/authors/sanobar-jahan',
     schemas: [
       {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Sanobar Jahan',
-        jobTitle: 'Editor-in-Chief & Lead Content Strategist',
-        worksFor: { '@type': 'Organization', name: 'CHATR Communication OS' }
+        jobTitle: 'Founder, TalentXcel & CHATR | HR, Talent & Education Strategist',
+        worksFor: [
+          { '@type': 'Organization', name: 'TalentXcel', url: 'https://talentxcel.in' },
+          { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatrchat.in' }
+        ],
+        alumniOf: [
+          { '@type': 'EducationalOrganization', name: 'Jamia Hamdard' }
+        ],
+        hasCredential: [
+          'MBA (Human Resources & Marketing) - Jamia Hamdard',
+          'B.Ed (Bachelor of Education)',
+          'M.Sc (Chemistry)',
+          'M.A. (Education)',
+          'PhD in Education (Pursuing)'
+        ]
       }
     ]
   },
