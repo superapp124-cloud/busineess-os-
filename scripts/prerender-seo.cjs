@@ -769,6 +769,36 @@ const PUBLIC_SEO_PAGES = [
   }
 ];
 
+// Top Cities Programmatic Location Pages Generator (100 Location Pages)
+const TOP_CITIES_LIST = [
+  'Mumbai', 'Delhi-NCR', 'Bangalore', 'Hyderabad', 'Pune',
+  'Chennai', 'Kolkata', 'Ahmedabad', 'Surat', 'Jaipur',
+  'Lucknow', 'Chandigarh', 'Indore', 'Kochi', 'Coimbatore',
+  'Nagpur', 'Noida', 'Gurgaon', 'Thane', 'Navi-Mumbai'
+];
+
+const LOCATION_USE_CASES_LIST = [
+  { slug: 'recruitment-agencies', title: 'Recruitment & Staffing Agencies' },
+  { slug: 'whatsapp-business-api', title: 'WhatsApp Business API Solutions' },
+  { slug: 'hiring-automation', title: 'Hiring Automation & SLA Tracking' },
+  { slug: 'real-estate-lead-management', title: 'Real Estate Lead Management' },
+  { slug: 'healthcare-patient-messaging', title: 'Healthcare & Clinic Patient Messaging' }
+];
+
+TOP_CITIES_LIST.forEach(city => {
+  LOCATION_USE_CASES_LIST.forEach(uc => {
+    const slug = `/location/${uc.slug}-${city.toLowerCase()}`;
+    PUBLIC_SEO_PAGES.push({
+      path: slug,
+      title: `${uc.title} in ${city.replace('-', ' ')} -- CHATR & TalentXcel`,
+      description: `Deploy CHATR OS and TalentXcel in ${city.replace('-', ' ')}. Automate candidate screening, WhatsApp API lead triage, and response SLAs.`,
+      keywords: `${uc.slug} ${city}, whatsapp business ${city}, hiring automation ${city}`,
+      canonical: DOMAIN + slug,
+      schemas: []
+    });
+  });
+});
+
 function prerender() {
   const distDir = path.resolve(__dirname, '../dist');
   const indexHtmlPath = path.join(distDir, 'index.html');
