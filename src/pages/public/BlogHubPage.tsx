@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const BLOG_POSTS: BlogPost[] = [
     excerpt: 'When a customer messages your WhatsApp and gets no reply within 5 minutes, the conversation is likely over. Here is the operational reality behind lead loss and what a unified inbox changes.',
     readingMinutes: 6,
     category: 'messaging',
-    domain: 'chatr.chat',
+    domain: 'chatrchat.in',
     publishedAt: '2026-08-11',
     author: 'CHATR Team',
   },
@@ -30,7 +30,7 @@ const BLOG_POSTS: BlogPost[] = [
     excerpt: 'The average business owner switches between 8 communication apps daily. Each context switch costs focus time. A unified inbox is a multiplier on your team output.',
     readingMinutes: 5,
     category: 'messaging',
-    domain: 'chatr.chat',
+    domain: 'chatrchat.in',
     publishedAt: '2026-08-11',
     author: 'CHATR Team',
   },
@@ -40,7 +40,7 @@ const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Recruitment agencies using WhatsApp as a primary candidate channel face a real operational bottleneck: volume. Structured screening workflows separate agencies that scale from those that stall.',
     readingMinutes: 7,
     category: 'recruitment',
-    domain: 'talentxcel.in',
+    domain: 'chatrchat.in',
     publishedAt: '2026-08-11',
     author: 'TalentXcel Team',
   },
@@ -60,7 +60,7 @@ const BLOG_POSTS: BlogPost[] = [
     excerpt: 'A Communication OS is not a better CRM. It is not a smarter helpdesk. It is the system that manages how your business communicates across every channel, team, and customer in one place.',
     readingMinutes: 8,
     category: 'product',
-    domain: 'chatr.chat',
+    domain: 'chatrchat.in',
     publishedAt: '2026-08-11',
     author: 'CHATR Team',
   },

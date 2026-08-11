@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, Tag, ArrowRight } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'why-businesses-lose-whatsapp-leads',
     title: 'Why Indian Businesses Lose WhatsApp Leads (And How to Stop It)',
     metaDescription: 'The 5-minute rule is real: most WhatsApp leads go cold in under 5 minutes of silence. Learn the operational mechanics behind lead loss and how a unified inbox prevents it.',
-    canonicalDomain: 'https://chatr.chat',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Messaging and Inbox',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -48,7 +48,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'universal-inbox-vs-switching-apps',
     title: 'Universal Inbox vs Switching Between Apps: The Hidden Cost for Small Business Teams',
     metaDescription: 'Context switching between messaging apps is one of the most underestimated productivity drains in small business operations. Here is what the data says and what a universal inbox solves.',
-    canonicalDomain: 'https://chatr.chat',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Messaging and Inbox',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -74,7 +74,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'whatsapp-candidate-screening-recruitment',
     title: 'WhatsApp Candidate Screening: How Recruitment Agencies Handle High Applicant Volume',
     metaDescription: 'For recruitment agencies managing high applicant volumes, WhatsApp has become a primary candidate channel. Here is how structured WhatsApp screening workflows work in practice.',
-    canonicalDomain: 'https://talentxcel.in',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Recruitment and Hiring',
     author: 'TalentXcel Team',
     publishedAt: '2026-08-11',
@@ -126,7 +126,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'what-is-a-communication-os',
     title: 'What Is a Communication OS? How It Differs From a CRM, Helpdesk, and WhatsApp Business',
     metaDescription: 'A Communication OS manages how your entire business communicates -- not just your support tickets or sales records. Here is how it is different from a CRM, helpdesk, and WhatsApp Business.',
-    canonicalDomain: 'https://chatr.chat',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Product and Technology',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',

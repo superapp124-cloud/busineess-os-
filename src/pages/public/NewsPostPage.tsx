@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Calendar, Clock } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const NEWS_ARTICLES: NewsArticle[] = [
     slug: 'chatr-communication-os-launch',
     title: 'CHATR Launches Communication OS: A Unified Inbox for WhatsApp, Email and Business Messaging',
     metaDescription: 'CHATR has launched CHATR Communication OS, a unified business communication platform consolidating WhatsApp, email, and team messaging into one shared inbox with AI-assisted workflows.',
-    canonicalDomain: 'https://chatr.chat',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Product Launch',
     publishedAt: '2026-08-11',
     readingMinutes: 3,
@@ -43,7 +43,7 @@ const NEWS_ARTICLES: NewsArticle[] = [
     slug: 'talentxcel-whatsapp-screening-live',
     title: 'TalentXcel WhatsApp Candidate Screening Now Live for Recruitment Agencies',
     metaDescription: 'TalentXcel has enabled WhatsApp candidate screening for recruitment agencies, allowing structured multi-stage screening workflows to run through WhatsApp Business API with full team visibility.',
-    canonicalDomain: 'https://talentxcel.in',
+    canonicalDomain: 'https://chatrchat.in',
     category: 'Feature Release',
     publishedAt: '2026-08-11',
     readingMinutes: 2,

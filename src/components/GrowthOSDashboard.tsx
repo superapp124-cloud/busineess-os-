@@ -604,12 +604,12 @@ export const GrowthOSDashboard: React.FC = () => {
             { mission: '#010', property: 'ALL', slug: 'robots.txt', query: 'Technical SEO: GPTBot/ClaudeBot/anthropic-ai allowed', status: 'FIXED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
             { mission: '#011', property: 'chatrchat.in', slug: 'sitemap.xml', query: 'Sitemap cleaned: chatrchat.in + chatr.chat only (35 URLs). talentxcel.in in own repo.', status: 'UPDATED', publishDate: '2026-08-11', indexStatus: 'LIVE', quality: 100 },
             { mission: '#012', property: 'chatrchat.in', slug: '/blog', query: 'blog hub: messaging, recruitment, growth, product', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 82 },
-            { mission: '#013', property: 'chatr.chat', slug: '/blog/why-businesses-lose-whatsapp-leads', query: 'why businesses lose whatsapp leads', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
-            { mission: '#014', property: 'chatr.chat', slug: '/blog/universal-inbox-vs-switching-apps', query: 'universal inbox vs switching apps', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 79 },
+            { mission: '#013', property: 'chatrchat.in', slug: '/blog/why-businesses-lose-whatsapp-leads', query: 'why businesses lose whatsapp leads', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#014', property: 'chatrchat.in', slug: '/blog/universal-inbox-vs-switching-apps', query: 'universal inbox vs switching apps', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 79 },
             { mission: '#015', property: 'chatrchat.in', slug: '/blog/running-business-on-whatsapp-email-excel', query: 'running business on whatsapp email excel', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 78 },
-            { mission: '#016', property: 'chatr.chat', slug: '/blog/what-is-a-communication-os', query: 'what is a communication os', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#016', property: 'chatrchat.in', slug: '/blog/what-is-a-communication-os', query: 'what is a communication os', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
             { mission: '#017', property: 'chatrchat.in', slug: '/news', query: 'news hub: product launches and announcements', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 76 },
-            { mission: '#018', property: 'chatr.chat', slug: '/news/chatr-communication-os-launch', query: 'chatr communication os launch announcement', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 75 },
+            { mission: '#018', property: 'chatrchat.in', slug: '/news/chatr-communication-os-launch', query: 'chatr communication os launch announcement', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 75 },
           ].map((item) => (
             <div key={item.mission} className="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-indigo-400 font-bold w-12 shrink-0">M{item.mission}</span>
