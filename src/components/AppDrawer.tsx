@@ -24,39 +24,33 @@ interface App {
 }
 
 const apps: App[] = [
- // Communication
- { id: "chat", name: "Messages", icon: MessageSquare, route: "/chat", category: "communication", color: "from-blue-500 to-cyan-500", description: "Chat with friends", badge: 3 },
- { id: "calls", name: "Call History", icon: Phone, route: "/call-history", category: "communication", color: "from-green-500 to-emerald-500", description: "View call logs" },
- { id: "contacts", name: "Contacts", icon: Users, route: "/contacts", category: "communication", color: "from-purple-500 to-violet-500", description: "Manage contacts" },
- 
- // Health
- { id: "health", name: "Health Hub", icon: Heart, route: "/health-hub", category: "health", color: "from-red-500 to-pink-500", description: "Your health center" },
- { id: "passport", name: "Health Passport", icon: FileText, route: "/health-passport", category: "health", color: "from-pink-500 to-rose-500", description: "Medical records" },
- { id: "wellness", name: "Wellness", icon: TrendingUp, route: "/wellness-tracking", category: "health", color: "from-orange-500 to-red-500", description: "Track wellness" },
- 
- // Commerce
- { id: "marketplace", name: "Marketplace", icon: ShoppingBag, route: "/marketplace", category: "commerce", color: "from-purple-500 to-violet-500", description: "Shop online" },
- { id: "rewards", name: "Reward Shop", icon: Gift, route: "/reward-shop", category: "commerce", color: "from-yellow-500 to-orange-500", description: "Redeem rewards" },
- { id: "wallet", name: "Wallet", icon: Wallet, route: "/health-wallet", category: "commerce", color: "from-green-500 to-teal-500", description: "Your digital wallet" },
- 
- // Social
- { id: "communities", name: "Communities", icon: Users, route: "/communities", category: "social", color: "from-green-500 to-emerald-500", description: "Join groups" },
- { id: "stories", name: "Stories", icon: Camera, route: "/stories", category: "social", color: "from-pink-500 to-purple-500", description: "Share moments" },
- { id: "official", name: "Official Accounts", icon: Award, route: "/official-accounts", category: "social", color: "from-blue-500 to-indigo-500", description: "Follow brands" },
- 
- // Productivity
- { id: "miniapps", name: "Mini Apps", icon: Grid3x3, route: "/native-apps", category: "productivity", color: "from-orange-500 to-amber-500", description: "Discover apps" },
- { id: "growth", name: "Growth", icon: Zap, route: "/chatr-growth", category: "productivity", color: "from-yellow-500 to-orange-500", description: "Earn & learn" },
- { id: "points", name: "Points", icon: TrendingUp, route: "/chatr-points", category: "productivity", color: "from-purple-500 to-pink-500", description: "Your points" },
- 
- // Entertainment
- { id: "youth", name: "Youth Feed", icon: Video, route: "/youth-feed", category: "entertainment", color: "from-red-500 to-orange-500", description: "Trending content" },
- { id: "tutors", name: "Tutors", icon: BookOpen, route: "/chatr-tutors", category: "entertainment", color: "from-blue-500 to-cyan-500", description: "Learn new skills" },
- 
- // Tools
- { id: "settings", name: "Settings", icon: Settings, route: "/account", category: "tools", color: "from-gray-500 to-slate-500", description: "App settings" },
- { id: "notifications", name: "Notifications", icon: Bell, route: "/notifications", category: "tools", color: "from-indigo-500 to-blue-500", description: "Your alerts", badge: 5 },
- { id: "help", name: "Help", icon: HelpCircle, route: "/help", category: "tools", color: "from-cyan-500 to-blue-500", description: "Get support" },
+  // Core Business & Operations
+  { id: "customers", name: "Customers", icon: Users, route: "/contacts", category: "productivity", color: "from-blue-500 to-indigo-500", description: "Keep customer details together" },
+  { id: "automations", name: "Automations", icon: Zap, route: "/automations", category: "productivity", color: "from-amber-500 to-orange-500", description: "Automate repetitive tasks" },
+  { id: "connections", name: "Connections", icon: Grid3x3, route: "/connected-accounts", category: "productivity", color: "from-purple-500 to-violet-500", description: "Connect WhatsApp and email" },
+
+  // Communication
+  { id: "chat", name: "Messages", icon: MessageSquare, route: "/chat", category: "communication", color: "from-blue-500 to-cyan-500", description: "See all conversations", badge: 3 },
+  { id: "calls", name: "Call History", icon: Phone, route: "/call-history", category: "communication", color: "from-green-500 to-emerald-500", description: "View call logs" },
+
+  // Health
+  { id: "health", name: "Health Hub", icon: Heart, route: "/health-hub", category: "health", color: "from-red-500 to-pink-500", description: "Your health center" },
+  { id: "passport", name: "Health Passport", icon: FileText, route: "/health-passport", category: "health", color: "from-pink-500 to-rose-500", description: "Medical records" },
+  { id: "wellness", name: "Wellness", icon: TrendingUp, route: "/wellness-tracking", category: "health", color: "from-orange-500 to-red-500", description: "Track wellness" },
+
+  // Commerce
+  { id: "marketplace", name: "Marketplace", icon: ShoppingBag, route: "/marketplace", category: "commerce", color: "from-purple-500 to-violet-500", description: "Shop online" },
+  { id: "wallet", name: "Wallet", icon: Wallet, route: "/health-wallet", category: "commerce", color: "from-green-500 to-teal-500", description: "Your digital wallet" },
+
+  // Social
+  { id: "communities", name: "Communities", icon: Users, route: "/communities", category: "social", color: "from-green-500 to-emerald-500", description: "Join groups" },
+  { id: "stories", name: "Stories", icon: Camera, route: "/stories", category: "social", color: "from-pink-500 to-purple-500", description: "Share moments" },
+
+  // Tools & Security
+  { id: "security", name: "Security & Privacy", icon: Shield, route: "/privacy", category: "tools", color: "from-emerald-500 to-teal-500", description: "Privacy controls" },
+  { id: "settings", name: "Settings", icon: Settings, route: "/account", category: "tools", color: "from-gray-500 to-slate-500", description: "App settings" },
+  { id: "notifications", name: "Notifications", icon: Bell, route: "/notifications", category: "tools", color: "from-indigo-500 to-blue-500", description: "Your alerts" },
+  { id: "help", name: "Help", icon: HelpCircle, route: "/help", category: "tools", color: "from-cyan-500 to-blue-500", description: "Get support" },
 ];
 
 const categories = [

@@ -18,12 +18,12 @@ export default function Automations() {
 
  useEffect(() => {
  // Verify Event Bus Integration
- const unsubscribe = systemEventBus.subscribe(BusinessEvents.WORKFLOW_TRIGGERED, (payload) => {
- toast({
- title: 'Workflow Engine Triggered',
- description: `Running automation for: ${payload.name}`,
- });
- });
+    const unsubscribe = systemEventBus.subscribe(BusinessEvents.WORKFLOW_TRIGGERED, (payload) => {
+      toast({
+        title: 'Task started',
+        description: `${payload.name} is running`,
+      });
+    });
 
  return () => unsubscribe();
  }, [toast]);

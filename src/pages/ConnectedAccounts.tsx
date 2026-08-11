@@ -90,7 +90,7 @@ export default function ConnectedAccounts() {
  await openProviderLogin(provider);
  toast({
  title: `${provider.name} opened in browser`,
- description: 'Complete login in your browser. Real OAuth connection will be wired in the next provider step.',
+ description: 'Complete sign-in in your browser, then return to CHATR.',
  });
  } catch (err) {
  toast({

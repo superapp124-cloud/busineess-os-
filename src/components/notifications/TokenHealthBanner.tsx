@@ -33,7 +33,7 @@ export const TokenHealthBanner = ({ userId }: Props) => {
  <ShieldAlert className="h-4 w-4" />
  <AlertTitle>Notifications are paused</AlertTitle>
  <AlertDescription className="space-y-3">
- <p>Your device token is invalid. Re-register to start receiving push notifications again.</p>
+ <p>Notifications aren't reaching this device right now. Turn on notifications to stay updated.</p>
  <Button asChild size="sm" variant="outline">
  <Link to="/notifications/health">Fix Now</Link>
  </Button>

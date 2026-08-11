@@ -130,10 +130,10 @@ export const OnboardingDialog = ({ isOpen, userId, onComplete, onSkip }: Onboard
  <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border-white/20 shadow-2xl p-0 overflow-hidden hide-scrollbar">
  <DialogHeader className="p-6 pb-2 text-center">
  <DialogTitle className="text-page font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
- Profile info
+ Welcome to CHATR
  </DialogTitle>
  <p className="text-secondary text-muted-foreground mt-2">
- Please provide your name and an optional profile photo
+ Let's set up your profile to get started
  </p>
  </DialogHeader>
 

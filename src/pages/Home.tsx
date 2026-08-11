@@ -190,7 +190,7 @@ const Home = memo(() => {
  <div className="absolute left-0 right-0 z-40 mt-2 rounded-[22px] border border-slate-100 bg-white/96 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-xl animate-in fade-in slide-in-from-top-3 duration-200">
  <div className="flex items-center gap-2 mb-3">
  <Sparkles className="h-3.5 w-3.5 text-[#5c22ff]" />
- <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">AI Intent Parser</span>
+ <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">Search Suggestions</span>
  </div>
  {searchQuery.trim() === '' ? (
  <div className="space-y-1.5">

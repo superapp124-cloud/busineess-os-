@@ -26,7 +26,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary, context }: ErrorFallb
  <Alert variant="destructive" className="border-2">
  <AlertTriangle className="h-5 w-5" />
  <AlertTitle className="text-section font-bold">
- {context ? `Error in ${context}` : 'Something went wrong'}
+ Something went wrong
  </AlertTitle>
  <AlertDescription className="mt-2 space-y-2">
  <p className="text-secondary">

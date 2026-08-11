@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, MessageCircle, Shield, LayoutGrid, User } from 'lucide-react';
+import { Home, MessageCircle, Sparkles, Briefcase, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Capacitor } from '@capacitor/core';
 import type { PluginListenerHandle } from '@capacitor/core';
@@ -10,14 +10,15 @@ import { prefetchRoute } from '@/routes/lazyPages';
 import { useInstantCache } from '@/hooks/useInstantCache';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UI_COPY } from '@/constants/copy';
 
-// Ecosystem Architecture: Home | Chats | Shield | Services | Me
+// Primary Navigation: Home | Messages | AI | Business | Me
 const navItems = [
- { name: 'Home', path: '/home', icon: Home, id: 'nav-home' },
- { name: 'Chats', path: '/chat', icon: MessageCircle, id: 'nav-chats' },
- { name: 'Shield', path: '/chatr-shield', icon: Shield, id: 'nav-shield', isShield: true },
- { name: 'Services', path: '/more', icon: LayoutGrid, id: 'nav-services' },
- { name: 'Me', path: '/profile', icon: User, id: 'nav-me', isMe: true },
+  { name: UI_COPY.navigation.home, path: '/home', icon: Home, id: 'nav-home' },
+  { name: UI_COPY.navigation.messages, path: '/chat', icon: MessageCircle, id: 'nav-messages' },
+  { name: UI_COPY.navigation.ai, path: '/ai-assistant', icon: Sparkles, id: 'nav-ai', isAi: true },
+  { name: UI_COPY.navigation.business, path: '/dhandha', icon: Briefcase, id: 'nav-business' },
+  { name: UI_COPY.navigation.me, path: '/profile', icon: User, id: 'nav-me', isMe: true },
 ];
 
 export const BottomNav = () => {
@@ -139,11 +140,11 @@ export const BottomNav = () => {
  (item.path === '/chat' && location.pathname.startsWith('/chat'));
 
  const Icon = item.icon;
- const isShieldTab = (item as any).isShield;
+ const isAiTab = (item as any).isAi;
  const isMeTab = (item as any).isMe;
 
- // ── Shield Tab — elevated hero button ──────────────────
- if (isShieldTab) {
+ // ── AI Tab — elevated hero button ──────────────────
+ if (isAiTab) {
  return (
  <NavLink
  key={item.path}
@@ -155,10 +156,10 @@ export const BottomNav = () => {
  className="relative flex flex-col items-center justify-center -mt-5"
  style={{ WebkitTapHighlightColor: 'transparent' }}
  >
- {/* Elevated Shield pill */}
+ {/* Elevated AI pill */}
  <div className={cn(
  'relative flex h-14 w-14 items-center justify-center rounded-[22px]',
- 'bg-gradient-to-br from-[#0d1117] via-[#1a1f2e] to-[#0f1729]',
+ 'bg-gradient-to-br from-[#5c22ff] via-[#8b5cf6] to-[#4c1d95]',
  'transition-all duration-300',
  isActive
  ? 'shadow-[0_8px_28px_rgba(92,34,255,0.50)]'
@@ -169,40 +170,27 @@ export const BottomNav = () => {
  <>
  <span className="absolute inset-[-3px] rounded-[25px] border border-primary/25 animate-ping"
  style={{ animationDuration: '2.5s' }} />
- <span className="absolute inset-[-7px] rounded-[29px] border border-emerald-500/10 animate-ping"
+ <span className="absolute inset-[-7px] rounded-[29px] border border-purple-400/20 animate-ping"
  style={{ animationDuration: '3.8s' }} />
  </>
  )}
 
- <Shield
+ <Sparkles
  className={cn(
- 'h-6 w-6 transition-all duration-300',
+ 'h-6 w-6 transition-all duration-300 text-white',
  isActive
- ? 'text-primary drop-shadow-[0_0_10px_rgba(139,92,246,0.9)]'
- : 'text-slate-300'
+ ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]'
+ : 'opacity-90'
  )}
  strokeWidth={isActive ? 2.5 : 2}
  />
-
- {/* Live green dot */}
- <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center">
- <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
- <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 m-auto" />
- </span>
-
- {/* Spam count badge */}
- {spamBlocked > 0 && (
- <span className="absolute -left-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-black text-white ring-1 ring-white">
- {spamBlocked > 99 ? '99+' : spamBlocked}
- </span>
- )}
  </div>
 
  <span className={cn(
  'mt-1.5 text-[9px] font-black uppercase tracking-[0.06em] transition-colors duration-300',
  isActive ? 'text-[#5c22ff]' : 'text-black/40'
  )}>
- Shield
+ {UI_COPY.navigation.ai}
  </span>
  </NavLink>
  );

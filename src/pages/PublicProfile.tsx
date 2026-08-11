@@ -11,6 +11,7 @@ import { TrustScoreBadge } from '@/components/TrustScoreBadge';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPublicProfileUrl, normalizePublicHandle } from '@/lib/profileLinks';
+import NotFound from '@/pages/NotFound';
 
 const PublicProfile = () => {
  const { handle } = useParams<{ handle: string }>();
@@ -176,13 +177,7 @@ const PublicProfile = () => {
  }
 
  if (!profile) {
- return (
- <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
- <h2 className="text-workspace font-bold mb-2">Profile Not Found</h2>
- <p className="text-muted-foreground text-secondary mb-4">@{normalizedHandle || handle} doesn't exist on CHATR</p>
- <Button onClick={() => navigate('/')}>Go Home</Button>
- </div>
- );
+ return <NotFound />;
  }
 
  return (

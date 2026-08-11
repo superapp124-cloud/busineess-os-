@@ -278,13 +278,13 @@ export default function AIAgents() {
  </div>
  <div>
  <h1 className="text-display sm:text-display bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
- Chatr AI Agent
+ AI Assistants
  </h1>
- <p className="text-secondary text-muted-foreground">Powered by Lovable AI</p>
+ <p className="text-secondary text-muted-foreground">Your personal AI assistants</p>
  </div>
  </div>
  <p className="text-muted-foreground max-w-2xl">
- Create your AI twin that works 24/7 • Auto-replies • Manages conversations • Helps customers • Grows your business
+ Create an AI assistant that works 24/7 • Auto-replies • Manages conversations • Helps customers • Grows your business
  </p>
  </div>
 
@@ -292,17 +292,17 @@ export default function AIAgents() {
  <DialogTrigger asChild>
  <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90">
  <Sparkles className="h-5 w-5" />
- Create AI Agent
+ Create AI Assistant
  </Button>
  </DialogTrigger>
  <DialogContent className="max-w-2xl max-h-[90vh]">
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2 text-workspace">
  <Bot className="h-6 w-6 text-primary" />
- Create Your Chatr AI Agent
+ Create Your AI Assistant
  </DialogTitle>
  <DialogDescription>
- Build an AI version of yourself that chats, helps, and works 24/7
+ Build an AI assistant that chats, helps, and works 24/7
  </DialogDescription>
  </DialogHeader>
  <ScrollArea className="max-h-[calc(90vh-120px)] pr-4">
@@ -311,7 +311,7 @@ export default function AIAgents() {
  {/* Name */}
  <div className="space-y-2">
  <Label className="text-secondary font-semibold flex items-center gap-1">
- Agent Name <span className="text-destructive">*</span>
+ Assistant Name <span className="text-destructive">*</span>
  </Label>
  <Input
  placeholder="e.g., AI Arshid, AI Shop Bot, Dr. Assistant"

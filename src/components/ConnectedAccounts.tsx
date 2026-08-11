@@ -83,7 +83,7 @@ export const ConnectedAccounts = () => {
         <CardHeader>
           <CardTitle className="text-section flex items-center gap-2">
             <Shield className="w-5 h-5 text-purple-500" />
-            Identity & Connected Services
+            Connections
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -101,7 +101,7 @@ export const ConnectedAccounts = () => {
       <CardHeader>
         <CardTitle className="text-section flex items-center gap-2 text-white">
           <Shield className="w-5 h-5 text-purple-400" />
-          Identity & Connected Services
+          Connections
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

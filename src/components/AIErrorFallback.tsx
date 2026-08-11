@@ -16,25 +16,25 @@ export function AIErrorFallback({
  title = "AI Assistant Unavailable",
  message 
 }: AIErrorFallbackProps) {
- const getErrorMessage = () => {
- if (message) return message;
- 
- const errorStr = typeof error === 'string' ? error : error?.message || '';
- 
- if (errorStr.includes('429') || errorStr.includes('rate limit')) {
- return 'The AI service is experiencing high demand. Please try again in a few moments.';
- }
- 
- if (errorStr.includes('402') || errorStr.includes('payment')) {
- return 'AI service credits are needed. Please contact support or try again later.';
- }
- 
- if (errorStr.includes('network') || errorStr.includes('fetch')) {
- return 'Unable to connect to the AI service. Please check your internet connection.';
- }
- 
- return 'The AI assistant is temporarily unavailable. You can still use other features.';
- };
+  const getErrorMessage = () => {
+    if (message) return message;
+    
+    const errorStr = typeof error === 'string' ? error : error?.message || '';
+    
+    if (errorStr.includes('429') || errorStr.includes('rate limit')) {
+      return 'CHATR AI is receiving high demand right now. Please try again in a moment.';
+    }
+    
+    if (errorStr.includes('402') || errorStr.includes('payment')) {
+      return 'AI service credits are needed. Please contact support or try again later.';
+    }
+    
+    if (errorStr.includes('network') || errorStr.includes('fetch')) {
+      return 'Unable to connect right now. Please check your internet connection and try again.';
+    }
+    
+    return "That service isn't responding right now. Please try again in a moment.";
+  };
 
  return (
  <Card className="p-6 bg-muted/50 border-muted">

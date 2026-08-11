@@ -149,14 +149,14 @@ export default function Automations() {
  };
 
  const deleteRule = async (ruleId: string) => {
- if (!confirm('Are you sure you want to delete this workflow?')) return;
+ if (!confirm('Are you sure you want to delete this automated task?')) return;
  try {
  const { error } = await supabase.from('automation_rules').delete().eq('id', ruleId);
  if (error) throw error;
  setRules(prev => prev.filter(r => r.id !== ruleId));
- toast.success('Workflow deleted');
+ toast.success('Task deleted');
  } catch (err) {
- toast.error('Failed to delete workflow');
+ toast.error('Failed to delete task');
  }
  };
 
@@ -198,7 +198,7 @@ export default function Automations() {
  <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
  <Zap className="w-4 h-4 text-blue-600" />
  </div>
- <h1 className="text-section font-bold text-gray-900">Automation Engine</h1>
+ <h1 className="text-section font-bold text-gray-900">Automations</h1>
  </div>
 
  <div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ export default function Automations() {
  type="text" 
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- placeholder="Search workflows, templates..." 
+ placeholder="Search automated tasks..." 
  className="w-full h-12 bg-white rounded-full pl-12 pr-12 text-[15px] font-medium shadow-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#5c22ff]/20"
  />
  {searchQuery && (

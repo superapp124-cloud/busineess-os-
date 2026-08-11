@@ -580,7 +580,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  {/* Desktop Platform Routes */}
   <Route path="/desktop">
   {/* Desktop Execution OS & Chief of Staff Home */}
-  <Route element={<DesktopLayout />}>
+  <Route element={<ProtectedRoute><DesktopLayout /></ProtectedRoute>}>
   <Route index element={<Navigate to="home" replace />} />
   <Route path="home" element={<Suspense fallback={<PageLoader message="Loading Home..." />}><ChiefOfStaffHome /></Suspense>} />
   <Route path="inbox" element={<ProtectedLazyRoute component={UniversalInbox} />} />
