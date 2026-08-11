@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, BarChart3, Database, FileSpreadsheet, ShieldCheck, Quote, Copy, Check } from 'lucide-react';
 import { RESEARCH_REPORTS } from '@/data/researchReportsData';
@@ -11,7 +11,7 @@ export const ResearchReportPage: React.FC = () => {
 
   useEffect(() => {
     if (!report) return;
-    document.title = ${report.title} — CHATR & TalentXcel Research;
+    document.title = `${report.title} — CHATR & TalentXcel Research`;
 
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
@@ -19,7 +19,7 @@ export const ResearchReportPage: React.FC = () => {
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', https://chatrchat.in);
+    canonical.setAttribute('href', `https://chatrchat.in${report.path}`);
 
     const scholarlySchema = {
       '@context': 'https://schema.org',

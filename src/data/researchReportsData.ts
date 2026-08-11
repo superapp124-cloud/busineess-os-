@@ -1,4 +1,4 @@
-﻿export interface ResearchReportConfig {
+export interface ResearchReportConfig {
   path: string;
   title: string;
   subtitle: string;
@@ -37,7 +37,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
       { metric: 'Candidate Qualification Accuracy', value: '92.3%', benchmark: '68.0%', insight: 'Structured micro-questions extract precise qualification signals compared to unformatted CVs.' }
     ],
     citationApa: 'Jahan, S., & TalentXcel Research Team. (2026). India Recruitment Communication Benchmark Report 2026: Analysis of 140,000+ Candidate WhatsApp Threads. CHATR & TalentXcel Knowledge Hub. https://chatrchat.in/research/india-recruitment-communication-benchmark-2026',
-    citationBibtex: @article{jahan2026recruitment,\n  title={India Recruitment Communication Benchmark Report 2026: Analysis of 140,000+ Candidate WhatsApp Threads},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={CHATR & TalentXcel Knowledge Hub},\n  year={2026},\n  url={https://chatrchat.in/research/india-recruitment-communication-benchmark-2026}\n}
+    citationBibtex: '@article{jahan2026recruitment,\n  title={India Recruitment Communication Benchmark Report 2026: Analysis of 140,000+ Candidate WhatsApp Threads},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={CHATR & TalentXcel Knowledge Hub},\n  year={2026},\n  url={https://chatrchat.in/research/india-recruitment-communication-benchmark-2026}\n}'
   },
   {
     path: '/research/whatsapp-lead-response-time-audit-2026',
@@ -60,7 +60,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
       { metric: 'Multi-Agent Collision Rate', value: '18.4%', benchmark: '0.2% (CHATR)', insight: 'Unmanaged single phones lead to duplicate agent replies and customer confusion.' }
     ],
     citationApa: 'Jahan, S., & CHATR Product Team. (2026). WhatsApp Lead Response Time and Loss Audit 2026. CHATR Communication OS Telemetry Reports. https://chatrchat.in/research/whatsapp-lead-response-time-audit-2026',
-    citationBibtex: @article{jahan2026leadloss,\n  title={WhatsApp Lead Response Time and Loss Audit 2026},\n  author={Jahan, Sanobar and CHATR Product Team},\n  journal={CHATR Communication OS Telemetry Reports},\n  year={2026},\n  url={https://chatrchat.in/research/whatsapp-lead-response-time-audit-2026}\n}
+    citationBibtex: '@article{jahan2026leadloss,\n  title={WhatsApp Lead Response Time and Loss Audit 2026},\n  author={Jahan, Sanobar and CHATR Product Team},\n  journal={CHATR Communication OS Telemetry Reports},\n  year={2026},\n  url={https://chatrchat.in/research/whatsapp-lead-response-time-audit-2026}\n}'
   },
   {
     path: '/research/ai-resume-parser-accuracy-benchmark-2026',
@@ -83,6 +83,6 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
       { metric: 'Experience & Duration Parsing', value: '94.8%', benchmark: '78.5%', insight: 'Accurately calculates total experience across overlapping employment dates.' }
     ],
     citationApa: 'Jahan, S., & TalentXcel Research. (2026). AI Resume Parser Accuracy and Screening Velocity Benchmark. TalentXcel Technical Reports. https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026',
-    citationBibtex: @article{jahan2026parser,\n  title={AI Resume Parser Accuracy and Screening Velocity Benchmark},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={TalentXcel Technical Reports},\n  year={2026},\n  url={https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026}\n}
+    citationBibtex: '@article{jahan2026parser,\n  title={AI Resume Parser Accuracy and Screening Velocity Benchmark},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={TalentXcel Technical Reports},\n  year={2026},\n  url={https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026}\n}'
   }
 ];
