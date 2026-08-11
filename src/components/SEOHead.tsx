@@ -18,7 +18,7 @@ interface SEOHeadProps {
  breadcrumbList?: Array<{ name: string; url: string }>;
 }
 
-const BASE_URL = 'https://chatrchat.in';
+const BASE_URL = 'https://www.chatrchat.in';
 
 export const SEOHead = ({
  title = 'CHATR Communication OS — Universal AI Business Messaging',

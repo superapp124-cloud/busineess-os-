@@ -22,7 +22,7 @@ export const LocationPillarPage: React.FC = () => {
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', `https://chatrchat.in${pageConfig.path}`);
+    canonical.setAttribute('href', `https://www.chatrchat.in${pageConfig.path}`);
 
     // GEO: Service schema — areaServed + serviceType enable RAG vectorization
     const serviceSchema = {
@@ -35,16 +35,16 @@ export const LocationPillarPage: React.FC = () => {
       provider: {
         '@type': 'Organization',
         name: 'CHATR Communication OS',
-        url: 'https://chatrchat.in',
-        logo: 'https://chatrchat.in/icons/logo.png'
+        url: 'https://www.chatrchat.in',
+        logo: 'https://www.chatrchat.in/icons/logo.png'
       },
-      url: `https://chatrchat.in${pageConfig.path}`,
+      url: `https://www.chatrchat.in${pageConfig.path}`,
       offers: {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
-        url: 'https://chatrchat.in/auth'
+        url: 'https://www.chatrchat.in/auth'
       }
     };
 
@@ -57,12 +57,12 @@ export const LocationPillarPage: React.FC = () => {
         '@type': 'Person',
         name: 'Sanobar Jahan',
         jobTitle: 'Founder, TalentXcel & CHATR',
-        url: 'https://chatrchat.in/authors/sanobar-jahan'
+        url: 'https://www.chatrchat.in/authors/sanobar-jahan'
       },
       publisher: {
         '@type': 'Organization',
         name: 'CHATR Communication OS',
-        url: 'https://chatrchat.in'
+        url: 'https://www.chatrchat.in'
       },
       datePublished: '2026-08-11',
       dateModified: '2026-08-11'
@@ -82,9 +82,9 @@ export const LocationPillarPage: React.FC = () => {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://chatrchat.in' },
-        { '@type': 'ListItem', position: 2, name: 'Location Directory', item: 'https://chatrchat.in#locations' },
-        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://chatrchat.in${pageConfig.path}` }
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.chatrchat.in' },
+        { '@type': 'ListItem', position: 2, name: 'Location Directory', item: 'https://www.chatrchat.in/locations' },
+        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://www.chatrchat.in${pageConfig.path}` }
       ]
     };
 

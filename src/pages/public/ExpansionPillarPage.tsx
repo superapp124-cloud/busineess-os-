@@ -22,7 +22,7 @@ export const ExpansionPillarPage: React.FC = () => {
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', `https://chatrchat.in${pageConfig.path}`);
+    canonical.setAttribute('href', `https://www.chatrchat.in${pageConfig.path}`);
 
     const articleSchema = {
       '@context': 'https://schema.org',
@@ -33,12 +33,12 @@ export const ExpansionPillarPage: React.FC = () => {
         '@type': 'Person',
         name: 'Sanobar Jahan',
         jobTitle: 'Founder, TalentXcel & CHATR',
-        url: 'https://chatrchat.in/authors/sanobar-jahan'
+        url: 'https://www.chatrchat.in/authors/sanobar-jahan'
       },
       publisher: {
         '@type': 'Organization',
         name: 'CHATR Communication OS',
-        url: 'https://chatrchat.in'
+        url: 'https://www.chatrchat.in'
       },
       datePublished: '2026-08-11',
       dateModified: '2026-08-11'
@@ -58,9 +58,9 @@ export const ExpansionPillarPage: React.FC = () => {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://chatrchat.in' },
-        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: `https://chatrchat.in#${pageConfig.category.toLowerCase()}` },
-        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://chatrchat.in${pageConfig.path}` }
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.chatrchat.in' },
+        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: `https://www.chatrchat.in#${pageConfig.category.toLowerCase()}` },
+        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://www.chatrchat.in${pageConfig.path}` }
       ]
     };
 

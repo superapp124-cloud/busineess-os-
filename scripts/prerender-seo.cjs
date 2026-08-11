@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOMAIN = 'https://chatrchat.in';
+const DOMAIN = 'https://www.chatrchat.in';
 
 const PUBLIC_SEO_PAGES = [
   {

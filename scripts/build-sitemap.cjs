@@ -20,7 +20,7 @@ const slugify = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-
 let locXml = '<!-- PROGRAMMATIC LOCATION EXPANSION MATRIX -->\n';
 
 // 1. Global Locations Hub
-locXml += `  <url><loc>https://chatrchat.in/locations</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n`;
+locXml += `  <url><loc>https://www.chatrchat.in/locations</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n`;
 
 // 2. City Hubs
 const seenCityHubs = new Set();
@@ -29,13 +29,13 @@ TOP_CITIES.forEach(c => {
   const hubPath = `/locations/${citySlug}`;
   if (!seenCityHubs.has(hubPath)) {
     seenCityHubs.add(hubPath);
-    locXml += `  <url><loc>https://chatrchat.in${hubPath}</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+    locXml += `  <url><loc>https://www.chatrchat.in${hubPath}</loc><lastmod>2026-08-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
   }
 });
 
 // 3. Vertical Location Pillar Pages
 LOCATION_EXPANSION_PAGES.forEach(p => {
-  locXml += `  <url><loc>https://chatrchat.in${p.path}</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>\n`;
+  locXml += `  <url><loc>https://www.chatrchat.in${p.path}</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>\n`;
 });
 locXml += '\n  ';
 

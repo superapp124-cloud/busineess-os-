@@ -1,8 +1,7 @@
 # CHATR Business OS — robots.txt
-# Updated: 2026-08-11 | GEO v3 — Full AI Crawler Permissions
-# Properties: chatrchat.in | chatr.chat | talentxcel.in
-# Architecture: 17,589 pre-rendered static HTML pages (zero JS execution required)
-# Strategy: Allow all AI search engines to index full programmatic SEO graph
+# Updated: 2026-08-11 | GEO v3 & Canonical Host Alignment (www.chatrchat.in)
+# Primary Production Domain: https://www.chatrchat.in
+# Architecture: 19,340 pre-rendered static HTML pages (zero JS execution required)
 
 # ============================================================
 # GOOGLE — Primary Search & Gemini AI Overviews
@@ -214,12 +213,12 @@ Disallow: /onboarding
 Disallow: /account
 
 # ============================================================
-# SITEMAP DECLARATIONS — All three canonical domains
+# SITEMAP DECLARATIONS — Canonical Domain Alignment
 # ============================================================
 
-Sitemap: https://chatrchat.in/sitemap.xml
+Sitemap: https://www.chatrchat.in/sitemap.xml
 Sitemap: https://chatr.chat/sitemap.xml
 Sitemap: https://talentxcel.in/sitemap.xml
 
 # llms.txt — AI Agent Documentation Index
-# https://chatrchat.in/llms.txt
+# https://www.chatrchat.in/llms.txt
