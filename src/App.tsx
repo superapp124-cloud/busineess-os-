@@ -117,6 +117,8 @@ const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPil
 const ResearchReportPage = React.lazy(() => import("./pages/public/ResearchReportPage").then(m => ({ default: m.ResearchReportPage })));
 const ResearchMediaKitPage = React.lazy(() => import("./pages/public/ResearchMediaKitPage").then(m => ({ default: m.ResearchMediaKitPage })));
 const LocationPillarPage = React.lazy(() => import("./pages/public/LocationPillarPage").then(m => ({ default: m.LocationPillarPage })));
+const LocationsHubPage = React.lazy(() => import("./pages/public/LocationsHubPage").then(m => ({ default: m.LocationsHubPage })));
+const CityHubPage = React.lazy(() => import("./pages/public/CityHubPage").then(m => ({ default: m.CityHubPage })));
 
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
@@ -846,6 +848,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/research/whatsapp-lead-response-time-audit-2026" element={<LazyRoute component={ResearchReportPage} />} />
   <Route path="/research/ai-resume-parser-accuracy-benchmark-2026" element={<LazyRoute component={ResearchReportPage} />} />
   <Route path="/research/media-kit" element={<LazyRoute component={ResearchMediaKitPage} />} />
+  <Route path="/locations" element={<LazyRoute component={LocationsHubPage} />} />
+  <Route path="/location-directory" element={<LazyRoute component={LocationsHubPage} />} />
+  <Route path="/locations/:citySlug" element={<LazyRoute component={CityHubPage} />} />
   <Route path="/location/:slug" element={<LazyRoute component={LocationPillarPage} />} />
 
 

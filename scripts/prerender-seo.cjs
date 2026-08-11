@@ -769,8 +769,37 @@ const PUBLIC_SEO_PAGES = [
   }
 ];
 
+// Global Locations Hub Directory
+PUBLIC_SEO_PAGES.push({
+  path: '/locations',
+  title: 'Global Locations Directory -- CHATR Communication OS & TalentXcel',
+  description: 'Explore CHATR OS and TalentXcel availability across 1,750+ cities globally. WhatsApp Business API multi-agent team inboxes, automated recruitment screening, and response SLA tracking.',
+  keywords: 'CHATR locations directory, global whatsapp api locations, talentxcel cities',
+  canonical: DOMAIN + '/locations',
+  schemas: []
+});
+
 // Programmatic Location Pages Generator (Middle East, GCC, SEA, NA & India Regional Hubs)
-const { LOCATION_EXPANSION_PAGES } = require('../src/data/locationExpansionData.ts');
+const { LOCATION_EXPANSION_PAGES, TOP_CITIES } = require('../src/data/locationExpansionData.ts');
+
+const slugify = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+const seenCityHubs = new Set();
+TOP_CITIES.forEach(c => {
+  const citySlug = slugify(c.city);
+  const hubPath = `/locations/${citySlug}`;
+  if (!seenCityHubs.has(hubPath)) {
+    seenCityHubs.add(hubPath);
+    PUBLIC_SEO_PAGES.push({
+      path: hubPath,
+      title: `${c.city} Solutions Hub -- WhatsApp API & Recruitment | CHATR & TalentXcel`,
+      description: `Deploy CHATR OS and TalentXcel in ${c.city}, ${c.state}. Access 10 specialized industry solutions including WhatsApp Business API, candidate screening, real estate lead management, and healthcare patient messaging.`,
+      keywords: `CHATR ${c.city}, WhatsApp Business API ${c.city}, candidate screening ${c.city}`,
+      canonical: DOMAIN + hubPath,
+      schemas: []
+    });
+  }
+});
 
 LOCATION_EXPANSION_PAGES.forEach(locPage => {
   PUBLIC_SEO_PAGES.push({

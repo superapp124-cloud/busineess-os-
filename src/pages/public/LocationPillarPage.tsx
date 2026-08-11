@@ -148,9 +148,17 @@ export const LocationPillarPage: React.FC = () => {
       <main className="max-w-3xl mx-auto px-4 py-12 space-y-12">
         {/* GEO: TL;DR block — first 150 words surfaced to AI crawlers (GPTBot, PerplexityBot, ClaudeBot) */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{pageConfig.city} Regional Hub • {pageConfig.stateRegion}</span>
+          <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold flex-wrap">
+            <Link to="/locations" className="hover:underline flex items-center gap-1 text-slate-400 hover:text-white">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Locations Directory</span>
+            </Link>
+            <span className="text-slate-600">/</span>
+            <Link to={`/locations/${pageConfig.city.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')}`} className="hover:underline text-indigo-300 font-bold">
+              {pageConfig.city} City Hub
+            </Link>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400">{pageConfig.stateRegion}</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{pageConfig.h1}</h1>
 
