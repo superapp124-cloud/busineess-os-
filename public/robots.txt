@@ -12,7 +12,8 @@ Allow: /
 Disallow: /desktop/
 Disallow: /admin/
 Disallow: /auth
-Disallow: /chat
+Disallow: /chat$
+Disallow: /chat/
 Disallow: /contacts
 Disallow: /settings
 Disallow: /notifications
@@ -202,7 +203,8 @@ Allow: /
 Disallow: /desktop/
 Disallow: /admin/
 Disallow: /auth
-Disallow: /chat
+Disallow: /chat$
+Disallow: /chat/
 Disallow: /contacts
 Disallow: /settings
 Disallow: /notifications
