@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, BarChart3, Database, FileSpreadsheet, ShieldCheck, Quote, Copy, Check, Lock, Layers, Zap, Download } from 'lucide-react';
+import { ArrowLeft, BarChart3, ShieldCheck, Quote, Copy, Check, Lock, Layers, Zap, Download, AlertTriangle, Info, GitBranch, Calendar } from 'lucide-react';
 import { RESEARCH_REPORTS } from '../../data/researchReportsData';
 import { AUTHORS } from '../../data/authorsData';
 
@@ -27,7 +27,7 @@ export const ResearchReportPage: React.FC = () => {
       headline: report.title,
       description: report.description,
       datePublished: report.publishDate,
-      identifier: report.doi,
+      identifier: report.researchId,
       author: {
         '@type': 'Person',
         name: 'Sanobar Jahan',
@@ -77,19 +77,26 @@ export const ResearchReportPage: React.FC = () => {
           <Link to="/" className="flex items-center gap-2 font-bold text-sm text-slate-300 hover:text-white">
             <ArrowLeft className="w-4 h-4" /> CHATR & TalentXcel Research Lab
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full font-semibold">
-              DOI: {report.doi}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-md font-semibold">
+              ID: {report.researchId}
+            </span>
+            <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">
+              {report.doiStatus}
             </span>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-12 space-y-12">
-        {/* Title & Metadata */}
+        {/* Title, Version & Metadata */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold uppercase tracking-wider">
-            <BarChart3 className="w-4 h-4" /> Published {report.publishDate} • {report.author}
+          <div className="flex flex-wrap items-center gap-3 text-xs text-indigo-400 font-semibold">
+            <span className="flex items-center gap-1"><BarChart3 className="w-3.5 h-3.5" /> Published {report.publishDate}</span>
+            <span>•</span>
+            <span className="flex items-center gap-1"><GitBranch className="w-3.5 h-3.5 text-emerald-400" /> {report.version}</span>
+            <span>•</span>
+            <span className="flex items-center gap-1 text-slate-400"><Calendar className="w-3.5 h-3.5" /> {report.nextUpdateDate}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">{report.title}</h1>
           <p className="text-lg text-slate-300 leading-relaxed font-light">{report.subtitle}</p>
@@ -97,13 +104,15 @@ export const ResearchReportPage: React.FC = () => {
 
         {/* Formal Scientific Methodology Standard Box */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-2">
             <div className="flex items-center gap-2 text-sm font-bold text-indigo-400 uppercase tracking-wider">
               <ShieldCheck className="w-5 h-5 text-indigo-400" /> Formal Research Methodology Standard
             </div>
-            <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-              {report.confidenceIntervals}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                {report.confidenceIntervals}
+              </span>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 text-xs">
@@ -116,11 +125,15 @@ export const ResearchReportPage: React.FC = () => {
               <p className="font-mono text-slate-200">{report.collectionPeriod}</p>
             </div>
             <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Geographic Distribution</span>
+              <span className="text-slate-400 font-semibold uppercase tracking-wider">Geographic Scope</span>
               <p className="text-slate-300 leading-relaxed">{report.geography}</p>
             </div>
             <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Inclusion Criteria</span>
+              <span className="text-slate-400 font-semibold uppercase tracking-wider">Statistical Method</span>
+              <p className="text-slate-300 leading-relaxed font-mono">{report.statisticalTestUsed}</p>
+            </div>
+            <div className="space-y-1.5 md:col-span-2">
+              <span className="text-slate-400 font-semibold uppercase tracking-wider">Inclusion & Selection Criteria</span>
               <p className="text-slate-300 leading-relaxed">{report.inclusionCriteria}</p>
             </div>
           </div>
@@ -131,6 +144,15 @@ export const ResearchReportPage: React.FC = () => {
               <span className="font-bold text-white">Anonymization & Privacy Protocol:</span>
               <p className="text-slate-400 leading-relaxed">{report.anonymizationProtocol}</p>
             </div>
+          </div>
+        </section>
+
+        {/* Observational Study Design Disclaimer */}
+        <section className="bg-indigo-950/20 border border-indigo-500/20 rounded-2xl p-5 flex items-start gap-3 text-xs">
+          <Info className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold text-white uppercase tracking-wider">Methodological Disclosure:</span>
+            <p className="text-slate-300 leading-relaxed">{report.observationalDisclaimer}</p>
           </div>
         </section>
 
@@ -155,9 +177,9 @@ export const ResearchReportPage: React.FC = () => {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-white font-bold text-xl">
-              <FileSpreadsheet className="w-5 h-5 text-emerald-400" /> Empirical Telemetry Data Table
+              <BarChart3 className="w-5 h-5 text-emerald-400" /> Empirical Telemetry Data Table
             </div>
-            <span className="text-xs text-slate-400">Baseline: <span className="text-slate-200 font-semibold">{report.comparisonCohortLabel}</span></span>
+            <span className="text-xs text-slate-400">Control Cohort: <span className="text-slate-200 font-semibold">{report.comparisonCohortLabel}</span></span>
           </div>
 
           <div className="overflow-x-auto border border-slate-800 rounded-2xl">
@@ -184,11 +206,34 @@ export const ResearchReportPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Ground-Truth Annotation & Train/Test Split Card (If AI Resume Parser Report) */}
+        {report.groundTruthAnnotation && (
+          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 font-bold text-white text-base">
+              <Layers className="w-4 h-4 text-indigo-400" /> Ground-Truth Annotation & Train / Test Validation
+            </div>
+            <div className="grid md:grid-cols-3 gap-4 text-xs">
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
+                <span className="text-slate-400 font-semibold">Model Version</span>
+                <p className="font-mono text-emerald-400 font-bold">{report.modelVersion}</p>
+              </div>
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
+                <span className="text-slate-400 font-semibold">Dataset Split</span>
+                <p className="font-mono text-indigo-400 font-bold">{report.trainTestSplit}</p>
+              </div>
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
+                <span className="text-slate-400 font-semibold">Ground Truth Provenance</span>
+                <p className="text-slate-300">{report.groundTruthAnnotation}</p>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Optional AI Resume Parser Field Accuracy & Latency Breakdown */}
         {report.fieldAccuracyMatrix && (
           <section className="space-y-4">
             <div className="flex items-center gap-2 text-white font-bold text-xl">
-              <Layers className="w-5 h-5 text-indigo-400" /> Field-Specific Accuracy Matrix (Precision / Recall / F1-Score)
+              <Layers className="w-5 h-5 text-indigo-400" /> Held-Out Test Set Accuracy Matrix (Precision / Recall / F1)
             </div>
             <div className="overflow-x-auto border border-slate-800 rounded-2xl">
               <table className="w-full text-left text-xs">
@@ -228,13 +273,31 @@ export const ResearchReportPage: React.FC = () => {
           </section>
         )}
 
+        {/* Study Limitations Section (Prominently Rendered) */}
+        <section className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 space-y-4">
+          <div className="flex items-center gap-2 text-amber-400 font-bold text-base uppercase tracking-wider">
+            <AlertTriangle className="w-5 h-5 text-amber-400" /> Study Limitations & Scope Boundaries
+          </div>
+          <p className="text-slate-300 text-xs leading-relaxed">
+            In accordance with formal data-journalism and scientific publication standards, the following explicit scope limitations apply to this observational telemetry report:
+          </p>
+          <div className="space-y-2 pt-1">
+            {report.limitations.map((lim, idx) => (
+              <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-300 flex items-start gap-2.5">
+                <span className="text-amber-400 font-bold mt-0.5">•</span>
+                <span className="leading-relaxed">{lim}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Reproducibility Package Declaration */}
         <section className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-6 flex items-start gap-4">
           <Download className="w-6 h-6 text-emerald-400 shrink-0 mt-1" />
           <div className="space-y-2">
             <h3 className="font-bold text-white text-base">Reproducibility & Data Dictionary Package</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Independent researchers, academic institutions, and journalists can request the aggregated, anonymized dataset and data dictionary package for methodology replication. Contact the <Link to="/about" className="text-emerald-400 hover:underline font-semibold">TalentXcel & CHATR Research Governance Board</Link>.
+              Independent researchers, academic institutions, and journalists can request the aggregated, anonymized dataset dictionary for methodology replication. Contact the <Link to="/about" className="text-emerald-400 hover:underline font-semibold">TalentXcel & CHATR Research Governance Board</Link>.
             </p>
           </div>
         </section>
