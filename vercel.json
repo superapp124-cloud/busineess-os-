@@ -1,18 +1,4 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.chatrchat.in"
-        }
-      ],
-      "destination": "https://chatrchat.in/:path*",
-      "permanent": true
-    }
-  ],
   "buildCommand": "bun run build",
   "outputDirectory": "dist",
   "framework": "vite",
