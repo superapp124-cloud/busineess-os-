@@ -9,6 +9,8 @@
 
 User-agent: Googlebot
 Allow: /
+Allow: /chatr
+Allow: /chatr/
 Disallow: /desktop/
 Disallow: /admin/
 Disallow: /auth
@@ -200,6 +202,8 @@ Disallow: /admin/
 
 User-agent: *
 Allow: /
+Allow: /chatr
+Allow: /chatr/
 Disallow: /desktop/
 Disallow: /admin/
 Disallow: /auth
