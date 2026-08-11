@@ -284,9 +284,11 @@ export const ExpansionPillarPage: React.FC = () => {
 
         {/* Author Attribution Card */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg shrink-0">
-            S
-          </div>
+          <img
+            src="/images/sanobar-jahan-founder.jpg"
+            alt="Sanobar Jahan"
+            className="w-12 h-12 rounded-xl object-cover object-top shrink-0 border border-indigo-500/40"
+          />
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-white text-base">{AUTHORS['sanobar-jahan'].name}</h3>

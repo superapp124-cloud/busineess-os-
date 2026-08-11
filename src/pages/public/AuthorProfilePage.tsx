@@ -75,10 +75,14 @@ export const AuthorProfilePage: React.FC = () => {
         {/* Executive Profile Header */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-8 space-y-6">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-violet-600 to-indigo-400 p-0.5 shrink-0 shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-indigo-300 font-bold text-3xl">
-                {author.name.charAt(0)}
-              </div>
+            <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-indigo-400 p-0.5 shrink-0 shadow-xl shadow-indigo-500/20 overflow-hidden">
+              {author.avatarUrl ? (
+                <img src={author.avatarUrl} alt={author.name} className="w-full h-full rounded-[14px] object-cover object-top" />
+              ) : (
+                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-indigo-300 font-bold text-3xl">
+                  {author.name.charAt(0)}
+                </div>
+              )}
             </div>
             <div className="space-y-1.5">
               {isFounder ? (

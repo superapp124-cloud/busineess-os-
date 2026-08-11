@@ -64,8 +64,12 @@ export const AuthorsHubPage: React.FC = () => {
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-xl shrink-0 group-hover:border-indigo-400 transition-colors">
-                    {author.name.charAt(0)}
+                  <div className="w-16 h-16 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-xl shrink-0 group-hover:border-indigo-400 transition-colors overflow-hidden">
+                    {author.avatarUrl ? (
+                      <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <span>{author.name.charAt(0)}</span>
+                    )}
                   </div>
                   <div>
                     <h2 className="font-bold text-white text-lg group-hover:text-indigo-300 transition-colors flex items-center gap-2">

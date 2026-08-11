@@ -121,8 +121,12 @@ export const AboutPage: React.FC = () => {
             {Object.values(AUTHORS).map((author) => (
               <div key={author.slug} className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg">
-                    {author.name.charAt(0)}
+                  <div className="w-14 h-14 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg overflow-hidden">
+                    {author.avatarUrl ? (
+                      <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <span>{author.name.charAt(0)}</span>
+                    )}
                   </div>
                   <div>
                     <h3 className="font-bold text-white text-base">{author.name}</h3>
