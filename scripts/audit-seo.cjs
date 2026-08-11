@@ -87,25 +87,10 @@ const ROUTES = [
   '/research/media-kit'
 ];
 
-const TOP_CITIES_LIST = [
-  'Mumbai', 'Delhi-NCR', 'Bangalore', 'Hyderabad', 'Pune',
-  'Chennai', 'Kolkata', 'Ahmedabad', 'Surat', 'Jaipur',
-  'Lucknow', 'Chandigarh', 'Indore', 'Kochi', 'Coimbatore',
-  'Nagpur', 'Noida', 'Gurgaon', 'Thane', 'Navi-Mumbai'
-];
+const { LOCATION_EXPANSION_PAGES } = require('../src/data/locationExpansionData.ts');
 
-const LOCATION_USE_CASES_LIST = [
-  'recruitment-agencies',
-  'whatsapp-business-api',
-  'hiring-automation',
-  'real-estate-lead-management',
-  'healthcare-patient-messaging'
-];
-
-TOP_CITIES_LIST.forEach(city => {
-  LOCATION_USE_CASES_LIST.forEach(uc => {
-    ROUTES.push(`/location/${uc}-${city.toLowerCase()}`);
-  });
+LOCATION_EXPANSION_PAGES.forEach(locPage => {
+  ROUTES.push(locPage.path);
 });
 
 function runAudit() {
