@@ -560,7 +560,7 @@ export const GrowthOSDashboard: React.FC = () => {
             { id: 'A5', name: 'Answer Engine Opt.', status: '● RUNNING', color: 'text-emerald-400', task: 'FAQPage + entity schema' },
             { id: 'A6', name: 'Web Distribution', status: '🔒 LOCKED', color: 'text-amber-400', task: 'Packages prepared — Phase 2 gate' },
             { id: 'A7', name: 'Internal Link Graph', status: '● RUNNING', color: 'text-emerald-400', task: '0 orphan pages' },
-            { id: 'A8', name: 'Sitemap Agent', status: '● RUNNING', color: 'text-emerald-400', task: '28 URLs — validated' },
+            { id: 'A8', name: 'Sitemap Agent', status: '● RUNNING', color: 'text-emerald-400', task: '35 URLs — chatrchat.in + chatr.chat' },
             { id: 'A9', name: 'Crawl Observability', status: '● RUNNING', color: 'text-emerald-400', task: 'Tracking 9 pages' },
             { id: 'A10', name: 'Conversion Agent', status: '● RUNNING', color: 'text-emerald-400', task: 'Path verified → /auth' },
             { id: 'A11', name: 'Organic Demand Intel', status: '● RUNNING', color: 'text-cyan-400', task: 'Demand Knowledge Graph taxonomy' },
@@ -593,16 +593,23 @@ export const GrowthOSDashboard: React.FC = () => {
         <div className="space-y-2">
           {[
             { mission: '#001', property: 'chatr.chat', slug: '/chatr/whatsapp-candidate-screening', query: 'whatsapp candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'WAITING_CRAWL', quality: 98 },
-            { mission: '#002', property: 'talentxcel.in', slug: '/talentxcel/ai-resume-parser', query: 'ai resume parser candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 94 },
-            { mission: '#003', property: 'talentxcel.in', slug: '/talentxcel/ats-resume-builder', query: 'best ats resume builder for freshers', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 91 },
+            { mission: '#002', property: 'chatrchat.in', slug: '/talentxcel/ai-resume-parser', query: 'ai resume parser candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 94 },
+            { mission: '#003', property: 'chatrchat.in', slug: '/talentxcel/ats-resume-builder', query: 'best ats resume builder for freshers', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 91 },
             { mission: '#004', property: 'chatr.chat', slug: '/chatr/universal-inbox-ai', query: 'universal inbox ai for business', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 88 },
-            { mission: '#005', property: 'talentxcel.in', slug: '/talentxcel/automate-candidate-screening', query: 'how to automate candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 87 },
+            { mission: '#005', property: 'chatrchat.in', slug: '/talentxcel/automate-candidate-screening', query: 'how to automate candidate screening', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 87 },
             { mission: '#006', property: 'chatr.chat', slug: '/chatr/whatsapp-business-recruitment', query: 'whatsapp business for recruitment agencies', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 85 },
             { mission: '#007', property: 'chatrchat.in', slug: '/ai-business-os-for-startups', query: 'ai business operating system for startups', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 82 },
-            { mission: '#008', property: 'talentxcel.in', slug: '/talentxcel/recruiter-productivity', query: 'recruiter productivity tools', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#008', property: 'chatrchat.in', slug: '/talentxcel/recruiter-productivity', query: 'recruiter productivity tools', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 80 },
             { mission: '#009', property: 'chatr.chat', slug: '/chatr/ai-messaging-for-business', query: 'ai messaging for small business', status: 'PUBLISHED', publishDate: '2026-08-10', indexStatus: 'QUEUED', quality: 78 },
             { mission: '#010', property: 'ALL', slug: 'robots.txt', query: 'Technical SEO: GPTBot/ClaudeBot/anthropic-ai allowed', status: 'FIXED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
-            { mission: '#011', property: 'chatrchat.in', slug: 'sitemap.xml', query: 'Sitemap: 20 → 28 URLs, new SEO pages added', status: 'UPDATED', publishDate: '2026-08-10', indexStatus: 'LIVE', quality: 100 },
+            { mission: '#011', property: 'chatrchat.in', slug: 'sitemap.xml', query: 'Sitemap cleaned: chatrchat.in + chatr.chat only (35 URLs). talentxcel.in in own repo.', status: 'UPDATED', publishDate: '2026-08-11', indexStatus: 'LIVE', quality: 100 },
+            { mission: '#012', property: 'chatrchat.in', slug: '/blog', query: 'blog hub: messaging, recruitment, growth, product', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 82 },
+            { mission: '#013', property: 'chatr.chat', slug: '/blog/why-businesses-lose-whatsapp-leads', query: 'why businesses lose whatsapp leads', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#014', property: 'chatr.chat', slug: '/blog/universal-inbox-vs-switching-apps', query: 'universal inbox vs switching apps', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 79 },
+            { mission: '#015', property: 'chatrchat.in', slug: '/blog/running-business-on-whatsapp-email-excel', query: 'running business on whatsapp email excel', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 78 },
+            { mission: '#016', property: 'chatr.chat', slug: '/blog/what-is-a-communication-os', query: 'what is a communication os', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 80 },
+            { mission: '#017', property: 'chatrchat.in', slug: '/news', query: 'news hub: product launches and announcements', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 76 },
+            { mission: '#018', property: 'chatr.chat', slug: '/news/chatr-communication-os-launch', query: 'chatr communication os launch announcement', status: 'PUBLISHED', publishDate: '2026-08-11', indexStatus: 'QUEUED', quality: 75 },
           ].map((item) => (
             <div key={item.mission} className="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-indigo-400 font-bold w-12 shrink-0">M{item.mission}</span>
