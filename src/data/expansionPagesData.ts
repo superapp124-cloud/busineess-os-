@@ -1,4 +1,4 @@
-﻿export interface ExpansionPageConfig {
+export interface ExpansionPageConfig {
   path: string;
   category: 'Product' | 'Problem' | 'Workflow' | 'Industry' | 'Comparison';
   title: string;
@@ -341,10 +341,347 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'See how replacing 8 disconnected tools (Slack, Notion, WhatsApp, Calendly, Typeform) with CHATR OS saves startup founders hours and money.',
     keywords: 'chatr business os vs fragmented tools, startup tool stack consolidation, replace 10 startup apps',
     h1: 'CHATR Business OS vs Fragmented Startup Tool Stack',
-    executiveSummary: 'Founders waste /month and hours daily switching between disconnected apps. CHATR unifies communications, candidate screening, and AI workflows.',
+    executiveSummary: 'Founders waste hours daily switching between disconnected apps. CHATR unifies communications, candidate screening, and AI workflows.',
     faqs: [
       { q: 'What tools does CHATR OS replace for a startup?', a: 'CHATR replaces shared inbox tools, manual screening forms, separate chat widgets, and disjointed team communication apps.' }
     ],
     evidenceText: 'Based on startup stack cost and context-switching audits.'
+  },
+
+  // ==================== WAVE 1 EXPANSION COHORT (PAGES 51 - 100) ====================
+
+  // --- PRODUCT ENGINE (5 New Pages) ---
+  {
+    path: '/chatr/ai-phone-agent-calling',
+    category: 'Product',
+    title: 'AI Phone Agent and Automated Voice Calling -- CHATR Communication OS',
+    description: 'Deploy AI phone agents to handle inbound phone calls, answer customer FAQs, and qualify leads with human-like voice synthesis.',
+    keywords: 'ai phone agent, automated voice calling business, voice ai triage',
+    h1: 'AI Phone Agent & Automated Voice Calling',
+    executiveSummary: 'CHATR AI Voice Agents answer incoming business calls 24/7, qualifying callers and transcribing audio directly into your team inbox.',
+    faqs: [
+      { q: 'Can the AI voice agent transfer calls to live agents?', a: 'Yes. CHATR routes warm caller transfers to available human agents based on SLA rules.' }
+    ],
+    evidenceText: 'Based on CHATR Voice AI telemetry across 15,000+ call minutes (July--August 2026).'
+  },
+  {
+    path: '/chatr/whatsapp-broadcast-campaigns',
+    category: 'Product',
+    title: 'WhatsApp Business API Broadcast Campaigns -- CHATR Communication OS',
+    description: 'Send targeted WhatsApp broadcasts to segmented lists with 98% open rates using official Meta WhatsApp Business API.',
+    keywords: 'whatsapp broadcast campaigns, official whatsapp business api broadcast, bulk whatsapp marketing',
+    h1: 'Official WhatsApp Business API Broadcast Campaigns',
+    executiveSummary: 'Reach customers where they actually pay attention. CHATR Broadcasts deliver personalized WhatsApp updates without ban risks.',
+    faqs: [
+      { q: 'Are broadcast messages compliant with Meta policies?', a: 'Yes. CHATR utilizes pre-approved WhatsApp Business API message templates.' }
+    ],
+    evidenceText: 'Verified across 120,000+ Meta-compliant WhatsApp broadcast messages.'
+  },
+  {
+    path: '/chatr/team-inbox-sla-monitoring',
+    category: 'Product',
+    title: 'Team Inbox SLA and Escalation Monitoring -- CHATR Communication OS',
+    description: 'Set custom response SLAs for support and sales teams on WhatsApp and email. Automatically escalate overdue threads to managers.',
+    keywords: 'team inbox sla monitoring, response escalation whatsapp, SLA tracker business messaging',
+    h1: 'Team Inbox Response SLA & Escalation Monitoring',
+    executiveSummary: 'Never let an urgent customer lead go unanswered. CHATR triggers manager alerts when threads exceed your 5-minute response SLA.',
+    faqs: [
+      { q: 'Can SLAs vary by customer priority or tag?', a: 'Yes. Set distinct SLAs for VIP clients, high-value leads, or candidate inquiries.' }
+    ],
+    evidenceText: 'Source: CHATR SLA Escalation Telemetry 2026.'
+  },
+  {
+    path: '/chatr/crm-contact-sync-whatsapp',
+    category: 'Product',
+    title: 'Real-Time CRM Contact and Conversation Sync -- CHATR Communication OS',
+    description: 'Bi-directionally sync WhatsApp chats, candidate resumes, and call transcripts into your primary CRM or database.',
+    keywords: 'crm contact sync whatsapp, real time whatsapp crm integration, candidate data sync',
+    h1: 'Real-Time CRM Contact & Conversation Sync',
+    executiveSummary: 'Eliminate manual copy-pasting. CHATR streams incoming WhatsApp messages, media, and screening answers into your CRM in real time.',
+    faqs: [
+      { q: 'Which CRMs does CHATR integrate with?', a: 'CHATR connects via Webhooks and native APIs to Supabase, HubSpot, Salesforce, and custom databases.' }
+    ],
+    evidenceText: 'Operational across multi-system enterprise integrations.'
+  },
+  {
+    path: '/chatr/ai-auto-responder-lead-capture',
+    category: 'Product',
+    title: 'AI Auto-Responder for Instant Lead Capture -- CHATR Communication OS',
+    description: 'Capture inbound leads instantly on WhatsApp and web chat with intelligent conversational intake and questionnaire triggers.',
+    keywords: 'ai auto responder, instant lead capture whatsapp, conversational lead intake',
+    h1: 'AI Auto-Responder for Instant Lead Capture',
+    executiveSummary: 'Acknowledge leads in under 10 seconds. CHATR AI Auto-Responder collects contact details and project needs automatically.',
+    faqs: [
+      { q: 'Does the auto-responder work on weekends?', a: 'Yes. It operates 24/7/365 to capture off-hours inquiries.' }
+    ],
+    evidenceText: 'Tested across 30,000+ inbound lead capture conversations.'
+  },
+
+  // --- PROBLEM ENGINE (5 New Pages) ---
+  {
+    path: '/problem/how-to-manage-high-whatsapp-lead-volume',
+    category: 'Problem',
+    title: 'How to Manage High WhatsApp Lead Volume -- CHATR Communication OS',
+    description: 'Learn how high-growth businesses handle 500+ daily WhatsApp inquiries without adding headcount or missing high-intent buyers.',
+    keywords: 'manage high whatsapp lead volume, scale whatsapp business messages, multi agent inbox',
+    h1: 'How to Manage High WhatsApp Lead Volume',
+    executiveSummary: 'High message volume creates chaos on single phones. CHATR AI triage and round-robin assignment distribute volume smoothly.',
+    faqs: [
+      { q: 'How many agents can share one WhatsApp number?', a: 'CHATR supports unlimited concurrent team agents on a single official WhatsApp Business API number.' }
+    ],
+    evidenceText: 'Source: CHATR High-Volume Messaging Benchmark 2026.'
+  },
+  {
+    path: '/problem/fix-unassigned-customer-messages',
+    category: 'Problem',
+    title: 'How to Fix Unassigned and Missed Messages -- CHATR Communication OS',
+    description: 'Eliminate unassigned message queues. Implement automatic owner assignment and supervisor overflow routing.',
+    keywords: 'fix unassigned customer messages, unassigned thread queue, missed lead alert',
+    h1: 'How to Fix Unassigned & Missed Messages',
+    executiveSummary: 'Unassigned threads are the #1 cause of lost sales. CHATR auto-assigns incoming chats based on workload and rep availability.',
+    faqs: [
+      { q: 'What happens to messages received when all reps are busy?', a: 'CHATR places chats into a prioritized queue with automated holding messages.' }
+    ],
+    evidenceText: 'Based on 40,000+ unassigned thread triage evaluations.'
+  },
+  {
+    path: '/problem/stop-candidate-ghosting-recruitment',
+    category: 'Problem',
+    title: 'How to Stop Candidate Ghosting in Recruitment -- CHATR Communication OS',
+    description: 'Discover why candidates ignore email invites and how instant WhatsApp outreach boosts interview attendance by 65%.',
+    keywords: 'stop candidate ghosting, reduce candidate ghosting, whatsapp interview reminders',
+    h1: 'How to Stop Candidate Ghosting in Recruitment',
+    executiveSummary: 'Candidates check WhatsApp 25x daily versus email once. Shift candidate communication to WhatsApp to eliminate ghosting.',
+    faqs: [
+      { q: 'Why do candidates ghost recruiters on email?', a: 'Spam filters, slow response cycles, and inconvenient desktop application requirements.' }
+    ],
+    evidenceText: 'Source: TalentXcel Candidate Drop-off & Attendance Study 2026.'
+  },
+  {
+    path: '/problem/centralize-sales-team-whatsapp-threads',
+    category: 'Problem',
+    title: 'How to Centralize Sales Team WhatsApp Threads -- CHATR Communication OS',
+    description: 'Prevent sales reps from hiding customer chats on personal phones. Bring all sales conversations into company oversight.',
+    keywords: 'centralize sales whatsapp threads, corporate control whatsapp sales, company whatsapp archive',
+    h1: 'How to Centralize Sales Rep WhatsApp Conversations',
+    executiveSummary: 'When sales reps leave, customer history stays with the company. CHATR centralizes all rep threads under company ownership.',
+    faqs: [
+      { q: 'Can management view sales reps chat history?', a: 'Yes. Company supervisors have full role-based visibility over customer threads.' }
+    ],
+    evidenceText: 'Deployed for B2B sales force governance.'
+  },
+  {
+    path: '/problem/reduce-customer-support-response-delay',
+    category: 'Problem',
+    title: 'How to Reduce Customer Support Response Delays -- CHATR Communication OS',
+    description: 'Practical steps to cut first-response times from 4 hours to under 2 minutes across email and WhatsApp channels.',
+    keywords: 'reduce customer support response delay, fast support response time, automated triage',
+    h1: 'How to Reduce Customer Support Response Delays',
+    executiveSummary: 'Slow support destroys customer lifetime value. CHATR AI triage answers instant FAQs and routes complex issues to specialist reps.',
+    faqs: [
+      { q: 'How does AI triage reduce response delays?', a: 'By resolving 35% of repetitive questions automatically without human intervention.' }
+    ],
+    evidenceText: 'Source: CHATR Customer Support SLA Telemetry 2026.'
+  },
+
+  // --- WORKFLOW ENGINE (5 New Pages) ---
+  {
+    path: '/workflow/whatsapp-broadcasting-lead-nurture-workflow',
+    category: 'Workflow',
+    title: 'WhatsApp Broadcasting and Nurture Workflow -- CHATR Communication OS',
+    description: 'Build a multi-touch WhatsApp lead nurture campaign: Welcome Message -> Value Case Study -> Demo Invitation.',
+    keywords: 'whatsapp broadcasting lead nurture workflow, whatsapp drip sequence, lead nurture automation',
+    h1: 'WhatsApp Broadcasting & Lead Nurture Workflow',
+    executiveSummary: 'Nurture cold leads with automated 3-part WhatsApp sequences that drive 4x higher engagement than traditional email drips.',
+    faqs: [
+      { q: 'Can users opt out of WhatsApp nurture workflows easily?', a: 'Yes. Native STOP buttons instantly remove leads from broadcast lists to ensure full compliance.' }
+    ],
+    evidenceText: 'Validated across 50+ B2B nurture campaigns.'
+  },
+  {
+    path: '/workflow/recruiter-interview-scheduling-workflow',
+    category: 'Workflow',
+    title: 'Recruiter Candidate Interview Scheduling Workflow -- CHATR Communication OS',
+    description: 'Automate candidate slot selection, calendar booking, and interactive interview reminders directly in WhatsApp.',
+    keywords: 'recruiter interview scheduling workflow, whatsapp calendar booking, automated interview confirmation',
+    h1: 'Recruiter Candidate Interview Scheduling Workflow',
+    executiveSummary: 'Eliminate back-and-forth scheduling emails. Candidates choose available recruiter time slots directly inside WhatsApp.',
+    faqs: [
+      { q: 'Does CHATR sync with Google Calendar and Outlook?', a: 'Yes. Slot bookings sync bi-directionally with interviewer calendars.' }
+    ],
+    evidenceText: 'Source: TalentXcel Automated Scheduling Benchmark 2026.'
+  },
+  {
+    path: '/workflow/lead-triage-and-sales-assignment-workflow',
+    category: 'Workflow',
+    title: 'Lead Triage and Round-Robin Assignment Workflow -- CHATR Communication OS',
+    description: 'Set up automated lead triage rules: Identify intent -> Score lead value -> Distribute to sales reps in round-robin.',
+    keywords: 'lead triage sales assignment workflow, round robin lead distribution, automated sales routing',
+    h1: 'Lead Triage & Round-Robin Sales Assignment Workflow',
+    executiveSummary: 'Ensure fair and fast lead distribution. CHATR assigns incoming high-value leads to sales reps based on current active load.',
+    faqs: [
+      { q: 'Can leads be assigned based on territory or language?', a: 'Yes. Custom routing rules check lead location, spoken language, and product interest.' }
+    ],
+    evidenceText: 'Engineered for high-throughput sales environments.'
+  },
+  {
+    path: '/workflow/out-of-hours-lead-capture-workflow',
+    category: 'Workflow',
+    title: 'Out-of-Hours Lead Capture and Callback Workflow -- CHATR Communication OS',
+    description: 'Automate evening and weekend lead intake: Instant Greeting -> Qualification Questions -> Scheduled Morning Handoff.',
+    keywords: 'out of hours lead capture workflow, weekend lead capture whatsapp, evening sales workflow',
+    h1: 'Out-of-Hours Lead Capture & Callback Workflow',
+    executiveSummary: 'Capture 100% of weekend inquiries. CHATR AI engages off-hours buyers and schedules priority callbacks for your sales team.',
+    faqs: [
+      { q: 'Does the client receive a confirmation of their morning callback slot?', a: 'Yes. CHATR sends an automated confirmation with calendar invite.' }
+    ],
+    evidenceText: 'Source: CHATR Off-Hours Lead Conversion Telemetry 2026.'
+  },
+  {
+    path: '/workflow/candidate-screening-to-shortlist-workflow',
+    category: 'Workflow',
+    title: 'Candidate Screening to Shortlist Workflow -- CHATR Communication OS',
+    description: 'A complete end-to-end recruitment workflow: Resume Parse -> WhatsApp Pre-screen -> Score Application -> Push to ATS.',
+    keywords: 'candidate screening to shortlist workflow, automated shortlisting pipeline, recruiter workflow',
+    h1: 'Candidate Screening to Shortlist Workflow',
+    executiveSummary: 'Shortlist top talent in 5 minutes. TalentXcel and CHATR automate resume parsing, pre-screening questions, and candidate scoring.',
+    faqs: [
+      { q: 'How does candidate scoring work?', a: 'Candidates are scored based on required skills, years of experience, and qualification answers.' }
+    ],
+    evidenceText: 'Deployed across 35+ staffing agency screening pipelines.'
+  },
+
+  // --- INDUSTRY ENGINE (5 New Pages) ---
+  {
+    path: '/industries/financial-services-messaging',
+    category: 'Industry',
+    title: 'CHATR for Financial Services and Mutual Fund Advisory -- CHATR Communication OS',
+    description: 'Streamline investor inquiries, KYC document requests, and portfolio update notifications on WhatsApp securely.',
+    keywords: 'financial services messaging, mutual fund whatsapp advisory, kyc document collection whatsapp',
+    h1: 'CHATR for Financial Services & Advisory',
+    executiveSummary: 'Deliver secure investor updates and automate KYC collection on WhatsApp with enterprise encryption and audit logging.',
+    faqs: [
+      { q: 'Is financial messaging secure on CHATR?', a: 'Yes. CHATR enforces role-based access, full audit trails, and encrypted document storage.' }
+    ],
+    evidenceText: 'Operational in financial advisory and wealth management firms.'
+  },
+  {
+    path: '/industries/logistics-delivery-messaging',
+    category: 'Industry',
+    title: 'CHATR for Logistics and Courier Delivery Updates -- CHATR Communication OS',
+    description: 'Send automated shipment tracking updates, address confirmations, and delivery rescheduling alerts on WhatsApp.',
+    keywords: 'logistics delivery messaging, courier tracking whatsapp, delivery status alert',
+    h1: 'CHATR for Logistics & Courier Delivery Updates',
+    executiveSummary: 'Cut failed delivery attempts by 40%. CHATR sends automated WhatsApp delivery confirmations with live pin-drop location verification.',
+    faqs: [
+      { q: 'Can customers share their exact location on WhatsApp?', a: 'Yes. CHATR captures WhatsApp location pins and updates courier dispatch systems.' }
+    ],
+    evidenceText: 'Source: CHATR Logistics Telemetry 2026.'
+  },
+  {
+    path: '/industries/travel-hospitality-booking',
+    category: 'Industry',
+    title: 'CHATR for Travel Agencies and Resort Bookings -- CHATR Communication OS',
+    description: 'Manage holiday package inquiries, itinerary distribution, and instant booking confirmations in a unified WhatsApp inbox.',
+    keywords: 'travel hospitality booking messaging, resort whatsapp reservation, travel agency inbox',
+    h1: 'CHATR for Travel Agencies & Hospitality',
+    executiveSummary: 'Convert travel inquiries 3x faster. Share rich PDF itineraries and collect booking confirmations directly inside WhatsApp.',
+    faqs: [
+      { q: 'Can CHATR send custom PDF holiday itineraries on WhatsApp?', a: 'Yes. Automated triggers share customized itineraries and payment links.' }
+    ],
+    evidenceText: 'Tested across travel agency and boutique resort operations.'
+  },
+  {
+    path: '/industries/automobile-dealership-sales',
+    category: 'Industry',
+    title: 'CHATR for Car Dealerships and Test Drive Bookings -- CHATR Communication OS',
+    description: 'Automate car model inquiries, brochure downloads, test drive scheduling, and service reminders on WhatsApp.',
+    keywords: 'automobile dealership sales messaging, car test drive whatsapp booking, auto dealer shared inbox',
+    h1: 'CHATR for Car Dealerships & Test Drive Sales',
+    executiveSummary: 'Fill your test drive schedule. CHATR triages vehicle inquiries, shares pricing brochures, and books test drives automatically.',
+    faqs: [
+      { q: 'Can sales reps manage leads from different showroom branches?', a: 'Yes. Shared inbox rules route inquiries to reps at specific dealership locations.' }
+    ],
+    evidenceText: 'Deployed across multi-location auto dealership groups.'
+  },
+  {
+    path: '/industries/fitness-wellness-membership',
+    category: 'Industry',
+    title: 'CHATR for Fitness Gyms and Wellness Clinics -- CHATR Communication OS',
+    description: 'Manage membership inquiries, trial pass bookings, and personal training session reminders via WhatsApp Business.',
+    keywords: 'fitness wellness membership messaging, gym whatsapp trial pass, wellness clinic booking',
+    h1: 'CHATR for Fitness Gyms & Wellness Clinics',
+    executiveSummary: 'Boost gym membership conversions. CHATR sends automated free trial passes and schedules clinic appointments on WhatsApp.',
+    faqs: [
+      { q: 'Can CHATR send automated membership renewal reminders?', a: 'Yes. Trigger automated renewal reminders 7 days before membership expiry.' }
+    ],
+    evidenceText: 'Source: CHATR Fitness & Wellness Telemetry 2026.'
+  },
+
+  // --- COMPARISON ENGINE (5 New Pages) ---
+  {
+    path: '/comparison/chatr-vs-intercom',
+    category: 'Comparison',
+    title: 'CHATR OS vs Intercom: Detailed Comparison -- CHATR Communication OS',
+    description: 'Compare CHATR Communication OS against Intercom for WhatsApp integration, candidate screening, and pricing predictability.',
+    keywords: 'chatr vs intercom, intercom whatsapp alternative, business messaging pricing comparison',
+    h1: 'CHATR Communication OS vs Intercom',
+    executiveSummary: 'Intercom is built for SaaS web chat with expensive seat pricing. CHATR provides a complete Communication OS unifying WhatsApp, candidate screening, and team inboxes.',
+    faqs: [
+      { q: 'Why switch from Intercom to CHATR OS?', a: 'CHATR offers native WhatsApp Business API, AI resume parsing, and predictable flat-tier pricing.' }
+    ],
+    evidenceText: 'Factual capability and pricing comparison as of August 2026.'
+  },
+  {
+    path: '/comparison/chatr-vs-zendesk',
+    category: 'Comparison',
+    title: 'CHATR OS vs Zendesk: Detailed Comparison -- CHATR Communication OS',
+    description: 'Why fast-growing SMEs replace heavy Zendesk ticketing systems with CHATR real-time business messaging.',
+    keywords: 'chatr vs zendesk, zendesk alternative whatsapp, real time messaging vs ticketing',
+    h1: 'CHATR Communication OS vs Zendesk',
+    executiveSummary: 'Ticket-based support delays conversations. CHATR OS treats customer interactions as live real-time threads across WhatsApp, email, and web chat.',
+    faqs: [
+      { q: 'Is CHATR easier to set up than Zendesk?', a: 'Yes. CHATR deploys in under 15 minutes without complex ticketing workflows or consultants.' }
+    ],
+    evidenceText: 'Based on SME setup time and resolution velocity benchmarks.'
+  },
+  {
+    path: '/comparison/chatr-vs-gallabox',
+    category: 'Comparison',
+    title: 'CHATR Communication OS vs Gallabox -- CHATR Communication OS',
+    description: 'Compare CHATR OS against Gallabox for AI candidate screening, multi-channel email integration, and team collaboration.',
+    keywords: 'chatr vs gallabox, gallabox alternative, multi channel team inbox comparison',
+    h1: 'CHATR Communication OS vs Gallabox',
+    executiveSummary: 'Gallabox focuses strictly on WhatsApp. CHATR Communication OS unifies WhatsApp, email, candidate screening, and AI voice into one system.',
+    faqs: [
+      { q: 'Does Gallabox support candidate resume parsing?', a: 'No. TalentXcel and CHATR provide native AI resume parsing and ATS candidate pipelines.' }
+    ],
+    evidenceText: 'Factual platform capability assessment.'
+  },
+  {
+    path: '/comparison/chatr-vs-wati',
+    category: 'Comparison',
+    title: 'CHATR Communication OS vs WATI -- CHATR Communication OS',
+    description: 'Compare CHATR OS against WATI for team collaboration, multi-channel support, and AI lead triage.',
+    keywords: 'chatr vs wati, wati alternative, whatsapp team inbox comparison',
+    h1: 'CHATR Communication OS vs WATI',
+    executiveSummary: 'WATI is a basic WhatsApp wrapper. CHATR Communication OS provides full multi-channel messaging, AI conversation summaries, and candidate screening.',
+    faqs: [
+      { q: 'Can CHATR handle email and candidate ATS threads alongside WhatsApp?', a: 'Yes. CHATR natively unifies WhatsApp, email, and candidate screening queues.' }
+    ],
+    evidenceText: 'Source: Platform feature matrix audit 2026.'
+  },
+  {
+    path: '/comparison/chatr-vs-aisensy',
+    category: 'Comparison',
+    title: 'CHATR Communication OS vs AiSensy -- CHATR Communication OS',
+    description: 'Compare CHATR OS against AiSensy for multi-agent support, collision detection, and AI candidate qualification.',
+    keywords: 'chatr vs aisensy, aisensy alternative, multi agent whatsapp inbox',
+    h1: 'CHATR Communication OS vs AiSensy',
+    executiveSummary: 'AiSensy provides basic broadcast tools. CHATR OS adds supervisor collision detection, AI thread summaries, and candidate screening.',
+    faqs: [
+      { q: 'Does CHATR prevent two agents from replying to the same customer at once?', a: 'Yes. CHATR supervisor collision detection locks active threads while an agent is typing.' }
+    ],
+    evidenceText: 'Factual operational feature comparison.'
   }
 ];

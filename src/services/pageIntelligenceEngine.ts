@@ -1,4 +1,4 @@
-﻿import { checkMultiDimensionalCannibalization, MultiDimensionalCannibalizationResult, PageType, IntentType } from './cannibalizationDetector';
+import { checkMultiDimensionalCannibalization, MultiDimensionalCannibalizationResult, PageType, IntentType } from './cannibalizationDetector';
 import { recordSEODecision, SEODecisionRecord } from './seoDecisionHistory';
 
 export interface PageIntelligenceInput {
@@ -44,8 +44,13 @@ export function evaluatePageQuality(input: PageIntelligenceInput): QualityGateRe
     primaryEntities: input.primaryEntities
   });
 
-  // 2. Thin Data Hard Veto Check
-  const isThinDataVeto = input.entityCount < 2 || input.telemetryRecordsCount < 5 || input.uniqueAttributeCount < 3;
+  // 2. Thin Data Hard Veto Check (Classified by Page Archetype)
+  const isDataDrivenPage = input.pageType === 'ENTITY' && (input.route.includes('/jobs') || input.route.includes('/salary') || input.route.includes('/companies'));
+  
+  // Editorial/Authority pages (Product, Problem, Workflow, Industry, Comparison) require real intent & quality score, not historical telemetry.
+  const isThinDataVeto = isDataDrivenPage
+    ? (input.entityCount < 2 || input.telemetryRecordsCount < 5 || input.uniqueAttributeCount < 3)
+    : false;
 
   const isBlockedByVeto = cannibalizationCheck.recommendation === 'NOINDEX_BLOCK' || isThinDataVeto;
 

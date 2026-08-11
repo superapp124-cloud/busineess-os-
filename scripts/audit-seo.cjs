@@ -54,7 +54,33 @@ const ROUTES = [
   '/comparison/chatr-vs-traditional-crm',
   '/comparison/chatr-vs-shared-email-inboxes',
   '/comparison/chatr-vs-manual-recruitment-screening',
-  '/comparison/chatr-vs-fragmented-startup-tools'
+  '/comparison/chatr-vs-fragmented-startup-tools',
+  // Wave 1 Expansion Cohort (25 Pages)
+  '/chatr/ai-phone-agent-calling',
+  '/chatr/whatsapp-broadcast-campaigns',
+  '/chatr/team-inbox-sla-monitoring',
+  '/chatr/crm-contact-sync-whatsapp',
+  '/chatr/ai-auto-responder-lead-capture',
+  '/problem/how-to-manage-high-whatsapp-lead-volume',
+  '/problem/fix-unassigned-customer-messages',
+  '/problem/stop-candidate-ghosting-recruitment',
+  '/problem/centralize-sales-team-whatsapp-threads',
+  '/problem/reduce-customer-support-response-delay',
+  '/workflow/whatsapp-broadcasting-lead-nurture-workflow',
+  '/workflow/recruiter-interview-scheduling-workflow',
+  '/workflow/lead-triage-and-sales-assignment-workflow',
+  '/workflow/out-of-hours-lead-capture-workflow',
+  '/workflow/candidate-screening-to-shortlist-workflow',
+  '/industries/financial-services-messaging',
+  '/industries/logistics-delivery-messaging',
+  '/industries/travel-hospitality-booking',
+  '/industries/automobile-dealership-sales',
+  '/industries/fitness-wellness-membership',
+  '/comparison/chatr-vs-intercom',
+  '/comparison/chatr-vs-zendesk',
+  '/comparison/chatr-vs-gallabox',
+  '/comparison/chatr-vs-wati',
+  '/comparison/chatr-vs-aisensy'
 ];
 
 function runAudit() {

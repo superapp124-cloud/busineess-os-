@@ -805,6 +805,38 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/comparison/chatr-vs-manual-recruitment-screening" element={<LazyRoute component={ExpansionPillarPage} />} />
   <Route path="/comparison/chatr-vs-fragmented-startup-tools" element={<LazyRoute component={ExpansionPillarPage} />} />
 
+  {/* WAVE 1 EXPANSION COHORT (PAGES 51 - 75) */}
+  <Route path="/chatr/ai-phone-agent-calling" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/whatsapp-broadcast-campaigns" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/team-inbox-sla-monitoring" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/crm-contact-sync-whatsapp" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/ai-auto-responder-lead-capture" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/problem/how-to-manage-high-whatsapp-lead-volume" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/fix-unassigned-customer-messages" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/stop-candidate-ghosting-recruitment" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/centralize-sales-team-whatsapp-threads" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/reduce-customer-support-response-delay" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/workflow/whatsapp-broadcasting-lead-nurture-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/recruiter-interview-scheduling-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/lead-triage-and-sales-assignment-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/out-of-hours-lead-capture-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/candidate-screening-to-shortlist-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/industries/financial-services-messaging" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/logistics-delivery-messaging" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/travel-hospitality-booking" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/automobile-dealership-sales" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/fitness-wellness-membership" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/comparison/chatr-vs-intercom" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-zendesk" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-gallabox" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-wati" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-aisensy" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />
   <Route path="/talentxcel/ats-resume-builder" element={<LazyRoute component={TalentXcelATSResumePage} />} />
