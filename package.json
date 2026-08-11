@@ -25,7 +25,7 @@
     "electron:build:all": "npm run build:desktop && node scripts/patch-electron-builder.cjs && electron-builder -wml",
     "electron:release": "node scripts/clean-dist-electron.cjs && npm run build:desktop && electron-builder --publish always",
     "start:desktop": "cross-env NODE_ENV=production electron .",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender-seo.cjs",
     "build:desktop": "vite build -c vite.desktop.config.ts --mode desktop",
     "build:mobile": "vite build -c vite.mobile.config.ts --mode mobile",
     "build:dev": "vite build --mode development",
