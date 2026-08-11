@@ -213,12 +213,10 @@ Disallow: /onboarding
 Disallow: /account
 
 # ============================================================
-# SITEMAP DECLARATIONS — Canonical Domain Alignment
+# SITEMAP DECLARATION — Canonical Domain Alignment
 # ============================================================
 
 Sitemap: https://www.chatrchat.in/sitemap.xml
-Sitemap: https://chatr.chat/sitemap.xml
-Sitemap: https://talentxcel.in/sitemap.xml
 
 # llms.txt — AI Agent Documentation Index
 # https://www.chatrchat.in/llms.txt

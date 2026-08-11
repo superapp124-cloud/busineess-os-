@@ -573,7 +573,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <GlobalBackHandler />
  <Routes>
   {/* Developer & Direct Integrations Routes */}
-  <Route path="/dev" element={<ExecutionDashboard />} />
+  <Route path="/dev" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
   <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
   <Route path="/oauth/callback" element={<Suspense fallback={<PageLoader message="Authenticating..." />}><OAuthCallback /></Suspense>} />
   <Route path="/design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
@@ -648,7 +648,6 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="marketplace" element={<LazyRoute component={LazyPages.AgentMarketplace} />} />
  <Route path="intent-store" element={<LazyRoute component={LazyPages.IntentStore} />} />
  <Route path="connector-store" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
- <Route path="connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="settings/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="agent/:id" element={<LazyRoute component={LazyPages.AgentWorkspace} />} />
  <Route path="studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
@@ -1075,8 +1074,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/bluetooth-test" element={<LazyRoute component={LazyPages.BluetoothTest} />} />
  
  {/* AI Command Center (CEO portal) */}
- <Route path="/command-center" element={<LazyRoute component={LazyPages.CommandCenter} />} />
- <Route path="/dev/execution-dashboard" element={<ExecutionDashboard />} />
+ <Route path="/command-center" element={<ProtectedLazyRoute component={LazyPages.CommandCenter} />} />
+ <Route path="/dev/execution-dashboard" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
 
  {/* Call Quality Benchmark Dashboard */}
  <Route path="/call-benchmark" element={<Suspense fallback={<PageLoader />}>{React.createElement(React.lazy(() => import('./pages/CallBenchmarkDashboard')))}</Suspense>} />
@@ -1088,7 +1087,6 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/wellness-circles" element={<LazyRoute component={LazyPages.WellnessCircles} />} />
  <Route path="/wellness-circles/:circleId" element={<LazyRoute component={LazyPages.WellnessCircles} />} />
  <Route path="/expert-sessions" element={<LazyRoute component={LazyPages.ExpertSessions} />} />
- <Route path="/community" element={<LazyRoute component={LazyPages.Community} />} />
  {/* New CHATR OS Enterprise Home Routes */}
  <Route path="/enterprise" element={<KernelProvider useInMemory={false}><Suspense fallback={<PageLoader />}><MarketplaceLayout /></Suspense></KernelProvider>}>
  <Route index element={<Suspense fallback={<PageLoader />}><HomeDashboard /></Suspense>} />
