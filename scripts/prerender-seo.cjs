@@ -336,14 +336,22 @@ function prerender() {
   for (const page of PUBLIC_SEO_PAGES) {
     let customHtml = baseHtml;
 
+    // 1. Replace Title Tag
     customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${page.title}</title>`);
     customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${page.title}">`);
+    
+    // 2. Replace Meta Description & Keywords
     customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${page.description}">`);
-
     if (page.keywords) {
       customHtml = customHtml.replace(/<meta\s+name="keywords"\s+content=".*?"\s*\/?>/i, `<meta name="keywords" content="${page.keywords}">`);
     }
 
+    // 3. Ensure Robots Tag
+    if (!customHtml.includes('name="robots"')) {
+      customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);
+    }
+
+    // 4. Replace Canonical & Open Graph
     customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${page.canonical}">`);
     customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${page.title}">`);
     customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${page.description}">`);
@@ -353,10 +361,30 @@ function prerender() {
       customHtml = customHtml.replace(/<meta\s+property="og:type"\s+content=".*?"\s*\/?>/i, `<meta property="og:type" content="${page.ogType}">`);
     }
 
-    if (page.schemas && page.schemas.length > 0) {
-      const schemaScripts = page.schemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n    ');
-      customHtml = customHtml.replace('</head>', `    ${schemaScripts}\n  </head>`);
-    }
+    // 5. Automatic BreadcrumbList Schema
+    const breadcrumbItems = [{ '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN }];
+    const pathParts = page.path.split('/').filter(Boolean);
+    let currentPath = '';
+    pathParts.forEach((part, idx) => {
+      currentPath += '/' + part;
+      const formattedName = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      breadcrumbItems.push({
+        '@type': 'ListItem',
+        position: idx + 2,
+        name: formattedName,
+        item: DOMAIN + currentPath
+      });
+    });
+
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbItems
+    };
+
+    const allSchemas = [...(page.schemas || []), breadcrumbSchema];
+    const schemaScripts = allSchemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n    ');
+    customHtml = customHtml.replace('</head>', `    ${schemaScripts}\n  </head>`);
 
     const targetDir = path.join(distDir, page.path.replace(/^\//, ''));
     fs.mkdirSync(targetDir, { recursive: true });
