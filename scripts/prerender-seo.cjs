@@ -318,6 +318,207 @@ const PUBLIC_SEO_PAGES = [
     keywords: 'Company Information, Entity Verification, CHATR Contacts',
     canonical: DOMAIN + '/company-info',
     schemas: []
+  },
+  // --- PHASE B EXPANSION ENGINE (25 HIGH-AUTHORITY PAGES) ---
+  {
+    path: '/chatr/shared-team-inbox-whatsapp',
+    title: 'Shared Team Inbox for WhatsApp Business -- CHATR Communication OS',
+    description: 'Assign incoming WhatsApp conversations, collaborate across team members, and track customer response times in one shared business inbox.',
+    keywords: 'shared team inbox whatsapp business, whatsapp multi agent inbox, team whatsapp management',
+    canonical: DOMAIN + '/chatr/shared-team-inbox-whatsapp',
+    schemas: []
+  },
+  {
+    path: '/chatr/ai-message-triage-routing',
+    title: 'AI Message Triage and Smart Routing -- CHATR Communication OS',
+    description: 'Auto-classify incoming business messages on WhatsApp and email. Route urgent leads to sales and screening inquiries to HR automatically.',
+    keywords: 'ai message triage, smart lead routing, automated business message classification',
+    canonical: DOMAIN + '/chatr/ai-message-triage-routing',
+    schemas: []
+  },
+  {
+    path: '/chatr/multi-channel-business-messaging',
+    title: 'Multi-Channel Business Messaging Platform -- CHATR Communication OS',
+    description: 'Unify WhatsApp, email, candidate applications, and internal team chat into one multi-channel business messaging workspace.',
+    keywords: 'multi channel business messaging, unified communication platform',
+    canonical: DOMAIN + '/chatr/multi-channel-business-messaging',
+    schemas: []
+  },
+  {
+    path: '/chatr/whatsapp-api-team-collaboration',
+    title: 'WhatsApp API Team Collaboration System -- CHATR Communication OS',
+    description: 'Empower customer support and sales teams with internal thread notes, supervisor collision detection, and automated SLA alerts on WhatsApp.',
+    keywords: 'whatsapp api team collaboration, collision detection whatsapp',
+    canonical: DOMAIN + '/chatr/whatsapp-api-team-collaboration',
+    schemas: []
+  },
+  {
+    path: '/chatr/ai-conversation-summarization',
+    title: 'AI Conversation Summarization for Teams -- CHATR Communication OS',
+    description: 'Generate instant executive summaries of long customer and candidate WhatsApp threads before handing off conversations.',
+    keywords: 'ai conversation summarization, thread summary ai',
+    canonical: DOMAIN + '/chatr/ai-conversation-summarization',
+    schemas: []
+  },
+  {
+    path: '/problem/how-to-stop-losing-whatsapp-leads',
+    title: 'How to Stop Losing WhatsApp Leads: Operational Guide -- CHATR Communication OS',
+    description: 'Discover why Indian SMEs lose 40% of WhatsApp inquiries to response delays and learn how to automate first-touch replies.',
+    keywords: 'how to stop losing whatsapp leads, prevent whatsapp lead loss',
+    canonical: DOMAIN + '/problem/how-to-stop-losing-whatsapp-leads',
+    schemas: []
+  },
+  {
+    path: '/problem/manage-multiple-whatsapp-business-accounts',
+    title: 'How to Manage Multiple WhatsApp Accounts -- CHATR Communication OS',
+    description: 'Stop juggling 5 physical phones. Learn how to centralize multiple WhatsApp Business numbers into one dashboard.',
+    keywords: 'manage multiple whatsapp business accounts, centralize whatsapp numbers',
+    canonical: DOMAIN + '/problem/manage-multiple-whatsapp-business-accounts',
+    schemas: []
+  },
+  {
+    path: '/problem/reduce-candidate-drop-off-recruitment',
+    title: 'How to Reduce Candidate Drop-Off in Recruitment -- CHATR Communication OS',
+    description: 'Slow email screening causes 60% candidate drop-off. Learn how WhatsApp screening keeps job seekers engaged.',
+    keywords: 'reduce candidate drop off, fast candidate screening',
+    canonical: DOMAIN + '/problem/reduce-candidate-drop-off-recruitment',
+    schemas: []
+  },
+  {
+    path: '/problem/fix-slow-customer-response-times',
+    title: 'How to Fix Slow Customer Response Times -- CHATR Communication OS',
+    description: 'Diagnose response bottlenecks across email and WhatsApp. Implement automated SLAs and instant AI acknowledgments.',
+    keywords: 'fix slow customer response times, business response SLA',
+    canonical: DOMAIN + '/problem/fix-slow-customer-response-times',
+    schemas: []
+  },
+  {
+    path: '/problem/eliminate-context-switching-inboxes',
+    title: 'How to Eliminate Context Switching Between Inboxes -- CHATR Communication OS',
+    description: 'Switching between Slack, WhatsApp, Gmail, and spreadsheets wastes 2 hours daily per employee. Here is how to unify tools.',
+    keywords: 'eliminate context switching inboxes, unified team workspace',
+    canonical: DOMAIN + '/problem/eliminate-context-switching-inboxes',
+    schemas: []
+  },
+  {
+    path: '/workflow/whatsapp-lead-response-workflow',
+    title: 'Step-by-Step WhatsApp Lead Response Workflow -- CHATR Communication OS',
+    description: 'Implement a structured 3-stage WhatsApp lead workflow: Instant Ack -> Lead Qualification -> Team Handoff.',
+    keywords: 'whatsapp lead response workflow, lead qualification automation',
+    canonical: DOMAIN + '/workflow/whatsapp-lead-response-workflow',
+    schemas: []
+  },
+  {
+    path: '/workflow/automated-candidate-screening-workflow',
+    title: 'Automated Candidate Screening Workflow -- CHATR Communication OS',
+    description: 'Build an automated WhatsApp screening pipeline: Resume Upload -> AI Parser -> Pre-screen Questions -> Recruiter Shortlist.',
+    keywords: 'automated candidate screening workflow, whatsapp screening pipeline',
+    canonical: DOMAIN + '/workflow/automated-candidate-screening-workflow',
+    schemas: []
+  },
+  {
+    path: '/workflow/shared-inbox-assignment-workflow',
+    title: 'Shared Inbox Message Assignment Workflow -- CHATR Communication OS',
+    description: 'Define round-robin, load-balanced, or skill-based message assignment workflows for support and sales teams.',
+    keywords: 'shared inbox message assignment workflow, round robin whatsapp',
+    canonical: DOMAIN + '/workflow/shared-inbox-assignment-workflow',
+    schemas: []
+  },
+  {
+    path: '/workflow/recruitment-agency-follow-up-workflow',
+    title: 'Recruitment Agency Follow-Up Workflow -- CHATR Communication OS',
+    description: 'Automate interview reminders, document requests, and offer acceptances via WhatsApp Business API.',
+    keywords: 'recruitment agency follow up workflow, interview reminder whatsapp',
+    canonical: DOMAIN + '/workflow/recruitment-agency-follow-up-workflow',
+    schemas: []
+  },
+  {
+    path: '/workflow/after-hours-business-messaging-workflow',
+    title: 'After-Hours Business Messaging Workflow -- CHATR Communication OS',
+    description: 'Capture weekend and evening leads with automated AI triage, FAQs, and scheduled next-day agent callbacks.',
+    keywords: 'after hours business messaging workflow, weekend whatsapp auto reply',
+    canonical: DOMAIN + '/workflow/after-hours-business-messaging-workflow',
+    schemas: []
+  },
+  {
+    path: '/industries/recruitment-agencies',
+    title: 'CHATR for Recruitment Agencies and Staffing Firms -- CHATR Communication OS',
+    description: 'Discover how staffing agencies use CHATR and TalentXcel to screen applicants 10x faster on WhatsApp.',
+    keywords: 'recruitment agencies software, staffing firm whatsapp screening',
+    canonical: DOMAIN + '/industries/recruitment-agencies',
+    schemas: []
+  },
+  {
+    path: '/industries/real-estate-messaging',
+    title: 'CHATR for Real Estate Agencies and Property Consultancies -- CHATR Communication OS',
+    description: 'Automate property lead qualification, site visit scheduling, and brochure distribution on WhatsApp.',
+    keywords: 'real estate messaging platform, property lead qualification whatsapp',
+    canonical: DOMAIN + '/industries/real-estate-messaging',
+    schemas: []
+  },
+  {
+    path: '/industries/healthcare-patient-messaging',
+    title: 'CHATR for Healthcare Clinics and Medical Diagnostics -- CHATR Communication OS',
+    description: 'Manage appointment bookings, lab report delivery, and patient inquiry triage on WhatsApp securely.',
+    keywords: 'healthcare patient messaging, clinic whatsapp appointment',
+    canonical: DOMAIN + '/industries/healthcare-patient-messaging',
+    schemas: []
+  },
+  {
+    path: '/industries/ecommerce-customer-support',
+    title: 'CHATR for E-Commerce Brands and D2C Stores -- CHATR Communication OS',
+    description: 'Handle order tracking inquiries, COD verification, and return requests in a unified WhatsApp team inbox.',
+    keywords: 'ecommerce customer support whatsapp, d2c brand shared inbox',
+    canonical: DOMAIN + '/industries/ecommerce-customer-support',
+    schemas: []
+  },
+  {
+    path: '/industries/education-student-admissions',
+    title: 'CHATR for Educational Institutes and Academies -- CHATR Communication OS',
+    description: 'Streamline student course inquiries, admission screening, and fee payment reminders via WhatsApp Business.',
+    keywords: 'education student admissions whatsapp, institute inquiry triage',
+    canonical: DOMAIN + '/industries/education-student-admissions',
+    schemas: []
+  },
+  {
+    path: '/comparison/chatr-vs-whatsapp-business-app',
+    title: 'CHATR OS vs WhatsApp Business App: Detailed Comparison -- CHATR Communication OS',
+    description: 'Compare CHATR Communication OS against standard WhatsApp Business App for multi-agent support and analytics.',
+    keywords: 'chatr vs whatsapp business app, whatsapp business app limits',
+    canonical: DOMAIN + '/comparison/chatr-vs-whatsapp-business-app',
+    schemas: []
+  },
+  {
+    path: '/comparison/chatr-vs-traditional-crm',
+    title: 'CHATR Communication OS vs Traditional CRM -- CHATR Communication OS',
+    description: 'Why traditional CRMs feel heavy and disconnected from WhatsApp messaging. Discover how a Communication OS differs.',
+    keywords: 'chatr vs traditional crm, communication os vs crm',
+    canonical: DOMAIN + '/comparison/chatr-vs-traditional-crm',
+    schemas: []
+  },
+  {
+    path: '/comparison/chatr-vs-shared-email-inboxes',
+    title: 'CHATR OS vs Shared Email Inboxes -- CHATR Communication OS',
+    description: 'Compare CHATR unified inbox against Google Workspace shared aliases. Bring WhatsApp, email, and screening together.',
+    keywords: 'chatr vs shared email inbox, Google workspace shared inbox alternative',
+    canonical: DOMAIN + '/comparison/chatr-vs-shared-email-inboxes',
+    schemas: []
+  },
+  {
+    path: '/comparison/chatr-vs-manual-recruitment-screening',
+    title: 'Automated WhatsApp Screening vs Manual Screening -- CHATR Communication OS',
+    description: 'An honest side-by-side evaluation of manual phone screening vs automated WhatsApp candidate qualification with TalentXcel.',
+    keywords: 'automated whatsapp screening vs manual screening, candidate screening ROI',
+    canonical: DOMAIN + '/comparison/chatr-vs-manual-recruitment-screening',
+    schemas: []
+  },
+  {
+    path: '/comparison/chatr-vs-fragmented-startup-tools',
+    title: 'CHATR Business OS vs Fragmented Startup Tool Stack -- CHATR Communication OS',
+    description: 'See how replacing 8 disconnected tools (Slack, Notion, WhatsApp, Calendly, Typeform) with CHATR OS saves founders hours.',
+    keywords: 'chatr business os vs fragmented tools, startup tool stack consolidation',
+    canonical: DOMAIN + '/comparison/chatr-vs-fragmented-startup-tools',
+    schemas: []
   }
 ];
 

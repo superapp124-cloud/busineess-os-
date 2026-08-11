@@ -110,6 +110,9 @@ const AuthorsHubPage = React.lazy(() => import("./pages/public/AuthorsHubPage").
 const AuthorProfilePage = React.lazy(() => import("./pages/public/AuthorProfilePage").then(m => ({ default: m.AuthorProfilePage })));
 const CompanyInfoPage = React.lazy(() => import("./pages/public/CompanyInfoPage").then(m => ({ default: m.CompanyInfoPage })));
 
+// Phase B Expansion Engine (25 High-Authority Product/Problem/Workflow/Industry/Comparison Pages)
+const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPillarPage").then(m => ({ default: m.ExpansionPillarPage })));
+
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
@@ -770,6 +773,37 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/authors" element={<LazyRoute component={AuthorsHubPage} />} />
   <Route path="/authors/:slug" element={<LazyRoute component={AuthorProfilePage} />} />
   <Route path="/company-info" element={<LazyRoute component={CompanyInfoPage} />} />
+
+  {/* Phase B Expansion Engine — Product / Problem / Workflow / Industry / Comparison (25 High-Authority Pages) */}
+  <Route path="/chatr/shared-team-inbox-whatsapp" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/ai-message-triage-routing" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/multi-channel-business-messaging" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/whatsapp-api-team-collaboration" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/chatr/ai-conversation-summarization" element={<LazyRoute component={ExpansionPillarPage} />} />
+  
+  <Route path="/problem/how-to-stop-losing-whatsapp-leads" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/manage-multiple-whatsapp-business-accounts" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/reduce-candidate-drop-off-recruitment" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/fix-slow-customer-response-times" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/problem/eliminate-context-switching-inboxes" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/workflow/whatsapp-lead-response-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/automated-candidate-screening-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/shared-inbox-assignment-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/recruitment-agency-follow-up-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/workflow/after-hours-business-messaging-workflow" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/industries/recruitment-agencies" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/real-estate-messaging" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/healthcare-patient-messaging" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/ecommerce-customer-support" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/industries/education-student-admissions" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  <Route path="/comparison/chatr-vs-whatsapp-business-app" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-traditional-crm" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-shared-email-inboxes" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-manual-recruitment-screening" element={<LazyRoute component={ExpansionPillarPage} />} />
+  <Route path="/comparison/chatr-vs-fragmented-startup-tools" element={<LazyRoute component={ExpansionPillarPage} />} />
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />

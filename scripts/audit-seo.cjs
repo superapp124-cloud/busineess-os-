@@ -28,7 +28,33 @@ const ROUTES = [
   '/talentxcel/ats-resume-builder',
   '/talentxcel/automate-candidate-screening',
   '/talentxcel/recruiter-productivity',
-  '/ai-business-os-for-startups'
+  '/ai-business-os-for-startups',
+  // Phase B Expansion Engine (25 Pages)
+  '/chatr/shared-team-inbox-whatsapp',
+  '/chatr/ai-message-triage-routing',
+  '/chatr/multi-channel-business-messaging',
+  '/chatr/whatsapp-api-team-collaboration',
+  '/chatr/ai-conversation-summarization',
+  '/problem/how-to-stop-losing-whatsapp-leads',
+  '/problem/manage-multiple-whatsapp-business-accounts',
+  '/problem/reduce-candidate-drop-off-recruitment',
+  '/problem/fix-slow-customer-response-times',
+  '/problem/eliminate-context-switching-inboxes',
+  '/workflow/whatsapp-lead-response-workflow',
+  '/workflow/automated-candidate-screening-workflow',
+  '/workflow/shared-inbox-assignment-workflow',
+  '/workflow/recruitment-agency-follow-up-workflow',
+  '/workflow/after-hours-business-messaging-workflow',
+  '/industries/recruitment-agencies',
+  '/industries/real-estate-messaging',
+  '/industries/healthcare-patient-messaging',
+  '/industries/ecommerce-customer-support',
+  '/industries/education-student-admissions',
+  '/comparison/chatr-vs-whatsapp-business-app',
+  '/comparison/chatr-vs-traditional-crm',
+  '/comparison/chatr-vs-shared-email-inboxes',
+  '/comparison/chatr-vs-manual-recruitment-screening',
+  '/comparison/chatr-vs-fragmented-startup-tools'
 ];
 
 function runAudit() {
