@@ -113,6 +113,9 @@ const CompanyInfoPage = React.lazy(() => import("./pages/public/CompanyInfoPage"
 // Phase B Expansion Engine (25 High-Authority Product/Problem/Workflow/Industry/Comparison Pages)
 const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPillarPage").then(m => ({ default: m.ExpansionPillarPage })));
 
+// First-Party Research Lab & Evidence Engine (2026-08-11)
+const ResearchReportPage = React.lazy(() => import("./pages/public/ResearchReportPage").then(m => ({ default: m.ResearchReportPage })));
+
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
@@ -835,6 +838,12 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/comparison/chatr-vs-gallabox" element={<LazyRoute component={ExpansionPillarPage} />} />
   <Route path="/comparison/chatr-vs-wati" element={<LazyRoute component={ExpansionPillarPage} />} />
   <Route path="/comparison/chatr-vs-aisensy" element={<LazyRoute component={ExpansionPillarPage} />} />
+
+  {/* First-Party Research Lab & Telemetry Reports (2026-08-11) */}
+  <Route path="/research/india-recruitment-communication-benchmark-2026" element={<LazyRoute component={ResearchReportPage} />} />
+  <Route path="/research/whatsapp-lead-response-time-audit-2026" element={<LazyRoute component={ResearchReportPage} />} />
+  <Route path="/research/ai-resume-parser-accuracy-benchmark-2026" element={<LazyRoute component={ResearchReportPage} />} />
+
 
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}

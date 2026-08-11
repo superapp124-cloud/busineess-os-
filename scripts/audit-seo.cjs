@@ -80,7 +80,11 @@ const ROUTES = [
   '/comparison/chatr-vs-zendesk',
   '/comparison/chatr-vs-gallabox',
   '/comparison/chatr-vs-wati',
-  '/comparison/chatr-vs-aisensy'
+  '/comparison/chatr-vs-aisensy',
+  // First-Party Research Lab & Telemetry Reports (3 Pages)
+  '/research/india-recruitment-communication-benchmark-2026',
+  '/research/whatsapp-lead-response-time-audit-2026',
+  '/research/ai-resume-parser-accuracy-benchmark-2026'
 ];
 
 function runAudit() {

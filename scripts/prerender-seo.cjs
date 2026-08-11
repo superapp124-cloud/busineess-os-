@@ -733,6 +733,31 @@ const PUBLIC_SEO_PAGES = [
     keywords: 'chatr vs aisensy, aisensy alternative',
     canonical: DOMAIN + '/comparison/chatr-vs-aisensy',
     schemas: []
+  },
+  // --- FIRST-PARTY RESEARCH LAB & TELEMETRY REPORTS (3 PAGES) ---
+  {
+    path: '/research/india-recruitment-communication-benchmark-2026',
+    title: 'India Recruitment Communication Benchmark Report 2026 -- CHATR & TalentXcel Research',
+    description: 'First-party research analyzing candidate response rates, drop-off velocity, screening timelines, and engagement channels across 140,000+ recruitment conversations.',
+    keywords: 'india recruitment benchmark 2026, candidate response rate study, whatsapp candidate engagement data',
+    canonical: DOMAIN + '/research/india-recruitment-communication-benchmark-2026',
+    schemas: []
+  },
+  {
+    path: '/research/whatsapp-lead-response-time-audit-2026',
+    title: 'WhatsApp Lead Response Time and Loss Audit 2026 -- CHATR Communication OS',
+    description: 'Empirical investigation into business response times on WhatsApp, quantifying the precise financial and conversion cost of response delays.',
+    keywords: 'whatsapp lead response time audit, business response SLA study, lead loss mechanics data',
+    canonical: DOMAIN + '/research/whatsapp-lead-response-time-audit-2026',
+    schemas: []
+  },
+  {
+    path: '/research/ai-resume-parser-accuracy-benchmark-2026',
+    title: 'AI Resume Parser Accuracy and Screening Velocity Benchmark -- TalentXcel Research',
+    description: 'Benchmarking skill extraction accuracy, work history parsing, and qualification verification across 50,000 candidate resumes.',
+    keywords: 'ai resume parser accuracy benchmark, cv skill extraction precision, talentxcel parser study',
+    canonical: DOMAIN + '/research/ai-resume-parser-accuracy-benchmark-2026',
+    schemas: []
   }
 ];
 
