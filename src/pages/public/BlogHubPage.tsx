@@ -173,8 +173,8 @@ export const BlogHubPage: React.FC = () => {
               <h2 className="font-bold text-lg leading-snug group-hover:text-indigo-300 transition-colors">{post.title}</h2>
               <p className="text-slate-400 text-sm leading-relaxed line-clamp-3">{post.excerpt}</p>
               <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-800">
-                <span>{post.author}</span>
-                <span className="flex items-center gap-1 text-indigo-400 group-hover:translate-x-1 transition-transform">Read <ArrowRight className="w-3.5 h-3.5" /></span>
+                <span className="text-slate-400 font-semibold">{post.author}</span>
+                <span className="flex items-center gap-1 text-indigo-400 group-hover:translate-x-1 transition-transform">Read Article <ArrowRight className="w-3.5 h-3.5" /></span>
               </div>
             </Link>
           ))}

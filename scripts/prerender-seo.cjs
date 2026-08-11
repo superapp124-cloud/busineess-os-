@@ -5,6 +5,23 @@ const DOMAIN = 'https://www.chatrchat.in';
 
 const PUBLIC_SEO_PAGES = [
   {
+    path: '/chatr/whatsapp-business-api',
+    title: 'WhatsApp Business API Platform -- CHATR Communication OS | Multi-Agent Team Inbox',
+    description: 'Connect your WhatsApp Business API to CHATR. Enable shared team inboxes, automated lead assignment, AI chat agents, and candidate screening.',
+    keywords: 'WhatsApp Business API, WhatsApp Multi-Agent Team Inbox, WhatsApp CRM, WhatsApp Lead Automation',
+    canonical: DOMAIN + '/chatr/whatsapp-business-api',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'CHATR WhatsApp Business API Platform',
+        applicationCategory: 'BusinessApplication',
+        url: DOMAIN + '/chatr/whatsapp-business-api',
+        description: 'WhatsApp Business API platform for multi-agent team inbox and candidate screening.'
+      }
+    ]
+  },
+  {
     path: '/blog',
     title: 'Blog -- CHATR Communication OS | Business Messaging and Growth Insights',
     description: 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs and recruitment agencies.',

@@ -19,7 +19,7 @@ export const ResearchReportPage: React.FC = () => {
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', `https://chatrchat.in${report.path}`);
+    canonical.setAttribute('href', `https://www.chatrchat.in${report.path}`);
 
     const scholarlySchema = {
       '@context': 'https://schema.org',
@@ -32,12 +32,12 @@ export const ResearchReportPage: React.FC = () => {
         '@type': 'Person',
         name: 'Sanobar Jahan',
         jobTitle: 'Founder, TalentXcel & CHATR | HR & Education Strategist',
-        url: 'https://chatrchat.in/authors/sanobar-jahan'
+        url: 'https://www.chatrchat.in/authors/sanobar-jahan'
       },
       publisher: {
         '@type': 'Organization',
         name: 'CHATR Communication OS & TalentXcel Research',
-        url: 'https://chatrchat.in'
+        url: 'https://www.chatrchat.in'
       }
     };
 

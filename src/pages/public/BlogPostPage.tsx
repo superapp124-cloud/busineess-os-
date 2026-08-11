@@ -254,7 +254,7 @@ export const BlogPostPage: React.FC = () => {
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-white text-base">{article.author}</h3>
-              <Link to="/authors" className="text-xs text-indigo-400 hover:underline">All Authors →</Link>
+              <Link to="/authors/chatr-product-team" className="text-xs text-indigo-400 hover:underline font-semibold">View Profile →</Link>
             </div>
             <p className="text-xs text-indigo-400 font-semibold">CHATR Engineering & Research Group</p>
             <p className="text-xs text-slate-400 leading-relaxed">

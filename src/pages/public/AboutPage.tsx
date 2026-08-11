@@ -131,7 +131,7 @@ export const AboutPage: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">{author.bio}</p>
                 </div>
-                <Link to={/authors/} className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 pt-2 border-t border-slate-800">
+                <Link to={`/authors/${author.slug}`} className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 pt-2 border-t border-slate-800">
                   View Profile & Articles <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

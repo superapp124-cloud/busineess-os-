@@ -95,6 +95,7 @@ const RevenueOSDashboard = React.lazy(() => import("./components/RevenueOSDashbo
 const CustomerSuccessOSDashboard = React.lazy(() => import("./components/CustomerSuccessOSDashboard").then(m => ({ default: m.CustomerSuccessOSDashboard })));
 const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
+const PermanentMarketingOS = React.lazy(() => import("./pages/desktop/PermanentMarketingOS"));
 const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));
 
 // Public Knowledge Hub — Blog & News (/blog, /news)
@@ -172,6 +173,7 @@ const BusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLandi
 const TalentXcelAIResumeParserPage = React.lazy(() => import('./pages/landing/TalentXcelAIResumeParserPage'));
 const TalentXcelATSResumePage = React.lazy(() => import('./pages/landing/TalentXcelATSResumePage'));
 const ChatrUniversalInboxPage = React.lazy(() => import('./pages/landing/ChatrUniversalInboxPage'));
+const ChatrWhatsAppBusinessAPIPage = React.lazy(() => import('./pages/landing/ChatrWhatsAppBusinessAPIPage'));
 
 // Cycle 2 SEO Opportunity Pages (2026-08-10)
 const TalentXcelAutomateScreeningPage = React.lazy(() => import('./pages/landing/TalentXcelAutomateScreeningPage'));
@@ -599,6 +601,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="growth" element={<LazyRoute component={LazyPages.GrowthWorkspace} />} />
   <Route path="executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
   <Route path="growth-os" element={<LazyRoute component={GrowthOSDashboard} />} />
+  <Route path="marketing-os" element={<LazyRoute component={PermanentMarketingOS} />} />
   <Route path="revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
@@ -861,6 +864,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
 
   {/* chatr.chat SEO Cluster — Universal AI Inbox (Cycle 1) */}
   <Route path="/chatr/universal-inbox-ai" element={<LazyRoute component={ChatrUniversalInboxPage} />} />
+  <Route path="/chatr/whatsapp-business-api" element={<LazyRoute component={ChatrWhatsAppBusinessAPIPage} />} />
 
   {/* Cycle 2 SEO Opportunity Pages (2026-08-10) */}
   <Route path="/talentxcel/automate-candidate-screening" element={<LazyRoute component={TalentXcelAutomateScreeningPage} />} />
@@ -987,6 +991,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/mcp-console" element={<ProtectedLazyRoute component={LazyPages.McpDeveloperDashboard} />} />
  <Route path="/official-accounts" element={<LazyRoute component={LazyPages.OfficialAccounts} />} />
  <Route path="/chatr-studio" element={<LazyRoute component={LazyPages.ChatrStudio} />} />
+ <Route path="/editor" element={<LazyRoute component={LazyPages.ChatrStudio} />} />
+ <Route path="/studio" element={<LazyRoute component={LazyPages.ChatrStudio} />} />
+ <Route path="/design-editor" element={<LazyRoute component={LazyPages.ChatrStudio} />} />
  <Route path="/food-ordering" element={<LazyRoute component={LazyPages.FoodOrdering} />} />
  <Route path="/restaurant/:id" element={<LazyRoute component={LazyPages.RestaurantDetail} />} />
  <Route path="/food-checkout/:id" element={<LazyRoute component={LazyPages.FoodCheckout} />} />
