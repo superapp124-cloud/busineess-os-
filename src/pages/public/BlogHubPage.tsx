@@ -64,6 +64,16 @@ const BLOG_POSTS: BlogPost[] = [
     publishedAt: '2026-08-11',
     author: 'CHATR Team',
   },
+  {
+    slug: 'ai-lead-triage-guide',
+    title: 'AI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+    excerpt: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    readingMinutes: 6,
+    category: 'product',
+    domain: 'chatrchat.in',
+    publishedAt: '2026-08-11',
+    author: 'CHATR Team',
+  },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {

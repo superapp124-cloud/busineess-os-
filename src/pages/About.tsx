@@ -1,58 +1,33 @@
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Heart, Zap, Shield, Globe, Award } from 'lucide-react';
 import chatrLogo from '@/assets/chatr-brand-logo.png';
 import { SEOHead } from '@/components/SEOHead';
 
 export default function About() {
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
- const values = [
- {
- icon: Users,
- title: 'Community First',
- description: 'Building meaningful connections through technology'
- },
- {
- icon: Heart,
- title: 'Health & Wellness',
- description: 'Making healthcare accessible to everyone'
- },
- {
- icon: Zap,
- title: 'Innovation',
- description: 'Constantly evolving with cutting-edge features'
- },
- {
- icon: Shield,
- title: 'Privacy & Security',
- description: 'Your data, your control, always protected'
- },
- {
- icon: Globe,
- title: 'Accessibility',
- description: 'Available anytime, anywhere, for everyone'
- },
- {
- icon: Award,
- title: 'Excellence',
- description: 'Delivering world-class user experience'
- }
- ];
+  const values = [
+    { icon: Users, title: 'Community First', description: 'Building meaningful connections through technology' },
+    { icon: Heart, title: 'Health & Wellness', description: 'Making healthcare accessible to everyone' },
+    { icon: Zap, title: 'Innovation', description: 'Constantly evolving with cutting-edge features' },
+    { icon: Shield, title: 'Privacy & Security', description: 'Your data, your control, always protected' },
+    { icon: Globe, title: 'Accessibility', description: 'Available anytime, anywhere, for everyone' },
+    { icon: Award, title: 'Excellence', description: 'Delivering world-class user experience' }
+  ];
 
- const milestones = [
- { year: '2025', event: 'Chatr+ Launch', description: 'Launched as India\'s first super-app ecosystem' },
- { year: '2025 Q2', event: 'AI Integration', description: 'Integrated advanced AI for health and chat' },
- { year: '2025 Q3', event: 'Business Hub', description: 'Launched comprehensive business tools' },
- { year: '2025 Q4', event: 'Community Growth', description: 'Reached 325+ active users and growing' }
- ];
+  const milestones = [
+    { year: '2025', event: 'CHATR Launch', description: 'Launched as India\'s unified business messaging platform' },
+    { year: '2025 Q2', event: 'AI Integration', description: 'Integrated advanced AI for lead triage and chat' },
+    { year: '2025 Q3', event: 'Business Hub', description: 'Launched comprehensive business tools' },
+    { year: '2025 Q4', event: 'Community Growth', description: 'Reached 325+ active business users and growing' }
+  ];
 
   return (
     <>
       <SEOHead
-        title="About Chatr+ | India's AI Superapp for Chat, Healthcare & Services"
-        description="Learn about Chatr+, India's next-generation superapp integrating communication, healthcare, business tools, and lifestyle services. Mission, vision, and company info."
+        title="About CHATR | Universal AI Business Messaging Platform"
+        description="Learn about CHATR Communication OS, India's unified platform for business messaging, WhatsApp integration, and team inbox workflows."
       />
       <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
         {/* Header */}
@@ -66,36 +41,36 @@ export default function About() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-lg font-bold text-slate-900">About Chatr+</h1>
+            <h1 className="text-lg font-bold text-slate-900">About CHATR Communication OS</h1>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-          {/* Hero Section - Matching Screenshot */}
+          {/* Hero Section */}
           <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_35px_rgba(0,0,0,0.03)] p-8 text-center space-y-4">
-            <img src={chatrLogo} alt="Chatr+" className="h-14 mx-auto" />
+            <img src={chatrLogo} alt="CHATR" className="h-14 mx-auto" />
             <h2 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Say It. Share It. Live It.
             </h2>
             <p className="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              Chatr+ is India's next-generation super-app that seamlessly integrates communication, 
+              CHATR Communication OS is India's unified platform that seamlessly integrates business messaging,
               healthcare, business tools, and lifestyle services into one powerful ecosystem.
             </p>
           </div>
 
-          {/* Mission & Vision - Matching Screenshot */}
+          {/* Mission & Vision */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_35px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-3">
               <h3 className="text-lg font-bold text-purple-600">Our Mission</h3>
               <p className="text-slate-500 text-sm leading-relaxed">
-                To revolutionize digital communication by creating an all-in-one platform that 
+                To revolutionize digital communication by creating an all-in-one platform that
                 empowers users to connect, collaborate, and thrive in their personal and professional lives.
               </p>
             </div>
             <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_35px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-3">
               <h3 className="text-lg font-bold text-cyan-600">Our Vision</h3>
               <p className="text-slate-500 text-sm leading-relaxed">
-                To become the most trusted and comprehensive digital ecosystem in India, 
+                To become the most trusted and comprehensive digital ecosystem in India,
                 making technology accessible, meaningful, and beneficial for everyone.
               </p>
             </div>
@@ -146,7 +121,7 @@ export default function About() {
             <div className="grid sm:grid-cols-2 gap-4 text-xs">
               <div>
                 <p className="text-slate-400">Product</p>
-                <p className="font-semibold text-slate-800">Chatr</p>
+                <p className="font-semibold text-slate-800">CHATR Communication OS</p>
               </div>
               <div>
                 <p className="text-slate-400">Operated By</p>
@@ -168,7 +143,7 @@ export default function About() {
 
           {/* CTA */}
           <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/5 to-cyan-500/10 border border-purple-200/60 rounded-3xl p-8 text-center space-y-4">
-            <h3 className="text-xl font-bold text-slate-900">Join the Chatr+ Community</h3>
+            <h3 className="text-xl font-bold text-slate-900">Join the CHATR Business Community</h3>
             <p className="text-sm text-slate-600 max-w-md mx-auto">
               Experience the future of digital communication today
             </p>

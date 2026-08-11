@@ -88,8 +88,8 @@ export default function Contact() {
   return (
     <>
       <SEOHead
-        title="Contact Us | Chatr+ Support"
-        description="Contact Chatr+ support team. Get help with your account, report issues, or share feedback. Available 24/7 via email, phone, or contact form."
+        title="Contact Us | CHATR Communication OS"
+        description="Contact CHATR support team. Get help with your business messaging workspace, report issues, or share feedback."
       />
       <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
         {/* Header */}

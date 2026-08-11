@@ -29,7 +29,7 @@ export const SplashScreen = ({ onComplete }: { onComplete?: () => void }) => {
 
  {/* Text Group */}
  <div className="flex flex-col items-center gap-3">
- <h1 className="text-white text-display font-black tracking-tight">chatr+</h1>
+ <h1 className="text-white text-display font-black tracking-tight">CHATR</h1>
  <p className="text-slate-500 text-[10px] font-mono tracking-widest uppercase animate-pulse">
  CONNECTING CORE...
  </p>

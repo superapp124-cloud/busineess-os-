@@ -12,6 +12,7 @@ export const Footer = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Solutions</h3>
             <ul className="space-y-2">
+              <li><Link to="/chatr/ai" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">CHATR AI Platform</Link></li>
               <li><Link to="/chatr/whatsapp-business-api" className="hover:text-indigo-400 transition-colors">WhatsApp Business API</Link></li>
               <li><Link to="/chatr/universal-inbox-ai" className="hover:text-indigo-400 transition-colors">Universal AI Inbox</Link></li>
               <li><Link to="/chatr/whatsapp-candidate-screening" className="hover:text-indigo-400 transition-colors">WhatsApp Candidate Screening</Link></li>
@@ -64,6 +65,7 @@ export const Footer = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Trust & Data</h3>
             <ul className="space-y-2">
+              <li><Link to="/pricing" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">Commercial Pricing</Link></li>
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">About CHATR</Link></li>
               <li><Link to="/authors" className="hover:text-indigo-400 transition-colors">Authors & Experts</Link></li>
               <li><Link to="/editorial-policy" className="hover:text-indigo-400 transition-colors">Editorial Policy</Link></li>

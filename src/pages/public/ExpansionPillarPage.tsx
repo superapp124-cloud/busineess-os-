@@ -299,6 +299,17 @@ export const ExpansionPillarPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Contextual Product CTA */}
+        {pageConfig.ctaTitle && pageConfig.ctaTarget && (
+          <section className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+            <h3 className="text-white font-bold text-lg">{pageConfig.ctaTitle}</h3>
+            <p className="text-slate-300 text-sm">{pageConfig.ctaDescription}</p>
+            <Link to={pageConfig.ctaTarget} className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+              {pageConfig.ctaButtonText || 'Explore Solution'} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </section>
+        )}
+
         {/* FAQ Accordion Section */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 font-bold text-lg text-white">

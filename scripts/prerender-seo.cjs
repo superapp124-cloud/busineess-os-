@@ -5,6 +5,37 @@ const DOMAIN = 'https://www.chatrchat.in';
 
 const PUBLIC_SEO_PAGES = [
   {
+    path: '/chatr/ai',
+    title: 'CHATR AI -- Intelligent Business Messaging & Workflow Automation',
+    description: 'Discover CHATR AI: the intelligent communication layer for WhatsApp, email, and candidate screening. Automate message triage, thread summaries, lead capture, and voice agents.',
+    keywords: 'CHATR AI, AI Business Messaging, AI Intent Triage, WhatsApp AI Agent',
+    canonical: DOMAIN + '/chatr/ai',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'CHATR AI',
+        applicationCategory: 'CommunicationApplication',
+        url: DOMAIN + '/chatr/ai'
+      }
+    ]
+  },
+  {
+    path: '/pricing',
+    title: 'CHATR Pricing -- Commercial Plans & Free Trial',
+    description: 'Simple, transparent pricing for CHATR Business OS and AI Workspace. Explore free trial, SME Starter plans from ₹999/mo, Growth OS, and Desktop Pro options.',
+    keywords: 'CHATR Pricing, CHATR Plans, Business OS Pricing, WhatsApp API Pricing',
+    canonical: DOMAIN + '/pricing',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'OfferCatalog',
+        name: 'CHATR Commercial Plans & Pricing',
+        url: DOMAIN + '/pricing'
+      }
+    ]
+  },
+  {
     path: '/chatr/whatsapp-business-api',
     title: 'WhatsApp Business API Platform -- CHATR Communication OS | Multi-Agent Team Inbox',
     description: 'Connect your WhatsApp Business API to CHATR. Enable shared team inboxes, automated lead assignment, AI chat agents, and candidate screening.',
@@ -137,7 +168,26 @@ const PUBLIC_SEO_PAGES = [
         description: 'A Communication OS is the central communication layer for business teams.',
         author: { '@type': 'Organization', name: 'CHATR Team' },
         datePublished: '2026-08-11',
-        publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatr.chat' }
+        publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://www.chatrchat.in' }
+      }
+    ]
+  },
+  {
+    path: '/blog/ai-lead-triage-guide',
+    title: 'AI Lead Triage & Smart Routing -- CHATR Communication OS',
+    description: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    keywords: 'AI lead triage, smart routing, message classification, WhatsApp lead automation',
+    canonical: DOMAIN + '/blog/ai-lead-triage-guide',
+    ogType: 'article',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'AI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+        description: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds.',
+        author: { '@type': 'Organization', name: 'CHATR Team' },
+        datePublished: '2026-08-11',
+        publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://www.chatrchat.in' }
       }
     ]
   },

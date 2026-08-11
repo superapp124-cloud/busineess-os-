@@ -20,7 +20,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'why-businesses-lose-whatsapp-leads',
     title: 'Why Indian Businesses Lose WhatsApp Leads (And How to Stop It)',
     metaDescription: 'The 5-minute rule is real: most WhatsApp leads go cold in under 5 minutes of silence. Learn the operational mechanics behind lead loss and how a unified inbox prevents it.',
-    canonicalDomain: 'https://chatrchat.in',
+    canonicalDomain: 'https://www.chatrchat.in',
     category: 'Messaging and Inbox',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -36,6 +36,15 @@ const ARTICLES: BlogArticle[] = [
         <h2 className="text-white text-xl font-bold mt-8">What a Unified Inbox Changes</h2>
         <p>A unified inbox does not make your team faster by itself. It removes the context-switching cost that slows them down. When every incoming message -- WhatsApp, email, Instagram -- arrives in one feed with assignable ownership, response time drops not because the team works harder but because they are not losing messages in notification noise.</p>
         <p>The second change is accountability. When a lead is assigned to a specific team member in a shared inbox, it is visible whether it was responded to. In a personal WhatsApp account, nothing is visible to anyone except the person holding the phone.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Turn WhatsApp conversations into a shared team workflow</h3>
+          <p className="text-slate-300 text-sm">Keep every customer conversation in one place, assign conversations to the right person, and respond faster.</p>
+          <Link to="/chatr/shared-team-inbox-whatsapp" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore the Shared Team Inbox <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     ),
     faqs: [
@@ -48,7 +57,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'universal-inbox-vs-switching-apps',
     title: 'Universal Inbox vs Switching Between Apps: The Hidden Cost for Small Business Teams',
     metaDescription: 'Context switching between messaging apps is one of the most underestimated productivity drains in small business operations. Here is what the data says and what a universal inbox solves.',
-    canonicalDomain: 'https://chatrchat.in',
+    canonicalDomain: 'https://www.chatrchat.in',
     category: 'Messaging and Inbox',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -63,6 +72,15 @@ const ARTICLES: BlogArticle[] = [
         <h2 className="text-white text-xl font-bold mt-8">What a Universal Inbox Actually Provides</h2>
         <p>A universal inbox consolidates incoming messages from all channels into a single, timestamped feed. Each message can be assigned to a team member. Each conversation has a status: open, in-progress, or closed. No message is invisible to the team -- every incoming inquiry is accounted for.</p>
         <p>CHATR Universal Inbox does exactly this: routes WhatsApp, email, and connected channels into one interface, with team assignment and response tracking built in.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Eliminate app context-switching for your messaging team</h3>
+          <p className="text-slate-300 text-sm">Bring WhatsApp, email, and candidate channels into a single timestamped workspace with clear thread assignment.</p>
+          <Link to="/chatr/multi-channel-business-messaging" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore Multi-Channel Workspace <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     ),
     faqs: [
@@ -74,7 +92,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'whatsapp-candidate-screening-recruitment',
     title: 'WhatsApp Candidate Screening: How Recruitment Agencies Handle High Applicant Volume',
     metaDescription: 'For recruitment agencies managing high applicant volumes, WhatsApp has become a primary candidate channel. Here is how structured WhatsApp screening workflows work in practice.',
-    canonicalDomain: 'https://chatrchat.in',
+    canonicalDomain: 'https://www.chatrchat.in',
     category: 'Recruitment and Hiring',
     author: 'TalentXcel Team',
     publishedAt: '2026-08-11',
@@ -89,6 +107,15 @@ const ARTICLES: BlogArticle[] = [
         <h2 className="text-white text-xl font-bold mt-8">Structured Screening Workflows</h2>
         <p>Agencies that handle high volumes effectively use structured screening sequences rather than ad-hoc conversations. A typical WhatsApp screening workflow includes an initial automated acknowledgement, a set of qualification questions, a response window for candidate replies, and a manual review step before shortlisting.</p>
         <p>CHATR's WhatsApp candidate screening tool enables exactly this kind of structured workflow -- bringing candidate responses into a shared recruiter inbox with qualification tracking, rather than leaving every conversation on a recruiter's personal phone.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Automate WhatsApp candidate screening at scale</h3>
+          <p className="text-slate-300 text-sm">Route high applicant volumes into a structured screening interface with automated pre-qualification and recruiter assignment.</p>
+          <Link to="/talentxcel/automate-candidate-screening" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore Candidate Screening Workflows <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     ),
     faqs: [
@@ -101,7 +128,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'running-business-on-whatsapp-email-excel',
     title: 'Running a Business on WhatsApp, Email and Excel: The Operational Cost Nobody Talks About',
     metaDescription: 'Most Indian SMEs run on a combination of WhatsApp, email, and Excel. This is not disorganization -- it is a real system with real limitations. Here is where the operational cost appears.',
-    canonicalDomain: 'https://chatrchat.in',
+    canonicalDomain: 'https://www.chatrchat.in',
     category: 'Business Growth',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -115,6 +142,15 @@ const ARTICLES: BlogArticle[] = [
         <p>The operational cost of this system is not visible in any single missed lead or forgotten follow-up. It is visible in the aggregate: customers who moved to a competitor, deals that stalled because nobody followed up, growth that slowed because the owner became the bottleneck.</p>
         <h2 className="text-white text-xl font-bold mt-8">What the Alternative Looks Like</h2>
         <p>The alternative is not a complex ERP or a 12-module CRM. For most SMEs, the step change comes from consolidating the communication layer -- all customer messages in one place, with team visibility and basic follow-up tracking. That is the operational gap that CHATR closes.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Upgrade from manual spreadsheets to CHATR Business OS</h3>
+          <p className="text-slate-300 text-sm">Consolidate your business messaging layer into a structured team OS without losing conversation history.</p>
+          <Link to="/business-os" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore CHATR Business OS <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     ),
     faqs: [
@@ -126,7 +162,7 @@ const ARTICLES: BlogArticle[] = [
     slug: 'what-is-a-communication-os',
     title: 'What Is a Communication OS? How It Differs From a CRM, Helpdesk, and WhatsApp Business',
     metaDescription: 'A Communication OS manages how your entire business communicates -- not just your support tickets or sales records. Here is how it is different from a CRM, helpdesk, and WhatsApp Business.',
-    canonicalDomain: 'https://chatrchat.in',
+    canonicalDomain: 'https://www.chatrchat.in',
     category: 'Product and Technology',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
@@ -143,12 +179,50 @@ const ARTICLES: BlogArticle[] = [
         <h2 className="text-white text-xl font-bold mt-8">What a Communication OS Actually Is</h2>
         <p>A Communication OS is the layer that sits between your business and every channel through which customers, candidates, or partners contact you. It brings all incoming conversations into one place, makes them visible to the right team members, enables structured responses and follow-ups, and creates a record of every communication without requiring manual entry.</p>
         <p>CHATR is built as a Communication OS -- not a CRM module, not a helpdesk replacement, but the central communication layer for business teams.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Build your business on a Communication OS</h3>
+          <p className="text-slate-300 text-sm">Manage live customer relationships across all digital channels with role-based governance and shared team visibility.</p>
+          <Link to="/chatr/multi-channel-business-messaging" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore CHATR Communication OS <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     ),
     faqs: [
       { q: 'What is a Communication OS?', a: 'A Communication OS is a business platform that consolidates and manages all incoming and outgoing communications across channels (WhatsApp, email, etc.) in one place, with team visibility, assignment, and workflow capabilities.' },
       { q: 'How is CHATR different from a CRM?', a: 'CHATR is primarily a communication system, not a database. It manages live conversations and team response workflows rather than storing customer records. It can complement a CRM by providing the communication layer that feeds customer interaction data.' },
       { q: 'Can CHATR replace WhatsApp Business?', a: 'CHATR integrates with WhatsApp Business to add team inbox, shared management, and workflow capabilities on top of WhatsApp messaging. It is not a replacement for WhatsApp itself, but it transforms WhatsApp from a personal messaging app into a managed team communication channel.' },
+    ],
+  },
+  {
+    slug: 'ai-lead-triage-guide',
+    title: 'AI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+    metaDescription: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    canonicalDomain: 'https://www.chatrchat.in',
+    category: 'AI and Automation',
+    author: 'CHATR Team',
+    publishedAt: '2026-08-11',
+    readingMinutes: 6,
+    body: (
+      <div className="prose prose-invert max-w-none space-y-5 text-slate-300 leading-relaxed">
+        <p>When high lead volumes hit your business inboxes, manual sorting becomes the primary operational bottleneck. Sales inquiries sit behind billing questions, and candidate applications wait behind general support threads.</p>
+        <p>AI message triage solves this bottleneck by classifying incoming intent in real-time, tagging urgency, and routing messages directly to the appropriate team workspace.</p>
+
+        {/* Contextual Product CTA */}
+        <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Classify and route incoming leads automatically</h3>
+          <p className="text-slate-300 text-sm">Use AI intent classification to route sales leads, candidate inquiries, and customer support threads instantly.</p>
+          <Link to="/chatr/ai-message-triage-routing" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore AI Lead Triage & Routing <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    ),
+    faqs: [
+      { q: 'How does AI lead triage work?', a: 'CHATR AI analyzes incoming message intent, urgency, and topic in real-time, categorizing threads before team members open them.' },
+      { q: 'Can I define custom routing rules?', a: 'Yes. Custom tags, escalation alerts, and department triggers are defined in CHATR Studio.' },
     ],
   },
 ];

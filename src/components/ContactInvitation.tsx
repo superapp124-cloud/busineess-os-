@@ -121,7 +121,7 @@ export const ContactInvitation = ({ userId, username }: ContactInvitationProps) 
  <Gift className="h-8 w-8 text-white" />
  </div>
  <h2 className="text-page font-bold text-[#2E1065]">Invite Friends</h2>
- <p className="text-secondary text-muted-foreground">Share Chatr+ and earn rewards together</p>
+ <p className="text-secondary text-muted-foreground">Share CHATR Communication OS with team members</p>
  </div>
 
  {/* Rewards Banner */}

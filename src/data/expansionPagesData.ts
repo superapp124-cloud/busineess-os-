@@ -8,6 +8,10 @@ export interface ExpansionPageConfig {
   executiveSummary: string;
   faqs: { q: string; a: string }[];
   evidenceText: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaTarget?: string;
+  ctaButtonText?: string;
 }
 
 export const EXPANSION_PAGES: ExpansionPageConfig[] = [
@@ -92,7 +96,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Why do businesses lose WhatsApp leads?', a: 'Unassigned personal phones, off-hours inquiries, and lack of automated instant acknowledgments.' }
     ],
-    evidenceText: 'Source: CHATR Business Response Time Study (July--August 2026).'
+    evidenceText: 'Source: CHATR Business Response Time Study (July--August 2026).',
+    ctaTitle: 'Stop losing WhatsApp leads with CHATR Shared Team Inbox',
+    ctaDescription: 'Turn a single WhatsApp number into a multi-agent workspace with instant conversation assignment and zero missed leads.',
+    ctaTarget: '/chatr/shared-team-inbox-whatsapp',
+    ctaButtonText: 'Explore the Shared Team Inbox'
   },
   {
     path: '/problem/manage-multiple-whatsapp-business-accounts',
@@ -105,7 +113,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Can I connect numbers from different branches?', a: 'Yes. CHATR aggregates multi-location WhatsApp numbers under role-based permissions.' }
     ],
-    evidenceText: 'Tested across multi-branch retail and real estate deployments in India.'
+    evidenceText: 'Tested across multi-branch retail and real estate deployments in India.',
+    ctaTitle: 'Centralize multi-account WhatsApp messaging',
+    ctaDescription: 'Aggregate multiple branch numbers and team accounts into a single secure operational dashboard.',
+    ctaTarget: '/chatr/multi-channel-business-messaging',
+    ctaButtonText: 'Explore Multi-Channel Workspace'
   },
   {
     path: '/problem/reduce-candidate-drop-off-recruitment',
@@ -118,7 +130,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Why do candidates drop off during screening?', a: 'Complex login portals, delayed recruiter responses, and non-mobile application forms.' }
     ],
-    evidenceText: 'Source: TalentXcel Candidate Engagement Benchmark Report 2026.'
+    evidenceText: 'Source: TalentXcel Candidate Engagement Benchmark Report 2026.',
+    ctaTitle: 'Accelerate candidate responses with WhatsApp screening',
+    ctaDescription: 'Replace slow email forms with automated micro-screening questions directly on WhatsApp.',
+    ctaTarget: '/talentxcel/automate-candidate-screening',
+    ctaButtonText: 'Explore Candidate Screening Workflows'
   },
   {
     path: '/problem/fix-slow-customer-response-times',
@@ -131,7 +147,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'What is an acceptable business response time on WhatsApp?', a: 'Under 5 minutes during business hours, and under 1 minute for automated acknowledgments.' }
     ],
-    evidenceText: 'Based on CHATR SLA telemetry processing over 60,000 customer touchpoints.'
+    evidenceText: 'Based on CHATR SLA telemetry processing over 60,000 customer touchpoints.',
+    ctaTitle: 'Cut customer response times by 80% with AI Triage',
+    ctaDescription: 'Automatically classify intent and route urgent leads to sales agents before conversations go cold.',
+    ctaTarget: '/chatr/ai-message-triage-routing',
+    ctaButtonText: 'Explore AI Lead Triage & Routing'
   },
   {
     path: '/problem/eliminate-context-switching-inboxes',
@@ -144,7 +164,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'How much time is lost to context switching?', a: 'Studies show employees lose up to 2.5 hours daily toggling between disconnected apps.' }
     ],
-    evidenceText: 'Source: CHATR Workplace Efficiency Telemetry 2026.'
+    evidenceText: 'Source: CHATR Workplace Efficiency Telemetry 2026.',
+    ctaTitle: 'Unify all messaging channels into one inbox',
+    ctaDescription: 'Stop toggling between 4 apps. Manage WhatsApp, email, and candidate threads in a single feed.',
+    ctaTarget: '/chatr/multi-channel-business-messaging',
+    ctaButtonText: 'Explore CHATR Communication OS'
   },
 
   // --- WORKFLOW ENGINE (5 Pages) ---

@@ -350,6 +350,15 @@ export const ResearchReportPage: React.FC = () => {
             <p className="text-xs text-slate-400 leading-relaxed">{AUTHORS['sanobar-jahan'].bio}</p>
           </div>
         </section>
+
+        {/* Contextual Product CTA */}
+        <section className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
+          <h3 className="text-white font-bold text-lg">Apply research-backed automated candidate screening</h3>
+          <p className="text-slate-300 text-sm">Implement structured WhatsApp pre-screening sequences to reduce time-to-shortlist from days to hours.</p>
+          <Link to="/workflow/automated-candidate-screening-workflow" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
+            Explore Automated Screening Workflow <ArrowRight className="w-4 h-4" />
+          </Link>
+        </section>
       </main>
     </div>
   );

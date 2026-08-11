@@ -42,7 +42,7 @@ export const BiometricLogin = ({ onSuccess }: BiometricLoginProps) => {
  logEvent('biometric_login_attempt');
 
  // Authenticate with biometrics
- const authSuccess = await authenticate('Login to Chatr+');
+ const authSuccess = await authenticate('Sign in to CHATR Workspace');
  
  if (!authSuccess) {
  setLoading(false);

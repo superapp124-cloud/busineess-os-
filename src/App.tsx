@@ -110,6 +110,8 @@ const EditorialPolicyPage = React.lazy(() => import("./pages/public/EditorialPol
 const AuthorsHubPage = React.lazy(() => import("./pages/public/AuthorsHubPage").then(m => ({ default: m.AuthorsHubPage })));
 const AuthorProfilePage = React.lazy(() => import("./pages/public/AuthorProfilePage").then(m => ({ default: m.AuthorProfilePage })));
 const CompanyInfoPage = React.lazy(() => import("./pages/public/CompanyInfoPage").then(m => ({ default: m.CompanyInfoPage })));
+const ChatrAIPage = React.lazy(() => import("./pages/public/ChatrAIPage").then(m => ({ default: m.ChatrAIPage })));
+const PricingPage = React.lazy(() => import("./pages/public/PricingPage").then(m => ({ default: m.PricingPage })));
 
 // Phase B Expansion Engine (25 High-Authority Product/Problem/Workflow/Industry/Comparison Pages)
 const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPillarPage").then(m => ({ default: m.ExpansionPillarPage })));
@@ -875,6 +877,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/chatr/ai-messaging-for-business" element={<LazyRoute component={ChatrAIMessagingPage} />} />
 
   {/* chatrchat.in Core Business OS Landing Pages */}
+  <Route path="/chatr/ai" element={<LazyRoute component={ChatrAIPage} />} />
+  <Route path="/pricing" element={<LazyRoute component={PricingPage} />} />
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />
   <Route path="/ai-business-os" element={<LazyRoute component={AIBusinessOSLanding} />} />
   <Route path="/ai-revenue-operations" element={<LazyRoute component={AIRevenueOperationsLanding} />} />
