@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, ChevronDown, HelpCircle, Tag, FileText, ArrowRight, Database, ShieldCheck, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronDown, HelpCircle, Tag, FileText, ArrowRight, Database, ShieldCheck, ExternalLink, AlertCircle, Wrench, Network } from 'lucide-react';
 import { EXPANSION_PAGES } from '../../data/expansionPagesData';
 import { AUTHORS } from '../../data/authorsData';
 import { getEvidenceNodesForRoute } from '../../services/evidenceGraphEngine';
@@ -64,6 +64,31 @@ export const ExpansionPillarPage: React.FC = () => {
       ]
     };
 
+    // HowTo Schema for Problem & Troubleshooting Pages
+    const howToSchema = pageConfig.category === 'Problem' ? {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      name: pageConfig.h1,
+      description: pageConfig.description,
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Diagnose Inbound Channel Friction',
+          text: 'Identify unassigned message queues, response SLA timeouts, and context-switching bottlenecks across your team inboxes.'
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Implement Immediate Operational Workflows',
+          text: 'Establish round-robin routing rules, multi-agent collision locks, and automated after-hours intake auto-responders.'
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Deploy CHATR Business OS Automation',
+          text: 'Unify WhatsApp, email, and candidate screening data into a single centralized system with real-time manager SLA alerts.'
+        }
+      ]
+    } : null;
+
     const scriptArt = document.createElement('script');
     scriptArt.id = 'expansion-article-schema';
     scriptArt.type = 'application/ld+json';
@@ -82,8 +107,16 @@ export const ExpansionPillarPage: React.FC = () => {
     scriptBc.textContent = JSON.stringify(breadcrumbSchema);
     if (!document.getElementById('expansion-breadcrumb-schema')) document.head.appendChild(scriptBc);
 
+    if (howToSchema) {
+      const scriptHowTo = document.createElement('script');
+      scriptHowTo.id = 'expansion-howto-schema';
+      scriptHowTo.type = 'application/ld+json';
+      scriptHowTo.textContent = JSON.stringify(howToSchema);
+      if (!document.getElementById('expansion-howto-schema')) document.head.appendChild(scriptHowTo);
+    }
+
     return () => {
-      ['expansion-article-schema', 'expansion-faq-schema', 'expansion-breadcrumb-schema'].forEach(id => {
+      ['expansion-article-schema', 'expansion-faq-schema', 'expansion-breadcrumb-schema', 'expansion-howto-schema'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.remove();
       });
@@ -124,17 +157,58 @@ export const ExpansionPillarPage: React.FC = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{pageConfig.h1}</h1>
 
-          {/* AI / GEO Direct Answer Executive Summary Block */}
+          {/* Direct Answer Executive Summary Block */}
           <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 space-y-2">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Executive Summary</span>
+              <span>Executive Summary & Key Takeaway</span>
             </div>
             <p className="text-slate-200 text-sm md:text-base leading-relaxed font-medium">
               {pageConfig.executiveSummary}
             </p>
           </div>
         </div>
+
+        {/* Diagnostic Root Cause Section (If Problem Category) */}
+        {pageConfig.category === 'Problem' && (
+          <section className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-base uppercase tracking-wider">
+              <AlertCircle className="w-5 h-5 text-amber-400" /> Diagnostic Root Cause Analysis
+            </div>
+            <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
+              This operational friction typically stems from single-device bottlenecks, lack of automated lead distribution, unmonitored response SLAs, and fragmented communication channels. Without a centralized triage system, teams experience high lead drop-off and delayed customer response times.
+            </p>
+            <div className="space-y-2 pt-2 border-t border-slate-800 text-xs text-slate-300">
+              <span className="font-bold text-white flex items-center gap-1.5"><Wrench className="w-3.5 h-3.5 text-indigo-400" /> 3 Actionable Non-Software Process Fixes:</span>
+              <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1">
+                <li>Assign dedicated lead triage shifts to prevent off-hours inbox queue backlog.</li>
+                <li>Establish rigid 5-minute response SLA targets for first-touch customer inquiries.</li>
+                <li>Implement standardized pre-screening question templates across all agent devices.</li>
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {/* 3-Way Interlinking Triad Box (Engine 5 -> Engine 6 / Engine 3 / Engine 7) */}
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div className="flex items-center gap-2 font-bold text-white text-base">
+            <Network className="w-4 h-4 text-indigo-400" /> Recommended Strategic Interlinking Triad
+          </div>
+          <div className="grid md:grid-cols-3 gap-3 text-xs">
+            <Link to="/workflow/whatsapp-lead-response-workflow" className="bg-slate-950 hover:bg-slate-800 border border-slate-800 p-4 rounded-xl space-y-1 block transition-colors">
+              <span className="text-indigo-400 font-bold text-xxs block uppercase">Engine 6: Workflow</span>
+              <span className="text-white font-semibold block leading-tight">Lead Response Workflow →</span>
+            </Link>
+            <Link to="/chatr/whatsapp-candidate-screening" className="bg-slate-950 hover:bg-slate-800 border border-slate-800 p-4 rounded-xl space-y-1 block transition-colors">
+              <span className="text-indigo-400 font-bold text-xxs block uppercase">Engine 3: Feature</span>
+              <span className="text-white font-semibold block leading-tight">WhatsApp Screening →</span>
+            </Link>
+            <Link to="/industries/recruitment-agencies" className="bg-slate-950 hover:bg-slate-800 border border-slate-800 p-4 rounded-xl space-y-1 block transition-colors">
+              <span className="text-indigo-400 font-bold text-xxs block uppercase">Engine 7: Industry</span>
+              <span className="text-white font-semibold block leading-tight">Recruitment Agencies →</span>
+            </Link>
+          </div>
+        </section>
 
         {/* Core Analysis Section */}
         <section className="space-y-6">
@@ -162,7 +236,7 @@ export const ExpansionPillarPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Evidence Graph Node Card (Dynamic Verified Evidence Trail) */}
+        {/* Evidence Graph Node Card */}
         {evidenceNodes.length > 0 && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -177,7 +251,7 @@ export const ExpansionPillarPage: React.FC = () => {
             <div className="space-y-3">
               {evidenceNodes.slice(0, 2).map((ev, idx) => (
                 <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                  <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-indigo-400 font-bold">Finding ID: {ev.findingId}</span>
                     <span>{ev.sampleSize}</span>
                   </div>
