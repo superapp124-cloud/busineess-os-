@@ -7,7 +7,7 @@ const ROUTES = [
   '/about',
   '/editorial-policy',
   '/authors',
-  '/authors/arshid-wani',
+  '/authors/sanobar-jahan',
   '/authors/chatr-product-team',
   '/authors/talentxcel-research',
   '/company-info',

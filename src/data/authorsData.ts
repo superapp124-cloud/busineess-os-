@@ -1,4 +1,4 @@
-﻿export interface AuthorEntity {
+export interface AuthorEntity {
   slug: string;
   name: string;
   role: string;
@@ -12,12 +12,12 @@
 }
 
 export const AUTHORS: Record<string, AuthorEntity> = {
-  'arshid-wani': {
-    slug: 'arshid-wani',
-    name: 'Arshid Wani',
-    role: 'Founder & Chief Architect',
-    bio: 'Founder and Lead Architect of CHATR Communication OS and TalentXcel. Specialist in high-throughput business messaging systems, AI-driven candidate screening, and unified inbox architectures.',
-    expertise: ['Communication OS Architecture', 'WhatsApp Business Automation', 'AI Candidate Screening', 'Distributed Telemetry'],
+  'sanobar-jahan': {
+    slug: 'sanobar-jahan',
+    name: 'Sanobar Jahan',
+    role: 'Editor-in-Chief & Lead Content Strategist',
+    bio: 'Editor-in-Chief of CHATR Communication OS and TalentXcel Knowledge Hub. Oversees editorial integrity, data verification standards, candidate screening analytics, and business messaging research.',
+    expertise: ['Editorial Governance', 'Business Messaging Research', 'Candidate Screening Analytics', 'Content Strategy'],
     organization: 'CHATR Communication OS',
     organizationUrl: 'https://chatrchat.in',
     avatarUrl: 'https://chatrchat.in/favicon.png',

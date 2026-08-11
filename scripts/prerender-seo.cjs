@@ -280,17 +280,17 @@ const PUBLIC_SEO_PAGES = [
     schemas: []
   },
   {
-    path: '/authors/arshid-wani',
-    title: 'Arshid Wani -- Founder and Chief Architect | CHATR Communication OS',
-    description: 'Arshid Wani is Founder and Lead Architect of CHATR Communication OS and TalentXcel. Specialist in business messaging systems and AI candidate screening.',
-    keywords: 'Arshid Wani, CHATR Founder, Communication OS Architect',
-    canonical: DOMAIN + '/authors/arshid-wani',
+    path: '/authors/sanobar-jahan',
+    title: 'Sanobar Jahan -- Editor-in-Chief | CHATR Communication OS',
+    description: 'Sanobar Jahan is Editor-in-Chief of CHATR Communication OS and TalentXcel Knowledge Hub. Oversees editorial integrity, data verification, and research.',
+    keywords: 'Sanobar Jahan, CHATR Editor-in-Chief, Communication OS Editorial Lead',
+    canonical: DOMAIN + '/authors/sanobar-jahan',
     schemas: [
       {
         '@context': 'https://schema.org',
         '@type': 'Person',
-        name: 'Arshid Wani',
-        jobTitle: 'Founder & Chief Architect',
+        name: 'Sanobar Jahan',
+        jobTitle: 'Editor-in-Chief & Lead Content Strategist',
         worksFor: { '@type': 'Organization', name: 'CHATR Communication OS' }
       }
     ]

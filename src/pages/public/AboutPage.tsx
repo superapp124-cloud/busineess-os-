@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, MessageSquare, Users, Cpu, ArrowRight, Building2, Globe, Award } from 'lucide-react';
 import { AUTHORS } from '@/data/authorsData';
@@ -29,10 +29,10 @@ export const AboutPage: React.FC = () => {
         name: 'CHATR Communication OS',
         url: 'https://chatrchat.in',
         logo: 'https://chatrchat.in/assets/chatrplus-logo512.png',
-        founder: {
+        editor: {
           '@type': 'Person',
-          name: AUTHORS['arshid-wani'].name,
-          jobTitle: AUTHORS['arshid-wani'].role,
+          name: AUTHORS['sanobar-jahan'].name,
+          jobTitle: AUTHORS['sanobar-jahan'].role,
         },
         subOrganization: {
           '@type': 'Organization',
