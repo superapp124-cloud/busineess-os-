@@ -103,6 +103,13 @@ const BlogPostPage = React.lazy(() => import("./pages/public/BlogPostPage").then
 const NewsHubPage = React.lazy(() => import("./pages/public/NewsHubPage").then(m => ({ default: m.NewsHubPage })));
 const NewsPostPage = React.lazy(() => import("./pages/public/NewsPostPage").then(m => ({ default: m.NewsPostPage })));
 
+// Entity & Editorial Trust Layer (Phase A — 2026-08-11)
+const AboutPage = React.lazy(() => import("./pages/public/AboutPage").then(m => ({ default: m.AboutPage })));
+const EditorialPolicyPage = React.lazy(() => import("./pages/public/EditorialPolicyPage").then(m => ({ default: m.EditorialPolicyPage })));
+const AuthorsHubPage = React.lazy(() => import("./pages/public/AuthorsHubPage").then(m => ({ default: m.AuthorsHubPage })));
+const AuthorProfilePage = React.lazy(() => import("./pages/public/AuthorProfilePage").then(m => ({ default: m.AuthorProfilePage })));
+const CompanyInfoPage = React.lazy(() => import("./pages/public/CompanyInfoPage").then(m => ({ default: m.CompanyInfoPage })));
+
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
@@ -756,6 +763,13 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/blog/:slug" element={<LazyRoute component={BlogPostPage} />} />
   <Route path="/news" element={<LazyRoute component={NewsHubPage} />} />
   <Route path="/news/:slug" element={<LazyRoute component={NewsPostPage} />} />
+
+  {/* Entity & Editorial Trust Layer (Phase A — 2026-08-11) */}
+  <Route path="/about" element={<LazyRoute component={AboutPage} />} />
+  <Route path="/editorial-policy" element={<LazyRoute component={EditorialPolicyPage} />} />
+  <Route path="/authors" element={<LazyRoute component={AuthorsHubPage} />} />
+  <Route path="/authors/:slug" element={<LazyRoute component={AuthorProfilePage} />} />
+  <Route path="/company-info" element={<LazyRoute component={CompanyInfoPage} />} />
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />

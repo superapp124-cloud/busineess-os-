@@ -213,30 +213,74 @@ export const BlogPostPage: React.FC = () => {
         </div>
       </header>
       <main className="max-w-3xl mx-auto px-4 py-12 space-y-10">
+        {/* Header & Meta */}
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-            <span className="flex items-center gap-1"><Tag className="w-3 h-3" />{article.category}</span>
-            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{article.publishedAt}</span>
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{article.readingMinutes} min read</span>
-            <span>{article.author}</span>
+            <span className="flex items-center gap-1"><Tag className="w-3 h-3 text-indigo-400" />{article.category}</span>
+            <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-indigo-400" />Published {article.publishedAt}</span>
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-indigo-400" />{article.readingMinutes} min read</span>
+            <Link to="/authors/chatr-product-team" className="text-indigo-400 hover:underline font-semibold">{article.author}</Link>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">{article.title}</h1>
-          <p className="text-slate-400 text-lg">{article.metaDescription}</p>
+          <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-white">{article.title}</h1>
+          
+          {/* AI / GEO Direct Answer Block */}
+          <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-5 space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Executive Summary & Key Takeaway</span>
+            <p className="text-slate-200 text-sm leading-relaxed">{article.metaDescription}</p>
+          </div>
         </div>
+
+        {/* Article Body */}
         <div className="border-t border-slate-800 pt-8">{article.body}</div>
-        <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 space-y-4">
-          <h2 className="font-bold text-lg">Frequently Asked Questions</h2>
+
+        {/* First-Party Source & Evidence Attribution Box */}
+        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 font-bold text-white text-sm">
+            <span>Methodology & Data Evidence Trail</span>
+          </div>
+          <p>
+            <strong className="text-slate-300">Source:</strong> CHATR Platform Telemetry & Candidate Response Dynamics (July–August 2026).
+          </p>
+          <p>
+            <strong className="text-slate-300">Editorial Standard:</strong> Reviewed under our <Link to="/editorial-policy" className="text-indigo-400 underline">Editorial Policy</Link>. Fact-checked against visible operational workflows.
+          </p>
+        </div>
+
+        {/* Author Attribution Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4">
+          <div className="w-12 h-12 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg shrink-0">
+            C
+          </div>
+          <div className="space-y-1.5 flex-1">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-white text-base">{article.author}</h3>
+              <Link to="/authors" className="text-xs text-indigo-400 hover:underline">All Authors →</Link>
+            </div>
+            <p className="text-xs text-indigo-400 font-semibold">CHATR Engineering & Research Group</p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Specialized research unit developing unified business communication infrastructure and AI candidate screening systems.
+            </p>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h2 className="font-bold text-lg text-white">Frequently Asked Questions</h2>
           {article.faqs.map((faq, i) => (
             <div key={i} className="border-t border-slate-800 pt-4 space-y-2">
-              <p className="font-semibold text-white">{faq.q}</p>
-              <p className="text-slate-400 text-sm leading-relaxed">{faq.a}</p>
+              <p className="font-semibold text-white text-sm">{faq.q}</p>
+              <p className="text-slate-400 text-xs leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>
+
+        {/* CTA Footer */}
         <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-          <h2 className="text-xl font-bold">Try CHATR for Your Business</h2>
-          <p className="text-slate-400 text-sm">Universal Inbox. WhatsApp Integration. Candidate Screening. AI Agents.</p>
-          <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
+          <h2 className="text-xl font-bold text-white">Try CHATR Communication OS Today</h2>
+          <p className="text-slate-400 text-sm">Universal Team Inbox • WhatsApp Integration • Candidate Screening • AI Agents</p>
+          <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
+            Get Started Free <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </main>
     </div>

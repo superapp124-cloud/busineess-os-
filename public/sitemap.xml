@@ -163,6 +163,51 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- ==================== ENTITY & EDITORIAL TRUST LAYER (Phase A — 2026-08-11) ==================== -->
+
+  <url>
+    <loc>https://chatrchat.in/about</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/editorial-policy</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors/arshid-wani</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors/chatr-product-team</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/authors/talentxcel-research</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/company-info</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- ==================== PRIORITY 0.8 -- SUPPORTING CONTENT ==================== -->
 
   <url>

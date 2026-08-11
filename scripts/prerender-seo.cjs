@@ -246,6 +246,78 @@ const PUBLIC_SEO_PAGES = [
     keywords: 'ai messaging for small business, smart business chat',
     canonical: DOMAIN + '/chatr/ai-messaging-for-business',
     schemas: []
+  },
+  // --- ENTITY & EDITORIAL TRUST LAYER (PHASE A) ---
+  {
+    path: '/about',
+    title: 'About -- CHATR Communication OS and TalentXcel',
+    description: 'Learn about CHATR Communication OS -- the unified business communication platform powering messaging, WhatsApp candidate screening, and AI workflows.',
+    keywords: 'About CHATR, Communication OS Architecture, TalentXcel Platform',
+    canonical: DOMAIN + '/about',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        name: 'About CHATR Communication OS',
+        url: DOMAIN + '/about'
+      }
+    ]
+  },
+  {
+    path: '/editorial-policy',
+    title: 'Editorial Policy and Research Standards -- CHATR Communication OS',
+    description: 'Read CHATR Communication OS editorial standards: data verification methodologies, author expertise rules, AI assistance disclosures, and correction policies.',
+    keywords: 'CHATR Editorial Policy, Fact Checking Methodology, AI Content Disclosure',
+    canonical: DOMAIN + '/editorial-policy',
+    schemas: []
+  },
+  {
+    path: '/authors',
+    title: 'Authors and Technical Contributors -- CHATR Communication OS',
+    description: 'Meet the verifiable authors and engineering contributors behind CHATR Communication OS and TalentXcel research.',
+    keywords: 'CHATR Authors, Engineering Team, Recruitment Analytics Researchers',
+    canonical: DOMAIN + '/authors',
+    schemas: []
+  },
+  {
+    path: '/authors/arshid-wani',
+    title: 'Arshid Wani -- Founder and Chief Architect | CHATR Communication OS',
+    description: 'Arshid Wani is Founder and Lead Architect of CHATR Communication OS and TalentXcel. Specialist in business messaging systems and AI candidate screening.',
+    keywords: 'Arshid Wani, CHATR Founder, Communication OS Architect',
+    canonical: DOMAIN + '/authors/arshid-wani',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: 'Arshid Wani',
+        jobTitle: 'Founder & Chief Architect',
+        worksFor: { '@type': 'Organization', name: 'CHATR Communication OS' }
+      }
+    ]
+  },
+  {
+    path: '/authors/chatr-product-team',
+    title: 'CHATR Product and Engineering Team | CHATR Communication OS',
+    description: 'The core product and engineering unit behind CHATR Communication OS. Responsible for multi-channel messaging infrastructure and AI runtimes.',
+    keywords: 'CHATR Product Team, Engineering Group',
+    canonical: DOMAIN + '/authors/chatr-product-team',
+    schemas: []
+  },
+  {
+    path: '/authors/talentxcel-research',
+    title: 'TalentXcel Research Team | CHATR Communication OS',
+    description: 'The specialized research unit at TalentXcel focusing on recruitment efficiency, ATS parser optimization, and hiring analytics.',
+    keywords: 'TalentXcel Research Team, Recruitment Analytics',
+    canonical: DOMAIN + '/authors/talentxcel-research',
+    schemas: []
+  },
+  {
+    path: '/company-info',
+    title: 'Company Information and Entity Verification -- CHATR Communication OS',
+    description: 'Official company information, entity verification, platform architecture details, and contact information for CHATR Communication OS.',
+    keywords: 'Company Information, Entity Verification, CHATR Contacts',
+    canonical: DOMAIN + '/company-info',
+    schemas: []
   }
 ];
 
