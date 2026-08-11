@@ -1,10 +1,13 @@
 /**
  * PROGRAMMATIC SEO HEALTH & VALIDATION PROTOCOL
- * CHATR Growth OS — Phase 1: Frozen / Passive Measurement & Validation Mode
+ * CHATR Growth OS — SEO Phase 1: FROZEN / PASSIVE MEASUREMENT / CANARY VALIDATION
  * Updated: 2026-08-11
  */
 
 export interface ProgrammaticSEOHealthState {
+  // Operational Label
+  operatingStatus: 'FROZEN / PASSIVE MEASUREMENT / CANARY VALIDATION';
+
   // Inventory Telemetry
   totalPreRenderedRoutes: number;       // 19,331
   sitemapCanonicalUrls: number;         // 19,251
@@ -12,22 +15,22 @@ export interface ProgrammaticSEOHealthState {
   totalCityHubs: number;                // 1,750
   corePublicPages: number;              // 81
 
-  // Quality Gate Compliance (Hard Gates: Q2, Q3, Q4, Q9)
+  // Quality Gate Compliance (Hard Rendered-Content Gates: Q2, Q3, Q4, Q9)
   qualityGate: {
     q1_uniqueSearchIntent: boolean;
-    q2_genuineLocationValue: boolean;    // HARD GATE
-    q3_genuineVerticalValue: boolean;    // HARD GATE
-    q4_firstPartyOriginalValue: boolean; // HARD GATE (Product capabilities, verified workflow info, research)
+    q2_genuineLocationValue: boolean;    // HARD GATE — verified against rendered content
+    q3_genuineVerticalValue: boolean;    // HARD GATE — verified against rendered content
+    q4_firstPartyOriginalValue: boolean; // HARD GATE — verified against rendered content
     q5_usefulInternalLinks: boolean;
     q6_correctCanonical: boolean;
     q7_validStructuredData: boolean;
     q8_usefulCTA: boolean;
-    q9_naturalHumanReadable: boolean;   // HARD GATE
+    q9_naturalHumanReadable: boolean;   // HARD GATE — verified against rendered content
     q10_noDoorwayPattern: boolean;
     allHardGatesPassed: boolean;
   };
 
-  // Layer 1: Technical SEO Metrics (GSC Page Indexing)
+  // Layer 1: Technical SEO Metrics (Latest Available GSC Data)
   layer1_technical: {
     indexed: number;
     notIndexed: number;
@@ -39,7 +42,7 @@ export interface ProgrammaticSEOHealthState {
     serverError5xx: number;
   };
 
-  // Layer 2: Search Performance Metrics (GSC Search Results)
+  // Layer 2: Search Performance Metrics (Latest Available GSC Data)
   layer2_search: {
     searchImpressions: number;
     searchClicks: number;
@@ -48,6 +51,7 @@ export interface ProgrammaticSEOHealthState {
     avgPosition: number;
     pagesEarningImpressions: number;
     pagesEarningClicks: number;
+    impressionBearingPageRatePct: number; // (Pages with ≥ 1 impression / Indexed Pages) * 100
   };
 
   // Layer 3: Business Impact Metrics (Product / Telemetry)
@@ -57,29 +61,40 @@ export interface ProgrammaticSEOHealthState {
     demoRequests: number;
     whatsAppConversationsStarted: number;
     conversions: number;
+    revenueGenerated: number;
   };
 
-  // 100-Page Controlled Sample Cohort (10 Tier-1 Cities × 10 Verticals)
-  sampleCohort100: {
+  // 100-Page Canary Benchmark Cohort (10 Tier-1 Cities × 10 Verticals)
+  canaryCohort100: {
     cities: string[]; // ['Mumbai', 'Delhi NCR', 'Bangalore', 'Hyderabad', 'Pune', 'Chennai', 'Dubai', 'London', 'New York', 'Singapore']
     sampleSize: number; // 100
-    cohortIndexed: number;
-    cohortImpressions: number;
-    cohortClicks: number;
+    crawled: number;
+    indexed: number;
+    indexedRatePct: number;       // Target: >= 30%
+    impressions: number;
+    pagesWithImpressions: number;
+    impressionRatePct: number;    // Target: >= 20%
+    clicks: number;
+    pagesWithClicks: number;
+    clickRatePct: number;         // Target: > 0%
+    avgPosition: number;
+    leadsGenerated: number;
   };
 
-  // Expansion Unlock Decision
-  expansionStatus: 'FROZEN' | 'PASSIVE_MEASUREMENT' | 'EXPANSION_UNLOCKED';
-  expansionUnlockCriteria: {
-    hardGatesPass: boolean;
-    canonicalErrorsZero: boolean;
-    serverErrorsZero: boolean;
-    crawlRateHealthy: boolean;
-    searchImpressionsGrowing: boolean;
+  // Controlled Unlock Ladder Criteria
+  unlockLadder: {
+    hardGatesPass: boolean;              // Q2, Q3, Q4, Q9 pass on rendered HTML
+    canonicalErrorsZero: boolean;        // Canonical errors = 0
+    serverErrorsZero: boolean;           // 5xx = 0
+    canaryIndexedRatePass: boolean;      // cohort indexedRate >= 30%
+    canaryImpressionRatePass: boolean;   // cohort impressionRate >= 20%
+    canaryClickRatePass: boolean;        // cohort clicks > 0
+    controlledUnfreezeUnlocked: boolean;
   };
 }
 
 export const INITIAL_PROGRAMMATIC_SEO_HEALTH: ProgrammaticSEOHealthState = {
+  operatingStatus: 'FROZEN / PASSIVE MEASUREMENT / CANARY VALIDATION',
   totalPreRenderedRoutes: 19331,
   sitemapCanonicalUrls: 19251,
   totalPillarPages: 17500,
@@ -119,6 +134,7 @@ export const INITIAL_PROGRAMMATIC_SEO_HEALTH: ProgrammaticSEOHealthState = {
     avgPosition: 0,
     pagesEarningImpressions: 0,
     pagesEarningClicks: 0,
+    impressionBearingPageRatePct: 0,
   },
 
   layer3_business: {
@@ -127,9 +143,10 @@ export const INITIAL_PROGRAMMATIC_SEO_HEALTH: ProgrammaticSEOHealthState = {
     demoRequests: 0,
     whatsAppConversationsStarted: 0,
     conversions: 0,
+    revenueGenerated: 0,
   },
 
-  sampleCohort100: {
+  canaryCohort100: {
     cities: [
       'Mumbai',
       'Delhi NCR',
@@ -143,17 +160,26 @@ export const INITIAL_PROGRAMMATIC_SEO_HEALTH: ProgrammaticSEOHealthState = {
       'Singapore',
     ],
     sampleSize: 100,
-    cohortIndexed: 0,
-    cohortImpressions: 0,
-    cohortClicks: 0,
+    crawled: 0,
+    indexed: 0,
+    indexedRatePct: 0,
+    impressions: 0,
+    pagesWithImpressions: 0,
+    impressionRatePct: 0,
+    clicks: 0,
+    pagesWithClicks: 0,
+    clickRatePct: 0,
+    avgPosition: 0,
+    leadsGenerated: 0,
   },
 
-  expansionStatus: 'FROZEN',
-  expansionUnlockCriteria: {
+  unlockLadder: {
     hardGatesPass: true,
     canonicalErrorsZero: true,
     serverErrorsZero: true,
-    crawlRateHealthy: false,
-    searchImpressionsGrowing: false,
+    canaryIndexedRatePass: false,    // Requires >= 30% cohort indexation
+    canaryImpressionRatePass: false, // Requires >= 20% cohort impression rate
+    canaryClickRatePass: false,      // Requires > 0 cohort clicks
+    controlledUnfreezeUnlocked: false,
   },
 };
