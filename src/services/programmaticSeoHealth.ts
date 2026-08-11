@@ -1,6 +1,7 @@
 /**
  * PROGRAMMATIC SEO HEALTH & VALIDATION PROTOCOL
- * CHATR Growth OS — SEO Phase 1: FROZEN / PASSIVE MEASUREMENT / CANARY VALIDATION
+ * CHATR Growth OS — SEO Phase 1: FINALIZED & FROZEN
+ * Status: FROZEN / PASSIVE MEASUREMENT / CANARY VALIDATION
  * Updated: 2026-08-11
  */
 
@@ -89,7 +90,8 @@ export interface ProgrammaticSEOHealthState {
     canaryIndexedRatePass: boolean;      // cohort indexedRate >= 30%
     canaryImpressionRatePass: boolean;   // cohort impressionRate >= 20%
     canaryClickRatePass: boolean;        // cohort clicks > 0
-    controlledUnfreezeUnlocked: boolean;
+    consecutiveCyclesPass: number;       // Target: >= 2 consecutive GSC measurement cycles
+    controlledUnfreezeUnlocked: boolean; // Unlocks INCREMENTAL expansion only
   };
 }
 
@@ -177,9 +179,10 @@ export const INITIAL_PROGRAMMATIC_SEO_HEALTH: ProgrammaticSEOHealthState = {
     hardGatesPass: true,
     canonicalErrorsZero: true,
     serverErrorsZero: true,
-    canaryIndexedRatePass: false,    // Requires >= 30% cohort indexation
-    canaryImpressionRatePass: false, // Requires >= 20% cohort impression rate
-    canaryClickRatePass: false,      // Requires > 0 cohort clicks
+    canaryIndexedRatePass: false,      // Requires >= 30% cohort indexation
+    canaryImpressionRatePass: false,   // Requires >= 20% cohort impression rate
+    canaryClickRatePass: false,        // Requires > 0 cohort clicks
+    consecutiveCyclesPass: 0,          // Requires >= 2 consecutive measurement cycles
     controlledUnfreezeUnlocked: false,
   },
 };
