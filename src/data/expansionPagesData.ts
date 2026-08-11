@@ -42,7 +42,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
       { q: 'How does AI message triage work?', a: 'Our NLP engine detects lead intent, urgency, and topic, categorizing messages before team members open them.' },
       { q: 'Can I customize routing rules for my business?', a: 'Yes. Define custom tags, escalation rules, and department triggers in CHATR Studio.' }
     ],
-    evidenceText: 'Verified against CHATR AI classifier telemetry processing 45,000+ incoming message threads.'
+    evidenceText: 'Verified against CHATR AI classifier telemetry processing 45,000+ incoming message threads.',
+    ctaTitle: 'Explore all CHATR AI capabilities',
+    ctaDescription: 'AI Message Triage is one of six integrated AI capabilities in the CHATR AI Platform. Discover the full intelligence layer for your business.',
+    ctaTarget: '/chatr/ai',
+    ctaButtonText: 'Explore CHATR AI Platform'
   },
   {
     path: '/chatr/multi-channel-business-messaging',
@@ -81,7 +85,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Can managers view AI summaries across all threads?', a: 'Yes. Executive dashboards display instant bullet-point summaries for rapid audit.' }
     ],
-    evidenceText: 'Tested across 12,000+ multi-turn customer support and screening conversations.'
+    evidenceText: 'Tested across 12,000+ multi-turn customer support and screening conversations.',
+    ctaTitle: 'Part of the CHATR AI intelligence layer',
+    ctaDescription: 'Conversation Summarization is one of six AI capabilities in CHATR. See the complete platform overview.',
+    ctaTarget: '/chatr/ai',
+    ctaButtonText: 'View all CHATR AI capabilities'
   },
 
   // --- PROBLEM ENGINE (5 Pages) ---
@@ -386,7 +394,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Can the AI voice agent transfer calls to live agents?', a: 'Yes. CHATR routes warm caller transfers to available human agents based on SLA rules.' }
     ],
-    evidenceText: 'Based on CHATR Voice AI telemetry across 15,000+ call minutes (July--August 2026).'
+    evidenceText: 'Based on CHATR Voice AI telemetry across 15,000+ call minutes (July--August 2026).',
+    ctaTitle: 'AI Voice is part of CHATR AI',
+    ctaDescription: 'The AI Phone Agent is one of six capabilities in the CHATR AI platform. Explore the full intelligent business communication layer.',
+    ctaTarget: '/chatr/ai',
+    ctaButtonText: 'Explore the CHATR AI Platform'
   },
   {
     path: '/chatr/whatsapp-broadcast-campaigns',
@@ -438,7 +450,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Does the auto-responder work on weekends?', a: 'Yes. It operates 24/7/365 to capture off-hours inquiries.' }
     ],
-    evidenceText: 'Tested across 30,000+ inbound lead capture conversations.'
+    evidenceText: 'Tested across 30,000+ inbound lead capture conversations.',
+    ctaTitle: 'Auto-Responder is part of the CHATR AI layer',
+    ctaDescription: 'Instant lead capture is one of six AI capabilities built into CHATR. See the complete AI platform overview for your business.',
+    ctaTarget: '/chatr/ai',
+    ctaButtonText: 'See all CHATR AI capabilities'
   },
 
   // --- PROBLEM ENGINE (5 New Pages) ---
@@ -453,7 +469,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'How many agents can share one WhatsApp number?', a: 'CHATR supports unlimited concurrent team agents on a single official WhatsApp Business API number.' }
     ],
-    evidenceText: 'Source: CHATR High-Volume Messaging Benchmark 2026.'
+    evidenceText: 'Source: CHATR High-Volume Messaging Benchmark 2026.',
+    ctaTitle: 'Handle high WhatsApp volume with a shared team inbox',
+    ctaDescription: 'Turn one WhatsApp Business number into a multi-agent workspace with AI-powered round-robin assignment and conversation routing.',
+    ctaTarget: '/chatr/shared-team-inbox-whatsapp',
+    ctaButtonText: 'Explore the CHATR Shared Team Inbox'
   },
   {
     path: '/problem/fix-unassigned-customer-messages',
@@ -466,7 +486,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'What happens to messages received when all reps are busy?', a: 'CHATR places chats into a prioritized queue with automated holding messages.' }
     ],
-    evidenceText: 'Based on 40,000+ unassigned thread triage evaluations.'
+    evidenceText: 'Based on 40,000+ unassigned thread triage evaluations.',
+    ctaTitle: 'Eliminate unassigned message queues with AI Triage',
+    ctaDescription: 'CHATR AI automatically classifies and routes incoming messages before agents open them, so no thread goes unassigned.',
+    ctaTarget: '/chatr/ai-message-triage-routing',
+    ctaButtonText: 'See AI Message Triage in action'
   },
   {
     path: '/problem/stop-candidate-ghosting-recruitment',
@@ -479,7 +503,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Why do candidates ghost recruiters on email?', a: 'Spam filters, slow response cycles, and inconvenient desktop application requirements.' }
     ],
-    evidenceText: 'Source: TalentXcel Candidate Drop-off & Attendance Study 2026.'
+    evidenceText: 'Source: TalentXcel Candidate Drop-off & Attendance Study 2026.',
+    ctaTitle: 'Reach candidates where they actually respond',
+    ctaDescription: 'TalentXcel automated WhatsApp screening keeps candidates engaged from first contact through interview confirmation.',
+    ctaTarget: '/talentxcel/automate-candidate-screening',
+    ctaButtonText: 'Explore WhatsApp Candidate Screening'
   },
   {
     path: '/problem/centralize-sales-team-whatsapp-threads',
@@ -492,7 +520,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'Can management view sales reps chat history?', a: 'Yes. Company supervisors have full role-based visibility over customer threads.' }
     ],
-    evidenceText: 'Deployed for B2B sales force governance.'
+    evidenceText: 'Deployed for B2B sales force governance.',
+    ctaTitle: 'Centralize all sales WhatsApp conversations in one workspace',
+    ctaDescription: 'Replace fragmented personal phones with a company-owned multi-channel messaging workspace your entire team can see and manage.',
+    ctaTarget: '/chatr/multi-channel-business-messaging',
+    ctaButtonText: 'Explore CHATR Multi-Channel Workspace'
   },
   {
     path: '/problem/reduce-customer-support-response-delay',
@@ -505,7 +537,11 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     faqs: [
       { q: 'How does AI triage reduce response delays?', a: 'By resolving 35% of repetitive questions automatically without human intervention.' }
     ],
-    evidenceText: 'Source: CHATR Customer Support SLA Telemetry 2026.'
+    evidenceText: 'Source: CHATR Customer Support SLA Telemetry 2026.',
+    ctaTitle: 'Cut first-response time with AI intent classification',
+    ctaDescription: 'CHATR AI Triage automatically resolves 35% of repetitive support queries and routes urgent threads to specialist agents in under 10 seconds.',
+    ctaTarget: '/chatr/ai-message-triage-routing',
+    ctaButtonText: 'Explore AI-Powered Support Triage'
   },
 
   // --- WORKFLOW ENGINE (5 New Pages) ---

@@ -359,6 +359,12 @@ export const ResearchReportPage: React.FC = () => {
             Explore Automated Screening Workflow <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
+
+        {/* CHATR AI Platform Link */}
+        <section className="my-4 p-5 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-xs text-slate-300 space-y-2">
+          <p className="font-semibold text-white text-sm">The AI layer behind this research</p>
+          <p>The screening and communication patterns in this benchmark are powered by the <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR AI Platform</Link> — including AI Message Triage, Candidate Screening, and Automated Summarization capabilities.</p>
+        </section>
       </main>
     </div>
   );

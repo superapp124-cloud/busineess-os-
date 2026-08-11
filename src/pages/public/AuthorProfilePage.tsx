@@ -180,10 +180,18 @@ export const AuthorProfilePage: React.FC = () => {
         )}
 
         {/* Back Link */}
-        <div className="text-center pt-4">
+        <div className="text-center pt-4 space-y-2">
           <Link to="/authors" className="inline-flex items-center gap-2 text-xs text-indigo-400 hover:underline font-semibold">
             ← Explore All CHATR Authors & Research Contributors
           </Link>
+          {isFounder && (
+            <p className="text-xs text-slate-500">
+              Explore the platform Sanobar built:{' '}
+              <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR AI Platform</Link>
+              {' '}·{' '}
+              <Link to="/pricing" className="text-slate-400 hover:text-slate-300 font-semibold hover:underline">Commercial Plans</Link>
+            </p>
+          )}
         </div>
       </main>
     </div>

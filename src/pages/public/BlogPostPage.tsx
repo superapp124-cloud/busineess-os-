@@ -352,9 +352,14 @@ export const BlogPostPage: React.FC = () => {
         <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
           <h2 className="text-xl font-bold text-white">Try CHATR Communication OS Today</h2>
           <p className="text-slate-400 text-sm">Universal Team Inbox • WhatsApp Integration • Candidate Screening • AI Agents</p>
-          <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
-            Get Started Free <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
+              Get Started Free <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">
+              Explore AI capabilities →
+            </Link>
+          </div>
         </div>
       </main>
     </div>

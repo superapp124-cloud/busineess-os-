@@ -103,6 +103,7 @@ export const AuthorsHubPage: React.FC = () => {
           <div className="space-y-1">
             <h3 className="font-bold text-white text-base">Editorial Transparency & Fact Checking</h3>
             <p className="text-xs text-slate-400">Read CHATR Communication OS research verification standards and author accreditation guidelines.</p>
+            <p className="text-xs text-slate-500 mt-1">Research from this team powers <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR AI</Link> and the underlying benchmarks driving our product decisions.</p>
           </div>
           <Link to="/editorial-policy" className="text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 font-bold px-5 py-2.5 rounded-xl transition-colors shrink-0">
             Read Editorial Policy →
