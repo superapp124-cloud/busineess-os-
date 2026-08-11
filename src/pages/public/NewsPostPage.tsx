@@ -71,17 +71,34 @@ export const NewsPostPage: React.FC = () => {
 
   useEffect(() => {
     if (!article) return;
-    document.title = article.title + ' -- CHATR News';
+    const pageTitle = `${article.title} — CHATR Communication OS`;
+    document.title = pageTitle;
+    
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
     metaDesc.setAttribute('content', article.metaDescription);
+    
+    let metaTitle = document.querySelector('meta[name="title"]');
+    if (metaTitle) metaTitle.setAttribute('content', pageTitle);
+    
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+    
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', article.metaDescription);
+    
+    const postUrl = `${article.canonicalDomain}/news/${article.slug}`;
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', postUrl);
+
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', article.canonicalDomain + '/news/' + article.slug);
+    canonical.setAttribute('href', postUrl);
+
     const schema = document.createElement('script');
     schema.id = 'news-post-schema';
     schema.type = 'application/ld+json';
-    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'NewsArticle', headline: article.title, description: article.metaDescription, datePublished: article.publishedAt, publisher: { '@type': 'Organization', name: 'CHATR', url: 'https://chatr.chat', sameAs: ['https://chatrchat.in', 'https://talentxcel.in'] } });
+    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'NewsArticle', headline: article.title, description: article.metaDescription, datePublished: article.publishedAt, publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatr.chat', sameAs: ['https://chatrchat.in', 'https://talentxcel.in'] } });
     if (!document.getElementById('news-post-schema')) document.head.appendChild(schema);
     return () => { const s = document.getElementById('news-post-schema'); if (s) s.remove(); };
   }, [article]);

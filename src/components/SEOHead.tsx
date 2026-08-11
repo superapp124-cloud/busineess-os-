@@ -21,9 +21,9 @@ interface SEOHeadProps {
 const BASE_URL = 'https://chatrchat.in';
 
 export const SEOHead = ({
- title = 'CHATR Business OS — Intent OS & AI Growth Platform',
- description = 'CHATR Business OS (chatrchat.in) is the AI-powered Intent OS and Business Growth platform for enterprise communication, candidate screening, CRM, and automated workflows.',
- keywords = 'CHATR Business OS, Intent OS, AI Candidate Screening, Business CRM, Enterprise Communication, TalentXcel, Business Automation, ChatrChat India',
+ title = 'CHATR Communication OS — Universal AI Business Messaging',
+ description = 'CHATR Communication OS (chatrchat.in) is the unified AI communication platform for business messaging, WhatsApp integration, candidate screening, and team inbox workflows.',
+ keywords = 'CHATR Communication OS, Universal Inbox, WhatsApp Candidate Screening, Business Messaging, ChatrChat India',
  ogImage = '/og-image.jpg',
  ogUrl,
  canonicalUrl,
@@ -41,11 +41,11 @@ export const SEOHead = ({
  const defaultSchema = {
  "@context": "https://schema.org",
  "@type": "SoftwareApplication",
- "name": "CHATR Business OS",
+ "name": "CHATR Communication OS",
  "alternateName": "ChatrChat",
  "description": description,
  "url": fullUrl,
- "applicationCategory": "BusinessApplication",
+ "applicationCategory": "CommunicationApplication",
  "operatingSystem": "Web, Windows, macOS, Android, iOS",
  "offers": {
  "@type": "Offer",

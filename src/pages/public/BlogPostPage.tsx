@@ -160,14 +160,31 @@ export const BlogPostPage: React.FC = () => {
 
   useEffect(() => {
     if (!article) return;
-    document.title = article.title + ' -- CHATR Blog';
+    const pageTitle = `${article.title} — CHATR Communication OS`;
+    document.title = pageTitle;
+    
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
     metaDesc.setAttribute('content', article.metaDescription);
+    
+    let metaTitle = document.querySelector('meta[name="title"]');
+    if (metaTitle) metaTitle.setAttribute('content', pageTitle);
+    
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+    
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', article.metaDescription);
+    
+    const postUrl = `${article.canonicalDomain}/blog/${article.slug}`;
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', postUrl);
+    
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', article.canonicalDomain + '/blog/' + article.slug);
-    const articleSchema = { '@context': 'https://schema.org', '@type': 'Article', headline: article.title, description: article.metaDescription, author: { '@type': 'Organization', name: article.author }, datePublished: article.publishedAt, publisher: { '@type': 'Organization', name: 'CHATR', url: 'https://chatr.chat' } };
+    canonical.setAttribute('href', postUrl);
+
+    const articleSchema = { '@context': 'https://schema.org', '@type': 'Article', headline: article.title, description: article.metaDescription, author: { '@type': 'Organization', name: article.author }, datePublished: article.publishedAt, publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatr.chat' } };
     const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: article.faqs.map(faq => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a } })) };
     const s1 = document.createElement('script'); s1.id = 'blog-post-article-schema'; s1.type = 'application/ld+json'; s1.textContent = JSON.stringify(articleSchema);
     const s2 = document.createElement('script'); s2.id = 'blog-post-faq-schema'; s2.type = 'application/ld+json'; s2.textContent = JSON.stringify(faqSchema);

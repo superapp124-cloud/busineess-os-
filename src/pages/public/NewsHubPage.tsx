@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Newspaper, Clock, Calendar } from 'lucide-react';
 
@@ -32,10 +32,25 @@ const NEWS_ITEMS: NewsItem[] = [
 
 export const NewsHubPage: React.FC = () => {
   useEffect(() => {
-    document.title = 'News -- CHATR | Product Updates and Announcements';
+    const pageTitle = 'News — CHATR Communication OS | Announcements & Updates';
+    document.title = pageTitle;
+    
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', 'Official news and product updates from CHATR, TalentXcel, and the CHATR Communication OS platform.');
+    metaDesc.setAttribute('content', 'Official news, product releases, and announcements from the CHATR Communication OS platform.');
+    
+    let metaTitle = document.querySelector('meta[name="title"]');
+    if (metaTitle) metaTitle.setAttribute('content', pageTitle);
+    
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+    
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', 'Official news, product releases, and announcements from the CHATR Communication OS platform.');
+    
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', 'https://chatrchat.in/news');
+
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
     canonical.setAttribute('href', 'https://chatrchat.in/news');

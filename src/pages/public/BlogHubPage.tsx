@@ -85,7 +85,9 @@ export const BlogHubPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = React.useState<string>('all');
 
   useEffect(() => {
-    document.title = 'Blog -- CHATR | Business Messaging, Recruitment and Growth Insights';
+    document.title = 'Blog — CHATR Communication OS | Business Messaging & Growth';
+    
+    // Meta Description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
@@ -93,6 +95,32 @@ export const BlogHubPage: React.FC = () => {
       document.head.appendChild(metaDesc);
     }
     metaDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs and recruitment agencies.');
+    
+    // Meta Title
+    let metaTitle = document.querySelector('meta[name="title"]');
+    if (metaTitle) {
+      metaTitle.setAttribute('content', 'Blog — CHATR Communication OS | Business Messaging & Growth');
+    }
+    
+    // OG Title
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', 'Blog — CHATR Communication OS | Business Messaging & Growth');
+    }
+    
+    // OG Description
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) {
+      ogDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs.');
+    }
+    
+    // OG URL
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://chatrchat.in/blog');
+    }
+
+    // Canonical
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement('link');
@@ -100,10 +128,11 @@ export const BlogHubPage: React.FC = () => {
       document.head.appendChild(canonical);
     }
     canonical.setAttribute('href', 'https://chatrchat.in/blog');
+
     const schema = document.createElement('script');
     schema.id = 'blog-hub-schema';
     schema.type = 'application/ld+json';
-    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Blog', name: 'CHATR Growth Blog', url: 'https://chatrchat.in/blog', publisher: { '@type': 'Organization', name: 'CHATR', url: 'https://chatr.chat', sameAs: ['https://chatrchat.in', 'https://talentxcel.in'] } });
+    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Blog', name: 'CHATR Communication OS Blog', url: 'https://chatrchat.in/blog', publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatr.chat', sameAs: ['https://chatrchat.in', 'https://talentxcel.in'] } });
     if (!document.getElementById('blog-hub-schema')) document.head.appendChild(schema);
     return () => { const s = document.getElementById('blog-hub-schema'); if (s) s.remove(); };
   }, []);
