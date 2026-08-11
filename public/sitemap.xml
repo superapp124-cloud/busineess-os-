@@ -218,4 +218,68 @@
     <priority>0.4</priority>
   </url>
 
+  <!-- ==================== PUBLIC KNOWLEDGE HUB — BLOG & NEWS (Cycle 4 — 2026-08-11) ==================== -->
+
+  <!-- Blog Hub -->
+  <url>
+    <loc>https://chatrchat.in/blog</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog Posts — grounded in real capabilities, ATS articles held -->
+  <url>
+    <loc>https://chatr.chat/blog/why-businesses-lose-whatsapp-leads</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatr.chat/blog/universal-inbox-vs-switching-apps</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentxcel.in/blog/whatsapp-candidate-screening-recruitment</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatrchat.in/blog/running-business-on-whatsapp-email-excel</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chatr.chat/blog/what-is-a-communication-os</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- News Hub -->
+  <url>
+    <loc>https://chatrchat.in/news</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- News Posts -->
+  <url>
+    <loc>https://chatr.chat/news/chatr-communication-os-launch</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://talentxcel.in/news/talentxcel-whatsapp-screening-live</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

@@ -97,6 +97,12 @@ const BusinessIntelligenceDashboard = React.lazy(() => import("./components/Busi
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
 const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));
 
+// Public Knowledge Hub — Blog & News (/blog, /news)
+const BlogHubPage = React.lazy(() => import("./pages/public/BlogHubPage").then(m => ({ default: m.BlogHubPage })));
+const BlogPostPage = React.lazy(() => import("./pages/public/BlogPostPage").then(m => ({ default: m.BlogPostPage })));
+const NewsHubPage = React.lazy(() => import("./pages/public/NewsHubPage").then(m => ({ default: m.NewsHubPage })));
+const NewsPostPage = React.lazy(() => import("./pages/public/NewsPostPage").then(m => ({ default: m.NewsPostPage })));
+
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
  import("./components/FeatureEngagementTracker").then((module) => ({
@@ -744,6 +750,12 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="/business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
   <Route path="/chatr/whatsapp-candidate-screening" element={<LazyRoute component={WhatsAppCandidateScreeningPage} />} />
+
+  {/* Public Knowledge Hub — Blog & News (Growth OS Cycle 4 — 2026-08-11) */}
+  <Route path="/blog" element={<LazyRoute component={BlogHubPage} />} />
+  <Route path="/blog/:slug" element={<LazyRoute component={BlogPostPage} />} />
+  <Route path="/news" element={<LazyRoute component={NewsHubPage} />} />
+  <Route path="/news/:slug" element={<LazyRoute component={NewsPostPage} />} />
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />
