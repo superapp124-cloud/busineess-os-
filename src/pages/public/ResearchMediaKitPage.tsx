@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, FileSpreadsheet, Quote, ShieldCheck, Download, ExternalLink, Mail, Lock } from 'lucide-react';
+import { ArrowLeft, FileSpreadsheet, Quote, ShieldCheck, Download, ExternalLink, Mail, Copy, Check, Info } from 'lucide-react';
 import { RESEARCH_REPORTS } from '../../data/researchReportsData';
 import { EVIDENCE_GRAPH } from '../../services/evidenceGraphEngine';
 import { AUTHORS } from '../../data/authorsData';
 
 export const ResearchMediaKitPage: React.FC = () => {
+  const [copiedFormat, setCopiedFormat] = useState<string | null>(null);
+
   useEffect(() => {
     document.title = 'Media & Journalist Data Room — CHATR & TalentXcel Research';
 
@@ -17,6 +19,12 @@ export const ResearchMediaKitPage: React.FC = () => {
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
     canonical.setAttribute('href', 'https://chatrchat.in/research/media-kit');
   }, []);
+
+  const copyToClipboard = (text: string, formatId: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedFormat(formatId);
+    setTimeout(() => setCopiedFormat(null), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans">
@@ -83,6 +91,53 @@ export const ResearchMediaKitPage: React.FC = () => {
                   <Link to={item.reportPath} className="text-indigo-400 hover:underline flex items-center gap-1 font-semibold">
                     View Methodology & Limitations <ExternalLink className="w-3 h-3" />
                   </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Frictionless "Cite This Research" Block for Journalists */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 text-white font-bold text-xl">
+            <Quote className="w-5 h-5 text-emerald-400" /> Frictionless Citation Cards for Journalists
+          </div>
+
+          <div className="space-y-6">
+            {RESEARCH_REPORTS.map((rep, idx) => (
+              <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-2">
+                  <div>
+                    <span className="text-xs font-mono text-indigo-400 font-bold uppercase">{rep.researchId}</span>
+                    <h3 className="text-lg font-bold text-white">{rep.title}</h3>
+                  </div>
+                  <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">
+                    {rep.doiStatus}
+                  </span>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4 text-xs font-mono bg-slate-950 border border-slate-800 rounded-xl p-4">
+                  <div><span className="text-slate-400">Author:</span> <span className="text-white font-semibold">Sanobar Jahan; TalentXcel & CHATR Research Team</span></div>
+                  <div><span className="text-slate-400">Published:</span> <span className="text-slate-200">August 2026</span></div>
+                  <div><span className="text-slate-400">Version:</span> <span className="text-emerald-400">{rep.version}</span></div>
+                  <div><span className="text-slate-400">Canonical URL:</span> <a href={`https://chatrchat.in${rep.path}`} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline truncate inline-block max-w-[200px]">https://chatrchat.in{rep.path}</a></div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-3 pt-1">
+                  <button
+                    onClick={() => copyToClipboard(rep.citationApa, `apa-${idx}`)}
+                    className="bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 p-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors"
+                  >
+                    <span>Copy APA Citation</span>
+                    {copiedFormat === `apa-${idx}` ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+                  </button>
+                  <button
+                    onClick={() => copyToClipboard(rep.citationBibtex, `bib-${idx}`)}
+                    className="bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 p-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors"
+                  >
+                    <span>Copy BibTeX Citation</span>
+                    {copiedFormat === `bib-${idx}` ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+                  </button>
                 </div>
               </div>
             ))}
