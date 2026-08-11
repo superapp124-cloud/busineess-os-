@@ -71,13 +71,11 @@ export function evaluatePageQuality(input: PageIntelligenceInput): QualityGateRe
   const internalLinkScore = Math.min(10, input.internalLinkCount * 2.5);
   const commercialRelevanceScore = input.hasCta ? 10 : 5;
 
-  // Honest Freshness Decay Engine (Max 5 points)
-  let freshnessScore = 0;
-  const daysSinceUpdate = (Date.now() - new Date(input.lastSubstantiveDataUpdate).getTime()) / (1000 * 60 * 60 * 24);
-  if (daysSinceUpdate <= 30) freshnessScore = 5;
-  else if (daysSinceUpdate <= 90) freshnessScore = 3;
+  // Evidence Coverage Score (Max 15 points)
+  let evidenceCoverageScore = 0;
+  if (input.hasEvidenceBox) evidenceCoverageScore = 15;
 
-  const totalScore = searchIntentScore + dataVolumeScore + uniqueInfoScore + contentDepthScore + internalLinkScore + commercialRelevanceScore + freshnessScore;
+  const totalScore = Math.min(100, searchIntentScore + dataVolumeScore + uniqueInfoScore + contentDepthScore + internalLinkScore + commercialRelevanceScore + freshnessScore + (input.hasEvidenceBox ? 5 : 0));
 
   let decision: 'PUBLISH' | 'EXPAND' | 'MERGE' | 'NOINDEX_BLOCK' = 'NOINDEX_BLOCK';
 

@@ -115,6 +115,7 @@ const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPil
 
 // First-Party Research Lab & Evidence Engine (2026-08-11)
 const ResearchReportPage = React.lazy(() => import("./pages/public/ResearchReportPage").then(m => ({ default: m.ResearchReportPage })));
+const ResearchMediaKitPage = React.lazy(() => import("./pages/public/ResearchMediaKitPage").then(m => ({ default: m.ResearchMediaKitPage })));
 
 
 const DeferredFeatureEngagementTracker = React.lazy(() =>
@@ -843,6 +844,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/research/india-recruitment-communication-benchmark-2026" element={<LazyRoute component={ResearchReportPage} />} />
   <Route path="/research/whatsapp-lead-response-time-audit-2026" element={<LazyRoute component={ResearchReportPage} />} />
   <Route path="/research/ai-resume-parser-accuracy-benchmark-2026" element={<LazyRoute component={ResearchReportPage} />} />
+  <Route path="/research/media-kit" element={<LazyRoute component={ResearchMediaKitPage} />} />
 
 
 

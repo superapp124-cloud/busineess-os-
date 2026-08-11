@@ -84,7 +84,8 @@ const ROUTES = [
   // First-Party Research Lab & Telemetry Reports (3 Pages)
   '/research/india-recruitment-communication-benchmark-2026',
   '/research/whatsapp-lead-response-time-audit-2026',
-  '/research/ai-resume-parser-accuracy-benchmark-2026'
+  '/research/ai-resume-parser-accuracy-benchmark-2026',
+  '/research/media-kit'
 ];
 
 function runAudit() {

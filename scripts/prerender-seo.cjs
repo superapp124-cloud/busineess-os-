@@ -758,6 +758,14 @@ const PUBLIC_SEO_PAGES = [
     keywords: 'ai resume parser accuracy benchmark, cv skill extraction precision, talentxcel parser study',
     canonical: DOMAIN + '/research/ai-resume-parser-accuracy-benchmark-2026',
     schemas: []
+  },
+  {
+    path: '/research/media-kit',
+    title: 'Media & Journalist Data Room -- CHATR & TalentXcel Research Lab',
+    description: 'Verified first-party telemetry benchmarks, one-page data sheets, approved quotes, and statistical citations for journalists, HR analysts, and tech researchers.',
+    keywords: 'recruitment research media kit, journalist data room, chatr press resources',
+    canonical: DOMAIN + '/research/media-kit',
+    schemas: []
   }
 ];
 
