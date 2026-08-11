@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Tag, BookOpen, Building2, GraduationCap, Award, HeartHandshake, Lightbulb, Users, Globe } from 'lucide-react';
 import { AUTHORS } from '@/data/authorsData';
@@ -9,16 +9,16 @@ export const AuthorProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (!author) return;
-    const pageTitle = ${author.name} — Founder, TalentXcel & CHATR | HR & Education Strategist;
+    const pageTitle = `${author.name} — Founder, TalentXcel & CHATR | HR & Education Strategist`;
     document.title = pageTitle;
     
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', ${author.name} is the Founder of TalentXcel and CHATR with 20+ years of HR, talent, training, and education experience across Fortis, Reliance, Savantis, and Evolve Services.);
+    metaDesc.setAttribute('content', `${author.name} is the Founder of TalentXcel and CHATR with 20+ years of HR, talent, training, and education experience across Fortis, Reliance, Savantis, and Evolve Services.`);
     
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', https://chatrchat.in/authors/);
+    canonical.setAttribute('href', `https://chatrchat.in/authors/${author.slug}`);
 
     const schema = document.createElement('script');
     schema.id = 'author-profile-schema';
@@ -37,7 +37,7 @@ export const AuthorProfilePage: React.FC = () => {
       ],
       hasCredential: author.credentials || [],
       description: author.bio,
-      url: https://chatrchat.in/authors/,
+      url: `https://chatrchat.in/authors/${author.slug}`,
     });
     if (!document.getElementById('author-profile-schema')) document.head.appendChild(schema);
     return () => { const s = document.getElementById('author-profile-schema'); if (s) s.remove(); };
