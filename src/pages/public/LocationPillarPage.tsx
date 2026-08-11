@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, MapPin, Tag, FileText, ArrowRight, Database, ShieldCheck, ExternalLink, HelpCircle, ChevronDown, Building2 } from 'lucide-react';
-import { LOCATION_EXPANSION_PAGES } from '../../data/locationExpansionData';
+import { LOCATION_EXPANSION_PAGES, LOCATION_USE_CASES, TOP_CITIES } from '../../data/locationExpansionData';
 import { AUTHORS } from '../../data/authorsData';
 import { getEvidenceNodesForRoute } from '../../services/evidenceGraphEngine';
 
@@ -328,6 +328,62 @@ export const LocationPillarPage: React.FC = () => {
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Contextual Topical & Regional Internal Cross-Linking Graph */}
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+          {/* 1. Topical Cross-Links: Other Solutions in the Same City */}
+          <div className="space-y-3">
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-indigo-400" />
+              <span>Other Business Solutions in {pageConfig.city}</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              {LOCATION_USE_CASES.filter((uc) => pageConfig.path.indexOf(uc.slug) === -1)
+                .slice(0, 4)
+                .map((uc) => {
+                  const citySlug = pageConfig.city.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+                  const siblingPath = `/location/${uc.slug}-${citySlug}`;
+                  return (
+                    <Link
+                      key={uc.slug}
+                      to={siblingPath}
+                      className="bg-slate-950 hover:bg-slate-800 border border-slate-800/80 p-2.5 rounded-lg text-slate-300 hover:text-indigo-300 transition-colors flex items-center justify-between"
+                    >
+                      <span className="font-medium truncate">{uc.title} ({pageConfig.city})</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    </Link>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* 2. Regional Cross-Links: Same Vertical in Nearby/Regional Cities */}
+          <div className="space-y-3 pt-4 border-t border-slate-800">
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-emerald-400" />
+              <span>{pageConfig.useCase} in Neighboring Hubs</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              {TOP_CITIES.filter((c) => c.city !== pageConfig.city)
+                .slice(0, 4)
+                .map((c) => {
+                  const currentUcSlug = LOCATION_USE_CASES.find((u) => pageConfig.path.includes(u.slug))?.slug || 'whatsapp-business-api';
+                  const neighborCitySlug = c.city.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+                  const neighborPath = `/location/${currentUcSlug}-${neighborCitySlug}`;
+                  return (
+                    <Link
+                      key={c.city}
+                      to={neighborPath}
+                      className="bg-slate-950 hover:bg-slate-800 border border-slate-800/80 p-2.5 rounded-lg text-slate-300 hover:text-emerald-300 transition-colors flex items-center justify-between"
+                    >
+                      <span className="font-medium truncate">{pageConfig.useCase} ({c.city})</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    </Link>
+                  );
+                })}
+            </div>
           </div>
         </section>
 
