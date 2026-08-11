@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ShieldCheck, Tag, HelpCircle, FileText, CheckCircle2 } from 'lucide-react';
 import { EXPANSION_PAGES, ExpansionPageConfig } from '@/data/expansionPagesData';
@@ -18,7 +18,7 @@ export const ExpansionPillarPage: React.FC = () => {
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', https://chatrchat.in);
+    canonical.setAttribute('href', `https://chatrchat.in${pageConfig.path}`);
 
     const articleSchema = {
       '@context': 'https://schema.org',
@@ -55,8 +55,8 @@ export const ExpansionPillarPage: React.FC = () => {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://chatrchat.in' },
-        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: https://chatrchat.in/ },
-        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: https://chatrchat.in }
+        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: `https://chatrchat.in/${pageConfig.category.toLowerCase()}` },
+        { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://chatrchat.in${pageConfig.path}` }
       ]
     };
 
