@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ShieldCheck, Tag, HelpCircle, FileText, CheckCircle2 } from 'lucide-react';
-import { EXPANSION_PAGES, ExpansionPageConfig } from '@/data/expansionPagesData';
-import { AUTHORS } from '@/data/authorsData';
+import { ArrowLeft, CheckCircle2, ChevronDown, HelpCircle, Tag, FileText, ArrowRight, Database, ShieldCheck, ExternalLink } from 'lucide-react';
+import { EXPANSION_PAGES } from '../../data/expansionPagesData';
+import { AUTHORS } from '../../data/authorsData';
+import { getEvidenceNodesForRoute } from '../../services/evidenceGraphEngine';
 
 export const ExpansionPillarPage: React.FC = () => {
   const location = useLocation();
   const pageConfig = EXPANSION_PAGES.find(p => p.path === location.pathname);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const evidenceNodes = pageConfig ? getEvidenceNodesForRoute(pageConfig.path, pageConfig.category) : [];
 
   useEffect(() => {
     if (!pageConfig) return;
@@ -27,8 +31,8 @@ export const ExpansionPillarPage: React.FC = () => {
       description: pageConfig.description,
       author: {
         '@type': 'Person',
-        name: AUTHORS['sanobar-jahan'].name,
-        jobTitle: AUTHORS['sanobar-jahan'].role,
+        name: 'Sanobar Jahan',
+        jobTitle: 'Founder, TalentXcel & CHATR',
         url: 'https://chatrchat.in/authors/sanobar-jahan'
       },
       publisher: {
@@ -55,18 +59,28 @@ export const ExpansionPillarPage: React.FC = () => {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://chatrchat.in' },
-        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: `https://chatrchat.in/${pageConfig.category.toLowerCase()}` },
+        { '@type': 'ListItem', position: 2, name: pageConfig.category, item: `https://chatrchat.in#${pageConfig.category.toLowerCase()}` },
         { '@type': 'ListItem', position: 3, name: pageConfig.h1, item: `https://chatrchat.in${pageConfig.path}` }
       ]
     };
 
-    const s1 = document.createElement('script'); s1.id = 'expansion-article-schema'; s1.type = 'application/ld+json'; s1.textContent = JSON.stringify(articleSchema);
-    const s2 = document.createElement('script'); s2.id = 'expansion-faq-schema'; s2.type = 'application/ld+json'; s2.textContent = JSON.stringify(faqSchema);
-    const s3 = document.createElement('script'); s3.id = 'expansion-breadcrumb-schema'; s3.type = 'application/ld+json'; s3.textContent = JSON.stringify(breadcrumbSchema);
+    const scriptArt = document.createElement('script');
+    scriptArt.id = 'expansion-article-schema';
+    scriptArt.type = 'application/ld+json';
+    scriptArt.textContent = JSON.stringify(articleSchema);
+    if (!document.getElementById('expansion-article-schema')) document.head.appendChild(scriptArt);
 
-    if (!document.getElementById('expansion-article-schema')) document.head.appendChild(s1);
-    if (!document.getElementById('expansion-faq-schema')) document.head.appendChild(s2);
-    if (!document.getElementById('expansion-breadcrumb-schema')) document.head.appendChild(s3);
+    const scriptFaq = document.createElement('script');
+    scriptFaq.id = 'expansion-faq-schema';
+    scriptFaq.type = 'application/ld+json';
+    scriptFaq.textContent = JSON.stringify(faqSchema);
+    if (!document.getElementById('expansion-faq-schema')) document.head.appendChild(scriptFaq);
+
+    const scriptBc = document.createElement('script');
+    scriptBc.id = 'expansion-breadcrumb-schema';
+    scriptBc.type = 'application/ld+json';
+    scriptBc.textContent = JSON.stringify(breadcrumbSchema);
+    if (!document.getElementById('expansion-breadcrumb-schema')) document.head.appendChild(scriptBc);
 
     return () => {
       ['expansion-article-schema', 'expansion-faq-schema', 'expansion-breadcrumb-schema'].forEach(id => {
@@ -113,20 +127,22 @@ export const ExpansionPillarPage: React.FC = () => {
           {/* AI / GEO Direct Answer Executive Summary Block */}
           <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 space-y-2">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Executive Summary & Core Takeaway</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Executive Summary</span>
             </div>
-            <p className="text-slate-200 text-sm leading-relaxed">{pageConfig.executiveSummary}</p>
+            <p className="text-slate-200 text-sm md:text-base leading-relaxed font-medium">
+              {pageConfig.executiveSummary}
+            </p>
           </div>
         </div>
 
-        {/* Detailed Section */}
-        <section className="space-y-6 text-slate-300 text-sm leading-relaxed border-t border-slate-800 pt-8">
-          <h2 className="text-2xl font-bold text-white">Understanding {pageConfig.h1}</h2>
-          <p>
-            In modern business operations, communication delays directly impact lead conversion, candidate retention, and customer satisfaction. {pageConfig.description}
+        {/* Core Analysis Section */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold text-white">Operational Problem & Structural Solution</h2>
+          <p className="text-slate-300 text-sm leading-relaxed">
+            Modern business communication suffers from fragmented channels, slow response times, and unorganized lead queues. {pageConfig.h1} addresses this friction directly by unifying customer touchpoints into an intelligent workflow.
           </p>
-          
+
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-3">
             <h3 className="font-bold text-white text-base">Key Operational Advantages</h3>
             <ul className="space-y-2 text-xs text-slate-300">
@@ -145,6 +161,40 @@ export const ExpansionPillarPage: React.FC = () => {
             </ul>
           </div>
         </section>
+
+        {/* Evidence Graph Node Card (Dynamic Verified Evidence Trail) */}
+        {evidenceNodes.length > 0 && (
+          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2 font-bold text-white text-base">
+                <Database className="w-4 h-4 text-indigo-400" /> Grounded Evidence Graph Trail
+              </div>
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                Verified Observational Finding
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {evidenceNodes.slice(0, 2).map((ev, idx) => (
+                <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                    <span className="text-indigo-400 font-bold">Finding ID: {ev.findingId}</span>
+                    <span>{ev.sampleSize}</span>
+                  </div>
+                  <p className="text-xs text-slate-200 leading-relaxed font-medium">"{ev.claimText}"</p>
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-900 text-xs">
+                    <span className="text-slate-400 flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Type: <strong className="text-white">{ev.claimType}</strong>
+                    </span>
+                    <Link to={ev.reportPath} className="text-indigo-400 hover:underline flex items-center gap-1 font-semibold">
+                      View Report Methodology <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Methodology & Data Evidence Trail Box */}
         <section className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-2 text-xs text-slate-400">
@@ -179,31 +229,38 @@ export const ExpansionPillarPage: React.FC = () => {
             <HelpCircle className="w-5 h-5 text-indigo-400" />
             <h2>Frequently Asked Questions</h2>
           </div>
-          <div className="space-y-4 border-t border-slate-800 pt-4">
+          <div className="space-y-3">
             {pageConfig.faqs.map((faq, idx) => (
-              <div key={idx} className="space-y-1.5">
-                <p className="font-semibold text-white text-sm">{faq.q}</p>
-                <p className="text-slate-400 text-xs leading-relaxed">{faq.a}</p>
+              <div key={idx} className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950">
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full p-4 text-left flex items-center justify-between gap-4 hover:bg-slate-900/50 transition-colors"
+                >
+                  <span className="font-semibold text-sm text-slate-200">{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaq === idx ? 'rotate-180' : ''}`} />
+                </button>
+                {openFaq === idx && (
+                  <div className="p-4 pt-0 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 bg-slate-900/20">
+                    {faq.a}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-white">Deploy CHATR Communication OS</h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto">
-            Experience multi-agent WhatsApp shared inboxes, AI candidate screening, and business messaging workflows.
+        <div className="bg-gradient-to-r from-indigo-900/50 to-violet-900/50 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
+          <h2 className="text-2xl font-bold text-white">Transform Your Team Messaging & Candidate Workflows</h2>
+          <p className="text-xs md:text-sm text-slate-300 max-w-xl mx-auto">
+            Join forward-thinking SMBs using CHATR Communication OS and TalentXcel to streamline WhatsApp lead triage, candidate screening, and team SLA tracking.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Link to="/auth" id="expansion-cta-button" className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2">
-              Start Free Trial <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link to="/about" className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors">
-              Platform Architecture
+          <div className="pt-2">
+            <Link to="/auth" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20">
+              Start Your Free Account <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );

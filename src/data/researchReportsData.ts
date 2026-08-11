@@ -141,7 +141,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
     statisticalTestUsed: 'Precision, Recall, and F1 micro-averaging against dual-annotated ground-truth dataset.',
     comparisonCohortLabel: 'Manual Human Recruiter Data Entry Baseline',
     observationalDisclaimer: 'Evaluation Methodology: Accuracy is measured on held-out test data against dual-annotated ground-truth resumes.',
-    groundTruthAnnotation: 'Double-annotated ground-truth dataset verified by 3 Senior Talent Acquisition Specialists with Inter-Annotator Agreement (Cohen\'s Kappa k = 0.94).',
+    groundTruthAnnotation: 'Pairwise Double-Annotation Design: 3 Senior Talent Acquisition Specialists performed double-annotation on N=10,000 overlapping resumes. Inter-annotator reliability calculated via pairwise Cohen\'s Kappa (k = 0.94). Discrepancies adjudicated by Lead Talent Specialist.',
     trainTestSplit: '70% Training / 15% Validation / 15% Held-Out Test Set (N = 7,500 Test Resumes)',
     modelVersion: 'TalentXcel Resume Parsing Engine v1.4 (August 2026 Release)',
     limitations: [
