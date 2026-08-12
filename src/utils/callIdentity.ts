@@ -33,10 +33,17 @@ export function resolveCallDisplayName(
     profile?.email ? cleanValue(profile.email).split("@")[0] : "",
   ];
 
+  // First pass: try non-phone name candidates
   for (const candidate of candidates) {
     const cleaned = cleanValue(candidate);
     if (!cleaned || looksLikeUuid(cleaned) || looksLikePhoneIdentity(cleaned)) continue;
     return cleaned;
+  }
+
+  // Second pass: if no explicit name found, allow phone number or cleaned string fallback
+  for (const candidate of candidates) {
+    const cleaned = cleanValue(candidate);
+    if (cleaned && !looksLikeUuid(cleaned)) return cleaned;
   }
 
   return "Unknown";

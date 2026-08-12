@@ -226,7 +226,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  setIncomingRoom({
  roomId: callRow.id,
  callId: callRow.id,
- callerName: callRow.caller_name || callerProf?.full_name || callerProf?.username || 'Unknown',
+ callerName: callRow.caller_name || callerProf?.full_name || callerProf?.username || callRow.caller_phone || callerProf?.phone_number || 'Caller',
  callerAvatar: callRow.caller_avatar || callerProf?.avatar_url || '',
  callerFlag: getFlagFromPhone(callRow.caller_phone || callerProf?.phone_number || '') || '',
  goal: 'quick',
@@ -241,14 +241,56 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  cleanup.current = [() => manager.destroy(), ...unsubs, () => supabase.removeChannel(inviteChannel), () => supabase.removeChannel(legacyCallChannel)];
  };
 
- const resolveUser = async (input: string): Promise<{ id: string; name: string; avatar: string; phone?: string } | null> => {
- if (!input.trim()) return null;
- const { data } = await supabase.from('profiles').select('id,full_name,username,avatar_url,phone_number')
- .or(`username.eq.${input.trim()},phone_number.eq.${input.trim()}`)
- .maybeSingle();
- if (data) return { id: data.id, name: data.full_name || data.username, avatar: data.avatar_url || '', phone: data.phone_number };
- return null;
- };
+  const resolveUser = async (input: string): Promise<{ id: string; name: string; avatar: string; phone?: string } | null> => {
+    const trimmed = input.trim();
+    if (!trimmed) return null;
+
+    // 1. Exact match on ID, username, or phone number
+    const { data: exact } = await supabase
+      .from('profiles')
+      .select('id,full_name,username,avatar_url,phone_number')
+      .or(`id.eq.${trimmed},username.eq.${trimmed},phone_number.eq.${trimmed}`)
+      .maybeSingle();
+
+    if (exact) {
+      const resolvedName = exact.full_name || exact.username || exact.phone_number || trimmed;
+      return { id: exact.id, name: resolvedName, avatar: exact.avatar_url || '', phone: exact.phone_number || '' };
+    }
+
+    // 2. Digit-only phone number matching
+    const digits = trimmed.replace(/\D/g, '');
+    if (digits.length >= 7) {
+      const { data: phoneMatch } = await supabase
+        .from('profiles')
+        .select('id,full_name,username,avatar_url,phone_number')
+        .ilike('phone_number', `%${digits}%`)
+        .maybeSingle();
+
+      if (phoneMatch) {
+        const resolvedName = phoneMatch.full_name || phoneMatch.username || phoneMatch.phone_number || trimmed;
+        return { id: phoneMatch.id, name: resolvedName, avatar: phoneMatch.avatar_url || '', phone: phoneMatch.phone_number || '' };
+      }
+    }
+
+    // 3. Name search fallback (case-insensitive partial match)
+    const { data: nameMatch } = await supabase
+      .from('profiles')
+      .select('id,full_name,username,avatar_url,phone_number')
+      .or(`full_name.ilike.%${trimmed}%,username.ilike.%${trimmed}%`)
+      .maybeSingle();
+
+    if (nameMatch) {
+      const resolvedName = nameMatch.full_name || nameMatch.username || nameMatch.phone_number || trimmed;
+      return { id: nameMatch.id, name: resolvedName, avatar: nameMatch.avatar_url || '', phone: nameMatch.phone_number || '' };
+    }
+
+    // 4. Fallback for raw numbers or UUIDs when no DB profile row exists yet
+    if (digits.length >= 7 || trimmed.includes('-') || trimmed.length > 5) {
+      return { id: trimmed, name: trimmed, avatar: '', phone: trimmed };
+    }
+
+    return null;
+  };
 
  const getStream = async (video: boolean): Promise<MediaStream | null> => {
  try {
@@ -313,7 +355,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  id: room.id, // use room.id as call id for correlation
  conversation_id: convId,
  caller_id: currentUserId,
- caller_name: callerProfile?.full_name || callerProfile?.username || 'Caller',
+ caller_name: callerProfile?.full_name || callerProfile?.username || callerProfile?.phone_number || currentUserName || 'Caller',
  caller_avatar: callerProfile?.avatar_url || '',
  caller_phone: callerProfile?.phone_number || '',
  receiver_id: target.id,

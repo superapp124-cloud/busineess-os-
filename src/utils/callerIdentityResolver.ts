@@ -564,9 +564,9 @@ export async function hydrateCallRowsForUser<T extends Record<string, any>>(
     const fallbackAvatar = isOutgoing ? call.receiver_avatar : call.caller_avatar;
     const key = getPhoneLookupKey(otherPhone);
     const baseIdentity = identityMap.get(key) || createFallbackCallerIdentity(otherPhone || fallbackName || '');
-    const fallbackDisplay = chooseCallerDisplayName([fallbackName], otherPhone);
+    const fallbackDisplay = chooseCallerDisplayName([fallbackName], otherPhone) || (fallbackName && fallbackName.trim() ? fallbackName.trim() : null);
     const resolvedName = chooseCallerDisplayName([baseIdentity.displayName], baseIdentity.phoneNumber);
-    const otherName = resolvedName || fallbackDisplay || baseIdentity.phoneNumber || 'Unknown';
+    const otherName = resolvedName || fallbackDisplay || fallbackName || baseIdentity.phoneNumber || otherPhone || 'Unknown';
     const otherIdentity: ResolvedCallerIdentity = {
       ...baseIdentity,
       displayName: otherName,
