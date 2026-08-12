@@ -8,6 +8,7 @@ export interface AuthorEntity {
   organizationUrl: string;
   avatarUrl: string;
   linkedinUrl?: string;
+  facebookUrl?: string;
   publishedCount: number;
   credentials?: string[];
   organizationsWorkedWith?: string[];
@@ -24,6 +25,9 @@ export const AUTHORS: Record<string, AuthorEntity> = {
     organization: 'CHATR Communication OS & TalentXcel',
     organizationUrl: 'https://www.chatrchat.in',
     avatarUrl: 'https://www.chatrchat.in/images/sanobar-jahan-founder.jpg',
+    linkedinUrl: 'https://www.linkedin.com/in/sanobarjahan12/',
+    redditUrl: 'https://www.reddit.com/user/SanobarJahan/',
+    facebookUrl: 'https://www.facebook.com/profile.php?id=61592903802484',
     publishedCount: 12,
     credentials: ['MBA (HR & Marketing) - Jamia Hamdard', 'B.Ed', 'M.Sc Chemistry', 'M.A. Education', 'PhD in Education (Pursuing)'],
     organizationsWorkedWith: ['Fortis', 'Reliance', 'Savantis', 'Evolve Services'],

@@ -38,6 +38,11 @@ export const AuthorProfilePage: React.FC = () => {
         { '@type': 'EducationalOrganization', name: 'Jamia Hamdard' }
       ] : undefined,
       hasCredential: author.credentials || [],
+      sameAs: [
+        author.linkedinUrl,
+        author.facebookUrl,
+        (author as any).redditUrl
+      ].filter(Boolean),
       description: author.bio,
       url: `https://www.chatrchat.in/authors/${author.slug}`,
     });
@@ -97,6 +102,23 @@ export const AuthorProfilePage: React.FC = () => {
                     <Building2 className="w-3.5 h-3.5 text-indigo-400" />
                     <span className="text-slate-300 font-semibold">Founder of TalentXcel & CHATR</span>
                   </p>
+                  <div className="flex items-center gap-2 pt-1">
+                    {author.linkedinUrl && (
+                      <a href={author.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-blue-600/30 transition-colors">
+                        <Globe className="w-3 h-3" /> LinkedIn Profile
+                      </a>
+                    )}
+                    {author.facebookUrl && (
+                      <a href={author.facebookUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-indigo-600/30 transition-colors">
+                        <Globe className="w-3 h-3" /> Facebook Profile
+                      </a>
+                    )}
+                    {(author as any).redditUrl && (
+                      <a href={(author as any).redditUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-orange-600/20 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-orange-600/30 transition-colors">
+                        <Globe className="w-3 h-3" /> Reddit Profile
+                      </a>
+                    )}
+                  </div>
                 </>
               ) : (
                 <>

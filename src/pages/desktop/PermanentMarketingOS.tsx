@@ -23,12 +23,28 @@ import {
   Activity,
   Search,
   MousePointerClick,
-  DollarSign
+  DollarSign,
+  Globe,
+  ShieldCheck,
+  ExternalLink,
+  Lock,
+  AlertTriangle,
+  UserCheck,
+  Building2
 } from 'lucide-react';
+import { 
+  PUBLIC_ACCOUNT_REGISTRY, 
+  PublicAccountEntry, 
+  getAccountsSummary, 
+  CANONICAL_FOUNDER_IDENTITY, 
+  CANONICAL_COMPANY_IDENTITY,
+  AccountStatus,
+  AccountType
+} from '@/data/accountRegistryData';
 
 // --- Types ---
 
-type TabType = 'calendar' | 'queue' | 'pipeline' | 'kpis';
+type TabType = 'calendar' | 'queue' | 'pipeline' | 'kpis' | 'accounts';
 
 interface DistributionItem {
   id: string;
@@ -134,6 +150,10 @@ export default function PermanentMarketingOS() {
   const [queue, setQueue] = useState<QueueItem[]>(INITIAL_QUEUE);
   const [prospects, setProspects] = useState<Prospect[]>(INITIAL_PROSPECTS);
 
+  const [accountList, setAccountList] = useState<PublicAccountEntry[]>(PUBLIC_ACCOUNT_REGISTRY);
+  const [accountFilterType, setAccountFilterType] = useState<'all' | 'founder' | 'company'>('all');
+  const [accountFilterStatus, setAccountFilterStatus] = useState<string>('all');
+
   const toggleAssetExpansion = (id: string) => {
     setExpandedAssetIds(prev => {
       const newSet = new Set(prev);
@@ -143,12 +163,23 @@ export default function PermanentMarketingOS() {
     });
   };
 
+  const toggleAccountVerification = (id: string) => {
+    setAccountList(prev => prev.map(acc => {
+      if (acc.id === id) {
+        const nextStatus = acc.verification_status === 'PUBLIC_URL_CONFIRMED' ? 'UNVERIFIED' : 'PUBLIC_URL_CONFIRMED';
+        return { ...acc, verification_status: nextStatus, last_verified_at: new Date().toISOString().split('T')[0] };
+      }
+      return acc;
+    }));
+  };
+
   const renderSidebar = () => {
     const navItems = [
       { id: 'calendar' as TabType, label: 'Content Calendar', icon: Calendar },
       { id: 'queue' as TabType, label: 'Distribution Queue', icon: ListTodo },
       { id: 'pipeline' as TabType, label: 'Partnership Pipeline', icon: Handshake },
       { id: 'kpis' as TabType, label: 'Growth KPIs', icon: BarChart3 },
+      { id: 'accounts' as TabType, label: 'External Accounts', icon: Globe },
     ];
 
     return (
@@ -526,6 +557,306 @@ export default function PermanentMarketingOS() {
     );
   };
 
+  const renderExternalAccounts = () => {
+    const summary = getAccountsSummary();
+
+    const filteredAccounts = accountList.filter(acc => {
+      if (accountFilterType !== 'all' && acc.account_type !== accountFilterType) return false;
+      if (accountFilterStatus !== 'all' && acc.status !== accountFilterStatus) return false;
+      return true;
+    });
+
+    const getStatusBadge = (status: AccountStatus) => {
+      switch (status) {
+        case 'ACTIVE':
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              ACTIVE
+            </span>
+          );
+        case 'PENDING':
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-950/80 text-amber-400 border border-amber-800">
+              <Circle className="w-3.5 h-3.5" />
+              PENDING
+            </span>
+          );
+        case 'BLOCKED':
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-950/80 text-rose-400 border border-rose-800">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              BLOCKED
+            </span>
+          );
+        case 'NOT_CREATED':
+        default:
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-800 text-gray-400 border border-gray-700">
+              <Circle className="w-3.5 h-3.5" />
+              NOT CREATED
+            </span>
+          );
+      }
+    };
+
+    return (
+      <div className="flex-1 overflow-auto bg-gray-950 p-8 space-y-8">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Globe className="w-6 h-6 text-purple-400" />
+              External Accounts & Identity Registry
+            </h1>
+            <p className="text-gray-400 mt-1">
+              Central single source of truth for CHATR & Founder public entity footprint across external platforms.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs bg-purple-900/40 text-purple-300 border border-purple-800 px-3 py-1.5 rounded-lg font-mono">
+              Canonical Brand: CHATR
+            </span>
+            <a 
+              href={CANONICAL_COMPANY_IDENTITY.canonicalUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 px-3 py-1.5 rounded-lg font-medium inline-flex items-center gap-1 transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
+              chatrchat.in
+            </a>
+          </div>
+        </div>
+
+        {/* Security & Ownership Mandate Banner */}
+        <div className="bg-purple-950/40 border border-purple-800/60 rounded-xl p-4 flex items-start gap-3">
+          <Lock className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
+          <div className="text-xs text-purple-200 leading-relaxed space-y-1">
+            <p className="font-semibold text-white text-sm">Strict Security & Privacy Mandate</p>
+            <p>
+              Growth OS stores <strong>ONLY public handles, public profile URLs, platform metadata, and ownership verification status</strong>. 
+              No passwords, recovery codes, OTPs, or API tokens are ever exposed or requested in this registry.
+            </p>
+          </div>
+        </div>
+
+        {/* Identity Hierarchy Summary */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-400 bg-purple-950/80 px-2.5 py-1 rounded-md border border-purple-800">
+                <UserCheck className="w-3.5 h-3.5" />
+                FOUNDER IDENTITY
+              </span>
+              <span className="text-xs text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-900">
+                Primary Authority Node
+              </span>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">{CANONICAL_FOUNDER_IDENTITY.name}</h3>
+              <p className="text-xs text-purple-300 font-medium">{CANONICAL_FOUNDER_IDENTITY.role}</p>
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {CANONICAL_FOUNDER_IDENTITY.positioning}
+            </p>
+            <div className="pt-2 flex flex-wrap gap-2">
+              <a href={CANONICAL_FOUNDER_IDENTITY.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 bg-blue-950/50 border border-blue-800/60 px-2.5 py-1 rounded font-medium hover:underline inline-flex items-center gap-1">
+                <ExternalLink className="w-3 h-3" /> LinkedIn (sanobarjahan12)
+              </a>
+              <a href={CANONICAL_FOUNDER_IDENTITY.redditUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-orange-400 bg-orange-950/50 border border-orange-800/60 px-2.5 py-1 rounded font-medium hover:underline inline-flex items-center gap-1">
+                <ExternalLink className="w-3 h-3" /> Reddit (u/SanobarJahan)
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 bg-blue-950/80 px-2.5 py-1 rounded-md border border-blue-800">
+                <Building2 className="w-3.5 h-3.5" />
+                COMPANY & PRODUCT IDENTITY
+              </span>
+              <span className="text-xs text-gray-400 font-mono">
+                Brand: CHATR
+              </span>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">{CANONICAL_COMPANY_IDENTITY.brandName}</h3>
+              <p className="text-xs text-blue-300 font-medium">{CANONICAL_COMPANY_IDENTITY.canonicalUrl}</p>
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {CANONICAL_COMPANY_IDENTITY.positioning}
+            </p>
+            <div className="pt-2 flex flex-wrap gap-2">
+              <span className="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2.5 py-1 rounded">
+                Facebook Page: CHATR
+              </span>
+              <span className="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2.5 py-1 rounded">
+                Instagram: @chatr_chat
+              </span>
+              <span className="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2.5 py-1 rounded">
+                X: @chatr_chat
+              </span>
+              <span className="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2.5 py-1 rounded">
+                YouTube: @chatr_chat
+              </span>
+              <span className="text-xs text-rose-400 bg-rose-950/40 border border-rose-800 px-2.5 py-1 rounded">
+                LinkedIn Company Page: Blocked (Needs Connections)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Registry Summary Counters */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl text-center">
+            <p className="text-2xl font-bold text-white">{summary.total}</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Total Registered</p>
+          </div>
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl text-center">
+            <p className="text-2xl font-bold text-emerald-400">{summary.active}</p>
+            <p className="text-xs text-emerald-400 uppercase tracking-wider mt-1">Active Accounts</p>
+          </div>
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl text-center">
+            <p className="text-2xl font-bold text-amber-400">{summary.pending}</p>
+            <p className="text-xs text-amber-400 uppercase tracking-wider mt-1">Pending Creation</p>
+          </div>
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl text-center">
+            <p className="text-2xl font-bold text-rose-400">{summary.blocked}</p>
+            <p className="text-xs text-rose-400 uppercase tracking-wider mt-1">Blocked Accounts</p>
+          </div>
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl text-center col-span-2 md:col-span-1">
+            <p className="text-2xl font-bold text-gray-400">{summary.notCreated}</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Not Created</p>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap justify-between items-center gap-4 bg-gray-900 border border-gray-800 rounded-xl p-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Identity:</span>
+            <button 
+              onClick={() => setAccountFilterType('all')} 
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${accountFilterType === 'all' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+            >
+              All ({accountList.length})
+            </button>
+            <button 
+              onClick={() => setAccountFilterType('founder')} 
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${accountFilterType === 'founder' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+            >
+              Founder (Sanobar Jahan)
+            </button>
+            <button 
+              onClick={() => setAccountFilterType('company')} 
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${accountFilterType === 'company' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+            >
+              Company (CHATR)
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Status:</span>
+            <select 
+              value={accountFilterStatus} 
+              onChange={(e) => setAccountFilterStatus(e.target.value)}
+              className="bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-purple-500"
+            >
+              <option value="all">All Statuses</option>
+              <option value="ACTIVE">Active Only</option>
+              <option value="PENDING">Pending Only</option>
+              <option value="BLOCKED">Blocked Only</option>
+              <option value="NOT_CREATED">Not Created Only</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Registry Table */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+          <table className="w-full text-left text-sm text-gray-300">
+            <thead className="text-xs uppercase bg-gray-800/60 text-gray-400 border-b border-gray-800">
+              <tr>
+                <th className="px-6 py-4 font-medium">Platform & Name</th>
+                <th className="px-6 py-4 font-medium">Owner</th>
+                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium">Public Handle / URL</th>
+                <th className="px-6 py-4 font-medium max-w-xs">Purpose & Details</th>
+                <th className="px-6 py-4 font-medium">Verification</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800/60">
+              {filteredAccounts.map(account => (
+                <tr key={account.id} className="hover:bg-gray-800/30 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-semibold text-white">{account.platform}</div>
+                    <div className="text-xs text-gray-400">{account.account_name}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {account.account_type === 'founder' ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-800">
+                        <UserCheck className="w-3 h-3" />
+                        {account.owner}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-950 text-blue-300 border border-blue-800">
+                        <Building2 className="w-3 h-3" />
+                        {account.owner}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    {getStatusBadge(account.status)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-xs font-mono text-gray-300">{account.username}</div>
+                    {account.public_url && account.public_url.startsWith('http') ? (
+                      <a 
+                        href={account.public_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-purple-400 hover:text-purple-300 underline inline-flex items-center gap-1 mt-0.5"
+                      >
+                        Visit Profile <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <span className="text-xs text-gray-500 italic mt-0.5 block">{account.public_url}</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 max-w-xs space-y-1">
+                    <p className="text-xs text-gray-300 font-medium">{account.purpose}</p>
+                    {account.notes && (
+                      <p className="text-xs text-rose-300 bg-rose-950/40 border border-rose-900/60 p-2 rounded leading-normal">
+                        ⚠️ <strong>Note:</strong> {account.notes}
+                      </p>
+                    )}
+                    {account.current_state && !account.notes && (
+                      <p className="text-xs text-gray-400 italic">
+                        {account.current_state}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="space-y-1.5">
+                      <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded border ${account.verification_status === 'PUBLIC_URL_CONFIRMED' ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800' : 'bg-gray-800 text-gray-400 border-gray-700'}`}>
+                        <ShieldCheck className="w-3 h-3" />
+                        {account.verification_status}
+                      </span>
+                      <button 
+                        onClick={() => toggleAccountVerification(account.id)}
+                        className="block text-[11px] text-gray-400 hover:text-white underline transition-colors"
+                      >
+                        Toggle Verification
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden">
       {renderSidebar()}
@@ -534,6 +865,7 @@ export default function PermanentMarketingOS() {
       {activeTab === 'queue' && renderDistributionQueue()}
       {activeTab === 'pipeline' && renderPartnershipPipeline()}
       {activeTab === 'kpis' && renderGrowthKPIs()}
+      {activeTab === 'accounts' && renderExternalAccounts()}
     </div>
   );
 }
