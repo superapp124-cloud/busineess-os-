@@ -1040,6 +1040,8 @@ export const GrowthOSDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
       {/* TAB 5: EXTERNAL ACCOUNTS REGISTRY */}
       {activeTab === 'external_accounts' && (
         <div className="space-y-6 font-sans">
