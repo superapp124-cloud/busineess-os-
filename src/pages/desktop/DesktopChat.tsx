@@ -458,13 +458,14 @@ export default function DesktopChat() {
     onOpenChange={setShowNewDmModal}
     onSelectContact={(contactUserId) => {
       setShowNewDmModal(false);
-      const existing = rooms.find(r => r.id === contactUserId || (r as any).peerId === contactUserId);
+      const cleanId = contactUserId.replace(/^lead_/, '');
+      const existing = rooms.find(r => r.id === cleanId || r.id === contactUserId || (r as any).peerId === cleanId);
       if (existing) {
         setSelectedId(existing.id);
       } else {
-        setSelectedId(contactUserId);
+        setSelectedId(cleanId);
       }
-      toast.success('Chat selected');
+      toast.success('Chat thread selected');
     }}
   />
 
