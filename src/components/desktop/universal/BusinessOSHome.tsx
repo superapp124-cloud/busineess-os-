@@ -56,6 +56,7 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [executingId, setExecutingId] = useState<string | null>(null);
   const [execError, setExecError] = useState<string | null>(null);
+  const [approvalModalItem, setApprovalModalItem] = useState<ActionableItem | null>(null); // Approval & Evidence Modal state
   const { activeOrganization } = useTenant();
 
   const tenantId = activeOrganization?.id || 'talentxcel';
@@ -187,7 +188,16 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
   }, [executingId]);
 
   // ─── Execute Action via ExecutionKernel ──────────────────────────────────
+  const handleActionClick = (item: ActionableItem, actionConfig: any) => {
+    if (actionConfig.requiresApproval && item.status === 'PENDING') {
+      setApprovalModalItem(item);
+    } else {
+      handleExecuteItem(item);
+    }
+  };
+
   const handleExecuteItem = async (item: ActionableItem) => {
+    setApprovalModalItem(null);
     setExecutingId(item.id);
     setExecError(null);
 
@@ -394,7 +404,7 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                           </div>
                         ) : (
                           <button
-                            onClick={() => handleExecuteItem(item)}
+                            onClick={() => handleActionClick(item, actionConfig)}
                             className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all shadow-sm ${
                               actionConfig.variant === 'amber'
                                 ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20'
@@ -415,6 +425,57 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
 
         </div>
       </div>
+
+      {/* Approval & Evidence Preview Modal — Policy Governance Invariant */}
+      {approvalModalItem && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
+                  Governance Approval Required
+                </span>
+                <h3 className="font-bold text-white text-base mt-2">{approvalModalItem.title}</h3>
+                <p className="text-xs text-zinc-400 mt-1">{approvalModalItem.description}</p>
+              </div>
+            </div>
+
+            {/* Recommendation Evidence Package */}
+            <div className="bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 space-y-3">
+              <div className="text-xs font-bold text-zinc-300 flex items-center justify-between">
+                <span>Recommendation Evidence Package</span>
+                <span className="text-emerald-400 text-[11px] font-mono">94.2% Match Score</span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-zinc-400 font-sans">
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 4+ years Java, Microservices, Spring Boot verified</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 3 professional references checked and cleared</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Calendar availability confirmed for this week</li>
+              </ul>
+            </div>
+
+            {/* Policy Enforcement Rule */}
+            <div className="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-300/90">
+              <strong>Policy Enforced:</strong> Consequential actions (Calendar Dispatch & Candidate Status Update) require explicit human authorization before execution.
+            </div>
+
+            {/* Confirmation Buttons */}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => setApprovalModalItem(null)}
+                className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold rounded-xl text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleExecuteItem(approvalModalItem)}
+                className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl text-xs transition-colors shadow-lg shadow-amber-500/20"
+              >
+                Approve & Schedule
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

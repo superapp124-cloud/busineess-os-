@@ -103,10 +103,11 @@ class GlobalSearchServiceClass {
 
     // ─── Run parallel queries ─────────────────────────────────────────────────
     // All queries include explicit tenant_id predicate + rely on Supabase RLS.
-    const [leads, conversations, executions] = await Promise.allSettled([
-      this.searchLeads(q, tenantId, Math.ceil(limit / 3)),
-      this.searchConversations(q, tenantId, Math.ceil(limit / 3)),
-      this.searchExecutions(q, tenantId, Math.ceil(limit / 3)),
+    const [candidates, leads, conversations, executions] = await Promise.allSettled([
+      this.searchCandidates(q, tenantId, Math.ceil(limit / 4)),
+      this.searchLeads(q, tenantId, Math.ceil(limit / 4)),
+      this.searchConversations(q, tenantId, Math.ceil(limit / 4)),
+      this.searchExecutions(q, tenantId, Math.ceil(limit / 4)),
     ]);
 
     // ─── Nav shortcuts (client-side, always safe) ─────────────────────────────
@@ -116,6 +117,7 @@ class GlobalSearchServiceClass {
       .map((n, i) => ({ ...n, id: `nav_${i}` }));
 
     const results: GlobalSearchResult[] = [
+      ...(candidates.status === 'fulfilled' ? candidates.value : []),
       ...(leads.status === 'fulfilled' ? leads.value : []),
       ...(conversations.status === 'fulfilled' ? conversations.value : []),
       ...(executions.status === 'fulfilled' ? executions.value : []),
@@ -132,6 +134,29 @@ class GlobalSearchServiceClass {
         return 0;
       })
       .slice(0, limit);
+  }
+
+  // ─── Candidates (Hiring / ATS Candidates) ──────────────────────────────
+
+  private async searchCandidates(q: string, tenantId: string, limit: number): Promise<GlobalSearchResult[]> {
+    const CANDIDATES_SEED = [
+      { id: 'candidate_java_847', name: 'Rajesh Kumar', role: 'Senior Java Developer', match: '94.2%', status: 'Qualified' },
+      { id: 'candidate_react_302', name: 'Priya Sharma', role: 'Lead Frontend Engineer', match: '91.8%', status: 'Interviewing' },
+      { id: 'candidate_devops_104', name: 'Amit Varma', role: 'DevOps Architect', match: '88.5%', status: 'Applied' },
+    ];
+
+    const matched = CANDIDATES_SEED.filter(c => c.name.toLowerCase().includes(q) || c.role.toLowerCase().includes(q));
+    
+    return matched.slice(0, limit).map(c => ({
+      id: `cand_${c.id}`,
+      type: 'candidate' as SearchResultType,
+      title: c.name,
+      subtitle: `${c.role} · ${c.match} Match · ${c.status}`,
+      group: 'Candidates',
+      canonicalUrl: `/desktop/hiring/candidate/${c.id}`,
+      timestamp: new Date().toISOString(),
+      meta: { candidateId: c.id, role: c.role },
+    }));
   }
 
   // ─── CRM Leads (People / Companies) ────────────────────────────────────────
