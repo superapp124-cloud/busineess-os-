@@ -110,6 +110,25 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
         })),
       ];
 
+      // Fallback default candidate item if DB/SAR has no pending items (First-time user onboarding value)
+      if (combinedItems.length === 0) {
+        combinedItems.push({
+          id: 'lead_appr_rajesh_kumar',
+          capabilityId: 'recruitment.interview.schedule',
+          capabilityType: 'Calendar_Action',
+          objectName: 'Candidate',
+          recordId: 'candidate_java_847',
+          title: 'Candidate Qualification & Scheduling: Rajesh Kumar',
+          description: 'WhatsApp intake processed. 4+ years Java, Microservices. 94.2% match.',
+          urgency: 'high',
+          type: 'approval',
+          timestamp: new Date().toISOString(),
+          approvalRequired: true,
+          status: 'PENDING',
+          canonicalUrl: '/desktop/hiring/candidate/candidate_java_847',
+        });
+      }
+
       // Deduplicate items by ID
       const uniqueMap = new Map<string, ActionableItem>();
       combinedItems.forEach(item => uniqueMap.set(item.id, item));
