@@ -383,8 +383,8 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                               {item.urgency}
                             </span>
                             {actionConfig.requiresApproval && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                                Policy: Human Approval
+                              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                                Approval Needed Before Scheduling
                               </span>
                             )}
                           </div>
@@ -395,12 +395,14 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                       {/* Action Button — Policy Driven + Event-Driven Execution */}
                       <div className="shrink-0">
                         {isConfirmed ? (
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                            <CheckCircle2 size={14} /> Confirmed
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                              <CheckCircle2 size={14} /> Scheduled · Tuesday 3 PM
+                            </div>
                           </div>
                         ) : isExecuting ? (
                           <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl">
-                            <Loader2 size={14} className="animate-spin" /> Executing…
+                            <Loader2 size={14} className="animate-spin" /> Scheduling interview…
                           </div>
                         ) : (
                           <button
@@ -412,7 +414,7 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                             }`}
                             title={actionConfig.description}
                           >
-                            {actionConfig.actionLabel} <ArrowRight size={14} />
+                            {actionConfig.requiresApproval ? 'Review & Approve' : actionConfig.actionLabel} <ArrowRight size={14} />
                           </button>
                         )}
                       </div>
@@ -426,36 +428,36 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
         </div>
       </div>
 
-      {/* Approval & Evidence Preview Modal — Policy Governance Invariant */}
+      {/* Approval & Evidence Preview Modal — Human-Centered Design */}
       {approvalModalItem && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
-                  Governance Approval Required
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
+                  Your approval is needed
                 </span>
-                <h3 className="font-bold text-white text-base mt-2">{approvalModalItem.title}</h3>
-                <p className="text-xs text-zinc-400 mt-1">{approvalModalItem.description}</p>
+                <h3 className="font-bold text-white text-base mt-2">Approve Interview Schedule for Rajesh Kumar</h3>
+                <p className="text-xs text-zinc-400 mt-1">Recommended for Senior Java Developer role</p>
               </div>
             </div>
 
-            {/* Recommendation Evidence Package */}
+            {/* Why CHATR is Recommending This Candidate */}
             <div className="bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 space-y-3">
               <div className="text-xs font-bold text-zinc-300 flex items-center justify-between">
-                <span>Recommendation Evidence Package</span>
-                <span className="text-emerald-400 text-[11px] font-mono">94.2% Match Score</span>
+                <span>Why CHATR recommends Rajesh:</span>
+                <span className="text-emerald-400 text-[11px] font-semibold">Strong Match</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-zinc-400 font-sans">
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 4+ years Java, Microservices, Spring Boot verified</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 3 professional references checked and cleared</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Calendar availability confirmed for this week</li>
+              <ul className="space-y-1.5 text-xs text-zinc-300 font-sans">
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 4+ years Java, Microservices, Spring Boot experience</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 3 professional references verified</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> <strong>Proposed slot:</strong> Tuesday, 3:00 – 3:30 PM (Your calendar is free)</li>
               </ul>
             </div>
 
-            {/* Policy Enforcement Rule */}
-            <div className="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-300/90">
-              <strong>Policy Enforced:</strong> Consequential actions (Calendar Dispatch & Candidate Status Update) require explicit human authorization before execution.
+            {/* Clear Side Effect Consequence */}
+            <div className="p-3 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-xs text-zinc-300">
+              <strong>What happens next:</strong> CHATR will send a Google Calendar invite to Rajesh Kumar for Tuesday at 3:00 PM and update your ATS pipeline.
             </div>
 
             {/* Confirmation Buttons */}
@@ -464,13 +466,13 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                 onClick={() => setApprovalModalItem(null)}
                 className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold rounded-xl text-xs transition-colors"
               >
-                Cancel
+                Not Now
               </button>
               <button
                 onClick={() => handleExecuteItem(approvalModalItem)}
                 className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl text-xs transition-colors shadow-lg shadow-amber-500/20"
               >
-                Approve & Schedule
+                Approve & Schedule Interview
               </button>
             </div>
           </div>
