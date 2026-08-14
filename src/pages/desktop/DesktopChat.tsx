@@ -106,6 +106,16 @@ export default function DesktopChat() {
  });
  }, []);
 
+  // Auto-select active room when opening chat
+  useEffect(() => {
+    if (!selectedId && rooms.length > 0) {
+      const activeRoom = rooms.find(r => r.id !== 'chatr-ai-room') || rooms[0];
+      if (activeRoom) {
+        setSelectedId(activeRoom.id);
+      }
+    }
+  }, [rooms, selectedId, setSelectedId]);
+
  // Handle Query Params & Global Events
  useEffect(() => {
   const id = searchParams.get('id');

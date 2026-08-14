@@ -81,17 +81,21 @@ export function GlobalNotificationListener() {
  const isForCurrentUser = participants?.some((p: any) => p.user_id === userId);
  if (!isForCurrentUser) return;
 
- // Get sender info
- const { data: sender } = await supabase
- .from("profiles")
- .select("username, avatar_url")
- .eq("id", message.sender_id)
- .maybeSingle();
+  // Get sender info
+  const { data: sender } = await supabase
+    .from("profiles")
+    .select("username, full_name, display_name, phone_number, email, avatar_url")
+    .eq("id", message.sender_id)
+    .maybeSingle();
 
- const senderName = sender?.username || "Someone";
- const messagePreview =
- (message.content?.substring(0, 50) || "New message") +
- ((message.content?.length || 0) > 50 ? "..." : "");
+  let senderName = message.sender_name || sender?.full_name || sender?.display_name || sender?.username;
+  if (!senderName && sender?.email) senderName = sender.email.split('@')[0];
+  if (!senderName && sender?.phone_number) senderName = `Member (${sender.phone_number.slice(-4)})`;
+  if (!senderName) senderName = "CHATR Member";
+
+  const messagePreview =
+    (message.content?.substring(0, 50) || "New message") +
+    ((message.content?.length || 0) > 50 ? "..." : "");
  const messageBody = message.content?.substring(0, 100) || "New message";
  const shouldUseNativeBackgroundNotification =
  typeof document !== "undefined" &&

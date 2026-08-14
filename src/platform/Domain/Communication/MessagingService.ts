@@ -183,7 +183,7 @@ class MessagingServiceClass implements IService {
           const conv = p.conversations;
           return {
             id: conv.id,
-            name: conv.group_name || 'Unnamed',
+            name: conv.group_name || 'Direct Contact',
             type: conv.is_group ? 'group' : 'dm',
             unreadCount: 0,
             lastMessageAt: conv.updated_at,
@@ -198,11 +198,14 @@ class MessagingServiceClass implements IService {
 
       const hydratedRooms = await Promise.all(
         baseRooms.map(async (room) => {
-          if (room.type === 'dm' && room.name === 'Unnamed') {
+          if (room.type === 'dm' && (room.name === 'Unnamed' || room.name === 'Direct Contact')) {
             const profile = await fetchConversationPeerProfile(room.id, user.id);
             if (profile) {
-              room.name = resolveSharedDisplayName(profile, 'Unnamed');
-              room.avatarUrl = profile.avatar_url;
+              const cleanName = resolveSharedDisplayName(profile, '');
+              if (cleanName && cleanName !== 'Unnamed') {
+                room.name = cleanName;
+                room.avatarUrl = profile.avatar_url;
+              }
             }
           }
           return room;
