@@ -87,6 +87,7 @@ const GoogleCalendarCallback = React.lazy(() => import("./pages/auth/GoogleCalen
 const OutlookCalendarCallback = React.lazy(() => import("./pages/auth/OutlookCalendarCallback").then(m => ({ default: m.OutlookCalendarCallback })));
 const ChiefOfStaffHome = React.lazy(() => import("./pages/desktop/ChiefOfStaffHome").then(m => ({ default: m.ChiefOfStaffHome })));
 const UniversalInbox = React.lazy(() => import("./pages/desktop/UniversalInbox").then(m => ({ default: m.UniversalInbox })));
+const ExecutionInspectPage = React.lazy(() => import("./pages/desktop/ExecutionInspectPage"));
 
 // Executive & Product Suite Dashboards
 const ExecutiveHomeLanding = React.lazy(() => import("./components/ExecutiveHomeLanding").then(m => ({ default: m.ExecutiveHomeLanding })));
@@ -653,7 +654,24 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="settings/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
  <Route path="agent/:id" element={<LazyRoute component={LazyPages.AgentWorkspace} />} />
  <Route path="studio" element={<LazyRoute component={LazyPages.WorkflowStudio} />} />
- <Route path="business-os" element={<LazyRoute component={LazyPages.BusinessOS} />} />
+
+ {/* ── CHATR Product Unification Contract — Canonical Business OS Routes ── */}
+ {/* business-os renders itself; sub-routes are read by useCanonicalRoute hook */}
+ <Route path="business-os" element={<LazyRoute component={LazyPages.BusinessOS} />}>
+   <Route index element={null} />
+   <Route path=":viewMode" element={null} />
+   <Route path="package/:packageId" element={null} />
+   <Route path="department/:deptId" element={null} />
+ </Route>
+
+ {/* ── Canonical Object Routes — tenant-scoped, permission-checked ── */}
+ {/* These allow AI-generated notifications and chat messages to deep-link */}
+ {/* directly to a specific business object without going through Home → Search. */}
+ <Route path="hiring/candidate/:candidateId" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
+ <Route path="crm/contact/:contactId" element={<LazyRoute component={LazyPages.DesktopContacts} />} />
+ <Route path="execution/:executionId" element={<Suspense fallback={<PageLoader message="Loading execution..." />}><ExecutionInspectPage /></Suspense>} />
+ <Route path="workflow/:workflowId" element={<Suspense fallback={<PageLoader />}><WorkflowInspectorPage /></Suspense>} />
+ <Route path="inbox/thread/:threadId" element={<LazyRoute component={LazyPages.UniversalInbox} />} />
  <Route path="smart-inbox" element={<LazyRoute component={LazyPages.SmartInbox} />} />
  <Route path="tickets" element={<LazyRoute component={LazyPages.DesktopTickets} />} />
  <Route path="files" element={<LazyRoute component={LazyPages.DesktopFiles} />} />

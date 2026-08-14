@@ -3,6 +3,7 @@ import {
   Building2, LayoutGrid, Sparkles, Plus, Search, Settings, ShieldCheck, Bell, Database, Users,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { useCanonicalRoute } from '../../hooks/useCanonicalRoute';
 import { KernelProvider } from '../../presentation-runtime/providers/KernelProvider';
 import { AutomationEngine } from '../../sdk/engines/AutomationEngine';
 import { useDesignSystem } from '../../contexts/DesignSystemContext';
@@ -26,7 +27,6 @@ import {
 } from './components/business-os';
 
 type AppState = 'onboarding' | 'provisioning' | 'os';
-type ViewMode = 'home' | 'recruitment' | 'marketplace' | 'knowledge' | 'settings' | 'ai_runtime' | 'organization' | 'package' | 'identity' | 'department';
 
 export default function BusinessOS() {
   const { theme, density, uiScale, setTheme, setDensity, setUiScale } = useDesignSystem();
@@ -38,7 +38,10 @@ export default function BusinessOS() {
   }, []);
 
   const [appState, setAppState] = useState<AppState>('os');
-  const [activeView, setActiveView] = useState<ViewMode>('home');
+  // ── Canonical URL routing (replaces useState<ViewMode>('home')) ──
+  // Survives refresh. Produces shareable deep links.
+  // CHATR Product Unification Contract — Gate 1.
+  const { viewMode: activeView, packageId: urlPackageId, deptId: urlDeptId, navigate: canonicalNavigate } = useCanonicalRoute();
   const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(() => resolveTemplate(localStorage.getItem('chatr_active_domain') || 'Professional Services') || TEMPLATES[0]);
   const [activeProfile, setActiveProfile] = useState<any>(() => ({
     name: localStorage.getItem('chatr_company_name') || localStorage.getItem('chatr_org_name') || localStorage.getItem('user_workspace_name') || (localStorage.getItem('chatr_user_name') ? `${localStorage.getItem('chatr_user_name')}'s Workspace` : 'CHATR Business OS'),
@@ -48,7 +51,10 @@ export default function BusinessOS() {
     teamSize: '11-50',
     location: 'Noida'
   }));
-  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  // selectedPackage: prefer URL-sourced packageId/deptId, fall back to local state for
+  // cases where the page navigates programmatically before the URL updates.
+  const [localPackageId, setLocalPackageId] = useState<string | null>(null);
+  const selectedPackage = urlPackageId || urlDeptId || localPackageId;
   const [installedPackages, setInstalledPackages] = useState<string[]>(
     () => CapabilityInstaller.getInstalledIds()
   );
@@ -115,8 +121,8 @@ export default function BusinessOS() {
   const handleUninstallCapability = (id: string) => {
     CapabilityInstaller.uninstall(id);
     setInstalledPackages(CapabilityInstaller.getInstalledIds());
-    if (selectedPackage === id) setSelectedPackage(null);
-    setActiveView('marketplace');
+    if (selectedPackage === id) setLocalPackageId(null);
+    canonicalNavigate('marketplace');
   };
 
   if (appState === 'onboarding') {
@@ -170,28 +176,28 @@ export default function BusinessOS() {
               <div>
                 {(isSidebarExpanded || isSidebarHovered) && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 px-3">Platform</div>}
                 <div className="space-y-1">
-                  <button onClick={() => setActiveView('home')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'home' ? 'bg-indigo-600/10 text-indigo-400 font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Home">
+                  <button onClick={() => canonicalNavigate('home')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'home' ? 'bg-indigo-600/10 text-indigo-400 font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Home">
                     <LayoutGrid size={15} className={`shrink-0 ${activeView === 'home' ? 'text-indigo-400' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Home</span>}
                   </button>
                   
-                  <button onClick={() => setActiveView('marketplace')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'marketplace' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Marketplace Ecosystem">
+                  <button onClick={() => canonicalNavigate('marketplace')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'marketplace' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Marketplace Ecosystem">
                     <LayoutGrid size={15} className={`shrink-0 ${activeView === 'marketplace' ? 'text-white' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Marketplace Ecosystem</span>}
                   </button>
-                  <button onClick={() => setActiveView('knowledge')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'knowledge' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Enterprise Knowledge Fabric">
+                  <button onClick={() => canonicalNavigate('knowledge')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'knowledge' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Enterprise Knowledge Fabric">
                     <Database size={15} className={`shrink-0 ${activeView === 'knowledge' ? 'text-white' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Enterprise Knowledge Fabric</span>}
                   </button>
-                  <button onClick={() => setActiveView('organization')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'organization' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Organization Structure">
+                  <button onClick={() => canonicalNavigate('organization')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'organization' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Organization Structure">
                     <Building2 size={15} className={`shrink-0 ${activeView === 'organization' ? 'text-white' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Organization Structure</span>}
                   </button>
-                  <button onClick={() => setActiveView('ai_runtime')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'ai_runtime' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Domain Superintendents">
+                  <button onClick={() => canonicalNavigate('ai_runtime')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'ai_runtime' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="System Health">
                     <Sparkles size={15} className={`shrink-0 ${activeView === 'ai_runtime' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Domain Superintendents</span>}
+                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">System Health</span>}
                   </button>
-                  <button onClick={() => setActiveView('identity')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'identity' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Identity & Access">
+                  <button onClick={() => canonicalNavigate('identity')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'identity' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Identity & Access">
                     <ShieldCheck size={15} className={`shrink-0 ${activeView === 'identity' ? 'text-white' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Identity & Access</span>}
                   </button>
@@ -209,7 +215,7 @@ export default function BusinessOS() {
                     return (
                       <button 
                         key={dept.id} 
-                        onClick={() => { setActiveView('department'); setSelectedPackage(dept.id); }}
+                        onClick={() => { setLocalPackageId(dept.id); canonicalNavigate('department', { deptId: dept.id }); }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${isActive ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`}
                         title={dept.name}
                       >
@@ -231,7 +237,7 @@ export default function BusinessOS() {
                 </div>
                 <div className="space-y-1">
                   {/* The Flagship Package always pinned at top */}
-                  <button onClick={() => setActiveView('recruitment')} className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${activeView === 'recruitment' ? 'bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium border border-transparent'}`} title="Recruitment & HR">
+                  <button onClick={() => canonicalNavigate('recruitment')} className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${activeView === 'recruitment' ? 'bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium border border-transparent'}`} title="Recruitment & HR">
                     <div className="flex items-center gap-3">
                       <Users size={15} className={`shrink-0 ${activeView === 'recruitment' ? 'text-indigo-400' : 'text-zinc-500 group-hover:text-indigo-400 transition-colors'}`} /> 
                       {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Recruitment & HR</span>}
@@ -244,7 +250,7 @@ export default function BusinessOS() {
                     return (
                       <button
                         key={manifest.id}
-                        onClick={() => { setActiveView('package'); setSelectedPackage(manifest.id); }}
+                        onClick={() => { setLocalPackageId(manifest.id); canonicalNavigate('package', { packageId: manifest.id }); }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${
                           isActive ? 'bg-emerald-600/10 text-emerald-400 font-semibold border border-emerald-500/20' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium border border-transparent'
                         }`}
@@ -314,9 +320,9 @@ export default function BusinessOS() {
             {/* View Router */}
             <div className="flex-1 flex overflow-hidden relative w-full">
               {activeView === 'home' && (
-                <BusinessOSHome onNavigateToRecord={(capId, objName, recId) => {
-                  setSelectedPackage(capId);
-                  setActiveView('package');
+                <BusinessOSHome onNavigateToRecord={(capId, _objName, _recId) => {
+                  setLocalPackageId(capId);
+                  canonicalNavigate('package', { packageId: capId });
                 }} />
               )}
               {activeView === 'marketplace' && <MarketplaceView installedPackages={installedPackages} onInstall={(id, _manifest) => { handleInstallCapability(id); }} />}
@@ -332,13 +338,13 @@ export default function BusinessOS() {
                   deptId={selectedPackage} 
                   onNavigateToPackage={(pkgId) => {
                     if (installedPackages.includes(pkgId)) {
-                      setActiveView('package');
-                      setSelectedPackage(pkgId);
+                      setLocalPackageId(pkgId);
+                      canonicalNavigate('package', { packageId: pkgId });
                     } else {
                       if (window.confirm(`This module requires the '${pkgId}' capability. Would you like to install it now?`)) {
                         handleInstallCapability(pkgId).then(() => {
-                          setActiveView('package');
-                          setSelectedPackage(pkgId);
+                          setLocalPackageId(pkgId);
+                          canonicalNavigate('package', { packageId: pkgId });
                         });
                       }
                     }
