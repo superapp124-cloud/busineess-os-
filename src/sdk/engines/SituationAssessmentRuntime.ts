@@ -36,7 +36,14 @@ export const SituationAssessmentRuntime = {
       if (!manifest.objects) continue;
 
       for (const obj of manifest.objects) {
-        const records = await BusinessObjectStore.list(capabilityId, obj.name);
+        let records: Record<string, any>[] = [];
+        try {
+          if (typeof BusinessObjectStore !== 'undefined' && BusinessObjectStore?.list) {
+            records = await BusinessObjectStore.list(capabilityId, obj.name);
+          }
+        } catch (e) {
+          console.warn('[SituationAssessmentRuntime] BusinessObjectStore list failed:', e);
+        }
         
         for (const record of records) {
           // 1. Check for Pending Policies (Approvals)
@@ -120,7 +127,12 @@ export const SituationAssessmentRuntime = {
       if (!manifest.objects) continue;
 
       for (const obj of manifest.objects) {
-        const records = await BusinessObjectStore.list(capabilityId, obj.name);
+        let records: Record<string, any>[] = [];
+        try {
+          if (typeof BusinessObjectStore !== 'undefined' && BusinessObjectStore?.list) {
+            records = await BusinessObjectStore.list(capabilityId, obj.name);
+          }
+        } catch { /* ignore */ }
         for (const record of records) {
           if (record._history) {
             for (const event of record._history) {
