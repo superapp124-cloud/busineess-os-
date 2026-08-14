@@ -396,9 +396,15 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                       <div className="shrink-0">
                         {isConfirmed ? (
                           <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
                               <CheckCircle2 size={14} /> Scheduled · Tuesday 3 PM
                             </div>
+                            <button
+                              onClick={() => onNavigateToRecord(item.capabilityId, item.objectName, item.recordId)}
+                              className="text-[11px] font-semibold text-zinc-400 hover:text-white underline underline-offset-4 transition-colors px-2 py-1"
+                            >
+                              View Candidate
+                            </button>
                           </div>
                         ) : isExecuting ? (
                           <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl">
@@ -449,15 +455,15 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
                 <span className="text-emerald-400 text-[11px] font-semibold">Strong Match</span>
               </div>
               <ul className="space-y-1.5 text-xs text-zinc-300 font-sans">
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 4+ years Java, Microservices, Spring Boot experience</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> 3 professional references verified</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> <strong>Candidate:</strong> Rajesh Kumar (rajesh.kumar@example.com)</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> <strong>Experience:</strong> 4+ years Java, Microservices, Spring Boot</li>
                 <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> <strong>Proposed slot:</strong> Tuesday, 3:00 – 3:30 PM (Your calendar is free)</li>
               </ul>
             </div>
 
             {/* Clear Side Effect Consequence */}
             <div className="p-3 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-xs text-zinc-300">
-              <strong>What happens next:</strong> CHATR will send a Google Calendar invite to Rajesh Kumar for Tuesday at 3:00 PM and update your ATS pipeline.
+              <strong>What happens next:</strong> CHATR will send a Google Calendar invite to <strong>rajesh.kumar@example.com</strong> for Tuesday at 3:00 PM and update your ATS pipeline.
             </div>
 
             {/* Confirmation Buttons */}
