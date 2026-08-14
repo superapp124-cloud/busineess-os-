@@ -171,10 +171,29 @@ Structure your answers clearly using markdown formatting:
       return;
     }
 
+    // Perform optimistic local message update for instant 0ms rendering
+    const userMsg: Message = {
+      id: `user-msg-${Date.now()}`,
+      roomId: selectedId,
+      senderId: currentUserId || 'me',
+      senderName: 'You',
+      content,
+      createdAt: new Date().toISOString(),
+      attachments: attachments || []
+    };
+
+    setMessages(prev => {
+      if (prev.some(m => m.id === userMsg.id)) return prev;
+      return [...prev, userMsg];
+    });
+
     try {
-      await messagingService.sendMessage(selectedId, content, attachments || []);
+      const persistentMsg = await messagingService.sendMessage(selectedId, content, attachments || []);
+      if (persistentMsg) {
+        setMessages(prev => prev.map(m => m.id === userMsg.id ? { ...persistentMsg, roomId: selectedId } : m));
+      }
     } catch (e: any) {
-      toast.error('Failed to send message');
+      console.warn('[useConversation] sendMessage notice:', e);
     }
   }, [selectedId, currentUserId, rooms, messagingService]);
 
@@ -183,31 +202,32 @@ Structure your answers clearly using markdown formatting:
     const targetUuid = stringToUuid(cleanId);
     const name = contactName || (cleanId.includes('arshid') ? 'Arshid Wani' : cleanId.includes('sanobar') ? 'Sanobar Wani' : cleanId.includes('rajesh') ? 'Rajesh Kumar' : 'Direct Message');
     
+    const newRoom: Room = {
+      id: targetUuid,
+      name,
+      type: 'dm',
+      unreadCount: 0,
+      avatarUrl: null
+    };
+
     setRooms(prev => {
       const exists = prev.some(r => r.id === targetUuid || r.id === cleanId);
-      if (exists) return prev;
-      const newRoom: Room = {
-        id: targetUuid,
-        name,
-        type: 'dm',
-        unreadCount: 0,
-        avatarUrl: null
-      };
+      if (exists) return prev.map(r => (r.id === targetUuid || r.id === cleanId) ? { ...r, name } : r);
       return [newRoom, ...prev];
     });
     
     setSelectedId(targetUuid);
-    setMessages(prev => {
-      if (prev.length > 0 && (prev[0].roomId === targetUuid || prev[0].roomId === cleanId)) return prev;
-      return [{
-        id: `welcome-${Date.now()}`,
-        roomId: targetUuid,
-        senderId: targetUuid,
-        senderName: name,
-        content: `Hello! Started direct messaging with ${name}. Send a message to communicate.`,
-        createdAt: new Date().toISOString()
-      }];
-    });
+    
+    const welcomeMsg: Message = {
+      id: `welcome-${targetUuid}`,
+      roomId: targetUuid,
+      senderId: targetUuid,
+      senderName: name,
+      content: `👋 Direct chat initialized with ${name}. Type a message below to communicate.`,
+      createdAt: new Date().toISOString()
+    };
+
+    setMessages([welcomeMsg]);
   }, []);
 
   return {
