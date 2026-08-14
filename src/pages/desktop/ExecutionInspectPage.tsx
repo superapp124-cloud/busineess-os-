@@ -27,15 +27,21 @@ import {
   Activity, AlertTriangle, Info, FileText, User, Zap, Hash
 } from 'lucide-react';
 
-// ─── Role Resolution ──────────────────────────────────────────────────────────
-// Uses localStorage role in V1. Replace with PermissionEngine.getUserRole() in production.
+import { supabase } from '../../integrations/supabase/client';
+
+// ─── Role Resolution (PermissionEngine / Auth Session Invariant) ─────────────
+// Normal users (recruiter / manager) see business outcomes, NOT engineering telemetry.
+// Admin / Inspector role sees full execution trace (execution ID, idempotency key, model decision, logs).
 
 type InspectionTier = 'recruiter' | 'manager' | 'admin';
 
-function resolveInspectionTier(): InspectionTier {
-  const role = localStorage.getItem('chatr_user_role') || 'recruiter';
-  if (role === 'admin' || role === 'inspector' || role === 'chatr_admin') return 'admin';
-  if (role === 'manager' || role === 'hiring_manager') return 'manager';
+async function resolveUserTier(): Promise<InspectionTier> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    const role = user?.user_metadata?.role || localStorage.getItem('chatr_user_role') || 'recruiter';
+    if (role === 'admin' || role === 'inspector' || role === 'chatr_admin') return 'admin';
+    if (role === 'manager' || role === 'hiring_manager') return 'manager';
+  } catch { /* fallback */ }
   return 'recruiter';
 }
 
@@ -123,9 +129,16 @@ function fmtTime(iso: string): string {
 export default function ExecutionInspectPage() {
   const { executionId } = useParams<{ executionId: string }>();
   const navigate = useNavigate();
-  const [tier] = useState<InspectionTier>(resolveInspectionTier);
+  const [userTier, setUserTier] = useState<InspectionTier>('recruiter');
   const [execution, setExecution] = useState<ExecutionRecord | null>(null);
-  const [expandedTier, setExpandedTier] = useState<InspectionTier>(tier);
+  const [expandedTier, setExpandedTier] = useState<InspectionTier>('recruiter');
+
+  useEffect(() => {
+    resolveUserTier().then(t => {
+      setUserTier(t);
+      setExpandedTier(t);
+    });
+  }, []);
 
   useEffect(() => {
     if (!executionId) return;
@@ -170,8 +183,8 @@ export default function ExecutionInspectPage() {
           <span className={`text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 ${statusColor}`}>
             {execution.status.replace('_', ' ')}
           </span>
-          {/* Tier switcher — admin only */}
-          {tier === 'admin' && (
+          {/* Tier switcher — strictly restricted to admin role */}
+          {userTier === 'admin' && (
             <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-1 gap-1">
               {(['recruiter', 'manager', 'admin'] as InspectionTier[]).map(t => (
                 <button
