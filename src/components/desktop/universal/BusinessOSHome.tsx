@@ -111,22 +111,22 @@ export const BusinessOSHome: React.FC<Props> = ({ onNavigateToRecord }) => {
         })),
       ];
 
-      // Fallback default candidate item if DB/SAR has no pending items (First-time user onboarding value)
+      // Synthetic-Free Onboarding Fallback (Gate E Invariant): Display clean setup guidance when DB has no pending items
       if (combinedItems.length === 0) {
         combinedItems.push({
-          id: 'lead_appr_rajesh_kumar',
-          capabilityId: 'recruitment.interview.schedule',
-          capabilityType: 'Calendar_Action',
-          objectName: 'Candidate',
-          recordId: 'candidate_java_847',
-          title: 'Candidate Qualification & Scheduling: Rajesh Kumar',
-          description: 'WhatsApp intake processed. 4+ years Java, Microservices. 94.2% match.',
-          urgency: 'high',
-          type: 'approval',
+          id: 'onboarding_connect_channels',
+          capabilityId: 'core.connectors.manage',
+          capabilityType: 'CRM_Action',
+          objectName: 'Channel',
+          recordId: 'conn_setup_01',
+          title: 'Your Workspace is Ready',
+          description: 'No pending candidate approvals right now. Connect your Gmail, WhatsApp, or Google Calendar to start processing workflows.',
+          urgency: 'low',
+          type: 'action',
           timestamp: new Date().toISOString(),
-          approvalRequired: true,
+          approvalRequired: false,
           status: 'PENDING',
-          canonicalUrl: '/desktop/hiring/candidate/candidate_java_847',
+          canonicalUrl: '/desktop/connectors',
         });
       }
 
