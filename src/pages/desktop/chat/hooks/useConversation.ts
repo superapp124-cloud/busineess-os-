@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { generate } from '@/services/ai';
+import { stringToUuid } from '@/platform/Domain/Communication/MessagingService';
 import type { Room, Message } from '../types';
 
 const DEFAULT_AI_ROOM: Room = {
@@ -179,13 +180,14 @@ Structure your answers clearly using markdown formatting:
 
   const openDirectConversation = useCallback((contactUserId: string, contactName?: string) => {
     const cleanId = contactUserId.replace(/^lead_/, '');
+    const targetUuid = stringToUuid(cleanId);
     const name = contactName || (cleanId.includes('arshid') ? 'Arshid Wani' : cleanId.includes('sanobar') ? 'Sanobar Wani' : cleanId.includes('rajesh') ? 'Rajesh Kumar' : 'Direct Message');
     
     setRooms(prev => {
-      const exists = prev.some(r => r.id === cleanId);
+      const exists = prev.some(r => r.id === targetUuid || r.id === cleanId);
       if (exists) return prev;
       const newRoom: Room = {
-        id: cleanId,
+        id: targetUuid,
         name,
         type: 'dm',
         unreadCount: 0,
@@ -194,13 +196,13 @@ Structure your answers clearly using markdown formatting:
       return [newRoom, ...prev];
     });
     
-    setSelectedId(cleanId);
+    setSelectedId(targetUuid);
     setMessages(prev => {
-      if (prev.length > 0 && prev[0].roomId === cleanId) return prev;
+      if (prev.length > 0 && (prev[0].roomId === targetUuid || prev[0].roomId === cleanId)) return prev;
       return [{
-        id: `welcome-${cleanId}`,
-        roomId: cleanId,
-        senderId: cleanId,
+        id: `welcome-${Date.now()}`,
+        roomId: targetUuid,
+        senderId: targetUuid,
         senderName: name,
         content: `Hello! Started direct messaging with ${name}. Send a message to communicate.`,
         createdAt: new Date().toISOString()
