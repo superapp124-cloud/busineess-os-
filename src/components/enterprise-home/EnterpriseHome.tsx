@@ -96,15 +96,15 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
 
   return (
     <>
-      <div className="flex-1 bg-slate-50 overflow-y-auto p-6 space-y-6 select-none font-sans max-w-7xl mx-auto">
+      <div className="flex-1 bg-[#09090b] text-zinc-100 overflow-y-auto p-6 space-y-6 select-none font-sans max-w-7xl mx-auto">
         
         {/* 1. HERO AREA: Welcome & Simple Purpose */}
-        <div className="bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-md flex justify-between items-center">
+        <div className="bg-zinc-900/80 border border-zinc-800/80 text-white px-6 py-4 rounded-2xl shadow-lg flex justify-between items-center backdrop-blur-md">
           <div className="flex items-center gap-4">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-white">{greetingHeading}</h1>
-              <p className="text-slate-300 text-xs mt-0.5">
+              <p className="text-zinc-400 text-xs mt-0.5">
                 Upload any document to instantly get summaries, key insights, and AI answers, or start a new task.
               </p>
             </div>
@@ -112,7 +112,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
 
           <button
             onClick={() => { onNavigate?.('docs'); onUploadClick?.(); }}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-2 cursor-pointer shrink-0"
+            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer shrink-0"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Upload Document</span>
@@ -122,8 +122,8 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
         {/* 2. ⚡ QUICK ACTIONS */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-indigo-600" />
+            <h2 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-indigo-400" />
               Quick Actions
             </h2>
           </div>
@@ -131,94 +131,94 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
           <div className="grid grid-cols-4 gap-4">
             <button
               onClick={() => { onNavigate?.('docs'); onUploadClick?.(); }}
-              className="p-4 rounded-2xl bg-white border border-indigo-200 hover:border-indigo-500 hover:shadow-md transition-all text-left space-y-2 group cursor-pointer"
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 hover:border-indigo-500/50 hover:bg-zinc-800/60 transition-all text-left space-y-2 group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <UploadCloud className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Upload Document</div>
-                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">Analyze PDFs, Word docs, contracts, or invoices</div>
+                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Upload Document</div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Analyze PDFs, Word docs, contracts, or invoices</div>
               </div>
             </button>
 
             <button
               onClick={() => onNavigate?.('chat')}
-              className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md transition-all text-left space-y-2 group cursor-pointer"
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 hover:border-indigo-500/50 hover:bg-zinc-800/60 transition-all text-left space-y-2 group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Ask AI Anything</div>
-                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">Chat with AI, draft emails, or ask questions</div>
+                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Ask AI Anything</div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Chat with AI, draft emails, or ask questions</div>
               </div>
             </button>
 
             <button
               onClick={() => onNavigate?.('tasks')}
-              className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md transition-all text-left space-y-2 group cursor-pointer"
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 hover:border-indigo-500/50 hover:bg-zinc-800/60 transition-all text-left space-y-2 group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <CheckSquare className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Create Task</div>
-                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">Organize your to-do items and follow-ups</div>
+                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Create Task</div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Organize your to-do items and follow-ups</div>
               </div>
             </button>
 
             <button
               onClick={() => onNavigate?.('calendar')}
-              className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md transition-all text-left space-y-2 group cursor-pointer"
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 hover:border-indigo-500/50 hover:bg-zinc-800/60 transition-all text-left space-y-2 group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Schedule Meeting</div>
-                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">Set up calendar events and appointments</div>
+                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Schedule Meeting</div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Set up calendar events and appointments</div>
               </div>
             </button>
           </div>
         </div>
 
         {/* 3. 🎯 WHAT YOU CAN ACHIEVE (SIMPLE 3-STEP GUIDE) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
+        <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" />
+            <h2 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
               How CHATR Works for You
             </h2>
           </div>
 
           <div className="grid grid-cols-3 gap-4 text-xs pt-1">
-            <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-1.5">
-              <div className="flex items-center gap-2 font-bold text-slate-900">
+            <div className="p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-xl space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-zinc-200">
                 <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">1</span>
                 <span>Upload Any File</span>
               </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Drag & drop PDFs, Word documents, invoices, or resumes. CHATR reads them instantly.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-1.5">
-              <div className="flex items-center gap-2 font-bold text-slate-900">
+            <div className="p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-xl space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-zinc-200">
                 <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">2</span>
                 <span>Instant AI Summary</span>
               </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Get clear bullet-point summaries, key highlights, and risk alerts without reading long pages.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-1.5">
-              <div className="flex items-center gap-2 font-bold text-slate-900">
+            <div className="p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-xl space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-zinc-200">
                 <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">3</span>
                 <span>Ask Questions & Act</span>
               </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Ask AI anything about the document, generate automated replies, or export key insights.
               </p>
             </div>
@@ -231,23 +231,23 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
             <div className="flex justify-between items-center px-1">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                <h2 className="text-sm font-bold text-slate-900">Needs Your Attention (1)</h2>
+                <h2 className="text-sm font-bold text-zinc-200">Needs Your Attention (1)</h2>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs hover:border-indigo-300 transition-all flex items-center justify-between">
+            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 shadow-sm hover:border-indigo-500/50 transition-all flex items-center justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 px-2 py-0.5 rounded">
                     Document Review
                   </span>
-                  <span className="text-xs font-semibold text-slate-500">Ready for Review</span>
+                  <span className="text-xs font-semibold text-zinc-400">Ready for Review</span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">{missionContext.mission.replace(/^Analyze and Structure\s*/i, '')}</h3>
+                <h3 className="text-sm font-bold text-zinc-100">{missionContext.mission.replace(/^Analyze and Structure\s*/i, '')}</h3>
               </div>
               <button
                 onClick={() => onNavigate?.('docs')}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-2xs transition-colors cursor-pointer shrink-0"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition-colors cursor-pointer shrink-0"
               >
                 Review Document
               </button>
@@ -259,13 +259,13 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
         <div className="grid grid-cols-2 gap-5">
           
           {/* Recent Documents */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-indigo-600" />
-                <h2 className="text-sm font-bold text-slate-900">Recent Documents</h2>
+                <FileText className="w-4 h-4 text-indigo-400" />
+                <h2 className="text-sm font-bold text-zinc-200">Recent Documents</h2>
               </div>
-              <button onClick={() => onNavigate?.('docs')} className="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">
+              <button onClick={() => onNavigate?.('docs')} className="text-xs font-bold text-indigo-400 hover:underline cursor-pointer">
                 View All →
               </button>
             </div>
@@ -275,18 +275,18 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
                   <button
                     key={doc.id}
                     onClick={() => onNavigate?.('docs', doc.sourceUri)}
-                    className="w-full p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl text-left font-semibold text-slate-800 transition-colors flex justify-between items-center cursor-pointer"
+                    className="w-full p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-semibold text-zinc-200 transition-colors flex justify-between items-center cursor-pointer"
                   >
-                    <span className="truncate max-w-[220px] font-medium">{doc.sourceUri}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">Uploaded</span>
+                    <span className="truncate max-w-[220px] font-medium text-zinc-300">{doc.sourceUri}</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">Uploaded</span>
                   </button>
                 ))
               ) : (
-                <div className="text-center py-6 text-slate-400 text-xs space-y-2">
+                <div className="text-center py-6 text-zinc-500 text-xs space-y-2">
                   <p>No documents uploaded yet.</p>
                   <button
                     onClick={() => { onNavigate?.('docs'); onUploadClick?.(); }}
-                    className="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-bold rounded-lg border border-indigo-200 hover:bg-indigo-100 transition-colors"
+                    className="px-3 py-1.5 bg-indigo-500/10 text-indigo-400 font-bold rounded-lg border border-indigo-500/30 hover:bg-indigo-500/20 transition-colors"
                   >
                     + Upload First Document
                   </button>
@@ -296,27 +296,27 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
           </div>
 
           {/* Recent Conversations */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-indigo-600" />
-                <h2 className="text-sm font-bold text-slate-900">Recent Conversations</h2>
+                <MessageSquare className="w-4 h-4 text-indigo-400" />
+                <h2 className="text-sm font-bold text-zinc-200">Recent Conversations</h2>
               </div>
-              <button onClick={() => onNavigate?.('chat')} className="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">
+              <button onClick={() => onNavigate?.('chat')} className="text-xs font-bold text-indigo-400 hover:underline cursor-pointer">
                 Open Chat →
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl text-left font-bold text-slate-800 transition-colors cursor-pointer">
+              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-bold text-zinc-300 transition-colors cursor-pointer">
                 # General Discussion
               </button>
-              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl text-left font-bold text-slate-800 transition-colors cursor-pointer">
+              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-bold text-zinc-300 transition-colors cursor-pointer">
                 # Document Reviews
               </button>
-              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl text-left font-bold text-slate-800 transition-colors cursor-pointer">
+              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-bold text-zinc-300 transition-colors cursor-pointer">
                 # Team Tasks
               </button>
-              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl text-left font-bold text-slate-800 transition-colors cursor-pointer">
+              <button onClick={() => onNavigate?.('chat')} className="p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-bold text-zinc-300 transition-colors cursor-pointer">
                 # AI Assistant
               </button>
             </div>
