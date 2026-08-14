@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Building2, LayoutGrid, Sparkles, Plus, Search, Settings, ShieldCheck, Bell, Database, Users,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, Command
 } from 'lucide-react';
 import { useCanonicalRoute } from '../../hooks/useCanonicalRoute';
+import { GlobalSearchPalette } from '../../components/GlobalSearchPalette';
 import { KernelProvider } from '../../presentation-runtime/providers/KernelProvider';
 import { AutomationEngine } from '../../sdk/engines/AutomationEngine';
 import { useDesignSystem } from '../../contexts/DesignSystemContext';
@@ -42,6 +43,24 @@ export default function BusinessOS() {
   // Survives refresh. Produces shareable deep links.
   // CHATR Product Unification Contract — Gate 1.
   const { viewMode: activeView, packageId: urlPackageId, deptId: urlDeptId, navigate: canonicalNavigate } = useCanonicalRoute();
+
+  // ── Global Search — Gate 2 ──
+  // Ctrl/Cmd + K opens the tenant-scoped search palette.
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const openSearch = useCallback(() => setIsSearchOpen(true), []);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
   const [activeTemplate, setActiveTemplate] = useState<OSTemplate | null>(() => resolveTemplate(localStorage.getItem('chatr_active_domain') || 'Professional Services') || TEMPLATES[0]);
   const [activeProfile, setActiveProfile] = useState<any>(() => ({
     name: localStorage.getItem('chatr_company_name') || localStorage.getItem('chatr_org_name') || localStorage.getItem('user_workspace_name') || (localStorage.getItem('chatr_user_name') ? `${localStorage.getItem('chatr_user_name')}'s Workspace` : 'CHATR Business OS'),
@@ -138,6 +157,10 @@ export default function BusinessOS() {
   if (appState === 'os') {
     return (
       <KernelProvider useInMemory={false}>
+        {/* Global Search Palette — Gate 2: Ctrl/Cmd+K */}
+        {/* Rendered at KernelProvider level to overlay entire BusinessOS UI */}
+        <GlobalSearchPalette isOpen={isSearchOpen} onClose={closeSearch} />
+
         <div className="flex w-full h-full bg-[#09090b] overflow-hidden font-sans">
           
           {/* Universal Sidebar - Collapsible with Hover-to-Expand */}
@@ -278,10 +301,20 @@ export default function BusinessOS() {
             {/* Action Bar (Top Toolbar) */}
             <div className="h-14 border-b border-zinc-800/60 flex items-center justify-between px-6 bg-zinc-950/30 backdrop-blur-md shrink-0 z-10">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-label text-zinc-400 w-96 shadow-inner focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
-                  <Search size={13} />
-                  <input type="text" placeholder="Enterprise Query: Search records, documents, or execute capabilities..." className="bg-transparent border-none focus:outline-none w-full placeholder:text-zinc-600 text-white" />
-                </div>
+                {/* Search trigger — opens GlobalSearchPalette (Ctrl/Cmd+K) */}
+                <button
+                  id="global-search-trigger"
+                  onClick={openSearch}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-zinc-500 w-80 hover:border-zinc-700 hover:text-zinc-300 transition-all group"
+                  title="Search (Ctrl+K)"
+                >
+                  <Search size={13} className="shrink-0" />
+                  <span className="flex-1 text-left text-[13px] truncate">Search people, conversations, executions…</span>
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <kbd className="text-[10px] font-mono bg-zinc-800 border border-zinc-700 rounded px-1 py-0.5 group-hover:border-zinc-600"><Command size={9} className="inline" /></kbd>
+                    <kbd className="text-[10px] font-mono bg-zinc-800 border border-zinc-700 rounded px-1 py-0.5 group-hover:border-zinc-600">K</kbd>
+                  </div>
+                </button>
               </div>
               <div className="flex items-center gap-4">
                 {/* Design System Toggles */}
