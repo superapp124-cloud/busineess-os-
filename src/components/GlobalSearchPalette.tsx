@@ -30,9 +30,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Loader2, ChevronRight, Users, MessageSquare, Zap, LayoutGrid, Command } from 'lucide-react';
-import { GlobalSearchService, GlobalSearchResult, SearchResultType } from '../../search/GlobalSearchService';
-import { useTenant } from '../../core/tenant/TenantContext';
-import { supabase } from '../../integrations/supabase/client';
+import { GlobalSearchService, GlobalSearchResult, SearchResultType } from '../search/GlobalSearchService';
+import { useTenant } from '../core/tenant/TenantContext';
+import { supabase } from '../integrations/supabase/client';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
