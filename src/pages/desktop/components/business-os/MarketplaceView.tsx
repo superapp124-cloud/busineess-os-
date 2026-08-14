@@ -36,6 +36,7 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [configPkg, setConfigPkg] = useState<any | null>(null);
+  const [previewPkg, setPreviewPkg] = useState<any | null>(null); // Permission Preview Modal state
   const [localInstalled, setLocalInstalled] = useState<string[]>(installedPackages);
 
   useEffect(() => { setLocalInstalled(installedPackages); }, [installedPackages]);
@@ -55,12 +56,12 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
   const featured = filtered.filter((p: any) => (p.installs || 0) > 15000);
   const rest = filtered.filter((p: any) => (p.installs || 0) <= 15000);
 
-  const handleInstall = async (id: string) => {
+  const handleConfirmInstall = async (pkg: any) => {
+    const id = pkg.id;
+    setPreviewPkg(null);
     setInstallingId(id);
-    const manifest = allPackages.find((p: any) => p.id === id);
     try {
-      // Execute the SDK installation pipeline passed from parent
-      await onInstall(id, manifest);
+      await onInstall(id, pkg);
       setLocalInstalled(p => [...p, id]);
     } catch (err) { console.error(err); }
     finally { setInstallingId(null); }
@@ -114,7 +115,7 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
         {/* Actions */}
         <div className="flex gap-2">
           <button
-            onClick={() => !isInstalled && !isInstalling && handleInstall(pkg.id)}
+            onClick={() => !isInstalled && !isInstalling && setPreviewPkg(pkg)}
             disabled={isInstalled || isInstalling}
             className={`flex-1 py-2 rounded-xl font-bold text-label transition-all flex items-center justify-center gap-1.5 ${
               isInstalled ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
@@ -137,6 +138,76 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
 
   return (
     <div className="flex flex-1 h-full w-full overflow-hidden bg-[#09090b]">
+      {/* Permission & Dependency Preview Modal — Gate 5 */}
+      {previewPkg && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-lg">
+                  {previewPkg.icon || '📦'}
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-base">{previewPkg.name}</h3>
+                  <p className="text-xs text-zinc-400">Version {previewPkg.version || '1.0.0'} · {previewPkg.category}</p>
+                </div>
+              </div>
+              <button onClick={() => setPreviewPkg(null)} className="text-zinc-500 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Dependency Visualization */}
+            <div>
+              <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Required Dependencies</div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-2 p-2 bg-zinc-800/60 rounded-lg text-emerald-400">
+                  <CheckCircle2 size={13} /> Contacts Workspace
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-zinc-800/60 rounded-lg text-emerald-400">
+                  <CheckCircle2 size={13} /> Calendar Subsystem
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-zinc-800/60 rounded-lg text-emerald-400">
+                  <CheckCircle2 size={13} /> Storage / Files
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-zinc-800/60 rounded-lg text-emerald-400">
+                  <CheckCircle2 size={13} /> AI Runtime
+                </div>
+              </div>
+            </div>
+
+            {/* Permissions Requested */}
+            <div>
+              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <ShieldCheck size={14} /> Permissions Requested
+              </div>
+              <ul className="space-y-1.5 text-xs text-zinc-300 bg-zinc-950/60 p-3 rounded-xl border border-zinc-800 font-mono">
+                <li className="flex items-center gap-2"><span className="text-indigo-400">•</span> Read & write candidate records</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">•</span> Dispatch automated calendar invites</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">•</span> Access EventStore execution pipeline</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-400">•</span> Trigger situation assessment notifications</li>
+              </ul>
+            </div>
+
+            {/* Admin Approval Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setPreviewPkg(null)}
+                className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold rounded-xl text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleConfirmInstall(previewPkg)}
+                className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg shadow-indigo-600/25"
+              >
+                Approve & Install
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Config Modal */}
       {configPkg && (
         <AppConfigModal

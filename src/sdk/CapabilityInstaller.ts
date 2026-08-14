@@ -164,6 +164,7 @@ export const CapabilityInstaller = {
     installedCapabilities.delete(capabilityId);
     capabilityStore.delete(capabilityId);
     ObjectRegistry.unregister(capabilityId);
+    PermissionRegistry.unregister(capabilityId);
     SearchEngine.deindex(capabilityId);
     AutomationEngine.deregister(capabilityId);
     localStorage.setItem(
@@ -174,6 +175,29 @@ export const CapabilityInstaller = {
       'chatr_capability_sdks',
       JSON.stringify([...capabilityStore.values()])
     );
+  },
+
+  /** Disable a capability (suspends execution without wiping persistent data) */
+  disable(capabilityId: string): void {
+    installedCapabilities.delete(capabilityId);
+    AutomationEngine.deregister(capabilityId);
+    localStorage.setItem(
+      'chatr_installed_capabilities',
+      JSON.stringify([...installedCapabilities])
+    );
+  },
+
+  /** Rollback a capability to uninstalled clean state */
+  rollback(capabilityId: string): void {
+    this.uninstall(capabilityId);
+  },
+
+  /** Repair a capability by re-running the 10-step installation pipeline */
+  async repair(capabilityId: string, onProgress?: InstallProgressCallback): Promise<{ success: boolean; error?: string }> {
+    const sdk = this.getSDK(capabilityId);
+    if (!sdk) return { success: false, error: 'Capability SDK not found in store' };
+    this.uninstall(capabilityId);
+    return this.install(sdk, onProgress);
   },
 
   /** Check if a capability is installed */
@@ -235,6 +259,9 @@ export const PermissionRegistry = {
   store: new Map<string, any>(),
   register(capabilityId: string, permissions: any) {
     this.store.set(capabilityId, permissions);
+  },
+  unregister(capabilityId: string) {
+    this.store.delete(capabilityId);
   },
   get(capabilityId: string) {
     return this.store.get(capabilityId);
