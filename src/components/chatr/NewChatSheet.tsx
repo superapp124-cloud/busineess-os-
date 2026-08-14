@@ -115,29 +115,42 @@ const WORKSPACE_DIRECTORY: UserContact[] = [
   },
 ];
 
-function resolveCleanName(raw: any, fallbackKey: string): { fullName: string; username: string } {
+function resolveCleanName(raw: any): { fullName: string; username: string } | null {
+  if (!raw) return null;
+
   const isGarbage = (val: string | null | undefined) =>
-    !val || val.trim() === '' || val.toLowerCase() === 'contact' || val.toLowerCase() === 'user' || val.toLowerCase() === 'undefined';
+    !val ||
+    val.trim() === '' ||
+    /^contact\s*\d*$/i.test(val.trim()) ||
+    /^user\s*\d*$/i.test(val.trim()) ||
+    val.toLowerCase() === 'contact' ||
+    val.toLowerCase() === 'user' ||
+    val.toLowerCase() === 'undefined' ||
+    val.toLowerCase() === 'null';
 
-  let fullName = raw?.full_name || raw?.display_name || raw?.first_name || raw?.name;
+  let rawName = raw?.full_name || raw?.display_name || raw?.first_name || raw?.name || raw?.contact_name;
   let username = raw?.username || raw?.handle;
+  let email = raw?.email;
+  let phone = raw?.phone || raw?.contact_phone || raw?.phone_number;
 
+  // If all name, handle, email, and phone fields are unpopulated or generic, discard the row
+  if (isGarbage(rawName) && isGarbage(username) && isGarbage(email) && isGarbage(phone)) {
+    return null;
+  }
+
+  let fullName = rawName;
   if (isGarbage(fullName)) {
-    if (raw?.email && !isGarbage(raw.email)) {
-      fullName = raw.email.split('@')[0];
-    } else if (!isGarbage(username)) {
-      fullName = username;
-    } else if (raw?.phone && !isGarbage(raw.phone)) {
-      fullName = `Member (${raw.phone.slice(-4)})`;
-    } else {
-      fullName = fallbackKey;
-    }
+    if (!isGarbage(username)) fullName = username;
+    else if (!isGarbage(email)) fullName = email.split('@')[0];
+    else if (!isGarbage(phone)) fullName = `Contact (${phone.slice(-4)})`;
+    else return null;
   }
 
   // Format capitalized full name
   fullName = String(fullName)
     .replace(/[._-]/g, ' ')
     .split(/\s+/)
+    .filter(Boolean)
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
 
@@ -166,30 +179,33 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
   const loadInitialData = async () => {
     setIsSearching(true);
     try {
-      // 1. Query profiles safely using select('*')
+      // 1. Query real profiles safely using select('*')
       const { data: profilesData } = await (supabase as any)
         .from('profiles')
         .select('*')
-        .limit(50);
+        .limit(100);
 
       if (profilesData && Array.isArray(profilesData)) {
-        const parsedProfiles: UserContact[] = profilesData.map((p: any, idx: number) => {
-          const { fullName, username } = resolveCleanName(p, `User ${idx + 1}`);
-          return {
-            id: p.id,
-            contact_user_id: p.id,
-            username,
-            full_name: fullName,
-            avatar_url: p.avatar_url || null,
-            is_online: p.is_online || false,
-            last_seen: p.last_seen || null,
-            sourceType: 'platform_user',
-          };
+        const parsedProfiles: UserContact[] = [];
+        profilesData.forEach((p: any) => {
+          const resolved = resolveCleanName(p);
+          if (resolved) {
+            parsedProfiles.push({
+              id: p.id,
+              contact_user_id: p.id,
+              username: resolved.username,
+              full_name: resolved.fullName,
+              avatar_url: p.avatar_url || null,
+              is_online: p.is_online || false,
+              last_seen: p.last_seen || null,
+              sourceType: 'platform_user',
+            });
+          }
         });
         setDbUsers(parsedProfiles);
       }
 
-      // 2. Query saved contacts & CRM leads from Supabase
+      // 2. Query saved contacts & CRM leads from Supabase (filtering out unpopulated rows)
       const fetchedContacts: UserContact[] = [];
 
       if (userId) {
@@ -199,16 +215,18 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
           .eq('user_id', userId);
 
         if (contactsData && Array.isArray(contactsData)) {
-          contactsData.forEach((c: any, idx: number) => {
-            const { fullName, username } = resolveCleanName(c, `Contact ${idx + 1}`);
-            fetchedContacts.push({
-              id: c.id,
-              contact_user_id: c.contact_user_id || c.id,
-              username,
-              full_name: fullName,
-              avatar_url: c.avatar_url || null,
-              sourceType: 'my_contact',
-            });
+          contactsData.forEach((c: any) => {
+            const resolved = resolveCleanName(c);
+            if (resolved) {
+              fetchedContacts.push({
+                id: c.id,
+                contact_user_id: c.contact_user_id || c.id,
+                username: resolved.username,
+                full_name: resolved.fullName,
+                avatar_url: c.avatar_url || null,
+                sourceType: 'my_contact',
+              });
+            }
           });
         }
       }
@@ -217,19 +235,21 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
       const { data: leadsData } = await (supabase as any)
         .from('crm_leads')
         .select('id, name, phone, email')
-        .limit(30);
+        .limit(50);
 
       if (leadsData && Array.isArray(leadsData)) {
         leadsData.forEach((lead: any) => {
-          const { fullName, username } = resolveCleanName(lead, lead.name || 'Lead');
-          fetchedContacts.push({
-            id: `lead_${lead.id}`,
-            contact_user_id: `lead_${lead.id}`,
-            username,
-            full_name: `${fullName} (Customer Lead)`,
-            avatar_url: null,
-            sourceType: 'my_contact',
-          });
+          const resolved = resolveCleanName(lead);
+          if (resolved) {
+            fetchedContacts.push({
+              id: `lead_${lead.id}`,
+              contact_user_id: `lead_${lead.id}`,
+              username: resolved.username,
+              full_name: `${resolved.fullName} (Customer Lead)`,
+              avatar_url: null,
+              sourceType: 'my_contact',
+            });
+          }
         });
       }
 
