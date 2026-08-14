@@ -30,8 +30,107 @@ interface UserContact {
   sourceType: 'my_contact' | 'platform_user' | 'workspace_member';
 }
 
-// Workspace Directory Seed (guarantees instant search results across all environments)
+// Workspace Directory Seed (Real Supabase Auth Users & Team Directory)
 const WORKSPACE_DIRECTORY: UserContact[] = [
+  {
+    id: 'ws-arsh',
+    contact_user_id: 'usr-arsh-wani',
+    username: 'arsh_wani',
+    full_name: 'Arsh Wani (arsh.wani@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-sanayah',
+    contact_user_id: 'usr-sanayah-arshid',
+    username: 'sanayah_arshid',
+    full_name: 'Sanayah Arshid (sanayah.arshid@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-superapp124',
+    contact_user_id: 'usr-superapp124',
+    username: 'superapp124',
+    full_name: 'Superapp 124 (superapp124@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-chatr4661',
+    contact_user_id: 'usr-chatr4661',
+    username: 'chatr4661',
+    full_name: 'Chatr Support (chatr4661@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-mdvasim',
+    contact_user_id: 'usr-mdvasim',
+    username: 'mdvasim42566',
+    full_name: 'MD Vasim (mdvasim42566@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-talentxcel-gmail',
+    contact_user_id: 'usr-talentxcel-gmail',
+    username: 'talentxcelservices',
+    full_name: 'TalentXcel Services (talentxcelservices@gmail.com)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-phone-9910678611',
+    contact_user_id: 'usr-9910678611',
+    username: 'member_9910678611',
+    full_name: 'Member (+91 99106 78611)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-phone-9717845477',
+    contact_user_id: 'usr-9717845477',
+    username: 'member_9717845477',
+    full_name: 'Member (+91 97178 45477)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-phone-9953969216',
+    contact_user_id: 'usr-9953969216',
+    username: 'member_9953969216',
+    full_name: 'Member (+91 99539 69216)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-phone-9927262367',
+    contact_user_id: 'usr-9927262367',
+    username: 'member_9927262367',
+    full_name: 'Member (+91 99272 62367)',
+    avatar_url: null,
+    is_online: false,
+    sourceType: 'platform_user',
+  },
+  {
+    id: 'ws-phone-8887814765',
+    contact_user_id: 'usr-8887814765',
+    username: 'member_8887814765',
+    full_name: 'Member (+91 88878 14765)',
+    avatar_url: null,
+    is_online: false,
+    sourceType: 'platform_user',
+  },
   {
     id: 'ws-arshid',
     contact_user_id: 'usr-arshid-wani',
@@ -104,15 +203,6 @@ const WORKSPACE_DIRECTORY: UserContact[] = [
     is_online: false,
     sourceType: 'my_contact',
   },
-  {
-    id: 'ws-talentxcel',
-    contact_user_id: 'usr-talentxcel-support',
-    username: 'talentxcel',
-    full_name: 'TalentXcel Workspace Support',
-    avatar_url: null,
-    is_online: true,
-    sourceType: 'workspace_member',
-  },
 ];
 
 function resolveCleanName(raw: any): { fullName: string; username: string } | null {
@@ -132,6 +222,28 @@ function resolveCleanName(raw: any): { fullName: string; username: string } | nu
   let username = raw?.username || raw?.handle;
   let email = raw?.email;
   let phone = raw?.phone || raw?.contact_phone || raw?.phone_number;
+
+  // Derive human name from email if name is missing or generic
+  if (isGarbage(rawName) && email) {
+    const prefix = email.split('@')[0];
+    const cleanPrefix = prefix.replace(/_fb$|_chatr$/, '');
+    if (/^\d{10,12}$/.test(cleanPrefix)) {
+      const pDigits = cleanPrefix;
+      const formattedPhone = pDigits.length === 12 ? `+${pDigits.slice(0, 2)} ${pDigits.slice(2, 7)} ${pDigits.slice(7)}` : `+91 ${pDigits.slice(0, 5)} ${pDigits.slice(5)}`;
+      rawName = `Member (${formattedPhone})`;
+    } else {
+      rawName = cleanPrefix.replace(/[._-]/g, ' ');
+    }
+  }
+
+  // Derive human name from phone if name is missing or generic
+  if (isGarbage(rawName) && phone) {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length >= 10) {
+      const formattedPhone = digits.length === 12 ? `+${digits.slice(0, 2)} ${digits.slice(2, 7)} ${digits.slice(7)}` : `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+      rawName = `Member (${formattedPhone})`;
+    }
+  }
 
   // If all name, handle, email, and phone fields are unpopulated or generic, discard the row
   if (isGarbage(rawName) && isGarbage(username) && isGarbage(email) && isGarbage(phone)) {
@@ -155,7 +267,7 @@ function resolveCleanName(raw: any): { fullName: string; username: string } | nu
     .join(' ');
 
   if (isGarbage(username)) {
-    username = fullName.toLowerCase().replace(/\s+/g, '_');
+    username = fullName.toLowerCase().replace(/[^a-z0-9_]/g, '_').replace(/__+/g, '_');
   } else {
     username = String(username).toLowerCase().replace(/[^a-z0-9_]/g, '');
   }
