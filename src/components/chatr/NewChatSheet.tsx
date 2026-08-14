@@ -16,7 +16,7 @@ interface NewChatSheetProps {
   userId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelectContact: (contactUserId: string) => void;
+  onSelectContact: (contactUserId: string, contactName?: string) => void;
 }
 
 interface UserContact {
@@ -274,7 +274,7 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
   }, [contacts, dbUsers, searchQuery, userId]);
 
   const handleSelect = (contact: UserContact) => {
-    onSelectContact(contact.contact_user_id);
+    onSelectContact(contact.contact_user_id, contact.full_name || contact.username);
     onOpenChange(false);
     setSearchQuery('');
     toast.success(`Opening chat with ${contact.full_name || contact.username}`);

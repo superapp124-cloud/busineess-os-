@@ -46,6 +46,7 @@ export default function DesktopChat() {
  messages, 
  selectedId, 
  setSelectedId, 
+ openDirectConversation,
  isLoadingRooms, 
  isLoadingMessages, 
  isAiLoading: isConvAiLoading,
@@ -456,16 +457,10 @@ export default function DesktopChat() {
     userId={currentUserId || ''}
     open={showNewDmModal}
     onOpenChange={setShowNewDmModal}
-    onSelectContact={(contactUserId) => {
+    onSelectContact={(contactUserId, contactName) => {
       setShowNewDmModal(false);
-      const cleanId = contactUserId.replace(/^lead_/, '');
-      const existing = rooms.find(r => r.id === cleanId || r.id === contactUserId || (r as any).peerId === cleanId);
-      if (existing) {
-        setSelectedId(existing.id);
-      } else {
-        setSelectedId(cleanId);
-      }
-      toast.success('Chat thread selected');
+      openDirectConversation(contactUserId, contactName);
+      toast.success(`Chat started with ${contactName || 'contact'}`);
     }}
   />
 

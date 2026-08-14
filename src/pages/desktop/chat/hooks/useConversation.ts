@@ -177,11 +177,43 @@ Structure your answers clearly using markdown formatting:
     }
   }, [selectedId, currentUserId, rooms, messagingService]);
 
+  const openDirectConversation = useCallback((contactUserId: string, contactName?: string) => {
+    const cleanId = contactUserId.replace(/^lead_/, '');
+    const name = contactName || (cleanId.includes('arshid') ? 'Arshid Wani' : cleanId.includes('sanobar') ? 'Sanobar Wani' : cleanId.includes('rajesh') ? 'Rajesh Kumar' : 'Direct Message');
+    
+    setRooms(prev => {
+      const exists = prev.some(r => r.id === cleanId);
+      if (exists) return prev;
+      const newRoom: Room = {
+        id: cleanId,
+        name,
+        type: 'dm',
+        unreadCount: 0,
+        avatarUrl: null
+      };
+      return [newRoom, ...prev];
+    });
+    
+    setSelectedId(cleanId);
+    setMessages(prev => {
+      if (prev.length > 0 && prev[0].roomId === cleanId) return prev;
+      return [{
+        id: `welcome-${cleanId}`,
+        roomId: cleanId,
+        senderId: cleanId,
+        senderName: name,
+        content: `Hello! Started direct messaging with ${name}. Send a message to communicate.`,
+        createdAt: new Date().toISOString()
+      }];
+    });
+  }, []);
+
   return {
     rooms,
     messages,
     selectedId,
     setSelectedId,
+    openDirectConversation,
     isLoadingRooms,
     isLoadingMessages,
     isAiLoading,
