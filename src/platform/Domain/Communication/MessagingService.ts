@@ -5,6 +5,36 @@ import { Logger } from '../../Infrastructure/Logger';
 import { fetchConversationPeerProfile } from '@/core/platformParity/sharedConversationHydrator';
 import { resolveSharedDisplayName } from '@/core/platformParity/sharedIdentityResolver';
 
+// ─── UUID Helpers ─────────────────────────────────────────────────────────────
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isValidUuid(val: string): boolean {
+  return typeof val === 'string' && UUID_REGEX.test(val);
+}
+
+export function stringToUuid(str: string): string {
+  if (!str) return '00000000-0000-4000-8000-000000000000';
+  if (isValidUuid(str)) return str;
+
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+  const p1 = (h1 >>> 0).toString(16).padStart(8, '0');
+  const p2 = ((h2 >>> 0) & 0xffff).toString(16).padStart(4, '0');
+  const p3 = (((h2 >>> 16) & 0x0fff) | 0x4000).toString(16).padStart(4, '0');
+  const p4 = (((h1 >>> 16) & 0x3fff) | 0x8000).toString(16).padStart(4, '0');
+  const p5 = ((h1 & 0xffff).toString(16) + (h2 & 0xffff).toString(16)).padStart(12, '0');
+
+  return `${p1}-${p2}-${p3}-${p4}-${p5}`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Room {
@@ -243,34 +273,6 @@ class MessagingServiceClass implements IService {
       return [];
     }
   }
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export function isValidUuid(val: string): boolean {
-  return typeof val === 'string' && UUID_REGEX.test(val);
-}
-
-export function stringToUuid(str: string): string {
-  if (!str) return '00000000-0000-4000-8000-000000000000';
-  if (isValidUuid(str)) return str;
-
-  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
-  for (let i = 0; i < str.length; i++) {
-    const ch = str.charCodeAt(i);
-    h1 = Math.imul(h1 ^ ch, 2654435761);
-    h2 = Math.imul(h2 ^ ch, 1597334677);
-  }
-  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-
-  const p1 = (h1 >>> 0).toString(16).padStart(8, '0');
-  const p2 = ((h2 >>> 0) & 0xffff).toString(16).padStart(4, '0');
-  const p3 = (((h2 >>> 16) & 0x0fff) | 0x4000).toString(16).padStart(4, '0');
-  const p4 = (((h1 >>> 16) & 0x3fff) | 0x8000).toString(16).padStart(4, '0');
-  const p5 = ((h1 & 0xffff).toString(16) + (h2 & 0xffff).toString(16)).padStart(12, '0');
-
-  return `${p1}-${p2}-${p3}-${p4}-${p5}`;
-}
 
   async sendMessage(
     roomId: string,
