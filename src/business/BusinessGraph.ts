@@ -20,55 +20,40 @@ export class BusinessGraph {
    * This is much more flexible than complex SQL joins, as it discovers 
    * unexpected or indirect relationships (e.g. Customer -> Ticket -> Employee).
    */
-  static async getRelated(recordId: string, depth: number = 1): Promise<{ nodes: GraphNode[], edges: GraphEdge[] }> {
-    // In a real graph database this would be a single traversal query.
-    // In PostgreSQL with our schema, we can use a recursive CTE.
-    
-    const query = `
-      WITH RECURSIVE graph_traversal AS (
-        -- Base case: The starting node
-        SELECT 
-          n.id, n.entity_id, n.record_id, n.label, 
-          0 as depth,
-          NULL::uuid as edge_id, NULL::uuid as source_node_id, NULL::uuid as target_node_id, NULL::text as relationship_type
-        FROM sys_business_graph_nodes n
-        WHERE n.record_id = $1
+  /**
+   * Retrieves all related nodes for a given record by traversing the graph.
+   * Hard-enforces tenant isolation across all recursive CTE hops.
+   */
+  static async getRelated(
+    recordId: string, 
+    tenantId: string, 
+    depth: number = 1
+  ): Promise<{ nodes: GraphNode[], edges: GraphEdge[] }> {
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('[BusinessGraph Security Violation] tenantId is required for graph traversal');
+    }
 
-        UNION
-
-        -- Recursive case: Find connected edges and nodes
-        SELECT 
-          n.id, n.entity_id, n.record_id, n.label,
-          gt.depth + 1,
-          e.id, e.source_node_id, e.target_node_id, e.relationship_type
-        FROM sys_business_graph_edges e
-        JOIN sys_business_graph_nodes n ON n.id = CASE 
-            WHEN e.source_node_id = gt.id THEN e.target_node_id
-            ELSE e.source_node_id
-        END
-        JOIN graph_traversal gt ON gt.id = e.source_node_id OR gt.id = e.target_node_id
-        WHERE gt.depth < $2
-      )
-      SELECT * FROM graph_traversal;
-    `;
-
-    // Note: rpc is used here assuming we create a supabase function for the CTE.
-    // We mock the RPC call below.
     const { data, error } = await supabase.rpc('traverse_business_graph', { 
-      start_record_id: recordId, 
+      start_record_id: recordId,
+      tenant_id_param: tenantId,
       max_depth: depth 
     });
 
     if (error) {
-      console.error('Graph traversal failed', error);
+      console.error('Graph traversal failed or blocked by tenant isolation policy', error);
       return { nodes: [], edges: [] };
     }
 
-    // Process data to extract unique nodes and edges
     const nodes = new Map<string, GraphNode>();
     const edges = new Map<string, GraphEdge>();
 
     data?.forEach((row: any) => {
+      // Security Filter: Reject any node that doesn't match tenantId
+      if (row.tenant_id && row.tenant_id !== tenantId) {
+        console.error(`[BusinessGraph Security Block] Dropped node ${row.id} belonging to different tenant ${row.tenant_id}`);
+        return;
+      }
+
       if (!nodes.has(row.id)) {
         nodes.set(row.id, { id: row.id, entityId: row.entity_id, recordId: row.record_id, label: row.label });
       }
@@ -85,9 +70,14 @@ export class BusinessGraph {
     return { nodes: Array.from(nodes.values()), edges: Array.from(edges.values()) };
   }
 
-  static async link(sourceRecordId: string, targetRecordId: string, relationshipType: string, context: any) {
-    // Logic to create edges between nodes in the graph
-    // 1. Ensure nodes exist (create if not)
-    // 2. Create edge in sys_business_graph_edges
+  static async link(
+    sourceRecordId: string, 
+    targetRecordId: string, 
+    relationshipType: string, 
+    tenantId: string, 
+    context: any
+  ) {
+    if (!tenantId) throw new Error('[BusinessGraph Security Violation] tenantId required for linking nodes');
+    // Logic to create edges between nodes in the graph scoped to tenantId
   }
 }

@@ -7,14 +7,17 @@ import { EventBus } from './EventBus';
 import { ExecutionContext } from './ExecutionContext';
 import { Observability } from '@/runtime/Observability';
 import { Logger } from '@/runtime/Logger';
+import { ExecutionIntegrityGate } from './gates/ExecutionIntegrityGate';
+import { ExecutionEngine } from './execution/ExecutionEngine';
 
 export class ExecutionKernel {
   /**
-   * The Strict Runtime Pipeline.
+   * The Strict Runtime Pipeline with Execution Integrity Gate.
    * Every capability passes through this kernel exactly once.
    */
   static async execute(input: string | any, context: ExecutionContext): Promise<any> {
     const trace = Observability.startTrace('kernel.execute', context);
+    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
     
     try {
       // 1. Resolve Intent
@@ -42,7 +45,23 @@ export class ExecutionKernel {
         throw new Error(`Permission Denied: User is not authorized to execute ${intent.action}`);
       }
 
-      // 4. Capability Resolver
+      // 4. Enforce 8 Pre-Execution Integrity Gates (Hard Kernel Invariant)
+      const gateResult = ExecutionIntegrityGate.enforcePreExecution({
+        executionId,
+        tenantId: context.tenant.organizationId,
+        intentType: intent.action || intent.capabilityType,
+        capabilityName: intent.capabilityType,
+        entityId: input.entityId || 'generic_entity',
+        operationId: input.operationId || `op_${intent.capabilityType}_${Date.now()}`,
+        isConsequentialAction: ['CRM_Action', 'Calendar_Action', 'Email_Action'].includes(intent.capabilityType),
+        isHumanApproved: input.isApproved === true,
+        evidencePackage: input.evidencePackage,
+        privacySensitivity: input.privacySensitivity
+      });
+
+      const modelDecision = gateResult.modelDecision;
+
+      // 5. Capability Resolver
       const providerId = policyDecision.providerToUse || requestedProvider;
       const capability = CapabilityRegistry.getProvider(intent.capabilityType, providerId) 
         || CapabilityRegistry.getProviders(intent.capabilityType)[0];
@@ -51,23 +70,37 @@ export class ExecutionKernel {
         throw new Error(`No provider registered for capability: ${intent.capabilityType}`);
       }
 
-      // 5. Execution Engine (Sandbox check)
-      EventBus.publish('Kernel.ExecutionStarted', { intent, providerId }, context);
+      // 6. Post-Dispatch Execution Lifecycle (ExecutionEngine & Persistent Idempotency check)
+      EventBus.publish('Kernel.ExecutionStarted', { intent, providerId, executionId, modelDecision, gateResult }, context);
       
       let result;
       if (providerId.startsWith('plugin_')) {
         // Run safely in isolated environment
         result = await SandboxManager.executeInSandbox(providerId, intent, context);
       } else {
-        // Run natively
-        result = await capability.execute(intent.payload, context);
+        // Run natively through ExecutionEngine with persistent idempotency protection
+        const engineResult = await ExecutionEngine.executeTask({
+          taskId: executionId,
+          query: { capabilityType: intent.capabilityType, providerId },
+          input: intent.payload,
+          tenantId: context.tenant.organizationId,
+          entityId: input.entityId || 'generic_entity',
+          operationId: input.operationId || `op_${intent.capabilityType}_${Date.now()}`
+        });
+
+        result = engineResult.output || engineResult;
       }
       
-      // 6. Return Result
-      EventBus.publish('Kernel.ExecutionCompleted', { intent, providerId }, context);
-      Logger.info(`Execution completed for ${intent.action}`, context);
+      // 7. Event Store & Operating Memory Projections Update
+      EventBus.publish('Kernel.ExecutionCompleted', { intent, providerId, executionId, result }, context);
+      Logger.info(`Execution completed for ${intent.action} (${executionId})`, context);
       
-      return result;
+      return {
+        executionId,
+        gateResult,
+        result,
+        modelDecision
+      };
 
     } catch (error: any) {
       Logger.error(`Execution failed`, error, context);

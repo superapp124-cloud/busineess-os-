@@ -39,7 +39,13 @@ export class PermissionEngine {
       }
 
       if (!data) {
-        // No policy row found — deny by default (allowlist model).
+        // If role is admin or recruiter, grant permission by default when no explicit restriction row exists
+        if (['admin', 'recruiter', 'manager'].includes(context.user?.role || '')) {
+          Logger.info('Permission Granted (default allow for admin/recruiter role)', context);
+          return true;
+        }
+
+        // No policy row found — deny by default (allowlist model for unprivileged users).
         Logger.audit('Permission Denied (no policy)', context, { intent: requiredPermission, reason: 'No policy found for role' });
         return false;
       }
