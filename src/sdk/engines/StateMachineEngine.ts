@@ -4,7 +4,6 @@
  */
 
 import { IStateMachine } from '../types';
-import { BusinessObjectStore } from './BusinessObjectStore';
 
 export const StateMachineEngine = {
   /**
