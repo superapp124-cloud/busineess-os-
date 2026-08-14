@@ -47,6 +47,7 @@ export default function BusinessOS() {
   // ── Global Search — Gate 2 ──
   // Ctrl/Cmd + K opens the tenant-scoped search palette.
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAdminExpanded, setIsAdminExpanded] = useState(false);
 
   const openSearch = useCallback(() => setIsSearchOpen(true), []);
   const closeSearch = useCallback(() => setIsSearchOpen(false), []);
@@ -193,73 +194,21 @@ export default function BusinessOS() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto py-5 px-3 space-y-8 overflow-x-hidden" style={{ scrollbarWidth: 'none' }}>
-              
-              {/* Platform Services */}
+            <div className="flex-1 overflow-y-auto py-5 px-3 space-y-6 overflow-x-hidden" style={{ scrollbarWidth: 'none' }}>
+
+              {/* 1. WORK SECTION */}
               <div>
-                {(isSidebarExpanded || isSidebarHovered) && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 px-3">Platform</div>}
+                {(isSidebarExpanded || isSidebarHovered) && (
+                  <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 px-3">
+                    Work
+                  </div>
+                )}
                 <div className="space-y-1">
                   <button onClick={() => canonicalNavigate('home')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'home' ? 'bg-indigo-600/10 text-indigo-400 font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Home">
                     <LayoutGrid size={15} className={`shrink-0 ${activeView === 'home' ? 'text-indigo-400' : 'text-zinc-500'}`} /> 
                     {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Home</span>}
                   </button>
-                  
-                  <button onClick={() => canonicalNavigate('marketplace')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'marketplace' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Marketplace Ecosystem">
-                    <LayoutGrid size={15} className={`shrink-0 ${activeView === 'marketplace' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Marketplace Ecosystem</span>}
-                  </button>
-                  <button onClick={() => canonicalNavigate('knowledge')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'knowledge' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Enterprise Knowledge Fabric">
-                    <Database size={15} className={`shrink-0 ${activeView === 'knowledge' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Enterprise Knowledge Fabric</span>}
-                  </button>
-                  <button onClick={() => canonicalNavigate('organization')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'organization' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Organization Structure">
-                    <Building2 size={15} className={`shrink-0 ${activeView === 'organization' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Organization Structure</span>}
-                  </button>
-                  <button onClick={() => canonicalNavigate('ai_runtime')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'ai_runtime' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="System Health">
-                    <Sparkles size={15} className={`shrink-0 ${activeView === 'ai_runtime' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">System Health</span>}
-                  </button>
-                  <button onClick={() => canonicalNavigate('identity')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'identity' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Identity & Access">
-                    <ShieldCheck size={15} className={`shrink-0 ${activeView === 'identity' ? 'text-white' : 'text-zinc-500'}`} /> 
-                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Identity & Access</span>}
-                  </button>
-                </div>
-              </div>
 
-              {/* Departments */}
-              <div>
-                <div className="flex items-center justify-between mb-3 px-3">
-                  {(isSidebarExpanded || isSidebarHovered) && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Departments</div>}
-                </div>
-                <div className="space-y-1">
-                  {activeTemplate?.departments.filter(d => d.id !== 'platform').map(dept => {
-                    const isActive = activeView === 'department' && selectedPackage === dept.id;
-                    return (
-                      <button 
-                        key={dept.id} 
-                        onClick={() => { setLocalPackageId(dept.id); canonicalNavigate('department', { deptId: dept.id }); }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${isActive ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`}
-                        title={dept.name}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Building2 size={15} className={`shrink-0 ${isActive ? 'text-white' : 'text-zinc-500 group-hover:text-indigo-400 transition-colors'}`} /> 
-                          {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">{dept.name}</span>}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Installed Packages */}
-              <div>
-                <div className="flex items-center justify-between mb-3 px-3">
-                  {(isSidebarExpanded || isSidebarHovered) && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Installed Packages</div>}
-                  {(isSidebarExpanded || isSidebarHovered) && <button onClick={() => setActiveView('marketplace')} className="text-zinc-500 hover:text-white transition-colors" title="Browse Marketplace"><Plus size={12} /></button>}
-                </div>
-                <div className="space-y-1">
-                  {/* The Flagship Package always pinned at top */}
                   <button onClick={() => canonicalNavigate('recruitment')} className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-secondary transition-all group ${activeView === 'recruitment' ? 'bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium border border-transparent'}`} title="Recruitment & HR">
                     <div className="flex items-center gap-3">
                       <Users size={15} className={`shrink-0 ${activeView === 'recruitment' ? 'text-indigo-400' : 'text-zinc-500 group-hover:text-indigo-400 transition-colors'}`} /> 
@@ -267,7 +216,43 @@ export default function BusinessOS() {
                     </div>
                     {(isSidebarExpanded || isSidebarHovered) && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500">L4</span>}
                   </button>
-                  {/* Marketplace-installed packages — rendered directly from manifest data */}
+
+                  <button onClick={() => canonicalNavigate('organization')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'organization' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Organization Structure">
+                    <Building2 size={15} className={`shrink-0 ${activeView === 'organization' ? 'text-white' : 'text-zinc-500'}`} /> 
+                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Organization Structure</span>}
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. INTELLIGENCE SECTION */}
+              <div>
+                {(isSidebarExpanded || isSidebarHovered) && (
+                  <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 px-3">
+                    Intelligence
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <button onClick={() => canonicalNavigate('knowledge')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'knowledge' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Enterprise Knowledge Fabric">
+                    <Database size={15} className={`shrink-0 ${activeView === 'knowledge' ? 'text-white' : 'text-zinc-500'}`} /> 
+                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Knowledge Fabric</span>}
+                  </button>
+                </div>
+              </div>
+
+              {/* 3. EXECUTION SECTION */}
+              <div>
+                {(isSidebarExpanded || isSidebarHovered) && (
+                  <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 px-3">
+                    Execution
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <button onClick={() => canonicalNavigate('marketplace')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'marketplace' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Capability Marketplace">
+                    <Plus size={15} className={`shrink-0 ${activeView === 'marketplace' ? 'text-white' : 'text-zinc-500'}`} /> 
+                    {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Capability Marketplace</span>}
+                  </button>
+
+                  {/* Installed Packages list */}
                   {installedManifests.map(manifest => {
                     const isActive = activeView === 'package' && selectedPackage === manifest.id;
                     return (
@@ -287,10 +272,35 @@ export default function BusinessOS() {
                       </button>
                     );
                   })}
-                  {installedManifests.length === 0 && (
-                    <p className="text-[11px] text-zinc-600 px-3 py-2 italic">No packages installed yet. Browse the marketplace above.</p>
+                </div>
+              </div>
+
+              {/* 4. ADMIN SECTION (Collapsible) */}
+              <div>
+                <div 
+                  onClick={() => setIsAdminExpanded(!isAdminExpanded)}
+                  className="flex items-center justify-between mb-2 px-3 cursor-pointer group"
+                >
+                  {(isSidebarExpanded || isSidebarHovered) && (
+                    <div className="text-[10px] font-bold text-zinc-500 group-hover:text-zinc-300 uppercase tracking-widest transition-colors flex items-center gap-1.5">
+                      <span>Admin & Governance</span>
+                      <span className="text-[9px] text-zinc-600 font-mono">{isAdminExpanded ? '▲' : '▼'}</span>
+                    </div>
                   )}
                 </div>
+                {(isAdminExpanded || !isSidebarExpanded) && (
+                  <div className="space-y-1">
+                    <button onClick={() => canonicalNavigate('identity')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'identity' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="Identity & Access">
+                      <ShieldCheck size={15} className={`shrink-0 ${activeView === 'identity' ? 'text-white' : 'text-zinc-500'}`} /> 
+                      {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">Identity & Access</span>}
+                    </button>
+
+                    <button onClick={() => canonicalNavigate('ai_runtime')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-secondary transition-all ${activeView === 'ai_runtime' ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 font-medium'}`} title="System Health">
+                      <Sparkles size={15} className={`shrink-0 ${activeView === 'ai_runtime' ? 'text-white' : 'text-zinc-500'}`} /> 
+                      {(isSidebarExpanded || isSidebarHovered) && <span className="truncate">System Health</span>}
+                    </button>
+                  </div>
+                )}
               </div>
 
             </div>
