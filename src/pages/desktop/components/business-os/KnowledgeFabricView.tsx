@@ -1,37 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import type { OSTemplate } from '../../../../data/os-templates';
 import { Loader2, Database, FileText, Users, FolderOpen } from 'lucide-react';
+import { BusinessObjectStore } from '../../../../sdk/engines/BusinessObjectStore';
 
 const KnowledgeFabricView = ({ template }: { template: OSTemplate }) => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Generate live knowledge stats from the SDK objects
-    const registry = (window as any).__CHATR_SDK_REGISTRY__ || {};
-    let docs = 0;
-    
-    Object.keys(registry).forEach(pkgId => {
-      const sdk = registry[pkgId];
-      if (sdk.objects) {
-        sdk.objects.forEach((obj: any) => {
-          const records = BusinessObjectStore.list(pkgId, obj.name);
-          docs += records.length;
-        });
+    const loadStats = async () => {
+      // Generate live knowledge stats from the SDK objects
+      const registry = (window as any).__CHATR_SDK_REGISTRY__ || {};
+      let docs = 0;
+      
+      for (const pkgId of Object.keys(registry)) {
+        const sdk = registry[pkgId];
+        if (sdk.objects) {
+          for (const obj of sdk.objects) {
+            try {
+              if (typeof BusinessObjectStore !== 'undefined' && BusinessObjectStore?.list) {
+                const records = (await BusinessObjectStore.list(pkgId, obj.name)) || [];
+                docs += records.length;
+              }
+            } catch (err) {
+              console.warn('[KnowledgeFabricView] Failed to fetch object records:', err);
+            }
+          }
+        }
       }
-    });
 
-    setStats({
-      indexedDocuments: docs,
-      vectorEmbeddings: docs * 15, // Mock average embeddings per doc
-      integrations: [
-        { name: 'Google Workspace', desc: 'Drive, Docs, Sheets', type: 'google', status: 'Connected' },
-        { name: 'Slack', desc: 'Channels and DMs', type: 'slack', status: 'Connected' },
-        { name: 'Notion', desc: 'Team Wikis', type: 'notion', status: 'Active' },
-        { name: 'Local File System', desc: 'Desktop Sync', type: 'local', status: 'Disconnected' }
-      ]
-    });
-    setLoading(false);
+      setStats({
+        indexedDocuments: docs,
+        vectorEmbeddings: docs * 15, // Mock average embeddings per doc
+        integrations: [
+          { name: 'Google Workspace', desc: 'Drive, Docs, Sheets', type: 'google', status: 'Connected' },
+          { name: 'Slack', desc: 'Channels and DMs', type: 'slack', status: 'Connected' },
+          { name: 'Notion', desc: 'Team Wikis', type: 'notion', status: 'Active' },
+          { name: 'Local File System', desc: 'Desktop Sync', type: 'local', status: 'Disconnected' }
+        ]
+      });
+      setLoading(false);
+    };
+
+    loadStats();
   }, []);
 
   return (
