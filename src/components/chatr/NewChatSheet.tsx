@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Search, X, Globe, Sparkles, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -29,12 +30,12 @@ interface UserContact {
   sourceType: 'my_contact' | 'platform_user' | 'workspace_member';
 }
 
-// Workspace Directory Seed (guarantees instant NLP search results across all environments)
+// Workspace Directory Seed (guarantees instant search results across all environments)
 const WORKSPACE_DIRECTORY: UserContact[] = [
   {
     id: 'ws-arshid',
     contact_user_id: 'usr-arshid-wani',
-    username: 'arshid',
+    username: 'arshid_wani',
     full_name: 'Arshid Wani',
     avatar_url: null,
     is_online: true,
@@ -43,16 +44,25 @@ const WORKSPACE_DIRECTORY: UserContact[] = [
   {
     id: 'ws-sanobar',
     contact_user_id: 'usr-sanobar-wani',
-    username: 'sanobar',
+    username: 'sanobar_wani',
     full_name: 'Sanobar Wani',
     avatar_url: null,
     is_online: true,
     sourceType: 'workspace_member',
   },
   {
+    id: 'ws-rajesh',
+    contact_user_id: 'candidate_java_847',
+    username: 'rajesh_kumar',
+    full_name: 'Rajesh Kumar (Senior Java Dev)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'my_contact',
+  },
+  {
     id: 'ws-vishal',
     contact_user_id: 'usr-vishal-sharma',
-    username: 'vishal',
+    username: 'vishal_sharma',
     full_name: 'Vishal Sharma',
     avatar_url: null,
     is_online: true,
@@ -61,11 +71,38 @@ const WORKSPACE_DIRECTORY: UserContact[] = [
   {
     id: 'ws-gaurav',
     contact_user_id: 'usr-gaurav-verma',
-    username: 'gaurav',
+    username: 'gaurav_verma',
     full_name: 'Gaurav Verma',
     avatar_url: null,
     is_online: false,
     sourceType: 'workspace_member',
+  },
+  {
+    id: 'ws-priya',
+    contact_user_id: 'usr-priya-sharma',
+    username: 'priya_sharma',
+    full_name: 'Priya Sharma (Recruiter)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'workspace_member',
+  },
+  {
+    id: 'ws-pooja',
+    contact_user_id: 'usr-pooja-sharma',
+    username: 'pooja_sharma',
+    full_name: 'Pooja Sharma (Talent Lead)',
+    avatar_url: null,
+    is_online: true,
+    sourceType: 'workspace_member',
+  },
+  {
+    id: 'ws-amit',
+    contact_user_id: 'usr-amit-varma',
+    username: 'amit_varma',
+    full_name: 'Amit Varma (DevOps)',
+    avatar_url: null,
+    is_online: false,
+    sourceType: 'my_contact',
   },
   {
     id: 'ws-talentxcel',
@@ -77,6 +114,41 @@ const WORKSPACE_DIRECTORY: UserContact[] = [
     sourceType: 'workspace_member',
   },
 ];
+
+function resolveCleanName(raw: any, fallbackKey: string): { fullName: string; username: string } {
+  const isGarbage = (val: string | null | undefined) =>
+    !val || val.trim() === '' || val.toLowerCase() === 'contact' || val.toLowerCase() === 'user' || val.toLowerCase() === 'undefined';
+
+  let fullName = raw?.full_name || raw?.display_name || raw?.first_name || raw?.name;
+  let username = raw?.username || raw?.handle;
+
+  if (isGarbage(fullName)) {
+    if (raw?.email && !isGarbage(raw.email)) {
+      fullName = raw.email.split('@')[0];
+    } else if (!isGarbage(username)) {
+      fullName = username;
+    } else if (raw?.phone && !isGarbage(raw.phone)) {
+      fullName = `Member (${raw.phone.slice(-4)})`;
+    } else {
+      fullName = fallbackKey;
+    }
+  }
+
+  // Format capitalized full name
+  fullName = String(fullName)
+    .replace(/[._-]/g, ' ')
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+
+  if (isGarbage(username)) {
+    username = fullName.toLowerCase().replace(/\s+/g, '_');
+  } else {
+    username = String(username).toLowerCase().replace(/[^a-z0-9_]/g, '');
+  }
+
+  return { fullName, username };
+}
 
 export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: NewChatSheetProps) {
   const [contacts, setContacts] = useState<UserContact[]>([]);
@@ -90,31 +162,36 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
     }
   }, [userId, open]);
 
-  // Load initial contacts and profiles with 400-proof simple select('*') queries
+  // Load initial contacts and profiles from Supabase tables (profiles, contacts, crm_leads)
   const loadInitialData = async () => {
     setIsSearching(true);
     try {
-      // 1. Query profiles safely using select('*') to avoid PostgREST foreign key 400 errors
+      // 1. Query profiles safely using select('*')
       const { data: profilesData } = await (supabase as any)
         .from('profiles')
         .select('*')
         .limit(50);
 
       if (profilesData && Array.isArray(profilesData)) {
-        const parsedProfiles: UserContact[] = profilesData.map((p: any) => ({
-          id: p.id,
-          contact_user_id: p.id,
-          username: p.username || 'User',
-          full_name: p.full_name || p.display_name || p.first_name || p.name || p.username,
-          avatar_url: p.avatar_url || null,
-          is_online: p.is_online || false,
-          last_seen: p.last_seen || null,
-          sourceType: 'platform_user',
-        }));
+        const parsedProfiles: UserContact[] = profilesData.map((p: any, idx: number) => {
+          const { fullName, username } = resolveCleanName(p, `User ${idx + 1}`);
+          return {
+            id: p.id,
+            contact_user_id: p.id,
+            username,
+            full_name: fullName,
+            avatar_url: p.avatar_url || null,
+            is_online: p.is_online || false,
+            last_seen: p.last_seen || null,
+            sourceType: 'platform_user',
+          };
+        });
         setDbUsers(parsedProfiles);
       }
 
-      // 2. Query saved contacts safely using select('*')
+      // 2. Query saved contacts & CRM leads from Supabase
+      const fetchedContacts: UserContact[] = [];
+
       if (userId) {
         const { data: contactsData } = await (supabase as any)
           .from('contacts')
@@ -122,16 +199,41 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
           .eq('user_id', userId);
 
         if (contactsData && Array.isArray(contactsData)) {
-          setContacts(contactsData.map((c: any) => ({
-            id: c.id,
-            contact_user_id: c.contact_user_id || c.id,
-            username: c.name || c.username || 'Contact',
-            full_name: c.name || c.full_name,
-            avatar_url: c.avatar_url || null,
-            sourceType: 'my_contact',
-          })));
+          contactsData.forEach((c: any, idx: number) => {
+            const { fullName, username } = resolveCleanName(c, `Contact ${idx + 1}`);
+            fetchedContacts.push({
+              id: c.id,
+              contact_user_id: c.contact_user_id || c.id,
+              username,
+              full_name: fullName,
+              avatar_url: c.avatar_url || null,
+              sourceType: 'my_contact',
+            });
+          });
         }
       }
+
+      // 3. Query real CRM leads / candidate contacts from Supabase
+      const { data: leadsData } = await (supabase as any)
+        .from('crm_leads')
+        .select('id, name, phone, email')
+        .limit(30);
+
+      if (leadsData && Array.isArray(leadsData)) {
+        leadsData.forEach((lead: any) => {
+          const { fullName, username } = resolveCleanName(lead, lead.name || 'Lead');
+          fetchedContacts.push({
+            id: `lead_${lead.id}`,
+            contact_user_id: `lead_${lead.id}`,
+            username,
+            full_name: `${fullName} (Customer Lead)`,
+            avatar_url: null,
+            sourceType: 'my_contact',
+          });
+        });
+      }
+
+      setContacts(fetchedContacts);
     } catch (err) {
       console.warn('[NewChatSheet] Data load warning:', err);
     } finally {
@@ -171,10 +273,11 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
     });
   }, [contacts, dbUsers, searchQuery, userId]);
 
-  const handleSelect = (contactUserId: string) => {
-    onSelectContact(contactUserId);
+  const handleSelect = (contact: UserContact) => {
+    onSelectContact(contact.contact_user_id);
     onOpenChange(false);
     setSearchQuery('');
+    toast.success(`Opening chat with ${contact.full_name || contact.username}`);
   };
 
   return (
@@ -227,7 +330,7 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
                 return (
                   <button
                     key={user.id}
-                    onClick={() => handleSelect(user.contact_user_id)}
+                    onClick={() => handleSelect(user)}
                     className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-white/3 hover:bg-white/8 border border-white/5 hover:border-violet-500/30 transition-all text-left group cursor-pointer"
                   >
                     <div className="relative shrink-0">
