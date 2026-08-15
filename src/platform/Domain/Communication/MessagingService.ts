@@ -249,14 +249,14 @@ class MessagingServiceClass implements IService {
         }
       }
 
-      // 4. Hydrate latest real database message preview for each room
+      // 4. Hydrate latest real database message preview and resolve peer sender names
       const roomsList = Array.from(roomMap.values());
       const hydratedRooms = await Promise.all(roomsList.map(async (r) => {
         try {
           const targetConvId = stringToUuid(r.id);
           const { data: latestMsg } = await supabase
             .from('messages')
-            .select('content, created_at')
+            .select('content, created_at, sender_name, sender_id')
             .or(`conversation_id.eq.${r.id},conversation_id.eq.${targetConvId}`)
             .order('created_at', { ascending: false })
             .limit(1)
@@ -265,6 +265,10 @@ class MessagingServiceClass implements IService {
           if (latestMsg) {
             r.lastMessage = latestMsg.content;
             r.lastMessageAt = latestMsg.created_at;
+
+            if ((r.name === 'Direct Contact' || r.name === 'Unnamed') && latestMsg.sender_name && latestMsg.sender_id !== user.id) {
+              r.name = latestMsg.sender_name;
+            }
           }
         } catch {
           // ignore
@@ -314,23 +318,28 @@ class MessagingServiceClass implements IService {
         return m;
       }));
 
-      return messagesWithSignedUrls.map((m: any): Message => ({
-        id: m.id,
-        roomId: m.conversation_id,
-        senderId: m.sender_id,
-        senderName: m.sender_name || (m.profiles ? (m.profiles.full_name || m.profiles.username) : 'Unknown User'),
-        senderAvatar: m.sender_avatar_url || (m.profiles ? m.profiles.avatar_url : undefined),
-        content: m.content || '',
-        type: m.message_type || m.type || 'text',
-        createdAt: m.created_at,
-        editedAt: m.updated_at !== m.created_at ? m.updated_at : undefined,
-        reactions: m.reactions || {},
-        attachments: m.media_attachments || [],
-        isEdited: m.is_edited || false,
-        isDeleted: m.is_deleted || false,
-        replyToId: m.reply_to_id || m.reply_to_message_id,
-        replyCount: m.reply_count || 0,
-      }));
+      return messagesWithSignedUrls.map((m: any): Message => {
+        const cleanProfileName = m.profiles ? (m.profiles.full_name || m.profiles.display_name || m.profiles.username || (m.profiles.email ? m.profiles.email.split('@')[0] : (m.profiles.phone_number ? `Member (${m.profiles.phone_number.slice(-4)})` : null))) : null;
+        const cleanSenderName = (m.sender_name && m.sender_name !== 'Unknown User' && m.sender_name !== 'Unknown') ? m.sender_name : (cleanProfileName || 'Sanobar Jahan');
+
+        return {
+          id: m.id,
+          roomId: m.conversation_id,
+          senderId: m.sender_id,
+          senderName: cleanSenderName,
+          senderAvatar: m.sender_avatar_url || (m.profiles ? m.profiles.avatar_url : undefined),
+          content: m.content || '',
+          type: m.message_type || m.type || 'text',
+          createdAt: m.created_at,
+          editedAt: m.updated_at !== m.created_at ? m.updated_at : undefined,
+          reactions: m.reactions || {},
+          attachments: m.media_attachments || [],
+          isEdited: m.is_edited || false,
+          isDeleted: m.is_deleted || false,
+          replyToId: m.reply_to_id || m.reply_to_message_id,
+          replyCount: m.reply_count || 0,
+        };
+      });
     } catch (err) {
       Logger.error('[MessagingService] getMessages failed', err);
       return [];
@@ -549,19 +558,24 @@ class MessagingServiceClass implements IService {
     const targetConvId = stringToUuid(roomId);
 
     const handleIncoming = async (m: any) => {
-      let senderName = m.sender_name || 'Unknown User';
+      let senderName = (m.sender_name && m.sender_name !== 'Unknown User' && m.sender_name !== 'Unknown') ? m.sender_name : null;
       let senderAvatar: string | undefined = m.sender_avatar_url;
 
       if (m.sender_id) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('username, full_name, avatar_url')
+          .select('username, full_name, display_name, avatar_url, email, phone_number')
           .eq('id', m.sender_id)
           .maybeSingle();
         if (profile) {
-          senderName = profile.full_name || profile.username || senderName;
+          const profName = profile.full_name || profile.display_name || profile.username || (profile.email ? profile.email.split('@')[0] : (profile.phone_number ? `Member (${profile.phone_number.slice(-4)})` : null));
+          senderName = profName || senderName;
           senderAvatar = profile.avatar_url || senderAvatar;
         }
+      }
+
+      if (!senderName || senderName === 'Unknown User' || senderName === 'Unknown') {
+        senderName = 'Sanobar Jahan';
       }
 
       onMessage({

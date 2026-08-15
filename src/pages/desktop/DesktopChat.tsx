@@ -381,6 +381,7 @@ export default function DesktopChat() {
  <MessageViewport 
  messages={messages}
  currentUserId={currentUserId}
+ selectedRoomName={selectedRoom.name}
  isUploading={isUploading}
  isAiLoading={isAiLoading || isConvAiLoading}
  typingUsers={typingUsers}

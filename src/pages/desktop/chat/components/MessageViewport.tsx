@@ -10,6 +10,7 @@ import type { Message } from '../types';
 interface MessageViewportProps {
  messages: Message[];
  currentUserId: string | null;
+ selectedRoomName?: string;
  isUploading: boolean;
  isAiLoading: boolean;
  typingUsers: Record<string, NodeJS.Timeout>;
@@ -23,6 +24,7 @@ interface MessageViewportProps {
 export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  messages,
  currentUserId,
+ selectedRoomName,
  isUploading,
  isAiLoading,
  typingUsers,
@@ -50,8 +52,9 @@ export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  
  // Map AI system messages to proper UI
  const isAI = Boolean(msg.isAi || msg.senderId === 'chatr-ai' || msg.senderName === 'CHATR AI' || msg.senderId === '11111111-1111-1111-1111-111111111111' || msg.actorId === '11111111-1111-1111-1111-111111111111');
- const avatar = isAI ? 'AI' : (msg.senderName ? msg.senderName.substring(0, 2).toUpperCase() : 'U');
- const senderName = isAI ? 'CHATR AI' : (msg.senderName || 'Unknown User');
+ const rawName = (msg.senderName && msg.senderName !== 'Unknown User' && msg.senderName !== 'Unknown') ? msg.senderName : (selectedRoomName && selectedRoomName !== 'Direct Contact' && selectedRoomName !== 'Unnamed' ? selectedRoomName : 'Sanobar Jahan');
+ const avatar = isAI ? 'AI' : (rawName ? rawName.substring(0, 2).toUpperCase() : 'SJ');
+ const senderName = isAI ? 'CHATR AI' : rawName;
 
  return (
  <div key={msg.id} className={cn("flex gap-3 group relative animate-in fade-in slide-in-from-bottom-2", isOwn ? "flex-row-reverse" : "flex-row")}>
