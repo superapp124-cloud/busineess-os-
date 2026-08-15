@@ -242,85 +242,87 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  };
 
   const resolveUser = async (input: string): Promise<{ id: string; name: string; avatar: string; phone?: string } | null> => {
-    const trimmed = input.trim();
-    if (!trimmed) return null;
+    const rawTrimmed = input.trim();
+    if (!rawTrimmed) return null;
 
-    let searchId = trimmed;
-    if (trimmed.startsWith('usr-')) {
-      searchId = trimmed.replace(/^usr-/, '');
+    const cleanSearch = rawTrimmed.replace(/^@/, '').replace(/^usr-/, '').trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanSearch);
+
+    // 1. If UUID, query profiles table directly by ID
+    if (isUuid) {
+      const { data: uuidProf } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
+        .eq('id', cleanSearch)
+        .maybeSingle();
+
+      if (uuidProf) {
+        const resolvedName = uuidProf.full_name || uuidProf.display_name || uuidProf.username || (uuidProf.email ? uuidProf.email.split('@')[0] : cleanSearch);
+        return { id: uuidProf.id, name: resolvedName, avatar: uuidProf.avatar_url || '', phone: uuidProf.phone_number || '' };
+      }
     }
 
-    // 1. Direct query on profiles table for UUID, username, phone_number, or email
-    const { data: exact } = await supabase
+    // 2. Query profiles by exact username, email, or phone_number
+    const { data: exactProf } = await supabase
       .from('profiles')
       .select('id, full_name, display_name, username, avatar_url, phone_number, email')
-      .or(`id.eq.${searchId},id.eq.${trimmed},username.eq.${trimmed},phone_number.eq.${trimmed},email.eq.${trimmed}`)
+      .or(`username.eq.${cleanSearch},email.eq.${cleanSearch},phone_number.eq.${cleanSearch}`)
       .maybeSingle();
 
-    if (exact) {
-      const resolvedName = exact.full_name || exact.display_name || exact.username || (exact.email ? exact.email.split('@')[0] : (exact.phone_number ? `Member (${exact.phone_number.slice(-4)})` : trimmed));
-      return { id: exact.id, name: resolvedName, avatar: exact.avatar_url || '', phone: exact.phone_number || '' };
+    if (exactProf) {
+      const resolvedName = exactProf.full_name || exactProf.display_name || exactProf.username || (exactProf.email ? exactProf.email.split('@')[0] : cleanSearch);
+      return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
 
-    // 2. Check conversation_participants if input is a conversation ID or room ID
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const currentUid = user?.id;
+    // 3. If input is a conversation ID / room ID (UUID format), check conversation_participants
+    if (isUuid) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const currentUid = user?.id;
 
-      const { data: peerPart } = await supabase
-        .from('conversation_participants')
-        .select('user_id, profiles!inner(id, full_name, display_name, username, avatar_url, phone_number, email)')
-        .or(`conversation_id.eq.${trimmed},conversation_id.eq.${searchId}`)
-        .neq('user_id', currentUid || '')
+        const { data: peerPart } = await supabase
+          .from('conversation_participants')
+          .select('user_id, profiles!inner(id, full_name, display_name, username, avatar_url, phone_number, email)')
+          .eq('conversation_id', cleanSearch)
+          .neq('user_id', currentUid || '')
+          .limit(1)
+          .maybeSingle();
+
+        if (peerPart && peerPart.profiles) {
+          const prof = peerPart.profiles as any;
+          const resolvedName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : cleanSearch);
+          return { id: prof.id, name: resolvedName, avatar: prof.avatar_url || '', phone: prof.phone_number || '' };
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // 4. Case-insensitive partial search on username, full_name, display_name, email
+    const safeTerm = cleanSearch.replace(/[^a-zA-Z0-9_\-\.\@\s]/g, '');
+    if (safeTerm.length >= 2) {
+      const { data: fuzzyProf } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
+        .or(`username.ilike.%${safeTerm}%,full_name.ilike.%${safeTerm}%,display_name.ilike.%${safeTerm}%,email.ilike.%${safeTerm}%`)
         .limit(1)
         .maybeSingle();
 
-      if (peerPart && peerPart.profiles) {
-        const prof = peerPart.profiles as any;
-        const resolvedName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : trimmed));
-        return { id: prof.id, name: resolvedName, avatar: prof.avatar_url || '', phone: prof.phone_number || '' };
+      if (fuzzyProf) {
+        const resolvedName = fuzzyProf.full_name || fuzzyProf.display_name || fuzzyProf.username || (fuzzyProf.email ? fuzzyProf.email.split('@')[0] : safeTerm);
+        return { id: fuzzyProf.id, name: resolvedName, avatar: fuzzyProf.avatar_url || '', phone: fuzzyProf.phone_number || '' };
       }
-    } catch {
-      // ignore
-    }
-
-    // 3. Digit-only phone number matching
-    const digits = trimmed.replace(/\D/g, '');
-    if (digits.length >= 7) {
-      const { data: phoneMatch } = await supabase
-        .from('profiles')
-        .select('id, full_name, display_name, username, avatar_url, phone_number')
-        .ilike('phone_number', `%${digits}%`)
-        .maybeSingle();
-
-      if (phoneMatch) {
-        const resolvedName = phoneMatch.full_name || phoneMatch.display_name || phoneMatch.username || phoneMatch.phone_number || trimmed;
-        return { id: phoneMatch.id, name: resolvedName, avatar: phoneMatch.avatar_url || '', phone: phoneMatch.phone_number || '' };
-      }
-    }
-
-    // 4. Case-insensitive partial name / username search
-    const { data: nameMatch } = await supabase
-      .from('profiles')
-      .select('id, full_name, display_name, username, avatar_url, phone_number')
-      .or(`full_name.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,username.ilike.%${trimmed}%`)
-      .limit(1)
-      .maybeSingle();
-
-    if (nameMatch) {
-      const resolvedName = nameMatch.full_name || nameMatch.display_name || nameMatch.username || nameMatch.phone_number || trimmed;
-      return { id: nameMatch.id, name: resolvedName, avatar: nameMatch.avatar_url || '', phone: nameMatch.phone_number || '' };
     }
 
     // 5. Query contacts table by name / phone
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      if (user && safeTerm) {
         const { data: contact } = await supabase
           .from('contacts')
           .select('contact_user_id, name, full_name, email, phone')
           .eq('user_id', user.id)
-          .or(`name.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%,phone.ilike.%${trimmed}%`)
+          .or(`name.ilike.%${safeTerm}%,full_name.ilike.%${safeTerm}%,phone.ilike.%${safeTerm}%`)
           .limit(1)
           .maybeSingle();
 
@@ -332,7 +334,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
             .maybeSingle();
 
           if (contactProf) {
-            const resolvedName = contactProf.full_name || contactProf.display_name || contactProf.username || contact.name || trimmed;
+            const resolvedName = contactProf.full_name || contactProf.display_name || contactProf.username || contact.name || rawTrimmed;
             return { id: contactProf.id, name: resolvedName, avatar: contactProf.avatar_url || '', phone: contactProf.phone_number || '' };
           }
         }
@@ -341,9 +343,9 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       // ignore
     }
 
-    // 6. If searchId looks like a valid UUID, use it directly as the target ID
-    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchId)) {
-      return { id: searchId, name: trimmed, avatar: '' };
+    // 6. If cleanSearch is already a valid UUID, return it directly
+    if (isUuid) {
+      return { id: cleanSearch, name: rawTrimmed, avatar: '' };
     }
 
     return null;
