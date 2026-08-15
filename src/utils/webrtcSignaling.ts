@@ -156,12 +156,20 @@ export const getTurnConfig = async () => {
 
 // Direct signaling through Supabase Realtime (no edge function)
 export const sendSignalDirect = async (signalData: SignalData) => {
+  const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
   const user = await supabase.auth.getUser();
+  const fromUserId = user.data.user?.id || '';
+
+  if (!isUuid(fromUserId) || !isUuid(signalData.to)) {
+    console.warn('[webrtcSignaling] Skipping signal insert - from_user or to_user is not a valid UUID:', fromUserId, signalData.to);
+    return;
+  }
+
   const { error } = await (supabase as any)
     .from('webrtc_signals')
     .insert([{
       call_id: signalData.callId,
-      from_user: user.data.user?.id || '',
+      from_user: fromUserId,
       to_user: signalData.to,
       signal_type: signalData.type,
       signal_data: signalData.data as any

@@ -107,6 +107,12 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   }
 
   public async sendSignal(targetUserId: string, callId: string, message: any): Promise<void> {
+    const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+    if (!isUuid(this.userId) || !isUuid(targetUserId)) {
+      console.warn('[SharedSignalingAdapter] Skipping insert: from_user or to_user is not a valid UUID:', this.userId, targetUserId);
+      return;
+    }
+
     let signalType = message.type as string;
     let signalData: any;
 
@@ -138,6 +144,11 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   }
 
   public async updateCallState(callId: string, callerId: string, receiverId: string, status: CallLifecycleMessage['status'], callType?: string): Promise<void> {
+    const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+    if (!isUuid(callerId) || !isUuid(receiverId)) {
+      console.warn('[SharedSignalingAdapter] Skipping updateCallState: callerId or receiverId is not a valid UUID:', callerId, receiverId);
+      return;
+    }
     try {
       const updateData: any = { status };
       if (callType) {

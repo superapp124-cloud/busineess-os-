@@ -98,6 +98,12 @@ export class DatabaseSignalingProvider implements SignalingProvider {
       signalData = { timestamp: Date.now() }; // End/video upgrades
     }
 
+    const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+    if (!isUuid(this.userId) || !isUuid(targetUserId)) {
+      console.warn('[DatabaseSignalingProvider] Skipping insert: from_user or to_user is not a valid UUID:', this.userId, targetUserId);
+      return;
+    }
+
     const { error } = await this.supabase.from('webrtc_signals').insert([{
       call_id: callId,
       from_user: this.userId,
@@ -112,6 +118,12 @@ export class DatabaseSignalingProvider implements SignalingProvider {
   }
 
   public async updateCallState(callId: string, callerId: string, receiverId: string, status: CallLifecycleMessage['status'], callType: string = 'audio'): Promise<void> {
+    const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+    if (!isUuid(callerId) || !isUuid(receiverId)) {
+      console.warn('[DatabaseSignalingProvider] Skipping updateCallState: callerId or receiverId is not a valid UUID:', callerId, receiverId);
+      return;
+    }
+
     // Legacy system uses the `calls` table for lifecycle
     const timestamp = new Date().toISOString();
     
