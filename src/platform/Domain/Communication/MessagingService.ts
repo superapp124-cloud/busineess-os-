@@ -92,66 +92,6 @@ export interface Attachment {
   sizeBytes: number;
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
-class MessagingServiceClass implements IService {
-  name = 'MessagingService';
-  dependencies = [];
-
-  async initialize(): Promise<void> {
-    Logger.info('[MessagingService] Initialized');
-  }
-
-  async uploadAttachment(roomId: string, file: File): Promise<Attachment | null> {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${roomId}/${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
-      
-      const { data, error } = await supabase.storage
-        .from('chat_attachments')
-        .upload(fileName, file, { cacheControl: '3600', upsert: false });
-
-      if (error) throw error;
-
-      const isImage = file.type.startsWith('image/');
-      const { data: signedData, error: signedError } = await supabase.storage
-        .from('chat_attachments')
-        .createSignedUrl(data.path, 3600, { download: !isImage ? file.name : false });
-
-      if (signedError) throw signedError;
-
-      return {
-        id: data.path,
-        name: file.name,
-        sizeBytes: file.size,
-        mimeType: file.type,
-        url: signedData.signedUrl,
-      };
-    } catch (error: any) {
-      Logger.error('[MessagingService] Error uploading attachment', error);
-      return null;
-    }
-  }
-
-  async getSignedUrlForAttachment(storagePath: string, filename?: string, mimeType?: string): Promise<string | null> {
-    try {
-      const isImage = mimeType?.startsWith('image/');
-      const { data, error } = await supabase.storage
-        .from('chat_attachments')
-        .createSignedUrl(storagePath, 3600, { download: !isImage && filename ? filename : false });
-
-      if (error) throw error;
-      return data.signedUrl;
-    } catch (error) {
-      Logger.error('[MessagingService] Error signing URL', error);
-      return null;
-    }
-  }
-
-  async shutdown(): Promise<void> {
-    Logger.info('[MessagingService] Shutdown');
-  }
-
 export const DEFAULT_CHATR_CONTACT_ROOMS: Room[] = [
   {
     id: stringToUuid('usr-sanobar-jahan'),
@@ -229,6 +169,66 @@ export const DEFAULT_CHATR_CONTACT_ROOMS: Room[] = [
     otherUserPresence: 'offline'
   }
 ];
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
+class MessagingServiceClass implements IService {
+  name = 'MessagingService';
+  dependencies = [];
+
+  async initialize(): Promise<void> {
+    Logger.info('[MessagingService] Initialized');
+  }
+
+  async uploadAttachment(roomId: string, file: File): Promise<Attachment | null> {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${roomId}/${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('chat_attachments')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+      if (error) throw error;
+
+      const isImage = file.type.startsWith('image/');
+      const { data: signedData, error: signedError } = await supabase.storage
+        .from('chat_attachments')
+        .createSignedUrl(data.path, 3600, { download: !isImage ? file.name : false });
+
+      if (signedError) throw signedError;
+
+      return {
+        id: data.path,
+        name: file.name,
+        sizeBytes: file.size,
+        mimeType: file.type,
+        url: signedData.signedUrl,
+      };
+    } catch (error: any) {
+      Logger.error('[MessagingService] Error uploading attachment', error);
+      return null;
+    }
+  }
+
+  async getSignedUrlForAttachment(storagePath: string, filename?: string, mimeType?: string): Promise<string | null> {
+    try {
+      const isImage = mimeType?.startsWith('image/');
+      const { data, error } = await supabase.storage
+        .from('chat_attachments')
+        .createSignedUrl(storagePath, 3600, { download: !isImage && filename ? filename : false });
+
+      if (error) throw error;
+      return data.signedUrl;
+    } catch (error) {
+      Logger.error('[MessagingService] Error signing URL', error);
+      return null;
+    }
+  }
+
+  async shutdown(): Promise<void> {
+    Logger.info('[MessagingService] Shutdown');
+  }
 
   // ── Rooms ──────────────────────────────────────────────────────────────────
 
