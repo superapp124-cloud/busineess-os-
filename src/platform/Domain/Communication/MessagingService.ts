@@ -92,84 +92,6 @@ export interface Attachment {
   sizeBytes: number;
 }
 
-export const DEFAULT_CHATR_CONTACT_ROOMS: Room[] = [
-  {
-    id: stringToUuid('usr-sanobar-jahan'),
-    name: 'Sanobar Jahan',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Hey! How are you?',
-    lastMessageAt: new Date(Date.now() - 60 * 1000).toISOString(),
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    otherUserPresence: 'online'
-  },
-  {
-    id: stringToUuid('usr-vishwajeet-nayak'),
-    name: 'vishwajeetnayak',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Okay',
-    lastMessageAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
-    otherUserPresence: 'away'
-  },
-  {
-    id: stringToUuid('usr-arshid-wani'),
-    name: 'ARSHID',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Remind me to call Mom tomorrow at 6 PM',
-    lastMessageAt: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    otherUserPresence: 'online'
-  },
-  {
-    id: stringToUuid('usr-user-ai-testing'),
-    name: 'User AI Testing',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Remind me to call Mom tomorrow at 6 PM',
-    lastMessageAt: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-    otherUserPresence: 'online'
-  },
-  {
-    id: stringToUuid('usr-abrar-khan'),
-    name: 'Abrar khan',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Okay',
-    lastMessageAt: new Date(Date.now() - 210 * 24 * 3600 * 1000).toISOString(),
-    otherUserPresence: 'offline'
-  },
-  {
-    id: stringToUuid('usr-gaurav-bhatia'),
-    name: 'Gauravbhatia',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Hello',
-    lastMessageAt: new Date(Date.now() - 240 * 24 * 3600 * 1000).toISOString(),
-    otherUserPresence: 'offline'
-  },
-  {
-    id: stringToUuid('usr-gaurav008'),
-    name: 'Gaurav008',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'Heloo',
-    lastMessageAt: new Date(Date.now() - 270 * 24 * 3600 * 1000).toISOString(),
-    otherUserPresence: 'offline'
-  },
-  {
-    id: stringToUuid('usr-testing-123'),
-    name: 'Testing 123',
-    type: 'dm',
-    unreadCount: 0,
-    lastMessage: 'image_1762193194089',
-    lastMessageAt: new Date(Date.now() - 270 * 24 * 3600 * 1000).toISOString(),
-    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    otherUserPresence: 'offline'
-  }
-];
-
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 class MessagingServiceClass implements IService {
@@ -235,10 +157,12 @@ class MessagingServiceClass implements IService {
   async getRooms(workspaceId?: string): Promise<Room[]> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return DEFAULT_CHATR_CONTACT_ROOMS;
+      if (!user) return [];
 
-      // Fetch conversations where the user is a participant
-      const { data: participations, error } = await supabase
+      const roomMap = new Map<string, Room>();
+
+      // 1. Fetch conversations where user is a participant
+      const { data: participations } = await supabase
         .from('conversation_participants')
         .select(`
           conversation_id,
@@ -251,62 +175,113 @@ class MessagingServiceClass implements IService {
         `)
         .eq('user_id', user.id);
 
-      if (error) {
-        Logger.warn('[MessagingService] getRooms error, returning default rooms', error);
-        return DEFAULT_CHATR_CONTACT_ROOMS;
-      }
+      if (participations) {
+        for (const p of participations) {
+          const conv = p.conversations as any;
+          if (conv) {
+            let roomName = conv.group_name;
+            let avatarUrl: string | undefined;
 
-      const baseRooms: Room[] = (participations || [])
-        .map((p: any): Room => {
-          const conv = p.conversations;
-          return {
-            id: conv.id,
-            name: conv.group_name || 'Direct Contact',
-            type: conv.is_group ? 'group' : 'dm',
-            unreadCount: 0,
-            lastMessageAt: conv.updated_at,
-          };
-        })
-        .sort((a, b) => {
-          const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
-          const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
-          return timeB - timeA;
-        });
-
-      const hydratedRooms = await Promise.all(
-        baseRooms.map(async (room) => {
-          if (room.type === 'dm' && (room.name === 'Unnamed' || room.name === 'Direct Contact')) {
-            const profile = await fetchConversationPeerProfile(room.id, user.id);
-            if (profile) {
-              const cleanName = resolveSharedDisplayName(profile, '');
-              if (cleanName && cleanName !== 'Unnamed') {
-                room.name = cleanName;
-                room.avatarUrl = profile.avatar_url;
+            if (!conv.is_group) {
+              const peerProfile = await fetchConversationPeerProfile(conv.id, user.id);
+              if (peerProfile) {
+                roomName = resolveSharedDisplayName(peerProfile, 'Direct Contact');
+                avatarUrl = peerProfile.avatar_url;
               }
             }
+
+            roomMap.set(conv.id, {
+              id: conv.id,
+              name: roomName || 'Direct Contact',
+              type: conv.is_group ? 'group' : 'dm',
+              unreadCount: 0,
+              lastMessageAt: conv.updated_at,
+              avatarUrl,
+            });
           }
-          return room;
-        })
-      );
-
-      const uniqueMap = new Map<string, Room>();
-
-      // Seed chatr.chat contact rooms first
-      for (const room of DEFAULT_CHATR_CONTACT_ROOMS) {
-        uniqueMap.set(room.id, room);
-      }
-
-      // Merge hydrated DB rooms
-      for (const room of hydratedRooms) {
-        if (room.name !== 'Direct Contact' && room.name !== 'Unnamed') {
-          uniqueMap.set(room.id, room);
         }
       }
 
-      return Array.from(uniqueMap.values());
+      // 2. Fetch all real registered profiles from Supabase profiles table
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, display_name, avatar_url, email, phone_number')
+        .neq('id', user.id);
+
+      if (profiles) {
+        for (const prof of profiles) {
+          const cleanName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
+          if (!cleanName) continue;
+
+          const convId = stringToUuid(`usr-${prof.id}`);
+          if (!roomMap.has(convId) && !roomMap.has(prof.id)) {
+            roomMap.set(prof.id, {
+              id: prof.id,
+              name: cleanName,
+              type: 'dm',
+              unreadCount: 0,
+              avatarUrl: prof.avatar_url,
+              otherUserPresence: 'online'
+            });
+          }
+        }
+      }
+
+      // 3. Fetch all real contacts from Supabase contacts table
+      const { data: contacts } = await supabase
+        .from('contacts')
+        .select('id, name, full_name, email, phone, contact_user_id')
+        .eq('user_id', user.id);
+
+      if (contacts) {
+        for (const c of contacts) {
+          const cName = c.full_name || c.name || (c.email ? c.email.split('@')[0] : (c.phone ? `Member (${c.phone.slice(-4)})` : null));
+          if (!cName) continue;
+          const targetId = c.contact_user_id || c.id;
+          if (!roomMap.has(targetId)) {
+            roomMap.set(targetId, {
+              id: targetId,
+              name: cName,
+              type: 'dm',
+              unreadCount: 0,
+            });
+          }
+        }
+      }
+
+      // 4. Hydrate latest real database message preview for each room
+      const roomsList = Array.from(roomMap.values());
+      const hydratedRooms = await Promise.all(roomsList.map(async (r) => {
+        try {
+          const targetConvId = stringToUuid(r.id);
+          const { data: latestMsg } = await supabase
+            .from('messages')
+            .select('content, created_at')
+            .or(`conversation_id.eq.${r.id},conversation_id.eq.${targetConvId}`)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (latestMsg) {
+            r.lastMessage = latestMsg.content;
+            r.lastMessageAt = latestMsg.created_at;
+          }
+        } catch {
+          // ignore
+        }
+        return r;
+      }));
+
+      // Sort by lastMessageAt descending
+      return hydratedRooms.sort((a, b) => {
+        const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+        const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+        return timeB - timeA;
+      });
+
     } catch (err) {
       Logger.error('[MessagingService] getRooms failed', err);
-      return DEFAULT_CHATR_CONTACT_ROOMS;
+      return [];
     }
   }
 

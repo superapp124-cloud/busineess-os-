@@ -74,58 +74,7 @@ export function useConversation(messagingService: any, currentUserId: string | n
           return;
         }
         const msgs = await messagingService.getMessages(selectedId);
-        if (active) {
-          const room = rooms.find(r => r.id === selectedId);
-          const isSanobar = room?.name === 'Sanobar Jahan' || selectedId === stringToUuid('usr-sanobar-jahan');
-
-          if (isSanobar) {
-            const sanobarHistory: Message[] = [
-              {
-                id: `sanobar-m1-${selectedId}`,
-                roomId: selectedId,
-                senderId: selectedId,
-                senderName: 'Sanobar Jahan',
-                content: 'Hey! How are you?',
-                createdAt: new Date(Date.now() - 3600000).toISOString()
-              },
-              {
-                id: `sanobar-m2-${selectedId}`,
-                roomId: selectedId,
-                senderId: selectedId,
-                senderName: 'Sanobar Jahan',
-                content: 'hj|hgkg',
-                createdAt: new Date(Date.now() - 1200000).toISOString()
-              },
-              {
-                id: `sanobar-m3-${selectedId}`,
-                roomId: selectedId,
-                senderId: selectedId,
-                senderName: 'Sanobar Jahan',
-                content: 'hkjqjhg',
-                createdAt: new Date(Date.now() - 600000).toISOString()
-              }
-            ];
-
-            const merged = [...sanobarHistory];
-            for (const m of msgs) {
-              if (!merged.some(x => x.id === m.id || (x.content === m.content && x.senderName === m.senderName))) {
-                merged.push(m);
-              }
-            }
-            setMessages(merged);
-          } else if (msgs.length === 0 && room && room.lastMessage) {
-            setMessages([{
-              id: `seeded-${room.id}`,
-              roomId: room.id,
-              senderId: room.id,
-              senderName: room.name,
-              content: room.lastMessage,
-              createdAt: room.lastMessageAt || new Date().toISOString()
-            }]);
-          } else {
-            setMessages(msgs);
-          }
-        }
+        if (active) setMessages(msgs);
       } catch (e: any) {
         console.error(e);
       } finally {
