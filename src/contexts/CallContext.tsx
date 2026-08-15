@@ -341,11 +341,11 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
 
   const startCall = async (dialInput: string, video: boolean = true) => {
     const rawTarget = dialInput.trim();
-    if (!rawTarget) return;
+    if (!rawTarget || !currentUserId) return;
 
     const resolved = await resolveUser(rawTarget);
     const target = resolved || {
-      id: `usr-${rawTarget.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+      id: rawTarget,
       name: rawTarget.replace(/^@/, '').replace(/[._-]/g, ' '),
       avatar: '',
       phone: rawTarget
@@ -365,7 +365,57 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     const stream = await getStream(video);
     if (stream) setLocalStream(stream);
 
-    if (gcm && currentUserId) {
+    // 1. Create DB session room and participants
+    try {
+      await supabase.from('session_rooms').insert({
+        id: roomId,
+        host_id: currentUserId,
+        session_goal: sessionGoal || 'quick',
+        title: `${video ? 'Video' : 'Voice'} Call with ${target.name}`,
+      });
+
+      await supabase.from('session_room_participants').insert([
+        { room_id: roomId, user_id: currentUserId },
+        { room_id: roomId, user_id: target.id }
+      ]);
+    } catch (e) {
+      console.warn('[CallContext] session_rooms insert notice:', e);
+    }
+
+    // 2. Create ringing call row in calls table to trigger recipient incoming popup
+    try {
+      const { data: callerProfile } = await supabase
+        .from('profiles')
+        .select('full_name, username, avatar_url, phone_number')
+        .eq('id', currentUserId)
+        .maybeSingle();
+
+      const callerName = callerProfile?.full_name || callerProfile?.username || currentUserName || 'Caller';
+
+      const { data: callRow } = await supabase
+        .from('calls')
+        .insert({
+          caller_id: currentUserId,
+          receiver_id: target.id,
+          caller_name: callerName,
+          caller_avatar: callerProfile?.avatar_url || '',
+          caller_phone: callerProfile?.phone_number || '',
+          status: 'ringing',
+          call_type: video ? 'video' : 'voice',
+          started_at: new Date().toISOString(),
+        })
+        .select()
+        .maybeSingle();
+
+      if (callRow?.id) {
+        setActiveCallId(callRow.id);
+      }
+    } catch (e) {
+      console.warn('[CallContext] calls table insert notice:', e);
+    }
+
+    // 3. Join WebRTC call room
+    if (gcm) {
       try {
         await gcm.joinRoom(roomId, [target.id], stream || new MediaStream(), { video, audio: true }, true);
       } catch (gcmErr) {
@@ -373,9 +423,9 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    toast.success(`Connected ${video ? 'Video' : 'Voice'} call with ${target.name}`);
+    toast.success(`Calling ${target.name}...`);
     navigate('/desktop/calls');
- };
+  };
 
  const answerCall = async () => {
  if (!gcm || !incomingRoom || !currentUserId) return;
