@@ -559,11 +559,6 @@ const DesktopCalls: React.FC = () => {
  .then(({ data }) => { if (data?.status) setPresence(data.status as any); });
  }, [currentUserId]);
 
- }, {});
- setCallLogs(calls.map(c => ({ ...c, other_user: profileMap[c.conversation_id] })));
- });
- };
-
  const remoteCount = Object.keys(remoteStreams).length;
 
  const handleAdmit = (id: string) => {
