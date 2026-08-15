@@ -74,7 +74,21 @@ export function useConversation(messagingService: any, currentUserId: string | n
           return;
         }
         const msgs = await messagingService.getMessages(selectedId);
-        if (active) setMessages(msgs);
+        if (active) {
+          const room = rooms.find(r => r.id === selectedId);
+          if (msgs.length === 0 && room && room.lastMessage) {
+            setMessages([{
+              id: `seeded-${room.id}`,
+              roomId: room.id,
+              senderId: room.id,
+              senderName: room.name,
+              content: room.lastMessage,
+              createdAt: room.lastMessageAt || new Date().toISOString()
+            }]);
+          } else {
+            setMessages(msgs);
+          }
+        }
       } catch (e: any) {
         console.error(e);
       } finally {

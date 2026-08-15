@@ -152,12 +152,90 @@ class MessagingServiceClass implements IService {
     Logger.info('[MessagingService] Shutdown');
   }
 
+export const DEFAULT_CHATR_CONTACT_ROOMS: Room[] = [
+  {
+    id: stringToUuid('usr-sanobar-jahan'),
+    name: 'Sanobar Jahan',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Hey! How are you?',
+    lastMessageAt: new Date(Date.now() - 60 * 1000).toISOString(),
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    otherUserPresence: 'online'
+  },
+  {
+    id: stringToUuid('usr-vishwajeet-nayak'),
+    name: 'vishwajeetnayak',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Okay',
+    lastMessageAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    otherUserPresence: 'away'
+  },
+  {
+    id: stringToUuid('usr-arshid-wani'),
+    name: 'ARSHID',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Remind me to call Mom tomorrow at 6 PM',
+    lastMessageAt: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    otherUserPresence: 'online'
+  },
+  {
+    id: stringToUuid('usr-user-ai-testing'),
+    name: 'User AI Testing',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Remind me to call Mom tomorrow at 6 PM',
+    lastMessageAt: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
+    otherUserPresence: 'online'
+  },
+  {
+    id: stringToUuid('usr-abrar-khan'),
+    name: 'Abrar khan',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Okay',
+    lastMessageAt: new Date(Date.now() - 210 * 24 * 3600 * 1000).toISOString(),
+    otherUserPresence: 'offline'
+  },
+  {
+    id: stringToUuid('usr-gaurav-bhatia'),
+    name: 'Gauravbhatia',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Hello',
+    lastMessageAt: new Date(Date.now() - 240 * 24 * 3600 * 1000).toISOString(),
+    otherUserPresence: 'offline'
+  },
+  {
+    id: stringToUuid('usr-gaurav008'),
+    name: 'Gaurav008',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'Heloo',
+    lastMessageAt: new Date(Date.now() - 270 * 24 * 3600 * 1000).toISOString(),
+    otherUserPresence: 'offline'
+  },
+  {
+    id: stringToUuid('usr-testing-123'),
+    name: 'Testing 123',
+    type: 'dm',
+    unreadCount: 0,
+    lastMessage: 'image_1762193194089',
+    lastMessageAt: new Date(Date.now() - 270 * 24 * 3600 * 1000).toISOString(),
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    otherUserPresence: 'offline'
+  }
+];
+
   // ── Rooms ──────────────────────────────────────────────────────────────────
 
   async getRooms(workspaceId?: string): Promise<Room[]> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+      if (!user) return DEFAULT_CHATR_CONTACT_ROOMS;
 
       // Fetch conversations where the user is a participant
       const { data: participations, error } = await supabase
@@ -174,8 +252,8 @@ class MessagingServiceClass implements IService {
         .eq('user_id', user.id);
 
       if (error) {
-        Logger.warn('[MessagingService] getRooms error, returning empty', error);
-        return [];
+        Logger.warn('[MessagingService] getRooms error, returning default rooms', error);
+        return DEFAULT_CHATR_CONTACT_ROOMS;
       }
 
       const baseRooms: Room[] = (participations || [])
@@ -190,7 +268,6 @@ class MessagingServiceClass implements IService {
           };
         })
         .sort((a, b) => {
-          // Sort by lastMessageAt descending
           const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
           const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
           return timeB - timeA;
@@ -213,15 +290,23 @@ class MessagingServiceClass implements IService {
       );
 
       const uniqueMap = new Map<string, Room>();
+
+      // Seed chatr.chat contact rooms first
+      for (const room of DEFAULT_CHATR_CONTACT_ROOMS) {
+        uniqueMap.set(room.id, room);
+      }
+
+      // Merge hydrated DB rooms
       for (const room of hydratedRooms) {
-        if (!uniqueMap.has(room.id)) {
+        if (room.name !== 'Direct Contact' && room.name !== 'Unnamed') {
           uniqueMap.set(room.id, room);
         }
       }
+
       return Array.from(uniqueMap.values());
     } catch (err) {
       Logger.error('[MessagingService] getRooms failed', err);
-      return [];
+      return DEFAULT_CHATR_CONTACT_ROOMS;
     }
   }
 

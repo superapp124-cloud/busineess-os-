@@ -143,22 +143,22 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                 </div>
               ) : uniqueDms.map(dm => (
                 <button key={dm.id} onClick={() => setSelectedId(dm.id)} className={cn(
-                  'w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg transition-colors text-left group relative',
-                  selectedId === dm.id ? 'bg-violet-600/20' : 'hover:bg-white/[0.04]'
+                  'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all text-left group relative',
+                  selectedId === dm.id ? 'bg-violet-600/25 border border-violet-500/30' : 'hover:bg-white/[0.05]'
                 )}>
                   <div className="relative shrink-0">
                     {dm.avatarUrl ? (
                       <img 
                         src={dm.avatarUrl} 
                         alt={dm.name} 
-                        className="w-6 h-6 rounded-[6px] object-cover" 
+                        className="w-8 h-8 rounded-lg object-cover shadow-sm" 
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).onerror = null;
                           (e.currentTarget as HTMLImageElement).style.display = 'none';
                         }}
                       />
                     ) : (
-                      <div className={cn("w-6 h-6 rounded-[6px] bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-white")}>
+                      <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-sm")}>
                         {formatDisplayName(dm.name)?.slice(0, 2).toUpperCase() || '?'}
                       </div>
                     )}
@@ -168,7 +168,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className={cn("text-[13px] truncate", selectedId === dm.id ? "font-semibold text-violet-300" : (dm.unreadCount || 0) > 0 ? "font-semibold text-white" : "text-white/80")}>
+                      <span className={cn("text-[13px] truncate", selectedId === dm.id ? "font-bold text-violet-200" : (dm.unreadCount || 0) > 0 ? "font-bold text-white" : "text-white/90")}>
                         {formatDisplayName(dm.name)}
                       </span>
                       {(dm.unreadCount || 0) > 0 && (
@@ -177,6 +177,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                         </span>
                       )}
                     </div>
+                    {dm.lastMessage && (
+                      <p className="text-[11px] text-white/40 truncate font-normal mt-0.5 group-hover:text-white/60 transition-colors">
+                        {dm.lastMessage}
+                      </p>
+                    )}
                   </div>
                 </button>
               ))}
