@@ -248,7 +248,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     const cleanSearch = rawTrimmed.replace(/^@/, '').replace(/^usr-/, '').trim();
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanSearch);
 
-    // 1. If UUID, query profiles table directly by ID
+    // 1. If cleanSearch is already a UUID, query profiles directly
     if (isUuid) {
       const { data: uuidProf } = await supabase
         .from('profiles')
@@ -274,31 +274,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
 
-    // 3. If input is a conversation ID / room ID (UUID format), check conversation_participants
-    if (isUuid) {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        const currentUid = user?.id;
-
-        const { data: peerPart } = await supabase
-          .from('conversation_participants')
-          .select('user_id, profiles!inner(id, full_name, display_name, username, avatar_url, phone_number, email)')
-          .eq('conversation_id', cleanSearch)
-          .neq('user_id', currentUid || '')
-          .limit(1)
-          .maybeSingle();
-
-        if (peerPart && peerPart.profiles) {
-          const prof = peerPart.profiles as any;
-          const resolvedName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : cleanSearch);
-          return { id: prof.id, name: resolvedName, avatar: prof.avatar_url || '', phone: prof.phone_number || '' };
-        }
-      } catch {
-        // ignore
-      }
-    }
-
-    // 4. Case-insensitive partial search on username, full_name, display_name, email
+    // 3. Case-insensitive fuzzy search on cleanSearch
     const safeTerm = cleanSearch.replace(/[^a-zA-Z0-9_\-\.\@\s]/g, '');
     if (safeTerm.length >= 2) {
       const { data: fuzzyProf } = await supabase
@@ -311,6 +287,22 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       if (fuzzyProf) {
         const resolvedName = fuzzyProf.full_name || fuzzyProf.display_name || fuzzyProf.username || (fuzzyProf.email ? fuzzyProf.email.split('@')[0] : safeTerm);
         return { id: fuzzyProf.id, name: resolvedName, avatar: fuzzyProf.avatar_url || '', phone: fuzzyProf.phone_number || '' };
+      }
+    }
+
+    // 4. Tokenized search for multi-word inputs ("talentxcel services", "sanobar jahan", etc.)
+    const tokens = cleanSearch.split(/\s+/).map(t => t.replace(/[^a-zA-Z0-9_\-\.@]/g, '')).filter(t => t.length >= 2);
+    for (const token of tokens) {
+      const { data: tokenProf } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
+        .or(`username.ilike.%${token}%,full_name.ilike.%${token}%,display_name.ilike.%${token}%,email.ilike.%${token}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (tokenProf) {
+        const resolvedName = tokenProf.full_name || tokenProf.display_name || tokenProf.username || (tokenProf.email ? tokenProf.email.split('@')[0] : token);
+        return { id: tokenProf.id, name: resolvedName, avatar: tokenProf.avatar_url || '', phone: tokenProf.phone_number || '' };
       }
     }
 
@@ -424,6 +416,8 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     const stream = await getStream(video);
     if (stream) setLocalStream(stream);
 
+    const isTargetUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
+
     // 1. Create DB session room and participants
     try {
       await supabase.from('session_rooms').insert({
@@ -433,44 +427,47 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         title: `${video ? 'Video' : 'Voice'} Call with ${target.name}`,
       });
 
-      await supabase.from('session_room_participants').insert([
-        { room_id: roomId, user_id: currentUserId },
-        { room_id: roomId, user_id: target.id }
-      ]);
+      const participantRows = [{ room_id: roomId, user_id: currentUserId }];
+      if (isTargetUuid) {
+        participantRows.push({ room_id: roomId, user_id: target.id });
+      }
+      await supabase.from('session_room_participants').insert(participantRows);
     } catch (e) {
       console.warn('[CallContext] session_rooms insert notice:', e);
     }
 
     // 2. Create ringing call row in calls table to trigger recipient incoming popup
-    try {
-      const { data: callerProfile } = await supabase
-        .from('profiles')
-        .select('full_name, username, avatar_url, phone_number')
-        .eq('id', currentUserId)
-        .maybeSingle();
+    if (isTargetUuid) {
+      try {
+        const { data: callerProfile } = await supabase
+          .from('profiles')
+          .select('full_name, username, avatar_url, phone_number')
+          .eq('id', currentUserId)
+          .maybeSingle();
 
-      const callerName = callerProfile?.full_name || callerProfile?.username || currentUserName || 'Caller';
+        const callerName = callerProfile?.full_name || callerProfile?.username || currentUserName || 'Caller';
 
-      const { data: callRow } = await supabase
-        .from('calls')
-        .insert({
-          caller_id: currentUserId,
-          receiver_id: target.id,
-          caller_name: callerName,
-          caller_avatar: callerProfile?.avatar_url || '',
-          caller_phone: callerProfile?.phone_number || '',
-          status: 'ringing',
-          call_type: video ? 'video' : 'voice',
-          started_at: new Date().toISOString(),
-        })
-        .select()
-        .maybeSingle();
+        const { data: callRow } = await supabase
+          .from('calls')
+          .insert({
+            caller_id: currentUserId,
+            receiver_id: target.id,
+            caller_name: callerName,
+            caller_avatar: callerProfile?.avatar_url || '',
+            caller_phone: callerProfile?.phone_number || '',
+            status: 'ringing',
+            call_type: video ? 'video' : 'voice',
+            started_at: new Date().toISOString(),
+          })
+          .select()
+          .maybeSingle();
 
-      if (callRow?.id) {
-        setActiveCallId(callRow.id);
+        if (callRow?.id) {
+          setActiveCallId(callRow.id);
+        }
+      } catch (e) {
+        console.warn('[CallContext] calls table insert notice:', e);
       }
-    } catch (e) {
-      console.warn('[CallContext] calls table insert notice:', e);
     }
 
     // 3. Join WebRTC call room
