@@ -5,7 +5,7 @@ import {
  Briefcase, Presentation, GraduationCap,
  Stethoscope, Sparkles, ChevronRight, MonitorOff, Plus,
  Calendar, Clock, TrendingUp, VideoIcon, CalendarClock,
- BarChart3, UserPlus, Hash, ArrowRight
+ BarChart3, UserPlus, Hash, ArrowRight, Search, X
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
