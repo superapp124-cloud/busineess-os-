@@ -407,7 +407,7 @@ export const EarnCampaign = lazy(() => import('@/pages/EarnCampaign'));
 // Desktop Layout
 export const DesktopConnectPairing = lazy(() => import('@/pages/desktop/DesktopConnectPairing').then(m => ({ default: m.DesktopConnectPairing })));
 export const DesktopConnectScanner = lazy(() => import('@/pages/DesktopConnectScanner').then(m => ({ default: m.DesktopConnectScanner })));
-export const DesktopChat = lazy(() => import('@/pages/desktop/DesktopChat'));
+export const DesktopChat = lazy(() => import('@/pages/Chat'));
 export const DesktopContacts = lazy(() => import('@/pages/desktop/DesktopContacts'));
 export const InfiniteCanvas = lazy(() => import('@/components/desktop/InfiniteCanvas').then(module => ({ default: module.InfiniteCanvas })));
 export const DesktopCalls = lazy(() => import('@/pages/desktop/DesktopCalls'));
