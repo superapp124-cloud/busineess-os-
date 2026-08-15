@@ -375,15 +375,18 @@ class MessagingServiceClass implements IService {
       // Ensure valid UUID for Postgres conversation_id column
       const targetConvId = stringToUuid(roomId);
 
-      // Ensure conversation record exists in Supabase
+      // Ensure conversation record & participant exist in Supabase
       try {
         await supabase.from('conversations').upsert({
           id: targetConvId,
           created_by: user.id,
           updated_at: new Date().toISOString()
         });
+        await supabase.from('conversation_participants').upsert([
+          { conversation_id: targetConvId, user_id: user.id }
+        ], { onConflict: 'conversation_id,user_id' });
       } catch (convErr) {
-        console.warn('[MessagingService] Conversation upsert notice:', convErr);
+        console.warn('[MessagingService] Conversation/participant upsert notice:', convErr);
       }
 
       let messageType = 'text';
@@ -450,6 +453,14 @@ class MessagingServiceClass implements IService {
         isDeleted: false,
       };
 
+      // Broadcast real-time payload to online peers
+      try {
+        const bChannel = supabase.channel(`room:${targetConvId}`);
+        bChannel.send({ type: 'broadcast', event: 'new_message', payload: message }).catch(() => {});
+      } catch {
+        // ignore broadcast errors
+      }
+
       // Publish to EventBus
       EventBus.publish('MessageSent', { message, roomId: targetConvId }, { priority: 'high', persistent: true }).catch(() => {});
 
@@ -467,7 +478,6 @@ class MessagingServiceClass implements IService {
         sender_id: null,
         content,
         message_type: 'ai',
-        // Legacy columns (Deprecated but maintained for zero-downtime dual-write)
         reactions: {},
         media_attachments: [],
         is_edited: false,
@@ -529,7 +539,6 @@ class MessagingServiceClass implements IService {
 
   async addReaction(messageId: string, emoji: string, userId: string): Promise<void> {
     try {
-      // Read current reactions, toggle emoji for userId, write back
       const { data, error: readErr } = await supabase
         .from('messages')
         .select('reactions')
@@ -562,56 +571,57 @@ class MessagingServiceClass implements IService {
     roomId: string,
     onMessage: (msg: Message) => void
   ): () => void {
+    const targetConvId = stringToUuid(roomId);
+
+    const handleIncoming = async (m: any) => {
+      let senderName = m.sender_name || 'Unknown User';
+      let senderAvatar: string | undefined = m.sender_avatar_url;
+
+      if (m.sender_id) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username, full_name, avatar_url')
+          .eq('id', m.sender_id)
+          .maybeSingle();
+        if (profile) {
+          senderName = profile.full_name || profile.username || senderName;
+          senderAvatar = profile.avatar_url || senderAvatar;
+        }
+      }
+
+      onMessage({
+        id: m.id || `msg-${Date.now()}`,
+        roomId: m.conversation_id || targetConvId,
+        senderId: m.sender_id || 'ai',
+        senderName,
+        senderAvatar,
+        content: m.content || '',
+        createdAt: m.created_at || new Date().toISOString(),
+        reactions: m.reactions || {},
+        attachments: m.media_attachments || [],
+        isEdited: m.is_edited || false,
+        isDeleted: m.is_deleted || false,
+        replyToId: m.reply_to_id || m.reply_to_message_id,
+      });
+    };
+
     const channel = supabase
-      .channel(`room:${roomId}`)
+      .channel(`room:${targetConvId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${roomId}` },
+        { event: 'INSERT', schema: 'public', table: 'messages' },
         async (payload) => {
           const m = payload.new as any;
-          // Hydrate sender profile from DB since realtime doesn't include joins
-          let senderName = 'Unknown';
-          let senderAvatar: string | undefined;
-          if (m.sender_id) {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('username, full_name, avatar_url')
-              .eq('id', m.sender_id)
-              .single();
-            if (profile) {
-              senderName = profile.full_name || profile.username || 'Unknown';
-              senderAvatar = profile.avatar_url;
-            }
-          } else if (m.message_type === 'ai' || m.type === 'ai') {
-            senderName = 'CHATR Copilot';
+          if (m && (m.conversation_id === targetConvId || m.conversation_id === roomId)) {
+            await handleIncoming(m);
           }
-
-          // Generate fresh signed URLs for all attachments
-          if (m.media_attachments && Array.isArray(m.media_attachments)) {
-            await Promise.all(m.media_attachments.map(async (att: any) => {
-              if (att.id) {
-                const freshUrl = await this.getSignedUrlForAttachment(att.id, att.name, att.mimeType);
-                if (freshUrl) att.url = freshUrl;
-              }
-            }));
-          }
-
-          onMessage({
-            id: m.id,
-            roomId: m.conversation_id,
-            senderId: m.sender_id || 'ai',
-            senderName,
-            senderAvatar,
-            content: m.content,
-            createdAt: m.created_at,
-            reactions: m.reactions || {},
-            attachments: m.media_attachments || [],
-            isEdited: m.is_edited || false,
-            isDeleted: m.is_deleted || false,
-            replyToId: m.reply_to_id || m.reply_to_message_id,
-          });
         }
       )
+      .on('broadcast', { event: 'new_message' }, (payload) => {
+        if (payload?.payload) {
+          onMessage(payload.payload);
+        }
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };

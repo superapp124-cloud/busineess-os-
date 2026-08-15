@@ -64,22 +64,19 @@ export function GlobalNotificationListener() {
  const message = payload.new as any;
  if (!message) return;
 
- // Ignore our own messages
- if (message.sender_id === userId) return;
+      // Ignore our own messages
+      if (message.sender_id === userId) return;
 
- // Check if this message is for the current user
- const { data: participants, error: partError } = await supabase
- .from("conversation_participants")
- .select("user_id")
- .eq("conversation_id", message.conversation_id);
+      // Check if this message is for the current user (best effort with fallback)
+      const { data: participants } = await supabase
+        .from("conversation_participants")
+        .select("user_id")
+        .eq("conversation_id", message.conversation_id);
 
- if (partError) {
- console.warn("⚠️ Failed to fetch conversation participants:", partError);
- return;
- }
-
- const isForCurrentUser = participants?.some((p: any) => p.user_id === userId);
- if (!isForCurrentUser) return;
+      if (participants && participants.length > 0) {
+        const isForCurrentUser = participants.some((p: any) => p.user_id === userId);
+        if (!isForCurrentUser) return;
+      }
 
   // Get sender info
   const { data: sender } = await supabase
