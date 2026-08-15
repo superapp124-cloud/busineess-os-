@@ -248,16 +248,16 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     const cleanSearch = rawTrimmed.replace(/^@/, '').replace(/^usr-/, '').trim();
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanSearch);
 
-    // 1. If cleanSearch is already a UUID, query profiles directly
+    // 1. If cleanSearch is already a UUID, query profiles directly by ID
     if (isUuid) {
       const { data: uuidProf } = await supabase
         .from('profiles')
-        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
+        .select('id, full_name, username, avatar_url, phone_number, email')
         .eq('id', cleanSearch)
         .maybeSingle();
 
       if (uuidProf) {
-        const resolvedName = uuidProf.full_name || uuidProf.display_name || uuidProf.username || (uuidProf.email ? uuidProf.email.split('@')[0] : cleanSearch);
+        const resolvedName = uuidProf.full_name || uuidProf.username || (uuidProf.email ? uuidProf.email.split('@')[0] : cleanSearch);
         return { id: uuidProf.id, name: resolvedName, avatar: uuidProf.avatar_url || '', phone: uuidProf.phone_number || '' };
       }
     }
@@ -265,27 +265,27 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     // 2. Query profiles by exact username, email, or phone_number
     const { data: exactProf } = await supabase
       .from('profiles')
-      .select('id, full_name, display_name, username, avatar_url, phone_number, email')
+      .select('id, full_name, username, avatar_url, phone_number, email')
       .or(`username.eq.${cleanSearch},email.eq.${cleanSearch},phone_number.eq.${cleanSearch}`)
       .maybeSingle();
 
     if (exactProf) {
-      const resolvedName = exactProf.full_name || exactProf.display_name || exactProf.username || (exactProf.email ? exactProf.email.split('@')[0] : cleanSearch);
+      const resolvedName = exactProf.full_name || exactProf.username || (exactProf.email ? exactProf.email.split('@')[0] : cleanSearch);
       return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
 
-    // 3. Case-insensitive fuzzy search on cleanSearch
+    // 3. Case-insensitive fuzzy search on username, full_name, email
     const safeTerm = cleanSearch.replace(/[^a-zA-Z0-9_\-\.\@\s]/g, '');
     if (safeTerm.length >= 2) {
       const { data: fuzzyProf } = await supabase
         .from('profiles')
-        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
-        .or(`username.ilike.%${safeTerm}%,full_name.ilike.%${safeTerm}%,display_name.ilike.%${safeTerm}%,email.ilike.%${safeTerm}%`)
+        .select('id, full_name, username, avatar_url, phone_number, email')
+        .or(`username.ilike.%${safeTerm}%,full_name.ilike.%${safeTerm}%,email.ilike.%${safeTerm}%`)
         .limit(1)
         .maybeSingle();
 
       if (fuzzyProf) {
-        const resolvedName = fuzzyProf.full_name || fuzzyProf.display_name || fuzzyProf.username || (fuzzyProf.email ? fuzzyProf.email.split('@')[0] : safeTerm);
+        const resolvedName = fuzzyProf.full_name || fuzzyProf.username || (fuzzyProf.email ? fuzzyProf.email.split('@')[0] : safeTerm);
         return { id: fuzzyProf.id, name: resolvedName, avatar: fuzzyProf.avatar_url || '', phone: fuzzyProf.phone_number || '' };
       }
     }
@@ -295,13 +295,13 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     for (const token of tokens) {
       const { data: tokenProf } = await supabase
         .from('profiles')
-        .select('id, full_name, display_name, username, avatar_url, phone_number, email')
-        .or(`username.ilike.%${token}%,full_name.ilike.%${token}%,display_name.ilike.%${token}%,email.ilike.%${token}%`)
+        .select('id, full_name, username, avatar_url, phone_number, email')
+        .or(`username.ilike.%${token}%,full_name.ilike.%${token}%,email.ilike.%${token}%`)
         .limit(1)
         .maybeSingle();
 
       if (tokenProf) {
-        const resolvedName = tokenProf.full_name || tokenProf.display_name || tokenProf.username || (tokenProf.email ? tokenProf.email.split('@')[0] : token);
+        const resolvedName = tokenProf.full_name || tokenProf.username || (tokenProf.email ? tokenProf.email.split('@')[0] : token);
         return { id: tokenProf.id, name: resolvedName, avatar: tokenProf.avatar_url || '', phone: tokenProf.phone_number || '' };
       }
     }
@@ -321,12 +321,12 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         if (contact && contact.contact_user_id) {
           const { data: contactProf } = await supabase
             .from('profiles')
-            .select('id, full_name, display_name, username, avatar_url, phone_number')
+            .select('id, full_name, username, avatar_url, phone_number')
             .eq('id', contact.contact_user_id)
             .maybeSingle();
 
           if (contactProf) {
-            const resolvedName = contactProf.full_name || contactProf.display_name || contactProf.username || contact.name || rawTrimmed;
+            const resolvedName = contactProf.full_name || contactProf.username || contact.name || rawTrimmed;
             return { id: contactProf.id, name: resolvedName, avatar: contactProf.avatar_url || '', phone: contactProf.phone_number || '' };
           }
         }
