@@ -248,7 +248,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     const cleanSearch = rawTrimmed.replace(/^@/, '').replace(/^usr-/, '').trim();
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanSearch);
 
-    // 1. If cleanSearch is already a UUID, query profiles directly by ID
+    // 1. Direct UUID match
     if (isUuid) {
       const { data: uuidProf } = await supabase
         .from('profiles')
@@ -260,13 +260,16 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         const resolvedName = uuidProf.full_name || uuidProf.username || (uuidProf.email ? uuidProf.email.split('@')[0] : cleanSearch);
         return { id: uuidProf.id, name: resolvedName, avatar: uuidProf.avatar_url || '', phone: uuidProf.phone_number || '' };
       }
+      return { id: cleanSearch, name: rawTrimmed, avatar: '' };
     }
 
-    // 2. Query profiles by exact username, email, or phone_number
+    // 2. Exact match on username, email, phone_number, or synthetic chatr email (e.g. 919717161809@chatr.local)
+    const digits = cleanSearch.replace(/\D/g, '');
     const { data: exactProf } = await supabase
       .from('profiles')
       .select('id, full_name, username, avatar_url, phone_number, email')
-      .or(`username.eq.${cleanSearch},email.eq.${cleanSearch},phone_number.eq.${cleanSearch}`)
+      .or(`username.eq.${cleanSearch},email.eq.${cleanSearch},phone_number.eq.${cleanSearch}${digits ? `,email.ilike.%${digits}%,phone_number.ilike.%${digits}%` : ''}`)
+      .limit(1)
       .maybeSingle();
 
     if (exactProf) {
@@ -274,7 +277,42 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
 
-    // 3. Case-insensitive fuzzy search on username, full_name, email
+    // 3. Check recent calls table (matches caller/receiver name to get authentic peer Auth UUID)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: recentCalls } = await supabase
+          .from('calls')
+          .select('caller_id, receiver_id, caller_name, receiver_name')
+          .or(`caller_id.eq.${user.id},receiver_id.eq.${user.id}`)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (recentCalls && recentCalls.length > 0) {
+          for (const callRow of recentCalls) {
+            const peerId = callRow.caller_id === user.id ? callRow.receiver_id : callRow.caller_id;
+            const peerName = callRow.caller_id === user.id ? callRow.receiver_name : callRow.caller_name;
+            if (peerId && peerName && peerName.toLowerCase().includes(cleanSearch.toLowerCase())) {
+              const { data: peerProf } = await supabase
+                .from('profiles')
+                .select('id, full_name, username, avatar_url, phone_number')
+                .eq('id', peerId)
+                .maybeSingle();
+
+              if (peerProf) {
+                const resolvedName = peerProf.full_name || peerProf.username || peerName;
+                return { id: peerProf.id, name: resolvedName, avatar: peerProf.avatar_url || '', phone: peerProf.phone_number || '' };
+              }
+              return { id: peerId, name: peerName, avatar: '' };
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // 4. Case-insensitive fuzzy search on username, full_name, email
     const safeTerm = cleanSearch.replace(/[^a-zA-Z0-9_\-\.\@\s]/g, '');
     if (safeTerm.length >= 2) {
       const { data: fuzzyProf } = await supabase
@@ -290,7 +328,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    // 4. Tokenized search for multi-word inputs ("talentxcel services", "sanobar jahan", etc.)
+    // 5. Tokenized search for multi-word inputs ("talentxcel services", "sanobar jahan", etc.)
     const tokens = cleanSearch.split(/\s+/).map(t => t.replace(/[^a-zA-Z0-9_\-\.@]/g, '')).filter(t => t.length >= 2);
     for (const token of tokens) {
       const { data: tokenProf } = await supabase
@@ -306,7 +344,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    // 5. Query contacts table by name / phone
+    // 6. Query contacts table by name / phone
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user && safeTerm) {
@@ -333,11 +371,6 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch {
       // ignore
-    }
-
-    // 6. If cleanSearch is already a valid UUID, return it directly
-    if (isUuid) {
-      return { id: cleanSearch, name: rawTrimmed, avatar: '' };
     }
 
     return null;
