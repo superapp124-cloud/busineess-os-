@@ -74,7 +74,23 @@ export function useConversation(messagingService: any, currentUserId: string | n
           return;
         }
         const msgs = await messagingService.getMessages(selectedId);
-        if (active) setMessages(msgs);
+        if (active) {
+          setMessages(msgs);
+
+          const peerMsg = msgs.find(m => m.senderId !== currentUserId && m.senderName && m.senderName !== 'Unknown User' && m.senderName !== 'Unknown');
+          if (peerMsg) {
+            setRooms(prevRooms => prevRooms.map(r => {
+              if (r.id === selectedId) {
+                return {
+                  ...r,
+                  name: (r.name === 'Direct Contact' || r.name === 'Unnamed' || !r.name) ? peerMsg.senderName : r.name,
+                  avatarUrl: r.avatarUrl || peerMsg.senderAvatar
+                };
+              }
+              return r;
+            }));
+          }
+        }
       } catch (e: any) {
         console.error(e);
       } finally {
@@ -91,6 +107,21 @@ export function useConversation(messagingService: any, currentUserId: string | n
           if (prev.some(m => m.id === newMsg.id)) return prev;
           return [...prev, newMsg];
         });
+
+        if (newMsg.senderId !== currentUserId && newMsg.senderName && newMsg.senderName !== 'Unknown User' && newMsg.senderName !== 'Unknown') {
+          setRooms(prevRooms => prevRooms.map(r => {
+            if (r.id === selectedId) {
+              return {
+                ...r,
+                name: (r.name === 'Direct Contact' || r.name === 'Unnamed' || !r.name) ? newMsg.senderName : r.name,
+                avatarUrl: r.avatarUrl || newMsg.senderAvatar,
+                lastMessage: newMsg.content,
+                lastMessageAt: newMsg.createdAt
+              };
+            }
+            return r;
+          }));
+        }
       });
     }
 

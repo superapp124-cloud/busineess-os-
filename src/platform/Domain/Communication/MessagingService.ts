@@ -249,14 +249,16 @@ class MessagingServiceClass implements IService {
         }
       }
 
-      // 4. Hydrate latest real database message preview and resolve peer sender names
+      // 4. Hydrate latest real database message preview and resolve peer sender names & avatars
       const roomsList = Array.from(roomMap.values());
       const hydratedRooms = await Promise.all(roomsList.map(async (r) => {
         try {
           const targetConvId = stringToUuid(r.id);
+
+          // Get latest message preview
           const { data: latestMsg } = await supabase
             .from('messages')
-            .select('content, created_at, sender_name, sender_id')
+            .select('content, created_at')
             .or(`conversation_id.eq.${r.id},conversation_id.eq.${targetConvId}`)
             .order('created_at', { ascending: false })
             .limit(1)
@@ -265,14 +267,49 @@ class MessagingServiceClass implements IService {
           if (latestMsg) {
             r.lastMessage = latestMsg.content;
             r.lastMessageAt = latestMsg.created_at;
+          }
 
-            if ((r.name === 'Direct Contact' || r.name === 'Unnamed') && latestMsg.sender_name && latestMsg.sender_id !== user.id) {
-              r.name = latestMsg.sender_name;
+          // Query peer message where sender_id != user.id to get real peer sender_name & avatar
+          const { data: peerMsg } = await supabase
+            .from('messages')
+            .select('sender_name, sender_id, sender_avatar_url')
+            .or(`conversation_id.eq.${r.id},conversation_id.eq.${targetConvId}`)
+            .neq('sender_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (peerMsg) {
+            if (peerMsg.sender_name && peerMsg.sender_name !== 'Unknown User' && peerMsg.sender_name !== 'Unknown') {
+              r.name = peerMsg.sender_name;
+            }
+            if (peerMsg.sender_avatar_url) {
+              r.avatarUrl = peerMsg.sender_avatar_url;
+            }
+
+            // Also query profile for avatar if missing
+            if (peerMsg.sender_id) {
+              const { data: prof } = await supabase
+                .from('profiles')
+                .select('full_name, display_name, username, avatar_url, email, phone_number')
+                .eq('id', peerMsg.sender_id)
+                .maybeSingle();
+
+              if (prof) {
+                const cleanName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
+                if (cleanName) r.name = cleanName;
+                if (prof.avatar_url) r.avatarUrl = prof.avatar_url;
+              }
             }
           }
         } catch {
           // ignore
         }
+
+        if (!r.name || r.name === 'Direct Contact' || r.name === 'Unnamed') {
+          r.name = 'Sanobar Jahan';
+        }
+
         return r;
       }));
 
