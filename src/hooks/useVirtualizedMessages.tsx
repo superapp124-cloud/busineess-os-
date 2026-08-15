@@ -38,17 +38,21 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
  
  setIsLoading(true);
  try {
- // Use only essential columns for faster query
  const { data, error } = await supabase
  .from('messages')
- .select('id, conversation_id, sender_id, content, type, media_attachments, created_at, reactions, reply_to_id, is_edited, is_deleted')
+ .select('id, conversation_id, sender_id, content, message_type, type, media_attachments, created_at, reactions, reply_to_id, is_edited, is_deleted')
  .eq('conversation_id', conversationId)
  .order('created_at', { ascending: false })
  .limit(MESSAGES_PER_PAGE);
 
  if (error) throw error;
  
- const reversedMessages = (data || []).reverse();
+ const normalizedData = (data || []).map((m: any) => ({
+   ...m,
+   message_type: m.message_type || m.type || 'text'
+ }));
+
+ const reversedMessages = normalizedData.reverse();
  setMessages(mergeMessagesForParity([], reversedMessages, {
  direction: 'replace',
  maxMessages: MAX_MESSAGES_IN_MEMORY,
@@ -73,7 +77,7 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
  const cursor = oldestMessageTimestamp.current;
  const { data, error } = await supabase
  .from('messages')
- .select('id, conversation_id, sender_id, content, message_type:type, media_attachments, created_at, reactions')
+ .select('id, conversation_id, sender_id, content, message_type, type, media_attachments, created_at, reactions')
  .eq('conversation_id', conversationId)
  .lt('created_at', cursor)
  .order('created_at', { ascending: false })
@@ -82,7 +86,11 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
  if (error) throw error;
  
  if (data && data.length > 0) {
- const reversedMessages = data.reverse();
+ const normalizedData = data.map((m: any) => ({
+   ...m,
+   message_type: m.message_type || m.type || 'text'
+ }));
+ const reversedMessages = normalizedData.reverse();
  setMessages(prev => {
  const combined = mergeMessagesForParity(prev, reversedMessages, {
  direction: 'prepend',
@@ -120,26 +128,27 @@ export const useVirtualizedMessages = (conversationId: string | null, userId: st
  message_type: type,
  created_at: new Date().toISOString(),
  status: 'sending',
- media_attachments: mediaAttachments || []
+ media_attachments: mediaAttachments
  };
  
- // Add optimistically (instant UI update like WhatsApp)
- setMessages(prev => mergeMessagesForParity(prev, [optimisticMessage], {
- direction: 'append',
+ setMessages(prev => mergeRealtimeMessage(prev, optimisticMessage, {
  maxMessages: MAX_MESSAGES_IN_MEMORY,
  }));
  setSending(true);
  
  try {
+ const payload: Record<string, any> = {
+  conversation_id: conversationId,
+  sender_id: userId,
+  content: content.trim(),
+  message_type: type,
+  type: type,
+  media_attachments: mediaAttachments || []
+ };
+
  const { data, error } = await supabase
  .from('messages')
- .insert({
- conversation_id: conversationId,
- sender_id: userId,
- content: content.trim(),
- message_type: type,
- media_attachments: mediaAttachments || []
- })
+ .insert(payload)
  .select()
  .single();
 
