@@ -3,6 +3,7 @@ import { Search, UserPlus, Plus, ChevronDown, BrainCircuit, Hash, Lock, Users } 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { PresenceIndicator } from './PresenceIndicator';
+import { getAvatarUrl } from '@/utils/avatarResolver';
 import type { Room } from '../types';
 
 interface ConversationSidebarProps {
@@ -147,21 +148,14 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
                   selectedId === dm.id ? 'bg-violet-600/25 border border-violet-500/30' : 'hover:bg-white/[0.05]'
                 )}>
                   <div className="relative shrink-0">
-                    {dm.avatarUrl ? (
-                      <img 
-                        src={dm.avatarUrl} 
-                        alt={dm.name} 
-                        className="w-8 h-8 rounded-lg object-cover shadow-sm" 
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).onerror = null;
-                          (e.currentTarget as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-sm")}>
-                        {formatDisplayName(dm.name)?.slice(0, 2).toUpperCase() || '?'}
-                      </div>
-                    )}
+                    <img 
+                      src={getAvatarUrl(dm.name, dm.avatarUrl)} 
+                      alt={dm.name} 
+                      className="w-8 h-8 rounded-lg object-cover shadow-sm border border-white/10 shrink-0" 
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(dm.name || 'User')}&background=6366f1&color=fff&bold=true`;
+                      }}
+                    />
                     <div className="absolute -bottom-0.5 -right-0.5 border-2 border-[#0b0b14] rounded-full">
                       <PresenceIndicator status={(dm.otherUserPresence || 'offline') as any} />
                     </div>

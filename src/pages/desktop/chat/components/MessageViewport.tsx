@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { format, isToday, isYesterday } from 'date-fns';
+import { getAvatarUrl } from '@/utils/avatarResolver';
 import type { Message } from '../types';
 
 interface MessageViewportProps {
@@ -53,7 +54,7 @@ export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  // Map AI system messages to proper UI
  const isAI = Boolean(msg.isAi || msg.senderId === 'chatr-ai' || msg.senderName === 'CHATR AI' || msg.senderId === '11111111-1111-1111-1111-111111111111' || msg.actorId === '11111111-1111-1111-1111-111111111111');
  const rawName = (msg.senderName && msg.senderName !== 'Unknown User' && msg.senderName !== 'Unknown') ? msg.senderName : (selectedRoomName && selectedRoomName !== 'Direct Contact' && selectedRoomName !== 'Unnamed' ? selectedRoomName : 'Sanobar Jahan');
- const avatar = isAI ? 'AI' : (rawName ? rawName.substring(0, 2).toUpperCase() : 'SJ');
+ const avatarUrl = isAI ? '/chatr-ai-logo.jpg' : getAvatarUrl(rawName, msg.senderAvatar);
  const senderName = isAI ? 'CHATR AI' : rawName;
 
  return (
@@ -61,10 +62,15 @@ export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  
  {/* Avatar (only for others) */}
  {!isOwn && (
- <div className={cn("w-8 h-8 rounded-[8px] flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-1 overflow-hidden",
- isAI ? 'bg-transparent border border-violet-500/30 shadow-md shadow-violet-500/20' : 'bg-gradient-to-br from-indigo-500 to-purple-500'
- )}>
- {isAI ? <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover rounded-[8px]" /> : (msg.senderAvatar ? <img src={msg.senderAvatar} className="w-full h-full rounded-[8px] object-cover" /> : avatar)}
+ <div className="w-8 h-8 rounded-[8px] shrink-0 mt-1 overflow-hidden shadow-md border border-white/10 relative">
+ <img 
+   src={avatarUrl} 
+   alt={senderName} 
+   className="w-full h-full object-cover" 
+   onError={(e) => {
+     (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(senderName)}&background=6366f1&color=fff&bold=true`;
+   }}
+ />
  </div>
  )}
 
