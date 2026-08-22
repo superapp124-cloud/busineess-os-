@@ -424,52 +424,52 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const startCall = async (dialInput: string, video: boolean = true) => {
-    const rawTarget = dialInput.trim();
-    if (!rawTarget || !currentUserId) return;
+    if (!gcm || !dialInput.trim() || !currentUserId) return;
 
-    const resolved = await resolveUser(rawTarget);
-    const target = resolved || {
-      id: rawTarget,
-      name: rawTarget.replace(/^@/, '').replace(/[._-]/g, ' '),
-      avatar: '',
-      phone: rawTarget
-    };
+    const resolved = await resolveUser(dialInput.trim());
+    if (!resolved) {
+      toast.error('User not found. Check the name or number and try again.');
+      return;
+    }
+    const target = resolved;
 
     setIsVideoCall(video);
     setRemoteUserName(target.name);
     setRemoteUserAvatar(target.avatar || '');
     setRemoteUserFlag(getFlagFromPhone(target.phone || '') || '');
 
-    const roomId = `room-${Date.now()}`;
-    setActiveRoomId(roomId);
+    // 1. Create real session_rooms row in Supabase — returns a real UUID
+    const { data: room, error: roomErr } = await supabase.from('session_rooms').insert({
+      host_id: currentUserId,
+      session_goal: sessionGoal || 'quick',
+      title: `${video ? 'Video' : 'Voice'} Call with ${target.name}`,
+    }).select().single();
+
+    if (roomErr || !room) {
+      console.warn('[CallContext] session_rooms insert failed:', roomErr);
+      toast.error('Could not start call session. Please try again.');
+      return;
+    }
+
+    setActiveRoomId(room.id);
     setActiveCallTargetId(target.id);
     setCallState('connected');
     startTimer();
 
+    // 2. Add both caller and receiver to the session room
+    const participantRows: any[] = [{ room_id: room.id, user_id: currentUserId }];
+    const isTargetUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
+    if (isTargetUuid) {
+      participantRows.push({ room_id: room.id, user_id: target.id });
+    }
+    await supabase.from('session_room_participants').insert(participantRows);
+
+    // 3. Get media stream
     const stream = await getStream(video);
     if (stream) setLocalStream(stream);
 
-    const isTargetUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
-
-    // 1. Create DB session room and participants
-    try {
-      await supabase.from('session_rooms').insert({
-        id: roomId,
-        host_id: currentUserId,
-        session_goal: sessionGoal || 'quick',
-        title: `${video ? 'Video' : 'Voice'} Call with ${target.name}`,
-      });
-
-      const participantRows = [{ room_id: roomId, user_id: currentUserId }];
-      if (isTargetUuid) {
-        participantRows.push({ room_id: roomId, user_id: target.id });
-      }
-      await supabase.from('session_room_participants').insert(participantRows);
-    } catch (e) {
-      console.warn('[CallContext] session_rooms insert notice:', e);
-    }
-
-    // 2. Create ringing call row in calls table to trigger recipient incoming popup
+    // 4. Insert ringing calls row to trigger receiver's incoming popup + FCM
+    let callRow: { id: string } | null = null;
     if (isTargetUuid) {
       try {
         const { data: callerProfile } = await supabase
@@ -480,28 +480,34 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
 
         const callerName = callerProfile?.full_name || callerProfile?.username || currentUserName || 'Caller';
 
-        const { data: callRow } = await supabase
-          .from('calls')
-          .insert({
-            caller_id: currentUserId,
-            receiver_id: target.id,
-            caller_name: callerName,
-            caller_avatar: callerProfile?.avatar_url || '',
-            caller_phone: callerProfile?.phone_number || '',
-            receiver_name: target.name,
-            receiver_avatar: target.avatar || '',
-            status: 'ringing',
-            call_type: video ? 'video' : 'voice',
-            started_at: new Date().toISOString(),
-          })
-          .select()
-          .maybeSingle();
+        // Get or create direct conversation
+        let convId: string | null = null;
+        try {
+          const { data: cid } = await supabase.rpc('create_direct_conversation', { other_user_id: target.id });
+          convId = cid;
+        } catch { /* ignore, conversation optional */ }
 
+        const { data: insertedCall } = await supabase.from('calls').insert({
+          id: room.id,         // ← Use the real session room UUID as call ID
+          conversation_id: convId,
+          caller_id: currentUserId,
+          caller_name: callerName,
+          caller_avatar: callerProfile?.avatar_url || '',
+          caller_phone: callerProfile?.phone_number || '',
+          receiver_id: target.id,
+          receiver_name: target.name,
+          receiver_avatar: target.avatar || '',
+          receiver_phone: target.phone || '',
+          call_type: video ? 'video' : 'voice',
+          status: 'ringing',
+          started_at: new Date().toISOString(),
+        }).select('id').single();
+
+        callRow = insertedCall;
         if (callRow?.id) {
           setActiveCallId(callRow.id);
 
-          // 🔔 Send FCM push notification to wake receiver's device (chatr.chat / Android / iOS)
-          // This fires even if Supabase Realtime INSERT event is delayed or missed on recipient device.
+          // 🔔 FCM push to wake receiver's chatr.chat / Android / iOS device
           try {
             await supabase.functions.invoke('fcm-notify', {
               body: {
@@ -521,22 +527,28 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       } catch (e) {
-        console.warn('[CallContext] calls table insert notice:', e);
+        console.warn('[CallContext] calls insert notice:', e);
       }
     }
 
-    // 3. Join WebRTC call room
-    if (gcm) {
-      try {
-        await gcm.joinRoom(roomId, [target.id], stream || new MediaStream(), { video, audio: true }, true);
-      } catch (gcmErr) {
-        console.warn('[CallContext] GCM joinRoom notice:', gcmErr);
-      }
+    // 5. Join WebRTC room as initiator
+    try {
+      await gcm.joinRoom(
+        room.id,
+        [target.id],
+        stream || new MediaStream(),
+        { video, audio: true },
+        true,
+        callRow ? { [target.id]: callRow.id } : undefined
+      );
+    } catch (gcmErr) {
+      console.warn('[CallContext] GCM joinRoom notice:', gcmErr);
     }
 
     toast.success(`Calling ${target.name}...`);
     navigate('/desktop/calls');
   };
+
 
  const answerCall = async () => {
  if (!gcm || !incomingRoom || !currentUserId) return;
