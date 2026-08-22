@@ -124,7 +124,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       .on('broadcast', { event: 'host_control' }, (payload) => {
         const { key, value } = payload.payload || {};
         if (key === 'mute_all') {
-          supabase.from('session_rooms').select('host_id').eq('id', activeRoomId).single().then(({ data }) => {
+          supabase.from('session_rooms').select('host_id').eq('id', activeRoomId).maybeSingle().then(({ data }) => {
             if (data && data.host_id !== currentUserId) {
               localStreamRef.current?.getAudioTracks().forEach(t => { t.enabled = false; });
               setIsMuted(true);
@@ -219,10 +219,10 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  .from('session_rooms')
  .select('host_id, session_goal')
  .eq('id', roomId)
- .single();
+ .maybeSingle();
 
  if (room && room.host_id !== user.id) {
- const { data: hostProf } = await supabase.from('profiles').select('full_name,username,avatar_url,phone_number').eq('id', room.host_id).single();
+ const { data: hostProf } = await supabase.from('profiles').select('full_name,username,avatar_url,phone_number').eq('id', room.host_id).maybeSingle();
 
  const { data: callRow } = await supabase
  .from('calls')
@@ -260,7 +260,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  if (!callRow || !callRow.id) return;
 
  if (payload.eventType === 'INSERT' && callRow.status === 'ringing') {
- const { data: callerProf } = await supabase.from('profiles').select('full_name,username,avatar_url,phone_number').eq('id', callRow.caller_id).single();
+ const { data: callerProf } = await supabase.from('profiles').select('full_name,username,avatar_url,phone_number').eq('id', callRow.caller_id).maybeSingle();
  setIsVideoCall(callRow.call_type === 'video');
  setIncomingRoom({
  roomId: callRow.id,
@@ -617,18 +617,22 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  if (!gcm || !incomingRoom || !currentUserId) return;
  const { roomId, callerName, callerAvatar, callerFlag, goal, callId: incomingCallId, callerId } = incomingRoom;
 
- // Security Check: Is the room locked?
- const { data: roomData } = await supabase.from('session_rooms').select('is_locked, waiting_room_enabled').eq('id', roomId).single();
- if (roomData?.is_locked) {
- toast.error('The host has locked this meeting. You cannot join.');
- setIncomingRoom(null);
- return;
- }
- if (roomData?.waiting_room_enabled) {
- toast.info('The host has enabled the waiting room. (Approval flow coming soon, joining blocked for now)');
- setIncomingRoom(null);
- return;
- }
+    // Security Check: Is the room locked? (optional, non-blocking)
+    try {
+      const { data: roomData } = await supabase.from('session_rooms').select('is_locked, waiting_room_enabled').eq('id', roomId).maybeSingle();
+      if (roomData?.is_locked) {
+        toast.error('The host has locked this meeting. You cannot join.');
+        setIncomingRoom(null);
+        return;
+      }
+      if (roomData?.waiting_room_enabled) {
+        toast.info('The host has enabled the waiting room. (Approval flow coming soon, joining blocked for now)');
+        setIncomingRoom(null);
+        return;
+      }
+    } catch {
+      // Non-critical fallback
+    }
 
  setIncomingRoom(null);
  setSessionGoal(goal);
