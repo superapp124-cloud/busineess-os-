@@ -104,16 +104,22 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
         .from('webrtc_signals')
         .select('*')
         .eq('to_user', this.userId)
-        .order('created_at', { ascending: true })
-        .limit(30);
+        .order('created_at', { ascending: false })
+        .limit(50);
 
       if (this.config.subscribeByCallId) {
         query = query.eq('call_id', this.config.subscribeByCallId);
       }
 
-      const { data: signals } = await query;
+      const { data: signals, error } = await query;
+      if (error) {
+        console.warn('[SharedSignalingAdapter] Signal poll error:', error.message);
+        return;
+      }
       if (signals && signals.length > 0) {
-        for (const signal of signals) {
+        // Dispatch in chronological order (oldest first)
+        const reversed = [...signals].reverse();
+        for (const signal of reversed) {
           if (!this.processedSignalIds.has(signal.id)) {
             this.processedSignalIds.add(signal.id);
             this.dispatchSignal(signal);
@@ -121,7 +127,7 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
         }
       }
     } catch (err) {
-      console.warn('[SharedSignalingAdapter] Signal poll error:', err);
+      console.warn('[SharedSignalingAdapter] Signal poll exception:', err);
     }
   }
 
@@ -129,7 +135,7 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
     if (this.signalPollingInterval) clearInterval(this.signalPollingInterval);
     this.signalPollingInterval = setInterval(() => {
       this.pollSignals();
-    }, 4000); // Reduced from 1000ms to prevent Supabase overload
+    }, 1000); // 1-second fallback poll interval for fast negotiation
   }
 
   private handleCallChange(row: any) {
@@ -168,6 +174,8 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
       signalData = message.rawPayload?.signal_data || { timestamp: Date.now() }; 
     }
 
+    console.log(`[SharedSignalingAdapter] 📤 Sending ${signalType} to ${targetUserId} (call: ${callId})`);
+
     try {
       const { error } = await this.supabase.from('webrtc_signals').insert([{
         call_id: callId,
@@ -178,10 +186,12 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
       }]);
 
       if (error) {
-        console.error('[SharedSignalingAdapter] Failed to send signal:', error);
+        console.error(`[SharedSignalingAdapter] ❌ Failed to send ${signalType}:`, error.message);
+      } else {
+        console.log(`[SharedSignalingAdapter] ✅ Sent ${signalType} to ${targetUserId}`);
       }
     } catch (err) {
-      console.error('[SharedSignalingAdapter] Exception while sending signal:', err);
+      console.error(`[SharedSignalingAdapter] ❌ Exception sending ${signalType}:`, err);
     }
   }
 

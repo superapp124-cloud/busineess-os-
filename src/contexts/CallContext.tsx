@@ -501,7 +501,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       const { data: room, error: roomErr } = await supabase.from('session_rooms').insert({
         host_id: userId,
         session_goal: sessionGoal || 'quick',
-      }).select('id').single();
+      }).select('id').maybeSingle();
 
       if (room?.id) {
         roomId = room.id;
@@ -562,7 +562,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
           call_type: video ? 'video' : 'voice',
           status: 'ringing',
           started_at: new Date().toISOString(),
-        }).select('id').single();
+        }).select('id').maybeSingle();
 
         callRow = insertedCall;
         if (callRow?.id) {
