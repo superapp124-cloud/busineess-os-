@@ -718,10 +718,10 @@ const DesktopCalls: React.FC = () => {
  return (
  <button
  key={log.id}
- onClick={() => {
-    const targetId = log.other_user?.id || log.other_user?.username || log.receiver_phone || log.caller_phone || '';
+  onClick={() => {
+    const cleanDialTarget = log.other_user?.username || log.other_user?.full_name || log.receiver_phone || log.caller_phone || '';
     setSessionGoal(log.call_type || 'quick');
-    setDialInput(targetId);
+    setDialInput(cleanDialTarget);
   }}
  className={cn('w-full flex items-center gap-2 p-1.5 rounded-md transition-colors text-left', isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-zinc-100')}
  >

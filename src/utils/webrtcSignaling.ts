@@ -16,9 +16,6 @@ const BLACKLISTED_ICE_HOSTS = [
   // Known problematic or slow public STUN servers
   'stun.mozilla.org',
   'stun.services.mozilla.com',
-  // Metered.ca endpoints have been unstable and causing ICE failures
-  'relay.metered.ca',
-  'a.relay.metered.ca',
   // Xirsys STUN
   'fr-turn1.xirsys.com',
   'xirsys.com',
@@ -37,6 +34,28 @@ const CLOUDFLARE_TURN_SERVER = {
   credential: '5969d5f8b822bcd5a43c3c5257fd9cbca7a787db37e20aa1602746f6b77a393a'
 };
 
+const METERED_FREE_SERVER = {
+  urls: [
+    'turns:a.relay.metered.ca:443?transport=tcp',
+    'turn:a.relay.metered.ca:443?transport=tcp',
+    'turn:a.relay.metered.ca:80',
+    'turn:a.relay.metered.ca:80?transport=tcp',
+  ],
+  username: 'e8dd65c92ae9a3b9bfcbeb6e',
+  credential: 'uWdWNmkhvyqTW1QP',
+};
+
+const OPENRELAY_FREE_SERVER = {
+  urls: [
+    'turn:openrelay.metered.ca:80',
+    'turn:openrelay.metered.ca:443',
+    'turn:openrelay.metered.ca:443?transport=tcp',
+    'turns:openrelay.metered.ca:443?transport=tcp',
+  ],
+  username: 'openrelayproject',
+  credential: 'openrelayproject',
+};
+
 const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
@@ -44,6 +63,8 @@ const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
   CLOUDFLARE_TURN_SERVER,
+  METERED_FREE_SERVER,
+  OPENRELAY_FREE_SERVER,
 ];
 
 function normalizeIceServers(input: any): any[] {

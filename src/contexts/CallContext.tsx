@@ -328,12 +328,12 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       return { id: cleanSearch, name: `User (${cleanSearch.slice(0, 8)})`, avatar: '' };
     }
 
-    // 2. Exact match on username, email, phone_number, or synthetic chatr email (e.g. 919717161809@chatr.local)
+    // 2. Exact/case-insensitive match on username, full_name, email, phone_number, or synthetic chatr email
     const digits = cleanSearch.replace(/\D/g, '');
     const { data: exactProf } = await supabase
       .from('profiles')
       .select('id, full_name, username, avatar_url, phone_number, email')
-      .or(`username.eq.${cleanSearch},email.eq.${cleanSearch},phone_number.eq.${cleanSearch}${digits ? `,email.ilike.%${digits}%,phone_number.ilike.%${digits}%` : ''}`)
+      .or(`username.ilike.${cleanSearch},full_name.ilike.${cleanSearch},email.ilike.${cleanSearch},phone_number.eq.${cleanSearch}${digits ? `,email.ilike.%${digits}%,phone_number.ilike.%${digits}%` : ''}`)
       .limit(1)
       .maybeSingle();
 
