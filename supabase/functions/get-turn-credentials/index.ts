@@ -12,8 +12,6 @@ import {
 export const BLACKLISTED_ICE_HOSTNAMES = [
   "stun.mozilla.org",
   "stun.services.mozilla.com",
-  "relay.metered.ca",
-  "a.relay.metered.ca",
   "fr-turn1.xirsys.com",
   "xirsys.com"
 ];
