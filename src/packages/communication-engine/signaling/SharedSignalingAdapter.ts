@@ -129,7 +129,7 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
     if (this.signalPollingInterval) clearInterval(this.signalPollingInterval);
     this.signalPollingInterval = setInterval(() => {
       this.pollSignals();
-    }, 1000);
+    }, 4000); // Reduced from 1000ms to prevent Supabase overload
   }
 
   private handleCallChange(row: any) {

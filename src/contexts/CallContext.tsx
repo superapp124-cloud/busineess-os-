@@ -180,7 +180,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         const { data: contact } = await supabase
           .from('contacts')
           .select('name, full_name, phone')
-          .or(`contact_user_id.eq.${p.userId},contact_id.eq.${p.userId}`)
+          .eq('contact_user_id', p.userId)
           .maybeSingle();
         if (contact) {
           name = contact.full_name || contact.name || 'Participant';
