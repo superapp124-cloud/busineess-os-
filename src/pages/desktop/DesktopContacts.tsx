@@ -267,14 +267,14 @@ export const DesktopContacts: React.FC = () => {
  <MessageCircle className="w-3.5 h-3.5" />
  </button>
  <button
- onClick={e => { e.stopPropagation(); if (contact.username) startCall(contact.username, false); else toast.error('No username to call'); }}
+ onClick={e => { e.stopPropagation(); const targetId = contact.profile_id || contact.contact_user_id || contact.username || contact.display_name; if (targetId) startCall(targetId, false); else toast.error('No contact to call'); }}
  className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-muted-foreground hover:text-emerald-400 transition-colors"
  title="Audio Call"
  >
  <Phone className="w-3.5 h-3.5" />
  </button>
  <button
- onClick={e => { e.stopPropagation(); if (contact.username) startCall(contact.username, true); else toast.error('No username to call'); }}
+ onClick={e => { e.stopPropagation(); const targetId = contact.profile_id || contact.contact_user_id || contact.username || contact.display_name; if (targetId) startCall(targetId, true); else toast.error('No contact to call'); }}
  className="p-1.5 rounded-lg hover:bg-blue-500/20 text-muted-foreground hover:text-blue-400 transition-colors"
  title="Video Call"
  >
@@ -291,7 +291,7 @@ export const DesktopContacts: React.FC = () => {
  {/* Relationship Workspace */}
  <div className="flex-1 flex flex-col min-w-0 bg-background">
  {selectedContact ? (
- <RelationshipWorkspace contact={selectedContact} onChat={openChat} onCall={(c, video) => c.username ? startCall(c.username, video) : toast.error('No username')} />
+ <RelationshipWorkspace contact={selectedContact} onChat={openChat} onCall={(c, video) => { const targetId = c.profile_id || c.contact_user_id || c.username || c.display_name; if (targetId) startCall(targetId, video); else toast.error('No contact user ID'); }} />
  ) : (
  <div className="flex-1 flex items-center justify-center">
  <div className="text-center flex flex-col items-center animate-in fade-in zoom-in duration-500">

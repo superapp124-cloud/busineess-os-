@@ -1374,11 +1374,6 @@ function StartCallConnectionModal({
   }, [dbContacts]);
 
   const query = search.trim().toLowerCase();
-  const filtered = React.useMemo(() => {
-    if (!query) return allConnections;
-    return allConnections.filter(c => c.name.toLowerCase().includes(query) || c.handle.toLowerCase().includes(query));
-  }, [allConnections, query]);
-
   const isPhoneOrEmail = query.includes('@') || /^\+?[0-9\s\-]{6,}$/.test(query);
   const matchedUser = allConnections.find(c => c.name.toLowerCase().includes(query) || c.handle.toLowerCase().includes(query));
   const isPlatformUser = Boolean(matchedUser) || (!isPhoneOrEmail && filtered.length > 0);
@@ -1488,14 +1483,14 @@ function StartCallConnectionModal({
 
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => onStart(c.handle || c.name)}
+                  onClick={() => onStart(c.id || c.handle || c.name)}
                   className="p-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                   title="Start Video Call"
                 >
                   <Video className="w-3.5 h-3.5" />
                 </button>
                 <button
-                  onClick={() => onStart(c.handle || c.name)}
+                  onClick={() => onStart(c.id || c.handle || c.name)}
                   className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                   title="Start Voice Call"
                 >
