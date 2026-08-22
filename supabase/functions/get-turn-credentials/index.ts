@@ -20,18 +20,27 @@ const fallbackStunServers = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
   { urls: "stun:stun2.l.google.com:19302" },
-  { urls: "stun:stun3.l.google.com:19302" },
-  { urls: "stun:stun4.l.google.com:19302" },
+  { urls: "stun:stun.cloudflare.com:3478" },
   {
     urls: [
-      "stun:stun.cloudflare.com:3478",
-      "turn:turn.cloudflare.com:3478?transport=udp",
-      "turn:turn.cloudflare.com:3478?transport=tcp",
-      "turns:turn.cloudflare.com:5349?transport=tcp"
+      "turns:a.relay.metered.ca:443?transport=tcp",
+      "turn:a.relay.metered.ca:443?transport=tcp",
+      "turn:a.relay.metered.ca:80",
+      "turn:a.relay.metered.ca:80?transport=tcp",
     ],
-    username: "g0c53265fd3d77b1917f9d26a934e34f4cc2e358d65733e4285a7be2e4344489",
-    credential: "5969d5f8b822bcd5a43c3c5257fd9cbca7a787db37e20aa1602746f6b77a393a"
-  }
+    username: "e8dd65c92ae9a3b9bfcbeb6e",
+    credential: "uWdWNmkhvyqTW1QP",
+  },
+  {
+    urls: [
+      "turn:openrelay.metered.ca:80",
+      "turn:openrelay.metered.ca:443",
+      "turn:openrelay.metered.ca:443?transport=tcp",
+      "turns:openrelay.metered.ca:443?transport=tcp",
+    ],
+    username: "openrelayproject",
+    credential: "openrelayproject",
+  },
 ];
 
 function normalizeIceServers(input: any): any[] {

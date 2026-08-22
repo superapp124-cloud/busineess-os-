@@ -60,9 +60,7 @@ const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
   { urls: 'stun:stun2.l.google.com:19302' },
-  { urls: 'stun:stun3.l.google.com:19302' },
-  { urls: 'stun:stun4.l.google.com:19302' },
-  CLOUDFLARE_TURN_SERVER,
+  { urls: 'stun:stun.cloudflare.com:3478' },
   METERED_FREE_SERVER,
   OPENRELAY_FREE_SERVER,
 ];

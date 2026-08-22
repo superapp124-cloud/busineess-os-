@@ -461,18 +461,18 @@ const DesktopCalls: React.FC = () => {
       if (!currentUserId) return;
       try {
         const { supabase } = await import('@/integrations/supabase/client');
-        const { data: events } = await supabase
+        const { data: events, error } = await supabase
           .from('calendar_events')
           .select('*')
-          .gte('start_time', new Date().toISOString())
-          .order('start_time', { ascending: true })
+          .gte('start_at', new Date().toISOString())
+          .order('start_at', { ascending: true })
           .limit(5);
 
-        if (events && events.length > 0) {
+        if (!error && events && events.length > 0) {
           setUpcomingMeetings(
             events.map((e: any) => ({
               title: e.title || 'Scheduled Sync',
-              time: new Date(e.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              time: new Date(e.start_at || e.start_time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               participants: Array.isArray(e.attendees) ? e.attendees.length : 2,
               color: 'bg-[#6D5DF6]',
             }))

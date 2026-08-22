@@ -20,18 +20,22 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
  const [participants, setParticipants] = useState<{user_id: string, name: string}[]>([]);
 
  useEffect(() => {
- if (!roomId) return;
- 
- const fetchState = async () => {
- const { data } = await supabase.from('session_rooms').select('is_locked, chat_disabled, waiting_room_enabled').eq('id', roomId).single();
- if (data) {
- setLocked(data.is_locked || false);
- setChatDisabled(data.chat_disabled || false);
- setWaitingRoomEnabled(data.waiting_room_enabled || false);
- }
- };
- fetchState();
- }, [roomId]);
+    if (!roomId) return;
+    
+    const fetchState = async () => {
+      try {
+        const { data, error } = await supabase.from('session_rooms').select('is_locked, chat_disabled, waiting_room_enabled').eq('id', roomId).maybeSingle();
+        if (!error && data) {
+          setLocked((data as any).is_locked || false);
+          setChatDisabled((data as any).chat_disabled || false);
+          setWaitingRoomEnabled((data as any).waiting_room_enabled || false);
+        }
+      } catch {
+        // Non-critical fallback if columns don't exist
+      }
+    };
+    fetchState();
+  }, [roomId]);
 
  const updateRoomSetting = async (key: string, value: boolean) => {
  if (!roomId) {

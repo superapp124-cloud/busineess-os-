@@ -151,6 +151,10 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     if (!user) return;
     setCurrentUserId(user.id);
 
+    // Clean up any previous subscriptions/channels before re-initializing
+    cleanup.current.forEach(fn => fn());
+    cleanup.current = [];
+
     const { data: profile } = await supabase.from('profiles').select('full_name,username').eq('id', user.id).maybeSingle();
     setCurrentUserName(profile?.full_name || profile?.username || 'You');
 
@@ -187,26 +191,8 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         name = prof.full_name || (prof.username ? `@${prof.username}` : (prof.email ? prof.email.split('@')[0] : (prof.phone_number || 'Participant')));
         flag = getFlagFromPhone(prof.phone_number || '');
       } else {
-        // Contacts fallback — requires user_id filter to satisfy RLS
-        try {
-          const { data: { user: currentUser } } = await supabase.auth.getUser();
-          let contactQuery = supabase
-            .from('contacts')
-            .select('name, full_name, phone')
-            .eq('contact_user_id', p.userId);
-          if (currentUser) {
-            contactQuery = contactQuery.eq('user_id', currentUser.id);
-          }
-          const { data: contact } = await contactQuery.maybeSingle();
-          if (contact) {
-            name = contact.full_name || contact.name || 'Participant';
-            flag = getFlagFromPhone(contact.phone || '');
-          } else {
-            name = `User (${p.userId.slice(0, 8)})`;
-          }
-        } catch {
-          name = `User (${p.userId.slice(0, 8)})`;
-        }
+        // Profile not found — show short UUID, don't query contacts (table unavailable)
+        name = `User (${p.userId.slice(0, 8)})`;
       }
     }
     // Cache result so repeated events don't re-query
@@ -314,19 +300,6 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         return { id: uuidProf.id, name: resolvedName, avatar: uuidProf.avatar_url || '', phone: uuidProf.phone_number || '' };
       }
 
-      // Check contacts table
-      try {
-        const { data: contact } = await supabase
-          .from('contacts')
-          .select('name, full_name, phone, email')
-          .or(`contact_id.eq.${cleanSearch},contact_user_id.eq.${cleanSearch}`)
-          .maybeSingle();
-        if (contact) {
-          const resolvedName = contact.full_name || contact.name || contact.phone || `User (${cleanSearch.slice(0, 8)})`;
-          return { id: cleanSearch, name: resolvedName, avatar: '', phone: contact.phone || '' };
-        }
-      } catch {}
-
       // Check calls table
       try {
         const { data: callRow } = await supabase
@@ -375,37 +348,6 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       const resolvedName = exactProf.full_name || exactProf.username || (exactProf.email ? exactProf.email.split('@')[0] : cleanSearch);
       return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
-
-    // 3. Check contacts table by phone or name
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const contactFilters = [
-        `name.ilike.${cleanSearch}`,
-        `full_name.ilike.${cleanSearch}`,
-        digits ? `phone.ilike.%${digits}%` : null,
-        last10 && last10 !== digits ? `phone.ilike.%${last10}%` : null,
-      ].filter(Boolean).join(',');
-
-      let contactQuery = supabase.from('contacts').select('contact_user_id, name, full_name, email, phone').or(contactFilters);
-      if (user) {
-        contactQuery = contactQuery.eq('user_id', user.id);
-      }
-      const { data: contact } = await contactQuery.limit(1).maybeSingle();
-
-      if (contact && contact.contact_user_id) {
-        const { data: contactProf } = await supabase
-          .from('profiles')
-          .select('id, full_name, username, avatar_url, phone_number')
-          .eq('id', contact.contact_user_id)
-          .maybeSingle();
-
-        if (contactProf) {
-          const resolvedName = contactProf.full_name || contactProf.username || contact.name || cleanSearch;
-          return { id: contactProf.id, name: resolvedName, avatar: contactProf.avatar_url || '', phone: contactProf.phone_number || contact.phone || '' };
-        }
-        return { id: contact.contact_user_id, name: contact.full_name || contact.name || cleanSearch, avatar: '', phone: contact.phone || '' };
-      }
-    } catch {}
 
     // 4. Check recent calls table (matches caller/receiver phone or name to get authentic peer Auth UUID)
     try {
@@ -575,14 +517,10 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     setCallState('connected');
     startTimer();
 
-    // 2. Add both caller and receiver to the session room
+    // 2. Add caller to the session room
     const isTargetUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
     try {
-      const participantRows: any[] = [{ room_id: roomId, user_id: userId }];
-      if (isTargetUuid) {
-        participantRows.push({ room_id: roomId, user_id: target.id });
-      }
-      await supabase.from('session_room_participants').insert(participantRows);
+      await supabase.from('session_room_participants').insert([{ room_id: roomId, user_id: userId }]);
     } catch (partErr) {
       console.warn('[CallContext] session_room_participants insert notice:', partErr);
     }
