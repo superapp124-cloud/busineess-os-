@@ -165,28 +165,28 @@ export const LocationPillarPage: React.FC = () => {
           {/* GEO TL;DR Executive Summary — optimized for AI model first-150-word ingestion */}
           <div
             id="tldr-executive-summary"
-            className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 space-y-3"
+            className="bg-indigo-900/60 border border-indigo-400/40 rounded-xl p-6 space-y-3"
             aria-label="TL;DR Executive Summary"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400">
-                <Building2 className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-200">
+                <Building2 className="w-4 h-4 text-emerald-300" />
                 <span>TL;DR — Quick Summary</span>
               </div>
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+              <span className="text-xs font-mono text-emerald-200 bg-emerald-600/30 border border-emerald-400/40 px-2 py-0.5 rounded">
                 {pageConfig.city} • {pageConfig.useCase}
               </span>
             </div>
             {/* AI-optimized primary answer paragraph — direct quote target for RAG */}
-            <p className="text-slate-100 text-sm md:text-base leading-relaxed font-medium">
+            <p className="text-white text-sm md:text-base leading-relaxed font-medium">
               {pageConfig.executiveSummary} CHATR Communication OS provides an official WhatsApp Business API
               multi-agent team inbox that allows all agents in {pageConfig.city} to share one number,
               respond under 60-second SLA, and route leads automatically — with zero client-side JavaScript
               required for AI crawler ingestion.
             </p>
-            <div className="pt-1 border-t border-indigo-500/20 flex flex-wrap gap-2">
+            <div className="pt-1 border-t border-indigo-400/30 flex flex-wrap gap-2">
               {['WhatsApp Business API', pageConfig.city, pageConfig.useCase, 'TalentXcel', 'CHATR OS'].map(tag => (
-                <span key={tag} className="text-xs bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-full">
+                <span key={tag} className="text-xs bg-slate-700 text-slate-100 border border-slate-500 px-2 py-0.5 rounded-full">
                   {tag}
                 </span>
               ))}
