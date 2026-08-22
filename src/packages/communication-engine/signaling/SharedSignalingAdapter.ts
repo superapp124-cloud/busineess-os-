@@ -20,6 +20,8 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   
   private signalsChannel: RealtimeChannel | null = null;
   private callsChannel: RealtimeChannel | null = null;
+  private processedSignalIds: Set<string> = new Set();
+  private signalPollingInterval: NodeJS.Timeout | null = null;
 
   constructor(supabaseClient: any, config: SharedAdapterConfig = {}) {
     this.supabase = supabaseClient;
@@ -33,9 +35,6 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
       ? `call_id=eq.${this.config.subscribeByCallId}`
       : `to_user=eq.${userId}`;
 
-    // Desktop/Mobile Unified Channel Setup
-    // Mobile traditionally used `webrtc-${callId}-${userId}` and Desktop used `webrtc-signals-${userId}`.
-    // The channel name itself doesn't matter for Postgres changes, but keeping it standard is good.
     const channelName = this.config.subscribeByCallId 
       ? `webrtc-shared-${this.config.subscribeByCallId}-${userId}`
       : `webrtc-shared-signals-${userId}`;
@@ -47,34 +46,21 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
         (payload: any) => {
           const row = payload.new;
           
-          // If filtering by call_id, we MUST check that we are the intended recipient
           if (this.config.subscribeByCallId && row.to_user !== this.userId) {
             return;
           }
 
-          if (this.onSignalCallback) {
-            // Translate the DB row back into the standard SignalingMessage expected by the engine
-            const type = row.signal_type === 'ice-candidate' ? 'ice' : row.signal_type;
-            const sdp = row.signal_type === 'offer' || row.signal_type === 'answer' ? row.signal_data : undefined;
-            const candidate = row.signal_type === 'ice-candidate' || row.signal_type === 'ice' ? row.signal_data : undefined;
-            const roomId = row.room_id || row.signal_data?.__chatr?.roomId;
-
-            this.onSignalCallback(row.call_id, {
-              type: type as any,
-              sdp: sdp,
-              candidate: candidate,
-              from: row.from_user,
-              roomId,
-              // We pass the raw signal data so Mobile can extract idempotency keys if needed
-              rawPayload: row, 
-            } as any);
+          if (row.id && this.processedSignalIds.has(row.id)) {
+            return;
           }
+          if (row.id) this.processedSignalIds.add(row.id);
+
+          this.dispatchSignal(row);
         }
       )
       .subscribe();
 
     // Listen for call lifecycle state changes (e.g. ringing, ended) directed to me
-    // (Used exclusively by Desktop CallContext for now)
     this.callsChannel = this.supabase.channel(`call-lifecycle-shared-${userId}`)
       .on(
         'postgres_changes',
@@ -87,6 +73,63 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
         (payload: any) => this.handleCallChange(payload.new)
       )
       .subscribe();
+
+    // Fetch existing/pending signals and start fallback polling
+    this.pollSignals();
+    this.startSignalPolling();
+  }
+
+  private dispatchSignal(row: any) {
+    if (this.onSignalCallback) {
+      const type = row.signal_type === 'ice-candidate' ? 'ice' : row.signal_type;
+      const sdp = row.signal_type === 'offer' || row.signal_type === 'answer' ? row.signal_data : undefined;
+      const candidate = row.signal_type === 'ice-candidate' || row.signal_type === 'ice' ? row.signal_data : undefined;
+      const roomId = row.room_id || row.signal_data?.__chatr?.roomId;
+
+      this.onSignalCallback(row.call_id, {
+        type: type as any,
+        sdp: sdp,
+        candidate: candidate,
+        from: row.from_user,
+        roomId,
+        rawPayload: row, 
+      } as any);
+    }
+  }
+
+  private async pollSignals() {
+    if (!this.userId) return;
+    try {
+      let query = this.supabase
+        .from('webrtc_signals')
+        .select('*')
+        .eq('to_user', this.userId)
+        .order('created_at', { ascending: true })
+        .limit(30);
+
+      if (this.config.subscribeByCallId) {
+        query = query.eq('call_id', this.config.subscribeByCallId);
+      }
+
+      const { data: signals } = await query;
+      if (signals && signals.length > 0) {
+        for (const signal of signals) {
+          if (!this.processedSignalIds.has(signal.id)) {
+            this.processedSignalIds.add(signal.id);
+            this.dispatchSignal(signal);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[SharedSignalingAdapter] Signal poll error:', err);
+    }
+  }
+
+  private startSignalPolling() {
+    if (this.signalPollingInterval) clearInterval(this.signalPollingInterval);
+    this.signalPollingInterval = setInterval(() => {
+      this.pollSignals();
+    }, 1000);
   }
 
   private handleCallChange(row: any) {
@@ -116,9 +159,8 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
     let signalType = message.type as string;
     let signalData: any;
 
-    // Normalize protocol differences before DB insertion
     if (message.type === 'ice') {
-      signalType = 'ice-candidate'; // Legacy format expected by SimpleWebRTCCall
+      signalType = 'ice-candidate';
       signalData = message.candidate;
     } else if (message.type === 'offer' || message.type === 'answer') {
       signalData = message.sdp;
@@ -168,9 +210,14 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   }
 
   public disconnect(): void {
+    if (this.signalPollingInterval) {
+      clearInterval(this.signalPollingInterval);
+      this.signalPollingInterval = null;
+    }
     if (this.signalsChannel) this.supabase.removeChannel(this.signalsChannel);
     if (this.callsChannel) this.supabase.removeChannel(this.callsChannel);
     this.signalsChannel = null;
     this.callsChannel = null;
+    this.processedSignalIds.clear();
   }
 }

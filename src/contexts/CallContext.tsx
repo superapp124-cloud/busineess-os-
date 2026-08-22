@@ -163,19 +163,43 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  localStreamRef.current = p.stream;
  setLocalStream(p.stream);
  }),
- bus.subscribe(CommunicationEvent.ROOM_PARTICIPANT_JOINED, async (p: any) => {
- const { data: prof } = await supabase.from('profiles').select('full_name,username,phone_number').eq('id', p.userId).single();
- const name = prof?.full_name || prof?.username || 'Participant';
- const flag = getFlagFromPhone(prof?.phone_number || '');
- setRemoteStreams(prev => ({ ...prev, [p.userId]: { stream: p.stream, name, flag } }));
- }),
- bus.subscribe(CommunicationEvent.ROOM_PARTICIPANT_LEFT, (p: any) => {
- setRemoteStreams(prev => {
- const next = { ...prev };
- delete next[p.userId];
- return next;
- });
- }),
+  bus.subscribe(CommunicationEvent.ROOM_PARTICIPANT_JOINED, async (p: any) => {
+    let name = 'Participant';
+    let flag = '';
+    if (p.userId) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('full_name, username, phone_number, email')
+        .eq('id', p.userId)
+        .maybeSingle();
+
+      if (prof) {
+        name = prof.full_name || (prof.username ? `@${prof.username}` : (prof.email ? prof.email.split('@')[0] : (prof.phone_number || 'Participant')));
+        flag = getFlagFromPhone(prof.phone_number || '');
+      } else {
+        const { data: contact } = await supabase
+          .from('contacts')
+          .select('name, full_name, phone')
+          .or(`contact_user_id.eq.${p.userId},contact_id.eq.${p.userId}`)
+          .maybeSingle();
+        if (contact) {
+          name = contact.full_name || contact.name || 'Participant';
+          flag = getFlagFromPhone(contact.phone || '');
+        } else {
+          name = `User (${p.userId.slice(0, 8)})`;
+        }
+      }
+    }
+    setRemoteStreams(prev => ({ ...prev, [p.userId]: { stream: p.stream, name, flag } }));
+    setRemoteUserName(name);
+  }),
+  bus.subscribe(CommunicationEvent.ROOM_PARTICIPANT_LEFT, (p: any) => {
+    setRemoteStreams(prev => {
+      const next = { ...prev };
+      delete next[p.userId];
+      return next;
+    });
+  }),
  ];
 
  const inviteChannel = supabase.channel(`room-invites-${user.id}`)
@@ -265,10 +289,43 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         .maybeSingle();
 
       if (uuidProf) {
-        const resolvedName = uuidProf.full_name || uuidProf.username || (uuidProf.email ? uuidProf.email.split('@')[0] : cleanSearch);
+        const resolvedName = uuidProf.full_name || (uuidProf.username ? `@${uuidProf.username}` : (uuidProf.email ? uuidProf.email.split('@')[0] : (uuidProf.phone_number || `User (${cleanSearch.slice(0, 8)})`)));
         return { id: uuidProf.id, name: resolvedName, avatar: uuidProf.avatar_url || '', phone: uuidProf.phone_number || '' };
       }
-      return { id: cleanSearch, name: rawTrimmed, avatar: '' };
+
+      // Check contacts table
+      try {
+        const { data: contact } = await supabase
+          .from('contacts')
+          .select('name, full_name, phone, email')
+          .or(`contact_id.eq.${cleanSearch},contact_user_id.eq.${cleanSearch}`)
+          .maybeSingle();
+        if (contact) {
+          const resolvedName = contact.full_name || contact.name || contact.phone || `User (${cleanSearch.slice(0, 8)})`;
+          return { id: cleanSearch, name: resolvedName, avatar: '', phone: contact.phone || '' };
+        }
+      } catch {}
+
+      // Check calls table
+      try {
+        const { data: callRow } = await supabase
+          .from('calls')
+          .select('caller_name, receiver_name, caller_id, receiver_id, caller_phone, receiver_phone')
+          .or(`caller_id.eq.${cleanSearch},receiver_id.eq.${cleanSearch}`)
+          .order('started_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (callRow) {
+          const recordedName = callRow.caller_id === cleanSearch
+            ? (callRow.caller_name || callRow.caller_phone)
+            : (callRow.receiver_name || callRow.receiver_phone);
+          if (recordedName) {
+            return { id: cleanSearch, name: recordedName, avatar: '', phone: callRow.caller_phone || callRow.receiver_phone || '' };
+          }
+        }
+      } catch {}
+
+      return { id: cleanSearch, name: `User (${cleanSearch.slice(0, 8)})`, avatar: '' };
     }
 
     // 2. Exact match on username, email, phone_number, or synthetic chatr email (e.g. 919717161809@chatr.local)

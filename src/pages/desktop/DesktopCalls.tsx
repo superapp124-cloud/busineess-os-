@@ -979,7 +979,9 @@ const DesktopCalls: React.FC = () => {
  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
  <p className="text-white/70 font-medium">Room is open</p>
  </div>
- <p className="text-white/30 text-secondary">Waiting for {remoteUserName || 'participants'} to join...</p>
+ <p className="text-white/30 text-secondary">
+ Waiting for {remoteUserName && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(remoteUserName.trim()) ? remoteUserName : (remoteUserName ? `User (${remoteUserName.trim().slice(0, 8)})` : 'participants')} to join...
+ </p>
  <button onClick={() => setShowInviteModal(true)} className="mt-2 flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/80 hover:bg-purple-500 text-white text-label font-bold transition-all mx-auto">
  <UserPlus className="w-3.5 h-3.5" /> Invite Participants
  </button>
