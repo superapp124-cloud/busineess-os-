@@ -74,15 +74,24 @@ export class WebRTCEngine {
     };
 
     this.peerConnection.ontrack = (event) => {
-      let stream = event.streams && event.streams[0];
-      if (!stream) {
-        if (!this.syntheticStream) {
-          this.syntheticStream = new MediaStream();
-        }
-        this.syntheticStream.addTrack(event.track);
-        stream = new MediaStream(this.syntheticStream.getTracks());
-        this.syntheticStream = stream;
+      console.log(`[WebRTC] Remote track received: kind=${event.track.kind}, id=${event.track.id}, readyState=${event.track.readyState}`);
+      try {
+        event.track.enabled = true;
+      } catch {}
+
+      if (!this.syntheticStream) {
+        this.syntheticStream = new MediaStream();
       }
+
+      const existing = this.syntheticStream.getTracks().find(t => t.id === event.track.id);
+      if (!existing) {
+        this.syntheticStream.addTrack(event.track);
+      }
+
+      let stream = event.streams && event.streams[0] && event.streams[0].getTracks().length > 0
+        ? event.streams[0]
+        : this.syntheticStream;
+
       if (this.onTrackCallback) {
         this.onTrackCallback(stream, event.track);
       }

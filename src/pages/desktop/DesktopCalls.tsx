@@ -78,35 +78,54 @@ const RemoteTile = ({ stream, label, avatarChar, flag, isSpeaking }: { stream: M
  const [hasVideo, setHasVideo] = useState(false);
  const [playFailed, setPlayFailed] = useState(false);
 
- useEffect(() => {
- if (!stream) return;
- const checkTracks = () => setHasVideo(stream.getVideoTracks().length > 0);
- checkTracks();
- stream.addEventListener('addtrack', checkTracks);
- stream.addEventListener('removetrack', checkTracks);
- return () => {
- stream.removeEventListener('addtrack', checkTracks);
- stream.removeEventListener('removetrack', checkTracks);
- };
- }, [stream]);
+  useEffect(() => {
+    if (!stream) {
+      setHasVideo(false);
+      return;
+    }
+    const checkTracks = () => {
+      const vTracks = stream.getVideoTracks();
+      const hasV = vTracks.length > 0 && vTracks.some(t => t.readyState === 'live' && t.enabled);
+      setHasVideo(hasV || vTracks.length > 0);
+    };
+    checkTracks();
+    stream.addEventListener('addtrack', checkTracks);
+    stream.addEventListener('removetrack', checkTracks);
 
- useEffect(() => {
- if (!stream) return;
- if (videoRef.current && videoRef.current.srcObject !== stream) videoRef.current.srcObject = stream;
- if (audioRef.current && audioRef.current.srcObject !== stream) audioRef.current.srcObject = stream;
- if (videoRef.current) videoRef.current.play().catch(e => console.warn('Video autoplay prevented:', e));
- if (audioRef.current) {
- audioRef.current.play().then(() => setPlayFailed(false)).catch(e => {
- console.warn('Audio autoplay prevented:', e);
- setPlayFailed(true);
- });
- }
- }, [stream, hasVideo]);
+    const interval = setInterval(checkTracks, 300);
+    const timeout = setTimeout(() => clearInterval(interval), 8000);
 
- const handlePlayClick = () => {
- if (audioRef.current) audioRef.current.play().then(() => setPlayFailed(false)).catch(console.error);
- if (videoRef.current) videoRef.current.play().catch(console.error);
- };
+    return () => {
+      stream.removeEventListener('addtrack', checkTracks);
+      stream.removeEventListener('removetrack', checkTracks);
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [stream]);
+
+  useEffect(() => {
+    if (!stream) return;
+    if (videoRef.current && videoRef.current.srcObject !== stream) {
+      videoRef.current.srcObject = stream;
+    }
+    if (audioRef.current && audioRef.current.srcObject !== stream) {
+      audioRef.current.srcObject = stream;
+    }
+    if (videoRef.current) {
+      videoRef.current.play().catch(e => console.warn('Video autoplay prevented:', e));
+    }
+    if (audioRef.current) {
+      audioRef.current.play().then(() => setPlayFailed(false)).catch(e => {
+        console.warn('Audio autoplay prevented:', e);
+        setPlayFailed(true);
+      });
+    }
+  }, [stream, hasVideo]);
+
+  const handlePlayClick = () => {
+    if (audioRef.current) audioRef.current.play().then(() => setPlayFailed(false)).catch(console.error);
+    if (videoRef.current) videoRef.current.play().catch(console.error);
+  };
 
  return (
  <div className={cn(
