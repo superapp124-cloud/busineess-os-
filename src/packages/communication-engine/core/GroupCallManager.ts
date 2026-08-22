@@ -119,7 +119,7 @@ export class GroupCallManager {
         callId;
       let isRoomActive = this.roomState.has(targetRoomId);
 
-      // 1. Already have a session for this peer
+      // 1. Check if any room already has a session for this peer
       for (const [roomId, peers] of this.roomSessions.entries()) {
         if (peers.has(peerId)) {
           targetRoomId = roomId;
@@ -128,7 +128,13 @@ export class GroupCallManager {
         }
       }
 
-      // 2. Room state exists but session not yet created (late-join offer)
+      // 2. If room not found by ID and there is only 1 active room, fallback to that active room
+      if (!isRoomActive && this.roomState.size === 1) {
+        targetRoomId = Array.from(this.roomState.keys())[0];
+        isRoomActive = true;
+      }
+
+      // 3. Room state exists but session not yet created (late-join offer)
       if (!isRoomActive && (message.type === 'offer' || message.type === 'ice')) {
         for (const [roomId, state] of this.roomState.entries()) {
           if (state.participants.includes(peerId)) {
@@ -162,8 +168,16 @@ export class GroupCallManager {
         return;
       }
 
-      // ── Session doesn't exist yet but room does (inbound offer path) ──────
-      let session = this.roomSessions.get(targetRoomId)?.get(peerId);
+      // ── Session lookup with 1-on-1 fallback ──────────────────────────────
+      const roomPeersMap = this.roomSessions.get(targetRoomId);
+      let session = roomPeersMap?.get(peerId);
+
+      // If exact peerId not in map, but room has exactly 1 session (1-on-1 call with resolved UUID), map it
+      if (!session && roomPeersMap && roomPeersMap.size === 1) {
+        session = Array.from(roomPeersMap.values())[0];
+        // Index under this peerId for subsequent ICE candidates
+        roomPeersMap.set(peerId, session);
+      }
 
       if (!session && message.type === 'offer') {
         const state = this.roomState.get(targetRoomId);

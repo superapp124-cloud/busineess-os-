@@ -328,12 +328,25 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       return { id: cleanSearch, name: `User (${cleanSearch.slice(0, 8)})`, avatar: '' };
     }
 
-    // 2. Exact/case-insensitive match on username, full_name, email, phone_number, or synthetic chatr email
+    // 2. Phone number / exact match on username, full_name, email, phone_number, or synthetic chatr email
     const digits = cleanSearch.replace(/\D/g, '');
+    const last10 = digits.length >= 10 ? digits.slice(-10) : digits;
+    const last8 = digits.length >= 8 ? digits.slice(-8) : digits;
+
+    const phoneFilters = [
+      `username.ilike.${cleanSearch}`,
+      `full_name.ilike.${cleanSearch}`,
+      `email.ilike.${cleanSearch}`,
+      `phone_number.eq.${cleanSearch}`,
+      digits ? `phone_number.ilike.%${digits}%,email.ilike.%${digits}%` : null,
+      last10 && last10 !== digits ? `phone_number.ilike.%${last10}%,email.ilike.%${last10}%` : null,
+      last8 && last8 !== last10 ? `phone_number.ilike.%${last8}%` : null,
+    ].filter(Boolean).join(',');
+
     const { data: exactProf } = await supabase
       .from('profiles')
       .select('id, full_name, username, avatar_url, phone_number, email')
-      .or(`username.ilike.${cleanSearch},full_name.ilike.${cleanSearch},email.ilike.${cleanSearch},phone_number.eq.${cleanSearch}${digits ? `,email.ilike.%${digits}%,phone_number.ilike.%${digits}%` : ''}`)
+      .or(phoneFilters)
       .limit(1)
       .maybeSingle();
 
@@ -342,42 +355,73 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
       return { id: exactProf.id, name: resolvedName, avatar: exactProf.avatar_url || '', phone: exactProf.phone_number || '' };
     }
 
-    // 3. Check recent calls table (matches caller/receiver name to get authentic peer Auth UUID)
+    // 3. Check contacts table by phone or name
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      const contactFilters = [
+        `name.ilike.${cleanSearch}`,
+        `full_name.ilike.${cleanSearch}`,
+        digits ? `phone.ilike.%${digits}%` : null,
+        last10 && last10 !== digits ? `phone.ilike.%${last10}%` : null,
+      ].filter(Boolean).join(',');
+
+      let contactQuery = supabase.from('contacts').select('contact_user_id, name, full_name, email, phone').or(contactFilters);
       if (user) {
-        const { data: recentCalls } = await supabase
-          .from('calls')
-          .select('caller_id, receiver_id, caller_name, receiver_name')
-          .or(`caller_id.eq.${user.id},receiver_id.eq.${user.id}`)
-          .order('created_at', { ascending: false })
-          .limit(20);
+        contactQuery = contactQuery.eq('user_id', user.id);
+      }
+      const { data: contact } = await contactQuery.limit(1).maybeSingle();
 
-        if (recentCalls && recentCalls.length > 0) {
-          for (const callRow of recentCalls) {
-            const peerId = callRow.caller_id === user.id ? callRow.receiver_id : callRow.caller_id;
-            const peerName = callRow.caller_id === user.id ? callRow.receiver_name : callRow.caller_name;
-            if (peerId && peerName && peerName.toLowerCase().includes(cleanSearch.toLowerCase())) {
-              const { data: peerProf } = await supabase
-                .from('profiles')
-                .select('id, full_name, username, avatar_url, phone_number')
-                .eq('id', peerId)
-                .maybeSingle();
+      if (contact && contact.contact_user_id) {
+        const { data: contactProf } = await supabase
+          .from('profiles')
+          .select('id, full_name, username, avatar_url, phone_number')
+          .eq('id', contact.contact_user_id)
+          .maybeSingle();
 
-              if (peerProf) {
-                const resolvedName = peerProf.full_name || peerProf.username || peerName;
-                return { id: peerProf.id, name: resolvedName, avatar: peerProf.avatar_url || '', phone: peerProf.phone_number || '' };
-              }
-              return { id: peerId, name: peerName, avatar: '' };
-            }
+        if (contactProf) {
+          const resolvedName = contactProf.full_name || contactProf.username || contact.name || cleanSearch;
+          return { id: contactProf.id, name: resolvedName, avatar: contactProf.avatar_url || '', phone: contactProf.phone_number || contact.phone || '' };
+        }
+        return { id: contact.contact_user_id, name: contact.full_name || contact.name || cleanSearch, avatar: '', phone: contact.phone || '' };
+      }
+    } catch {}
+
+    // 4. Check recent calls table (matches caller/receiver phone or name to get authentic peer Auth UUID)
+    try {
+      const callFilters = [
+        `caller_name.ilike.${cleanSearch}`,
+        `receiver_name.ilike.${cleanSearch}`,
+        digits ? `caller_phone.ilike.%${digits}%,receiver_phone.ilike.%${digits}%` : null,
+        last10 && last10 !== digits ? `caller_phone.ilike.%${last10}%,receiver_phone.ilike.%${last10}%` : null,
+      ].filter(Boolean).join(',');
+
+      const { data: recentCalls } = await supabase
+        .from('calls')
+        .select('caller_id, receiver_id, caller_name, receiver_name, caller_phone, receiver_phone')
+        .or(callFilters)
+        .order('started_at', { ascending: false })
+        .limit(5);
+
+      if (recentCalls && recentCalls.length > 0) {
+        const { data: { user } } = await supabase.auth.getUser();
+        for (const callRow of recentCalls) {
+          const peerId = user && callRow.caller_id === user.id ? callRow.receiver_id : callRow.caller_id;
+          const peerName = user && callRow.caller_id === user.id ? (callRow.receiver_name || callRow.receiver_phone) : (callRow.caller_name || callRow.caller_phone);
+          if (peerId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(peerId)) {
+            const { data: peerProf } = await supabase
+              .from('profiles')
+              .select('id, full_name, username, avatar_url, phone_number')
+              .eq('id', peerId)
+              .maybeSingle();
+
+            const resolvedName = peerProf?.full_name || peerProf?.username || peerName || cleanSearch;
+            return { id: peerId, name: resolvedName, avatar: peerProf?.avatar_url || '', phone: peerProf?.phone_number || '' };
           }
         }
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
 
-    // 4. Case-insensitive fuzzy search on username, full_name, email
+    // 5. Case-insensitive fuzzy search on username, full_name, email
     const safeTerm = cleanSearch.replace(/[^a-zA-Z0-9_\-\.\@\s]/g, '');
     if (safeTerm.length >= 2) {
       const { data: fuzzyProf } = await supabase
@@ -391,51 +435,6 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         const resolvedName = fuzzyProf.full_name || fuzzyProf.username || (fuzzyProf.email ? fuzzyProf.email.split('@')[0] : safeTerm);
         return { id: fuzzyProf.id, name: resolvedName, avatar: fuzzyProf.avatar_url || '', phone: fuzzyProf.phone_number || '' };
       }
-    }
-
-    // 5. Tokenized search for multi-word inputs ("talentxcel services", "sanobar jahan", etc.)
-    const tokens = cleanSearch.split(/\s+/).map(t => t.replace(/[^a-zA-Z0-9_\-\.@]/g, '')).filter(t => t.length >= 2);
-    for (const token of tokens) {
-      const { data: tokenProf } = await supabase
-        .from('profiles')
-        .select('id, full_name, username, avatar_url, phone_number, email')
-        .or(`username.ilike.%${token}%,full_name.ilike.%${token}%,email.ilike.%${token}%`)
-        .limit(1)
-        .maybeSingle();
-
-      if (tokenProf) {
-        const resolvedName = tokenProf.full_name || tokenProf.username || (tokenProf.email ? tokenProf.email.split('@')[0] : token);
-        return { id: tokenProf.id, name: resolvedName, avatar: tokenProf.avatar_url || '', phone: tokenProf.phone_number || '' };
-      }
-    }
-
-    // 6. Query contacts table by name / phone
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user && safeTerm) {
-        const { data: contact } = await supabase
-          .from('contacts')
-          .select('contact_user_id, name, full_name, email, phone')
-          .eq('user_id', user.id)
-          .or(`name.ilike.%${safeTerm}%,full_name.ilike.%${safeTerm}%,phone.ilike.%${safeTerm}%`)
-          .limit(1)
-          .maybeSingle();
-
-        if (contact && contact.contact_user_id) {
-          const { data: contactProf } = await supabase
-            .from('profiles')
-            .select('id, full_name, username, avatar_url, phone_number')
-            .eq('id', contact.contact_user_id)
-            .maybeSingle();
-
-          if (contactProf) {
-            const resolvedName = contactProf.full_name || contactProf.username || contact.name || rawTrimmed;
-            return { id: contactProf.id, name: resolvedName, avatar: contactProf.avatar_url || '', phone: contactProf.phone_number || '' };
-          }
-        }
-      }
-    } catch {
-      // ignore
     }
 
     return null;
