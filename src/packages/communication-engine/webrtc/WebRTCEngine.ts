@@ -191,6 +191,11 @@ export class WebRTCEngine {
 
   public async handleRemoteAnswer(answer: RTCSessionDescriptionInit) {
     if (!this.peerConnection) throw new Error('[WebRTC] No peer connection to handle answer');
+    // Guard: if already stable, the answer was already applied (e.g. via WebSocket + polling duplicate)
+    if (this.peerConnection.signalingState === 'stable') {
+      console.warn('[WebRTC] Ignoring duplicate answer — already in stable state');
+      return;
+    }
     await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     // Drain buffered ICE candidates
     for (const c of this.iceCandidateBuffer) {

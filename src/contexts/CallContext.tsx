@@ -96,6 +96,8 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  const timerRef = useRef<NodeJS.Timeout | null>(null);
  const transcriptRef = useRef<string>('');
  const cleanup = useRef<Array<() => void>>([]);
+ // Cache resolved participant names to prevent repeated DB queries per ROOM_PARTICIPANT_JOINED event
+ const participantInfoCache = useRef<Record<string, { name: string; flag: string }>>({});
 
   useEffect(() => {
     init();
@@ -164,6 +166,14 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  setLocalStream(p.stream);
  }),
   bus.subscribe(CommunicationEvent.ROOM_PARTICIPANT_JOINED, async (p: any) => {
+    // Use cached result if we already resolved this participant
+    if (participantInfoCache.current[p.userId]) {
+      const cached = participantInfoCache.current[p.userId];
+      setRemoteStreams(prev => ({ ...prev, [p.userId]: { stream: p.stream, name: cached.name, flag: cached.flag } }));
+      setRemoteUserName(cached.name);
+      return;
+    }
+
     let name = 'Participant';
     let flag = '';
     if (p.userId) {
@@ -177,19 +187,30 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         name = prof.full_name || (prof.username ? `@${prof.username}` : (prof.email ? prof.email.split('@')[0] : (prof.phone_number || 'Participant')));
         flag = getFlagFromPhone(prof.phone_number || '');
       } else {
-        const { data: contact } = await supabase
-          .from('contacts')
-          .select('name, full_name, phone')
-          .eq('contact_user_id', p.userId)
-          .maybeSingle();
-        if (contact) {
-          name = contact.full_name || contact.name || 'Participant';
-          flag = getFlagFromPhone(contact.phone || '');
-        } else {
+        // Contacts fallback — requires user_id filter to satisfy RLS
+        try {
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          let contactQuery = supabase
+            .from('contacts')
+            .select('name, full_name, phone')
+            .eq('contact_user_id', p.userId);
+          if (currentUser) {
+            contactQuery = contactQuery.eq('user_id', currentUser.id);
+          }
+          const { data: contact } = await contactQuery.maybeSingle();
+          if (contact) {
+            name = contact.full_name || contact.name || 'Participant';
+            flag = getFlagFromPhone(contact.phone || '');
+          } else {
+            name = `User (${p.userId.slice(0, 8)})`;
+          }
+        } catch {
           name = `User (${p.userId.slice(0, 8)})`;
         }
       }
     }
+    // Cache result so repeated events don't re-query
+    participantInfoCache.current[p.userId] = { name, flag };
     setRemoteStreams(prev => ({ ...prev, [p.userId]: { stream: p.stream, name, flag } }));
     setRemoteUserName(name);
   }),
@@ -769,6 +790,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  transcriptRef.current = '';
  setIsMuted(false);
  setIsVideoOff(false);
+ participantInfoCache.current = {}; // Clear cached participant info for next call
 
  if (finalCallId) {
  supabase.from('calls').update({ status: 'ended', ended_at: new Date().toISOString() })
