@@ -488,6 +488,8 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
             caller_name: callerName,
             caller_avatar: callerProfile?.avatar_url || '',
             caller_phone: callerProfile?.phone_number || '',
+            receiver_name: target.name,
+            receiver_avatar: target.avatar || '',
             status: 'ringing',
             call_type: video ? 'video' : 'voice',
             started_at: new Date().toISOString(),
@@ -497,6 +499,26 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
 
         if (callRow?.id) {
           setActiveCallId(callRow.id);
+
+          // 🔔 Send FCM push notification to wake receiver's device (chatr.chat / Android / iOS)
+          // This fires even if Supabase Realtime INSERT event is delayed or missed on recipient device.
+          try {
+            await supabase.functions.invoke('fcm-notify', {
+              body: {
+                type: 'call',
+                receiverId: target.id,
+                callerId: currentUserId,
+                callerName,
+                callerAvatar: callerProfile?.avatar_url || '',
+                callerPhone: callerProfile?.phone_number || '',
+                callId: callRow.id,
+                callType: video ? 'video' : 'audio',
+              }
+            });
+            console.log('[CallContext] FCM call notification dispatched to', target.id);
+          } catch (fcmErr) {
+            console.warn('[CallContext] FCM notification error (non-critical):', fcmErr);
+          }
         }
       } catch (e) {
         console.warn('[CallContext] calls table insert notice:', e);
