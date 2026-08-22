@@ -97,52 +97,60 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  const transcriptRef = useRef<string>('');
  const cleanup = useRef<Array<() => void>>([]);
 
- useEffect(() => {
- init();
- return () => {
- cleanup.current.forEach(fn => fn());
- if (timerRef.current) clearInterval(timerRef.current);
- localStreamRef.current?.getTracks().forEach(t => t.stop());
- };
- }, []);
+  useEffect(() => {
+    init();
 
- useEffect(() => {
- if (!activeRoomId || !currentUserId) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        init(session.user);
+      }
+    });
 
- // Listen for host commands like Mute All and Host Transfer
- const settingsChannel = supabase.channel(`room-settings-${activeRoomId}`)
- .on('broadcast', { event: 'host_control' }, (payload) => {
- const { key, value } = payload.payload || {};
- if (key === 'mute_all') {
- supabase.from('session_rooms').select('host_id').eq('id', activeRoomId).single().then(({ data }) => {
- if (data && data.host_id !== currentUserId) {
- localStreamRef.current?.getAudioTracks().forEach(t => { t.enabled = false; });
- setIsMuted(true);
- toast.info('The host has muted your microphone.');
- }
- });
- } else if (key === 'host_transferred') {
- if (value === currentUserId) {
- toast.success('You are now the host of this meeting.');
- } else {
- toast.info('The host role has been transferred.');
- }
- }
- })
- .subscribe();
+    return () => {
+      subscription.unsubscribe();
+      cleanup.current.forEach(fn => fn());
+      if (timerRef.current) clearInterval(timerRef.current);
+      localStreamRef.current?.getTracks().forEach(t => t.stop());
+    };
+  }, []);
 
- return () => {
- supabase.removeChannel(settingsChannel);
- };
- }, [activeRoomId, currentUserId]);
+  useEffect(() => {
+    if (!activeRoomId || !currentUserId) return;
 
- const init = async () => {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return;
- setCurrentUserId(user.id);
+    // Listen for host commands like Mute All and Host Transfer
+    const settingsChannel = supabase.channel(`room-settings-${activeRoomId}`)
+      .on('broadcast', { event: 'host_control' }, (payload) => {
+        const { key, value } = payload.payload || {};
+        if (key === 'mute_all') {
+          supabase.from('session_rooms').select('host_id').eq('id', activeRoomId).single().then(({ data }) => {
+            if (data && data.host_id !== currentUserId) {
+              localStreamRef.current?.getAudioTracks().forEach(t => { t.enabled = false; });
+              setIsMuted(true);
+              toast.info('The host has muted your microphone.');
+            }
+          });
+        } else if (key === 'host_transferred') {
+          if (value === currentUserId) {
+            toast.success('You are now the host of this meeting.');
+          } else {
+            toast.info('The host role has been transferred.');
+          }
+        }
+      })
+      .subscribe();
 
- const { data: profile } = await supabase.from('profiles').select('full_name,username').eq('id', user.id).single();
- setCurrentUserName(profile?.full_name || profile?.username || 'You');
+    return () => {
+      supabase.removeChannel(settingsChannel);
+    };
+  }, [activeRoomId, currentUserId]);
+
+  const init = async (providedUser?: any) => {
+    const user = providedUser || (await supabase.auth.getUser()).data?.user;
+    if (!user) return;
+    setCurrentUserId(user.id);
+
+    const { data: profile } = await supabase.from('profiles').select('full_name,username').eq('id', user.id).maybeSingle();
+    setCurrentUserName(profile?.full_name || profile?.username || 'You');
 
  const provider = new SupabaseSignalingAdapter(supabase);
  await provider.connect(user.id);
@@ -424,14 +432,44 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const startCall = async (dialInput: string, video: boolean = true) => {
-    if (!gcm || !dialInput.trim() || !currentUserId) return;
-
-    const resolved = await resolveUser(dialInput.trim());
-    if (!resolved) {
-      toast.error('User not found. Check the name or number and try again.');
+    const rawTarget = dialInput?.trim();
+    if (!rawTarget) {
+      toast.error('Please enter a username, phone number, or select a contact');
       return;
     }
-    const target = resolved;
+
+    let userId = currentUserId;
+    if (!userId) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        userId = user.id;
+        setCurrentUserId(user.id);
+      }
+    }
+    if (!userId) {
+      toast.error('Please sign in to start a call');
+      return;
+    }
+
+    let manager = gcm;
+    if (!manager) {
+      try {
+        const provider = new SupabaseSignalingAdapter(supabase);
+        await provider.connect(userId);
+        manager = new GroupCallManager(userId, provider);
+        setGcm(manager);
+      } catch (err) {
+        console.warn('[CallContext] Manager init notice:', err);
+      }
+    }
+
+    const resolved = await resolveUser(rawTarget);
+    const target = resolved || {
+      id: rawTarget,
+      name: rawTarget.replace(/^@/, '').replace(/[._-]/g, ' '),
+      avatar: '',
+      phone: rawTarget
+    };
 
     setIsVideoCall(video);
     setRemoteUserName(target.name);
@@ -439,30 +477,38 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     setRemoteUserFlag(getFlagFromPhone(target.phone || '') || '');
 
     // 1. Create real session_rooms row in Supabase — returns a real UUID
-    const { data: room, error: roomErr } = await supabase.from('session_rooms').insert({
-      host_id: currentUserId,
-      session_goal: sessionGoal || 'quick',
-      title: `${video ? 'Video' : 'Voice'} Call with ${target.name}`,
-    }).select().single();
+    let roomId = crypto.randomUUID();
+    try {
+      const { data: room, error: roomErr } = await supabase.from('session_rooms').insert({
+        host_id: userId,
+        session_goal: sessionGoal || 'quick',
+      }).select('id').single();
 
-    if (roomErr || !room) {
-      console.warn('[CallContext] session_rooms insert failed:', roomErr);
-      toast.error('Could not start call session. Please try again.');
-      return;
+      if (room?.id) {
+        roomId = room.id;
+      } else if (roomErr) {
+        console.warn('[CallContext] session_rooms insert warning:', roomErr);
+      }
+    } catch (e) {
+      console.warn('[CallContext] session_rooms insert exception:', e);
     }
 
-    setActiveRoomId(room.id);
+    setActiveRoomId(roomId);
     setActiveCallTargetId(target.id);
     setCallState('connected');
     startTimer();
 
     // 2. Add both caller and receiver to the session room
-    const participantRows: any[] = [{ room_id: room.id, user_id: currentUserId }];
     const isTargetUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
-    if (isTargetUuid) {
-      participantRows.push({ room_id: room.id, user_id: target.id });
+    try {
+      const participantRows: any[] = [{ room_id: roomId, user_id: userId }];
+      if (isTargetUuid) {
+        participantRows.push({ room_id: roomId, user_id: target.id });
+      }
+      await supabase.from('session_room_participants').insert(participantRows);
+    } catch (partErr) {
+      console.warn('[CallContext] session_room_participants insert notice:', partErr);
     }
-    await supabase.from('session_room_participants').insert(participantRows);
 
     // 3. Get media stream
     const stream = await getStream(video);
@@ -475,7 +521,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         const { data: callerProfile } = await supabase
           .from('profiles')
           .select('full_name, username, avatar_url, phone_number')
-          .eq('id', currentUserId)
+          .eq('id', userId)
           .maybeSingle();
 
         const callerName = callerProfile?.full_name || callerProfile?.username || currentUserName || 'Caller';
@@ -488,9 +534,9 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
         } catch { /* ignore, conversation optional */ }
 
         const { data: insertedCall } = await supabase.from('calls').insert({
-          id: room.id,         // ← Use the real session room UUID as call ID
+          id: roomId,         // ← Use the session room UUID as call ID
           conversation_id: convId,
-          caller_id: currentUserId,
+          caller_id: userId,
           caller_name: callerName,
           caller_avatar: callerProfile?.avatar_url || '',
           caller_phone: callerProfile?.phone_number || '',
@@ -513,7 +559,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
               body: {
                 type: 'call',
                 receiverId: target.id,
-                callerId: currentUserId,
+                callerId: userId,
                 callerName,
                 callerAvatar: callerProfile?.avatar_url || '',
                 callerPhone: callerProfile?.phone_number || '',
@@ -532,17 +578,19 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // 5. Join WebRTC room as initiator
-    try {
-      await gcm.joinRoom(
-        room.id,
-        [target.id],
-        stream || new MediaStream(),
-        { video, audio: true },
-        true,
-        callRow ? { [target.id]: callRow.id } : undefined
-      );
-    } catch (gcmErr) {
-      console.warn('[CallContext] GCM joinRoom notice:', gcmErr);
+    if (manager) {
+      try {
+        await manager.joinRoom(
+          roomId,
+          [target.id],
+          stream || new MediaStream(),
+          { video, audio: true },
+          true,
+          callRow ? { [target.id]: callRow.id } : undefined
+        );
+      } catch (gcmErr) {
+        console.warn('[CallContext] GCM joinRoom notice:', gcmErr);
+      }
     }
 
     toast.success(`Calling ${target.name}...`);

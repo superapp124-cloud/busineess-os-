@@ -489,20 +489,23 @@ const DesktopCalls: React.FC = () => {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
 
+      // Only load calls where current user is caller or receiver
       const { data: calls } = await supabase
         .from('calls')
         .select('*')
+        .or(`caller_id.eq.${uid},receiver_id.eq.${uid}`)
         .order('started_at', { ascending: false })
         .limit(40);
 
+      // NOTE: display_name column does NOT exist in profiles — omit it
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, username, full_name, display_name, avatar_url, phone_number, email');
+        .select('id, username, full_name, avatar_url, phone_number, email');
 
       const profileMap: Record<string, any> = {};
       (profiles || []).forEach(p => {
-        const cleanName = p.full_name || p.display_name || p.username || (p.email ? p.email.split('@')[0] : (p.phone_number ? `Member (${p.phone_number.slice(-4)})` : null));
-        profileMap[p.id] = { ...p, full_name: cleanName || 'Sanobar Jahan' };
+        const cleanName = p.full_name || p.username || (p.email ? p.email.split('@')[0] : (p.phone_number ? `Member (${p.phone_number.slice(-4)})` : null));
+        profileMap[p.id] = { ...p, full_name: cleanName || 'Unknown' };
       });
 
       const convIds = [...new Set((calls || []).map(c => c.conversation_id).filter(Boolean))];
@@ -527,11 +530,15 @@ const DesktopCalls: React.FC = () => {
           let otherUser = (peerId && profileMap[peerId]) || partMap[c.conversation_id];
 
           if (!otherUser) {
-            const metaName = c.metadata?.caller_name || c.caller_name || (c.caller_id && c.caller_id !== uid ? `Member (${c.caller_id.slice(-4)})` : 'Sanobar Jahan');
+            // Use the stored caller_name / receiver_name from the calls row first
+            const storedName = c.caller_id === uid
+              ? (c.receiver_name || c.receiver_phone || '')
+              : (c.caller_name || c.caller_phone || '');
+            const metaName = storedName || c.metadata?.caller_name || (peerId ? `Member (${peerId.slice(-4)})` : 'Unknown');
             otherUser = {
-              id: peerId || c.caller_id || 'peer',
+              id: peerId || '',
               full_name: metaName,
-              username: metaName.toLowerCase().replace(/\s+/g, '_'),
+              username: '',
               avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(metaName)}&background=6366f1&color=fff&bold=true`
             };
           }
@@ -714,7 +721,11 @@ const DesktopCalls: React.FC = () => {
  return (
  <button
  key={log.id}
- onClick={() => { setSessionGoal(log.call_type || 'quick'); setDialInput(log.other_user?.username || ''); }}
+ onClick={() => {
+    const targetId = log.other_user?.id || '';
+    setSessionGoal(log.call_type || 'quick');
+    setDialInput(targetId);
+  }}
  className={cn('w-full flex items-center gap-2 p-1.5 rounded-md transition-colors text-left', isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-zinc-100')}
  >
  <Avatar className={cn('w-6 h-6 border shrink-0', isDark ? 'border-white/5' : 'border-zinc-200')}>
@@ -1293,6 +1304,201 @@ const DesktopCalls: React.FC = () => {
  'bg-gradient-to-br from-[#129B55] to-[#046132]', // Green
  'bg-gradient-to-br from-[#D97904] to-[#995100]', // Orange
  'bg-gradient-to-br from-[#0B71C6] to-[#033F76]', // Blue
+{showReactions && <ReactionsBar onClose={() => setShowReactions(false)} />}
+ {showLayoutSwitcher && (
+ <LayoutSwitcher
+ current={layoutMode}
+ onChange={setLayoutMode}
+ onClose={() => setShowLayoutSwitcher(false)}
+ />
+ )}
+ {showHostControls && (
+ <HostControls
+ onClose={() => setShowHostControls(false)}
+ onMuteAll={async () => {
+ if (!activeRoomId) return;
+ try {
+ await supabase.channel(`room-settings-${activeRoomId}`).send({
+ type: 'broadcast',
+ event: 'host_control',
+ payload: { key: 'mute_all', value: true }
+ });
+ toast.success('Mute command sent to all participants.');
+ } catch (e) {
+ toast.error('Failed to send mute command.');
+ }
+ }}
+ onEndMeeting={endCall}
+ roomId={activeRoomId}
+ />
+ )}
+
+ <MeetingControls
+ isMuted={isMuted}
+ isVideoOff={isVideoOff}
+ isRecording={isRecording}
+ isHandRaised={isHandRaised}
+ isScreenSharing={isScreenSharing}
+ showAddParticipant={showAddParticipant}
+ onToggleMute={toggleMute}
+ onToggleVideo={toggleVideo}
+ onToggleRecord={handleToggleRecording}
+ onToggleHand={() => { setIsHandRaised(p => !p); toast.info(isHandRaised ? 'Hand lowered' : 'Hand raised ✋'); }}
+ onToggleScreen={() => setIsScreenSharing(p => !p)}
+ onAddParticipant={() => { closeAllPopups(); setShowAddParticipant(p => !p); }}
+ onReactions={() => { closeAllPopups(); setShowReactions(p => !p); }}
+ onMoreOptions={() => { closeAllPopups(); setShowHostControls(p => !p); }}
+ onEndCall={handleEndCall}
+ callDuration={fmt(callDuration)}
+ />
+ </div>
+ </div>
+
+ {/* Participants Panel */}
+ {showParticipants && (
+ <ParticipantsPanel
+ participants={participants}
+ isHost={true}
+ onClose={() => setShowParticipants(false)}
+ onInvite={() => { setShowParticipants(false); setShowInviteModal(true); }}
+ onMuteParticipant={(id) => { console.log('Mute', id); toast.info('Participant muted'); }}
+ onRemoveParticipant={(id) => { console.log('Remove', id); toast.info('Participant removed'); }}
+ />
+ )}
+
+ {/* AI Workspace */}
+ <SessionWorkspace
+ goal={sessionGoal || 'quick'}
+ remoteUserName={remoteUserName}
+ remoteUserAvatar={remoteUserAvatar}
+ callId={getLocalCallId()}
+ callDuration={callDuration}
+ onSaveTranscript={saveTranscriptToDocuments}
+ onSaveSummary={saveSummaryToDocuments}
+ onTranscriptUpdate={(text) => {
+ const cleanedText = text.trim();
+ if (!cleanedText) return;
+ transcriptRef.current = transcriptRef.current
+ ? `${transcriptRef.current.trimEnd()}\n${cleanedText}`
+ : cleanedText;
+ }}
+ />
+ </div>
+ </div>
+ )}
+ </div>
+
+ {/* ── Global Modals ───────────────────────────────────── */}
+ {showInviteModal && (
+ <InviteModal
+ meetingId={activeRoomId || instantMeetingId}
+ meetingLink={activeRoomId ? `${window.location.origin}/desktop/calls?room=${activeRoomId}` : `${window.location.origin}/desktop/calls?room=${instantMeetingId}`}
+ passcode=""
+ onClose={() => setShowInviteModal(false)}
+ />
+ )}
+
+ {/* Post-Call Summary Modal */}
+ {showSummaryModal && (
+ <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 animate-in fade-in duration-300">
+ <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden">
+ <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+ <h3 className="font-semibold text-white/90 flex items-center gap-2">
+ <Sparkles className="w-4 h-4 text-indigo-400" /> Call Summary
+ </h3>
+ {!summaryLoading && (
+ <button onClick={() => setShowSummaryModal(false)} className="text-white/40 hover:text-white/80 p-1">
+ ✕
+ </button>
+ )}
+ </div>
+ <div className="p-6">
+ {summaryLoading ? (
+ <div className="flex flex-col items-center justify-center py-10 space-y-4">
+ <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+ <p className="text-secondary text-white/60">ChatrAI is analyzing the transcript...</p>
+ </div>
+ ) : (
+ <div className="space-y-4">
+ <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 text-secondary text-white/80 whitespace-pre-line ">
+ {summary || "No summary could be generated."}
+ </div>
+ <div className="flex justify-end pt-2">
+ <button onClick={() => setShowSummaryModal(false)} className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-secondary font-medium transition-colors">
+ Close
+ </button>
+ </div>
+ </div>
+ )}
+ </div>
+ </div>
+ </div>
+ )}
+
+ {/* Add Custom Goal Modal */}
+ {showAddGoalModal && (
+ <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 animate-in fade-in duration-300">
+ <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
+ <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+ <h3 className="font-semibold text-white/90 flex items-center gap-2">
+ <Plus className="w-4 h-4 text-purple-400" /> Add Custom Goal
+ </h3>
+ <button onClick={() => setShowAddGoalModal(false)} className="text-white/40 hover:text-white/80 p-1">
+ ✕
+ </button>
+ </div>
+ <div className="p-6 space-y-4">
+ <div>
+ <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Label</label>
+ <input
+ type="text"
+ placeholder="e.g. Sales Pitch"
+ value={newGoal.label}
+ onChange={(e) => setNewGoal({ ...newGoal, label: e.target.value })}
+ className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-secondary text-white focus:outline-none focus:border-purple-500"
+ />
+ </div>
+ <div>
+ <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Description</label>
+ <textarea
+ placeholder="What is this goal for?"
+ value={newGoal.desc}
+ onChange={(e) => setNewGoal({ ...newGoal, desc: e.target.value })}
+ className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-secondary text-white focus:outline-none focus:border-purple-500 h-20 resize-none"
+ />
+ </div>
+ <div className="grid grid-cols-2 gap-4">
+ <div>
+ <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Category / Tag</label>
+ <input
+ type="text"
+ placeholder="e.g. Sales"
+ value={newGoal.tag}
+ onChange={(e) => setNewGoal({ ...newGoal, tag: e.target.value })}
+ className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-secondary text-white focus:outline-none focus:border-purple-500"
+ />
+ </div>
+ <div>
+ <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Icon</label>
+ <select
+ value={newGoal.iconName}
+ onChange={(e) => setNewGoal({ ...newGoal, iconName: e.target.value })}
+ className="w-full bg-black/40 border border-white/10 rounded-md px-3 py-2 text-secondary text-white focus:outline-none focus:border-purple-500"
+ >
+ {Object.keys(IconMap).map((k) => (
+ <option key={k} value={k}>{k}</option>
+ ))}
+ </select>
+ </div>
+ </div>
+ <div>
+ <label className="text-[10px] text-white/60 uppercase tracking-widest font-bold mb-1.5 block">Color Theme</label>
+ <div className="flex gap-2">
+ {[
+ 'bg-gradient-to-br from-[#7C2BBE] to-[#450C85]', // Purple
+ 'bg-gradient-to-br from-[#129B55] to-[#046132]', // Green
+ 'bg-gradient-to-br from-[#D97904] to-[#995100]', // Orange
+ 'bg-gradient-to-br from-[#0B71C6] to-[#033F76]', // Blue
  'bg-gradient-to-br from-[#E22748] to-[#910A22]', // Red
  ].map((c, i) => (
  <button
@@ -1347,7 +1553,7 @@ function StartCallConnectionModal({
   isOpen: boolean;
   onClose: () => void;
   goal: string | null;
-  onStart: (target: string) => void;
+  onStart: (target: string, video?: boolean) => void;
 }) {
   const [search, setSearch] = useState('');
   const [dbContacts, setDbContacts] = useState<any[]>([]);
@@ -1375,6 +1581,9 @@ function StartCallConnectionModal({
 
   const query = search.trim().toLowerCase();
   const isPhoneOrEmail = query.includes('@') || /^\+?[0-9\s\-]{6,}$/.test(query);
+  const filtered = search.trim()
+    ? allConnections.filter(c => c.name.toLowerCase().includes(query) || c.handle.toLowerCase().includes(query))
+    : allConnections;
   const matchedUser = allConnections.find(c => c.name.toLowerCase().includes(query) || c.handle.toLowerCase().includes(query));
   const isPlatformUser = Boolean(matchedUser) || (!isPhoneOrEmail && filtered.length > 0);
 
@@ -1483,14 +1692,14 @@ function StartCallConnectionModal({
 
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => onStart(c.id || c.handle || c.name)}
+                  onClick={() => onStart(c.id || c.handle || c.name, true)}
                   className="p-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                   title="Start Video Call"
                 >
                   <Video className="w-3.5 h-3.5" />
                 </button>
                 <button
-                  onClick={() => onStart(c.id || c.handle || c.name)}
+                  onClick={() => onStart(c.id || c.handle || c.name, false)}
                   className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                   title="Start Voice Call"
                 >
