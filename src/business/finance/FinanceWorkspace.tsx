@@ -23,6 +23,7 @@ import { MonthEndCloseView } from './close/MonthEndCloseView';
 import { FinancialStatementsView } from './reporting/FinancialStatementsView';
 import { CFOBriefingView } from './reporting/CFOBriefingView';
 import { FinanceAgentWorkspace } from './ai/FinanceAgentWorkspace';
+import { StrategicScenarioView } from './simulation/StrategicScenarioView';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -187,6 +188,7 @@ export function FinanceWorkspace() {
             <TabsTrigger value="statements" className="text-xs gap-1"><FileText className="w-3 h-3" />Statements</TabsTrigger>
             <TabsTrigger value="cfo" className="text-xs gap-1"><Sparkles className="w-3 h-3" />CFO Briefing</TabsTrigger>
             <TabsTrigger value="copilot" className="text-xs gap-1"><Bot className="w-3 h-3" />AI Copilot & Risks</TabsTrigger>
+            <TabsTrigger value="simulator" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Strategic Simulator</TabsTrigger>
             <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
           </TabsList>
 
@@ -299,6 +301,9 @@ export function FinanceWorkspace() {
             </TabsContent>
             <TabsContent value="copilot" className="mt-0">
               <FinanceAgentWorkspace />
+            </TabsContent>
+            <TabsContent value="simulator" className="mt-0">
+              <StrategicScenarioView />
             </TabsContent>
             <TabsContent value="integrity" className="mt-0">
               {finOrg && (
