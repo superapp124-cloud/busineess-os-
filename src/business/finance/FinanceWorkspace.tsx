@@ -19,6 +19,9 @@ import { RevenueSchedulesView } from './revenue/RevenueSchedulesView';
 import { BankAccountsView } from './banking/BankAccountsView';
 import { ReconciliationView } from './banking/ReconciliationView';
 import { CashForecastView } from './banking/CashForecastView';
+import { MonthEndCloseView } from './close/MonthEndCloseView';
+import { FinancialStatementsView } from './reporting/FinancialStatementsView';
+import { CFOBriefingView } from './reporting/CFOBriefingView';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -179,6 +182,9 @@ export function FinanceWorkspace() {
             <TabsTrigger value="banking" className="text-xs gap-1"><Landmark className="w-3 h-3" />Banking</TabsTrigger>
             <TabsTrigger value="reconciliation" className="text-xs gap-1"><Sparkles className="w-3 h-3" />Reconciliation</TabsTrigger>
             <TabsTrigger value="forecast" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Cash Forecast</TabsTrigger>
+            <TabsTrigger value="close" className="text-xs gap-1"><ShieldCheck className="w-3 h-3" />Month-End Close</TabsTrigger>
+            <TabsTrigger value="statements" className="text-xs gap-1"><FileText className="w-3 h-3" />Statements</TabsTrigger>
+            <TabsTrigger value="cfo" className="text-xs gap-1"><Sparkles className="w-3 h-3" />CFO Briefing</TabsTrigger>
             <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
           </TabsList>
 
@@ -267,6 +273,27 @@ export function FinanceWorkspace() {
                   finOrganizationId={finOrg.id}
                 />
               )}
+            </TabsContent>
+            <TabsContent value="close" className="mt-0">
+              {finOrg && selectedEntity && selectedPeriod && (
+                <MonthEndCloseView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                  periodId={selectedPeriod}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="statements" className="mt-0">
+              {finOrg && selectedEntity && selectedPeriod && (
+                <FinancialStatementsView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                  periodId={selectedPeriod}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="cfo" className="mt-0">
+              <CFOBriefingView />
             </TabsContent>
             <TabsContent value="integrity" className="mt-0">
               {finOrg && (
