@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,9 @@ import type { FinOrganization, FinLegalEntity, FinPeriod } from './types';
 import { GeneralLedger } from './gl/GeneralLedger';
 import { ChartOfAccounts } from './coa/ChartOfAccounts';
 import { JournalEntryViewer } from './journal/JournalEntryViewer';
+import { InvoicesView } from './ar/InvoicesView';
+import { BillsView } from './ap/BillsView';
+import { IntegrityDashboard } from './integrity/IntegrityDashboard';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -164,6 +167,9 @@ export function FinanceWorkspace() {
             <TabsTrigger value="gl" className="text-xs gap-1"><BookOpen className="w-3 h-3" />General Ledger</TabsTrigger>
             <TabsTrigger value="coa" className="text-xs gap-1"><List className="w-3 h-3" />Chart of Accounts</TabsTrigger>
             <TabsTrigger value="journal" className="text-xs gap-1"><FileText className="w-3 h-3" />Journal Entries</TabsTrigger>
+            <TabsTrigger value="ar" className="text-xs gap-1"><FileText className="w-3 h-3" />Invoices (AR)</TabsTrigger>
+            <TabsTrigger value="ap" className="text-xs gap-1"><FileText className="w-3 h-3" />Bills (AP)</TabsTrigger>
+            <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
           </TabsList>
 
           <div className="flex-1 overflow-auto p-4">
@@ -196,6 +202,29 @@ export function FinanceWorkspace() {
                   finOrganizationId={finOrg.id}
                   legalEntityId={selectedEntity}
                   periodId={selectedPeriod}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="ar" className="mt-0">
+              {finOrg && selectedEntity && (
+                <InvoicesView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="ap" className="mt-0">
+              {finOrg && selectedEntity && (
+                <BillsView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="integrity" className="mt-0">
+              {finOrg && (
+                <IntegrityDashboard
+                  finOrganizationId={finOrg.id}
                 />
               )}
             </TabsContent>
