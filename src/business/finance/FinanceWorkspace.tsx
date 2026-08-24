@@ -400,7 +400,12 @@ export function FinanceWorkspace() {
 
           <div className="flex-1 overflow-auto p-4">
             <TabsContent value="cmd" className="mt-0">
-              <CFOCommandCenter />
+              <CFOCommandCenter
+                finOrganizationId={finOrg?.id}
+                legalEntityId={selectedEntity}
+                periodId={selectedPeriod}
+                reportingCurrency={finOrg?.reporting_currency || 'INR'}
+              />
             </TabsContent>
             <TabsContent value="wizard" className="mt-0">
               <FinancialImportWizard />
