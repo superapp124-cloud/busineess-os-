@@ -24,6 +24,7 @@ import { FinancialStatementsView } from './reporting/FinancialStatementsView';
 import { CFOBriefingView } from './reporting/CFOBriefingView';
 import { FinanceAgentWorkspace } from './ai/FinanceAgentWorkspace';
 import { StrategicScenarioView } from './simulation/StrategicScenarioView';
+import { CFOCommandCenter } from './command/CFOCommandCenter';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -34,7 +35,7 @@ export function FinanceWorkspace() {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('cmd');
 
   useEffect(() => {
     loadFinanceContext();
@@ -173,6 +174,7 @@ export function FinanceWorkspace() {
       <div className="flex-1 overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <TabsList className="mx-4 mt-4 w-fit">
+            <TabsTrigger value="cmd" className="text-xs gap-1 font-semibold text-primary"><Sparkles className="w-3.5 h-3.5 text-primary" />Command Center</TabsTrigger>
             <TabsTrigger value="overview" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Overview</TabsTrigger>
             <TabsTrigger value="gl" className="text-xs gap-1"><BookOpen className="w-3 h-3" />General Ledger</TabsTrigger>
             <TabsTrigger value="coa" className="text-xs gap-1"><List className="w-3 h-3" />Chart of Accounts</TabsTrigger>
@@ -193,6 +195,9 @@ export function FinanceWorkspace() {
           </TabsList>
 
           <div className="flex-1 overflow-auto p-4">
+            <TabsContent value="cmd" className="mt-0">
+              <CFOCommandCenter />
+            </TabsContent>
             <TabsContent value="overview" className="mt-0">
               <FinanceOverview finOrg={finOrg} entities={entities} periods={periods} />
             </TabsContent>
