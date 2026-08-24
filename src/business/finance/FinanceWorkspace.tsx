@@ -17,8 +17,10 @@ import {
   ShieldCheck,
   Award,
   Layers,
-  Activity
+  Activity,
+  ChevronDown
 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import type { FinOrganization, FinLegalEntity, FinPeriod } from './types';
@@ -284,66 +286,115 @@ export function FinanceWorkspace() {
       )}
 
       {/* Tabs */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden flex flex-col">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-          <div className="mx-4 mt-3 flex flex-wrap items-center gap-2 border-b border-border/60 pb-2.5">
-            {/* Executive Group */}
-            <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-700 shadow-sm">
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider px-2">Executive</span>
-              <TabsList className="bg-transparent h-7 p-0 gap-1">
-                <TabsTrigger value="cmd" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-amber-400 data-[state=active]:text-slate-950" />Command Center</TabsTrigger>
-                <TabsTrigger value="copilot" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Bot className="w-3 h-3 text-blue-400 data-[state=active]:text-slate-950" />AI Copilot & Risks</TabsTrigger>
-                <TabsTrigger value="simulator" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Strategic Simulator</TabsTrigger>
-                <TabsTrigger value="matrix" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-blue-400 data-[state=active]:text-slate-950" />Scenario Matrix</TabsTrigger>
-              </TabsList>
-            </div>
+          {/* Compact Grouped Navigation Bar */}
+          <div className="mx-3.5 mt-2.5 pb-2 border-b border-slate-800/80 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-2 min-w-max">
+              {/* 1. EXECUTIVE */}
+              <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shadow-sm">
+                <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-wider px-1">Executive</span>
+                <TabsList className="bg-transparent h-6 p-0 gap-0.5">
+                  <TabsTrigger value="cmd" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-amber-400 data-[state=active]:text-slate-950" />Command Center</TabsTrigger>
+                  <TabsTrigger value="copilot" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Bot className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />AI Copilot</TabsTrigger>
+                  <TabsTrigger value="simulator" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Simulator</TabsTrigger>
+                  <TabsTrigger value="matrix" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Layers className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />Matrix</TabsTrigger>
+                </TabsList>
+              </div>
 
-            {/* Accounting Group */}
-            <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-700 shadow-sm">
-              <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider px-2">Accounting</span>
-              <TabsList className="bg-transparent h-7 p-0 gap-1">
-                <TabsTrigger value="gl" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><BookOpen className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />GL</TabsTrigger>
-                <TabsTrigger value="coa" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><List className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />COA</TabsTrigger>
-                <TabsTrigger value="journal" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Journals</TabsTrigger>
-                <TabsTrigger value="ar" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Invoices</TabsTrigger>
-                <TabsTrigger value="ap" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Bills</TabsTrigger>
-                <TabsTrigger value="contracts" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Contracts</TabsTrigger>
-                <TabsTrigger value="schedules" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Recognition</TabsTrigger>
-              </TabsList>
-            </div>
+              {/* 2. ACCOUNTING */}
+              <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shadow-sm">
+                <span className="text-[9px] font-extrabold text-sky-400 uppercase tracking-wider px-1">Accounting</span>
+                <TabsList className="bg-transparent h-6 p-0 gap-0.5">
+                  <TabsTrigger value="gl" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><BookOpen className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />GL</TabsTrigger>
+                  <TabsTrigger value="coa" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><List className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />COA</TabsTrigger>
+                  <TabsTrigger value="journal" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Journal</TabsTrigger>
+                  <TabsTrigger value="ar" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Invoices</TabsTrigger>
+                  <TabsTrigger value="ap" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Bills</TabsTrigger>
+                  <TabsTrigger value="contracts" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Contracts</TabsTrigger>
+                  <TabsTrigger value="schedules" className="text-xs h-6 px-1.5 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-sky-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-sky-400 data-[state=active]:text-slate-950" />Recognition</TabsTrigger>
+                </TabsList>
+              </div>
 
-            {/* Cash & Banking Group */}
-            <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-700 shadow-sm">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider px-2">Cash & Banking</span>
-              <TabsList className="bg-transparent h-7 p-0 gap-1">
-                <TabsTrigger value="banking" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Landmark className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Banking</TabsTrigger>
-                <TabsTrigger value="reconciliation" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Reconciliation</TabsTrigger>
-                <TabsTrigger value="forecast" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Cash Forecast</TabsTrigger>
-              </TabsList>
-            </div>
+              {/* 3. CASH & BANKING */}
+              <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shadow-sm">
+                <span className="text-[9px] font-extrabold text-emerald-400 uppercase tracking-wider px-1">Cash & Banking</span>
+                <TabsList className="bg-transparent h-6 p-0 gap-0.5">
+                  <TabsTrigger value="banking" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Landmark className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Banking</TabsTrigger>
+                  <TabsTrigger value="reconciliation" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Reconciliation</TabsTrigger>
+                  <TabsTrigger value="forecast" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-emerald-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-emerald-400 data-[state=active]:text-slate-950" />Forecast</TabsTrigger>
+                </TabsList>
+              </div>
 
-            {/* Close & Reporting Group */}
-            <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-700 shadow-sm">
-              <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider px-2">Close & Reporting</span>
-              <TabsList className="bg-transparent h-7 p-0 gap-1">
-                <TabsTrigger value="close" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><ShieldCheck className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />Close</TabsTrigger>
-                <TabsTrigger value="statements" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />Statements</TabsTrigger>
-                <TabsTrigger value="cfo" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />CFO Briefing</TabsTrigger>
-              </TabsList>
-            </div>
+              {/* 4. CLOSE & REPORTING */}
+              <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shadow-sm">
+                <span className="text-[9px] font-extrabold text-purple-400 uppercase tracking-wider px-1">Close & Reporting</span>
+                <TabsList className="bg-transparent h-6 p-0 gap-0.5">
+                  <TabsTrigger value="close" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><ShieldCheck className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />Close</TabsTrigger>
+                  <TabsTrigger value="statements" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><FileText className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />Statements</TabsTrigger>
+                  <TabsTrigger value="cfo" className="text-xs h-6 px-2 gap-1 font-medium text-slate-300 hover:text-white data-[state=active]:bg-purple-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Sparkles className="w-3 h-3 text-purple-400 data-[state=active]:text-slate-950" />CFO Briefing</TabsTrigger>
+                </TabsList>
+              </div>
 
-            {/* Operations Group */}
-            <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-700 shadow-sm">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider px-2">Operations</span>
-              <TabsList className="bg-transparent h-7 p-0 gap-1">
-                <TabsTrigger value="wizard" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><UploadCloud className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Import Wizard</TabsTrigger>
-                <TabsTrigger value="pilot" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><ShieldCheck className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Parallel Pilot</TabsTrigger>
-                <TabsTrigger value="cert" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Award className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Certification</TabsTrigger>
-                <TabsTrigger value="reconciler" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Layers className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Truth Reconciler</TabsTrigger>
-                <TabsTrigger value="health" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Activity className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />System Health</TabsTrigger>
-                <TabsTrigger value="integrity" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><Landmark className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Control Center</TabsTrigger>
-                <TabsTrigger value="overview" className="text-xs h-6 px-2.5 gap-1.5 font-medium text-slate-200 hover:text-white hover:bg-slate-800 data-[state=active]:bg-indigo-500 data-[state=active]:text-slate-950 data-[state=active]:font-bold transition-all"><TrendingUp className="w-3 h-3 text-indigo-400 data-[state=active]:text-slate-950" />Overview</TabsTrigger>
-              </TabsList>
+              {/* 5. TRUST & CONTROL ▾ */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`h-7 text-xs px-2.5 gap-1.5 border-slate-800 bg-slate-900/90 font-medium ${
+                      ['integrity', 'reconciler', 'pilot', 'cert', 'health'].includes(activeTab)
+                        ? 'bg-indigo-600 text-white font-bold border-indigo-500'
+                        : 'text-indigo-300 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                    Trust &amp; Control
+                    <ChevronDown className="w-3 h-3 ml-0.5 opacity-70" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-slate-900 border-slate-700 text-slate-100 text-xs shadow-lg">
+                  <DropdownMenuItem onClick={() => setActiveTab('integrity')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <Landmark className="w-3.5 h-3.5 text-indigo-400" /> Control Center
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('reconciler')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <Layers className="w-3.5 h-3.5 text-indigo-400" /> Truth Reconciler
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('pilot')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Parallel Pilot
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('cert')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <Award className="w-3.5 h-3.5 text-indigo-400" /> Pilot Certification
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('health')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <Activity className="w-3.5 h-3.5 text-indigo-400" /> System Health
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* 6. PRODUCTION ▾ */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`h-7 text-xs px-2.5 gap-1.5 border-slate-800 bg-slate-900/90 font-medium ${
+                      activeTab === 'wizard'
+                        ? 'bg-emerald-600 text-white font-bold border-emerald-500'
+                        : 'text-emerald-300 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    <UploadCloud className="w-3.5 h-3.5 text-emerald-400" />
+                    Production
+                    <ChevronDown className="w-3 h-3 ml-0.5 opacity-70" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-slate-900 border-slate-700 text-slate-100 text-xs shadow-lg">
+                  <DropdownMenuItem onClick={() => setActiveTab('wizard')} className="gap-2 cursor-pointer hover:bg-slate-800 focus:bg-slate-800">
+                    <UploadCloud className="w-3.5 h-3.5 text-emerald-400" /> Import Wizard
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
