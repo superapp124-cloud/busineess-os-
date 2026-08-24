@@ -16,6 +16,9 @@ import { BillsView } from './ap/BillsView';
 import { IntegrityDashboard } from './integrity/IntegrityDashboard';
 import { ContractsView } from './revenue/ContractsView';
 import { RevenueSchedulesView } from './revenue/RevenueSchedulesView';
+import { BankAccountsView } from './banking/BankAccountsView';
+import { ReconciliationView } from './banking/ReconciliationView';
+import { CashForecastView } from './banking/CashForecastView';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -173,6 +176,9 @@ export function FinanceWorkspace() {
             <TabsTrigger value="ap" className="text-xs gap-1"><FileText className="w-3 h-3" />Bills (AP)</TabsTrigger>
             <TabsTrigger value="contracts" className="text-xs gap-1"><FileText className="w-3 h-3" />Contracts (ASC 606)</TabsTrigger>
             <TabsTrigger value="schedules" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Recognition</TabsTrigger>
+            <TabsTrigger value="banking" className="text-xs gap-1"><Landmark className="w-3 h-3" />Banking</TabsTrigger>
+            <TabsTrigger value="reconciliation" className="text-xs gap-1"><Sparkles className="w-3 h-3" />Reconciliation</TabsTrigger>
+            <TabsTrigger value="forecast" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Cash Forecast</TabsTrigger>
             <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
           </TabsList>
 
@@ -236,6 +242,28 @@ export function FinanceWorkspace() {
             <TabsContent value="schedules" className="mt-0">
               {finOrg && (
                 <RevenueSchedulesView
+                  finOrganizationId={finOrg.id}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="banking" className="mt-0">
+              {finOrg && selectedEntity && (
+                <BankAccountsView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="reconciliation" className="mt-0">
+              {finOrg && (
+                <ReconciliationView
+                  finOrganizationId={finOrg.id}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="forecast" className="mt-0">
+              {finOrg && (
+                <CashForecastView
                   finOrganizationId={finOrg.id}
                 />
               )}
