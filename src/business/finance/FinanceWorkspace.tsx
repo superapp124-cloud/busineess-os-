@@ -179,32 +179,66 @@ export function FinanceWorkspace() {
       {/* Tabs */}
       <div className="flex-1 overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-          <TabsList className="mx-4 mt-4 w-fit">
-            <TabsTrigger value="cmd" className="text-xs gap-1 font-semibold text-primary"><Sparkles className="w-3.5 h-3.5 text-primary" />Command Center</TabsTrigger>
-            <TabsTrigger value="wizard" className="text-xs gap-1 font-semibold text-blue-600"><UploadCloud className="w-3.5 h-3.5 text-blue-600" />Import Wizard</TabsTrigger>
-            <TabsTrigger value="health" className="text-xs gap-1 font-semibold text-emerald-600"><Activity className="w-3.5 h-3.5 text-emerald-600" />System Health</TabsTrigger>
-            <TabsTrigger value="cert" className="text-xs gap-1"><Award className="w-3 h-3 text-emerald-600" />Pilot Certification</TabsTrigger>
-            <TabsTrigger value="reconciler" className="text-xs gap-1"><Layers className="w-3 h-3 text-purple-600" />Truth Reconciler</TabsTrigger>
-            <TabsTrigger value="pilot" className="text-xs gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Parallel Pilot</TabsTrigger>
-            <TabsTrigger value="matrix" className="text-xs gap-1"><TrendingUp className="w-3 h-3 text-blue-600" />Scenario Matrix</TabsTrigger>
-            <TabsTrigger value="overview" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Overview</TabsTrigger>
-            <TabsTrigger value="gl" className="text-xs gap-1"><BookOpen className="w-3 h-3" />General Ledger</TabsTrigger>
-            <TabsTrigger value="coa" className="text-xs gap-1"><List className="w-3 h-3" />Chart of Accounts</TabsTrigger>
-            <TabsTrigger value="journal" className="text-xs gap-1"><FileText className="w-3 h-3" />Journal Entries</TabsTrigger>
-            <TabsTrigger value="ar" className="text-xs gap-1"><FileText className="w-3 h-3" />Invoices (AR)</TabsTrigger>
-            <TabsTrigger value="ap" className="text-xs gap-1"><FileText className="w-3 h-3" />Bills (AP)</TabsTrigger>
-            <TabsTrigger value="contracts" className="text-xs gap-1"><FileText className="w-3 h-3" />Contracts (ASC 606)</TabsTrigger>
-            <TabsTrigger value="schedules" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Recognition</TabsTrigger>
-            <TabsTrigger value="banking" className="text-xs gap-1"><Landmark className="w-3 h-3" />Banking</TabsTrigger>
-            <TabsTrigger value="reconciliation" className="text-xs gap-1"><Sparkles className="w-3 h-3" />Reconciliation</TabsTrigger>
-            <TabsTrigger value="forecast" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Cash Forecast</TabsTrigger>
-            <TabsTrigger value="close" className="text-xs gap-1"><ShieldCheck className="w-3 h-3" />Month-End Close</TabsTrigger>
-            <TabsTrigger value="statements" className="text-xs gap-1"><FileText className="w-3 h-3" />Statements</TabsTrigger>
-            <TabsTrigger value="cfo" className="text-xs gap-1"><Sparkles className="w-3 h-3" />CFO Briefing</TabsTrigger>
-            <TabsTrigger value="copilot" className="text-xs gap-1"><Bot className="w-3 h-3" />AI Copilot & Risks</TabsTrigger>
-            <TabsTrigger value="simulator" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Strategic Simulator</TabsTrigger>
-            <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
-          </TabsList>
+          <div className="mx-4 mt-3 flex flex-wrap items-center gap-2 border-b pb-2">
+            {/* Executive Group */}
+            <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase px-1.5">Executive</span>
+              <TabsList className="bg-transparent h-7 p-0 gap-0.5">
+                <TabsTrigger value="cmd" className="text-xs h-6 px-2.5 gap-1 font-semibold text-primary"><Sparkles className="w-3 h-3 text-primary" />Command Center</TabsTrigger>
+                <TabsTrigger value="copilot" className="text-xs h-6 px-2 gap-1"><Bot className="w-3 h-3" />AI Copilot & Risks</TabsTrigger>
+                <TabsTrigger value="simulator" className="text-xs h-6 px-2 gap-1"><TrendingUp className="w-3 h-3" />Strategic Simulator</TabsTrigger>
+                <TabsTrigger value="matrix" className="text-xs h-6 px-2 gap-1"><TrendingUp className="w-3 h-3 text-blue-600" />Scenario Matrix</TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Accounting Group */}
+            <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase px-1.5">Accounting</span>
+              <TabsList className="bg-transparent h-7 p-0 gap-0.5">
+                <TabsTrigger value="gl" className="text-xs h-6 px-2 gap-1"><BookOpen className="w-3 h-3" />GL</TabsTrigger>
+                <TabsTrigger value="coa" className="text-xs h-6 px-2 gap-1"><List className="w-3 h-3" />COA</TabsTrigger>
+                <TabsTrigger value="journal" className="text-xs h-6 px-2 gap-1"><FileText className="w-3 h-3" />Journals</TabsTrigger>
+                <TabsTrigger value="ar" className="text-xs h-6 px-2 gap-1"><FileText className="w-3 h-3" />Invoices</TabsTrigger>
+                <TabsTrigger value="ap" className="text-xs h-6 px-2 gap-1"><FileText className="w-3 h-3" />Bills</TabsTrigger>
+                <TabsTrigger value="contracts" className="text-xs h-6 px-2 gap-1"><FileText className="w-3 h-3" />Contracts</TabsTrigger>
+                <TabsTrigger value="schedules" className="text-xs h-6 px-2 gap-1"><TrendingUp className="w-3 h-3" />Recognition</TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Cash & Banking Group */}
+            <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase px-1.5">Cash & Banking</span>
+              <TabsList className="bg-transparent h-7 p-0 gap-0.5">
+                <TabsTrigger value="banking" className="text-xs h-6 px-2 gap-1"><Landmark className="w-3 h-3" />Banking</TabsTrigger>
+                <TabsTrigger value="reconciliation" className="text-xs h-6 px-2 gap-1"><Sparkles className="w-3 h-3" />Reconciliation</TabsTrigger>
+                <TabsTrigger value="forecast" className="text-xs h-6 px-2 gap-1"><TrendingUp className="w-3 h-3" />Cash Forecast</TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Close & Reporting Group */}
+            <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase px-1.5">Close & Reporting</span>
+              <TabsList className="bg-transparent h-7 p-0 gap-0.5">
+                <TabsTrigger value="close" className="text-xs h-6 px-2 gap-1"><ShieldCheck className="w-3 h-3" />Close</TabsTrigger>
+                <TabsTrigger value="statements" className="text-xs h-6 px-2 gap-1"><FileText className="w-3 h-3" />Statements</TabsTrigger>
+                <TabsTrigger value="cfo" className="text-xs h-6 px-2 gap-1"><Sparkles className="w-3 h-3" />CFO Briefing</TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Operations Group */}
+            <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase px-1.5">Operations</span>
+              <TabsList className="bg-transparent h-7 p-0 gap-0.5">
+                <TabsTrigger value="wizard" className="text-xs h-6 px-2 gap-1 font-semibold text-blue-600"><UploadCloud className="w-3 h-3 text-blue-600" />Import Wizard</TabsTrigger>
+                <TabsTrigger value="pilot" className="text-xs h-6 px-2 gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Parallel Pilot</TabsTrigger>
+                <TabsTrigger value="cert" className="text-xs h-6 px-2 gap-1"><Award className="w-3 h-3 text-emerald-600" />Certification</TabsTrigger>
+                <TabsTrigger value="reconciler" className="text-xs h-6 px-2 gap-1"><Layers className="w-3 h-3 text-purple-600" />Truth Reconciler</TabsTrigger>
+                <TabsTrigger value="health" className="text-xs h-6 px-2 gap-1 font-semibold text-emerald-600"><Activity className="w-3 h-3 text-emerald-600" />System Health</TabsTrigger>
+                <TabsTrigger value="integrity" className="text-xs h-6 px-2 gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
+                <TabsTrigger value="overview" className="text-xs h-6 px-2 gap-1"><TrendingUp className="w-3 h-3" />Overview</TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
 
           <div className="flex-1 overflow-auto p-4">
             <TabsContent value="cmd" className="mt-0">
