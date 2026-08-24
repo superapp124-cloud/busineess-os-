@@ -132,48 +132,48 @@ export function CFOCommandCenter() {
 
       {/* 2. Top Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <Card className="p-3 bg-muted/20">
-          <span className="text-[11px] text-muted-foreground block">Cash Balance</span>
-          <strong className="text-base font-bold text-foreground">₹4.82 Cr</strong>
-          <span className="text-[10px] text-emerald-600 block flex items-center gap-0.5 mt-0.5">
-            <ShieldCheck className="w-3 h-3" /> Reconciled
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Cash Balance</span>
+          <strong className="text-xl font-bold text-white tracking-tight">₹4.82 Cr</strong>
+          <span className="text-[11px] text-emerald-400 font-semibold block flex items-center gap-1 mt-1">
+            <ShieldCheck className="w-3.5 h-3.5" /> Reconciled
           </span>
         </Card>
 
-        <Card className="p-3 bg-blue-50/50 border-blue-200">
-          <span className="text-[11px] text-blue-900 block font-medium">Expected Runway</span>
-          <strong className="text-base font-bold text-blue-950">7.4 Months</strong>
-          <span className="text-[10px] text-blue-700 block mt-0.5">Stress case: 5.9 mo</span>
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Expected Runway</span>
+          <strong className="text-xl font-bold text-sky-400 tracking-tight">7.4 Months</strong>
+          <span className="text-[11px] text-slate-400 block mt-1 font-medium">Stress case: 5.9 mo</span>
         </Card>
 
-        <Card className="p-3 bg-muted/20">
-          <span className="text-[11px] text-muted-foreground block">Monthly Revenue</span>
-          <strong className="text-base font-bold text-foreground">₹6.21 Cr</strong>
-          <span className="text-[10px] text-emerald-600 block flex items-center gap-0.5 mt-0.5 font-medium">
-            <TrendingUp className="w-3 h-3" /> +14.2% MoM
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Monthly Revenue</span>
+          <strong className="text-xl font-bold text-white tracking-tight">₹6.21 Cr</strong>
+          <span className="text-[11px] text-emerald-400 font-semibold block flex items-center gap-1 mt-1">
+            <TrendingUp className="w-3.5 h-3.5" /> +14.2% MoM
           </span>
         </Card>
 
-        <Card className="p-3 bg-muted/20">
-          <span className="text-[11px] text-muted-foreground block">Gross Margin</span>
-          <strong className="text-base font-bold text-foreground">41.8%</strong>
-          <span className="text-[10px] text-amber-600 block flex items-center gap-0.5 mt-0.5 font-medium">
-            <TrendingDown className="w-3 h-3" /> -1.8 pp (AWS)
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Gross Margin</span>
+          <strong className="text-xl font-bold text-white tracking-tight">41.8%</strong>
+          <span className="text-[11px] text-amber-400 font-semibold block flex items-center gap-1 mt-1">
+            <TrendingDown className="w-3.5 h-3.5" /> -1.8 pp (AWS)
           </span>
         </Card>
 
-        <Card className="p-3 bg-muted/20">
-          <span className="text-[11px] text-muted-foreground block">Accounts Receivable</span>
-          <strong className="text-base font-bold text-foreground">₹2.14 Cr</strong>
-          <span className="text-[10px] text-destructive block font-medium mt-0.5">
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Accounts Receivable</span>
+          <strong className="text-xl font-bold text-white tracking-tight">₹2.14 Cr</strong>
+          <span className="text-[11px] text-rose-400 font-semibold block mt-1">
             ₹48L Overdue (&gt;60 days)
           </span>
         </Card>
 
-        <Card className="p-3 bg-muted/20">
-          <span className="text-[11px] text-muted-foreground block">Accounts Payable</span>
-          <strong className="text-base font-bold text-foreground">₹1.37 Cr</strong>
-          <span className="text-[10px] text-muted-foreground block mt-0.5">
+        <Card className="p-3.5 bg-slate-900/90 border border-slate-700/80 rounded-lg shadow-sm">
+          <span className="text-xs text-slate-400 block font-medium">Accounts Payable</span>
+          <strong className="text-xl font-bold text-white tracking-tight">₹1.37 Cr</strong>
+          <span className="text-[11px] text-slate-400 font-medium block mt-1">
             Due in 15 days
           </span>
         </Card>
@@ -182,97 +182,97 @@ export function CFOCommandCenter() {
       {/* 3. Executive Two-Column Section: Attention Required & AI Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Attention Required Feed */}
-        <Card className="p-4 space-y-3 text-xs">
-          <CardTitle className="text-xs font-bold text-foreground flex items-center gap-2 border-b pb-2">
-            <AlertTriangle className="w-4 h-4 text-amber-500" />
+        <Card className="p-4 space-y-3 bg-slate-900/90 border border-slate-700/80 text-xs shadow-sm">
+          <CardTitle className="text-xs font-bold text-slate-100 flex items-center gap-2 border-b border-slate-700/60 pb-2">
+            <AlertTriangle className="w-4 h-4 text-amber-400" />
             ATTENTION REQUIRED (4 Items)
           </CardTitle>
 
-          <div className="space-y-2">
-            <div className="p-2.5 rounded bg-destructive/10 border border-destructive/20 space-y-1">
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 space-y-1">
               <div className="flex items-center justify-between">
-                <Badge variant="destructive" className="text-[9px] px-1 py-0">HIGH</Badge>
-                <span className="font-mono font-bold text-foreground">₹18.4L</span>
+                <Badge className="text-[10px] px-1.5 py-0 bg-rose-600 text-white font-bold">HIGH</Badge>
+                <span className="font-mono font-bold text-white text-sm">₹18.4L</span>
               </div>
-              <div className="font-semibold text-foreground">Nexus Corp receivable is 68 days overdue</div>
-              <p className="text-[11px] text-muted-foreground">Exceeds 60-day aging threshold. AR Subledger recommends collections escalation.</p>
+              <div className="font-semibold text-slate-100 text-xs mt-1">Nexus Corp receivable is 68 days overdue</div>
+              <p className="text-[11px] text-slate-300">Exceeds 60-day aging threshold. AR Subledger recommends collections escalation.</p>
             </div>
 
-            <div className="p-2.5 rounded bg-amber-500/10 border border-amber-500/20 space-y-1">
+            <div className="p-3 rounded-lg bg-amber-950/40 border border-amber-800/60 space-y-1">
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-[9px] px-1 py-0 border-amber-500 text-amber-700">MEDIUM</Badge>
-                <span className="font-mono font-bold text-foreground">+34.2% MoM</span>
+                <Badge className="text-[10px] px-1.5 py-0 bg-amber-600 text-slate-950 font-bold">MEDIUM</Badge>
+                <span className="font-mono font-bold text-white text-sm">+34.2% MoM</span>
               </div>
-              <div className="font-semibold text-foreground">AWS Cloud Infrastructure expense surge</div>
-              <p className="text-[11px] text-muted-foreground">Spend increased by ₹18.4L for GPU cluster auto-scaling on Project Titan.</p>
+              <div className="font-semibold text-slate-100 text-xs mt-1">AWS Cloud Infrastructure expense surge</div>
+              <p className="text-[11px] text-slate-300">Spend increased by ₹18.4L for GPU cluster auto-scaling on Project Titan.</p>
             </div>
 
-            <div className="p-2.5 rounded bg-muted/40 border space-y-1">
+            <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 space-y-1">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="text-[9px] px-1 py-0">MEDIUM</Badge>
-                <span className="font-mono font-bold text-foreground">2 Exceptions</span>
+                <Badge className="text-[10px] px-1.5 py-0 bg-slate-700 text-slate-200 font-medium">MEDIUM</Badge>
+                <span className="font-mono font-bold text-white text-sm">2 Exceptions</span>
               </div>
-              <div className="font-semibold text-foreground">Bank reconciliation exceptions pending review</div>
-              <p className="text-[11px] text-muted-foreground">AI Recon Worker proposed fee deduction match for Stripe payout.</p>
+              <div className="font-semibold text-slate-100 text-xs mt-1">Bank reconciliation exceptions pending review</div>
+              <p className="text-[11px] text-slate-300">AI Recon Worker proposed fee deduction match for Stripe payout.</p>
             </div>
           </div>
         </Card>
 
         {/* AI Recommendations & Actions */}
-        <Card className="p-4 space-y-3 text-xs">
-          <CardTitle className="text-xs font-bold text-foreground flex items-center gap-2 border-b pb-2">
-            <Bot className="w-4 h-4 text-blue-600" />
+        <Card className="p-4 space-y-3 bg-slate-900/90 border border-slate-700/80 text-xs shadow-sm">
+          <CardTitle className="text-xs font-bold text-slate-100 flex items-center gap-2 border-b border-slate-700/60 pb-2">
+            <Bot className="w-4 h-4 text-sky-400" />
             AI STRATEGIC RECOMMENDATIONS (Ready for Approval)
           </CardTitle>
 
-          <div className="space-y-2">
-            <div className="p-2.5 rounded bg-muted/30 border space-y-1.5">
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-primary flex items-center gap-1">
-                  <Send className="w-3 h-3" /> Collect Overdue AR
+                <span className="font-bold text-sky-400 flex items-center gap-1.5 text-xs">
+                  <Send className="w-3.5 h-3.5" /> Collect Overdue AR
                 </span>
-                <Badge variant="outline" className="text-[9px]">Confidence: 99%</Badge>
+                <Badge variant="outline" className="text-[10px] border-emerald-500/50 text-emerald-400 bg-emerald-950/30">Confidence: 99%</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground">Issue formal executive reminder letter to Nexus Corp finance team.</p>
-              <div className="flex justify-end">
-                <Button size="sm" className="h-6 text-[10px] px-2.5">Execute Reminder</Button>
+              <p className="text-[11px] text-slate-300">Issue formal executive reminder letter to Nexus Corp finance team.</p>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="h-7 text-xs px-3 bg-sky-600 hover:bg-sky-500 text-white font-medium">Execute Reminder</Button>
               </div>
             </div>
 
-            <div className="p-2.5 rounded bg-muted/30 border space-y-1.5">
+            <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-primary flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" /> Approve Reconciliation Match
+                <span className="font-bold text-emerald-400 flex items-center gap-1.5 text-xs">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Approve Reconciliation Match
                 </span>
-                <Badge variant="outline" className="text-[9px]">Confidence: 98%</Badge>
+                <Badge variant="outline" className="text-[10px] border-emerald-500/50 text-emerald-400 bg-emerald-950/30">Confidence: 98%</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground">Match ₹98,000 credit against INV-2026-088 with ₹2,000 Stripe processor fee.</p>
-              <div className="flex justify-end">
-                <Button size="sm" className="h-6 text-[10px] px-2.5">Approve & Post GL</Button>
+              <p className="text-[11px] text-slate-300">Match ₹98,000 credit against INV-2026-088 with ₹2,000 Stripe processor fee.</p>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="h-7 text-xs px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium">Approve & Post GL</Button>
               </div>
             </div>
 
-            <div className="p-2.5 rounded bg-muted/30 border space-y-1.5">
+            <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-primary flex items-center gap-1">
-                  <Users className="w-3 h-3" /> Strategic Headcount Solver
+                <span className="font-bold text-purple-400 flex items-center gap-1.5 text-xs">
+                  <Users className="w-3.5 h-3.5" /> Strategic Headcount Solver
                 </span>
-                <Badge variant="outline" className="text-[9px]">Interactive</Badge>
+                <Badge variant="outline" className="text-[10px] border-purple-500/50 text-purple-400 bg-purple-950/30">Interactive</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground">Model hiring 30 to 50 engineers with probability-weighted runway buffers.</p>
+              <p className="text-[11px] text-slate-300">Model hiring 30 to 50 engineers with probability-weighted runway buffers.</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* 4. Ask CHATR Natural Language Copilot with Evidence Traceability */}
-      <Card className="p-4 space-y-3 bg-gradient-to-b from-card to-muted/20 border-primary/20">
+      <Card className="p-4 space-y-3 bg-slate-900/90 border border-slate-700/80 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            <h3 className="text-xs font-bold text-foreground">Ask CHATR Financial Copilot</h3>
+            <Sparkles className="w-4 h-4 text-purple-400" />
+            <h3 className="text-xs font-bold text-slate-100">Ask TalentXcel Financial Copilot</h3>
           </div>
-          <span className="text-[10px] text-muted-foreground">100% Evidence Traceable</span>
+          <span className="text-[10px] text-slate-400 font-medium">100% Evidence Traceable</span>
         </div>
 
         {/* Quick Query Shortcuts */}
@@ -280,7 +280,7 @@ export function CFOCommandCenter() {
           <Button
             variant="outline"
             size="sm"
-            className="h-6 text-[10px] bg-background"
+            className="h-6 text-[10px] bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white"
             onClick={() => handleAsk('cash_growth')}
           >
             "Why is cash down despite revenue growth?"
@@ -288,7 +288,7 @@ export function CFOCommandCenter() {
           <Button
             variant="outline"
             size="sm"
-            className="h-6 text-[10px] bg-background"
+            className="h-6 text-[10px] bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white"
             onClick={() => handleAsk('margin_decline')}
           >
             "What caused August margin decline?"
@@ -296,7 +296,7 @@ export function CFOCommandCenter() {
           <Button
             variant="outline"
             size="sm"
-            className="h-6 text-[10px] bg-background"
+            className="h-6 text-[10px] bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white"
             onClick={() => handleAsk('hire_50')}
           >
             "Can we afford 50 hires?"
@@ -304,7 +304,7 @@ export function CFOCommandCenter() {
           <Button
             variant="outline"
             size="sm"
-            className="h-6 text-[10px] bg-background"
+            className="h-6 text-[10px] bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white"
             onClick={() => handleAsk('rev_drop_20')}
           >
             "What happens if revenue drops 20%?"
@@ -315,42 +315,42 @@ export function CFOCommandCenter() {
         <form onSubmit={handleCustomQuery} className="flex gap-2">
           <Input
             placeholder="Ask any question about cash, margins, contracts, runway, or hiring..."
-            className="h-8 text-xs bg-background"
+            className="h-8 text-xs bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500"
             value={nlQuery}
             onChange={e => setNlQuery(e.target.value)}
           />
-          <Button type="submit" size="sm" className="h-8 text-xs gap-1">
+          <Button type="submit" size="sm" className="h-8 text-xs gap-1 bg-purple-600 hover:bg-purple-500 text-white font-medium">
             <Send className="w-3 h-3" /> Ask
           </Button>
         </form>
 
         {/* Evidence Trace Card */}
         {activeTrace && (
-          <Card className="p-3.5 bg-background border border-purple-200/60 space-y-2 text-xs animate-in fade-in-50 duration-200">
-            <div className="flex items-center justify-between border-b pb-1.5">
-              <span className="font-semibold text-foreground flex items-center gap-1.5">
-                <Bot className="w-3.5 h-3.5 text-purple-600" />
+          <Card className="p-3.5 bg-slate-950 border border-purple-800/60 space-y-2 text-xs animate-in fade-in-50 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+              <span className="font-semibold text-purple-300 flex items-center gap-1.5">
+                <Bot className="w-3.5 h-3.5 text-purple-400" />
                 AI Executive Reasoning
               </span>
-              <Badge variant="outline" className="text-[10px] border-green-300 text-green-700">
+              <Badge variant="outline" className="text-[10px] border-emerald-500/50 text-emerald-400 bg-emerald-950/30">
                 Confidence: {Math.round(activeTrace.confidence * 100)}%
               </Badge>
             </div>
 
-            <p className="font-medium text-foreground text-xs leading-relaxed">{activeTrace.claim}</p>
+            <p className="font-medium text-slate-100 text-xs leading-relaxed">{activeTrace.claim}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pt-1 text-[11px]">
-              <div className="p-2 rounded bg-muted/40 border space-y-0.5">
-                <strong className="text-foreground block">Evidence:</strong>
-                <span className="text-muted-foreground">{activeTrace.evidence}</span>
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 space-y-0.5">
+                <strong className="text-slate-200 block">Evidence:</strong>
+                <span className="text-slate-400">{activeTrace.evidence}</span>
               </div>
-              <div className="p-2 rounded bg-muted/40 border space-y-0.5">
-                <strong className="text-foreground block">Calculation:</strong>
-                <span className="text-muted-foreground font-mono text-[10px]">{activeTrace.calculation}</span>
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 space-y-0.5">
+                <strong className="text-slate-200 block">Calculation:</strong>
+                <span className="text-slate-400 font-mono text-[10px]">{activeTrace.calculation}</span>
               </div>
-              <div className="p-2 rounded bg-muted/40 border space-y-0.5">
-                <strong className="text-foreground block">Source Lineage:</strong>
-                <span className="text-primary font-mono text-[10px]">{activeTrace.sourceLineage}</span>
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 space-y-0.5">
+                <strong className="text-slate-200 block">Source Lineage:</strong>
+                <span className="text-purple-400 font-mono text-[10px]">{activeTrace.sourceLineage}</span>
               </div>
             </div>
           </Card>
