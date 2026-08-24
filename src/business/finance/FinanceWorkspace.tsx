@@ -14,6 +14,8 @@ import { JournalEntryViewer } from './journal/JournalEntryViewer';
 import { InvoicesView } from './ar/InvoicesView';
 import { BillsView } from './ap/BillsView';
 import { IntegrityDashboard } from './integrity/IntegrityDashboard';
+import { ContractsView } from './revenue/ContractsView';
+import { RevenueSchedulesView } from './revenue/RevenueSchedulesView';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -169,6 +171,8 @@ export function FinanceWorkspace() {
             <TabsTrigger value="journal" className="text-xs gap-1"><FileText className="w-3 h-3" />Journal Entries</TabsTrigger>
             <TabsTrigger value="ar" className="text-xs gap-1"><FileText className="w-3 h-3" />Invoices (AR)</TabsTrigger>
             <TabsTrigger value="ap" className="text-xs gap-1"><FileText className="w-3 h-3" />Bills (AP)</TabsTrigger>
+            <TabsTrigger value="contracts" className="text-xs gap-1"><FileText className="w-3 h-3" />Contracts (ASC 606)</TabsTrigger>
+            <TabsTrigger value="schedules" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Recognition</TabsTrigger>
             <TabsTrigger value="integrity" className="text-xs gap-1"><Landmark className="w-3 h-3" />Control Center</TabsTrigger>
           </TabsList>
 
@@ -218,6 +222,21 @@ export function FinanceWorkspace() {
                 <BillsView
                   finOrganizationId={finOrg.id}
                   legalEntityId={selectedEntity}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="contracts" className="mt-0">
+              {finOrg && selectedEntity && (
+                <ContractsView
+                  finOrganizationId={finOrg.id}
+                  legalEntityId={selectedEntity}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="schedules" className="mt-0">
+              {finOrg && (
+                <RevenueSchedulesView
+                  finOrganizationId={finOrg.id}
                 />
               )}
             </TabsContent>
