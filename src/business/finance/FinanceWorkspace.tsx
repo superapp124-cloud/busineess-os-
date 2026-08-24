@@ -25,6 +25,8 @@ import { CFOBriefingView } from './reporting/CFOBriefingView';
 import { FinanceAgentWorkspace } from './ai/FinanceAgentWorkspace';
 import { StrategicScenarioView } from './simulation/StrategicScenarioView';
 import { CFOCommandCenter } from './command/CFOCommandCenter';
+import { ParallelPilotDashboard } from './pilot/ParallelPilotDashboard';
+import { ScenarioComparisonMatrixView } from './simulation/ScenarioComparisonMatrixView';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -175,6 +177,8 @@ export function FinanceWorkspace() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <TabsList className="mx-4 mt-4 w-fit">
             <TabsTrigger value="cmd" className="text-xs gap-1 font-semibold text-primary"><Sparkles className="w-3.5 h-3.5 text-primary" />Command Center</TabsTrigger>
+            <TabsTrigger value="pilot" className="text-xs gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Parallel Pilot</TabsTrigger>
+            <TabsTrigger value="matrix" className="text-xs gap-1"><TrendingUp className="w-3 h-3 text-blue-600" />Scenario Matrix</TabsTrigger>
             <TabsTrigger value="overview" className="text-xs gap-1"><TrendingUp className="w-3 h-3" />Overview</TabsTrigger>
             <TabsTrigger value="gl" className="text-xs gap-1"><BookOpen className="w-3 h-3" />General Ledger</TabsTrigger>
             <TabsTrigger value="coa" className="text-xs gap-1"><List className="w-3 h-3" />Chart of Accounts</TabsTrigger>
@@ -197,6 +201,12 @@ export function FinanceWorkspace() {
           <div className="flex-1 overflow-auto p-4">
             <TabsContent value="cmd" className="mt-0">
               <CFOCommandCenter />
+            </TabsContent>
+            <TabsContent value="pilot" className="mt-0">
+              <ParallelPilotDashboard />
+            </TabsContent>
+            <TabsContent value="matrix" className="mt-0">
+              <ScenarioComparisonMatrixView />
             </TabsContent>
             <TabsContent value="overview" className="mt-0">
               <FinanceOverview finOrg={finOrg} entities={entities} periods={periods} />
