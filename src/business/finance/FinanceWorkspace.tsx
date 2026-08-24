@@ -29,6 +29,8 @@ import { ParallelPilotDashboard } from './pilot/ParallelPilotDashboard';
 import { ScenarioComparisonMatrixView } from './simulation/ScenarioComparisonMatrixView';
 import { FinancialTruthReconcilerView } from './certification/FinancialTruthReconcilerView';
 import { ShadowPilotCertificationView } from './pilot_certification/ShadowPilotCertificationView';
+import { FinancialImportWizard } from './importer/FinancialImportWizard';
+import { FinanceHealthDashboard } from './observability/FinanceHealthDashboard';
 
 export function FinanceWorkspace() {
   const { user } = useAuth();
@@ -179,6 +181,8 @@ export function FinanceWorkspace() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <TabsList className="mx-4 mt-4 w-fit">
             <TabsTrigger value="cmd" className="text-xs gap-1 font-semibold text-primary"><Sparkles className="w-3.5 h-3.5 text-primary" />Command Center</TabsTrigger>
+            <TabsTrigger value="wizard" className="text-xs gap-1 font-semibold text-blue-600"><UploadCloud className="w-3.5 h-3.5 text-blue-600" />Import Wizard</TabsTrigger>
+            <TabsTrigger value="health" className="text-xs gap-1 font-semibold text-emerald-600"><Activity className="w-3.5 h-3.5 text-emerald-600" />System Health</TabsTrigger>
             <TabsTrigger value="cert" className="text-xs gap-1"><Award className="w-3 h-3 text-emerald-600" />Pilot Certification</TabsTrigger>
             <TabsTrigger value="reconciler" className="text-xs gap-1"><Layers className="w-3 h-3 text-purple-600" />Truth Reconciler</TabsTrigger>
             <TabsTrigger value="pilot" className="text-xs gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Parallel Pilot</TabsTrigger>
@@ -205,6 +209,12 @@ export function FinanceWorkspace() {
           <div className="flex-1 overflow-auto p-4">
             <TabsContent value="cmd" className="mt-0">
               <CFOCommandCenter />
+            </TabsContent>
+            <TabsContent value="wizard" className="mt-0">
+              <FinancialImportWizard />
+            </TabsContent>
+            <TabsContent value="health" className="mt-0">
+              <FinanceHealthDashboard />
             </TabsContent>
             <TabsContent value="cert" className="mt-0">
               <ShadowPilotCertificationView />
