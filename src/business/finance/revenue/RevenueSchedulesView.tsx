@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,14 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RefreshCw, CheckCircle2, Clock, Calendar, ArrowRight } from 'lucide-react';
 import { formatCurrency } from '../types';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface RevenueSchedulesViewProps {
   finOrganizationId: string;
 }
 
 export function RevenueSchedulesView({ finOrganizationId }: RevenueSchedulesViewProps) {
-  const { user } = useAuth();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [recognizingId, setRecognizingId] = useState<string | null>(null);
@@ -40,12 +38,13 @@ export function RevenueSchedulesView({ finOrganizationId }: RevenueSchedulesView
   }, [loadSchedules]);
 
   async function handleRecognize(scheduleId: string) {
-    if (!user) return;
+    const { data: authData } = await supabase.auth.getUser();
+    if (!authData?.user) return;
     setRecognizingId(scheduleId);
     try {
       const { data, error } = await supabase.rpc('fin_recognize_schedule_item', {
         p_schedule_id: scheduleId,
-        p_user_id: user.id
+        p_user_id: authData.user.id
       });
       if (error) throw error;
       await loadSchedules();

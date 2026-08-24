@@ -1,11 +1,10 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Clock, RefreshCw, Lock, ShieldCheck, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface MonthEndCloseViewProps {
   finOrganizationId: string;
@@ -14,7 +13,6 @@ interface MonthEndCloseViewProps {
 }
 
 export function MonthEndCloseView({ finOrganizationId, legalEntityId, periodId }: MonthEndCloseViewProps) {
-  const { user } = useAuth();
   const [checklist, setChecklist] = useState<any>(null);
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,10 +52,11 @@ export function MonthEndCloseView({ finOrganizationId, legalEntityId, periodId }
 
   async function handleToggleTask(taskId: string, currentStatus: string) {
     const nextStatus = currentStatus === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
+    const { data: authData } = await supabase.auth.getUser();
     await supabase.from('fin_close_tasks').update({
       status: nextStatus,
       completed_at: nextStatus === 'COMPLETED' ? new Date().toISOString() : null,
-      completed_by: nextStatus === 'COMPLETED' && user ? user.id : null,
+      completed_by: nextStatus === 'COMPLETED' && authData?.user ? authData.user.id : null,
     }).eq('id', taskId);
 
     await loadChecklist();

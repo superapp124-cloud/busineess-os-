@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Landmark, BookOpen, List, FileText, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import type { FinOrganization, FinLegalEntity, FinPeriod } from './types';
 import { GeneralLedger } from './gl/GeneralLedger';
 import { ChartOfAccounts } from './coa/ChartOfAccounts';
@@ -33,7 +32,6 @@ import { FinancialImportWizard } from './importer/FinancialImportWizard';
 import { FinanceHealthDashboard } from './observability/FinanceHealthDashboard';
 
 export function FinanceWorkspace() {
-  const { user } = useAuth();
   const [finOrg, setFinOrg] = useState<FinOrganization | null>(null);
   const [entities, setEntities] = useState<FinLegalEntity[]>([]);
   const [periods, setPeriods] = useState<FinPeriod[]>([]);
@@ -460,3 +458,5 @@ function FinanceOverview({ finOrg, entities, periods }: {
     </div>
   );
 }
+
+export default FinanceWorkspace;

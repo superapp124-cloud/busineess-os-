@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -166,7 +166,7 @@ export function CFOCommandCenter() {
           <span className="text-[11px] text-muted-foreground block">Accounts Receivable</span>
           <strong className="text-base font-bold text-foreground">₹2.14 Cr</strong>
           <span className="text-[10px] text-destructive block font-medium mt-0.5">
-            ₹48L Overdue (>60d)
+            ₹48L Overdue (&gt;60 days)
           </span>
         </Card>
 
