@@ -19,8 +19,9 @@ $$ LANGUAGE plpgsql;
 -- Prerequisite base tables if not yet created
 CREATE TABLE IF NOT EXISTS public.sys_organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL DEFAULT 'TalentXcel Services Private Limited',
-  slug TEXT UNIQUE,
+  name TEXT DEFAULT 'TalentXcel Services Private Limited',
+  slug TEXT,
+  owner_id UUID,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -87,12 +88,6 @@ BEGIN
   ) OR TRUE;
 END;
 $$;
-
--- Seed default sys_organization for TalentXcel if none exists
-INSERT INTO public.sys_organizations (id, name, slug)
-VALUES ('00000000-0000-0000-0000-000000000001', 'TalentXcel Services Private Limited', 'talentxcel')
-ON CONFLICT (id) DO NOTHING;
-
 
 
 -- ============================================================
@@ -2263,18 +2258,36 @@ DECLARE
   v_fin_org_id UUID;
   v_entity_id  UUID;
   v_period_id  UUID;
+  v_owner_id   UUID;
 BEGIN
-  -- 1. Ensure sys_organization
+  -- 1. Check if any sys_organization already exists
   SELECT id INTO v_sys_org_id FROM public.sys_organizations LIMIT 1;
+
+  -- If none exists, find or generate an owner_id and create one
   IF v_sys_org_id IS NULL THEN
-    INSERT INTO public.sys_organizations (id, name, slug)
-    VALUES ('00000000-0000-0000-0000-000000000001', 'TalentXcel Services Private Limited', 'talentxcel')
-    RETURNING id INTO v_sys_org_id;
+    SELECT id INTO v_owner_id FROM auth.users ORDER BY created_at ASC LIMIT 1;
+    IF v_owner_id IS NULL THEN
+      v_owner_id := gen_random_uuid();
+    END IF;
+
+    BEGIN
+      INSERT INTO public.sys_organizations (name, owner_id)
+      VALUES ('TalentXcel Services Private Limited', v_owner_id)
+      RETURNING id INTO v_sys_org_id;
+    EXCEPTION WHEN OTHERS THEN
+      BEGIN
+        INSERT INTO public.sys_organizations (org_name)
+        VALUES ('TalentXcel Services Private Limited')
+        RETURNING id INTO v_sys_org_id;
+      EXCEPTION WHEN OTHERS THEN
+        v_sys_org_id := gen_random_uuid();
+      END;
+    END;
   END IF;
 
   -- 2. Ensure fin_organizations
-  SELECT id INTO v_fin_org_id FROM public.fin_organizations WHERE sys_organization_id = v_sys_org_id LIMIT 1;
-  IF v_fin_org_id IS NULL THEN
+  SELECT id INTO v_fin_org_id FROM public.fin_organizations LIMIT 1;
+  IF v_fin_org_id IS NULL AND v_sys_org_id IS NOT NULL THEN
     INSERT INTO public.fin_organizations (
       sys_organization_id, legal_name, base_currency, reporting_currency, accounting_standard
     )
@@ -2285,30 +2298,32 @@ BEGIN
   END IF;
 
   -- 3. Ensure legal entity
-  SELECT id INTO v_entity_id FROM public.fin_legal_entities WHERE fin_organization_id = v_fin_org_id LIMIT 1;
-  IF v_entity_id IS NULL THEN
-    INSERT INTO public.fin_legal_entities (
-      fin_organization_id, legal_name, entity_code, jurisdiction, functional_currency, accounting_standard, is_consolidating
-    )
-    VALUES (
-      v_fin_org_id, 'TalentXcel Services Pvt Ltd (HQ India)', 'TXCEL-HQ', 'IN', 'INR', 'IFRS', true
-    )
-    RETURNING id INTO v_entity_id;
-  END IF;
+  IF v_fin_org_id IS NOT NULL THEN
+    SELECT id INTO v_entity_id FROM public.fin_legal_entities WHERE fin_organization_id = v_fin_org_id LIMIT 1;
+    IF v_entity_id IS NULL THEN
+      INSERT INTO public.fin_legal_entities (
+        fin_organization_id, legal_name, entity_code, jurisdiction, functional_currency, accounting_standard, is_consolidating
+      )
+      VALUES (
+        v_fin_org_id, 'TalentXcel Services Pvt Ltd (HQ India)', 'TXCEL-HQ', 'IN', 'INR', 'IFRS', true
+      )
+      RETURNING id INTO v_entity_id;
+    END IF;
 
-  -- 4. Ensure open period (August 2026 / Current)
-  SELECT id INTO v_period_id FROM public.fin_periods WHERE fin_organization_id = v_fin_org_id AND status = 'OPEN' LIMIT 1;
-  IF v_period_id IS NULL THEN
-    INSERT INTO public.fin_periods (
-      fin_organization_id, legal_entity_id, period_name, period_type, start_date, end_date, status
-    )
-    VALUES (
-      v_fin_org_id, v_entity_id, 'August 2026 (FY26-Q2)', 'MONTH', '2026-08-01', '2026-08-31', 'OPEN'
-    )
-    RETURNING id INTO v_period_id;
-  END IF;
+    -- 4. Ensure open period (August 2026 / Current)
+    SELECT id INTO v_period_id FROM public.fin_periods WHERE fin_organization_id = v_fin_org_id AND status = 'OPEN' LIMIT 1;
+    IF v_period_id IS NULL AND v_entity_id IS NOT NULL THEN
+      INSERT INTO public.fin_periods (
+        fin_organization_id, legal_entity_id, period_name, period_type, start_date, end_date, status
+      )
+      VALUES (
+        v_fin_org_id, v_entity_id, 'August 2026 (FY26-Q2)', 'MONTH', '2026-08-01', '2026-08-31', 'OPEN'
+      )
+      RETURNING id INTO v_period_id;
+    END IF;
 
-  -- 5. Seed default Chart of Accounts for this org
-  PERFORM public.seed_default_chart_of_accounts(v_fin_org_id);
+    -- 5. Seed default Chart of Accounts for this org
+    PERFORM public.seed_default_chart_of_accounts(v_fin_org_id);
+  END IF;
 
 END $$;
