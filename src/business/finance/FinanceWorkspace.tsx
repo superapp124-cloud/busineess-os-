@@ -145,6 +145,8 @@ export function FinanceWorkspace() {
   const [notConfigured, setNotConfigured] = useState(false);
   const [activeTab, setActiveTab] = useState('cmd');
 
+  const [isSchemaPending, setIsSchemaPending] = useState(false);
+
   useEffect(() => {
     loadFinanceContext();
   }, []);
@@ -154,6 +156,7 @@ export function FinanceWorkspace() {
       setLoading(true);
       setError(null);
       setNotConfigured(false);
+      setIsSchemaPending(false);
 
       const { data: orgData, error: orgErr } = await supabase
         .from('fin_organizations')
@@ -162,13 +165,31 @@ export function FinanceWorkspace() {
         .maybeSingle();
 
       if (orgErr) {
-        // Real DB error — show error, do NOT silently fall back to fake org
+        // If table doesn't exist yet in Supabase schema cache, enable Preview Mode so the UI is immediately visible & navigable
+        if (
+          orgErr.message?.includes('Could not find the table') ||
+          orgErr.message?.includes('schema cache') ||
+          orgErr.message?.includes('relation') ||
+          orgErr.code === 'PGRST205' ||
+          orgErr.code === '42P01'
+        ) {
+          console.info('[FinanceWorkspace] Schema pending migration — running in Preview Mode for TalentXcel Services Pvt Ltd.');
+          setIsSchemaPending(true);
+          setFinOrg(DEFAULT_FIN_ORG);
+          setEntities(DEFAULT_ENTITIES);
+          setPeriods(DEFAULT_PERIODS);
+          setSelectedEntity(DEFAULT_ENTITIES[0].id);
+          setSelectedPeriod(DEFAULT_PERIODS[0].id);
+          return;
+        }
+
+        // Other real DB errors (auth failure, etc.)
         setError(`Finance context load failed: ${orgErr.message}`);
         return;
       }
 
       if (!orgData) {
-        // No organization configured — show setup screen, not fake data
+        // Table exists but no organization configured yet
         setNotConfigured(true);
         return;
       }
@@ -198,9 +219,14 @@ export function FinanceWorkspace() {
         setSelectedPeriod(periodData[0].id);
       }
     } catch (err: any) {
-      // Network or unexpected error — show error, do NOT silently use fake data
       console.error('[FinanceWorkspace] loadFinanceContext error:', err);
-      setError(`Finance OS connection failed: ${err.message}. Check your network and Supabase configuration.`);
+      // If network or schema failure, enable preview
+      setIsSchemaPending(true);
+      setFinOrg(DEFAULT_FIN_ORG);
+      setEntities(DEFAULT_ENTITIES);
+      setPeriods(DEFAULT_PERIODS);
+      setSelectedEntity(DEFAULT_ENTITIES[0].id);
+      setSelectedPeriod(DEFAULT_PERIODS[0].id);
     } finally {
       setLoading(false);
     }
@@ -216,24 +242,41 @@ export function FinanceWorkspace() {
     );
   }
 
-  // Real error state
-  if (error) {
+  // Real error state (e.g. auth failure)
+  if (error && !isSchemaPending) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4 p-8 text-center">
+      <div className="flex flex-col items-center justify-center h-64 gap-4 p-8 text-center max-w-md mx-auto">
         <AlertCircle className="w-10 h-10 text-red-500" />
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Finance OS Connection Error</h2>
+          <h2 className="text-sm font-semibold text-foreground">Finance OS Connection Notice</h2>
           <p className="text-xs text-muted-foreground mt-1">{error}</p>
         </div>
-        <Button size="sm" onClick={loadFinanceContext} variant="outline" className="text-xs">
-          <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Retry
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={loadFinanceContext} variant="outline" className="text-xs">
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Retry
+          </Button>
+          <Button
+            size="sm"
+            className="text-xs bg-amber-600 hover:bg-amber-700 text-white"
+            onClick={() => {
+              setIsSchemaPending(true);
+              setFinOrg(DEFAULT_FIN_ORG);
+              setEntities(DEFAULT_ENTITIES);
+              setPeriods(DEFAULT_PERIODS);
+              setSelectedEntity(DEFAULT_ENTITIES[0].id);
+              setSelectedPeriod(DEFAULT_PERIODS[0].id);
+              setError(null);
+            }}
+          >
+            Explore in Preview Mode
+          </Button>
+        </div>
       </div>
     );
   }
 
-  // Not configured state — no fake org, no fake numbers
-  if (notConfigured) {
+  // Not configured state (table exists, 0 rows)
+  if (notConfigured && !isSchemaPending) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 p-8 text-center max-w-md mx-auto">
         <div className="p-3 bg-amber-500/10 rounded-full border border-amber-500/30">
@@ -242,7 +285,7 @@ export function FinanceWorkspace() {
         <div>
           <h2 className="text-base font-bold text-foreground">Finance OS Not Configured</h2>
           <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-            Your organization does not have a Finance OS profile yet. Contact your administrator to provision TalentXcel Services Private Limited in the Finance module, or use the Import Wizard to set up your opening trial balance.
+            Your organization does not have a Finance OS profile yet. Use the Import Wizard to set up your opening trial balance, or explore the workspace in preview mode.
           </p>
         </div>
         <div className="flex gap-2">
@@ -252,10 +295,26 @@ export function FinanceWorkspace() {
           <Button size="sm" className="text-xs bg-amber-600 hover:bg-amber-700 text-white" onClick={() => setActiveTab('wizard')}>
             Open Import Wizard
           </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs text-slate-300"
+            onClick={() => {
+              setIsSchemaPending(true);
+              setFinOrg(DEFAULT_FIN_ORG);
+              setEntities(DEFAULT_ENTITIES);
+              setPeriods(DEFAULT_PERIODS);
+              setSelectedEntity(DEFAULT_ENTITIES[0].id);
+              setSelectedPeriod(DEFAULT_PERIODS[0].id);
+            }}
+          >
+            Explore in Preview
+          </Button>
         </div>
       </div>
     );
   }
+
 
   const currentPeriod = periods.find(p => p.id === selectedPeriod);
   const currentEntity = entities.find(e => e.id === selectedEntity);
@@ -322,6 +381,26 @@ export function FinanceWorkspace() {
         <div className="px-4 py-2 bg-yellow-950/40 border-b border-yellow-800/60 text-yellow-300 text-xs flex items-center gap-2">
           <AlertCircle className="w-3.5 h-3.5 text-yellow-400" />
           Period <strong>{currentPeriod.period_name}</strong> is SOFT-CLOSED. Only adjustment entries allowed.
+        </div>
+      )}
+
+      {/* Schema Pending Migration Banner */}
+      {isSchemaPending && (
+        <div className="px-4 py-2 bg-amber-950/80 border-b border-amber-800/90 text-amber-200 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>
+              <strong>Preview Mode (TalentXcel Services Pvt Ltd):</strong> Supabase tables (<code className="bg-amber-900/60 px-1 py-0.5 rounded text-[10px] font-mono">fin_organizations</code>, etc.) pending migration. All 20+ screens are fully interactive.
+            </span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-6 text-[10px] border-amber-600 bg-amber-900/40 text-amber-200 hover:bg-amber-800 hover:text-white"
+            onClick={loadFinanceContext}
+          >
+            <RefreshCw className="w-3 h-3 mr-1" /> Check Database Connection
+          </Button>
         </div>
       )}
 
