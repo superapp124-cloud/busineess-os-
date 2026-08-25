@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,8 +33,12 @@ export function FinancialStatementsView({ finOrganizationId, legalEntityId, peri
     loadStatements();
   }, [loadStatements]);
 
-  const pnl = statements?.pnl || {};
-  const bs = statements?.balance_sheet || {};
+  const totalAssets = Number(bs.total_assets || 0);
+  const totalLiabilities = Number(bs.total_liabilities || 0);
+  const totalEquity = Number(bs.total_equity || 0);
+  const totalLiabAndEquity = totalLiabilities + totalEquity;
+  const balanceDiff = Math.abs(totalAssets - totalLiabAndEquity);
+  const isBalanced = balanceDiff < 0.01;
 
   return (
     <div className="space-y-4">
@@ -44,7 +48,7 @@ export function FinancialStatementsView({ finOrganizationId, legalEntityId, peri
           <h2 className="text-sm font-semibold text-foreground">Management Financial Statements</h2>
           <p className="text-xs text-muted-foreground">IFRS / US GAAP compliant P&L and Balance Sheet</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={loadStatements}>
+        <Button variant="ghost" size="sm" onClick={loadStatements} disabled={loading}>
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
@@ -83,22 +87,24 @@ export function FinancialStatementsView({ finOrganizationId, legalEntityId, peri
             <div className="space-y-2 text-xs">
               <div className="flex justify-between py-1 border-b">
                 <span className="font-semibold">Total Assets</span>
-                <span className="font-mono font-bold text-foreground">{formatCurrency(bs.total_assets || 0, 'INR')}</span>
+                <span className="font-mono font-bold text-foreground">{formatCurrency(totalAssets, 'INR')}</span>
               </div>
               <div className="flex justify-between py-1 border-b">
                 <span className="text-muted-foreground pl-4">Total Liabilities</span>
-                <span className="font-mono text-foreground">{formatCurrency(bs.total_liabilities || 0, 'INR')}</span>
+                <span className="font-mono text-foreground">{formatCurrency(totalLiabilities, 'INR')}</span>
               </div>
               <div className="flex justify-between py-1 border-b">
                 <span className="text-muted-foreground pl-4">Total Shareholders' Equity</span>
-                <span className="font-mono text-foreground">{formatCurrency(bs.total_equity || 0, 'INR')}</span>
+                <span className="font-mono text-foreground">{formatCurrency(totalEquity, 'INR')}</span>
               </div>
-              <div className="flex justify-between py-2 border-t-2 font-bold text-sm bg-muted/20 px-2 rounded">
+              <div className={`flex justify-between py-2 border-t-2 font-bold text-sm px-2 rounded ${isBalanced ? 'bg-emerald-50/50 text-emerald-800' : 'bg-red-50/50 text-red-800'}`}>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  {isBalanced ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
                   Assets = Liabilities + Equity
                 </span>
-                <span className="font-mono text-green-700">Balanced (100%)</span>
+                <span className="font-mono">
+                  {isBalanced ? 'Balanced (Exact match)' : `Imbalance: ₹${balanceDiff.toFixed(2)}`}
+                </span>
               </div>
             </div>
           </Card>
@@ -107,3 +113,4 @@ export function FinancialStatementsView({ finOrganizationId, legalEntityId, peri
     </div>
   );
 }
+

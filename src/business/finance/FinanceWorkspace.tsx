@@ -135,13 +135,14 @@ const DEFAULT_PERIODS: FinPeriod[] = [
 ];
 
 export function FinanceWorkspace() {
-  const [finOrg, setFinOrg] = useState<FinOrganization>(DEFAULT_FIN_ORG);
-  const [entities, setEntities] = useState<FinLegalEntity[]>(DEFAULT_ENTITIES);
-  const [periods, setPeriods] = useState<FinPeriod[]>(DEFAULT_PERIODS);
-  const [selectedEntity, setSelectedEntity] = useState<string>(DEFAULT_ENTITIES[0].id);
-  const [selectedPeriod, setSelectedPeriod] = useState<string>(DEFAULT_PERIODS[0].id);
-  const [loading, setLoading] = useState(false);
+  const [finOrg, setFinOrg] = useState<FinOrganization | null>(null);
+  const [entities, setEntities] = useState<FinLegalEntity[]>([]);
+  const [periods, setPeriods] = useState<FinPeriod[]>([]);
+  const [selectedEntity, setSelectedEntity] = useState<string>('');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notConfigured, setNotConfigured] = useState(false);
   const [activeTab, setActiveTab] = useState('cmd');
 
   useEffect(() => {
@@ -152,67 +153,106 @@ export function FinanceWorkspace() {
     try {
       setLoading(true);
       setError(null);
+      setNotConfigured(false);
 
-      // Load fin_organization for current user's org if available
       const { data: orgData, error: orgErr } = await supabase
         .from('fin_organizations')
         .select('*')
         .limit(1)
         .maybeSingle();
 
-      if (orgData) {
-        setFinOrg(orgData);
+      if (orgErr) {
+        // Real DB error — show error, do NOT silently fall back to fake org
+        setError(`Finance context load failed: ${orgErr.message}`);
+        return;
+      }
 
-        // Load legal entities
-        const { data: entityData } = await supabase
-          .from('fin_legal_entities')
-          .select('*')
-          .eq('fin_organization_id', orgData.id)
-          .eq('is_active', true)
-          .order('entity_code');
-        if (entityData && entityData.length > 0) {
-          setEntities(entityData);
-          setSelectedEntity(entityData[0].id);
-        }
+      if (!orgData) {
+        // No organization configured — show setup screen, not fake data
+        setNotConfigured(true);
+        return;
+      }
 
-        // Load open periods
-        const { data: periodData } = await supabase
-          .from('fin_periods')
-          .select('*')
-          .eq('fin_organization_id', orgData.id)
-          .in('status', ['OPEN', 'SOFT_CLOSED'])
-          .order('start_date', { ascending: false })
-          .limit(24);
-        if (periodData && periodData.length > 0) {
-          setPeriods(periodData);
-          setSelectedPeriod(periodData[0].id);
-        }
-      } else {
-        // Use default enterprise configuration
-        setFinOrg(DEFAULT_FIN_ORG);
-        setEntities(DEFAULT_ENTITIES);
-        setPeriods(DEFAULT_PERIODS);
-        setSelectedEntity(DEFAULT_ENTITIES[0].id);
-        setSelectedPeriod(DEFAULT_PERIODS[0].id);
+      setFinOrg(orgData);
+
+      const { data: entityData } = await supabase
+        .from('fin_legal_entities')
+        .select('*')
+        .eq('fin_organization_id', orgData.id)
+        .eq('is_active', true)
+        .order('entity_code');
+      if (entityData && entityData.length > 0) {
+        setEntities(entityData);
+        setSelectedEntity(entityData[0].id);
+      }
+
+      const { data: periodData } = await supabase
+        .from('fin_periods')
+        .select('*')
+        .eq('fin_organization_id', orgData.id)
+        .in('status', ['OPEN', 'SOFT_CLOSED'])
+        .order('start_date', { ascending: false })
+        .limit(24);
+      if (periodData && periodData.length > 0) {
+        setPeriods(periodData);
+        setSelectedPeriod(periodData[0].id);
       }
     } catch (err: any) {
-      console.warn('Finance context loading notice:', err.message);
-      // Seamlessly fall back to default enterprise configuration
-      setFinOrg(DEFAULT_FIN_ORG);
-      setEntities(DEFAULT_ENTITIES);
-      setPeriods(DEFAULT_PERIODS);
-      setSelectedEntity(DEFAULT_ENTITIES[0].id);
-      setSelectedPeriod(DEFAULT_PERIODS[0].id);
+      // Network or unexpected error — show error, do NOT silently use fake data
+      console.error('[FinanceWorkspace] loadFinanceContext error:', err);
+      setError(`Finance OS connection failed: ${err.message}. Check your network and Supabase configuration.`);
     } finally {
       setLoading(false);
     }
   }
 
-  if (loading && !finOrg) {
+  // Loading state
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <RefreshCw className="w-6 h-6 animate-spin text-amber-500 mr-2" />
-        <span className="text-muted-foreground">Loading financial data...</span>
+        <span className="text-muted-foreground">Loading financial data…</span>
+      </div>
+    );
+  }
+
+  // Real error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 p-8 text-center">
+        <AlertCircle className="w-10 h-10 text-red-500" />
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Finance OS Connection Error</h2>
+          <p className="text-xs text-muted-foreground mt-1">{error}</p>
+        </div>
+        <Button size="sm" onClick={loadFinanceContext} variant="outline" className="text-xs">
+          <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Retry
+        </Button>
+      </div>
+    );
+  }
+
+  // Not configured state — no fake org, no fake numbers
+  if (notConfigured) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 p-8 text-center max-w-md mx-auto">
+        <div className="p-3 bg-amber-500/10 rounded-full border border-amber-500/30">
+          <AlertCircle className="w-8 h-8 text-amber-500" />
+        </div>
+        <div>
+          <h2 className="text-base font-bold text-foreground">Finance OS Not Configured</h2>
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+            Your organization does not have a Finance OS profile yet. Contact your administrator to provision TalentXcel Services Private Limited in the Finance module, or use the Import Wizard to set up your opening trial balance.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={loadFinanceContext} variant="outline" className="text-xs">
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Check Again
+          </Button>
+          <Button size="sm" className="text-xs bg-amber-600 hover:bg-amber-700 text-white" onClick={() => setActiveTab('wizard')}>
+            Open Import Wizard
+          </Button>
+        </div>
       </div>
     );
   }
@@ -405,13 +445,14 @@ export function FinanceWorkspace() {
                 legalEntityId={selectedEntity}
                 periodId={selectedPeriod}
                 reportingCurrency={finOrg?.reporting_currency || 'INR'}
+                onNavigate={setActiveTab}
               />
             </TabsContent>
             <TabsContent value="wizard" className="mt-0">
               <FinancialImportWizard />
             </TabsContent>
             <TabsContent value="health" className="mt-0">
-              <FinanceHealthDashboard />
+              <FinanceHealthDashboard finOrganizationId={finOrg?.id} />
             </TabsContent>
             <TabsContent value="cert" className="mt-0">
               <ShadowPilotCertificationView />
@@ -423,7 +464,7 @@ export function FinanceWorkspace() {
               <ParallelPilotDashboard />
             </TabsContent>
             <TabsContent value="matrix" className="mt-0">
-              <ScenarioComparisonMatrixView />
+              <ScenarioComparisonMatrixView finOrganizationId={finOrg?.id} />
             </TabsContent>
             <TabsContent value="overview" className="mt-0">
               <FinanceOverview finOrg={finOrg} entities={entities} periods={periods} />
@@ -529,13 +570,21 @@ export function FinanceWorkspace() {
               )}
             </TabsContent>
             <TabsContent value="cfo" className="mt-0">
-              <CFOBriefingView />
+              <CFOBriefingView
+                finOrganizationId={finOrg?.id}
+                legalEntityId={selectedEntity}
+                periodId={selectedPeriod}
+              />
             </TabsContent>
             <TabsContent value="copilot" className="mt-0">
-              <FinanceAgentWorkspace />
+              <FinanceAgentWorkspace
+                finOrganizationId={finOrg?.id}
+                legalEntityId={selectedEntity}
+                onNavigate={setActiveTab}
+              />
             </TabsContent>
             <TabsContent value="simulator" className="mt-0">
-              <StrategicScenarioView />
+              <StrategicScenarioView finOrganizationId={finOrg?.id} />
             </TabsContent>
             <TabsContent value="integrity" className="mt-0">
               {finOrg && (

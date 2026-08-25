@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,29 +19,32 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
 
   const loadReconciliationData = useCallback(async () => {
     setLoading(true);
-    // 1. Fetch Exceptions
+    // 1. Fetch Exceptions — scoped to this organization
     const { data: excs } = await supabase
       .from('fin_reconciliation_exceptions')
       .select('*, bank_transaction:fin_bank_transactions(*)')
-      .eq('status', 'OPEN').eq('fin_organization_id', finOrganizationId /* needs migration */)
+      .eq('status', 'OPEN')
+      .eq('fin_organization_id', finOrganizationId)
       .order('created_at', { ascending: false });
 
     setExceptions(excs || []);
 
-    // 2. Fetch Recent Matches
+    // 2. Fetch Recent Matches — scoped to this organization
     const { data: mData } = await supabase
       .from('fin_reconciliation_matches')
       .select('*, bank_transaction:fin_bank_transactions(*), payment:fin_payments(*)')
+      .eq('fin_organization_id', finOrganizationId)
       .order('created_at', { ascending: false })
       .limit(20);
 
     setMatches(mData || []);
 
-    // 3. Fetch Open Invoices for AI Worker Context
+    // 3. Fetch Open Invoices for AI Worker Context — scoped to this organization
     const { data: invs } = await supabase
       .from('fin_invoices')
       .select('id, invoice_number, amount_due, customer:fin_customers(name)')
-      .in('status', ['ISSUED', 'PARTIALLY_PAID']);
+      .in('status', ['ISSUED', 'PARTIALLY_PAID'])
+      .eq('fin_organization_id', finOrganizationId);
 
     setOpenInvoices(
       (invs || []).map(i => ({
@@ -53,7 +56,8 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
     );
 
     setLoading(false);
-  }, []);
+  }, [finOrganizationId]);
+
 
   useEffect(() => {
     loadReconciliationData();

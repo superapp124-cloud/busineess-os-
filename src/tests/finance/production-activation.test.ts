@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CHATR Financial Intelligence & Accounting Core
  * Production Activation & Real Data Ingestion Test Suite
  */
@@ -104,8 +104,8 @@ test('FinanceRBACGuard: enforces role boundaries and approval gates across all 8
 // ══════════════════════════════════════════════════════════════════════
 console.log('--- 3. Finance OS Health & Observability Engine ---');
 
-test('FinanceObservabilityEngine: evaluates system telemetry confirming healthy invariant state', () => {
-  const report = FinanceObservabilityEngine.getSystemHealth();
+test('FinanceObservabilityEngine: evaluates system telemetry confirming healthy invariant state', async () => {
+  const report = await FinanceObservabilityEngine.getSystemHealth();
 
   assertEqual(report.overallStatus, 'HEALTHY', 'Overall system is HEALTHY');
   assertEqual(report.activeWorkersCount, 7, '7/7 AI workers online');
