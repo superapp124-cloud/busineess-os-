@@ -23,7 +23,7 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
     const { data: excs } = await supabase
       .from('fin_reconciliation_exceptions')
       .select('*, bank_transaction:fin_bank_transactions(*)')
-      .eq('status', 'OPEN')
+      .eq('status', 'OPEN').eq('fin_organization_id', finOrganizationId /* needs migration */)
       .order('created_at', { ascending: false });
 
     setExceptions(excs || []);

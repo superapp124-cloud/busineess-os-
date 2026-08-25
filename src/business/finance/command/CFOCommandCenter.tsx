@@ -65,17 +65,17 @@ export function CFOCommandCenter({
   const [nlQuery, setNlQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [metrics, setMetrics] = useState<LiveMetricsState>({
-    cashBalance: 48200000,
-    monthlyRevenue: 62100000,
-    grossMargin: 41.8,
-    accountsReceivable: 21400000,
-    overdueAR: 4800000,
-    accountsPayable: 13700000,
-    expectedRunwayMonths: 7.4,
-    stressRunwayMonths: 5.9,
-    closeProgressPercent: 97,
-    closeCompletedStages: 7,
-    closeTotalStages: 8,
+    cashBalance: 0,
+    monthlyRevenue: 0,
+    grossMargin: 0,
+    accountsReceivable: 0,
+    overdueAR: 0,
+    accountsPayable: 0,
+    expectedRunwayMonths: 0,
+    stressRunwayMonths: 0,
+    closeProgressPercent: 0,
+    closeCompletedStages: 0,
+    closeTotalStages: 0,
     isLiveDbConnected: false,
   });
 
@@ -155,20 +155,42 @@ export function CFOCommandCenter({
         const runway = cash > 0 && monthlyBurn > 0 ? Math.round((cash / monthlyBurn) * 10) / 10 : 7.4;
         const stressRunway = Math.round(runway * 0.8 * 10) / 10;
 
+        
+        const { data: closeData } = await supabase.from('fin_close_tasks').select('status').eq('checklist_id', periodId || '');
+        let progress = 0;
+        if (closeData && closeData.length > 0) {
+            progress = (closeData.filter(t => t.status === 'COMPLETED').length / closeData.length) * 100;
+        }
+
         setMetrics({
-          cashBalance: cash > 0 ? cash : 48200000,
-          monthlyRevenue: revenue > 0 ? revenue : 62100000,
-          grossMargin: margin,
-          accountsReceivable: arTotal > 0 ? arTotal : 21400000,
-          overdueAR: arOverdue > 0 ? arOverdue : 4800000,
-          accountsPayable: apTotal > 0 ? apTotal : 13700000,
-          expectedRunwayMonths: runway,
-          stressRunwayMonths: stressRunway,
-          closeProgressPercent: 97,
-          closeCompletedStages: 7,
-          closeTotalStages: 8,
-          isLiveDbConnected: true,
+          cashBalance: cash,
+          monthlyRevenue: revenue,
+          grossMargin: revenue > 0 ? ((revenue - cogs) / revenue) * 100 : 0,
+          accountsReceivable: arTotal,
+          overdueAR: arOverdue,
+          accountsPayable: apTotal,
+          expectedRunwayMonths: expenses > 0 ? (cash / (expenses / 12)) : 0,
+          stressRunwayMonths: expenses > 0 ? ((cash * 0.8) / (expenses / 12)) : 0,
+          closeProgressPercent: progress,
+          closeCompletedStages: closeData ? closeData.filter(t => t.status === 'COMPLETED').length : 0,
+          closeTotalStages: closeData ? closeData.length : 0,
+          isLiveDbConnected: true
         });
+
+        // Attention Items
+        const { data: overdueData } = await supabase.from('fin_invoices').select('id, invoice_number, amount_due, due_date, customer:fin_customers(name)').in('status', ['ISSUED','PARTIALLY_PAID']).lt('due_date', new Date().toISOString().split('T')[0]).eq('fin_organization_id', finOrganizationId);
+        const { data: reconData } = await supabase.from('fin_reconciliation_exceptions').select('id, exception_type, amount, description').eq('status', 'OPEN').limit(5);
+        
+        const attentionItems = [];
+        (overdueData || []).forEach(inv => attentionItems.push({ id: inv.id, type: 'invoice', message: `Overdue invoice ${inv.invoice_number} for ${inv.amount_due}` }));
+        (reconData || []).forEach(rec => attentionItems.push({ id: rec.id, type: 'recon', message: `Recon exception: ${rec.description} (${rec.amount})` }));
+        setAttentionItems(attentionItems);
+
+        // AI Proposals
+        const risks = [];
+        (overdueData || []).forEach(inv => risks.push({ id: inv.id, title: 'Collect AR', message: `Collect ${inv.amount_due} from ${inv.invoice_number}` }));
+        setAiProposals(risks);
+  
       }
     } catch (e) {
       console.warn('[CFOCommandCenter] Live metric query fallback to pilot baseline:', e);
