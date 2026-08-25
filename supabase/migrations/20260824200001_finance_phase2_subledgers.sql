@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 2: Financial Event Mesh & Subledgers (AR/AP/Payments/Reconciliation/Integrity)
 -- Migration: 20260824200001_finance_phase2_subledgers.sql

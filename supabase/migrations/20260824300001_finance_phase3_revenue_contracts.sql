@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 3: Revenue Intelligence & Contract Accounting (ASC 606 / IFRS 15)
 -- Migration: 20260824300001_finance_phase3_revenue_contracts.sql

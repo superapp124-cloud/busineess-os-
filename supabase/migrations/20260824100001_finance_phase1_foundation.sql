@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 1: Financial Foundation
 -- 20260824100001_finance_phase1_foundation.sql

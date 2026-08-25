@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 5: Financial Close & Intelligence OS
 -- Migration: 20260824500001_finance_phase5_close_intelligence.sql

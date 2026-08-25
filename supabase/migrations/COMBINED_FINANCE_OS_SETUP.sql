@@ -95,7 +95,7 @@ ON CONFLICT (id) DO NOTHING;
 
 
 
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 1: Financial Foundation
 -- 20260824100001_finance_phase1_foundation.sql
@@ -745,7 +745,7 @@ $$;
 GRANT EXECUTE ON FUNCTION public.seed_default_chart_of_accounts TO authenticated;
 
 
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 2: Financial Event Mesh & Subledgers (AR/AP/Payments/Reconciliation/Integrity)
 -- Migration: 20260824200001_finance_phase2_subledgers.sql
@@ -1301,7 +1301,7 @@ END; $fn$;
 GRANT EXECUTE ON FUNCTION public.fin_run_integrity_check TO authenticated;
 
 
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 3: Revenue Intelligence & Contract Accounting (ASC 606 / IFRS 15)
 -- Migration: 20260824300001_finance_phase3_revenue_contracts.sql
@@ -1664,7 +1664,7 @@ END; $fn$;
 GRANT EXECUTE ON FUNCTION public.fin_run_revenue_integrity_check TO authenticated;
 
 
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 4: Cash, Banking & Reconciliation Intelligence
 -- Migration: 20260824400001_finance_phase4_banking_reconciliation.sql
@@ -1974,7 +1974,7 @@ END; $fn$;
 GRANT EXECUTE ON FUNCTION public.fin_calculate_90_day_cash_forecast TO authenticated;
 
 
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 5: Financial Close & Intelligence OS
 -- Migration: 20260824500001_finance_phase5_close_intelligence.sql

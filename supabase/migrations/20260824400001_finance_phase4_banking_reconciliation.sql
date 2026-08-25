@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- CHATR Financial Intelligence & Accounting Core
 -- Phase 4: Cash, Banking & Reconciliation Intelligence
 -- Migration: 20260824400001_finance_phase4_banking_reconciliation.sql
