@@ -1,10 +1,14 @@
 const DEFAULT_ALLOWED_ORIGINS = [
+  "https://chatrchat.in",
+  "https://www.chatrchat.in",
   "https://chatr.chat",
   "https://www.chatr.chat",
   "http://localhost:5173",
   "http://localhost:8080",
   "http://localhost:8085",
+  "http://localhost:8086",
   "http://127.0.0.1:8085",
+  "http://127.0.0.1:8086",
   "capacitor://localhost",
   "ionic://localhost",
 ];
