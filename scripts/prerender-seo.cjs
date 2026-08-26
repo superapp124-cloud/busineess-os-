@@ -846,38 +846,19 @@ PUBLIC_SEO_PAGES.push({
   schemas: []
 });
 
-// Programmatic Location Pages Generator (Middle East, GCC, SEA, NA & India Regional Hubs)
-const { LOCATION_EXPANSION_PAGES, TOP_CITIES } = require('../src/data/locationExpansionData.ts');
+// Programmatic Location Pages Generator (Build-time / Server-side only)
+const { CITIES } = require('./citiesData.cjs');
+const {
+  LOCATION_USE_CASES,
+  renderLocationPillarHtml,
+  renderCityHubHtml,
+  renderLocationsDirectoryHtml,
+  slugify
+} = require('./renderLocationHtml.cjs');
 
-const slugify = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-
-const seenCityHubs = new Set();
-TOP_CITIES.forEach(c => {
-  const citySlug = slugify(c.city);
-  const hubPath = `/locations/${citySlug}`;
-  if (!seenCityHubs.has(hubPath)) {
-    seenCityHubs.add(hubPath);
-    PUBLIC_SEO_PAGES.push({
-      path: hubPath,
-      title: `${c.city} Solutions Hub -- WhatsApp API & Recruitment | CHATR & TalentXcel`,
-      description: `Deploy CHATR OS and TalentXcel in ${c.city}, ${c.state}. Access 10 specialized industry solutions including WhatsApp Business API, candidate screening, real estate lead management, and healthcare patient messaging.`,
-      keywords: `CHATR ${c.city}, WhatsApp Business API ${c.city}, candidate screening ${c.city}`,
-      canonical: DOMAIN + hubPath,
-      schemas: []
-    });
-  }
-});
-
-LOCATION_EXPANSION_PAGES.forEach(locPage => {
-  PUBLIC_SEO_PAGES.push({
-    path: locPage.path,
-    title: locPage.title,
-    description: locPage.description,
-    keywords: locPage.keywords,
-    canonical: DOMAIN + locPage.path,
-    schemas: []
-  });
-});
+function injectRootHtml(html, bodyContent) {
+  return html.replace(/<div id="root">[\s\S]*?<\/body>/, `<div id="root">\n${bodyContent}\n    </div>\n  </body>`);
+}
 
 function prerender() {
   const distDir = path.resolve(__dirname, '../dist');
@@ -890,26 +871,26 @@ function prerender() {
 
   const baseHtml = fs.readFileSync(indexHtmlPath, 'utf8');
   let count = 0;
+  const startTime = Date.now();
 
+  console.log(`[PRERENDER] Starting full static HTML generation...`);
+
+  // 1. Render Core Public SEO Pages
   for (const page of PUBLIC_SEO_PAGES) {
     let customHtml = baseHtml;
 
-    // 1. Replace Title Tag
+    // Head tags
     customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${page.title}</title>`);
     customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${page.title}">`);
-    
-    // 2. Replace Meta Description & Keywords
     customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${page.description}">`);
     if (page.keywords) {
       customHtml = customHtml.replace(/<meta\s+name="keywords"\s+content=".*?"\s*\/?>/i, `<meta name="keywords" content="${page.keywords}">`);
     }
 
-    // 3. Ensure Robots Tag
     if (!customHtml.includes('name="robots"')) {
       customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);
     }
 
-    // 4. Replace Canonical & Open Graph
     customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${page.canonical}">`);
     customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${page.title}">`);
     customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${page.description}">`);
@@ -919,7 +900,7 @@ function prerender() {
       customHtml = customHtml.replace(/<meta\s+property="og:type"\s+content=".*?"\s*\/?>/i, `<meta property="og:type" content="${page.ogType}">`);
     }
 
-    // 5. Automatic BreadcrumbList Schema
+    // BreadcrumbList Schema
     const breadcrumbItems = [{ '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN }];
     const pathParts = page.path.split('/').filter(Boolean);
     let currentPath = '';
@@ -944,15 +925,171 @@ function prerender() {
     const schemaScripts = allSchemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n    ');
     customHtml = customHtml.replace('</head>', `    ${schemaScripts}\n  </head>`);
 
+    // Inject Directory HTML for /locations
+    if (page.path === '/locations') {
+      const dirBody = renderLocationsDirectoryHtml(CITIES);
+      customHtml = injectRootHtml(customHtml, dirBody);
+    }
+
     const targetDir = path.join(distDir, page.path.replace(/^\//, ''));
     fs.mkdirSync(targetDir, { recursive: true });
     const targetFilePath = path.join(targetDir, 'index.html');
     fs.writeFileSync(targetFilePath, customHtml, 'utf8');
     count++;
-    console.log(`[PRERENDER] Generated: ${page.path} -> ${targetFilePath}`);
   }
 
-  console.log(`\nPRERENDER SUCCESS: Generated ${count} static HTML files in dist/`);
+  console.log(`[PRERENDER] Rendered ${count} core pages.`);
+
+  // 2. Render City Hub Pages (/locations/:citySlug)
+  let cityHubCount = 0;
+  for (const [city, state, region] of CITIES) {
+    const citySlug = slugify(city);
+    const hubPath = `/locations/${citySlug}`;
+    const canonical = `${DOMAIN}${hubPath}`;
+    const title = `${city} Solutions Hub — WhatsApp API & Recruitment | CHATR & TalentXcel`;
+    const description = `Deploy CHATR OS and TalentXcel in ${city}, ${state}. Access 10 specialized industry solutions including WhatsApp Business API, candidate screening, real estate lead management, and healthcare patient messaging.`;
+
+    let customHtml = baseHtml;
+    customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${title}</title>`);
+    customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${title}">`);
+    customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${description}">`);
+    customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${canonical}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${title}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${description}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/i, `<meta property="og:url" content="${canonical}">`);
+
+    if (!customHtml.includes('name="robots"')) {
+      customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);
+    }
+
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
+        { '@type': 'ListItem', position: 2, name: 'Locations Directory', item: `${DOMAIN}/locations` },
+        { '@type': 'ListItem', position: 3, name: `${city} Hub`, item: canonical }
+      ]
+    };
+    customHtml = customHtml.replace('</head>', `    <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>\n  </head>`);
+
+    const bodyHtml = renderCityHubHtml(city, state, region);
+    customHtml = injectRootHtml(customHtml, bodyHtml);
+
+    const targetDir = path.join(distDir, 'locations', citySlug);
+    fs.mkdirSync(targetDir, { recursive: true });
+    fs.writeFileSync(path.join(targetDir, 'index.html'), customHtml, 'utf8');
+    cityHubCount++;
+  }
+  console.log(`[PRERENDER] Rendered ${cityHubCount} city hub pages (/locations/:citySlug).`);
+
+  // 3. Render Location Pillar Pages (/location/:useCase-:citySlug)
+  let pillarCount = 0;
+  for (const [city, state, region] of CITIES) {
+    const citySlug = slugify(city);
+
+    for (const uc of LOCATION_USE_CASES) {
+      const pagePath = `/location/${uc.slug}-${citySlug}`;
+      const canonical = `${DOMAIN}${pagePath}`;
+      const title = `${uc.h1Prefix} ${city} — CHATR & TalentXcel Solutions`;
+      const description = uc.summary(city);
+      const h1 = `${uc.h1Prefix} ${city}`;
+
+      let customHtml = baseHtml;
+      customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${title}</title>`);
+      customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${title}">`);
+      customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${description}">`);
+      customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${canonical}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${title}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${description}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/i, `<meta property="og:url" content="${canonical}">`);
+
+      if (!customHtml.includes('name="robots"')) {
+        customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);
+      }
+
+      // Rich Schemas
+      const serviceSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: uc.title,
+        description: uc.summary(city),
+        serviceType: uc.title,
+        areaServed: { '@type': 'Place', name: city },
+        provider: {
+          '@type': 'Organization',
+          name: 'CHATR Communication OS',
+          url: DOMAIN,
+          logo: `${DOMAIN}/icons/logo.png`
+        },
+        url: canonical
+      };
+
+      const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: h1,
+        description: description,
+        author: {
+          '@type': 'Person',
+          name: 'Sanobar Jahan',
+          jobTitle: 'Founder, TalentXcel & CHATR',
+          url: `${DOMAIN}/authors/sanobar-jahan`
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'CHATR Communication OS',
+          url: DOMAIN
+        },
+        datePublished: '2026-08-11',
+        dateModified: '2026-08-11'
+      };
+
+      const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: uc.faqs(city).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      };
+
+      const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
+          { '@type': 'ListItem', position: 2, name: 'Location Directory', item: `${DOMAIN}/locations` },
+          { '@type': 'ListItem', position: 3, name: h1, item: canonical }
+        ]
+      };
+
+      const schemaHtml = [serviceSchema, articleSchema, faqSchema, breadcrumbSchema]
+        .map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`)
+        .join('\n    ');
+      customHtml = customHtml.replace('</head>', `    ${schemaHtml}\n  </head>`);
+
+      // Inject full semantic HTML body
+      const bodyHtml = renderLocationPillarHtml(city, state, region, uc);
+      customHtml = injectRootHtml(customHtml, bodyHtml);
+
+      const targetDir = path.join(distDir, 'location', `${uc.slug}-${citySlug}`);
+      fs.mkdirSync(targetDir, { recursive: true });
+      fs.writeFileSync(path.join(targetDir, 'index.html'), customHtml, 'utf8');
+      pillarCount++;
+    }
+  }
+
+  const total = count + cityHubCount + pillarCount;
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`\n========================================`);
+  console.log(`PRERENDER COMPLETE: Generated ${total} HTML pages in ${elapsed}s`);
+  console.log(`- Core public SEO pages: ${count}`);
+  console.log(`- City hub pages: ${cityHubCount}`);
+  console.log(`- Location pillar pages: ${pillarCount}`);
+  console.log(`========================================\n`);
 }
 
 prerender();
+

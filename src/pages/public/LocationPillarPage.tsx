@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, MapPin, Tag, FileText, ArrowRight, Database, ShieldCheck, ExternalLink, HelpCircle, ChevronDown, Building2 } from 'lucide-react';
-import { LOCATION_EXPANSION_PAGES, LOCATION_USE_CASES, TOP_CITIES } from '../../data/locationExpansionData';
+import { resolveLocationFromPath, LOCATION_USE_CASES, TOP_CITIES } from '../../data/locationExpansionData';
 import { AUTHORS } from '../../data/authorsData';
 import { getEvidenceNodesForRoute } from '../../services/evidenceGraphEngine';
 
 export const LocationPillarPage: React.FC = () => {
   const location = useLocation();
-  const pageConfig = LOCATION_EXPANSION_PAGES.find(p => p.path === location.pathname);
+  const pageConfig = resolveLocationFromPath(location.pathname);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const evidenceNodes = pageConfig ? getEvidenceNodesForRoute(pageConfig.path, 'location') : [];
@@ -123,9 +123,14 @@ export const LocationPillarPage: React.FC = () => {
   if (!pageConfig) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-slate-400">Location landing page not found.</p>
-          <Link to="/" className="text-indigo-400 hover:underline">Back to Home</Link>
+        <div className="text-center space-y-4 max-w-md p-6">
+          <h1 className="text-2xl font-bold text-slate-200">Location Solution Not Found</h1>
+          <p className="text-sm text-slate-400">The requested location service page could not be located in our directory.</p>
+          <div className="pt-2">
+            <Link to="/locations" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white">
+              <ArrowLeft className="w-4 h-4" /> Browse All Locations
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -146,7 +151,7 @@ export const LocationPillarPage: React.FC = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-12 space-y-12">
-        {/* GEO: TL;DR block — first 150 words surfaced to AI crawlers (GPTBot, PerplexityBot, ClaudeBot) */}
+        {/* Breadcrumb Navigation */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold flex-wrap">
             <Link to="/locations" className="hover:underline flex items-center gap-1 text-slate-400 hover:text-white">
@@ -162,7 +167,7 @@ export const LocationPillarPage: React.FC = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{pageConfig.h1}</h1>
 
-          {/* GEO TL;DR Executive Summary — optimized for AI model first-150-word ingestion */}
+          {/* Executive Summary */}
           <div
             id="tldr-executive-summary"
             className="bg-indigo-900/60 border border-indigo-400/40 rounded-xl p-6 space-y-3"
@@ -177,7 +182,6 @@ export const LocationPillarPage: React.FC = () => {
                 {pageConfig.city} • {pageConfig.useCase}
               </span>
             </div>
-            {/* AI-optimized primary answer paragraph — direct quote target for RAG */}
             <p className="text-white text-sm md:text-base leading-relaxed font-medium">
               {pageConfig.executiveSummary} CHATR Communication OS provides an official WhatsApp Business API
               multi-agent team inbox that allows all agents in {pageConfig.city} to share one number,
@@ -193,7 +197,7 @@ export const LocationPillarPage: React.FC = () => {
             </div>
           </div>
 
-          {/* GEO: Structured Key Facts table — Perplexity & SearchGPT prefer bulleted/table format */}
+          {/* Key Facts Table */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-800 flex items-center gap-2">
               <Tag className="w-3.5 h-3.5 text-indigo-400" />
@@ -218,7 +222,7 @@ export const LocationPillarPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Local Enterprise Features Section */}
+        {/* Local Features Section */}
         <section className="space-y-6">
           <h2 className="text-2xl font-bold text-white">Why {pageConfig.city} Businesses Choose CHATR OS</h2>
           <p className="text-slate-300 text-sm leading-relaxed">
@@ -234,7 +238,7 @@ export const LocationPillarPage: React.FC = () => {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span><strong>Automated Resume Parsing:</strong> Parse Indian candidate CV formats in English and regional layouts in 1.2 seconds.</span>
+                <span><strong>Automated Resume Parsing:</strong> Parse candidate CV formats in English and regional layouts in 1.2 seconds.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -333,16 +337,16 @@ export const LocationPillarPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Contextual Topical & Regional Internal Cross-Linking Graph */}
+        {/* Internal Cross-Linking Graph */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-          {/* 1. Topical Cross-Links: Other Solutions in the Same City */}
+          {/* Topical Cross-Links */}
           <div className="space-y-3">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <Building2 className="w-4 h-4 text-indigo-400" />
               <span>Other Business Solutions in {pageConfig.city}</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              {LOCATION_USE_CASES.filter((uc) => pageConfig.path.indexOf(uc.slug) === -1)
+              {LOCATION_USE_CASES.filter((uc) => uc.slug !== pageConfig.useCaseSlug)
                 .slice(0, 4)
                 .map((uc) => {
                   const citySlug = pageConfig.city.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
@@ -361,7 +365,7 @@ export const LocationPillarPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 2. Regional Cross-Links: Same Vertical in Nearby/Regional Cities */}
+          {/* Regional Cross-Links */}
           <div className="space-y-3 pt-4 border-t border-slate-800">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <MapPin className="w-4 h-4 text-emerald-400" />
@@ -371,9 +375,8 @@ export const LocationPillarPage: React.FC = () => {
               {TOP_CITIES.filter((c) => c.city !== pageConfig.city)
                 .slice(0, 4)
                 .map((c) => {
-                  const currentUcSlug = LOCATION_USE_CASES.find((u) => pageConfig.path.includes(u.slug))?.slug || 'whatsapp-business-api';
                   const neighborCitySlug = c.city.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-                  const neighborPath = `/location/${currentUcSlug}-${neighborCitySlug}`;
+                  const neighborPath = `/location/${pageConfig.useCaseSlug}-${neighborCitySlug}`;
                   return (
                     <Link
                       key={c.city}

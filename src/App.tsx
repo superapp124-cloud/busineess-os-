@@ -672,7 +672,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="crm/contact/:contactId" element={<LazyRoute component={LazyPages.DesktopContacts} />} />
  <Route path="execution/:executionId" element={<Suspense fallback={<PageLoader message="Loading execution..." />}><ExecutionInspectPage /></Suspense>} />
  <Route path="workflow/:workflowId" element={<Suspense fallback={<PageLoader />}><WorkflowInspectorPage /></Suspense>} />
- <Route path="inbox/thread/:threadId" element={<LazyRoute component={LazyPages.UniversalInbox} />} />
+ <Route path="inbox/thread/:threadId" element={<LazyRoute component={UniversalInbox} />} />
  <Route path="smart-inbox" element={<LazyRoute component={LazyPages.SmartInbox} />} />
  <Route path="tickets" element={<LazyRoute component={LazyPages.DesktopTickets} />} />
  <Route path="files" element={<LazyRoute component={LazyPages.DesktopFiles} />} />
