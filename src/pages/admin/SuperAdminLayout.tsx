@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Building2, TrendingUp, Globe, Activity, 
   Shield, FileText, Lock, LogOut, ExternalLink, ChevronRight, CheckCircle2,
-  AlertTriangle, ShieldCheck, FileCode, Layers, Search
+  AlertTriangle, ShieldCheck, FileCode, Layers, Search, Bot
 } from 'lucide-react';
 import { verifySuperAdminStatus, normalizePhone } from '../../services/admin/superAdminAuth';
 

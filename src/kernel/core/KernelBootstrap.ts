@@ -184,11 +184,13 @@ export async function bootKernel(): Promise<void> {
     });
   });
 
-  // 5. Start Discovery & Monitoring
-  discoveryEngine.registerPlugin(new MCPDiscoveryPlugin([
-    'http://localhost:3001/mcp', // Mock default endpoint
-    'http://localhost:3002/mcp'
-  ]));
+  // 5. Start Discovery & Monitoring (Only probe localhost MCP servers in local development)
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    discoveryEngine.registerPlugin(new MCPDiscoveryPlugin([
+      'http://localhost:3001/mcp',
+      'http://localhost:3002/mcp'
+    ]));
+  }
   
   discoveryEngine.start(60000); // scan every minute
   monitoringEngine.start(120000); // health check every 2 minutes
