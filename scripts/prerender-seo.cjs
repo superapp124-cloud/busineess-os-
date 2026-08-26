@@ -827,11 +827,52 @@ const PUBLIC_SEO_PAGES = [
     schemas: []
   },
   {
-    path: '/research/media-kit',
-    title: 'Media & Journalist Data Room -- CHATR & TalentXcel Research Lab',
-    description: 'Verified first-party telemetry benchmarks, one-page data sheets, approved quotes, and statistical citations for journalists, HR analysts, and tech researchers.',
-    keywords: 'recruitment research media kit, journalist data room, chatr press resources',
-    canonical: DOMAIN + '/research/media-kit',
+    path: '/tools/resume-grader',
+    title: 'Free AI ATS Resume Grader & Scanner -- Instant ATS Score | CHATR TalentXcel',
+    description: '100% free instant AI ATS Resume Grader. Score your CV for formatting, keyword match, and recruiter readability in seconds with zero signup.',
+    keywords: 'ats resume grader, free resume score, cv checker, ats scanner, ai resume review',
+    canonical: DOMAIN + '/tools/resume-grader',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: 'Free AI ATS Resume Grader',
+        applicationCategory: 'BusinessApplication',
+        url: DOMAIN + '/tools/resume-grader',
+        description: 'Instant free AI ATS Resume Grader and CV optimization engine.'
+      }
+    ]
+  },
+  {
+    path: '/tools/resume-grade',
+    title: 'Free AI ATS Resume Grader & Scanner -- Instant ATS Score | CHATR TalentXcel',
+    description: '100% free instant AI ATS Resume Grader. Score your CV for formatting, keyword match, and recruiter readability in seconds with zero signup.',
+    keywords: 'ats resume grader, free resume score, cv checker, ats scanner',
+    canonical: DOMAIN + '/tools/resume-grader',
+    schemas: []
+  },
+  {
+    path: '/tools/whatsapp-link-generator',
+    title: 'Free WhatsApp Direct Chat & QR Link Generator -- Zero Setup | CHATR',
+    description: 'Generate instant click-to-chat WhatsApp links and custom QR codes with pre-filled messages for your business or clinic.',
+    keywords: 'whatsapp link generator, click to chat whatsapp, wa link qr code generator',
+    canonical: DOMAIN + '/tools/whatsapp-link-generator',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: 'Free WhatsApp Link & QR Generator',
+        applicationCategory: 'CommunicationApplication',
+        url: DOMAIN + '/tools/whatsapp-link-generator'
+      }
+    ]
+  },
+  {
+    path: '/tools/sla-calculator',
+    title: 'WhatsApp Response Time & Revenue Loss SLA Calculator | CHATR',
+    description: 'Calculate how much lead leakage and pipeline revenue your business loses due to slow WhatsApp response times.',
+    keywords: 'whatsapp sla calculator, lead response time loss, customer service response calculator',
+    canonical: DOMAIN + '/tools/sla-calculator',
     schemas: []
   }
 ];

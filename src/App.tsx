@@ -919,10 +919,19 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/share/candidate/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
   <Route path="/share/scorecard/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
 
-  {/* Viral Acquisition Utilities (Loop A) & Growth Telemetry Dashboard */}
+  {/* Viral Acquisition Utilities (Loop A) & Growth Telemetry Dashboard (with full typo/slug aliases) */}
   <Route path="/tools/resume-grader" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/resume-grade" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/resume" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/resume-scanner" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/resume-checker" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/ats-grader" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/ats-checker" element={<LazyRoute component={ResumeGraderTool} />} />
   <Route path="/tools/whatsapp-link-generator" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
+  <Route path="/tools/whatsapp-link" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
+  <Route path="/tools/wa-link" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
   <Route path="/tools/sla-calculator" element={<LazyRoute component={SlaCalculatorTool} />} />
+  <Route path="/tools/sla" element={<LazyRoute component={SlaCalculatorTool} />} />
   <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
   <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
 
