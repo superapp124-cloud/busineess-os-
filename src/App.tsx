@@ -191,6 +191,10 @@ const AIRevenueOperationsLanding = React.lazy(() => import('./pages/landing/Busi
 const AIAgentsForBusinessLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIAgentsForBusinessLanding })));
 const BusinessAutomationLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.BusinessAutomationLanding })));
 const SharedCandidateScorecard = React.lazy(() => import('./pages/public/SharedCandidateScorecard'));
+const ResumeGraderTool = React.lazy(() => import('./pages/public/tools/ResumeGraderTool'));
+const WhatsAppLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/WhatsAppLinkGeneratorTool'));
+const SlaCalculatorTool = React.lazy(() => import('./pages/public/tools/SlaCalculatorTool'));
+const AcquisitionDashboard = React.lazy(() => import('./pages/desktop/AcquisitionDashboard'));
 
 
 const queryClient = new QueryClient({
@@ -882,6 +886,13 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   {/* Viral Product-Led Growth (PLG) & Shareable Candidate Scorecard Routes */}
   <Route path="/share/candidate/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
   <Route path="/share/scorecard/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
+
+  {/* Viral Acquisition Utilities (Loop A) & Growth Telemetry Dashboard */}
+  <Route path="/tools/resume-grader" element={<LazyRoute component={ResumeGraderTool} />} />
+  <Route path="/tools/whatsapp-link-generator" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
+  <Route path="/tools/sla-calculator" element={<LazyRoute component={SlaCalculatorTool} />} />
+  <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
+  <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />
