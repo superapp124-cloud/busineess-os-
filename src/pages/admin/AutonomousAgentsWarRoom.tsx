@@ -5,7 +5,8 @@ import {
   Check, X, ShieldAlert, Phone, Sparkles, Flame, 
   CheckCheck, RefreshCw, Layers, ArrowUpRight, Plus, Trash2, 
   Target, ArrowRight, Play, Pause, FastForward, Activity, Users, 
-  Mail, Key, Copy, AlertCircle, Inbox
+  Video, Share2, Copy, Film, Linkedin, Twitter, MessageCircle, 
+  Laptop, HardDrive, Smartphone, Eye
 } from 'lucide-react';
 import { 
   AutonomousAgentDefinition, AgentSquadType, SQUADS_CONFIG 
@@ -24,9 +25,9 @@ import {
   InterAgentMessage 
 } from '../../services/agents/autonomousEnterpriseEngine';
 import { 
-  OUTBOUND_EMAIL_PERSONAS, getSavedResendApiKey, saveResendApiKey, 
-  sendEmailViaResend, dispatchAutomatedEmailBatch, EmailOutboundTemplate 
-} from '../../services/outbound/automatedEmailDispatcher';
+  VIRAL_REEL_SCRIPTS, VIRAL_LINKEDIN_POSTS, VIRAL_TWITTER_THREADS, 
+  VIRAL_REDDIT_POSTS, ReelScriptItem, LinkedInPostItem, TwitterThreadItem, RedditCommunityPost 
+} from '../../services/marketing/viralContentEngine';
 
 export const AutonomousAgentsWarRoom: React.FC = () => {
   const [agents, setAgents] = useState<AutonomousAgentDefinition[]>([]);
@@ -36,39 +37,25 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
   const [goals, setGoals] = useState<StrategicCompanyGoal[]>([]);
   const [messages, setMessages] = useState<InterAgentMessage[]>([]);
   const [isAutoRunning, setIsAutoRunning] = useState(true);
-  const [velocity, setVelocity] = useState(1);
 
   // Tabs
-  const [activeTab, setActiveTab] = useState<'CEO_GOALS' | 'EMAIL_OUTBOUND' | 'PIPELINE_FLOW' | 'CLIENT_LEADS' | '200_ROSTER' | 'EVENT_STREAM'>('EMAIL_OUTBOUND');
+  const [activeTab, setActiveTab] = useState<'VIRAL_STUDIO' | 'CEO_GOALS' | 'CLIENT_LEADS' | 'PIPELINE_FLOW' | '200_ROSTER'>('VIRAL_STUDIO');
+  const [socialSubTab, setSocialSubTab] = useState<'REELS' | 'LINKEDIN' | 'TWITTER' | 'REDDIT'>('REELS');
   const [selectedSquad, setSelectedSquad] = useState<AgentSquadType | 'ALL'>('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Email Outbound State
-  const [resendApiKey, setResendApiKey] = useState('');
-  const [selectedPersonaId, setSelectedPersonaId] = useState('persona_sarah_ats');
-  const [testEmailTo, setTestEmailTo] = useState('arshidwani786@gmail.com');
-  const [isSendingTest, setIsSendingTest] = useState(false);
-  const [emailFeedback, setEmailFeedback] = useState<string | null>(null);
-  const [isDispatchingBatch, setIsDispatchingBatch] = useState(false);
-  const [copiedDns, setCopiedDns] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Scraper Controls
   const [scrapeCity, setScrapeCity] = useState('Dubai');
   const [scrapeVertical, setScrapeVertical] = useState('Recruitment & Staffing Agencies');
   const [isScraping, setIsScraping] = useState(false);
-  const [customUrlInput, setCustomUrlInput] = useState('');
-  const [isScrapingUrl, setIsScrapingUrl] = useState(false);
 
-  // New Goal Input
-  const [newGoalText, setNewGoalText] = useState('');
-  const [newGoalTarget, setNewGoalTarget] = useState(500);
-  const [isCreatingGoal, setIsCreatingGoal] = useState(false);
-  const [goalFeedback, setGoalFeedback] = useState<string | null>(null);
+  // Custom AI Hook Generator Input
+  const [customHookPrompt, setCustomHookPrompt] = useState('');
+  const [generatedHook, setGeneratedHook] = useState<string | null>(null);
 
   const loadRealData = async () => {
     try {
       setAgents(getLiveAgentRoster());
-      setResendApiKey(getSavedResendApiKey());
       const [realTelemetry, realLogs] = await Promise.all([
         fetchRealAutonomousTelemetry(),
         fetchRealOsEventStream()
@@ -81,7 +68,6 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
       setGoals(orgState.activeGoals);
       setMessages(orgState.interAgentMessages);
       setIsAutoRunning(orgState.isAutonomousRunning);
-      setVelocity(orgState.surgeVelocityMultiplier);
     } catch {}
   };
 
@@ -91,103 +77,39 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSaveApiKey = (e: React.FormEvent) => {
-    e.preventDefault();
-    saveResendApiKey(resendApiKey);
-    setEmailFeedback('✅ Resend API Key saved successfully. Ready to dispatch outbound emails.');
-    setTimeout(() => setEmailFeedback(null), 4000);
-  };
-
-  const handleSendTestEmail = async () => {
-    if (!testEmailTo.trim() || isSendingTest) return;
-    setIsSendingTest(true);
-    setEmailFeedback(null);
-    try {
-      const persona = OUTBOUND_EMAIL_PERSONAS.find(p => p.id === selectedPersonaId) || OUTBOUND_EMAIL_PERSONAS[0];
-      const sampleLead: ScrapedLeadRecord = leads[0] || {
-        id: 'sample',
-        companyName: 'Michael Page Middle East',
-        city: 'Dubai',
-        vertical: 'Recruitment & Staffing',
-        decisionMakerName: 'Managing Director',
-        decisionMakerRole: 'Director',
-        phone: '97147090300',
-        email: testEmailTo,
-        website: 'https://www.michaelpage.ae',
-        sourcePlatform: 'Test',
-        whatsappVerified: true,
-        status: 'DISCOVERED',
-        scrapedByAgentId: 'Agent',
-        leadScore: 95,
-        pitchMessage: '',
-        scrapedAt: ''
-      };
-
-      const res = await sendEmailViaResend({
-        apiKey: resendApiKey,
-        from: `${persona.senderName} <${persona.senderEmail}>`,
-        to: testEmailTo,
-        subject: persona.subject.replace('{{company_name}}', sampleLead.companyName),
-        html: persona.generateBodyHtml(sampleLead),
-        leadId: 'test_lead',
-        companyName: sampleLead.companyName
-      });
-
-      if (res.success) {
-        setEmailFeedback(`✅ Test email delivered successfully! Resend Message ID: ${res.id}`);
-      } else {
-        setEmailFeedback(`❌ Email dispatch failed: ${res.error}`);
-      }
-    } finally {
-      setIsSendingTest(false);
-    }
-  };
-
-  const handleDispatchBatchEmails = async () => {
-    if (isDispatchingBatch) return;
-    setIsDispatchingBatch(true);
-    setEmailFeedback(null);
-    try {
-      const res = await dispatchAutomatedEmailBatch(selectedPersonaId);
-      setEmailFeedback(`🚀 Batch Complete: Delivered ${res.delivered} / ${res.totalAttempted} outbound emails.${res.errors.length > 0 ? ` (${res.errors[0]})` : ''}`);
-      await loadRealData();
-    } finally {
-      setIsDispatchingBatch(false);
-    }
-  };
-
-  const copyToClipboard = (text: string, label: string) => {
+  const handleCopyText = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedDns(label);
-    setTimeout(() => setCopiedDns(null), 2000);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2500);
+  };
+
+  const handleGenerateCustomHook = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customHookPrompt.trim()) return;
+
+    const hook = `🔥 VIRAL HOOK SCRIPT: "${customHookPrompt}"
+    
+Scene 1 (0-3s): [Close up on screen showing $500 cloud AI bills being burned]
+Visual Text: "WHY ARE YOU STILL PAYING FOR CLOUD AI TOKENS? ❌"
+Voiceover: "Here is the exact setup we use to run Llama 3 and DeepSeek 100% offline for $0 in CHATR Desktop."
+
+Scene 2 (4-15s): [Open CHATR Desktop -> Toggle Ollama local model -> Prompt executes at 120 tokens/sec]
+Visual Text: "0ms Latency • 100% Private On-Device AI 💻"
+Voiceover: "Zero token fees. Unlimited queries. Full local privacy."
+
+Scene 3 (16-30s): [Drag & Drop PDF -> Instant ATS Resume Score]
+Visual Text: "Free ATS Grader: chatrchat.in/tools/resume-grader"
+Voiceover: "Download the free Electron Desktop App at chatrchat.in."
+
+Link in bio: https://www.chatrchat.in`;
+
+    setGeneratedHook(hook);
   };
 
   const handleToggleAutoEngine = () => {
     const newState = toggleAutonomousOrgEngine();
     setIsAutoRunning(newState);
     loadRealData();
-  };
-
-  const handleSetVelocity = (multiplier: number) => {
-    setSurgeVelocity(multiplier);
-    setVelocity(multiplier);
-    loadRealData();
-  };
-
-  const handleCreateStrategicGoal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newGoalText.trim() || isCreatingGoal) return;
-
-    setIsCreatingGoal(true);
-    setGoalFeedback(null);
-    try {
-      const created = await createAndDecomposeCeoGoal(newGoalText, newGoalTarget);
-      setGoalFeedback(`🎯 Strategic Goal Activated: "${created.title}". Decomposed into ${created.decomposedTasksCount} automated sub-tasks.`);
-      setNewGoalText('');
-      await loadRealData();
-    } finally {
-      setIsCreatingGoal(false);
-    }
   };
 
   const handleRunVerifiedScrape = async () => {
@@ -200,20 +122,6 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
     }
   };
 
-  const handleScrapeCustomUrl = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customUrlInput.trim() || isScrapingUrl) return;
-
-    setIsScrapingUrl(true);
-    try {
-      await scrapeLiveWebpageUrl(customUrlInput, scrapeCity, scrapeVertical);
-      setCustomUrlInput('');
-      await loadRealData();
-    } finally {
-      setIsScrapingUrl(false);
-    }
-  };
-
   const handleOpenWhatsAppOutreach = async (lead: ScrapedLeadRecord) => {
     await markLeadOutreachDispatched(lead.id);
     const encodedText = encodeURIComponent(lead.pitchMessage);
@@ -222,32 +130,21 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
     await loadRealData();
   };
 
-  const activePersona = OUTBOUND_EMAIL_PERSONAS.find(p => p.id === selectedPersonaId) || OUTBOUND_EMAIL_PERSONAS[0];
-
-  const filteredAgents = agents.filter(a => {
-    const matchesSquad = selectedSquad === 'ALL' || a.squad === selectedSquad;
-    const matchesSearch = 
-      a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.currentTaskSummary.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSquad && matchesSearch;
-  });
-
   return (
     <div className="space-y-8">
-      {/* Top Header */}
+      {/* Top Executive Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-mono font-bold uppercase flex items-center gap-1.5">
-              <Bot className="w-3.5 h-3.5" /> 200 AUTONOMOUS AI WORKERS
+            <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500/20 to-indigo-500/20 border border-pink-500/30 text-pink-300 text-xs font-mono font-bold uppercase flex items-center gap-1.5">
+              <Video className="w-3.5 h-3.5 text-pink-400" /> VIRAL SOCIAL MEDIA & REELS BUZZ ENGINE
             </span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400 font-mono font-bold">Resend Zero-Cost Email Outbound Active</span>
+            <span className="text-xs text-emerald-400 font-mono font-bold">On-Device Ollama & Electron Growth</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Human CEO Executive Command Suite</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Social Media Buzz & Content Machine</h1>
           <p className="text-xs text-slate-400">
-            Automated cold email delivery via verified domain identities (Sarah Jenkins & Alex Rivera) with 100% free ATS tool hooks
+            Generate viral Reels, YouTube Shorts, LinkedIn teardowns, and Reddit community posts highlighting On-Device Ollama AI and the Free ATS Resume Grader
           </p>
         </div>
 
@@ -265,7 +162,7 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
             <span>{isAutoRunning ? '24/7 AUTONOMOUS: ACTIVE' : 'ENGINE: PAUSED'}</span>
           </button>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 flex items-center gap-2">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-1.5 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <div className="text-right">
               <p className="text-[9px] uppercase font-mono font-bold text-slate-400">Supreme Commander</p>
@@ -275,59 +172,51 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
         </div>
       </div>
 
-      {/* Row 1: Real Telemetry KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 font-mono">
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Total AI Workers</span>
-          <p className="text-2xl font-black text-white">200</p>
-          <p className="text-[10px] text-emerald-400">7 Autonomous Squads</p>
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Free Email Quota</span>
-          <p className="text-2xl font-black text-indigo-400">3,000<span className="text-xs font-normal text-slate-400">/mo</span></p>
-          <p className="text-[10px] text-emerald-400">Resend Free Tier ($0.00)</p>
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Real Leads Extracted</span>
-          <p className="text-2xl font-black text-cyan-400">{leads.length}</p>
-          <p className="text-[10px] text-slate-400">Verified Companies</p>
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Outreach Dispatched</span>
-          <p className="text-2xl font-black text-emerald-400">
-            {leads.filter(l => l.status === 'OUTREACH_DISPATCHED').length}
+      {/* Row 1: Core Growth Pillars Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-5 space-y-2">
+          <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <HardDrive className="w-5 h-5" />
+          </div>
+          <h3 className="font-bold text-sm text-white">1. On-Device Ollama AI ($0 / mo)</h3>
+          <p className="text-xs text-slate-400">
+            Run Llama 3.3 & DeepSeek locally in CHATR Desktop with 0 token fees and 100% offline privacy.
           </p>
-          <p className="text-[10px] text-slate-400">Email & WhatsApp</p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Database Events</span>
-          <p className="text-2xl font-black text-purple-400">{telemetry?.totalSystemEvents.toLocaleString() || '27,086'}</p>
-          <p className="text-[10px] text-emerald-400">public.os_events rows</p>
+        <div className="bg-gradient-to-br from-pink-950/40 to-slate-900 border border-pink-500/30 rounded-2xl p-5 space-y-2">
+          <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center">
+            <Video className="w-5 h-5" />
+          </div>
+          <h3 className="font-bold text-sm text-white">2. Viral Video Reels & Shorts</h3>
+          <p className="text-xs text-slate-400">
+            30-45s visual storyboards ready to record for Instagram, TikTok, and YouTube Shorts.
+          </p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">Registered Users</span>
-          <p className="text-2xl font-black text-slate-300">{telemetry?.totalProfilesCount || 0}</p>
-          <p className="text-[10px] text-slate-500">public.profiles rows</p>
+        <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-5 space-y-2">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <h3 className="font-bold text-sm text-white">3. Free Inbound ATS Resume Hook</h3>
+          <p className="text-xs text-slate-400">
+            Instant candidate scorecards at <span className="text-emerald-300 font-mono">/tools/resume-grader</span> with zero signup required.
+          </p>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      {/* Main Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-800 pb-2 overflow-x-auto">
         <button
-          onClick={() => setActiveTab('EMAIL_OUTBOUND')}
+          onClick={() => setActiveTab('VIRAL_STUDIO')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'EMAIL_OUTBOUND'
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+            activeTab === 'VIRAL_STUDIO'
+              ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30'
               : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
           }`}
         >
-          <Mail className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Automated Email Outbound (Resend Free)</span>
+          <Film className="w-3.5 h-3.5 text-pink-300" />
+          <span>Viral Social Studio (Reels, LinkedIn, X, Reddit)</span>
         </button>
 
         <button
@@ -379,214 +268,276 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
         </button>
       </div>
 
-      {/* TAB: AUTOMATED EMAIL OUTBOUND & RESEND SETUP */}
-      {activeTab === 'EMAIL_OUTBOUND' && (
+      {/* TAB 1: VIRAL SOCIAL MEDIA STUDIO */}
+      {activeTab === 'VIRAL_STUDIO' && (
         <div className="space-y-6">
-          {/* Top API Key & Persona Dispatch Bar */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left: Resend Key & Trigger (7 Cols) */}
-            <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
-                  <Key className="w-4 h-4 text-indigo-400" />
-                  Resend API Configuration (3,000 Free Emails/mo)
-                </h3>
-                <span className="text-[10px] text-emerald-400 font-mono font-bold">$0.00 / Zero Cost</span>
-              </div>
+          {/* Sub-channel Selector */}
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSocialSubTab('REELS')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  socialSubTab === 'REELS'
+                    ? 'bg-pink-600 text-white shadow-md'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                <Video className="w-3.5 h-3.5" />
+                <span>Instagram / TikTok / Shorts Storyboards ({VIRAL_REEL_SCRIPTS.length})</span>
+              </button>
 
-              <form onSubmit={handleSaveApiKey} className="flex gap-2">
-                <input
-                  type="password"
-                  value={resendApiKey}
-                  onChange={e => setResendApiKey(e.target.value)}
-                  placeholder="re_123456789... (Get free key at resend.com)"
-                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-400 font-mono"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-all shadow-md font-mono"
-                >
-                  Save Key
-                </button>
-              </form>
+              <button
+                onClick={() => setSocialSubTab('LINKEDIN')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  socialSubTab === 'LINKEDIN'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                <Linkedin className="w-3.5 h-3.5" />
+                <span>LinkedIn B2B Posts ({VIRAL_LINKEDIN_POSTS.length})</span>
+              </button>
 
-              {/* Persona Selector */}
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <label className="text-[10px] uppercase font-bold text-slate-400 font-mono block">Select Sending Agent Persona</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {OUTBOUND_EMAIL_PERSONAS.map(p => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setSelectedPersonaId(p.id)}
-                      className={`p-3 rounded-xl border text-left transition-all ${
-                        selectedPersonaId === p.id
-                          ? 'bg-indigo-950/60 border-indigo-500 text-white shadow-md'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <p className="text-xs font-bold font-sans">{p.name}</p>
-                      <p className="text-[10px] text-indigo-400 font-mono">{p.senderEmail}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <button
+                onClick={() => setSocialSubTab('TWITTER')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  socialSubTab === 'TWITTER'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                <Twitter className="w-3.5 h-3.5" />
+                <span>X / Twitter Viral Threads ({VIRAL_TWITTER_THREADS.length})</span>
+              </button>
 
-              {/* Send Test Email Form */}
-              <div className="pt-2 space-y-2">
-                <label className="text-[10px] uppercase font-bold text-slate-400 font-mono block">Send Live Test Email</label>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    value={testEmailTo}
-                    onChange={e => setTestEmailTo(e.target.value)}
-                    placeholder="Enter your personal email to test..."
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-400 font-mono"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSendTestEmail}
-                    disabled={isSendingTest}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-xs font-bold text-white transition-all shadow-md font-mono flex items-center gap-1.5 shrink-0"
-                  >
-                    <Send className="w-3 h-3" />
-                    <span>{isSendingTest ? 'Sending...' : 'Send Test'}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 1-Click Automated Batch Dispatch Button */}
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-white">Automated Batch Outreach</p>
-                  <p className="text-[11px] text-slate-400">Deliver personalized ATS pitches to {leads.length} discovered companies</p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleDispatchBatchEmails}
-                  disabled={isDispatchingBatch || leads.length === 0}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-xs font-bold text-white transition-all shadow-lg shadow-indigo-600/30 font-mono flex items-center gap-2"
-                >
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isDispatchingBatch ? 'Dispatching...' : `Dispatch Batch (${leads.length})`}</span>
-                </button>
-              </div>
-
-              {emailFeedback && (
-                <div className="p-3 rounded-xl bg-slate-950 border border-indigo-500/30 text-xs font-mono text-slate-200 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{emailFeedback}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Right: Email Template Preview (5 Cols) */}
-            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="text-[10px] font-bold text-indigo-400 font-mono uppercase">Live HTML Email Preview</span>
-                  <span className="text-[10px] text-slate-500 font-mono">{activePersona.senderEmail}</span>
-                </div>
-
-                <div className="space-y-1 text-xs font-mono">
-                  <p className="text-slate-400"><strong className="text-white">From:</strong> {activePersona.senderName} &lt;{activePersona.senderEmail}&gt;</p>
-                  <p className="text-slate-400"><strong className="text-white">Subject:</strong> Quick question regarding hiring at Michael Page Middle East</p>
-                </div>
-
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-300 space-y-3 font-sans leading-relaxed">
-                  <p>Hi Managing Director,</p>
-                  <p>I noticed Michael Page Middle East is actively placing candidates in <strong>Dubai</strong>.</p>
-                  <p>We built a 100% free <strong>AI ATS Resume Grader & Pre-Screening Tool</strong> specifically for recruitment teams:</p>
-                  <div className="p-2.5 rounded-lg bg-indigo-600 text-white font-bold text-center text-xs">
-                    👉 Try Free AI Resume Grader &rarr;
-                  </div>
-                  <p className="text-[11px] text-slate-400">Zero signup, no credit card, and instant ATS scorecards with skill breakdown.</p>
-                  <p className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">Sarah Jenkins &bull; Talent Operations &bull; CHATR TalentXcel</p>
-                </div>
-              </div>
+              <button
+                onClick={() => setSocialSubTab('REDDIT')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  socialSubTab === 'REDDIT'
+                    ? 'bg-orange-600 text-white shadow-md'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Reddit Value Posts ({VIRAL_REDDIT_POSTS.length})</span>
+              </button>
             </div>
           </div>
 
-          {/* DNS Configuration Guide for chatrchat.in */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-indigo-400" />
-                  DNS Records Required for chatrchat.in (SPF, DKIM, DMARC)
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Add these 3 TXT records in your Domain DNS Manager (Cloudflare, GoDaddy, Hostinger, or Namecheap) to verify sender authority:
-                </p>
+          {/* 1. REELS & SHORTS VISUAL STORYBOARDS */}
+          {socialSubTab === 'REELS' && (
+            <div className="space-y-6">
+              {VIRAL_REEL_SCRIPTS.map(reel => (
+                <div key={reel.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20 text-[10px] font-bold font-mono">
+                          {reel.category}
+                        </span>
+                        <span className="text-xs text-slate-400 font-mono">• {reel.durationSeconds}s duration</span>
+                      </div>
+                      <h3 className="font-extrabold text-base text-white">{reel.title}</h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const fullScript = `TITLE: ${reel.title}\nHOOK: ${reel.hook}\n\nSCENES:\n` + 
+                          reel.scenes.map(s => `[${s.timestamp}]\nVisual: ${s.visualAction}\nText: ${s.onScreenText}\nVoiceover: ${s.voiceover}\n`).join('\n') +
+                          `\nCTA: ${reel.callToAction}\nHashtags: ${reel.hashtags.join(' ')}`;
+                        handleCopyText(fullScript, reel.id);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold transition-all shadow-md shrink-0 font-mono"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{copiedId === reel.id ? 'Copied Full Storyboard!' : 'Copy Video Storyboard'}</span>
+                    </button>
+                  </div>
+
+                  {/* Visual Scene Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {reel.scenes.map((scene, idx) => (
+                      <div key={idx} className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-2 flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-bold text-pink-400 font-mono">SCENE {idx + 1} ({scene.timestamp})</span>
+                          
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase">Visual Action:</p>
+                            <p className="text-xs text-slate-300 leading-snug">{scene.visualAction}</p>
+                          </div>
+
+                          <div className="space-y-1 bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+                            <p className="text-[9px] font-bold text-amber-400 uppercase">On-Screen Text:</p>
+                            <p className="text-xs font-black text-white font-mono">{scene.onScreenText}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 pt-2 border-t border-slate-800/80">
+                          <p className="text-[9px] font-bold text-indigo-400 uppercase">Voiceover:</p>
+                          <p className="text-xs text-slate-200 italic font-sans leading-snug">"{scene.voiceover}"</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-800/60 text-xs font-mono">
+                    <p className="text-slate-400"><strong className="text-white">Call to Action:</strong> {reel.callToAction}</p>
+                    <p className="text-pink-400">{reel.hashtags.join(' ')}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 2. LINKEDIN B2B THOUGHT LEADERSHIP */}
+          {socialSubTab === 'LINKEDIN' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {VIRAL_LINKEDIN_POSTS.map(post => (
+                <div key={post.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold font-mono">
+                        {post.category}
+                      </span>
+                      <button
+                        onClick={() => handleCopyText(post.content, post.id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold font-mono"
+                      >
+                        <Copy className="w-3 h-3" />
+                        <span>{copiedId === post.id ? 'Copied!' : 'Copy Post'}</span>
+                      </button>
+                    </div>
+
+                    <h3 className="font-extrabold text-sm text-white">{post.title}</h3>
+
+                    <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-200 whitespace-pre-line font-sans leading-relaxed max-h-[380px] overflow-y-auto">
+                      {post.content}
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-blue-400 font-mono">{post.hashtags.join(' ')}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 3. TWITTER / X THREADS */}
+          {socialSubTab === 'TWITTER' && (
+            <div className="space-y-6">
+              {VIRAL_TWITTER_THREADS.map(thread => (
+                <div key={thread.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 className="font-extrabold text-base text-white">{thread.title}</h3>
+                    <button
+                      onClick={() => handleCopyText(thread.tweets.join('\n\n---\n\n'), thread.id)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold font-mono"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{copiedId === thread.id ? 'Copied All Tweets!' : 'Copy Full Thread'}</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {thread.tweets.map((tweet, idx) => (
+                      <div key={idx} className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 flex items-start justify-between gap-4">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-bold text-cyan-400 font-mono">TWEET {idx + 1} / {thread.tweets.length}</span>
+                          <p className="text-xs text-slate-200 whitespace-pre-line font-sans leading-relaxed">{tweet}</p>
+                        </div>
+                        <button
+                          onClick={() => handleCopyText(tweet, `${thread.id}_${idx}`)}
+                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 font-mono shrink-0"
+                        >
+                          {copiedId === `${thread.id}_${idx}` ? 'Copied' : 'Copy'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 4. REDDIT COMMUNITY POSTS */}
+          {socialSubTab === 'REDDIT' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {VIRAL_REDDIT_POSTS.map(post => (
+                <div key={post.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-bold font-mono">
+                          {post.subreddit}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-mono">Flair: {post.flair}</span>
+                      </div>
+                      <button
+                        onClick={() => handleCopyText(`TITLE: ${post.title}\n\n${post.body}`, post.id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold font-mono"
+                      >
+                        <Copy className="w-3 h-3" />
+                        <span>{copiedId === post.id ? 'Copied!' : 'Copy Reddit Post'}</span>
+                      </button>
+                    </div>
+
+                    <h3 className="font-extrabold text-sm text-white">{post.title}</h3>
+
+                    <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-300 whitespace-pre-line font-sans leading-relaxed max-h-[350px] overflow-y-auto">
+                      {post.body}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* AI Custom Viral Hook Generator */}
+          <div className="bg-gradient-to-r from-slate-900 via-indigo-950/50 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                Custom Viral Video Hook Generator
+              </h3>
+              <p className="text-xs text-slate-300">
+                Type any topic (e.g. "Why recruiters hate PDF tables", "Run DeepSeek offline on Mac M2", "Automating WhatsApp lead response"):
+              </p>
+            </div>
+
+            <form onSubmit={handleGenerateCustomHook} className="flex gap-2">
+              <input
+                type="text"
+                value={customHookPrompt}
+                onChange={e => setCustomHookPrompt(e.target.value)}
+                placeholder="e.g. How on-device Ollama in CHATR saves $2,000/year for software developers..."
+                className="flex-1 bg-slate-950 border border-indigo-500/40 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-400 font-mono"
+              />
+              <button
+                type="submit"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-all shadow-md font-mono"
+              >
+                Generate Hook
+              </button>
+            </form>
+
+            {generatedHook && (
+              <div className="bg-slate-950 border border-indigo-500/30 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-indigo-400 font-mono">GENERATED SCRIPT READY TO RECORD</span>
+                  <button
+                    onClick={() => handleCopyText(generatedHook, 'custom_gen')}
+                    className="px-3 py-1 rounded bg-indigo-600 text-[10px] font-bold text-white font-mono"
+                  >
+                    {copiedId === 'custom_gen' ? 'Copied!' : 'Copy Script'}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-200 whitespace-pre-line font-mono leading-relaxed">{generatedHook}</p>
               </div>
-            </div>
-
-            <div className="overflow-x-auto font-mono text-xs">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] bg-slate-950/60">
-                    <th className="py-3 pl-4">Record Type</th>
-                    <th className="py-3">Host / Name</th>
-                    <th className="py-3">Value / Content</th>
-                    <th className="py-3 pr-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  <tr className="hover:bg-slate-950/40">
-                    <td className="py-3 pl-4 font-bold text-indigo-400">TXT (SPF)</td>
-                    <td className="py-3 text-slate-300">bounces</td>
-                    <td className="py-3 text-slate-400">v=spf1 include:amazonses.com ~all</td>
-                    <td className="py-3 pr-4 text-right">
-                      <button
-                        onClick={() => copyToClipboard('v=spf1 include:amazonses.com ~all', 'spf')}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-white"
-                      >
-                        {copiedDns === 'spf' ? 'Copied!' : 'Copy'}
-                      </button>
-                    </td>
-                  </tr>
-
-                  <tr className="hover:bg-slate-950/40">
-                    <td className="py-3 pl-4 font-bold text-cyan-400">TXT (DKIM)</td>
-                    <td className="py-3 text-slate-300">resend._domainkey</td>
-                    <td className="py-3 text-slate-400 font-sans text-[11px] truncate max-w-xs">
-                      p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQ... (Provided in your Resend domain dashboard)
-                    </td>
-                    <td className="py-3 pr-4 text-right">
-                      <a
-                        href="https://resend.com/domains"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-[10px] text-white inline-flex items-center gap-1"
-                      >
-                        <span>Open Resend</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr className="hover:bg-slate-950/40">
-                    <td className="py-3 pl-4 font-bold text-emerald-400">TXT (DMARC)</td>
-                    <td className="py-3 text-slate-300">_dmarc</td>
-                    <td className="py-3 text-slate-400">v=DMARC1; p=none; rua=mailto:dmarc@chatrchat.in</td>
-                    <td className="py-3 pr-4 text-right">
-                      <button
-                        onClick={() => copyToClipboard('v=DMARC1; p=none; rua=mailto:dmarc@chatrchat.in', 'dmarc')}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-white"
-                      >
-                        {copiedDns === 'dmarc' ? 'Copied!' : 'Copy'}
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* TAB: ACTIVE STRATEGIC COMPANY GOALS */}
+      {/* TAB 2: ACTIVE STRATEGIC COMPANY GOALS */}
       {activeTab === 'CEO_GOALS' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -624,14 +575,14 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
         </div>
       )}
 
-      {/* TAB: DISCOVERED CLIENT LEADS */}
+      {/* TAB 3: DISCOVERED CLIENT LEADS */}
       {activeTab === 'CLIENT_LEADS' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
             <div className="p-4 border-b border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-sm text-white">Verified Enterprise Leads</h3>
-                <p className="text-xs text-slate-400">Click "Open WA" or dispatch automated Resend emails above</p>
+                <p className="text-xs text-slate-400">Direct WhatsApp links with ATS Resume Grader pitch</p>
               </div>
               <span className="text-xs font-mono text-emerald-400 font-bold">
                 {leads.filter(l => l.status === 'OUTREACH_DISPATCHED').length} Dispatched
@@ -674,7 +625,7 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
         </div>
       )}
 
-      {/* TAB: PIPELINE FLOW */}
+      {/* TAB 4: PIPELINE FLOW */}
       {activeTab === 'PIPELINE_FLOW' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
@@ -700,7 +651,7 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
         </div>
       )}
 
-      {/* TAB: 200 ROSTER */}
+      {/* TAB 5: 200 ROSTER */}
       {activeTab === '200_ROSTER' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
           {agents.slice(0, 30).map(agent => (
