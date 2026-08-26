@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Building2, TrendingUp, Globe, Activity, 
   Shield, FileText, Lock, LogOut, ExternalLink, ChevronRight, CheckCircle2,
-  AlertTriangle, ShieldCheck
+  AlertTriangle, ShieldCheck, FileCode, Layers, Search
 } from 'lucide-react';
 import { verifySuperAdminStatus, normalizePhone } from '../../services/admin/superAdminAuth';
 
@@ -23,7 +23,9 @@ export const SuperAdminLayout: React.FC = () => {
     { label: 'User Directory', path: '/admin/users', icon: Users },
     { label: 'Businesses & B2B2C', path: '/admin/businesses', icon: Building2 },
     { label: 'Growth & Telemetry', path: '/admin/growth', icon: TrendingUp },
-    { label: 'SEO & Indexation', path: '/admin/seo', icon: Globe },
+    { label: 'SEO & Search Console', path: '/admin/seo', icon: Globe },
+    { label: 'Pages & Indexation', path: '/admin/pages', icon: FileCode },
+    { label: 'XML Sitemaps & Shards', path: '/admin/sitemaps', icon: Layers },
     { label: 'System Health', path: '/admin/system', icon: Activity },
     { label: 'Audit Logs', path: '/admin/audit', icon: FileText },
     { label: 'Security & Roles', path: '/admin/security', icon: Shield },
@@ -94,13 +96,26 @@ export const SuperAdminLayout: React.FC = () => {
           </nav>
         </div>
 
-        {/* Bottom Exit Links */}
+        {/* Bottom Exit & External Launch Links */}
         <div className="p-4 border-t border-slate-800 space-y-2">
+          <a
+            href="https://search.google.com/search-console?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-indigo-950/60 hover:bg-indigo-900 border border-indigo-500/30 text-indigo-300 hover:text-white text-xs font-bold transition-all shadow-sm"
+          >
+            <span className="flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Search Console ↗</span>
+            </span>
+            <ExternalLink className="w-3 h-3 opacity-80" />
+          </a>
+
           <Link
             to="/business"
             className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors"
           >
-            <span>Open Application</span>
+            <span>Open Application Workspace</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </Link>
           <p className="text-[10px] text-slate-600 text-center font-mono">

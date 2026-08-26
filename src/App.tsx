@@ -206,6 +206,8 @@ const SeoControlView = React.lazy(() => import('./pages/admin/SeoControlView'));
 const SystemHealthView = React.lazy(() => import('./pages/admin/SystemHealthView'));
 const AuditLogsView = React.lazy(() => import('./pages/admin/AuditLogsView'));
 const SecurityRolesView = React.lazy(() => import('./pages/admin/SecurityRolesView'));
+const PagesIndexationView = React.lazy(() => import('./pages/admin/PagesIndexationView'));
+const SitemapsView = React.lazy(() => import('./pages/admin/SitemapsView'));
 
 
 const queryClient = new QueryClient({
@@ -761,6 +763,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
     <Route path="businesses" element={<LazyRoute component={BusinessManagementView} />} />
     <Route path="growth" element={<LazyRoute component={AcquisitionDashboard} />} />
     <Route path="seo" element={<LazyRoute component={SeoControlView} />} />
+    <Route path="pages" element={<LazyRoute component={PagesIndexationView} />} />
+    <Route path="sitemaps" element={<LazyRoute component={SitemapsView} />} />
     <Route path="system" element={<LazyRoute component={SystemHealthView} />} />
     <Route path="audit" element={<LazyRoute component={AuditLogsView} />} />
     <Route path="security" element={<LazyRoute component={SecurityRolesView} />} />

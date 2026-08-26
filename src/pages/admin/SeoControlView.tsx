@@ -46,13 +46,78 @@ export const SeoControlView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
           <h1 className="text-2xl font-extrabold text-white">Programmatic SEO Control Center</h1>
-          <p className="text-xs text-slate-400">19,444 SSG inventory status, crawl budget telemetry, and gated multi-million expansion locks</p>
+          <p className="text-xs text-slate-400">19,444 SSG inventory status, Google Search Console telemetry, and gated expansion locks</p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono font-bold">
-            BUNDLE INVARIANT: 58.68 kB O(1)
-          </span>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://search.google.com/search-console?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-all shadow-lg shadow-indigo-600/30"
+          >
+            <span>Open Google Search Console</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
         </div>
+      </div>
+
+      {/* Google Search Console Direct Section Quick Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <a
+          href="https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 p-4 rounded-xl space-y-1 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-400">GSC Performance</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+          <p className="text-sm font-bold text-white">Search Clicks & Impressions</p>
+          <p className="text-[10px] text-emerald-400 font-mono">Live GSC Telemetry</p>
+        </a>
+
+        <a
+          href="https://search.google.com/search-console/index/pages?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 p-4 rounded-xl space-y-1 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Indexing Report</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+          <p className="text-sm font-bold text-white">Pages Indexation Status</p>
+          <p className="text-[10px] text-indigo-400 font-mono">19,444 Pages Discovered</p>
+        </a>
+
+        <a
+          href="https://search.google.com/search-console/sitemaps?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 p-4 rounded-xl space-y-1 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-400">XML Sitemaps</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+          <p className="text-sm font-bold text-white">Sitemap Shards & Ingestion</p>
+          <p className="text-[10px] text-emerald-400 font-mono">sitemap.xml verified</p>
+        </a>
+
+        <a
+          href="https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 p-4 rounded-xl space-y-1 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Live Inspector</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+          <p className="text-sm font-bold text-white">URL Live Inspection</p>
+          <p className="text-[10px] text-amber-400 font-mono">Real-time Googlebot crawl</p>
+        </a>
       </div>
 
       {/* SEO Architecture Gated Lock Status */}
