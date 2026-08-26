@@ -208,6 +208,7 @@ const AuditLogsView = React.lazy(() => import('./pages/admin/AuditLogsView'));
 const SecurityRolesView = React.lazy(() => import('./pages/admin/SecurityRolesView'));
 const PagesIndexationView = React.lazy(() => import('./pages/admin/PagesIndexationView'));
 const SitemapsView = React.lazy(() => import('./pages/admin/SitemapsView'));
+const AutonomousAgentsWarRoom = React.lazy(() => import('./pages/admin/AutonomousAgentsWarRoom'));
 
 
 const queryClient = new QueryClient({
@@ -759,6 +760,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   }>
     <Route index element={<LazyRoute component={ExecutiveDashboardView} />} />
     <Route path="dashboard" element={<LazyRoute component={ExecutiveDashboardView} />} />
+    <Route path="agents" element={<LazyRoute component={AutonomousAgentsWarRoom} />} />
     <Route path="users" element={<LazyRoute component={UserManagementView} />} />
     <Route path="businesses" element={<LazyRoute component={BusinessManagementView} />} />
     <Route path="growth" element={<LazyRoute component={AcquisitionDashboard} />} />
