@@ -39,6 +39,7 @@ import {
   UserPlus,
   Bot,
   FileText,
+  Landmark,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -88,6 +89,7 @@ const NAV_SECTIONS = [
     label: 'Product OS Suites',
     items: [
       { icon: Shield,        label: 'Executive Home',        subtitle: 'Executive Operating Center & Industry Switcher', path: '/desktop/executive' },
+      { icon: Landmark,      label: 'Finance OS',            subtitle: 'CFO Command Center & Golden Ledger',            path: '/desktop/finance' },
       { icon: Sparkles,      label: 'Growth OS',             subtitle: 'Growth & Lead Telemetry',                         path: '/desktop/growth-os' },
       { icon: Building2,     label: 'Revenue OS',            subtitle: 'Pipeline & Proposal Engine',                       path: '/desktop/revenue' },
       { icon: Users,         label: 'Customer Operations',   subtitle: 'Deployments & Retention Health',                      path: '/desktop/customer-success' },

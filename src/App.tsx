@@ -580,6 +580,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
   <Route path="/oauth/callback" element={<Suspense fallback={<PageLoader message="Authenticating..." />}><OAuthCallback /></Suspense>} />
   <Route path="/design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
+  <Route path="/finance" element={<Navigate to="/desktop/finance" replace />} />
  {/* Desktop Platform Routes */}
   <Route path="/desktop">
   {/* Desktop Execution OS & Chief of Staff Home */}

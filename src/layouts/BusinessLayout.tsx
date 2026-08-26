@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Inbox, Users, Link as LinkIcon, Building2, LayoutDashboard, Settings, Workflow, PhoneCall, Store, Terminal, Megaphone } from 'lucide-react';
+import { Inbox, Users, Link as LinkIcon, Building2, LayoutDashboard, Settings, Workflow, PhoneCall, Store, Terminal, Megaphone, Landmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { CommunicationPulse } from '@/components/desktop/CommunicationPulse';
@@ -10,6 +10,7 @@ export const BusinessLayout = () => {
 
  const navigation = [
  { name: 'Dashboard', href: '/desktop/pro/business/dashboard', icon: LayoutDashboard },
+ { name: 'Finance OS', href: '/desktop/finance', icon: Landmark },
  { name: 'Team Inbox', href: '/desktop/pro/business/inbox', icon: Inbox },
  { name: 'Customers', href: '/desktop/pro/business/crm', icon: Users },
  { name: 'Automations', href: '/desktop/pro/business/automations', icon: Workflow },

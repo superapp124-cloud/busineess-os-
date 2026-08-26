@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
  Search, MessageSquare, Phone, Video, Users, BrainCircuit, Calendar,
  CheckSquare, FolderOpen, Building2, Settings, FileText, Hash,
- ArrowRight, Sparkles, Clock, Zap, Command, Keyboard, Globe,
+ ArrowRight, Sparkles, Clock, Zap, Command, Keyboard, Globe, Landmark,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -98,39 +98,36 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  if (remoteRes.all) {
  remoteRes.all.forEach((item: any) => {
  let icon = Globe;
- if (item.entityType === 'message') icon = MessageSquare;
- else if (item.entityType === 'task') icon = CheckSquare;
- else if (item.entityType === 'meeting') icon = Calendar;
- else if (item.entityType === 'file') icon = FileText;
- 
+ if (item.type === 'message') icon = MessageSquare;
+ if (item.type === 'contact') icon = Users;
+ if (item.type === 'file') icon = FileText;
  mapped.push({
- id: `search-${item.entityId}`,
- category: 'Cloud Search',
+ id: `remote-${item.id}`,
+ category: item.type === 'message' ? 'Messages' : item.type === 'contact' ? 'Contacts' : 'Cloud',
  icon,
- label: item.title,
- description: item.preview || `Found in ${item.entityType}`,
- action: () => go(item.urlPath, item.title)
+ label: item.title || item.snippet || 'Untitled Result',
+ description: item.subtitle || (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : undefined),
+ action: () => {
+ if (item.type === 'message') go('/desktop/chat', item.title, { conversationId: item.id });
+ else if (item.type === 'contact') go('/desktop/chat', item.title, { contactId: item.id });
+ else if (item.url) window.open(item.url, '_blank');
+ }
  });
  });
  }
 
- // Map local document results to CommandItems
- if (Array.isArray(localRes)) {
- localRes.forEach((file: any) => {
+ // Map local documents
+ if (localRes && Array.isArray(localRes)) {
+ localRes.forEach((doc: any) => {
  mapped.push({
- id: `local-doc-${file.path}`,
- category: 'Local Documents',
+ id: `local-${doc.id}`,
+ category: 'Local Files',
  icon: FileText,
- label: file.name,
- description: file.path,
- // Clicking a local file in command palette opens it natively using the OS default application
- action: async () => {
- const electron = (window as any).electronAPI;
- if (electron?.documents?.open) {
- await electron.documents.open(file.path);
- onClose();
- } else {
- go(`/desktop/workspace-ide?file=${encodeURIComponent(file.path)}`);
+ label: doc.name || doc.path,
+ description: doc.path,
+ action: () => {
+ if (electronAPI && electronAPI.documents) {
+ electronAPI.documents.open(doc.path);
  }
  }
  });
@@ -149,6 +146,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  // ─── Static command registry ──────────────────────────────────────────────
  const commands: CommandItem[] = [
  // Navigation
+ { id: 'nav-finance', category: 'Navigate', icon: Landmark, label: 'Open Finance OS', shortcut: 'F', action: () => go('/desktop/finance', 'Open Finance OS'), keywords: ['finance', 'cfo', 'accounting', 'ledger', 'invoices', 'bills', 'banking'] },
  { id: 'nav-chat', category: 'Navigate', icon: MessageSquare, label: 'Open Chat', shortcut: 'C', action: () => go('/desktop/chat', 'Open Chat'), keywords: ['messages', 'conversations'] },
  { id: 'nav-calls', category: 'Navigate', icon: Phone, label: 'Open Calls', shortcut: 'L', action: () => go('/desktop/calls', 'Open Calls'), keywords: ['call', 'phone'] },
  { id: 'nav-contacts', category: 'Navigate', icon: Users, label: 'Open Contacts', shortcut: 'O', action: () => go('/desktop/contacts', 'Open Contacts'), keywords: ['people', 'contacts'] },
