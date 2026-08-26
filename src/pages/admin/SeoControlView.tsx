@@ -106,7 +106,7 @@ export const SeoControlView: React.FC = () => {
         </a>
 
         <a
-          href="https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
+          href="https://search.google.com/search-console?resource_id=https%3A%2F%2Fwww.chatrchat.in%2F"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 p-4 rounded-xl space-y-1 transition-all group"
@@ -116,7 +116,7 @@ export const SeoControlView: React.FC = () => {
             <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
           <p className="text-sm font-bold text-white">URL Live Inspection</p>
-          <p className="text-[10px] text-amber-400 font-mono">Real-time Googlebot crawl</p>
+          <p className="text-[10px] text-amber-400 font-mono">Open GSC Search Bar</p>
         </a>
       </div>
 
