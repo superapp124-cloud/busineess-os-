@@ -1,85 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, Search, Zap, CheckCircle2, AlertTriangle, ArrowUpRight, 
-  Users, MessageSquare, PhoneCall, TrendingUp, Filter 
+  Users, MessageSquare, PhoneCall, TrendingUp, Filter, RefreshCw 
 } from 'lucide-react';
-
-interface BusinessRecord {
-  id: string;
-  name: string;
-  ownerName: string;
-  ownerPhone: string;
-  plan: 'ENTERPRISE' | 'GROWTH' | 'STARTER' | 'TRIAL';
-  whatsAppStatus: 'CONNECTED' | 'DISCONNECTED' | 'PENDING_VERIFICATION';
-  totalTeamSeats: number;
-  monthlyMessages: number;
-  candidatesScreened: number;
-  downstreamUsersGenerated: number;
-  acquisitionSource: string;
-  joinedDate: string;
-}
+import { fetchLiveBusinesses, LiveBusinessWorkspace } from '../../services/admin/superAdminLiveStats';
 
 export const BusinessManagementView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [businesses, setBusinesses] = useState<LiveBusinessWorkspace[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const businesses: BusinessRecord[] = [
-    {
-      id: 'biz_001',
-      name: 'Apex Staffing Solutions',
-      ownerName: 'Rahul Sharma',
-      ownerPhone: '9811223344',
-      plan: 'ENTERPRISE',
-      whatsAppStatus: 'CONNECTED',
-      totalTeamSeats: 12,
-      monthlyMessages: 24500,
-      candidatesScreened: 840,
-      downstreamUsersGenerated: 320,
-      acquisitionSource: 'Loop A (Resume Grader)',
-      joinedDate: '2026-08-12'
-    },
-    {
-      id: 'biz_002',
-      name: 'Gulf Properties Real Estate',
-      ownerName: 'Fatima Al-Mansoor',
-      ownerPhone: '971501234567',
-      plan: 'GROWTH',
-      whatsAppStatus: 'CONNECTED',
-      totalTeamSeats: 8,
-      monthlyMessages: 18200,
-      candidatesScreened: 0,
-      downstreamUsersGenerated: 184,
-      acquisitionSource: 'Loop A (WhatsApp Link Gen)',
-      joinedDate: '2026-08-14'
-    },
-    {
-      id: 'biz_003',
-      name: 'TechHire India Recruitment',
-      ownerName: 'Priya Nair',
-      ownerPhone: '9940123456',
-      plan: 'ENTERPRISE',
-      whatsAppStatus: 'CONNECTED',
-      totalTeamSeats: 15,
-      monthlyMessages: 31000,
-      candidatesScreened: 1250,
-      downstreamUsersGenerated: 480,
-      acquisitionSource: 'Loop B (B2B2C Share)',
-      joinedDate: '2026-08-18'
-    },
-    {
-      id: 'biz_004',
-      name: 'HealthBridge Diagnostic Clinics',
-      ownerName: 'Vikram Mehta',
-      ownerPhone: '9820011223',
-      plan: 'STARTER',
-      whatsAppStatus: 'PENDING_VERIFICATION',
-      totalTeamSeats: 4,
-      monthlyMessages: 4800,
-      candidatesScreened: 0,
-      downstreamUsersGenerated: 32,
-      acquisitionSource: 'Loop A (SLA Calculator)',
-      joinedDate: '2026-08-16'
+  const loadBusinesses = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchLiveBusinesses();
+      setBusinesses(data);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    loadBusinesses();
+  }, []);
 
   const filtered = businesses.filter(b => 
     b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -173,9 +116,16 @@ export const BusinessManagementView: React.FC = () => {
                   <td className="py-3.5 text-center font-mono font-black text-emerald-400 text-sm">
                     {biz.downstreamUsersGenerated}
                   </td>
-                  <td className="py-3.5 pr-4 text-slate-400 text-[11px] font-mono">{biz.acquisitionSource}</td>
+                  <td className="py-3.5 pr-4 text-slate-400 text-[11px] font-mono">{biz.joinedDate}</td>
                 </tr>
               ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-slate-500 font-mono text-xs">
+                    {loading ? 'Querying live database organizations...' : '0 B2B organizations registered in live database.'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

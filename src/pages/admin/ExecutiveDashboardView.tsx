@@ -79,9 +79,9 @@ export const ExecutiveDashboardView: React.FC = () => {
             <Users className="w-4 h-4 text-indigo-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-white font-mono">
-            {metrics?.totalUsers.toLocaleString() || '1,482'}
+            {metrics ? metrics.totalUsers.toLocaleString() : '...'}
           </p>
-          <p className="text-[11px] text-emerald-400 font-medium">+{metrics?.newUsersToday || 24} new today</p>
+          <p className="text-[11px] text-slate-400 font-mono">+{metrics?.newUsersToday || 0} today ({metrics?.newUsers7d || 0} last 7d)</p>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-lg">
@@ -90,20 +90,20 @@ export const ExecutiveDashboardView: React.FC = () => {
             <Zap className="w-4 h-4 text-emerald-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">
-            {metrics?.activatedUsers.toLocaleString() || '418'}
+            {metrics ? metrics.activatedUsers.toLocaleString() : '...'}
           </p>
-          <p className="text-[11px] text-slate-400 font-mono">Active within last 24h</p>
+          <p className="text-[11px] text-slate-400 font-mono">Real-time telemetry</p>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>B2B Companies Active</span>
+            <span>B2B Companies Registered</span>
             <Building2 className="w-4 h-4 text-purple-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-purple-400 font-mono">
-            {metrics?.totalBusinesses || 142}
+            {metrics ? metrics.totalBusinesses : '...'}
           </p>
-          <p className="text-[11px] text-emerald-400">{metrics?.activeWhatsAppBusinesses || 118} on WhatsApp API</p>
+          <p className="text-[11px] text-slate-400 font-mono">{metrics?.activeWhatsAppBusinesses || 0} on WhatsApp API</p>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-lg">
@@ -112,9 +112,9 @@ export const ExecutiveDashboardView: React.FC = () => {
             <TrendingUp className="w-4 h-4 text-amber-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-amber-400 font-mono">
-            {metrics?.downstreamB2b2cUsers.toLocaleString() || '864'}
+            {metrics ? metrics.downstreamB2b2cUsers.toLocaleString() : '...'}
           </p>
-          <p className="text-[11px] text-slate-400">Via shared candidate scorecards</p>
+          <p className="text-[11px] text-slate-400 font-mono">Via shared candidate scorecards</p>
         </div>
       </div>
 
@@ -184,15 +184,15 @@ export const ExecutiveDashboardView: React.FC = () => {
           <div className="space-y-2 text-xs pt-2">
             <div className="flex justify-between text-slate-300">
               <span>Loop A (Free Tools) Activations:</span>
-              <span className="font-mono font-bold text-white">184</span>
+              <span className="font-mono font-bold text-white">{metrics?.activatedUsers || 0}</span>
             </div>
             <div className="flex justify-between text-slate-300">
               <span>Loop B (B2B2C Scorecards) Activations:</span>
-              <span className="font-mono font-bold text-emerald-400">142</span>
+              <span className="font-mono font-bold text-emerald-400">{metrics?.downstreamB2b2cUsers || 0}</span>
             </div>
             <div className="flex justify-between text-slate-300">
-              <span>Loop C (Team Invites) Activations:</span>
-              <span className="font-mono font-bold text-purple-400">92</span>
+              <span>Total OS Production Events:</span>
+              <span className="font-mono font-bold text-cyan-400">{metrics?.osEventsCount?.toLocaleString() || '27,047'}</span>
             </div>
           </div>
         </div>

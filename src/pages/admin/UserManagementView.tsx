@@ -197,6 +197,13 @@ export const UserManagementView: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {filteredUsers.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-slate-500 font-mono text-xs">
+                    {loading ? 'Querying live database profiles...' : '0 user accounts found in live database.'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
