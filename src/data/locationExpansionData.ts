@@ -208,7 +208,7 @@ export function resolveLocationFromPath(pathname: string): LocationPageConfig | 
   };
 }
 
-// Curated top global hubs for the hub navigation directory (Lightweight ~3KB)
+// Curated top global hubs for the hub navigation directory (Lightweight ~2KB)
 export const TOP_CITIES = [
   { city: 'Mumbai', state: 'Maharashtra', region: 'India Financial Capital' },
   { city: 'Bangalore', state: 'Karnataka', region: 'India Tech Capital' },
@@ -229,11 +229,5 @@ export const TOP_CITIES = [
   { city: 'London', state: 'UK', region: 'European Financial Capital' },
   { city: 'Singapore', state: 'Singapore', region: 'Southeast Asia Tech & Commerce Hub' },
   { city: 'New York', state: 'US', region: 'North America Financial Capital' },
-  { city: 'San Francisco', state: 'US', region: 'Silicon Valley Innovation Hub' },
-  { city: 'Erdenet', state: 'Mongolia', region: 'Northern Mongolia Industrial & Mining Hub' },
-  { city: 'Nicosia', state: 'Cyprus', region: 'Eastern Mediterranean Tech Hub' },
-  { city: 'Georgetown', state: 'Guyana', region: 'Caribbean Energy & Commerce Hub' },
-  { city: 'Belize City', state: 'Belize', region: 'Central America Trade Hub' },
-  { city: 'Hawassa', state: 'Ethiopia', region: 'East Africa Industrial Hub' },
-  { city: 'Kasungu', state: 'Malawi', region: 'Central Africa Agriculture & Trade Hub' },
+  { city: 'San Francisco', state: 'US', region: 'Silicon Valley Innovation Hub' }
 ];
