@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, Search, Shield, ShieldAlert, UserX, UserCheck, 
-  RotateCcw, Eye, Filter, CheckCircle2, AlertOctagon, Phone, Mail 
+  RotateCcw, Eye, Filter, CheckCircle2, AlertOctagon, Phone, Mail, RefreshCw 
 } from 'lucide-react';
 import { logAdminAction, verifySuperAdminStatus } from '../../services/admin/superAdminAuth';
-
-interface AdminUserRecord {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  company: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'RECRUITER' | 'BUSINESS_USER' | 'CANDIDATE';
-  source: string;
-  status: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
-  createdDate: string;
-  downstreamInvites: number;
-}
+import { fetchLiveUserDirectory, LiveAdminUser } from '../../services/admin/superAdminLiveStats';
 
 export const UserManagementView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [users, setUsers] = useState<LiveAdminUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const [actionConfirmation, setActionConfirmation] = useState<{
     action: 'SUSPEND' | 'RESTORE' | 'RESET_ACCESS' | 'CHANGE_ROLE';
-    user: AdminUserRecord;
+    user: LiveAdminUser;
     newRole?: string;
   } | null>(null);
 
-  // Sample database records (mock/seeded representation)
-  const [users, setUsers] = useState<AdminUserRecord[]>([
-    { id: 'usr_001', name: 'Arshid Wani', phone: '9910678611', email: 'arshid@chatr.chat', company: 'CHATR Operating Systems', role: 'SUPER_ADMIN', source: 'Founder Bootstrap', status: 'ACTIVE', createdDate: '2026-01-15', downstreamInvites: 42 },
-    { id: 'usr_002', name: 'Sanobar Jahan', phone: '9717845477', email: 'sanobar@talentxcel.in', company: 'TalentXcel Services Pvt Ltd', role: 'SUPER_ADMIN', source: 'Founder Bootstrap', status: 'ACTIVE', createdDate: '2026-01-15', downstreamInvites: 38 },
-    { id: 'usr_003', name: 'Rahul Sharma', phone: '9811223344', email: 'rahul@apexstaffing.com', company: 'Apex Staffing Solutions', role: 'RECRUITER', source: 'Resume Grader Tool', status: 'ACTIVE', createdDate: '2026-08-12', downstreamInvites: 18 },
-    { id: 'usr_004', name: 'Fatima Al-Mansoor', phone: '971501234567', email: 'fatima@gulfrealty.ae', company: 'Gulf Properties Dubai', role: 'BUSINESS_USER', source: 'WhatsApp Link Gen', status: 'ACTIVE', createdDate: '2026-08-14', downstreamInvites: 9 },
-    { id: 'usr_005', name: 'Vikram Mehta', phone: '9820011223', email: 'vikram@healthbridge.in', company: 'HealthBridge Clinics', role: 'BUSINESS_USER', source: 'SLA Calculator Tool', status: 'SUSPENDED', createdDate: '2026-08-16', downstreamInvites: 2 },
-    { id: 'usr_006', name: 'Priya Nair', phone: '9940123456', email: 'priya@techhire.co', company: 'TechHire India', role: 'RECRUITER', source: 'B2B2C Candidate Share', status: 'ACTIVE', createdDate: '2026-08-18', downstreamInvites: 14 }
-  ]);
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchLiveUserDirectory();
+      setUsers(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const filteredUsers = users.filter(u => {
     const matchesSearch = 
@@ -170,7 +163,7 @@ export const UserManagementView: React.FC = () => {
                   </td>
                   <td className="py-3.5 text-slate-400 text-[11px] font-mono">{user.source}</td>
                   <td className="py-3.5 text-center font-mono font-bold text-emerald-400">
-                    {user.downstreamInvites}
+                    {user.downstreamInvites || 0}
                   </td>
                   <td className="py-3.5">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
