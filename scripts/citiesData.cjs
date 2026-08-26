@@ -895,6 +895,7 @@ const CITIES = [
 
   // ─── INDIA: KARNATAKA ─────────────────────────────────────────────────────
   ['Bangalore','Karnataka','Silicon Valley of India'],
+  ['Bengaluru','Karnataka','Silicon Valley of India'],
   ['Mysuru','Karnataka','Tech & Cultural Heritage Hub'],
   ['Hubballi','Karnataka','North Karnataka Industrial Hub'],
   ['Mangaluru','Karnataka','Port & Educational Hub'],
@@ -1032,6 +1033,7 @@ const CITIES = [
   ['Bhadrak','Odisha','Odisha Commerce Hub'],
 
   // ─── INDIA: NCR & HARYANA & PUNJAB ───────────────────────────────────────
+  ['Delhi','Delhi','National Capital Territory'],
   ['Delhi NCR','Delhi','National Capital Region Hub'],
   ['Gurgaon','Haryana','Corporate & Startup Capital'],
   ['Faridabad','Haryana','NCR Southern Industrial Belt'],

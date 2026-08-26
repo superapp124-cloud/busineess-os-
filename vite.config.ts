@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: 'es2020',
+    emptyOutDir: true,
     minify: 'esbuild',
     cssMinify: true,
     cssCodeSplit: true,

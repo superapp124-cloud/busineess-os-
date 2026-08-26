@@ -190,6 +190,7 @@ const AIBusinessOSLanding = React.lazy(() => import('./pages/landing/BusinessLan
 const AIRevenueOperationsLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIRevenueOperationsLanding })));
 const AIAgentsForBusinessLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.AIAgentsForBusinessLanding })));
 const BusinessAutomationLanding = React.lazy(() => import('./pages/landing/BusinessLandingPages').then(m => ({ default: m.BusinessAutomationLanding })));
+const SharedCandidateScorecard = React.lazy(() => import('./pages/public/SharedCandidateScorecard'));
 
 
 const queryClient = new QueryClient({
@@ -877,6 +878,10 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/location/:slug" element={<LazyRoute component={LocationPillarPage} />} />
 
 
+
+  {/* Viral Product-Led Growth (PLG) & Shareable Candidate Scorecard Routes */}
+  <Route path="/share/candidate/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
+  <Route path="/share/scorecard/:candidateId" element={<LazyRoute component={SharedCandidateScorecard} />} />
 
   {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />

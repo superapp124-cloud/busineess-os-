@@ -1,5 +1,6 @@
 import React, { useState, useMemo, memo } from 'react';
-import { X, FileDown, Brain, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, DollarSign, Clock, Calendar, Briefcase, FileText, ChevronRight, User, MapPin, ExternalLink, RefreshCw } from 'lucide-react';
+import { X, FileDown, Brain, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, DollarSign, Clock, Calendar, Briefcase, FileText, ChevronRight, User, MapPin, ExternalLink, RefreshCw, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Candidate, Requisition } from './types';
 import { sanitizeCandidateName, sanitizeCandidateEmail, getAIPalette, getInitials, getCandidateStage, exportCandidateDossier, detectDomainFromSkills, createImmutableCandidateContainer, downloadCandidatePdf, downloadCandidateDoc } from './utils';
 
@@ -264,6 +265,17 @@ export const CandidateProfileModal = memo(({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const shareUrl = `${window.location.origin}/share/candidate/${candidate.id}`;
+                navigator.clipboard.writeText(shareUrl);
+                toast.success(`Shareable Scorecard link copied!`);
+              }}
+              title="Copy Public AI Scorecard Link"
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+            >
+              <Share2 className="w-3.5 h-3.5" /> Share Scorecard
+            </button>
             <button
               onClick={() => {
                 downloadCandidatePdf(candidate);
