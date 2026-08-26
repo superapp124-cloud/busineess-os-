@@ -196,6 +196,17 @@ const WhatsAppLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/
 const SlaCalculatorTool = React.lazy(() => import('./pages/public/tools/SlaCalculatorTool'));
 const AcquisitionDashboard = React.lazy(() => import('./pages/desktop/AcquisitionDashboard'));
 
+// Super Admin Control Plane (Strictly Authorized: 9910678611, 9717845477)
+const SuperAdminRoute = React.lazy(() => import('./components/SuperAdminRoute'));
+const SuperAdminLayout = React.lazy(() => import('./pages/admin/SuperAdminLayout'));
+const ExecutiveDashboardView = React.lazy(() => import('./pages/admin/ExecutiveDashboardView'));
+const UserManagementView = React.lazy(() => import('./pages/admin/UserManagementView'));
+const BusinessManagementView = React.lazy(() => import('./pages/admin/BusinessManagementView'));
+const SeoControlView = React.lazy(() => import('./pages/admin/SeoControlView'));
+const SystemHealthView = React.lazy(() => import('./pages/admin/SystemHealthView'));
+const AuditLogsView = React.lazy(() => import('./pages/admin/AuditLogsView'));
+const SecurityRolesView = React.lazy(() => import('./pages/admin/SecurityRolesView'));
+
 
 const queryClient = new QueryClient({
  defaultOptions: {
@@ -736,31 +747,46 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/auth/google/callback" element={<React.Suspense fallback={<PageLoader />}><GoogleCalendarCallback /></React.Suspense>} />
  <Route path="/auth/outlook/callback" element={<React.Suspense fallback={<PageLoader />}><OutlookCalendarCallback /></React.Suspense>} />
  
- {/* Admin Platform Routes */}
- <Route path="/admin" element={<Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>}>
- <Route index element={<LazyRoute component={LazyPages.AdminDashboard} />} />
- <Route path="feature-builder" element={<LazyRoute component={LazyPages.FeatureBuilder} />} />
- <Route path="schema-manager" element={<LazyRoute component={LazyPages.SchemaManager} />} />
- <Route path="users" element={<LazyRoute component={LazyPages.AdminUsers} />} />
- <Route path="providers" element={<LazyRoute component={LazyPages.AdminProviders} />} />
- <Route path="analytics" element={<LazyRoute component={LazyPages.AdminAnalytics} />} />
- <Route path="payments" element={<LazyRoute component={LazyPages.AdminPayments} />} />
- <Route path="points" element={<LazyRoute component={LazyPages.AdminPoints} />} />
- <Route path="settings" element={<LazyRoute component={LazyPages.AdminSettings} />} />
- <Route path="announcements" element={<LazyRoute component={LazyPages.AdminAnnouncements} />} />
- <Route path="documents" element={<LazyRoute component={LazyPages.AdminDocuments} />} />
- <Route path="doctor-applications" element={<LazyRoute component={LazyPages.AdminDoctorApplications} />} />
- <Route path="official-accounts" element={<LazyRoute component={LazyPages.OfficialAccountsManager} />} />
- <Route path="broadcast" element={<LazyRoute component={LazyPages.BroadcastManager} />} />
- <Route path="brand-partnerships" element={<LazyRoute component={LazyPages.BrandPartnerships} />} />
- <Route path="app-approvals" element={<LazyRoute component={LazyPages.AppApprovals} />} />
- <Route path="kyc-approvals" element={<LazyRoute component={LazyPages.KYCApprovals} />} />
- <Route path="chatr-world" element={<LazyRoute component={LazyPages.ChatrWorldAdmin} />} />
- <Route path="payment-verification" element={<LazyRoute component={LazyPages.PaymentVerification} />} />
- <Route path="micro-tasks" element={<LazyRoute component={LazyPages.AdminMicroTasks} />} />
- <Route path="job-health" element={<LazyRoute component={LazyPages.AdminJobHealth} />} />
- <Route path="token-health" element={<LazyRoute component={LazyPages.AdminTokenHealth} />} />
- </Route>
+ {/* Super Admin Control Plane (Guarded by SuperAdminRoute: 9910678611, 9717845477) */}
+  <Route path="/admin" element={
+    <Suspense fallback={<PageLoader />}>
+      <SuperAdminRoute>
+        <SuperAdminLayout />
+      </SuperAdminRoute>
+    </Suspense>
+  }>
+    <Route index element={<LazyRoute component={ExecutiveDashboardView} />} />
+    <Route path="dashboard" element={<LazyRoute component={ExecutiveDashboardView} />} />
+    <Route path="users" element={<LazyRoute component={UserManagementView} />} />
+    <Route path="businesses" element={<LazyRoute component={BusinessManagementView} />} />
+    <Route path="growth" element={<LazyRoute component={AcquisitionDashboard} />} />
+    <Route path="seo" element={<LazyRoute component={SeoControlView} />} />
+    <Route path="system" element={<LazyRoute component={SystemHealthView} />} />
+    <Route path="audit" element={<LazyRoute component={AuditLogsView} />} />
+    <Route path="security" element={<LazyRoute component={SecurityRolesView} />} />
+
+    {/* Legacy / Operational Modules */}
+    <Route path="feature-builder" element={<LazyRoute component={LazyPages.FeatureBuilder} />} />
+    <Route path="schema-manager" element={<LazyRoute component={LazyPages.SchemaManager} />} />
+    <Route path="providers" element={<LazyRoute component={LazyPages.AdminProviders} />} />
+    <Route path="analytics" element={<LazyRoute component={LazyPages.AdminAnalytics} />} />
+    <Route path="payments" element={<LazyRoute component={LazyPages.AdminPayments} />} />
+    <Route path="points" element={<LazyRoute component={LazyPages.AdminPoints} />} />
+    <Route path="settings" element={<LazyRoute component={LazyPages.AdminSettings} />} />
+    <Route path="announcements" element={<LazyRoute component={LazyPages.AdminAnnouncements} />} />
+    <Route path="documents" element={<LazyRoute component={LazyPages.AdminDocuments} />} />
+    <Route path="doctor-applications" element={<LazyRoute component={LazyPages.AdminDoctorApplications} />} />
+    <Route path="official-accounts" element={<LazyRoute component={LazyPages.OfficialAccountsManager} />} />
+    <Route path="broadcast" element={<LazyRoute component={LazyPages.BroadcastManager} />} />
+    <Route path="brand-partnerships" element={<LazyRoute component={LazyPages.BrandPartnerships} />} />
+    <Route path="app-approvals" element={<LazyRoute component={LazyPages.AppApprovals} />} />
+    <Route path="kyc-approvals" element={<LazyRoute component={LazyPages.KYCApprovals} />} />
+    <Route path="chatr-world" element={<LazyRoute component={LazyPages.ChatrWorldAdmin} />} />
+    <Route path="payment-verification" element={<LazyRoute component={LazyPages.PaymentVerification} />} />
+    <Route path="micro-tasks" element={<LazyRoute component={LazyPages.AdminMicroTasks} />} />
+    <Route path="job-health" element={<LazyRoute component={LazyPages.AdminJobHealth} />} />
+    <Route path="token-health" element={<LazyRoute component={LazyPages.AdminTokenHealth} />} />
+  </Route>
 
  {/* Mobile & Public Platform Routes */}
  <Route element={<MobileLayout />}>
