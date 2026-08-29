@@ -50,18 +50,18 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
     languages: ['Hinglish', 'Hindi', 'English'],
     avatarImage: '/characters/meera/master_face_crop.jpg',
     videoMap: {
-      talk: '/chatr/dryrun003/episode_01/video.mp4',
-      podcast: '/chatr/dryrun003/episode_03/video.mp4',
-      sing: '/chatr/dryrun003/episode_10/video.mp4',
+      walk: '/videos/dances/ai_dance_09.mp4',
+      talk: '/videos/dances/ai_bench_01.mp4',
+      podcast: '/videos/dances/ai_bench_02.mp4',
       dance: '/videos/dances/ai_dance_01.mp4',
-      walk: '/outputs/meera/milestone-1/meera_delhi_walk_001.mp4'
+      sing: '/videos/dances/ai_dance_07.mp4'
     },
     audioMap: {
-      talk: '/chatr/dryrun003/episode_01/voice.mp3',
-      podcast: '/chatr/dryrun003/episode_03/voice.mp3',
-      sing: '/chatr/dryrun003/episode_10/voice.mp3',
-      dance: '/audio/real/hiphop_808.m4a',
-      walk: '/chatr/dryrun003/episode_02/voice.mp3'
+      talk: '/videos/gurugram_report_voice.mp3',
+      podcast: '/audio/real/lofi_chill.m4a',
+      sing: '/audio/suno_sufi_song.m4a',
+      dance: '/audio/real/bhangra_dhol.m4a',
+      walk: '/audio/real/hiphop_808.m4a'
     },
     defaultPrompts: {
       talk: 'Okay so listen... main kal raat yeh climax dekhi and I was not ready! Yaar maine kal raat ek cheez dekhi aur main literally so nahi payi.',

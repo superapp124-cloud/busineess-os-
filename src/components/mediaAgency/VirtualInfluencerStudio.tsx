@@ -330,8 +330,9 @@ export const VirtualInfluencerStudio: React.FC = () => {
               {/* Top Influencer Badge */}
               <div className="absolute top-3 left-3 right-3 z-30 space-y-1 pointer-events-none">
                 <div className="flex items-center justify-between text-[10px] font-mono font-bold text-white bg-black/80 px-3 py-1.5 rounded-xl backdrop-blur-sm border border-white/10">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <div className="flex items-center space-x-2">
+                    <img src={selectedInfluencer.avatarImage} alt={selectedInfluencer.name} className="w-5 h-5 rounded-full object-cover border border-indigo-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     <span>{selectedInfluencer.handle}</span>
                   </div>
                   <span className="text-indigo-400 uppercase font-bold">{currentMode} MODE</span>
