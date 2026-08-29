@@ -296,18 +296,22 @@ if __name__ == "__main__":
 
     controller = SoupJobController(worker_url=args.worker_url)
 
-    # Health check first
-    print(f"Checking worker health at {args.worker_url}...")
-    health = controller.health_check()
-    print(f"  Worker: {health.get('status')} | GPU: {health.get('gpu', 'unknown')} | VRAM: {health.get('vram_total_gb', '?')} GB")
-    if health.get("status") != "ONLINE":
-        print("  Worker offline. Paste the Cloudflare URL from Colab and try again.")
-        sys.exit(1)
-
+    # Dry-run: generate config locally without needing the worker online
     if args.dry_run:
         result = controller.submit_job(plan, dry_run=True)
         print(json.dumps(result, indent=2, default=str))
         sys.exit(0)
+
+    # Health check — required for actual submission
+    print(f"Checking worker health at {args.worker_url}...")
+    health = controller.health_check()
+    print(f"  Worker: {health.get('status')} | GPU: {health.get('gpu', 'unknown')} | VRAM: {health.get('vram_total_gb', '?')} GB")
+    if health.get("status") != "ONLINE":
+        print("  Worker offline.")
+        print("  1. Open notebooks/chatr_training_worker.ipynb on Colab (T4 GPU)")
+        print("  2. Run all cells")
+        print("  3. Copy the Cloudflare tunnel URL and pass it via --worker-url")
+        sys.exit(1)
 
     if not args.submit and not args.run_full_pipeline:
         print("\nNothing submitted. Add --submit to submit or --dry-run to preview config.")

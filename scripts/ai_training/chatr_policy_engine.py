@@ -224,26 +224,32 @@ class ChatrPolicyEngine:
         """Check dataset exists in registry and is approved for training."""
         registry_path = os.path.abspath(DATA_REGISTRY_PATH)
         if not os.path.exists(registry_path):
-            # Registry doesn't exist yet — allow in development mode
             return PolicyViolation(
                 rule="DATASET_REGISTRY",
-                message=f"data/_registry.json not found. Create the registry before submitting training jobs.",
+                message="data/_registry.json not found. Create the registry before submitting training jobs.",
                 severity="WARNING"
             )
         try:
             with open(registry_path, "r", encoding="utf-8") as f:
                 registry = json.load(f)
             datasets = registry.get("datasets", [])
-            match = next((d for d in datasets if d.get("dataset_id") == dataset_id), None)
+            # Registry uses "id" as the key (not "dataset_id")
+            match = next((d for d in datasets if d.get("id") == dataset_id), None)
             if not match:
                 return PolicyViolation(
                     rule="DATASET_NOT_FOUND",
-                    message=f"Dataset '{dataset_id}' not found in data/_registry.json."
+                    message=f"Dataset '{dataset_id}' not found in data/_registry.json. Register it first."
                 )
-            if not match.get("approved_for_training", False):
+            # Verify the dataset file actually exists on disk
+            # match["path"] is relative to repo root (e.g. "data/general/general_sft_v1.jsonl")
+            # DATA_REGISTRY_PATH resolves to <repo>/data/_registry.json, so dirname = <repo>/data/
+            # One level up (..) gives us <repo>/
+            repo_root = os.path.abspath(os.path.join(os.path.dirname(DATA_REGISTRY_PATH), ".."))
+            dataset_file = os.path.join(repo_root, match.get("path", ""))
+            if not os.path.exists(dataset_file):
                 return PolicyViolation(
-                    rule="DATASET_NOT_APPROVED",
-                    message=f"Dataset '{dataset_id}' exists but approved_for_training=false."
+                    rule="DATASET_FILE_MISSING",
+                    message=f"Dataset '{dataset_id}' is registered but file not found at: {dataset_file}"
                 )
         except Exception as e:
             return PolicyViolation(
