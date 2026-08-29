@@ -1,12 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const LOVABLE_AI_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -38,15 +37,15 @@ serve(async (req) => {
       case 'log_food': {
         const { food_name, meal_type, quantity } = params;
         
-        // Use AI to estimate nutrition
-        const aiResponse = await fetch(LOVABLE_AI_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
+        // Use direct AI to estimate nutrition
+        let nutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
+
+        try {
+          const aiResult = await completeChat({
+            primaryProvider: "gemini",
+            fallbackProviders: ["groq", "openrouter"],
+            model: "gemini-2.5-flash",
+            responseFormat: { type: "json_object" },
             messages: [
               {
                 role: 'system',
@@ -60,21 +59,15 @@ Use typical Indian portion sizes. Be accurate for common foods like roti, dal, r
               }
             ],
             temperature: 0.3,
-            max_tokens: 200
-          })
-        });
+            maxTokens: 200
+          });
 
-        let nutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
-        
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const content = aiData.choices[0]?.message?.content || '{}';
-          try {
-            const parsed = JSON.parse(content.replace(/```json\n?|\n?```/g, ''));
-            nutrition = { ...nutrition, ...parsed };
-          } catch {
-            console.log('Could not parse AI response, using defaults');
-          }
+          const content = aiResult.content || '{}';
+          const clean = content.replace(/```json\n?|\n?```/g, '').trim();
+          const parsed = JSON.parse(clean);
+          nutrition = { ...nutrition, ...parsed };
+        } catch (e) {
+          console.log('Could not parse AI response, using defaults:', e);
         }
 
         // Log the food

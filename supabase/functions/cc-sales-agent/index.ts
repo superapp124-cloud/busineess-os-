@@ -1,5 +1,6 @@
 // Sales Agent — generates leads + outreach messages from a plan or ICP
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,46 +56,41 @@ Deno.serve(async (req) => {
     );
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const { data: roleRow } = await supabase
       .from("user_roles").select("role").eq("user_id", user.id).in("role", ["ceo", "admin"]).maybeSingle();
-    if (!roleRow) return new Response(JSON.stringify({ error: "Forbidden" }), {
-      status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (!roleRow) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const { icp, count = 5, plan_id } = await req.json().catch(() => ({}));
     const n = Math.min(Math.max(Number(count) || 5, 1), 10);
     const userPrompt = `Generate ${n} leads matching this ICP: ${icp || "Indian early-stage SaaS founders (Seed–Series A) who'd benefit from a unified communication + earning super-app for their teams and customers."}`;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userPrompt },
-        ],
-        response_format: { type: "json_object" },
-      }),
+    const aiRes = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["openrouter", "groq"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.5,
     });
 
-    if (!aiRes.ok) {
-      if (aiRes.status === 429) return new Response(JSON.stringify({ error: "Rate limit, try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (aiRes.status === 402) return new Response(JSON.stringify({ error: "Add credits in Settings → Workspace → Usage." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      const t = await aiRes.text(); console.error("AI error", aiRes.status, t);
-      throw new Error("AI gateway failure");
-    }
-
-    const aiData = await aiRes.json();
     let parsed: any = {};
-    try { parsed = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}"); } catch { parsed = {}; }
+    try { parsed = JSON.parse(aiRes.content ?? "{}"); } catch {
+      const match = (aiRes.content ?? "").match(/\{[\s\S]*\}/);
+      parsed = match ? JSON.parse(match[0]) : {};
+    }
 
     const leadsIn: any[] = Array.isArray(parsed.leads) ? parsed.leads.slice(0, n) : [];
     const inserted: any[] = [];

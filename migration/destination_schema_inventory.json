@@ -1,0 +1,41 @@
+{
+  "destination_project": "cenxckpxaqborfqyexot",
+  "destination_name": "chatr-core",
+  "branch": "main / PRODUCTION",
+  "live_tables_count": 27,
+  "live_tables": [
+    "users",
+    "profiles",
+    "ai_memory",
+    "ai_sessions",
+    "attachments",
+    "calendar_events",
+    "calls",
+    "contacts",
+    "conversation_participants",
+    "conversations",
+    "device_challenges",
+    "identity_providers",
+    "meeting_participants",
+    "messages",
+    "notifications",
+    "notification_preferences",
+    "storage_metadata",
+    "trusted_devices",
+    "user_devices",
+    "audit_logs",
+    "meetings",
+    "meeting_polls",
+    "meeting_poll_votes",
+    "organizations",
+    "organization_members",
+    "session_room_participants",
+    "session_rooms"
+  ],
+  "live_users_count": 8,
+  "live_auth_status": "OPERATIONAL",
+  "storage_buckets_deployed": [
+    "chat_attachments"
+  ],
+  "vector_dimension": 768
+}

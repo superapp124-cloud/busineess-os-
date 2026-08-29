@@ -1,6 +1,7 @@
 // Visual Search - Upload image and find similar services/products
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
+import { completeChat } from '../_core/aiProvider.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,33 +23,26 @@ Deno.serve(async (req) => {
       );
     }
 
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-
-    // Use the image URL or construct from base64
     const finalImageUrl = imageUrl || `data:image/jpeg;base64,${imageBase64}`;
 
-    // Step 1: Analyze image using GPT-5 Vision
+    // Step 1: Analyze image using direct multi-provider vision (Gemini / OpenAI)
     let imageAnalysis: any = null;
     let detectedObjects: string[] = [];
     let searchQuery = '';
 
-    if (OPENAI_API_KEY) {
-      const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-5-2025-08-07',
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: `Analyze this image and provide:
+    try {
+      const visionResult = await completeChat({
+        primaryProvider: "gemini",
+        fallbackProviders: ["openai", "openrouter"],
+        model: "gemini-2.5-flash",
+        responseFormat: { type: "json_object" },
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analyze this image and provide:
 1. Main objects/items visible
 2. Category (e.g., food, furniture, appliance, service, etc.)
 3. Specific details (brand, type, condition, etc.)
@@ -65,33 +59,28 @@ Respond in JSON format:
   "style": "style description",
   "estimated_value": "price range if applicable"
 }`
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: finalImageUrl
-                  }
-                }
-              ]
-            }
-          ],
-          max_completion_tokens: 1000
-        }),
+              },
+              {
+                type: "image_url",
+                image_url: { url: finalImageUrl }
+              }
+            ]
+          }
+        ],
       });
 
-      const visionData = await visionResponse.json();
-      
-      if (visionData.choices?.[0]?.message?.content) {
+      if (visionResult.content) {
         try {
-          imageAnalysis = JSON.parse(visionData.choices[0].message.content);
+          imageAnalysis = JSON.parse(visionResult.content);
           detectedObjects = imageAnalysis.objects || [];
           searchQuery = imageAnalysis.search_query || imageAnalysis.details || '';
         } catch {
-          // If JSON parsing fails, use the content as is
-          searchQuery = visionData.choices[0].message.content;
+          searchQuery = visionResult.content;
           imageAnalysis = { content: searchQuery };
         }
       }
+    } catch (e) {
+      console.warn('Vision analysis fallback notice:', e);
     }
 
     // Step 2: Search for similar services/products based on image analysis
@@ -103,7 +92,6 @@ Respond in JSON format:
     const searchResults: any[] = [];
 
     if (searchQuery) {
-      // Search in services
       const { data: services } = await supabaseClient
         .from('chatr_plus_services')
         .select(`
@@ -163,15 +151,12 @@ Respond in JSON format:
 
     // Step 3: Get AI recommendations based on image
     let aiRecommendations = null;
-    if (LOVABLE_API_KEY && imageAnalysis) {
-      const recommendationsResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+    if (imageAnalysis) {
+      try {
+        const recResult = await completeChat({
+          primaryProvider: "gemini",
+          fallbackProviders: ["groq", "openrouter"],
+          model: "gemini-2.5-flash",
           messages: [
             {
               role: 'system',
@@ -183,12 +168,10 @@ Respond in JSON format:
             }
           ],
           temperature: 0.3,
-        }),
-      });
-
-      const recommendationsData = await recommendationsResponse.json();
-      if (recommendationsData.choices?.[0]?.message?.content) {
-        aiRecommendations = recommendationsData.choices[0].message.content;
+        });
+        aiRecommendations = recResult.content;
+      } catch (e) {
+        console.warn('AI recommendation fallback notice:', e);
       }
     }
 

@@ -97,7 +97,9 @@ function auditFunction(name) {
   const hasAudit = source.includes('auditSecurityEvent(') || /audit|telemetry|log/i.test(source);
   const highValueName = /(ai|pstn|token|push|notification|media|prescription|health|payment|qr|call|webrtc|location|mcp|sms)/i.test(name);
 
+  const hasLovableRuntime = /ai\.gateway\.lovable\.dev|lovable\.dev\/api/i.test(source);
   const issues = [];
+  if (hasLovableRuntime) issues.push(['lovableRuntimeDependency', 'critical']);
   if (!source) issues.push(['missingIndex', 'critical']);
   if (wildcardCors) issues.push(['wildcardCors', 'high']);
   if (usesServiceRole && !hasAuth) issues.push(['serviceRoleWithoutAuth', 'critical']);
@@ -146,6 +148,7 @@ function summarize(items) {
     wildcardCors: 0,
     serviceRoleWithoutAuth: 0,
     highValueWithoutAuth: 0,
+    lovableRuntimeDependency: 0,
     legacySecurityWrapper: 0,
   };
 

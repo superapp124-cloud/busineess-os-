@@ -1,0 +1,9 @@
+{
+  "source_project": "sbayuqgomlflmxgicplz",
+  "source_status": "INACTIVE_LEGACY_SUPABASE",
+  "auth_endpoint": "HTTP 200 (auth server reachable)",
+  "rest_endpoint": "HTTP 401/404 via anon key",
+  "administrative_access_status": "BLOCKED — SOURCE_SERVICE_ROLE_KEY not supplied in environment",
+  "canonical_identities_extracted_from_repository": 24,
+  "historical_tables_documented": 14
+}

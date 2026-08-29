@@ -1,0 +1,52 @@
+{
+  "source_project": "sbayuqgomlflmxgicplz",
+  "destination_project": "cenxckpxaqborfqyexot",
+  "source_buckets_count": 6,
+  "destination_buckets_count": 1,
+  "buckets": [
+    {
+      "name": "chat_attachments",
+      "public": false,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "VERIFIED_DEPLOYED_IN_CORE"
+    },
+    {
+      "name": "avatars",
+      "public": true,
+      "file_size_limit": "5MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "stories",
+      "public": true,
+      "file_size_limit": "10MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "media",
+      "public": true,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "voice_notes",
+      "public": false,
+      "file_size_limit": "20MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "documents",
+      "public": false,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    }
+  ],
+  "deleted_objects_count": 0,
+  "orphaned_objects_count": 0
+}

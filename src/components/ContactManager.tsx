@@ -120,64 +120,74 @@ export const ContactManager = ({ userId, onContactSelect }: ContactManagerProps)
  };
 
  const addContact = async () => {
- if (!contactIdentifier.trim()) {
- toast({
- title: 'Error',
- description: 'Please enter an email or phone number',
- variant: 'destructive'
- });
- return;
- }
+    if (!contactIdentifier.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a phone number or email',
+        variant: 'destructive'
+      });
+      return;
+    }
 
- setIsLoading(true);
+    setIsLoading(true);
 
- // Check if it's an email or phone
- const isEmail = contactIdentifier.includes('@');
- 
- // First, try to find a registered user
- let query = supabase.from('profiles').select('*');
- 
- if (isEmail) {
- query = query.eq('email', contactIdentifier);
- } else {
- query = query.eq('phone_number', contactIdentifier);
- }
+    const isEmail = contactIdentifier.includes('@') && !contactIdentifier.endsWith('@chatr.local');
+    let matchedUserId: string | null = null;
+    let matchedUsername: string | null = null;
+    let canonicalContactPhone = contactIdentifier.trim();
 
- const { data: matchedUser } = await query.maybeSingle();
+    if (!isEmail) {
+      canonicalContactPhone = normalizePhoneNumber(contactIdentifier) || contactIdentifier.trim();
+      const matched = await findUserByPhone(canonicalContactPhone);
+      if (matched) {
+        matchedUserId = matched.id;
+        matchedUsername = matched.displayName || matched.fullName || matched.username;
+      }
+    } else {
+      const { data: matchedUser } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', contactIdentifier.trim())
+        .maybeSingle();
+      if (matchedUser) {
+        matchedUserId = matchedUser.id;
+        matchedUsername = matchedUser.username;
+      }
+    }
 
- // Insert or update contact
- const { error } = await supabase
- .from('contacts')
- .upsert({
- user_id: userId,
- contact_name: contactName || contactIdentifier,
- contact_phone: contactIdentifier,
- contact_user_id: matchedUser?.id || null,
- is_registered: !!matchedUser
- }, {
- onConflict: 'user_id,contact_phone'
- });
+    // Insert or update contact
+    const { error } = await supabase
+      .from('contacts')
+      .upsert({
+        user_id: userId,
+        contact_name: contactName || contactIdentifier,
+        contact_phone: canonicalContactPhone,
+        contact_user_id: matchedUserId,
+        is_registered: !!matchedUserId
+      }, {
+        onConflict: 'user_id,contact_phone'
+      });
 
- setIsLoading(false);
+    setIsLoading(false);
 
- if (error) {
- toast({
- title: 'Error',
- description: 'Failed to add contact: ' + error.message,
- variant: 'destructive'
- });
- } else {
- toast({
- title: 'Success',
- description: matchedUser 
- ? `Added ${matchedUser.username} to your contacts` 
- : 'Contact added. They will appear when they join Chatr.',
- });
- setContactName('');
- setContactIdentifier('');
- setShowAddContact(false);
- loadContacts();
- }
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to add contact: ' + error.message,
+        variant: 'destructive'
+      });
+    } else {
+      toast({
+        title: 'Success',
+        description: matchedUsername 
+          ? `Added ${matchedUsername} to your contacts` 
+          : 'Contact added. They will appear when they join Chatr.',
+      });
+      setContactName('');
+      setContactIdentifier('');
+      setShowAddContact(false);
+      loadContacts();
+    }
  };
 
  const inviteViaWhatsApp = async (name: string, phone: string) => {

@@ -15,6 +15,7 @@ import {
   requireString,
   requireUser,
 } from "../_shared/security.ts";
+import { completeChat, streamChat } from "../_core/aiProvider.ts";
 
 interface BrainRequest {
   query: string;
@@ -79,11 +80,6 @@ Deno.serve(async (req) => {
     };
     const stream = body.stream === true;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY not configured");
-    }
-
     const enhancedPrompt = buildEnhancedPrompt(
       typeof body.systemPrompt === "string" ? body.systemPrompt.slice(0, 4000) : "",
       agents,
@@ -92,7 +88,7 @@ Deno.serve(async (req) => {
       body.userMemory,
     );
 
-    const messages: Array<{ role: string; content: string }> = [
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
       { role: "system", content: enhancedPrompt },
     ];
 
@@ -101,35 +97,11 @@ Deno.serve(async (req) => {
         ...body.conversationHistory
           .filter((item) => item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string")
           .slice(-10)
-          .map((item) => ({ role: item.role, content: item.content.slice(0, 2000) })),
+          .map((item) => ({ role: item.role as "user" | "assistant", content: item.content.slice(0, 2000) })),
       );
     }
 
     messages.push({ role: "user", content: query });
-
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages,
-        stream,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
-        return jsonResponse(req, { error: "Rate limit exceeded. Please try again later." }, 429);
-      }
-      if (aiResponse.status === 402) {
-        return jsonResponse(req, { error: "AI credits depleted. Please add credits." }, 402);
-      }
-      throw new Error(`AI API error: ${aiResponse.status}`);
-    }
 
     await auditSecurityEvent(serviceClient, {
       userId: user.id,
@@ -138,13 +110,28 @@ Deno.serve(async (req) => {
     });
 
     if (stream) {
-      return new Response(aiResponse.body, {
+      const streamResponse = await streamChat({
+        primaryProvider: "gemini",
+        fallbackProviders: ["groq", "openrouter"],
+        model: "gemini-2.5-flash",
+        messages,
+        temperature: 0.7,
+      });
+
+      return new Response(streamResponse.body, {
         headers: { ...corsHeaders(req), "Content-Type": "text/event-stream" },
       });
     }
 
-    const aiData = await aiResponse.json();
-    const answer = aiData.choices?.[0]?.message?.content || "Unable to process your request.";
+    const aiResult = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      messages,
+      temperature: 0.7,
+    });
+
+    const answer = aiResult.content || "Unable to process your request.";
     const lowerQuery = query.toLowerCase();
     const isIdentityResponse = intent.primary === "conversation" &&
       (lowerQuery.includes("my name is") || lowerQuery.includes("i'm ") || lowerQuery.includes("call me "));

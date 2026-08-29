@@ -7,6 +7,7 @@ import {
 import { Capacitor } from '@capacitor/core';
 import { auth } from '@/firebase';
 import { supabase } from '@/integrations/supabase/client';
+import { normalizePhone, canonicalNationalPhone } from '@/core/phone/phoneIdentity';
 
 // On native (Android/iOS) Firebase verifies the phone number through
 // Play Integrity / APNs — NO web reCAPTCHA and NO authorized-domain check required.
@@ -169,14 +170,15 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       recaptchaVerifierRef.current = verifier;
       (window as any).recaptchaVerifier = verifier;
 
-      const confirmationResult = await signInWithPhoneNumber(auth, phone, verifier);
+      const canonicalE164 = normalizePhone(phone);
+      const confirmationResult = await signInWithPhoneNumber(auth, canonicalE164, verifier);
       confirmationResultRef.current = confirmationResult;
       
       setStep('otp');
       setCountdown(30);
       setLoading(false);
       
-      console.log('📱 [Auth] OTP sent successfully (web)');
+      console.log('📱 [Auth] OTP sent successfully (web) to', canonicalE164);
       return true;
     } catch (err: any) {
       console.error('[Firebase Web] OTP error detail:', err.code, err.message, err);
@@ -196,7 +198,9 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       let waitTime = 0;
       
       if (err.code === 'auth/invalid-phone-number') {
-        msg = 'Invalid phone number';
+        msg = 'Invalid phone number format';
+      } else if (err.code === 'auth/invalid-app-credential') {
+        msg = 'Firebase verification credential error. Ensure domain is authorized in Firebase Console and retry.';
       } else if (
         err.code === 'auth/unauthorized-domain' || 
         err.message?.includes('Hostname') ||
@@ -239,28 +243,48 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     setError(null);
     setPhoneNumber(phone);
 
-    const normalizedPhone = phone.replace(/\s/g, '');
-    const cleanDigits = normalizedPhone.replace(/\+/g, '');
-    const email = `${cleanDigits}@chatr.local`;
+    const e164 = normalizePhone(phone);
+    const national = canonicalNationalPhone(phone);
+    const cleanDigits = e164.replace(/\+/g, '') || phone.replace(/\D/g, '');
 
-    try {
-      // Instant login check for existing users
-      const { data } = await supabase.auth.signInWithPassword({
-        email,
-        password: normalizedPhone,
-      });
-      
-      if (data?.session) {
-        setIsExistingUser(true);
-        console.log('✅ [Auth] Existing user authenticated instantly');
-        setLoading(false);
-        return true;
+    const candidateEmails = [
+      `${cleanDigits}@chatr.local`,
+      `91${national}@chatr.local`,
+      `${national}@chatr.local`,
+    ];
+
+    const candidatePwds = [
+      e164,
+      `+${cleanDigits}`,
+      cleanDigits,
+      `chatr_${cleanDigits}`,
+      `chatr_${e164}`,
+      `91${national}`,
+      `+91${national}`,
+      national,
+    ];
+
+    for (const email of candidateEmails) {
+      for (const pwd of candidatePwds) {
+        try {
+          const { data } = await supabase.auth.signInWithPassword({
+            email,
+            password: pwd,
+          });
+          
+          if (data?.session) {
+            setIsExistingUser(true);
+            console.log('✅ [Auth] Existing user authenticated instantly with candidate credentials');
+            setLoading(false);
+            return true;
+          }
+        } catch {
+          // Try next candidate
+        }
       }
-    } catch {
-      // Continue to OTP verification for new users
     }
 
-    // New user - send verification OTP immediately
+    // If instant login not matched, send verification OTP immediately
     setIsExistingUser(false);
     return await sendOTP(phone);
   }, []);
@@ -273,10 +297,10 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     const cleanDigits = normalizedPhone.replace(/\+/g, '');
     const email = `${cleanDigits}@chatr.local`;
 
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://cenxckpxaqborfqyexot.supabase.co';
     const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
       import.meta.env.VITE_SUPABASE_ANON_KEY || 
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
 
     let session: { access_token?: string; refresh_token?: string } | null = null;
 

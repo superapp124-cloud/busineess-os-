@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,51 +59,43 @@ serve(async (req) => {
 
     if (goalsError) throw goalsError;
 
-    // Use Lovable AI for health predictions
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a health analytics AI. Analyze health data and provide:
+    // Direct AI call for health predictions
+    const aiResult = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [
+        {
+          role: 'system',
+          content: `You are a health analytics AI. Analyze health data and provide:
 1. Risk assessments for potential health issues
 2. Trend analysis of vital signs
 3. Personalized health recommendations
 4. Goal progress insights
 Return JSON with: {predictions: [{type, category, description, confidence, recommendation}]}`
-          },
-          {
-            role: 'user',
-            content: JSON.stringify({
-              vitals: vitals?.slice(0, 20),
-              medications,
-              goals
-            })
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1500
-      })
+        },
+        {
+          role: 'user',
+          content: JSON.stringify({
+            vitals: vitals?.slice(0, 20),
+            medications,
+            goals
+          })
+        }
+      ],
+      temperature: 0.7,
+      maxTokens: 1500
     });
 
-    if (!aiResponse.ok) {
-      throw new Error('AI analysis failed');
-    }
-
-    const aiData = await aiResponse.json();
-    const aiContent = aiData.choices[0]?.message?.content || '{}';
+    const aiContent = aiResult.content || '{}';
     
     let predictions;
     try {
       predictions = JSON.parse(aiContent).predictions || [];
     } catch {
-      predictions = [{
+      const match = aiContent.match(/\{[\s\S]*\}/);
+      predictions = match ? (JSON.parse(match[0]).predictions || []) : [{
         type: 'recommendation',
         category: 'general',
         description: aiContent,

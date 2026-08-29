@@ -187,22 +187,20 @@ export const ChiefOfStaffHome: React.FC = () => {
         const candidateName =
           profile?.full_name ||
           profile?.display_name ||
-          profile?.username ||
-          profile?.first_name ||
-          profile?.name ||
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
+          (profile?.username && !profile.username.startsWith('user_') ? profile.username : '') ||
           user.user_metadata?.username ||
-          (user.email ? user.email.split('@')[0] : '');
+          '';
 
         const cleaned = (candidateName || '').trim();
-        const isNumericPhone = !cleaned || /^\+?[0-9\s\-]+$/.test(cleaned);
-
-        if (isNumericPhone) {
-          setUserName('User');
-        } else {
+        if (cleaned) {
           const firstName = cleaned.split(' ')[0];
           setUserName(firstName.charAt(0).toUpperCase() + firstName.slice(1));
+        } else if (profile?.phone_number || user?.phone) {
+          setUserName(profile?.phone_number || user?.phone);
+        } else {
+          setUserName('User');
         }
       } catch (err) {
         console.warn('[ChiefOfStaffHome] Profile query error:', err);

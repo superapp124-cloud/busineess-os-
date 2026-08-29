@@ -1,6 +1,6 @@
 /**
  * Agent Voice TTS - Text to Speech for AI Agents
- * Uses Lovable AI gateway for speech synthesis
+ * Direct OpenAI TTS synthesis with browser fallback
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";

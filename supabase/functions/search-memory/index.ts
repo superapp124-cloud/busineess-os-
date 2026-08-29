@@ -1,42 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { generateEmbedding, completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Generate embedding for user query
-async function generateQueryEmbedding(query: string, apiKey: string) {
-  const fetchUrl = Deno.env.get("OPENROUTER_API_KEY") 
-    ? 'https://openrouter.ai/api/v1/embeddings' 
-    : 'https://ai.gateway.lovable.dev/v1/embeddings';
-
-  const response = await fetch(fetchUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://chatr.chat',
-      'X-Title': 'Chatr Communication Memory'
-    },
-    body: JSON.stringify({
-      model: 'google/text-embedding-004', // Matches the dimension we stored
-      input: query
-    })
-  });
-
-  if (!response.ok) throw new Error(`Embedding API Error: ${response.status}`);
-  const result = await response.json();
-  return result.data[0].embedding;
-}
-
-// Synthesize answer using Gemini 2.5 Flash
-async function synthesizeAnswer(query: string, memories: any[], apiKey: string) {
-  const fetchUrl = Deno.env.get("OPENROUTER_API_KEY") 
-    ? 'https://openrouter.ai/api/v1/chat/completions' 
-    : 'https://ai.gateway.lovable.dev/v1/chat/completions';
-
+// Synthesize answer using direct AI Router (Gemini / OpenRouter / Groq)
+async function synthesizeAnswer(query: string, memories: any[]): Promise<string> {
   const contextText = memories.map((m, i) => `[Source ${i+1} - ${m.memory_type}]: ${m.content}`).join('\n\n');
 
   const systemPrompt = `You are the Brain of the CHATR Communication OS. 
@@ -44,26 +16,18 @@ Answer the user's query based ONLY on the provided memory context.
 If the memory context does not contain the answer, say you don't know based on their history.
 Always cite your sources using the format [Source X].`;
 
-  const response = await fetch(fetchUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://chatr.chat',
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-preview',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Context:\n${contextText}\n\nQuery: ${query}` }
-      ],
-      temperature: 0.2
-    })
+  const response = await completeChat({
+    primaryProvider: "gemini",
+    fallbackProviders: ["openrouter", "groq", "openai"],
+    model: "gemini-2.5-flash",
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: `Context:\n${contextText}\n\nQuery: ${query}` }
+    ],
+    temperature: 0.2
   });
 
-  if (!response.ok) throw new Error(`Chat API Error: ${response.status}`);
-  const result = await response.json();
-  return result.choices[0].message.content;
+  return response.content;
 }
 
 serve(async (req) => {
@@ -91,11 +55,11 @@ serve(async (req) => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
-    const apiKey = Deno.env.get("OPENROUTER_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("AI API Key is missing");
-
-    // 1. Generate query embedding
-    const queryEmbedding = await generateQueryEmbedding(query, apiKey);
+    // 1. Generate query embedding (768 dimensions)
+    const embeddingResult = await generateEmbedding({
+      input: query,
+      model: "text-embedding-004",
+    });
 
     // 2. Perform hybrid search via RPC
     const supabaseAdmin = createClient(
@@ -104,8 +68,8 @@ serve(async (req) => {
     );
 
     const { data: memories, error: searchError } = await supabaseAdmin.rpc('hybrid_search_memory', {
-      query_embedding: queryEmbedding,
-      match_threshold: 0.1, // Adjust as needed
+      query_embedding: embeddingResult.embedding,
+      match_threshold: 0.1,
       match_count: 10,
       p_user_id: user.id,
       filter_type: filter_type || null
@@ -121,7 +85,7 @@ serve(async (req) => {
     }
 
     // 3. Synthesize the answer
-    const answer = await synthesizeAnswer(query, memories, apiKey);
+    const answer = await synthesizeAnswer(query, memories);
 
     return new Response(JSON.stringify({ 
       answer,

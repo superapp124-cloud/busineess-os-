@@ -1,0 +1,23 @@
+[
+  {
+    "sequence": 1,
+    "migration": "20260826143000_super_admin_security.sql",
+    "reason": "Deploy super_admin_allowlist and is_super_admin() security definer",
+    "risk": "LOW_ADDITIVE",
+    "applied": false
+  },
+  {
+    "sequence": 2,
+    "migration": "20260709000002_phase1_profile_privacy_fields.sql",
+    "reason": "Add profile privacy fields (last_seen_privacy, avatar_privacy)",
+    "risk": "LOW_ADDITIVE",
+    "applied": false
+  },
+  {
+    "sequence": 3,
+    "migration": "create_profiles_view.sql",
+    "reason": "Ensure public.profiles view is robustly bound to public.users",
+    "risk": "IDEMPOTENT_VIEW",
+    "applied": true
+  }
+]

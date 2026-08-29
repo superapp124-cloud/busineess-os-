@@ -1,0 +1,34 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_AUTH_RECONCILIATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "source_canonical_identities": 24,
+  "destination_pre_write_count": 8,
+  "destination_post_write_count": 16,
+  "identities_provisioned_this_run": 8,
+  "identities_preserved_unchanged": 8,
+  "quarantined_not_provisioned": ["971161809 (9-digit fragment)"],
+  "provisioned": [
+    {"name": "Arshid Wani", "phone": "919910678611", "uuid": "91ff8778-47d8-450c-8020-fffd3f6337e0", "priority": 1, "super_admin": true},
+    {"name": "Vishal Sharma", "phone": "919953969216", "uuid": "b2693451-9d88-460d-a3ed-a18191479570"},
+    {"name": "Gaurav Verma", "phone": "919927262367", "uuid": "1e0f6993-8eb7-4a00-a085-b42449030f6b"},
+    {"name": "MD Vasim", "phone": "918887814765", "uuid": "a0ab42a8-ff46-4b65-a3d3-f832cfa4b82b"},
+    {"name": "Sanayah Arshid", "phone": null, "uuid": "f88cd99d-0da7-4328-aec7-f920ef422e85"},
+    {"name": "Superapp 124", "phone": "919700000001", "uuid": "737c6b36-6e2e-445d-a052-4a8b86e30f34"},
+    {"name": "Chatr Support", "phone": "919700000002", "uuid": "aa00c5f7-3aa6-4653-833d-dd185adfad4f"},
+    {"name": "TalentXcel Services", "phone": "919700000003", "uuid": "39debcea-c732-4499-a195-bd435d323386"}
+  ],
+  "preserved": [
+    {"id": "a2a132ca-851f-432c-ae48-6651a1dfe24f", "phone": "919717845477", "note": "Sanobar Jahan - original UUID preserved"},
+    {"id": "9121dd4c-4c95-4430-b391-e34df061c8f5", "phone": "919910000000"},
+    {"id": "86bcc4eb-02ec-44b2-bb36-b5124bedaa02", "phone": "919717100000"},
+    {"id": "686eb0cb-acdb-4870-8796-c81d60c8da89", "email": "919717845477@chatr.local"},
+    {"id": "e8ac8840-d27f-44dc-a540-b51dd8a2366e", "email": "919999999999@chatr.local"},
+    {"id": "96ab4b28-a72b-4144-a3ee-1c86edcb4420", "email": "919717100000@chatr.local"},
+    {"id": "f74da4b3-770f-46a5-8a93-f0db5a747332", "email": "919818900000@chatr.local"},
+    {"id": "9a38b1ac-3732-4ba3-8e63-096d48c0fd0b", "phone": "919818900000"}
+  ],
+  "pending_unresolved_canonical_identities": 6,
+  "pending_note": "6 users from historical_chatr_users.json require confirmed phone numbers before provisioning: Priya Sharma, Pooja Sharma, Amit Varma, Aasim Syed, Rahul Verma, Rajesh Kumar — placeholder numbers used in SQL but not provisioned as their canonical phones could not be confirmed from the paused source.",
+  "duplicate_check": "PASSED - no duplicate phone identities created",
+  "idempotency": "VERIFIED - all inserts guarded by IF NOT EXISTS on phone and email"
+}

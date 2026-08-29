@@ -7,7 +7,7 @@ export function getAvatarUrl(name?: string | null, rawAvatarUrl?: string | null)
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:')) {
       return trimmed;
     }
-    return `https://sbayuqgomlflmxgicplz.supabase.co/storage/v1/object/public/avatars/${trimmed.replace(/^\/+/, '')}`;
+    return `https://cenxckpxaqborfqyexot.supabase.co/storage/v1/object/public/avatars/${trimmed.replace(/^\/+/, '')}`;
   }
 
   const cleanName = name && name.trim() ? name.trim() : 'CHATR User';

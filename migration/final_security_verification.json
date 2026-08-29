@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-08-29T13:39:00.000Z",
+  "target_backend": "cenxckpxaqborfqyexot",
+  "super_admin_security_foundation": {
+    "migration_file": "supabase/migrations/20260826143000_super_admin_security.sql",
+    "table_name": "public.super_admin_allowlist",
+    "security_definer_function": "public.is_super_admin(UUID)",
+    "server_side_enforcement": true,
+    "client_side_bypass_possible": false,
+    "authorized_super_admin_numbers": [
+      {
+        "phone": "9910678611",
+        "normalized": "+919910678611",
+        "name": "Arshid Wani",
+        "role": "Super Admin / CTO",
+        "status": "AUTHORIZED_PRIORITY_1"
+      },
+      {
+        "phone": "9717845477",
+        "normalized": "+919717845477",
+        "name": "Sanobar Jahan",
+        "role": "Super Admin / Founder",
+        "status": "AUTHORIZED_ACTIVE_IN_CORE"
+      }
+    ],
+    "unauthorized_access_assertion": "All other phone numbers, email identities, and client-side roles are strictly denied Super Admin privileges by the server-side security definer."
+  },
+  "status": "VERIFIED_READY_FOR_DEPLOYMENT"
+}

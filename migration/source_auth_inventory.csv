@@ -1,0 +1,25 @@
+source_project,source_user_id,raw_identity,phone,normalized_phone,email,provider,role,account_type,historical_messages,historical_conversations
+"sbayuqgomlflmxgicplz","usr-arsh-wani","Arsh Wani","+919910678611","+919910678611","arsh.wani@gmail.com","firebase_phone","super_admin","founder",142,18
+"sbayuqgomlflmxgicplz","usr-sanobar-jahan","Sanobar Jahan","+919717845477","+919717845477","sanobar.jahan@gmail.com","firebase_phone","super_admin","founder",310,28
+"sbayuqgomlflmxgicplz","usr-sanayah-arshid","Sanayah Arshid","N/A","N/A","sanayah.arshid@gmail.com","google_oauth","member","team",25,4
+"sbayuqgomlflmxgicplz","usr-superapp124","Superapp 124","N/A","N/A","superapp124@gmail.com","google_oauth","admin","system",84,12
+"sbayuqgomlflmxgicplz","usr-chatr4661","Chatr Support","N/A","N/A","chatr4661@gmail.com","google_oauth","support","service",52,10
+"sbayuqgomlflmxgicplz","usr-mdvasim","MD Vasim","N/A","N/A","mdvasim42566@gmail.com","google_oauth","developer","team",40,6
+"sbayuqgomlflmxgicplz","usr-talentxcel-gmail","TalentXcel Services","N/A","N/A","talentxcelservices@gmail.com","google_oauth","enterprise_admin","business",95,14
+"sbayuqgomlflmxgicplz","usr-9910678611","Member (+91 99106 78611)","+91 99106 78611","+919910678611","919910678611@chatr.local","firebase_phone","super_admin","user",180,22
+"sbayuqgomlflmxgicplz","usr-9717845477","Member (+91 97178 45477)","+91 97178 45477","+919717845477","919717845477@chatr.local","firebase_phone","super_admin","user",240,25
+"sbayuqgomlflmxgicplz","usr-9953969216","Member (+91 99539 69216)","+91 99539 69216","+919953969216","919953969216@chatr.local","firebase_phone","user","user",45,6
+"sbayuqgomlflmxgicplz","usr-9927262367","Member (+91 99272 62367)","+91 99272 62367","+919927262367","919927262367@chatr.local","firebase_phone","user","user",32,5
+"sbayuqgomlflmxgicplz","usr-8887814765","Member (+91 88878 14765)","+91 88878 14765","+918887814765","918887814765@chatr.local","firebase_phone","user","user",18,3
+"sbayuqgomlflmxgicplz","usr-vishal-sharma","Vishal Sharma","N/A","N/A","vishal.sharma@talentxcel.com","google_oauth","engineering_lead","team",88,11
+"sbayuqgomlflmxgicplz","usr-gaurav-verma","Gaurav Verma","N/A","N/A","gaurav.verma@talentxcel.com","google_oauth","product_manager","team",60,8
+"sbayuqgomlflmxgicplz","usr-priya-sharma","Priya Sharma (Recruiter)","N/A","N/A","priya.sharma@talentxcel.com","google_oauth","recruiter","team",115,16
+"sbayuqgomlflmxgicplz","usr-pooja-sharma","Pooja Sharma (Talent Lead)","N/A","N/A","pooja.sharma@talentxcel.com","google_oauth","talent_lead","team",130,17
+"sbayuqgomlflmxgicplz","usr-amit-varma","Amit Varma (DevOps)","N/A","N/A","amit.varma@talentxcel.com","google_oauth","devops","team",42,7
+"sbayuqgomlflmxgicplz","candidate_java_847","Rajesh Kumar (Senior Java Dev)","N/A","N/A","rajesh.kumar@talentxcel.candidate","internal_seed","candidate","talent_pool",12,2
+"sbayuqgomlflmxgicplz","usr-aasim-syed","Aasim Syed","N/A","N/A","aasim@talentxcel.com","google_oauth","recruitment_manager","team",76,9
+"sbayuqgomlflmxgicplz","usr-rahul-verma","Rahul Verma","N/A","N/A","rahul@talentxcel.com","google_oauth","sourcer","team",55,7
+"sbayuqgomlflmxgicplz","usr-pack-parcel","Pack & Parcel / ChatrEnterperse","+919717100000","+919717100000","919717100000@chatr.local","firebase_phone","enterprise_client","business",65,8
+"sbayuqgomlflmxgicplz","usr-testuser1","testuser1","+919818900000","+919818900000","919818900000@chatr.local","firebase_phone","tester","test",14,3
+"sbayuqgomlflmxgicplz","usr-test-synthetic-999","Test Account 999","+919999999999","+919999999999","919999999999@chatr.local","synthetic_phone","tester","synthetic_test",2,1
+"sbayuqgomlflmxgicplz","usr-seed-user-991","Member (+91 99100 00000)","+919910000000","+919910000000","919910000000@chatr.local","firebase_phone","user","user",10,2

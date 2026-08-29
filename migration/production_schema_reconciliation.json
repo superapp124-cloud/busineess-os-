@@ -1,0 +1,192 @@
+{
+  "target_project": "cenxckpxaqborfqyexot",
+  "target_project_name": "chatr-core",
+  "total_live_tables_preserved": 27,
+  "live_tables_inventory": [
+    {
+      "table_name": "public.users",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.profiles",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.ai_memory",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.ai_sessions",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.attachments",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.calendar_events",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.calls",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.contacts",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.conversation_participants",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.conversations",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.device_challenges",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.identity_providers",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.meeting_participants",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.messages",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.notifications",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.notification_preferences",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.storage_metadata",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.trusted_devices",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.user_devices",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.audit_logs",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.meetings",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.meeting_polls",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.meeting_poll_votes",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.organizations",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.organization_members",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.session_room_participants",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    },
+    {
+      "table_name": "public.session_rooms",
+      "status": "ALREADY_DEPLOYED_AND_PROTECTED",
+      "rls_enforced": true,
+      "policy_status": "PRESERVED"
+    }
+  ],
+  "safe_additive_delta": [
+    {
+      "object_name": "public.super_admin_allowlist",
+      "object_type": "TABLE",
+      "classification": "SAFE_SECURITY_ADDITION",
+      "reason": "Locks Super Admin rights to 9910678611 (Arshid Wani) and 9717845477 (Sanobar Jahan)",
+      "source_migration": "20260826143000_super_admin_security.sql"
+    },
+    {
+      "object_name": "public.is_super_admin(p_user_id UUID)",
+      "object_type": "FUNCTION",
+      "classification": "SAFE_SECURITY_ADDITION",
+      "reason": "Server-side security definer for Super Admin RBAC",
+      "source_migration": "20260826143000_super_admin_security.sql"
+    },
+    {
+      "object_name": "public.communication_memory",
+      "object_type": "VIEW",
+      "classification": "SAFE_COMPATIBILITY_VIEW",
+      "reason": "Non-destructive view bridging to public.ai_memory (768-dim)",
+      "sql": "CREATE OR REPLACE VIEW public.communication_memory AS SELECT * FROM public.ai_memory;"
+    }
+  ]
+}

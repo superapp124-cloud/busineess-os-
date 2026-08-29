@@ -1,0 +1,22 @@
+{
+  "total_local_intended_policies": 1310,
+  "deployed_tables_with_rls": [
+    "conversations",
+    "messages",
+    "contacts",
+    "attachments",
+    "calls",
+    "notifications",
+    "user_devices",
+    "ai_memory",
+    "ai_sessions",
+    "calendar_events",
+    "device_challenges",
+    "identity_providers",
+    "meeting_participants",
+    "notification_preferences",
+    "storage_metadata",
+    "trusted_devices"
+  ],
+  "missing_tables_rls_policies_count": 592
+}

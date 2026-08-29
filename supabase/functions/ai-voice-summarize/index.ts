@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,11 +14,9 @@ serve(async (req) => {
 
   try {
     const { conversationId, duration = 300 } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Supabase credentials not configured");
     }
@@ -54,46 +53,26 @@ serve(async (req) => {
       })
       .join('\n');
 
-    // Call Lovable AI for summarization
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant that summarizes conversations. Provide concise, bullet-point summaries highlighting key topics, decisions, and action items."
-          },
-          {
-            role: "user",
-            content: `Summarize this conversation:\n\n${formattedMessages}`
-          }
-        ],
-      }),
+    // Call direct AI Provider
+    const response = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant that summarizes conversations. Provide concise, bullet-point summaries highlighting key topics, decisions, and action items."
+        },
+        {
+          role: "user",
+          content: `Summarize this conversation:\n\n${formattedMessages}`
+        }
+      ],
+      temperature: 0.3,
+      maxTokens: 500,
     });
 
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (aiResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI usage credits exhausted. Please add funds." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      throw new Error(`AI API error: ${aiResponse.status}`);
-    }
-
-    const aiData = await aiResponse.json();
-    const summary = aiData.choices?.[0]?.message?.content || "Failed to generate summary";
+    const summary = response.content || "Failed to generate summary";
 
     return new Response(
       JSON.stringify({ 

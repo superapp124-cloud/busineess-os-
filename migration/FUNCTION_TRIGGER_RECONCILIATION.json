@@ -1,0 +1,22 @@
+{
+  "auth_triggers": [
+    {
+      "trigger": "on_auth_user_created",
+      "function": "public.handle_new_user()",
+      "status": "ACTIVE_IN_CORE"
+    }
+  ],
+  "security_functions": [
+    {
+      "function": "public.is_super_admin(UUID)",
+      "role": "SECURITY DEFINER",
+      "status": "PREPARED_FOR_DEPLOYMENT"
+    }
+  ],
+  "vector_functions": [
+    {
+      "function": "public.match_ai_memory()",
+      "status": "ACTIVE_IN_CORE"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "videoId": "meera_ep009_1787832249",
+  "totalDurationSec": 19,
+  "mode": "NEWS_REACTION",
+  "location": "connaught_place",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 3,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "delhi city center walking",
+      "backgroundType": "connaught_place \u2014 hook",
+      "dialogue": "I thrift my clothes for 300 rupees",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Natural camera movement. Background has ambient motion.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "india urban street shopping",
+      "backgroundType": "connaught_place \u2014 reaction",
+      "dialogue": "Explain this 8-lakh gown that looks like bubble wrap",
+      "emotionalBeat": "amused",
+      "charactersPresent": [],
+      "motionNotes": "Meera's expression changes mid-shot.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 6,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "walking_toward_camera",
+      "backgroundVideoQuery": "connaught place india",
+      "backgroundType": "connaught_place \u2014 walking",
+      "dialogue": "Okay so Unusual celebrity red carpet fashion at the big awards",
+      "emotionalBeat": "conspiratorial",
+      "charactersPresent": [],
+      "motionNotes": "Background scrolls, natural camera shake while walking.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "medium_shot_fixed",
+      "meeraAction": "looking_skeptical",
+      "backgroundVideoQuery": "delhi city center walking",
+      "backgroundType": "connaught_place \u2014 payoff",
+      "dialogue": "Main alone nahi hoon na in thinking this is insane",
+      "emotionalBeat": "deadpan",
+      "charactersPresent": [],
+      "motionNotes": "One eyebrow up. Holds eye contact.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

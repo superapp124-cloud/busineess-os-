@@ -715,39 +715,6 @@ async function callGemini(systemPrompt: string, userPayloadText: string): Promis
   }
 }
 
-async function callLovableGateway(messages: LLMMessage[]): Promise<string | null> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) return null;
-
-  try {
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: Deno.env.get('LOVABLE_AI_MODEL') || 'google/gemini-2.5-flash',
-        messages,
-        max_tokens: 900,
-        temperature: 0.15,
-      }),
-      signal: AbortSignal.timeout(12000),
-    });
-
-    if (!response.ok) {
-      console.error('Lovable AI API error:', response.status);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content?.trim() || null;
-  } catch (error) {
-    console.error('Lovable AI summary error:', error);
-    return null;
-  }
-}
-
 async function generateAIFusionSummary(query: string, results: SearchResult[], category: string): Promise<string> {
   try {
     const rankedResults = rankResults(results);
@@ -777,12 +744,10 @@ async function generateAIFusionSummary(query: string, results: SearchResult[], c
         ? [
             () => callGemini(systemPrompt, userPayloadText),
             () => callGroq(messages),
-            () => callLovableGateway(messages),
           ]
         : [
             () => callGroq(messages),
             () => callGemini(systemPrompt, userPayloadText),
-            () => callLovableGateway(messages),
           ];
 
     for (const provider of providers) {
@@ -798,107 +763,7 @@ async function generateAIFusionSummary(query: string, results: SearchResult[], c
 }
 
 async function generateLegacyAIFusionSummary(query: string, results: SearchResult[], category: string): Promise<string> {
-  try {
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      console.error('LOVABLE_API_KEY not configured');
-      return 'AI summary unavailable. See search results below.';
-    }
-
-    // Prioritize official domains and most relevant results
-    const prioritizedResults = [...results].sort((a, b) => {
-      // Boost official domains (.com, .dev, .org from main sites)
-      const aIsOfficial = a.url.includes('.com/') || a.url.includes('.dev') || a.url.includes('.org');
-      const bIsOfficial = b.url.includes('.com/') || b.url.includes('.dev') || b.url.includes('.org');
-      if (aIsOfficial && !bIsOfficial) return -1;
-      if (!aIsOfficial && bIsOfficial) return 1;
-      
-      // Boost results from authoritative sources
-      const authoritativeSources = ['Wikipedia', 'Google Knowledge Graph', 'GitHub'];
-      const aIsAuth = authoritativeSources.includes(a.source);
-      const bIsAuth = authoritativeSources.includes(b.source);
-      if (aIsAuth && !bIsAuth) return -1;
-      if (!aIsAuth && bIsAuth) return 1;
-      
-      return 0;
-    });
-
-    // Take top 12 most relevant results
-    const topResults = prioritizedResults.slice(0, 12);
-    const context = topResults
-      .filter(r => r.snippet && r.snippet.length > 20)
-      .map((r, i) => `[${i + 1}] ${r.source} - ${r.url}\n${r.title}\n${r.snippet}`)
-      .join('\n\n');
-
-    if (!context) {
-      return 'No sufficient data found. Try refining your search.';
-    }
-
-    const systemPrompt = `${getTemporalInstruction()}
-
-You provide accurate, well-structured summaries based on search results.
-
-CRITICAL RULES:
-1. ALWAYS prioritize official websites and authoritative sources
-2. For company/product searches, focus on the ACTUAL company/product, not general definitions
-3. If searching for a specific entity (company, product, person), mention it first with official URL
-4. Use sources marked with URLs like .dev, .com, official GitHub repos
-5. Ignore generic dictionary definitions when specific entities exist
-6. For live/current queries, interpret "latest", "today", "current", and the current year relative to the temporal context above
-7. For Indian tax questions, prefer official Income Tax Department guidance and the current financial/assessment year implied by today's date
-
-FORMAT:
-First paragraph: Direct, specific answer about what the user is looking for (prioritize official sources)
-
-**Key Information**
-• Specific facts from official sources
-• Important details with source citations [1], [2]
-• Relevant data or statistics
-
-**Additional Context** (if needed)
-• Secondary information
-• Related topics
-
-Be specific, factual, and prioritize the most relevant official information.`;
-
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: `Query: "${query}"\n\nPrioritize specific companies, products, or entities over general definitions.\n\nSearch Results (ranked by relevance):\n${context}\n\nProvide a focused, accurate summary.`
-          }
-        ],
-        max_tokens: 500,
-        temperature: 0.2
-      }),
-    });
-
-    if (!response.ok) {
-      console.error('AI API error:', response.status);
-      if (response.status === 429) return 'Rate limit reached. Showing search results below.';
-      if (response.status === 402) return 'AI service unavailable. Showing search results below.';
-      return 'AI summary temporarily unavailable. See search results below.';
-    }
-
-    const data = await response.json();
-    const summary = data.choices?.[0]?.message?.content || 'Summary generation failed.';
-    
-    return summary;
-  } catch (error) {
-    console.error('AI summary error:', error);
-    return 'AI summary unavailable. See search results below.';
-  }
+  return generateAIFusionSummary(query, results, category);
 }
 
 serve(async (req) => {

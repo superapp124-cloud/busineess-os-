@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,11 +32,6 @@ serve(async (req) => {
     }
     
     const { symptoms, age, gender } = validationResult.data;
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
-    }
 
     const symptomsText = symptoms.join(', ');
     const prompt = `Analyze these symptoms: ${symptomsText}. 
@@ -57,31 +53,20 @@ serve(async (req) => {
     IMPORTANT: Always recommend consulting a healthcare professional. This is not a diagnosis.
     Format as JSON with keys: severity, conditions, actions, specialist`;
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: 'You are a medical triage assistant. Provide helpful guidance in clear, natural language. NO markdown formatting. Write like a healthcare professional speaking to a patient - professional yet conversational. Always recommend professional consultation.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.3,
-        max_tokens: 500
-      }),
+    const response = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [
+        { role: 'system', content: 'You are a medical triage assistant. Provide helpful guidance in clear, natural language. NO markdown formatting. Write like a healthcare professional speaking to a patient - professional yet conversational. Always recommend professional consultation.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.3,
+      maxTokens: 500
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const assessment = data.choices[0].message.content;
+    const assessment = response.content;
 
     return new Response(
       JSON.stringify({ assessment }),

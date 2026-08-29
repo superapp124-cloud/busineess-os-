@@ -1,0 +1,412 @@
+[
+  {
+    "id": "24a94840-2834-4211-9155-ab6585871d1c",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-15T18:09:23.704387+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "f3693dda-2695-431a-8c3b-b9c56f589bcb",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "clinic",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-15T18:10:11.018925+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "d8f02e71-c1d2-4719-bd7c-ec099fb3a28c",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-16T06:13:26.844394+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "bdfc8af6-6589-4642-a849-f77a1128861d",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-25T12:35:38.597808+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "ec577cc0-0608-4e77-af69-c9b5547d6a58",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-25T12:35:38.769807+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "72ef5cf6-aeae-4211-9ba4-4c299bdaa619",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-07-25T12:35:39.539941+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "3923b984-75fc-42e5-9123-285ffad42efa",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "sales",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-14T12:24:04.341662+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "3507e299-c658-4e31-a824-39f280663b3c",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "sales",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-14T12:24:08.021813+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "b04a90e7-63c9-4a1b-8fb1-f5630ddf2f8d",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "quick",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-14T12:27:31.689479+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "786fe676-6136-4e51-9bc9-7f3bb0992527",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:06:55.609221+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "20a35c13-034d-4f40-93e6-c3fe259ea29b",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:08:34.600872+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "dfc0f08f-3e84-42bd-bb5c-886e4836ec5b",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:22:46.805954+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "955d047f-7fb3-4d22-897f-a8c4ffacbcd3",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:25:16.063729+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "d6253e61-c12c-4c0c-a883-1637327d7dc2",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:25:54.176958+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "d4a55263-3867-47ab-af2c-8a521cdd60c8",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:22.437165+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "40b53073-c649-4276-a8d5-705e1009b5c5",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:24.835182+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "2f4e1495-d2ca-4013-9c97-8ffc56f8bdd7",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:27.008116+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "07acc882-c436-4894-bf75-1201fff841ef",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:27.407816+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "f69e71fc-7504-49a2-909e-be1755a1f70a",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:29.611181+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "1458a22a-786b-41d9-beb1-7685846c7714",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:30.006177+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "101ecb2b-4f1e-406d-b439-642fd6cdf8f6",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:31.778191+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "133e44f3-86bb-43ac-b66b-385c73ef7027",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "voice",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:40:32.074811+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "4d9b8b5d-c16e-44ea-9152-6935d66682e2",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T09:51:51.233195+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "33852703-fecf-4769-b1ea-1a46b563e672",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T13:42:55.227339+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "65eb8ee8-16ac-4261-9289-54aac42d15a0",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T13:44:14.212297+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "62379e95-1533-4c04-8d03-f993c3fc29f7",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "quick",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T13:53:20.73544+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "6af36b03-0ab5-48f2-955b-89e7d87afe12",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T13:56:44.953149+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "1deaef26-63ee-4339-83b1-2f35a3ffe2a3",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:04:43.012737+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "4fbc0b09-7836-4a8c-99ca-45d90deaf0b3",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:10:33.212851+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "1dd455ab-46b0-430a-9e8e-d36b9891c4b9",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:22:25.449249+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "ab206756-135c-4339-af6e-24433380b7ff",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:26:25.133064+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "ef6dd927-6a7f-4089-bd6a-c8e92e5056f9",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:26:28.634707+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "767e4317-a48f-4579-8309-783d13ad4116",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:43:22.655307+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "2a49076c-3902-4909-b61e-62a57a50292c",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "quick",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T14:45:18.714379+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "4b52a9ae-d680-4af2-8c46-b84b77f41871",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:45:29.401376+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "504f61ab-0f26-445f-bdec-737f0c944ec0",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:46:43.919874+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "f6801091-ef47-40af-b41b-c3a671635314",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:50:03.926172+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "3ea3946a-8ae6-49f7-a353-6b2e4341d2e5",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:52:38.814336+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "641d6242-b49c-4886-ab84-339012845920",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:54:36.273881+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "990e1e7b-be30-465a-a2ea-4de1bb304dc0",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "recruitment",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:57:40.837222+00:00",
+    "ended_at": null
+  },
+  {
+    "id": "411c496e-8c66-4a65-bcb2-27fb510919a4",
+    "host_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "session_goal": "video",
+    "room_name": null,
+    "max_participants": 10,
+    "status": "active",
+    "created_at": "2026-08-22T15:58:11.202215+00:00",
+    "ended_at": null
+  }
+]

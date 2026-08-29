@@ -1,0 +1,26 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_DATA_RECONCILIATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "source_project": "sbayuqgomlflmxgicplz",
+  "destination_project": "cenxckpxaqborfqyexot",
+  "source_accessibility": "INACCESSIBLE - project paused, REST API returns HTTP 401/404",
+  "data_migrated": {
+    "auth_users": {"pre": 8, "post": 16, "added": 8},
+    "public_users": {"pre": 8, "post": 16, "added": 8, "note": "auto-created by handle_new_user trigger"},
+    "profiles": {"pre": 8, "post": 16, "added": 8, "note": "auto-created by handle_new_user trigger"},
+    "conversations": {"pre": 2, "post": 2, "added": 0},
+    "messages": {"pre": 4, "post": 4, "added": 0},
+    "conversation_participants": {"pre": 0, "post": 4, "added": 4, "note": "likely auto-created by trigger or pre-existing"},
+    "user_devices": {"pre": 3, "post": 3, "added": 0},
+    "trusted_devices": {"pre": 0, "post": 3, "added": 3, "note": "pre-existing, stats were stale"},
+    "contacts": {"pre": 0, "post": 0},
+    "calls": {"pre": 0, "post": 0},
+    "notifications": {"pre": 0, "post": 0},
+    "ai_memory": {"pre": 0, "post": 0},
+    "organizations": {"pre": 0, "post": 0},
+    "super_admin_allowlist": {"pre": 0, "post": 2, "added": 2}
+  },
+  "source_historical_data_migrated": false,
+  "source_data_blocker": "Source project sbayuqgomlflmxgicplz is paused. HTTP 401 on REST API. No pg_dump provided. Cannot safely read or transfer historical rows without source access.",
+  "result": "PARTIAL - Auth provisioning complete. Historical row migration blocked by inaccessible source."
+}

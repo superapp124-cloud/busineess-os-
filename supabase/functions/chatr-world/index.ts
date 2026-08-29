@@ -1,13 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// Lovable AI Gateway (reliable, no credit issues)
-const LOVABLE_AI_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Map cities to include nearby metros for better results
 const NEARBY_CITIES: Record<string, string[]> = {
@@ -60,52 +58,25 @@ function detectIntent(query: string): { modules: string[]; primary_intent: strin
   };
 }
 
-// Lovable AI call (reliable, no credits needed)
-async function callLovableAI(systemPrompt: string, userPrompt: string): Promise<string> {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
-  if (!apiKey) {
-    console.warn('LOVABLE_API_KEY not configured');
+// Direct AI call
+async function callDirectAI(systemPrompt: string, userPrompt: string): Promise<string> {
+  try {
+    const response = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.5,
+      maxTokens: 500,
+    });
+    return response.content || '';
+  } catch (err) {
+    console.error('Direct AI error:', err);
     return '';
   }
-
-  try {
-    console.log('Calling Lovable AI...');
-    const response = await fetch(LOVABLE_AI_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ]
-      })
-    });
-
-    if (!response.ok) {
-      const status = response.status;
-      console.error(`Lovable AI failed: ${status}`);
-      if (status === 429) {
-        return 'I\'m experiencing high demand right now. Please try again in a moment.';
-      }
-      return '';
-    }
-
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    
-    if (content && content.trim().length > 10) {
-      console.log('Lovable AI succeeded');
-      return content;
-    }
-  } catch (err) {
-    console.error('Lovable AI error:', err);
-  }
-  
-  return '';
 }
 
 serve(async (req) => {
@@ -143,7 +114,6 @@ serve(async (req) => {
         (async () => {
           let jobQuery = supabase.from('chatr_jobs').select('*').eq('is_active', true);
           if (searchCities.length > 0) {
-            // Use OR for multiple cities
             const cityFilters = searchCities.map(c => `location.ilike.%${c}%`).join(',');
             jobQuery = jobQuery.or(cityFilters);
           }
@@ -221,7 +191,6 @@ serve(async (req) => {
 
     await Promise.all(fetchPromises);
 
-    // Generate response with Lovable AI (plain text prompt)
     const systemPrompt = `You are Chatr World assistant.
 Help users find services, food, deals and healthcare.
 Give short helpful answers with specific names and details.
@@ -234,7 +203,7 @@ Query: ${query}
 Available data: ${JSON.stringify(results.data)}
 Give a helpful response about what is available.`;
 
-    let conversationalText = await callLovableAI(systemPrompt, userPrompt);
+    let conversationalText = await callDirectAI(systemPrompt, userPrompt);
     
     // Fallback response if AI fails
     if (!conversationalText) {

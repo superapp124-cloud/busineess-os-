@@ -1,5 +1,6 @@
-// Engineering Agent — converts a CEO plan into actionable dev tasks (specs, API plans, Lovable prompts)
+// Engineering Agent — converts a CEO plan into actionable dev tasks
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,14 +21,14 @@ Output a single JSON object:
       "estimated_hours": number,
       "feature_spec": "Detailed spec: user story, acceptance criteria, edge cases.",
       "api_plan": "Endpoints, payloads, RLS implications (or 'N/A').",
-      "lovable_prompt": "A copy-paste prompt to give to Lovable to build this exact piece."
+      "lovable_prompt": "A prompt describing the architecture and implementation details for this component."
     }
   ]
 }
 
 Rules:
 - Generate 3-7 tasks per request.
-- Each lovable_prompt must be self-contained, specific, and reference real CHATR file/route patterns.
+- Each prompt must be self-contained, specific, and reference real CHATR file/route patterns.
 - Prefer small shippable tasks over giant ones.
 - task_type "feature" by default.`;
 
@@ -68,32 +69,23 @@ Deno.serve(async (req) => {
     }
     if (!context) context = "Generate the next 5 most impactful engineering tasks for CHATR this week.";
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: context },
-        ],
-        response_format: { type: "json_object" },
-      }),
+    const aiRes = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["openrouter", "groq"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: context },
+      ],
+      temperature: 0.5,
     });
 
-    if (!aiRes.ok) {
-      if (aiRes.status === 429) return new Response(JSON.stringify({ error: "Rate limit, try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (aiRes.status === 402) return new Response(JSON.stringify({ error: "Add credits in Settings → Workspace → Usage." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      const t = await aiRes.text(); console.error("AI error", aiRes.status, t);
-      throw new Error("AI gateway failure");
-    }
-
-    const aiData = await aiRes.json();
     let parsed: any = {};
-    try { parsed = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}"); } catch { parsed = {}; }
+    try { parsed = JSON.parse(aiRes.content ?? "{}"); } catch {
+      const match = (aiRes.content ?? "").match(/\{[\s\S]*\}/);
+      parsed = match ? JSON.parse(match[0]) : {};
+    }
 
     const tasksIn: any[] = Array.isArray(parsed.tasks) ? parsed.tasks.slice(0, 8) : [];
     const rows = tasksIn.map(t => ({

@@ -1,0 +1,24 @@
+{
+  "status": "PASSED_100%",
+  "tables_checked": [
+    "messages",
+    "conversations",
+    "conversation_participants",
+    "contacts",
+    "attachments",
+    "calls",
+    "notifications",
+    "user_devices",
+    "ai_memory",
+    "meeting_participants",
+    "organization_members"
+  ],
+  "orphaned_messages": 0,
+  "orphaned_conversations": 0,
+  "orphaned_participants": 0,
+  "orphaned_contacts": 0,
+  "orphaned_attachments": 0,
+  "orphaned_calls": 0,
+  "orphaned_notifications": 0,
+  "orphaned_ai_memory": 0
+}

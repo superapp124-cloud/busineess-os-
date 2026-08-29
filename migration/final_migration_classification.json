@@ -1,0 +1,2467 @@
+{
+  "total": 350,
+  "counts": {
+    "SUPERSEDED": 275,
+    "CORE_REQUIRED": 11,
+    "AUTH": 5,
+    "COMMUNICATION": 4,
+    "AI": 1,
+    "ADMIN_SECURITY": 1,
+    "NOTIFICATIONS": 1,
+    "ENTERPRISE": 6,
+    "FINANCE": 7,
+    "EXPERIMENTAL": 39
+  },
+  "migrations": [
+    {
+      "filename": "00000000000000_initial_schema.sql",
+      "path": "00000000000000_initial_schema.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "001_profiles_rls_hardening.sql",
+      "path": "001_profiles_rls_hardening.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "002_rls_policy_consolidation.sql",
+      "path": "002_rls_policy_consolidation.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "003_talentxcel_tenant_initialization.sql",
+      "path": "003_talentxcel_tenant_initialization.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "004_clean_candidate_records.sql",
+      "path": "004_clean_candidate_records.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "005_real_candidate_profiles.sql",
+      "path": "005_real_candidate_profiles.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "006_clear_all_demo_candidates.sql",
+      "path": "006_clear_all_demo_candidates.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "007_update_anandan_real_profile.sql",
+      "path": "007_update_anandan_real_profile.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "008_delete_example_com_candidates.sql",
+      "path": "008_delete_example_com_candidates.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260702120952_add_phone_to_users.sql",
+      "path": "20260702120952_add_phone_to_users.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260702132311_create_identity_providers.sql",
+      "path": "20260702132311_create_identity_providers.sql",
+      "category": "AUTH",
+      "reason": "Authentication & Device Trust",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703014743_fix_identity_providers_permissions.sql",
+      "path": "20260703014743_fix_identity_providers_permissions.sql",
+      "category": "AUTH",
+      "reason": "Authentication & Device Trust",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703061719_create_enterprise_trusted_devices.sql",
+      "path": "20260703061719_create_enterprise_trusted_devices.sql",
+      "category": "AUTH",
+      "reason": "Authentication & Device Trust",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703080000_sync_auth_users.sql",
+      "path": "20260703080000_sync_auth_users.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703093000_grant_auth_function_user_permissions.sql",
+      "path": "20260703093000_grant_auth_function_user_permissions.sql",
+      "category": "AUTH",
+      "reason": "Authentication & Device Trust",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703100000_web_user_profiles.sql",
+      "path": "20260703100000_web_user_profiles.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703110000_fix_calls_and_users_rls.sql",
+      "path": "20260703110000_fix_calls_and_users_rls.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703120000_grant_authenticated_access.sql",
+      "path": "20260703120000_grant_authenticated_access.sql",
+      "category": "AUTH",
+      "reason": "Authentication & Device Trust",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703133000_fix_conversation_participants_rls.sql",
+      "path": "20260703133000_fix_conversation_participants_rls.sql",
+      "category": "COMMUNICATION",
+      "reason": "Communication & Messaging engine",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703140000_fix_profiles_view_grants.sql",
+      "path": "20260703140000_fix_profiles_view_grants.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703150000_patch_core_messaging_schema.sql",
+      "path": "20260703150000_patch_core_messaging_schema.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703160000_patch_core_messaging_schema_pt2.sql",
+      "path": "20260703160000_patch_core_messaging_schema_pt2.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703170000_patch_core_messaging_schema_pt3.sql",
+      "path": "20260703170000_patch_core_messaging_schema_pt3.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260703180000_patch_core_messaging_schema_pt4.sql",
+      "path": "20260703180000_patch_core_messaging_schema_pt4.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260704110000_full_comms_schema_fix_v2.sql",
+      "path": "20260704110000_full_comms_schema_fix_v2.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260704120000_fix_contacts_unique.sql",
+      "path": "20260704120000_fix_contacts_unique.sql",
+      "category": "COMMUNICATION",
+      "reason": "Communication & Messaging engine",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260704130000_restore_legacy_message_columns.sql",
+      "path": "20260704130000_restore_legacy_message_columns.sql",
+      "category": "COMMUNICATION",
+      "reason": "Communication & Messaging engine",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000000_add_calendar_events_and_notification_is_read.sql",
+      "path": "20260705000000_add_calendar_events_and_notification_is_read.sql",
+      "category": "NOTIFICATIONS",
+      "reason": "In-app alerts & calendar",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000001_desktop_call_features.sql",
+      "path": "20260705000001_desktop_call_features.sql",
+      "category": "COMMUNICATION",
+      "reason": "Communication & Messaging engine",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000002_core_foundation_v1.sql",
+      "path": "20260705000002_core_foundation_v1.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000003_core_foundation_v1_pt2.sql",
+      "path": "20260705000003_core_foundation_v1_pt2.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000004_core_foundation_v1_pt3.sql",
+      "path": "20260705000004_core_foundation_v1_pt3.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260705000005_core_foundation_v1_pt4.sql",
+      "path": "20260705000005_core_foundation_v1_pt4.sql",
+      "category": "CORE_REQUIRED",
+      "reason": "Core Foundation & Communications",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000001_phase1_missing_tables_rls_hardening.sql",
+      "path": "20260709000001_phase1_missing_tables_rls_hardening.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000002_phase1_profile_privacy_fields.sql",
+      "path": "20260709000002_phase1_profile_privacy_fields.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000003_phase3_semantic_memory.sql",
+      "path": "20260709000003_phase3_semantic_memory.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000004_phase1_final_rls.sql",
+      "path": "20260709000004_phase1_final_rls.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000005_phase2_agent_sessions.sql",
+      "path": "20260709000005_phase2_agent_sessions.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000006_phase3_execution_queue.sql",
+      "path": "20260709000006_phase3_execution_queue.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000007_phase4_workflow_versioning.sql",
+      "path": "20260709000007_phase4_workflow_versioning.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000008_phase4_workflow_runs_audit.sql",
+      "path": "20260709000008_phase4_workflow_runs_audit.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000009_phase4_approvals_vault.sql",
+      "path": "20260709000009_phase4_approvals_vault.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000010_phase5_policy_engine.sql",
+      "path": "20260709000010_phase5_policy_engine.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260709000011_phase5_marketplace.sql",
+      "path": "20260709000011_phase5_marketplace.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260710000001_stage1_production_validation.sql",
+      "path": "20260710000001_stage1_production_validation.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260710000002_stage1_5_testbed_apis.sql",
+      "path": "20260710000002_stage1_5_testbed_apis.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260711000001_experience_provider_schema.sql",
+      "path": "20260711000001_experience_provider_schema.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260717000000_phase_b_canonical_graph.sql",
+      "path": "20260717000000_phase_b_canonical_graph.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260717000001_phase_c_workflow_versions.sql",
+      "path": "20260717000001_phase_c_workflow_versions.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000001_phase_f_os_events.sql",
+      "path": "20260718000001_phase_f_os_events.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000002_phase_f_reality_graph.sql",
+      "path": "20260718000002_phase_f_reality_graph.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000003_phase_f_knowledge_kernel.sql",
+      "path": "20260718000003_phase_f_knowledge_kernel.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000004_phase_f_outcome_platform.sql",
+      "path": "20260718000004_phase_f_outcome_platform.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000005_release_gate_1.sql",
+      "path": "20260718000005_release_gate_1.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260718000006_rg2_value_analytics.sql",
+      "path": "20260718000006_rg2_value_analytics.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260720000001_semantic_object_engine.sql",
+      "path": "20260720000001_semantic_object_engine.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260720000002_os_kernel_foundation.sql",
+      "path": "20260720000002_os_kernel_foundation.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260721000000_kernel_event_store.sql",
+      "path": "20260721000000_kernel_event_store.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260722000000_enterprise_marketplace_workspace.sql",
+      "path": "20260722000000_enterprise_marketplace_workspace.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260722133000_business_os_kernel.sql",
+      "path": "20260722133000_business_os_kernel.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260722143000_business_os_rls.sql",
+      "path": "20260722143000_business_os_rls.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260722180000_business_object_store.sql",
+      "path": "20260722180000_business_object_store.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260722183000_knowledge_graph.sql",
+      "path": "20260722183000_knowledge_graph.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260728140000_intent_os_deployment_bridge.sql",
+      "path": "20260728140000_intent_os_deployment_bridge.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260805130000_candidate_document_intelligence.sql",
+      "path": "20260805130000_candidate_document_intelligence.sql",
+      "category": "ENTERPRISE",
+      "reason": "Enterprise Recruitment / TalentXcel",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260810000000_crm_agentic_upgrade.sql",
+      "path": "20260810000000_crm_agentic_upgrade.sql",
+      "category": "EXPERIMENTAL",
+      "reason": "Feature extension",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824100001_finance_phase1_foundation.sql",
+      "path": "20260824100001_finance_phase1_foundation.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824100002_finance_phase1_seed_coa.sql",
+      "path": "20260824100002_finance_phase1_seed_coa.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824200001_finance_phase2_subledgers.sql",
+      "path": "20260824200001_finance_phase2_subledgers.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824300001_finance_phase3_revenue_contracts.sql",
+      "path": "20260824300001_finance_phase3_revenue_contracts.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824400001_finance_phase4_banking_reconciliation.sql",
+      "path": "20260824400001_finance_phase4_banking_reconciliation.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260824500001_finance_phase5_close_intelligence.sql",
+      "path": "20260824500001_finance_phase5_close_intelligence.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260826143000_super_admin_security.sql",
+      "path": "20260826143000_super_admin_security.sql",
+      "category": "ADMIN_SECURITY",
+      "reason": "Super Admin Allowlist & Security Foundation",
+      "is_superseded": false
+    },
+    {
+      "filename": "20260826170000_autonomous_200_agents_engine.sql",
+      "path": "20260826170000_autonomous_200_agents_engine.sql",
+      "category": "AI",
+      "reason": "AI Sessions & Vector Memory",
+      "is_superseded": false
+    },
+    {
+      "filename": "20251003080905_a7196c23-2f72-4656-8d4d-ba763fcf7658.sql",
+      "path": "archive\\old-migrations\\20251003080905_a7196c23-2f72-4656-8d4d-ba763fcf7658.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003080946_7cefd56a-abcb-4d78-b021-3255a9dc5d24.sql",
+      "path": "archive\\old-migrations\\20251003080946_7cefd56a-abcb-4d78-b021-3255a9dc5d24.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003083510_fe036019-76eb-4618-9110-0be348174bb1.sql",
+      "path": "archive\\old-migrations\\20251003083510_fe036019-76eb-4618-9110-0be348174bb1.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003085615_9fbe80eb-ca36-402e-bb3f-ccfcd61dc72f.sql",
+      "path": "archive\\old-migrations\\20251003085615_9fbe80eb-ca36-402e-bb3f-ccfcd61dc72f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003091221_21daef3f-be91-483a-8833-f3bc38d73c4c.sql",
+      "path": "archive\\old-migrations\\20251003091221_21daef3f-be91-483a-8833-f3bc38d73c4c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003112421_c3ae6977-a6b5-4091-8722-7b341fe3c4cf.sql",
+      "path": "archive\\old-migrations\\20251003112421_c3ae6977-a6b5-4091-8722-7b341fe3c4cf.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003113018_b814d0d4-6209-4c30-946e-61a6bb0add6a.sql",
+      "path": "archive\\old-migrations\\20251003113018_b814d0d4-6209-4c30-946e-61a6bb0add6a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003115040_b2f5d3f7-9bb2-4c20-8d7f-5635995ade51.sql",
+      "path": "archive\\old-migrations\\20251003115040_b2f5d3f7-9bb2-4c20-8d7f-5635995ade51.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003123617_46e09f3a-294e-493a-aa02-37bb14c2009c.sql",
+      "path": "archive\\old-migrations\\20251003123617_46e09f3a-294e-493a-aa02-37bb14c2009c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003124736_47d917f5-83b7-4776-9ee3-16e138f69962.sql",
+      "path": "archive\\old-migrations\\20251003124736_47d917f5-83b7-4776-9ee3-16e138f69962.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003133137_aec9d57f-1c10-41a4-95cf-607849959a18.sql",
+      "path": "archive\\old-migrations\\20251003133137_aec9d57f-1c10-41a4-95cf-607849959a18.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251003133546_a7a90d8d-0be4-459a-a526-0cc6949eb54d.sql",
+      "path": "archive\\old-migrations\\20251003133546_a7a90d8d-0be4-459a-a526-0cc6949eb54d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251004050727_0227c284-32e5-48b9-bfbe-3dc0412c65e8.sql",
+      "path": "archive\\old-migrations\\20251004050727_0227c284-32e5-48b9-bfbe-3dc0412c65e8.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005055111_932a2ba2-3bb5-4a54-ab3a-599cfb7257ff.sql",
+      "path": "archive\\old-migrations\\20251005055111_932a2ba2-3bb5-4a54-ab3a-599cfb7257ff.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005063615_1b0809cf-94a9-4f59-8b8e-b7e170e49a21.sql",
+      "path": "archive\\old-migrations\\20251005063615_1b0809cf-94a9-4f59-8b8e-b7e170e49a21.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005063732_17e435ce-b154-46ee-8a49-e39732b12922.sql",
+      "path": "archive\\old-migrations\\20251005063732_17e435ce-b154-46ee-8a49-e39732b12922.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005071709_9a5ab547-4a19-43e8-8e5d-f1983379d5fb.sql",
+      "path": "archive\\old-migrations\\20251005071709_9a5ab547-4a19-43e8-8e5d-f1983379d5fb.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005074855_714cf9f8-fdd6-4e03-a40b-a3bf9f1b3ade.sql",
+      "path": "archive\\old-migrations\\20251005074855_714cf9f8-fdd6-4e03-a40b-a3bf9f1b3ade.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005092335_f4a8f1b2-6571-45a8-999e-d88379747204.sql",
+      "path": "archive\\old-migrations\\20251005092335_f4a8f1b2-6571-45a8-999e-d88379747204.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251005095813_539c3d12-df8c-4d74-a2b9-7823e614ae4a.sql",
+      "path": "archive\\old-migrations\\20251005095813_539c3d12-df8c-4d74-a2b9-7823e614ae4a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006080129_316d311a-5d11-4eb4-bfbd-79d38ba741de.sql",
+      "path": "archive\\old-migrations\\20251006080129_316d311a-5d11-4eb4-bfbd-79d38ba741de.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006081020_df588db6-feba-4002-b59a-093af0fa261a.sql",
+      "path": "archive\\old-migrations\\20251006081020_df588db6-feba-4002-b59a-093af0fa261a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006082411_24dcdbc7-c79e-49c0-be59-3f3ce706894a.sql",
+      "path": "archive\\old-migrations\\20251006082411_24dcdbc7-c79e-49c0-be59-3f3ce706894a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006084615_164e91c9-a360-4fa8-a888-f8c5280ecaea.sql",
+      "path": "archive\\old-migrations\\20251006084615_164e91c9-a360-4fa8-a888-f8c5280ecaea.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006084756_3155b042-df75-4a75-8ee1-416dd987cde4.sql",
+      "path": "archive\\old-migrations\\20251006084756_3155b042-df75-4a75-8ee1-416dd987cde4.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006092848_e83a8ee9-8ecc-474c-ae80-0475e431b3a0.sql",
+      "path": "archive\\old-migrations\\20251006092848_e83a8ee9-8ecc-474c-ae80-0475e431b3a0.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006100814_0b4d4e47-2b59-4296-a525-b299160c351a.sql",
+      "path": "archive\\old-migrations\\20251006100814_0b4d4e47-2b59-4296-a525-b299160c351a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006103152_45ab2d99-79a1-48b9-893f-9d812017cd28.sql",
+      "path": "archive\\old-migrations\\20251006103152_45ab2d99-79a1-48b9-893f-9d812017cd28.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006110204_0d558cd4-0ffc-4182-b184-8f9a86590a2c.sql",
+      "path": "archive\\old-migrations\\20251006110204_0d558cd4-0ffc-4182-b184-8f9a86590a2c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006112259_9af2c3f2-37df-490a-b29e-9cd0593ec7d4.sql",
+      "path": "archive\\old-migrations\\20251006112259_9af2c3f2-37df-490a-b29e-9cd0593ec7d4.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006115600_72750d54-6268-428c-9507-70678b18cafd.sql",
+      "path": "archive\\old-migrations\\20251006115600_72750d54-6268-428c-9507-70678b18cafd.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006163311_13f994a5-a67b-4a3b-a64c-ae4cfeb69a6c.sql",
+      "path": "archive\\old-migrations\\20251006163311_13f994a5-a67b-4a3b-a64c-ae4cfeb69a6c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251006170704_85ca52ef-d28c-46f4-855c-6bb2bdab1fdc.sql",
+      "path": "archive\\old-migrations\\20251006170704_85ca52ef-d28c-46f4-855c-6bb2bdab1fdc.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251007061251_f6e03e86-fd6d-48c0-a24c-cb204bc6afb5.sql",
+      "path": "archive\\old-migrations\\20251007061251_f6e03e86-fd6d-48c0-a24c-cb204bc6afb5.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008062218_5b9f6fa9-c632-4dac-b8e0-68970ae9a0e8.sql",
+      "path": "archive\\old-migrations\\20251008062218_5b9f6fa9-c632-4dac-b8e0-68970ae9a0e8.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008063647_4916e1a7-fe65-4d8b-9292-cf98897d6694.sql",
+      "path": "archive\\old-migrations\\20251008063647_4916e1a7-fe65-4d8b-9292-cf98897d6694.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008080913_b2c86c49-f1fb-4d2b-8852-0e409708c959.sql",
+      "path": "archive\\old-migrations\\20251008080913_b2c86c49-f1fb-4d2b-8852-0e409708c959.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008081220_ac6b0a87-493e-415b-a87f-6436c0dccca2.sql",
+      "path": "archive\\old-migrations\\20251008081220_ac6b0a87-493e-415b-a87f-6436c0dccca2.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008101958_9e1983ae-c22c-4cbc-b080-65ea13abf168.sql",
+      "path": "archive\\old-migrations\\20251008101958_9e1983ae-c22c-4cbc-b080-65ea13abf168.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008102551_e60525d2-42fe-4a5b-9b7e-9001b4237bde.sql",
+      "path": "archive\\old-migrations\\20251008102551_e60525d2-42fe-4a5b-9b7e-9001b4237bde.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008110027_9a768074-6593-47ee-af94-dbb1f8cecd07.sql",
+      "path": "archive\\old-migrations\\20251008110027_9a768074-6593-47ee-af94-dbb1f8cecd07.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008121921_7c1cc66c-f116-47d3-acce-33d919ac7afd.sql",
+      "path": "archive\\old-migrations\\20251008121921_7c1cc66c-f116-47d3-acce-33d919ac7afd.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008122319_0f7f6474-29a0-4883-93c4-e207b6dbef87.sql",
+      "path": "archive\\old-migrations\\20251008122319_0f7f6474-29a0-4883-93c4-e207b6dbef87.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008174846_930caf5e-10e8-45d2-8273-5d10aac04647.sql",
+      "path": "archive\\old-migrations\\20251008174846_930caf5e-10e8-45d2-8273-5d10aac04647.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008175131_038b166a-5717-47a7-9245-df40563a5882.sql",
+      "path": "archive\\old-migrations\\20251008175131_038b166a-5717-47a7-9245-df40563a5882.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008180830_16046376-4290-4ad2-8e64-91b8dc80467f.sql",
+      "path": "archive\\old-migrations\\20251008180830_16046376-4290-4ad2-8e64-91b8dc80467f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251008181012_7e6680c4-3b70-4285-a351-e46425b4235b.sql",
+      "path": "archive\\old-migrations\\20251008181012_7e6680c4-3b70-4285-a351-e46425b4235b.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009055503_5aa61eb1-437e-4976-b3f9-581c7d90b26f.sql",
+      "path": "archive\\old-migrations\\20251009055503_5aa61eb1-437e-4976-b3f9-581c7d90b26f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009082307_962af924-0417-4f8e-915b-542fa98ffc43.sql",
+      "path": "archive\\old-migrations\\20251009082307_962af924-0417-4f8e-915b-542fa98ffc43.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009092636_3ee4db3a-6576-4ee3-9b8c-a001d3acbd7a.sql",
+      "path": "archive\\old-migrations\\20251009092636_3ee4db3a-6576-4ee3-9b8c-a001d3acbd7a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009101234_0d13e3a9-897c-4edd-86cc-dd02fa6afed6.sql",
+      "path": "archive\\old-migrations\\20251009101234_0d13e3a9-897c-4edd-86cc-dd02fa6afed6.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009103115_97181922-bd80-4597-98d0-c789252d839d.sql",
+      "path": "archive\\old-migrations\\20251009103115_97181922-bd80-4597-98d0-c789252d839d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009130020_bf8f003a-f37f-47c6-88a7-f319ca8977fa.sql",
+      "path": "archive\\old-migrations\\20251009130020_bf8f003a-f37f-47c6-88a7-f319ca8977fa.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009164101_d7f98d58-cb05-4d5b-84d7-6c751c969835.sql",
+      "path": "archive\\old-migrations\\20251009164101_d7f98d58-cb05-4d5b-84d7-6c751c969835.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009173034_3fcb8f58-da9e-4a72-8ec5-913c1dfe1b05.sql",
+      "path": "archive\\old-migrations\\20251009173034_3fcb8f58-da9e-4a72-8ec5-913c1dfe1b05.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009173932_7b4dd854-2379-462f-86e8-e4bcda1aeb0d.sql",
+      "path": "archive\\old-migrations\\20251009173932_7b4dd854-2379-462f-86e8-e4bcda1aeb0d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009181240_19ba0bc9-79cc-48e5-8463-e35626a8d822.sql",
+      "path": "archive\\old-migrations\\20251009181240_19ba0bc9-79cc-48e5-8463-e35626a8d822.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251009181530_8e512d8d-9d9c-4769-b8aa-a0d7aa01cc51.sql",
+      "path": "archive\\old-migrations\\20251009181530_8e512d8d-9d9c-4769-b8aa-a0d7aa01cc51.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010012305_805120a9-7577-4d7f-84f7-b1efc3d93358.sql",
+      "path": "archive\\old-migrations\\20251010012305_805120a9-7577-4d7f-84f7-b1efc3d93358.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010012648_e875a609-d9a6-4785-9077-14db0a44e401.sql",
+      "path": "archive\\old-migrations\\20251010012648_e875a609-d9a6-4785-9077-14db0a44e401.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010013000_b50ed926-563f-4021-a7b3-04ae63e1ee4c.sql",
+      "path": "archive\\old-migrations\\20251010013000_b50ed926-563f-4021-a7b3-04ae63e1ee4c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010013055_57f77065-cfb1-4d1c-aee3-2eac4ff3f286.sql",
+      "path": "archive\\old-migrations\\20251010013055_57f77065-cfb1-4d1c-aee3-2eac4ff3f286.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010021101_988c59f3-5070-4f44-9b31-d2249cb70440.sql",
+      "path": "archive\\old-migrations\\20251010021101_988c59f3-5070-4f44-9b31-d2249cb70440.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010023805_8f715c77-99c5-42e0-a6d2-3a1983a1c332.sql",
+      "path": "archive\\old-migrations\\20251010023805_8f715c77-99c5-42e0-a6d2-3a1983a1c332.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010024126_6ca73fb3-984b-4721-9467-3d2078e62ea2.sql",
+      "path": "archive\\old-migrations\\20251010024126_6ca73fb3-984b-4721-9467-3d2078e62ea2.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010024223_6b006122-8fd3-4e70-827f-a9ccdc737b08.sql",
+      "path": "archive\\old-migrations\\20251010024223_6b006122-8fd3-4e70-827f-a9ccdc737b08.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010120430_ca454222-b895-4d2a-a5c1-cdae491bb304.sql",
+      "path": "archive\\old-migrations\\20251010120430_ca454222-b895-4d2a-a5c1-cdae491bb304.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010120540_58966a4d-cbf7-415e-bfe8-91bb8258acb7.sql",
+      "path": "archive\\old-migrations\\20251010120540_58966a4d-cbf7-415e-bfe8-91bb8258acb7.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010121048_51bff819-1b09-44e4-8d19-3738a403ab95.sql",
+      "path": "archive\\old-migrations\\20251010121048_51bff819-1b09-44e4-8d19-3738a403ab95.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251010182653_8f1a2d88-cacd-4d79-be0e-5e9d3325d199.sql",
+      "path": "archive\\old-migrations\\20251010182653_8f1a2d88-cacd-4d79-be0e-5e9d3325d199.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251011094944_a19aee9b-232e-4b8f-98c3-77ee9a8d097b.sql",
+      "path": "archive\\old-migrations\\20251011094944_a19aee9b-232e-4b8f-98c3-77ee9a8d097b.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251011104311_a4c16993-214f-42ce-96e5-9c2cce810f29.sql",
+      "path": "archive\\old-migrations\\20251011104311_a4c16993-214f-42ce-96e5-9c2cce810f29.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251011104837_4e5b2100-894b-4a27-a819-c9d5597647fc.sql",
+      "path": "archive\\old-migrations\\20251011104837_4e5b2100-894b-4a27-a819-c9d5597647fc.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251012063528_926257db-3f79-445d-86cb-1201113442e3.sql",
+      "path": "archive\\old-migrations\\20251012063528_926257db-3f79-445d-86cb-1201113442e3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251012073207_f5f3e2fe-ce54-4e96-a2f0-4ec5cd23919e.sql",
+      "path": "archive\\old-migrations\\20251012073207_f5f3e2fe-ce54-4e96-a2f0-4ec5cd23919e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251013084203_b316c3b6-3fd4-46a2-b8fb-c8a076ac08e7.sql",
+      "path": "archive\\old-migrations\\20251013084203_b316c3b6-3fd4-46a2-b8fb-c8a076ac08e7.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251013091545_fe6e57e1-412d-40e0-b857-bbdd2451674b.sql",
+      "path": "archive\\old-migrations\\20251013091545_fe6e57e1-412d-40e0-b857-bbdd2451674b.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251013101910_bb8d14c7-dcc7-46f5-ace6-c6347fbb7b3e.sql",
+      "path": "archive\\old-migrations\\20251013101910_bb8d14c7-dcc7-46f5-ace6-c6347fbb7b3e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251014005909_84b26ac2-f403-453a-b435-4da7c1107628.sql",
+      "path": "archive\\old-migrations\\20251014005909_84b26ac2-f403-453a-b435-4da7c1107628.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251014050829_fd37e437-7588-43ae-96a3-a1a601f7e2e3.sql",
+      "path": "archive\\old-migrations\\20251014050829_fd37e437-7588-43ae-96a3-a1a601f7e2e3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251014063101_234ad337-63f7-49c2-bcbe-ef466f0dde2a.sql",
+      "path": "archive\\old-migrations\\20251014063101_234ad337-63f7-49c2-bcbe-ef466f0dde2a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251014070422_21d1ff0e-3ad1-47c5-81f4-22ea823a72b3.sql",
+      "path": "archive\\old-migrations\\20251014070422_21d1ff0e-3ad1-47c5-81f4-22ea823a72b3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251014072417_0996aa5e-592c-4f86-af2a-e11c268f52a2.sql",
+      "path": "archive\\old-migrations\\20251014072417_0996aa5e-592c-4f86-af2a-e11c268f52a2.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015071854_0e17da1b-8d19-4ffa-9707-4c9a8d9198d7.sql",
+      "path": "archive\\old-migrations\\20251015071854_0e17da1b-8d19-4ffa-9707-4c9a8d9198d7.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015072844_e041c9ad-43e9-4314-a894-839766917e6a.sql",
+      "path": "archive\\old-migrations\\20251015072844_e041c9ad-43e9-4314-a894-839766917e6a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015075720_e86b53ca-2818-4bb4-9161-220c04600511.sql",
+      "path": "archive\\old-migrations\\20251015075720_e86b53ca-2818-4bb4-9161-220c04600511.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015081410_40763d41-7221-4927-86ff-9c913bbacfd3.sql",
+      "path": "archive\\old-migrations\\20251015081410_40763d41-7221-4927-86ff-9c913bbacfd3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015083341_9dd56421-24d2-44fd-884c-83794facabf6.sql",
+      "path": "archive\\old-migrations\\20251015083341_9dd56421-24d2-44fd-884c-83794facabf6.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015083510_103ef4e8-6c37-47ad-9dfc-1645200ee380.sql",
+      "path": "archive\\old-migrations\\20251015083510_103ef4e8-6c37-47ad-9dfc-1645200ee380.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015083717_a574a6b3-3c58-4a7f-b2a5-5a9efe38eab9.sql",
+      "path": "archive\\old-migrations\\20251015083717_a574a6b3-3c58-4a7f-b2a5-5a9efe38eab9.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015083905_1022b82f-e8a4-401b-ba00-eb919f9701fb.sql",
+      "path": "archive\\old-migrations\\20251015083905_1022b82f-e8a4-401b-ba00-eb919f9701fb.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015091355_8ce86b7b-b244-4a8d-9ba6-c3a03b1ce261.sql",
+      "path": "archive\\old-migrations\\20251015091355_8ce86b7b-b244-4a8d-9ba6-c3a03b1ce261.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015092426_77d41b3a-58aa-4e12-b040-3e1d5fafa360.sql",
+      "path": "archive\\old-migrations\\20251015092426_77d41b3a-58aa-4e12-b040-3e1d5fafa360.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015102339_64ff115e-6066-41e1-8cd6-be9f81bd7751.sql",
+      "path": "archive\\old-migrations\\20251015102339_64ff115e-6066-41e1-8cd6-be9f81bd7751.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015122022_ca34ebdc-cd48-4b32-a6c0-e8f43104d282.sql",
+      "path": "archive\\old-migrations\\20251015122022_ca34ebdc-cd48-4b32-a6c0-e8f43104d282.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015122725_483f28da-fd3b-4a20-b434-9a1f5f77d00a.sql",
+      "path": "archive\\old-migrations\\20251015122725_483f28da-fd3b-4a20-b434-9a1f5f77d00a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015122751_2caa41ba-727e-44fd-b2ea-f396481cb0d3.sql",
+      "path": "archive\\old-migrations\\20251015122751_2caa41ba-727e-44fd-b2ea-f396481cb0d3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015160318_b0d048b7-1862-42f7-a8bb-9c0ea6fc386f.sql",
+      "path": "archive\\old-migrations\\20251015160318_b0d048b7-1862-42f7-a8bb-9c0ea6fc386f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015175058_f1924270-89b0-4377-a8ea-2e6b22b81f95.sql",
+      "path": "archive\\old-migrations\\20251015175058_f1924270-89b0-4377-a8ea-2e6b22b81f95.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015200727_1ec936a9-a541-444a-9034-5f23dcecdef9.sql",
+      "path": "archive\\old-migrations\\20251015200727_1ec936a9-a541-444a-9034-5f23dcecdef9.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251015200739_62c18907-c3dd-49fc-b229-4b325d0d5086.sql",
+      "path": "archive\\old-migrations\\20251015200739_62c18907-c3dd-49fc-b229-4b325d0d5086.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251016054713_5d5ac4ea-702e-48e1-8a6c-fb6e7c6d7072.sql",
+      "path": "archive\\old-migrations\\20251016054713_5d5ac4ea-702e-48e1-8a6c-fb6e7c6d7072.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251017125352_d7aaf8e3-d9bb-4d60-9b21-ebae18927cc5.sql",
+      "path": "archive\\old-migrations\\20251017125352_d7aaf8e3-d9bb-4d60-9b21-ebae18927cc5.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251020043610_e32ff286-4bb1-4813-9a5b-da82afea8bbf.sql",
+      "path": "archive\\old-migrations\\20251020043610_e32ff286-4bb1-4813-9a5b-da82afea8bbf.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251020043744_28eefbee-6cd4-4ade-a77c-a5fe6a808fc0.sql",
+      "path": "archive\\old-migrations\\20251020043744_28eefbee-6cd4-4ade-a77c-a5fe6a808fc0.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251022055752_f8858adc-f598-450c-b620-1218ac7f0315.sql",
+      "path": "archive\\old-migrations\\20251022055752_f8858adc-f598-450c-b620-1218ac7f0315.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251023041733_ec2984e6-477f-49b0-bddd-23ee65f16c38.sql",
+      "path": "archive\\old-migrations\\20251023041733_ec2984e6-477f-49b0-bddd-23ee65f16c38.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251024033123_78ae4ef9-e68f-46a6-8e57-edbe1358a264.sql",
+      "path": "archive\\old-migrations\\20251024033123_78ae4ef9-e68f-46a6-8e57-edbe1358a264.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251026051532_a2dc1dd4-d1ba-4e58-889e-8f6c4c14be0e.sql",
+      "path": "archive\\old-migrations\\20251026051532_a2dc1dd4-d1ba-4e58-889e-8f6c4c14be0e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251026052759_14d7f4d6-3a7e-486f-b496-c74d4fc67435.sql",
+      "path": "archive\\old-migrations\\20251026052759_14d7f4d6-3a7e-486f-b496-c74d4fc67435.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251026054252_d7d99a7d-7098-4d0a-8e3f-d2e04bef6805.sql",
+      "path": "archive\\old-migrations\\20251026054252_d7d99a7d-7098-4d0a-8e3f-d2e04bef6805.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251026072245_8e5a7a61-4d26-48b4-99b3-2ae9e0d73871.sql",
+      "path": "archive\\old-migrations\\20251026072245_8e5a7a61-4d26-48b4-99b3-2ae9e0d73871.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251027010114_1355fe20-20fe-49e0-8428-a1cb54a4288e.sql",
+      "path": "archive\\old-migrations\\20251027010114_1355fe20-20fe-49e0-8428-a1cb54a4288e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251029010214_66e17c81-0f33-43ca-8e76-cb2919207e99.sql",
+      "path": "archive\\old-migrations\\20251029010214_66e17c81-0f33-43ca-8e76-cb2919207e99.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103120643_403e2c9c-1d1b-473d-b63f-fe5f2e0c0b9a.sql",
+      "path": "archive\\old-migrations\\20251103120643_403e2c9c-1d1b-473d-b63f-fe5f2e0c0b9a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103121749_e8ad0095-ea69-4fc8-b3f9-0732fae14bbb.sql",
+      "path": "archive\\old-migrations\\20251103121749_e8ad0095-ea69-4fc8-b3f9-0732fae14bbb.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103131319_ad6cb532-2496-4a94-ac63-acff586fd136.sql",
+      "path": "archive\\old-migrations\\20251103131319_ad6cb532-2496-4a94-ac63-acff586fd136.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103143746_c8051507-4020-4f52-a2ed-575a9ee33f90.sql",
+      "path": "archive\\old-migrations\\20251103143746_c8051507-4020-4f52-a2ed-575a9ee33f90.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103145916_6a97fcd7-5b24-4183-9ad7-9587abd95857.sql",
+      "path": "archive\\old-migrations\\20251103145916_6a97fcd7-5b24-4183-9ad7-9587abd95857.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103151139_4eb48b9e-ee0e-427e-885f-9befa6c2e3d1.sql",
+      "path": "archive\\old-migrations\\20251103151139_4eb48b9e-ee0e-427e-885f-9befa6c2e3d1.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251103153950_c1468f94-1e59-468d-9b2e-2730020d4c18.sql",
+      "path": "archive\\old-migrations\\20251103153950_c1468f94-1e59-468d-9b2e-2730020d4c18.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251105043256_587c05c0-3a28-4f4f-91c2-642ad7fe305d.sql",
+      "path": "archive\\old-migrations\\20251105043256_587c05c0-3a28-4f4f-91c2-642ad7fe305d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251106012850_bd50d84b-0bfd-4af6-befc-b8ac72d09a08.sql",
+      "path": "archive\\old-migrations\\20251106012850_bd50d84b-0bfd-4af6-befc-b8ac72d09a08.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110074625_ab80856d-7ad3-43b7-8e2e-bdf8abacfb59.sql",
+      "path": "archive\\old-migrations\\20251110074625_ab80856d-7ad3-43b7-8e2e-bdf8abacfb59.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110080617_644c235e-8b73-4b95-aee7-e3b3df2b2aac.sql",
+      "path": "archive\\old-migrations\\20251110080617_644c235e-8b73-4b95-aee7-e3b3df2b2aac.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110084503_e405fd11-8a06-44df-a21a-21466d5f72e4.sql",
+      "path": "archive\\old-migrations\\20251110084503_e405fd11-8a06-44df-a21a-21466d5f72e4.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110094530_8af123c6-6c8d-44dd-a436-e8601e41f5b3.sql",
+      "path": "archive\\old-migrations\\20251110094530_8af123c6-6c8d-44dd-a436-e8601e41f5b3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110094649_1f412f58-cb6e-4082-838a-8cd81df462b8.sql",
+      "path": "archive\\old-migrations\\20251110094649_1f412f58-cb6e-4082-838a-8cd81df462b8.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110102331_796c886b-8d68-4cf2-935c-a356a47f1fb7.sql",
+      "path": "archive\\old-migrations\\20251110102331_796c886b-8d68-4cf2-935c-a356a47f1fb7.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110110909_8e300b3e-5324-4e1b-afba-6443f5dceade.sql",
+      "path": "archive\\old-migrations\\20251110110909_8e300b3e-5324-4e1b-afba-6443f5dceade.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110134455_ee639bf8-623f-406d-83ba-dfbd47432362.sql",
+      "path": "archive\\old-migrations\\20251110134455_ee639bf8-623f-406d-83ba-dfbd47432362.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110154220_f2d7e39e-2f05-49df-9602-a974fadefa38.sql",
+      "path": "archive\\old-migrations\\20251110154220_f2d7e39e-2f05-49df-9602-a974fadefa38.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251110174329_dfb6c3f4-cd89-47f9-9b66-053d36f19bdd.sql",
+      "path": "archive\\old-migrations\\20251110174329_dfb6c3f4-cd89-47f9-9b66-053d36f19bdd.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251111034936_3c8966b1-fd1d-4ba5-9826-7c3f6f4bc196.sql",
+      "path": "archive\\old-migrations\\20251111034936_3c8966b1-fd1d-4ba5-9826-7c3f6f4bc196.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251113064715_bf3701de-1387-4247-ad0c-c4e2645015da.sql",
+      "path": "archive\\old-migrations\\20251113064715_bf3701de-1387-4247-ad0c-c4e2645015da.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251113064924_8f09ec4d-b90a-4672-a4c5-5912b3ecc7c1.sql",
+      "path": "archive\\old-migrations\\20251113064924_8f09ec4d-b90a-4672-a4c5-5912b3ecc7c1.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251113065241_7d37407a-d8b5-41fc-b782-054e8705267f.sql",
+      "path": "archive\\old-migrations\\20251113065241_7d37407a-d8b5-41fc-b782-054e8705267f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251114010442_756e3bab-f081-4a51-b2f5-bbda49858d70.sql",
+      "path": "archive\\old-migrations\\20251114010442_756e3bab-f081-4a51-b2f5-bbda49858d70.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251118004535_e4448d02-c8c8-408a-b6f9-0642ed5f7d30.sql",
+      "path": "archive\\old-migrations\\20251118004535_e4448d02-c8c8-408a-b6f9-0642ed5f7d30.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251118014440_98ce3bc7-8b78-4911-b844-988bdcca075a.sql",
+      "path": "archive\\old-migrations\\20251118014440_98ce3bc7-8b78-4911-b844-988bdcca075a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251118021223_4640cf1f-2669-43e4-848c-239d7d417935.sql",
+      "path": "archive\\old-migrations\\20251118021223_4640cf1f-2669-43e4-848c-239d7d417935.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251120144251_4649b103-7377-4ae5-b354-f63029c37099.sql",
+      "path": "archive\\old-migrations\\20251120144251_4649b103-7377-4ae5-b354-f63029c37099.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251121005122_b48f1ecd-5602-4328-ab2a-342568848c15.sql",
+      "path": "archive\\old-migrations\\20251121005122_b48f1ecd-5602-4328-ab2a-342568848c15.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251121010507_f13da0f4-0fa4-4d8d-834f-4b8d3bcd65e0.sql",
+      "path": "archive\\old-migrations\\20251121010507_f13da0f4-0fa4-4d8d-834f-4b8d3bcd65e0.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251121010829_f12b3873-cbc4-45e7-8bd9-a94e2de40866.sql",
+      "path": "archive\\old-migrations\\20251121010829_f12b3873-cbc4-45e7-8bd9-a94e2de40866.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251122055507_9c3b041c-8d5e-4053-8229-83550606ce34.sql",
+      "path": "archive\\old-migrations\\20251122055507_9c3b041c-8d5e-4053-8229-83550606ce34.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251123064104_ef51108d-5dcc-4ef1-958e-c9335730c68a.sql",
+      "path": "archive\\old-migrations\\20251123064104_ef51108d-5dcc-4ef1-958e-c9335730c68a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251126005128_8ed6a08d-c359-4bcd-a823-bd1cbd746e4d.sql",
+      "path": "archive\\old-migrations\\20251126005128_8ed6a08d-c359-4bcd-a823-bd1cbd746e4d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251127134836_02b9d8bf-d362-40b7-b7bd-6287349226f4.sql",
+      "path": "archive\\old-migrations\\20251127134836_02b9d8bf-d362-40b7-b7bd-6287349226f4.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251127135623_cf1f55db-aa75-4b6a-b1f8-620600ba5a81.sql",
+      "path": "archive\\old-migrations\\20251127135623_cf1f55db-aa75-4b6a-b1f8-620600ba5a81.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251128160638_93f7132a-8fb1-4ce8-9290-51f7921f91bc.sql",
+      "path": "archive\\old-migrations\\20251128160638_93f7132a-8fb1-4ce8-9290-51f7921f91bc.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251128161140_724751b2-fbff-4245-8ae0-aad31286cfe1.sql",
+      "path": "archive\\old-migrations\\20251128161140_724751b2-fbff-4245-8ae0-aad31286cfe1.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251128161233_06e670ba-41cb-4e21-a674-180dfccf2810.sql",
+      "path": "archive\\old-migrations\\20251128161233_06e670ba-41cb-4e21-a674-180dfccf2810.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251202074356_1a60dc28-47fa-4232-8974-504117966d08.sql",
+      "path": "archive\\old-migrations\\20251202074356_1a60dc28-47fa-4232-8974-504117966d08.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203092603_eb7310af-add3-494f-a63d-8f99c5a5700c.sql",
+      "path": "archive\\old-migrations\\20251203092603_eb7310af-add3-494f-a63d-8f99c5a5700c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203115522_3e333949-5410-4fbe-af86-907532e26a48.sql",
+      "path": "archive\\old-migrations\\20251203115522_3e333949-5410-4fbe-af86-907532e26a48.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203115555_1530bd29-62e1-4301-bd99-23b5e2a49430.sql",
+      "path": "archive\\old-migrations\\20251203115555_1530bd29-62e1-4301-bd99-23b5e2a49430.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203120401_85da4e9e-46c6-4f24-8c84-b53d3abb6e43.sql",
+      "path": "archive\\old-migrations\\20251203120401_85da4e9e-46c6-4f24-8c84-b53d3abb6e43.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203125251_ed18d9c4-54bb-4d77-8774-9155e56d3091.sql",
+      "path": "archive\\old-migrations\\20251203125251_ed18d9c4-54bb-4d77-8774-9155e56d3091.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203125306_3a4ec03e-7f46-4547-b651-5c748455bc35.sql",
+      "path": "archive\\old-migrations\\20251203125306_3a4ec03e-7f46-4547-b651-5c748455bc35.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203130240_ebbfc2f2-a512-4fb0-9ba8-6c621d1fad4e.sql",
+      "path": "archive\\old-migrations\\20251203130240_ebbfc2f2-a512-4fb0-9ba8-6c621d1fad4e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203131218_7b40163b-9a17-4060-b416-0d4923c2df92.sql",
+      "path": "archive\\old-migrations\\20251203131218_7b40163b-9a17-4060-b416-0d4923c2df92.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203132840_c54376c4-874c-42a5-8aa3-61d0adcbc0ad.sql",
+      "path": "archive\\old-migrations\\20251203132840_c54376c4-874c-42a5-8aa3-61d0adcbc0ad.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203164248_22e2cd30-fd35-4644-b696-fe47cc98779e.sql",
+      "path": "archive\\old-migrations\\20251203164248_22e2cd30-fd35-4644-b696-fe47cc98779e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203173117_c1def3f5-aff4-4b2c-a0dd-ea1b1756774c.sql",
+      "path": "archive\\old-migrations\\20251203173117_c1def3f5-aff4-4b2c-a0dd-ea1b1756774c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203173343_7afc0965-61ad-4081-a7a1-5b4afbb0df42.sql",
+      "path": "archive\\old-migrations\\20251203173343_7afc0965-61ad-4081-a7a1-5b4afbb0df42.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251203175057_8f69778e-2481-480f-ab30-9cf14844660a.sql",
+      "path": "archive\\old-migrations\\20251203175057_8f69778e-2481-480f-ab30-9cf14844660a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204052834_bc495c1a-779b-4878-8197-889bb7d5ed5d.sql",
+      "path": "archive\\old-migrations\\20251204052834_bc495c1a-779b-4878-8197-889bb7d5ed5d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204053854_d357fa82-eea8-4ad0-90d6-488eb016985f.sql",
+      "path": "archive\\old-migrations\\20251204053854_d357fa82-eea8-4ad0-90d6-488eb016985f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204071049_fdbd8b39-b11b-4d21-a886-4be542b39a0b.sql",
+      "path": "archive\\old-migrations\\20251204071049_fdbd8b39-b11b-4d21-a886-4be542b39a0b.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204134604_18aa5ec4-e145-4fe0-be53-b1fdb7376b18.sql",
+      "path": "archive\\old-migrations\\20251204134604_18aa5ec4-e145-4fe0-be53-b1fdb7376b18.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204141456_6d6171e2-7c12-4d8f-a203-f8ff30d1a840.sql",
+      "path": "archive\\old-migrations\\20251204141456_6d6171e2-7c12-4d8f-a203-f8ff30d1a840.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204142141_71f596c9-fbf2-44fc-a7c2-4572819b83ac.sql",
+      "path": "archive\\old-migrations\\20251204142141_71f596c9-fbf2-44fc-a7c2-4572819b83ac.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251204143501_accb6d76-6965-49f0-826b-3ce18afe943e.sql",
+      "path": "archive\\old-migrations\\20251204143501_accb6d76-6965-49f0-826b-3ce18afe943e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251205114212_cc6c89a0-13fa-4092-8784-4437443ba89e.sql",
+      "path": "archive\\old-migrations\\20251205114212_cc6c89a0-13fa-4092-8784-4437443ba89e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251209015131_cb5588e6-2a91-4207-a42c-0d4774e2c77d.sql",
+      "path": "archive\\old-migrations\\20251209015131_cb5588e6-2a91-4207-a42c-0d4774e2c77d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251216013032_442ddd7b-d50b-4d4b-8f8a-271b56c54262.sql",
+      "path": "archive\\old-migrations\\20251216013032_442ddd7b-d50b-4d4b-8f8a-271b56c54262.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251219035047_b56689cf-2c1d-49a0-aa1b-e2dde3d0124e.sql",
+      "path": "archive\\old-migrations\\20251219035047_b56689cf-2c1d-49a0-aa1b-e2dde3d0124e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251219180222_8b4e7f15-16fe-4d95-b4d2-c7af5c2e86a2.sql",
+      "path": "archive\\old-migrations\\20251219180222_8b4e7f15-16fe-4d95-b4d2-c7af5c2e86a2.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251220050846_30bbc3e0-c1ce-4e38-a4c5-f6ca2dba619f.sql",
+      "path": "archive\\old-migrations\\20251220050846_30bbc3e0-c1ce-4e38-a4c5-f6ca2dba619f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251221043711_86e85fa9-3eae-4233-9eca-5cc31380fb90.sql",
+      "path": "archive\\old-migrations\\20251221043711_86e85fa9-3eae-4233-9eca-5cc31380fb90.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251225152731_8e4c477b-4ff8-40b1-9263-5f61ea32da6f.sql",
+      "path": "archive\\old-migrations\\20251225152731_8e4c477b-4ff8-40b1-9263-5f61ea32da6f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251225152942_6e7e1419-976b-4812-8161-d171d384fb2f.sql",
+      "path": "archive\\old-migrations\\20251225152942_6e7e1419-976b-4812-8161-d171d384fb2f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251225153256_2c95330a-433e-4e0b-9699-fd0003a75f47.sql",
+      "path": "archive\\old-migrations\\20251225153256_2c95330a-433e-4e0b-9699-fd0003a75f47.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251226015351_24112c54-26ff-4ff6-99bd-2f3249bacf9f.sql",
+      "path": "archive\\old-migrations\\20251226015351_24112c54-26ff-4ff6-99bd-2f3249bacf9f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251226015520_cc6dad97-fed7-4507-9ef7-d1325ad57cdb.sql",
+      "path": "archive\\old-migrations\\20251226015520_cc6dad97-fed7-4507-9ef7-d1325ad57cdb.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251227090602_232cf158-9215-46ad-967d-8fb2eeb9ae29.sql",
+      "path": "archive\\old-migrations\\20251227090602_232cf158-9215-46ad-967d-8fb2eeb9ae29.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251227090900_35952539-7c4c-471a-b7f5-80963fda0258.sql",
+      "path": "archive\\old-migrations\\20251227090900_35952539-7c4c-471a-b7f5-80963fda0258.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20251229122935_17916562-6fe4-4f36-a561-0fcc9a5e8805.sql",
+      "path": "archive\\old-migrations\\20251229122935_17916562-6fe4-4f36-a561-0fcc9a5e8805.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260101045251_a2e02180-f4e6-4f31-afa6-5718a3a89637.sql",
+      "path": "archive\\old-migrations\\20260101045251_a2e02180-f4e6-4f31-afa6-5718a3a89637.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260101165716_58dca91e-1fa4-4334-ace9-ad238293bb4d.sql",
+      "path": "archive\\old-migrations\\20260101165716_58dca91e-1fa4-4334-ace9-ad238293bb4d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260104133646_aed28f61-43af-4462-854d-afce562576ac.sql",
+      "path": "archive\\old-migrations\\20260104133646_aed28f61-43af-4462-854d-afce562576ac.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260104133713_56d1ab5d-4658-46d8-942b-cb958829c86c.sql",
+      "path": "archive\\old-migrations\\20260104133713_56d1ab5d-4658-46d8-942b-cb958829c86c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260104144512_59a627b9-9b1d-462c-a791-420349853c9a.sql",
+      "path": "archive\\old-migrations\\20260104144512_59a627b9-9b1d-462c-a791-420349853c9a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105064552_5f085429-e3fd-4bbb-af99-eaa5f85da604.sql",
+      "path": "archive\\old-migrations\\20260105064552_5f085429-e3fd-4bbb-af99-eaa5f85da604.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105094034_de944e8d-934f-4caf-bc79-0087600ae42e.sql",
+      "path": "archive\\old-migrations\\20260105094034_de944e8d-934f-4caf-bc79-0087600ae42e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105141845_07184927-fc4f-496d-b0af-7fecf0da617c.sql",
+      "path": "archive\\old-migrations\\20260105141845_07184927-fc4f-496d-b0af-7fecf0da617c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105160658_28765926-265f-4d62-b5ad-40ee5790647d.sql",
+      "path": "archive\\old-migrations\\20260105160658_28765926-265f-4d62-b5ad-40ee5790647d.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105181912_8ff7482b-9b4f-4a2c-b10f-d96f972e03c8.sql",
+      "path": "archive\\old-migrations\\20260105181912_8ff7482b-9b4f-4a2c-b10f-d96f972e03c8.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260105184334_995da2f6-b75b-49ce-933c-a3a06f544b56.sql",
+      "path": "archive\\old-migrations\\20260105184334_995da2f6-b75b-49ce-933c-a3a06f544b56.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260106154115_6628151b-d493-4f4e-883c-b6af91b7e85a.sql",
+      "path": "archive\\old-migrations\\20260106154115_6628151b-d493-4f4e-883c-b6af91b7e85a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260108084001_0b64e804-0e21-4c57-b8bd-55fd0e7fd951.sql",
+      "path": "archive\\old-migrations\\20260108084001_0b64e804-0e21-4c57-b8bd-55fd0e7fd951.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260108084956_7d65a565-7869-47f1-9094-45c2114f8cc9.sql",
+      "path": "archive\\old-migrations\\20260108084956_7d65a565-7869-47f1-9094-45c2114f8cc9.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260120094924_bc6859e4-56f0-4ed5-8d2c-3258dfa6efcf.sql",
+      "path": "archive\\old-migrations\\20260120094924_bc6859e4-56f0-4ed5-8d2c-3258dfa6efcf.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260123025843_52c0951e-26c7-4e21-bf40-2da7cee32a41.sql",
+      "path": "archive\\old-migrations\\20260123025843_52c0951e-26c7-4e21-bf40-2da7cee32a41.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260217050517_15b6a14d-649e-4504-90b4-69f16475ea75.sql",
+      "path": "archive\\old-migrations\\20260217050517_15b6a14d-649e-4504-90b4-69f16475ea75.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260217052704_07544ce4-323e-4a0c-8527-b686ae1d294a.sql",
+      "path": "archive\\old-migrations\\20260217052704_07544ce4-323e-4a0c-8527-b686ae1d294a.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260217052903_960d9cf4-7a52-4e05-80e5-5c0cf3729e7c.sql",
+      "path": "archive\\old-migrations\\20260217052903_960d9cf4-7a52-4e05-80e5-5c0cf3729e7c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260221101826_98541f8d-82c3-4d9f-87a5-0c2735086743.sql",
+      "path": "archive\\old-migrations\\20260221101826_98541f8d-82c3-4d9f-87a5-0c2735086743.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260222055647_75f3f0d5-c2e8-45a9-adc1-4c5c85025572.sql",
+      "path": "archive\\old-migrations\\20260222055647_75f3f0d5-c2e8-45a9-adc1-4c5c85025572.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260222060701_83fec7c5-5096-420d-b7d2-047f38721801.sql",
+      "path": "archive\\old-migrations\\20260222060701_83fec7c5-5096-420d-b7d2-047f38721801.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260228003756_3bc00237-a4fe-412f-baec-930a70a2f483.sql",
+      "path": "archive\\old-migrations\\20260228003756_3bc00237-a4fe-412f-baec-930a70a2f483.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260228053754_359841e3-6d97-4a51-beaa-c88aaee6d65c.sql",
+      "path": "archive\\old-migrations\\20260228053754_359841e3-6d97-4a51-beaa-c88aaee6d65c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260228053814_374541af-4f4e-493c-9b62-70c9b350e3b7.sql",
+      "path": "archive\\old-migrations\\20260228053814_374541af-4f4e-493c-9b62-70c9b350e3b7.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260318183417_d0078b3e-71c4-40ea-a9bd-c53761f851dd.sql",
+      "path": "archive\\old-migrations\\20260318183417_d0078b3e-71c4-40ea-a9bd-c53761f851dd.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260319043318_d028cf68-8070-44f9-90ca-f17163c5e99e.sql",
+      "path": "archive\\old-migrations\\20260319043318_d028cf68-8070-44f9-90ca-f17163c5e99e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260409060801_1bf9ab6c-efbe-44f1-b9f4-76efcdceb709.sql",
+      "path": "archive\\old-migrations\\20260409060801_1bf9ab6c-efbe-44f1-b9f4-76efcdceb709.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260413065829_0e3e1930-3728-41ca-94bf-5d530595e9cd.sql",
+      "path": "archive\\old-migrations\\20260413065829_0e3e1930-3728-41ca-94bf-5d530595e9cd.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260413065909_6c082423-716b-4751-8b6a-d6273f62b356.sql",
+      "path": "archive\\old-migrations\\20260413065909_6c082423-716b-4751-8b6a-d6273f62b356.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260413070235_d02f1c82-b4f2-4489-bfc2-a32c483e9173.sql",
+      "path": "archive\\old-migrations\\20260413070235_d02f1c82-b4f2-4489-bfc2-a32c483e9173.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260414132830_5ab1753f-7e13-4501-bcc1-0bda8589ddb3.sql",
+      "path": "archive\\old-migrations\\20260414132830_5ab1753f-7e13-4501-bcc1-0bda8589ddb3.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260420073605_df7a0391-a914-4936-9ff2-5e013be511cc.sql",
+      "path": "archive\\old-migrations\\20260420073605_df7a0391-a914-4936-9ff2-5e013be511cc.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260420073648_ffa368f1-a723-4acf-a254-b01cae67f34f.sql",
+      "path": "archive\\old-migrations\\20260420073648_ffa368f1-a723-4acf-a254-b01cae67f34f.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260420074150_052a495c-3f97-4241-a8a9-69bf66061d96.sql",
+      "path": "archive\\old-migrations\\20260420074150_052a495c-3f97-4241-a8a9-69bf66061d96.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260420075239_d10370f9-0335-49d7-b9e5-6c93c86bd180.sql",
+      "path": "archive\\old-migrations\\20260420075239_d10370f9-0335-49d7-b9e5-6c93c86bd180.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260420085704_d8a4e404-c14f-4daa-8898-de4254b25fc0.sql",
+      "path": "archive\\old-migrations\\20260420085704_d8a4e404-c14f-4daa-8898-de4254b25fc0.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260421064320_d27a30c2-89f3-4c93-9629-4454ee529030.sql",
+      "path": "archive\\old-migrations\\20260421064320_d27a30c2-89f3-4c93-9629-4454ee529030.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260422070241_7effceaa-5587-42d1-91c4-3398efdbd9fc.sql",
+      "path": "archive\\old-migrations\\20260422070241_7effceaa-5587-42d1-91c4-3398efdbd9fc.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260425182034_15049199-9997-425d-9550-eda581629d02.sql",
+      "path": "archive\\old-migrations\\20260425182034_15049199-9997-425d-9550-eda581629d02.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260426090642_96849d68-22a4-4fa6-86f4-e07440608b74.sql",
+      "path": "archive\\old-migrations\\20260426090642_96849d68-22a4-4fa6-86f4-e07440608b74.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260426091559_5e70d8e2-bf39-42ec-a294-53f47237cded.sql",
+      "path": "archive\\old-migrations\\20260426091559_5e70d8e2-bf39-42ec-a294-53f47237cded.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260426162520_20d7c276-b07c-4dec-a793-ef3396fd871e.sql",
+      "path": "archive\\old-migrations\\20260426162520_20d7c276-b07c-4dec-a793-ef3396fd871e.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260427014243_66e2860b-fc6e-48c6-918a-f4cfdabdfd27.sql",
+      "path": "archive\\old-migrations\\20260427014243_66e2860b-fc6e-48c6-918a-f4cfdabdfd27.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260428022240_d2caa36a-a14d-4353-814c-9d7a0e18cd55.sql",
+      "path": "archive\\old-migrations\\20260428022240_d2caa36a-a14d-4353-814c-9d7a0e18cd55.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260428023756_e8caf99c-1c23-49fc-a8e4-8efbd542bf4c.sql",
+      "path": "archive\\old-migrations\\20260428023756_e8caf99c-1c23-49fc-a8e4-8efbd542bf4c.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260430_ai_dialer_schema.sql",
+      "path": "archive\\old-migrations\\20260430_ai_dialer_schema.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260501000000_native_call_capture.sql",
+      "path": "archive\\old-migrations\\20260501000000_native_call_capture.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260515000000_phase1_security_hardening.sql",
+      "path": "archive\\old-migrations\\20260515000000_phase1_security_hardening.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260515000001_security_audit_insert_policy.sql",
+      "path": "archive\\old-migrations\\20260515000001_security_audit_insert_policy.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260517000000_call_progress_tone_statuses.sql",
+      "path": "archive\\old-migrations\\20260517000000_call_progress_tone_statuses.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260520000000_contact_identity_and_recents_fix.sql",
+      "path": "archive\\old-migrations\\20260520000000_contact_identity_and_recents_fix.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260520_call_quality_metrics.sql",
+      "path": "archive\\old-migrations\\20260520_call_quality_metrics.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260521000000_ai_call_summaries.sql",
+      "path": "archive\\old-migrations\\20260521000000_ai_call_summaries.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260615085750_add_chat_folders.sql",
+      "path": "archive\\old-migrations\\20260615085750_add_chat_folders.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260615091000_add_profile_themes.sql",
+      "path": "archive\\old-migrations\\20260615091000_add_profile_themes.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260615091500_add_custom_notification_sounds.sql",
+      "path": "archive\\old-migrations\\20260615091500_add_custom_notification_sounds.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260624000000_dpdp_crowdsourcing.sql",
+      "path": "archive\\old-migrations\\20260624000000_dpdp_crowdsourcing.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260626061920_create_channels_tables.sql",
+      "path": "archive\\old-migrations\\20260626061920_create_channels_tables.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260626114934_create_channels_tables.sql",
+      "path": "archive\\old-migrations\\20260626114934_create_channels_tables.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260626130000_remediate_username_pii_leak.sql",
+      "path": "archive\\old-migrations\\20260626130000_remediate_username_pii_leak.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260626130500_add_custom_call_ringtone.sql",
+      "path": "archive\\old-migrations\\20260626130500_add_custom_call_ringtone.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000000_communication_memory.sql",
+      "path": "archive\\old-migrations\\20260627000000_communication_memory.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000001_chatr_shield.sql",
+      "path": "archive\\old-migrations\\20260627000001_chatr_shield.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000002_universal_timeline.sql",
+      "path": "archive\\old-migrations\\20260627000002_universal_timeline.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000003_automation_rules.sql",
+      "path": "archive\\old-migrations\\20260627000003_automation_rules.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000004_automation_logs.sql",
+      "path": "archive\\old-migrations\\20260627000004_automation_logs.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000005_desktop_and_ai_schema.sql",
+      "path": "archive\\old-migrations\\20260627000005_desktop_and_ai_schema.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000006_desktop_production_phase1.sql",
+      "path": "archive\\old-migrations\\20260627000006_desktop_production_phase1.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000007_ai_memory_schema.sql",
+      "path": "archive\\old-migrations\\20260627000007_ai_memory_schema.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000008_agent_marketplace.sql",
+      "path": "archive\\old-migrations\\20260627000008_agent_marketplace.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260627000009_workflow_engine.sql",
+      "path": "archive\\old-migrations\\20260627000009_workflow_engine.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628000000_recruiter_workspace.sql",
+      "path": "archive\\old-migrations\\20260628000000_recruiter_workspace.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628000000_workspace_architecture.sql",
+      "path": "archive\\old-migrations\\20260628000000_workspace_architecture.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628000001_smart_inbox.sql",
+      "path": "archive\\old-migrations\\20260628000001_smart_inbox.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628000002_activity_logs.sql",
+      "path": "archive\\old-migrations\\20260628000002_activity_logs.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628000003_workspace_tasks.sql",
+      "path": "archive\\old-migrations\\20260628000003_workspace_tasks.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628100000_session_rooms.sql",
+      "path": "archive\\old-migrations\\20260628100000_session_rooms.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260628163000_include_sender_avatar_in_message_pushes.sql",
+      "path": "archive\\old-migrations\\20260628163000_include_sender_avatar_in_message_pushes.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260629000000_chatr_business_phase4.sql",
+      "path": "archive\\old-migrations\\20260629000000_chatr_business_phase4.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260630000000_orchestration_event_bus.sql",
+      "path": "archive\\old-migrations\\20260630000000_orchestration_event_bus.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260701000001_platform_files.sql",
+      "path": "archive\\old-migrations\\20260701000001_platform_files.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260701000002_platform_tasks_calendar.sql",
+      "path": "archive\\old-migrations\\20260701000002_platform_tasks_calendar.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260701000003_platform_knowledge.sql",
+      "path": "archive\\old-migrations\\20260701000003_platform_knowledge.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260701000004_platform_collaboration.sql",
+      "path": "archive\\old-migrations\\20260701000004_platform_collaboration.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "20260701000007_actor_model_organizations.sql",
+      "path": "archive\\old-migrations\\20260701000007_actor_model_organizations.sql",
+      "category": "SUPERSEDED",
+      "reason": "Historical Lovable incremental migration (2025–early 2026) archived",
+      "is_superseded": true
+    },
+    {
+      "filename": "COMBINED_FINANCE_OS_SETUP.sql",
+      "path": "COMBINED_FINANCE_OS_SETUP.sql",
+      "category": "FINANCE",
+      "reason": "Finance OS Subsystem",
+      "is_superseded": false
+    }
+  ]
+}

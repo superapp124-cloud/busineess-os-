@@ -1,16 +1,17 @@
 {
-  "generatedAt": "2026-05-15T18:41:57.552Z",
+  "generatedAt": "2026-08-29T07:26:28.411Z",
   "note": "Incremental Supabase Edge Function governance baseline. Reduce counts over time; new or increased risk fails edge:functions:audit.",
   "totals": {
-    "functions": 109,
-    "critical": 12,
-    "high": 88,
+    "functions": 136,
+    "critical": 43,
+    "high": 108,
     "medium": 132,
-    "low": 15,
-    "wildcardCors": 88,
-    "serviceRoleWithoutAuth": 9,
-    "highValueWithoutAuth": 3,
-    "legacySecurityWrapper": 89
+    "low": 22,
+    "wildcardCors": 108,
+    "serviceRoleWithoutAuth": 27,
+    "highValueWithoutAuth": 15,
+    "lovableRuntimeDependency": 0,
+    "legacySecurityWrapper": 77
   },
   "functions": {
     "agent-voice-tts": {
@@ -26,26 +27,36 @@
     },
     "ai-assistant": {
       "wildcardCors": 1,
+      "highValueWithoutAuth": 1,
       "highValueWithoutAudit": 1,
       "legacySecurityWrapper": 1
     },
     "ai-browser-search": {
       "wildcardCors": 1,
+      "highValueWithoutRateLimit": 1,
+      "legacySecurityWrapper": 1
+    },
+    "ai-chat": {
+      "wildcardCors": 1,
+      "highValueWithoutRateLimit": 1,
+      "highValueWithoutAudit": 1,
       "legacySecurityWrapper": 1
     },
     "ai-chat-assistant": {
       "wildcardCors": 1,
+      "highValueWithoutAuth": 1,
       "highValueWithoutAudit": 1,
       "legacySecurityWrapper": 1
     },
     "ai-chat-summary": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAuth": 1
     },
     "ai-clone-respond": {
       "wildcardCors": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "highValueWithoutAuth": 1,
+      "highValueWithoutAudit": 1
     },
     "ai-coaching": {
       "wildcardCors": 1,
@@ -59,11 +70,11 @@
     },
     "ai-image-generator": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAuth": 1
     },
     "ai-message-insights": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAuth": 1
     },
     "ai-smart-reply": {
       "wildcardCors": 1,
@@ -71,8 +82,9 @@
     },
     "ai-voice-summarize": {
       "wildcardCors": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "highValueWithoutAuth": 1,
+      "highValueWithoutAudit": 1
     },
     "analyze-chat-brands": {
       "wildcardCors": 1,
@@ -91,12 +103,38 @@
     "auth-phone-otp": {},
     "auto-translate": {
       "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1
+    },
+    "backfill-memory": {
+      "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
     "backfill-phone-hashes": {
       "serviceRoleWithoutAuth": 1,
       "missingOptionsHandler": 1,
       "inconsistentErrors": 1,
+      "legacySecurityWrapper": 1
+    },
+    "bot-webhook": {
+      "wildcardCors": 1,
+      "jsonWithoutValidation": 1,
+      "legacySecurityWrapper": 1
+    },
+    "business-campaign-runner": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1,
+      "highValueWithoutAuth": 1,
+      "highValueWithoutAudit": 1,
+      "legacySecurityWrapper": 1
+    },
+    "business-ivr-webhook": {
+      "serviceRoleWithoutAuth": 1,
+      "missingOptionsHandler": 1,
+      "inconsistentErrors": 1,
+      "legacySecurityWrapper": 1
+    },
+    "business-workflow-engine": {
+      "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
     "call-sentiment": {
@@ -111,15 +149,13 @@
     },
     "cc-ai-ceo": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutRateLimit": 1
     },
     "cc-engineering-agent": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "cc-sales-agent": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "chatr-brain": {},
     "chatr-games-ai": {
@@ -134,19 +170,24 @@
     },
     "chatr-plus-ai-search": {
       "wildcardCors": 1,
-      "highValueWithoutRateLimit": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAuth": 1,
+      "jsonWithoutValidation": 1,
+      "highValueWithoutAudit": 1
+    },
+    "chatr-shield-pipeline": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1
     },
     "chatr-world": {
       "wildcardCors": 1,
-      "inconsistentErrors": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "inconsistentErrors": 1
     },
     "chatr-world-ai": {
       "wildcardCors": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAuth": 1,
+      "jsonWithoutValidation": 1,
+      "highValueWithoutAudit": 1
     },
     "chatr-world-search": {
       "wildcardCors": 1,
@@ -163,14 +204,39 @@
       "serviceRoleWithoutAuth": 1,
       "legacySecurityWrapper": 1
     },
+    "connector-hub": {
+      "wildcardCors": 1,
+      "inconsistentErrors": 1,
+      "legacySecurityWrapper": 1
+    },
     "crawl-jobs": {
       "wildcardCors": 1,
       "inconsistentErrors": 1,
       "legacySecurityWrapper": 1
     },
+    "desktop-pair-confirm": {
+      "wildcardCors": 1,
+      "highValueWithoutRateLimit": 1,
+      "legacySecurityWrapper": 1
+    },
+    "desktop-pair-init": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1,
+      "highValueWithoutAuth": 1,
+      "highValueWithoutAudit": 1,
+      "legacySecurityWrapper": 1
+    },
+    "desktop-session-revoke": {
+      "missingOptionsHandler": 1,
+      "legacySecurityWrapper": 1
+    },
     "detect-video-objects": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "jsonWithoutValidation": 1
+    },
+    "device-auth": {
+      "serviceRoleWithoutAuth": 1
     },
     "fcm-call-trigger": {
       "wildcardCors": 1,
@@ -190,12 +256,40 @@
       "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
+    "finance-close-period": {
+      "wildcardCors": 1,
+      "legacySecurityWrapper": 1
+    },
+    "finance-idempotency-check": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1,
+      "legacySecurityWrapper": 1
+    },
+    "finance-post": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1,
+      "legacySecurityWrapper": 1
+    },
+    "finance-validate-entry": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1,
+      "inconsistentErrors": 1,
+      "legacySecurityWrapper": 1
+    },
     "firebase-phone-auth": {},
     "generate-feature": {
       "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
     "generate-media-url": {},
+    "generate-memory-embedding": {
+      "wildcardCors": 1,
+      "serviceRoleWithoutAuth": 1
+    },
+    "generate-questions": {
+      "wildcardCors": 1,
+      "legacySecurityWrapper": 1
+    },
     "generate-referral-code": {
       "wildcardCors": 1,
       "legacySecurityWrapper": 1
@@ -205,8 +299,7 @@
       "legacySecurityWrapper": 1
     },
     "generate-sticker": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "geo-search": {
       "wildcardCors": 1,
@@ -229,8 +322,7 @@
     "health-predictions": {
       "wildcardCors": 1,
       "highValueWithoutRateLimit": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAudit": 1
     },
     "health-wallet-transaction": {
       "wildcardCors": 1,
@@ -239,6 +331,12 @@
       "legacySecurityWrapper": 1
     },
     "healthcare-booking": {},
+    "identity-exchange": {},
+    "intent-runtime": {
+      "missingIndex": 1,
+      "missingOptionsHandler": 1,
+      "inconsistentErrors": 1
+    },
     "job-matching": {
       "wildcardCors": 1,
       "serviceRoleWithoutAuth": 1,
@@ -255,14 +353,12 @@
     },
     "lookup-chatr-users": {},
     "medication-interactions": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "mental-health-assistant": {
       "wildcardCors": 1,
       "highValueWithoutRateLimit": 1,
-      "highValueWithoutAudit": 1,
-      "legacySecurityWrapper": 1
+      "highValueWithoutAudit": 1
     },
     "native-call-update": {},
     "notify-referral-join": {
@@ -270,11 +366,18 @@
       "legacySecurityWrapper": 1
     },
     "nutrition-tracker": {
+      "wildcardCors": 1
+    },
+    "orchestration-event-router": {},
+    "parse-prescription": {},
+    "perplexity-search": {
+      "wildcardCors": 1
+    },
+    "persist-events": {
       "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
-    "parse-prescription": {},
-    "perplexity-search": {
+    "platform-init": {
       "wildcardCors": 1,
       "legacySecurityWrapper": 1
     },
@@ -322,10 +425,14 @@
       "legacySecurityWrapper": 1
     },
     "schedule-notification": {},
+    "schema-dumper": {
+      "wildcardCors": 1,
+      "legacySecurityWrapper": 1
+    },
     "scrape-jobs": {
       "wildcardCors": 1,
-      "inconsistentErrors": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "inconsistentErrors": 1
     },
     "screen-incoming-call": {},
     "search-alerts-notifier": {
@@ -333,10 +440,13 @@
       "serviceRoleWithoutAuth": 1,
       "legacySecurityWrapper": 1
     },
+    "search-memory": {
+      "wildcardCors": 1
+    },
     "search-suggestions": {
       "wildcardCors": 1,
-      "inconsistentErrors": 1,
-      "legacySecurityWrapper": 1
+      "jsonWithoutValidation": 1,
+      "inconsistentErrors": 1
     },
     "send-broadcast-email": {
       "wildcardCors": 1,
@@ -356,6 +466,12 @@
     "send-digest-notifications": {},
     "send-invite": {
       "wildcardCors": 1,
+      "legacySecurityWrapper": 1
+    },
+    "send-missed-call": {
+      "wildcardCors": 1,
+      "highValueWithoutRateLimit": 1,
+      "highValueWithoutAudit": 1,
       "legacySecurityWrapper": 1
     },
     "send-module-notification": {
@@ -386,32 +502,25 @@
       "legacySecurityWrapper": 1
     },
     "smart-compose": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "smart-notification-orchestrator": {
       "wildcardCors": 1,
       "highValueWithoutRateLimit": 1,
-      "inconsistentErrors": 1,
-      "legacySecurityWrapper": 1
+      "inconsistentErrors": 1
     },
     "smart-push-engine": {
       "wildcardCors": 1,
-      "highValueWithoutRateLimit": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1,
+      "highValueWithoutAuth": 1
     },
     "summarize-chat": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "symptom-checker": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
-    "sync-google-contacts": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
-    },
+    "sync-contacts": {},
     "sync-health-data": {
       "wildcardCors": 1,
       "highValueWithoutRateLimit": 1,
@@ -422,8 +531,7 @@
       "legacySecurityWrapper": 1
     },
     "translate-message": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "universal-ai-search": {
       "wildcardCors": 1,
@@ -433,7 +541,7 @@
     "universal-search": {},
     "universal-search-engine": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1
     },
     "update-location": {
       "wildcardCors": 1,
@@ -441,13 +549,15 @@
       "legacySecurityWrapper": 1
     },
     "verify-micro-task": {},
+    "visual-intelligence": {
+      "wildcardCors": 1
+    },
     "visual-search": {
       "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "serviceRoleWithoutAuth": 1
     },
     "web-search-aggregator": {
-      "wildcardCors": 1,
-      "legacySecurityWrapper": 1
+      "wildcardCors": 1
     },
     "webrtc-signaling": {
       "wildcardCors": 1,

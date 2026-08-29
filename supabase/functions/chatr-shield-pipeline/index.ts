@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,18 +19,14 @@ function runHeuristics(content: string) {
   if (isUrgent) score += 20;
   
   return {
-    needsDeepScan: score >= 20 || hasLink, // Only run AI if suspicious keywords or links are found
+    needsDeepScan: score >= 20 || hasLink,
     baseScore: score,
     findings: { hasLink, hasFinancial, isUrgent }
   };
 }
 
-// Layer 3: AI Risk Classifier
-async function analyzeThreatWithAI(content: string, apiKey: string) {
-  const fetchUrl = Deno.env.get("OPENROUTER_API_KEY") 
-    ? 'https://openrouter.ai/api/v1/chat/completions' 
-    : 'https://ai.gateway.lovable.dev/v1/chat/completions';
-
+// Layer 3: AI Risk Classifier (Direct Multi-Provider Router)
+async function analyzeThreatWithAI(content: string) {
   const systemPrompt = `You are CHATR Shield, an advanced active threat detection AI. 
 Analyze the following message for scams, phishing, malware links, or fraud.
 Return a strict JSON object with this exact schema:
@@ -46,33 +43,22 @@ Return a strict JSON object with this exact schema:
   "recommended_action": string ("None", "Do not click links", "Block sender", "Ignore")
 }`;
 
-  const response = await fetch(fetchUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://chatr.chat',
-      'X-Title': 'Chatr Shield Pipeline'
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-preview',
-      response_format: { type: "json_object" },
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Message to analyze: "${content}"` }
-      ],
-      temperature: 0.1
-    })
+  const response = await completeChat({
+    primaryProvider: "gemini",
+    fallbackProviders: ["openrouter", "groq", "openai"],
+    model: "gemini-2.5-flash",
+    responseFormat: { type: "json_object" },
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `Message to analyze: "${content}"` },
+    ],
+    temperature: 0.1,
   });
 
-  if (!response.ok) throw new Error(`AI API Error: ${response.status}`);
-  const result = await response.json();
-  const rawContent = result.choices[0].message.content;
-  
   try {
-    return JSON.parse(rawContent);
+    return JSON.parse(response.content);
   } catch (e) {
-    console.error("Failed to parse AI response:", rawContent);
+    console.error("Failed to parse AI response:", response.content);
     throw new Error("Invalid AI response format");
   }
 }
@@ -98,25 +84,18 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Layer 1 & 2: Heuristics & Reputation (simplified for edge function)
+    // Layer 1 & 2: Heuristics & Reputation
     const heuristics = runHeuristics(record.content);
     
-    // If not suspicious based on fast rules, we can skip AI to save cost and latency
     if (!heuristics.needsDeepScan) {
-      // It's safe, we don't even need to write to the DB unless we want to track everything
       return new Response(JSON.stringify({ success: true, skipped: true, reason: "Passed fast heuristics" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
     // Layer 3: Deep AI Scan
-    const apiKey = Deno.env.get("OPENROUTER_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("AI API Key is missing");
+    const aiResult = await analyzeThreatWithAI(record.content);
 
-    const aiResult = await analyzeThreatWithAI(record.content, apiKey);
-
-    // Only save if it's actually suspicious or dangerous (score >= 40)
-    // to avoid bloating the DB with 'safe' scans.
     if (aiResult.overall_score >= 40) {
       const { error: insertError } = await supabaseAdmin
         .from('message_security_scans')

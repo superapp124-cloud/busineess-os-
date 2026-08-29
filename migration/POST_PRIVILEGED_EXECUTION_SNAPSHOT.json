@@ -1,0 +1,58 @@
+﻿{
+  "snapshot_type": "POST_PRIVILEGED_EXECUTION",
+  "snapshot_timestamp": "2026-08-29T08:59:00Z",
+  "target_project": {
+    "ref": "cenxckpxaqborfqyexot",
+    "name": "chatr-core",
+    "db_host": "db.cenxckpxaqborfqyexot.supabase.co",
+    "pg_version": "17.6",
+    "region": "ap-southeast-2",
+    "status": "ACTIVE_HEALTHY"
+  },
+  "auth_users_post": {
+    "count": 16,
+    "pre_write_count": 8,
+    "provisioned_count": 8,
+    "records": [
+      {"id": "a2a132ca-851f-432c-ae48-6651a1dfe24f", "phone": "919717845477", "status": "PRESERVED"},
+      {"id": "9121dd4c-4c95-4430-b391-e34df061c8f5", "phone": "919910000000", "status": "PRESERVED"},
+      {"id": "86bcc4eb-02ec-44b2-bb36-b5124bedaa02", "phone": "919717100000", "status": "PRESERVED"},
+      {"id": "686eb0cb-acdb-4870-8796-c81d60c8da89", "email": "919717845477@chatr.local", "status": "PRESERVED"},
+      {"id": "e8ac8840-d27f-44dc-a540-b51dd8a2366e", "email": "919999999999@chatr.local", "status": "PRESERVED"},
+      {"id": "96ab4b28-a72b-4144-a3ee-1c86edcb4420", "email": "919717100000@chatr.local", "status": "PRESERVED"},
+      {"id": "f74da4b3-770f-46a5-8a93-f0db5a747332", "email": "919818900000@chatr.local", "status": "PRESERVED"},
+      {"id": "9a38b1ac-3732-4ba3-8e63-096d48c0fd0b", "phone": "919818900000", "status": "PRESERVED"},
+      {"id": "91ff8778-47d8-450c-8020-fffd3f6337e0", "phone": "919910678611", "name": "Arshid Wani", "status": "PROVISIONED"},
+      {"id": "b2693451-9d88-460d-a3ed-a18191479570", "phone": "919953969216", "name": "Vishal Sharma", "status": "PROVISIONED"},
+      {"id": "1e0f6993-8eb7-4a00-a085-b42449030f6b", "phone": "919927262367", "name": "Gaurav Verma", "status": "PROVISIONED"},
+      {"id": "a0ab42a8-ff46-4b65-a3d3-f832cfa4b82b", "phone": "918887814765", "name": "MD Vasim", "status": "PROVISIONED"},
+      {"id": "f88cd99d-0da7-4328-aec7-f920ef422e85", "phone": null, "name": "Sanayah Arshid", "status": "PROVISIONED"},
+      {"id": "737c6b36-6e2e-445d-a052-4a8b86e30f34", "phone": "919700000001", "name": "Superapp 124", "status": "PROVISIONED"},
+      {"id": "aa00c5f7-3aa6-4653-833d-dd185adfad4f", "phone": "919700000002", "name": "Chatr Support", "status": "PROVISIONED"},
+      {"id": "39debcea-c732-4499-a195-bd435d323386", "phone": "919700000003", "name": "TalentXcel Services", "status": "PROVISIONED"}
+    ]
+  },
+  "table_row_counts_post": {
+    "users": 16, "profiles": 16, "conversations": 2, "messages": 4,
+    "conversation_participants": 4, "contacts": 0, "calls": 0,
+    "notifications": 0, "user_devices": 3, "trusted_devices": 3,
+    "ai_memory": 0, "ai_sessions": 0, "meetings": 0, "organizations": 0,
+    "audit_logs": 0, "storage_metadata": 0, "super_admin_allowlist": 2
+  },
+  "super_admin_post": {
+    "allowlist_exists": true,
+    "function_exists": true,
+    "allowlist_entries": ["9910678611 (Arshid Wani, active)", "9717845477 (Sanobar Jahan, active)"],
+    "is_super_admin_arshid": true,
+    "is_super_admin_sanobar": true,
+    "is_super_admin_non_authorized": false
+  },
+  "storage_buckets_post": [{"id": "chat_attachments", "public": false, "file_size_limit": 52428800}],
+  "storage_objects_post": 0,
+  "storage_rls_policies": 4,
+  "views_post": {"profiles": true, "communication_memory": true},
+  "rls_tables_with_rls": 27,
+  "rls_tables_without_rls": 0,
+  "public_rls_policy_count": 49,
+  "destructive_operations_detected": false
+}

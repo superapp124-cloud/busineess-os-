@@ -18,6 +18,7 @@ export const usePlatform = (): Platform => useContext(PlatformContext);
 import { SplashScreen } from "@capacitor/splash-screen";
 import { HelmetProvider } from 'react-helmet-async';
 import ProtectedRoute from "./components/ProtectedRoute";
+import { SuperAdminGuard } from "./components/SuperAdminGuard";
 import { NativeAppProvider } from "./components/NativeAppProvider";
 import { LocationProvider } from "./contexts/LocationContext";
 import { initializeCapabilities } from "./core/capabilities/init";
@@ -97,7 +98,10 @@ const CustomerSuccessOSDashboard = React.lazy(() => import("./components/Custome
 const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
 const PermanentMarketingOS = React.lazy(() => import("./pages/desktop/PermanentMarketingOS"));
+const MediaDistributionControlCenter = React.lazy(() => import("./pages/desktop/MediaDistributionControlCenter").then(m => ({ default: m.MediaDistributionControlCenter })));
+const AIHubPage = React.lazy(() => import("./pages/AIHub").then(m => ({ default: m.AIHub })));
 const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));
+
 
 // Public Knowledge Hub — Blog & News (/blog, /news)
 const BlogHubPage = React.lazy(() => import("./pages/public/BlogHubPage").then(m => ({ default: m.BlogHubPage })));
@@ -594,9 +598,10 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <DeferredGlobalServices />
  <GlobalBackHandler />
  <Routes>
-  {/* Developer & Direct Integrations Routes */}
-  <Route path="/dev" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
-  <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
+   {/* Developer & Direct Integrations Routes */}
+   <Route path="/dev" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
+   <Route path="/media-distribution" element={<SuperAdminGuard><Suspense fallback={<PageLoader message="Verifying Super Admin Authorization..." />}><MediaDistributionControlCenter /></Suspense></SuperAdminGuard>} />
+   <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
   <Route path="/oauth/callback" element={<Suspense fallback={<PageLoader message="Authenticating..." />}><OAuthCallback /></Suspense>} />
   <Route path="/design-system" element={<Suspense fallback={<PageLoader message="Loading CXS Design System..." />}><DesignSystemPlayground /></Suspense>} />
   <Route path="/finance" element={<Navigate to="/desktop/finance" replace />} />
@@ -625,6 +630,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
   <Route path="growth-os" element={<LazyRoute component={GrowthOSDashboard} />} />
   <Route path="marketing-os" element={<LazyRoute component={PermanentMarketingOS} />} />
+  <Route path="media-distribution" element={<SuperAdminGuard><Suspense fallback={<PageLoader message="Verifying Super Admin Authorization..." />}><MediaDistributionControlCenter /></Suspense></SuperAdminGuard>} />
+  <Route path="ai-hub" element={<Suspense fallback={<PageLoader message="Loading AI Training Hub..." />}><AIHubPage /></Suspense>} />
   <Route path="revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />

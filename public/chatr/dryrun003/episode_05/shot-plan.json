@@ -1,0 +1,74 @@
+{
+  "videoId": "meera_ep005_1787832090",
+  "totalDurationSec": 25,
+  "mode": "DANCE",
+  "location": "mumbai_bandra",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "mumbai street india",
+      "backgroundType": "mumbai_bandra \u2014 shot 1",
+      "dialogue": "I told myself I wouldn't do this dance",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "india coastal city walking",
+      "backgroundType": "mumbai_bandra \u2014 shot 2",
+      "dialogue": "I lied to myself",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "mumbai urban bandra",
+      "backgroundType": "mumbai_bandra \u2014 shot 3",
+      "dialogue": "Okay I don't know who made Viral Indian pop hook that is taking over every reel but they need to be stopped",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "mumbai street india",
+      "backgroundType": "mumbai_bandra \u2014 shot 4",
+      "dialogue": "In the best possible way",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 5,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "india coastal city walking",
+      "backgroundType": "mumbai_bandra \u2014 shot 5",
+      "dialogue": "Main serious hoon",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

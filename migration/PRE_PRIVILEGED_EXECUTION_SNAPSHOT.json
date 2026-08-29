@@ -1,0 +1,38 @@
+﻿{
+  "snapshot_type": "PRE_PRIVILEGED_EXECUTION",
+  "snapshot_timestamp": "2026-08-29T08:40:00Z",
+  "target_project": {
+    "ref": "cenxckpxaqborfqyexot",
+    "name": "chatr-core",
+    "db_host": "db.cenxckpxaqborfqyexot.supabase.co",
+    "pg_version": "17.6",
+    "region": "ap-southeast-2",
+    "status": "ACTIVE_HEALTHY"
+  },
+  "auth_users_pre_write": {
+    "count": 8,
+    "records": [
+      {"id": "a2a132ca-851f-432c-ae48-6651a1dfe24f", "phone": "919717845477", "email": null},
+      {"id": "9121dd4c-4c95-4430-b391-e34df061c8f5", "phone": "919910000000", "email": null},
+      {"id": "86bcc4eb-02ec-44b2-bb36-b5124bedaa02", "phone": "919717100000", "email": null},
+      {"id": "686eb0cb-acdb-4870-8796-c81d60c8da89", "phone": null, "email": "919717845477@chatr.local"},
+      {"id": "e8ac8840-d27f-44dc-a540-b51dd8a2366e", "phone": null, "email": "919999999999@chatr.local"},
+      {"id": "96ab4b28-a72b-4144-a3ee-1c86edcb4420", "phone": null, "email": "919717100000@chatr.local"},
+      {"id": "f74da4b3-770f-46a5-8a93-f0db5a747332", "phone": null, "email": "919818900000@chatr.local"},
+      {"id": "9a38b1ac-3732-4ba3-8e63-096d48c0fd0b", "phone": "919818900000", "email": null}
+    ]
+  },
+  "table_row_counts_pre": {
+    "users": 8, "profiles": 8, "conversations": 2, "messages": 4,
+    "conversation_participants": 0, "contacts": 0, "calls": 0,
+    "notifications": 0, "user_devices": 3, "trusted_devices": 0,
+    "ai_memory": 0, "ai_sessions": 0, "meetings": 0, "organizations": 0,
+    "audit_logs": 0, "storage_metadata": 0
+  },
+  "super_admin_pre": {"allowlist_exists": false, "function_exists": false},
+  "storage_buckets_pre": [],
+  "rls_tables_with_rls": 26,
+  "rls_tables_without_rls": 0,
+  "views_pre": {"profiles": true, "communication_memory": false},
+  "destructive_operations_detected": false
+}

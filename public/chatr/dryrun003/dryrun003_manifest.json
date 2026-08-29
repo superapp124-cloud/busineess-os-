@@ -1,0 +1,101 @@
+{
+  "batch": "DRY_RUN_003",
+  "creator": "Meera (@meera_wtf)",
+  "completedAt": "2026-08-27T17:35:11.694880",
+  "totalEpisodes": 10,
+  "qualityGatePassedCount": 10,
+  "publishingEnabled": false,
+  "oauthEnabled": false,
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "videoId": "meera_ep001_1787831956",
+      "episodeDir": "public/chatr/dryrun003\\episode_01",
+      "script": "Okay so listen... main kal raat yeh climax dekhi and I was not ready! Okay so listen\u2014 yaar maine kal",
+      "shotsPlanned": 5,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 2,
+      "videoId": "meera_ep002_1787831985",
+      "episodeDir": "public/chatr/dryrun003\\episode_02",
+      "script": "Momos are spiritually important. Main Delhi market se live report de rahi hoon. Maine aaj kuch khaya",
+      "shotsPlanned": 5,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 3,
+      "videoId": "meera_ep003_1787832025",
+      "episodeDir": "public/chatr/dryrun003\\episode_03",
+      "script": "Arjun claims he predicted the entire tech industry in 2018. Sure, Arjun. Something happened. Main de",
+      "shotsPlanned": 4,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 4,
+      "videoId": "meera_ep004_1787832055",
+      "episodeDir": "public/chatr/dryrun003\\episode_04",
+      "script": "Someone commented that I talk too fast. Have you ever tried boarding Rajiv Chowk metro? Okay so Audi",
+      "shotsPlanned": 4,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 5,
+      "videoId": "meera_ep005_1787832090",
+      "episodeDir": "public/chatr/dryrun003\\episode_05",
+      "script": "I told myself I wouldn't do this dance. I lied to myself. Okay I don't know who made Viral Indian po",
+      "shotsPlanned": 5,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 6,
+      "videoId": "meera_ep006_1787832127",
+      "episodeDir": "public/chatr/dryrun003\\episode_06",
+      "script": "People are hiring helicopter paparazzi for weddings now. Meanwhile my tea just got cold. The most un",
+      "shotsPlanned": 5,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 7,
+      "videoId": "meera_ep007_1787832161",
+      "episodeDir": "public/chatr/dryrun003\\episode_07",
+      "script": "Monsoon in Bollywood: romantic violin. Monsoon in Delhi: why is there a lake outside my PG? Delhi mo",
+      "shotsPlanned": 5,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 8,
+      "videoId": "meera_ep008_1787832206",
+      "episodeDir": "public/chatr/dryrun003\\episode_08",
+      "script": "We said a quiet dinner. How did we end up stranded at 2 AM looking for ice cream? Meri ek friend ne ",
+      "shotsPlanned": 4,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 9,
+      "videoId": "meera_ep009_1787832249",
+      "episodeDir": "public/chatr/dryrun003\\episode_09",
+      "script": "I thrift my clothes for 300 rupees. Explain this 8-lakh gown that looks like bubble wrap. Okay so Un",
+      "shotsPlanned": 4,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    },
+    {
+      "episodeNumber": 10,
+      "videoId": "meera_ep010_1787832330",
+      "episodeDir": "public/chatr/dryrun003\\episode_10",
+      "script": "Late night acoustic session. Pure melody, no autotune, just vibes. This song has been in my head for",
+      "shotsPlanned": 4,
+      "qualityGatePassed": true,
+      "state": "GATE_CHECKED"
+    }
+  ]
+}

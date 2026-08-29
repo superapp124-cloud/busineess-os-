@@ -1,0 +1,35 @@
+{
+  "source_project_id": "sbayuqgomlflmxgicplz",
+  "source_url": "https://sbayuqgomlflmxgicplz.supabase.co",
+  "source_type": "HISTORICAL_LOVABLE_CONNECTED_BACKEND",
+  "live_status": "INACTIVE_LEGACY_PAUSED",
+  "auth_users_count": 24,
+  "canonical_identities_count": 24,
+  "historical_tables_count": 14,
+  "historical_tables": [
+    "users",
+    "profiles",
+    "user_devices",
+    "conversations",
+    "messages",
+    "contacts",
+    "attachments",
+    "calls",
+    "notifications",
+    "stories",
+    "communication_memory",
+    "user_settings",
+    "meetings",
+    "organizations"
+  ],
+  "storage_buckets_count": 6,
+  "storage_buckets": [
+    "avatars",
+    "chat_attachments",
+    "stories",
+    "media",
+    "voice_notes",
+    "documents"
+  ],
+  "vector_embeddings_dimension": 768
+}

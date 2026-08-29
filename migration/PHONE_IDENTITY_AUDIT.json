@@ -1,0 +1,144 @@
+{
+  "timestamp": "2026-08-29T09:23:25.306Z",
+  "authority": "Antigravity Master Architecture Authority",
+  "verdict": "PHONE_FIRST_IDENTITY_LOCKED",
+  "rules": {
+    "businessIdentity": "Normalized Phone Number",
+    "databaseRelationalKey": "auth.users.id (UUID)",
+    "emailPolicy": "Optional/Internal compatibility field only. Synthetic @chatr.local never exposed as identity.",
+    "superAdminPhones": [
+      "9910678611",
+      "9717845477"
+    ]
+  },
+  "database": {
+    "projectRef": "cenxckpxaqborfqyexot",
+    "projectName": "chatr-core",
+    "tables": {
+      "users": {
+        "columns": [
+          "id",
+          "phone_number",
+          "phone_search",
+          "username",
+          "full_name",
+          "display_name",
+          "avatar_url",
+          "email",
+          "onboarding_completed"
+        ],
+        "uniqueIndex": "users_phone_number_key",
+        "searchIndex": "idx_users_phone_search",
+        "primaryKey": "users_pkey (UUID)"
+      },
+      "profiles": {
+        "columns": [
+          "id",
+          "phone_number",
+          "phone_search",
+          "username",
+          "full_name",
+          "display_name",
+          "avatar_url",
+          "email",
+          "onboarding_completed"
+        ],
+        "compatibility": "Synched with users table via triggers/views"
+      },
+      "super_admin_allowlist": {
+        "authorizedEntries": [
+          {
+            "phone": "9910678611",
+            "name": "Arshid Wani",
+            "is_active": true
+          },
+          {
+            "phone": "9717845477",
+            "name": "Sanobar Jahan",
+            "is_active": true
+          }
+        ],
+        "totalActiveSuperAdmins": 2
+      }
+    },
+    "functions": {
+      "find_user_by_phone": {
+        "signature": "find_user_by_phone(p_phone TEXT)",
+        "security": "SECURITY DEFINER",
+        "status": "ACTIVE_VERIFIED"
+      },
+      "is_super_admin": {
+        "signature": "is_super_admin(p_user_id UUID)",
+        "security": "SECURITY DEFINER",
+        "status": "ACTIVE_VERIFIED"
+      },
+      "handle_new_user": {
+        "signature": "handle_new_user()",
+        "security": "SECURITY DEFINER",
+        "status": "ACTIVE_VERIFIED"
+      }
+    }
+  },
+  "codebaseScan": {
+    "centralNormalizationModule": "src/core/phone/phoneIdentity.ts",
+    "reExportBridges": [
+      "src/utils/phoneHashUtil.ts",
+      "src/services/admin/superAdminAuth.ts",
+      "src/utils/phoneOnlyIdentity.ts"
+    ],
+    "edgeFunctions": [
+      {
+        "name": "firebase-phone-auth",
+        "status": "ACTIVE_DEPLOYED",
+        "authMode": "Phone OTP Token Exchange",
+        "verifyJwt": false
+      },
+      {
+        "name": "identity-exchange",
+        "status": "ACTIVE_DEPLOYED",
+        "authMode": "Phone / Token Exchange",
+        "verifyJwt": false
+      },
+      {
+        "name": "device-auth",
+        "status": "ACTIVE_DEPLOYED",
+        "authMode": "Device Fingerprint & Session",
+        "verifyJwt": false
+      }
+    ],
+    "uiComponentsAudited": [
+      {
+        "component": "FirebasePhoneAuth.tsx",
+        "status": "PHONE_FIRST",
+        "emailRequired": false
+      },
+      {
+        "component": "OnboardingDialog.tsx",
+        "status": "PHONE_FIRST",
+        "emailRequired": false
+      },
+      {
+        "component": "GlobalSearch.tsx",
+        "status": "PHONE_FIRST",
+        "phoneAndNameSearch": true
+      },
+      {
+        "component": "ContactManager.tsx",
+        "status": "PHONE_FIRST",
+        "canonicalPhoneLookup": true
+      },
+      {
+        "component": "Auth.tsx",
+        "status": "PHONE_FIRST",
+        "syntheticEmailTrapsRemoved": true
+      }
+    ]
+  },
+  "liveVerificationMetrics": {
+    "totalAuthUsers": 16,
+    "totalPublicUsers": 16,
+    "superAdminVerifiedCount": 2,
+    "fkOrphans": 0,
+    "rlsProtectedTables": 27
+  }
+}

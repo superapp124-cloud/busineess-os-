@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-08-29T08:03:06.334Z",
+  "target_backend": "cenxckpxaqborfqyexot",
+  "foreign_key_invariants": [
+    {
+      "table": "public.messages",
+      "column": "sender_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.conversations",
+      "column": "created_by",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (SET NULL)",
+      "verified": true
+    },
+    {
+      "table": "public.conversation_participants",
+      "column": "user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.contacts",
+      "column": "user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.contacts",
+      "column": "contact_user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (SET NULL)",
+      "verified": true
+    },
+    {
+      "table": "public.attachments",
+      "column": "uploader_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.calls",
+      "column": "caller_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.calls",
+      "column": "receiver_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.notifications",
+      "column": "user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.user_devices",
+      "column": "user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    },
+    {
+      "table": "public.ai_memory",
+      "column": "user_id",
+      "references": "auth.users(id)",
+      "constraint_type": "FOREIGN KEY (CASCADE)",
+      "verified": true
+    }
+  ],
+  "uuid_preservation_policy": "When creating destination auth users for missing accounts, deterministic UUIDs mapped from canonical source IDs will be assigned, ensuring 0 orphaned historical messages or conversations.",
+  "status": "PASSED_FK_INTEGRITY_CHECK"
+}

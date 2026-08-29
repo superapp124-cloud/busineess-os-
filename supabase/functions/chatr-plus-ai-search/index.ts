@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,74 +13,61 @@ serve(async (req) => {
 
   try {
     const { query } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY not configured");
-    }
+    const response = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant for Chatr+, a superapp for local services in India. 
+When users search for something, analyze their intent and suggest relevant service categories and keywords.
 
-    // Use AI to understand search intent and suggest relevant services
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: `You are an AI assistant for Chatr+, a superapp for local services in India. 
-            When users search for something, analyze their intent and suggest relevant service categories and keywords.
-            
-            Available categories:
-            - Food & Dining: restaurants, home food, chai, biryani, cafes
-            - Home Services: plumbers, electricians, cleaners, carpenters, repairs
-            - Healthcare: doctors, dentists, clinics, labs, consultations
-            - Beauty & Wellness: salons, spas, massage, beauty treatments
-            - Local Jobs: hire helpers, drivers, maids, gig workers
-            - Education: tutors, coaching, skill training
-            - Business Tools: mini-apps, listings, dashboards
-            
-            Return a JSON object with:
-            {
-              "category": "most relevant category",
-              "keywords": ["keyword1", "keyword2", "keyword3"],
-              "intent": "brief description of what user wants",
-              "suggestions": ["service suggestion 1", "service suggestion 2"]
-            }`
-          },
-          {
-            role: "user",
-            content: query
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 300
-      }),
+Available categories:
+- Food & Dining: restaurants, home food, chai, biryani, cafes
+- Home Services: plumbers, electricians, cleaners, carpenters, repairs
+- Healthcare: doctors, dentists, clinics, labs, consultations
+- Beauty & Wellness: salons, spas, massage, beauty treatments
+- Local Jobs: hire helpers, drivers, maids, gig workers
+- Education: tutors, coaching, skill training
+- Business Tools: mini-apps, listings, dashboards
+
+Return a JSON object with:
+{
+  "category": "most relevant category",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "intent": "brief description of what user wants",
+  "suggestions": ["service suggestion 1", "service suggestion 2"]
+}`
+        },
+        {
+          role: "user",
+          content: query
+        }
+      ],
+      temperature: 0.7,
+      maxTokens: 300
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("AI API error:", response.status, errorText);
-      throw new Error("AI service unavailable");
-    }
-
-    const aiData = await response.json();
-    const aiContent = aiData.choices?.[0]?.message?.content;
+    const aiContent = response.content;
 
     let parsedResult;
     try {
       parsedResult = JSON.parse(aiContent);
     } catch {
-      // If AI doesn't return valid JSON, create a basic response
-      parsedResult = {
-        category: "general",
-        keywords: [query],
-        intent: query,
-        suggestions: []
-      };
+      const match = aiContent.match(/\{[\s\S]*\}/);
+      if (match) {
+        parsedResult = JSON.parse(match[0]);
+      } else {
+        parsedResult = {
+          category: "general",
+          keywords: [query],
+          intent: query,
+          suggestions: []
+        };
+      }
     }
 
     return new Response(

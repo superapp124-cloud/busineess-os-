@@ -1,0 +1,48 @@
+{
+  "target_backend": "cenxckpxaqborfqyexot",
+  "buckets": [
+    {
+      "name": "chat_attachments",
+      "public": false,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "VERIFIED_DEPLOYED"
+    },
+    {
+      "name": "avatars",
+      "public": true,
+      "file_size_limit": "5MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "stories",
+      "public": true,
+      "file_size_limit": "10MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "media",
+      "public": true,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "voice_notes",
+      "public": false,
+      "file_size_limit": "20MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    },
+    {
+      "name": "documents",
+      "public": false,
+      "file_size_limit": "50MB",
+      "rls": "ENFORCED",
+      "status": "ADDITIVE_CANDIDATE"
+    }
+  ],
+  "deletion_policy": "ZERO deletions — All storage objects and buckets protected"
+}

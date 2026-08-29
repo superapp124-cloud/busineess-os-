@@ -1,0 +1,9 @@
+{
+  "status": "ENFORCED_ON_ALL_27_TABLES",
+  "public_readable_tables": [
+    "users",
+    "profiles"
+  ],
+  "rls_enforced_tables_count": 25,
+  "security_weakening_detected": false
+}

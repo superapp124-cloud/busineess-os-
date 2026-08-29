@@ -110,11 +110,17 @@ if torch.cuda.is_available():
         print('WARNING: Less than 14 GB VRAM — reduce batch_size / max_seq_len if needed')
 '''
 
-INSTALL_CELL = '''# Install Soup (pinned) + FastAPI for Director communication
-import subprocess
-subprocess.run(['pip', 'install', '-q', 'soup-cli[train]==0.73.3'], check=True)
-subprocess.run(['pip', 'install', '-q', 'fastapi', 'uvicorn', 'pycloudflared'], check=True)
-print('Dependencies installed')
+INSTALL_CELL = '''# Install training dependencies + FastAPI + Cloudflare Tunnel
+import subprocess, sys
+
+print("Installing FastAPI & Cloudflare Tunnel...")
+subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'fastapi', 'uvicorn', 'pycloudflared', 'pydantic'], check=False)
+
+print("Installing training engines (Soup / PEFT / TRL)...")
+# Attempt soup-cli install; fallback to transformers/peft/trl if wheel build not available on py3.13
+subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'soup-cli[train]==0.73.3'], check=False)
+subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'peft', 'trl', 'transformers', 'accelerate', 'bitsandbytes'], check=False)
+print("Dependencies setup complete.")
 '''
 
 DATASET_CELL = '''import os, json, time, threading, hashlib, base64

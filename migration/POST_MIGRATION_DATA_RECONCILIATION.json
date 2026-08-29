@@ -1,0 +1,7 @@
+{
+  "status": "MIGRATION BLOCKED",
+  "reason": "Administrative credentials required for direct database writes to auth.users and SQL execution",
+  "live_production_tables_preserved": 27,
+  "destructive_operations": 0,
+  "data_loss": 0
+}

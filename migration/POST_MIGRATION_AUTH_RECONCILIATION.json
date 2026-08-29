@@ -1,0 +1,19 @@
+{
+  "status": "MIGRATION BLOCKED",
+  "blocker": "Direct write to auth.users requires SUPABASE_SERVICE_ROLE_KEY",
+  "canonical_population_total": 24,
+  "destination_before_count": 8,
+  "existing_users_preserved": 6,
+  "new_users_ready_for_provisioning": 18,
+  "priority_1_super_admin": {
+    "name": "Arshid Wani",
+    "phone": "+919910678611",
+    "email": "arsh.wani@gmail.com",
+    "role": "super_admin"
+  },
+  "authorized_super_admins": [
+    "9910678611",
+    "9717845477"
+  ],
+  "quarantined_identity": "971161809"
+}

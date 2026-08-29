@@ -1,0 +1,30 @@
+{
+  "total_local_intended_functions": 170,
+  "critical_functions_audit": [
+    {
+      "name": "handle_new_user",
+      "role": "auth.users sync trigger",
+      "status": "MATCHED_DEPLOYED"
+    },
+    {
+      "name": "is_super_admin",
+      "role": "RBAC security definer",
+      "status": "MISSING_IN_REMOTE"
+    },
+    {
+      "name": "match_communication_memory",
+      "role": "vector HNSW cosine search",
+      "status": "MISSING_IN_REMOTE"
+    },
+    {
+      "name": "match_messages",
+      "role": "full text search",
+      "status": "MISSING_IN_REMOTE"
+    },
+    {
+      "name": "sync_contacts",
+      "role": "e164 contact graph builder",
+      "status": "MISSING_IN_REMOTE"
+    }
+  ]
+}

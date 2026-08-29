@@ -1,0 +1,15 @@
+{
+  "status": "MIGRATION BLOCKED",
+  "deployed_buckets": [
+    "chat_attachments"
+  ],
+  "candidate_buckets": [
+    "avatars",
+    "stories",
+    "media",
+    "voice_notes",
+    "documents"
+  ],
+  "deleted_objects": 0,
+  "blocker": "Direct bucket provisioning requires administrative credentials"
+}

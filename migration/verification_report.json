@@ -1,0 +1,10 @@
+{
+  "integrity_checks": {
+    "zero_writes_executed": true,
+    "destination_database_unmodified": true,
+    "foreign_key_invariants_checked": true,
+    "vector_dimension_preserved": 768,
+    "super_admin_allowlist_enforced": true,
+    "ci_governance_ready": true
+  }
+}

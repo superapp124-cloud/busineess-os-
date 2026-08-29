@@ -1,0 +1,21 @@
+{
+  "authoritative_router": "supabase/functions/_core/aiProvider.ts",
+  "router_status": "VERIFIED_COMPILING",
+  "capabilities": [
+    "completeChat()",
+    "streamChat()",
+    "generateEmbedding()",
+    "generateImage()",
+    "chatCompletionJson()"
+  ],
+  "active_providers": {
+    "primary_chat": "Google Gemini 2.5 Flash",
+    "fast_chat_fallback": "Groq Cloud (llama-3.3-70b-versatile)",
+    "deep_reasoning_fallback": "OpenRouter / OpenAI",
+    "embeddings": "Google Gemini text-embedding-004 (768 dimensions)"
+  },
+  "scanned_edge_functions": 136,
+  "lovable_ai_gateway_runtime_references": 0,
+  "lovable_api_runtime_references": 0,
+  "lovable_api_key_runtime_references": 0
+}

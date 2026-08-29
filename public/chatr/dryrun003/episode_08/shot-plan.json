@@ -1,0 +1,61 @@
+{
+  "videoId": "meera_ep008_1787832206",
+  "totalDurationSec": 19,
+  "mode": "TALK",
+  "location": "home_room",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 3,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "india bedroom cozy interior",
+      "backgroundType": "home_room \u2014 hook",
+      "dialogue": "We said a quiet dinner",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Natural camera movement. Background has ambient motion.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "india interior living room warm",
+      "backgroundType": "home_room \u2014 reaction",
+      "dialogue": "How did we end up stranded at 2 AM looking for ice cream",
+      "emotionalBeat": "amused",
+      "charactersPresent": [],
+      "motionNotes": "Meera's expression changes mid-shot.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 6,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "walking_toward_camera",
+      "backgroundVideoQuery": "warm room interior india",
+      "backgroundType": "home_room \u2014 walking",
+      "dialogue": "Meri ek friend ne mujhe yeh story sunaayi aur tab se main is baare mein soch rahi hoon",
+      "emotionalBeat": "conspiratorial",
+      "charactersPresent": [],
+      "motionNotes": "Background scrolls, natural camera shake while walking.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "medium_shot_fixed",
+      "meeraAction": "looking_skeptical",
+      "backgroundVideoQuery": "india bedroom cozy interior",
+      "backgroundType": "home_room \u2014 payoff",
+      "dialogue": "Confirm karo please",
+      "emotionalBeat": "deadpan",
+      "charactersPresent": [],
+      "motionNotes": "One eyebrow up. Holds eye contact.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

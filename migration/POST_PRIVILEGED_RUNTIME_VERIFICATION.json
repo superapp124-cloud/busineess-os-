@@ -1,0 +1,20 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_RUNTIME_VERIFICATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "app_runtime_url": "https://cenxckpxaqborfqyexot.supabase.co",
+  "legacy_url_references_in_runtime": 0,
+  "files_verified": [
+    "src/integrations/supabase/client.ts",
+    "src/core/connector/SupabaseConnectorHub.ts",
+    "src/hooks/useFirebasePhoneAuth.tsx",
+    "src/utils/avatarResolver.ts",
+    "src/utils/instantAppShell.ts",
+    "src/utils/hybridAppOptimizations.ts",
+    "android/app/build.gradle.kts"
+  ],
+  "typescript_check": {"result": "PASS", "errors": 0},
+  "edge_functions_audit": {"result": "PASS", "total_functions": 136, "legacy_dependencies": 0},
+  "lint_governance": {"result": "PASS", "exit_code": 0},
+  "production_domains": ["chatr.chat", "chatrchat.in"],
+  "result": "PASS"
+}

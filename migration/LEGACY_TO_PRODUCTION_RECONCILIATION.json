@@ -1,0 +1,169 @@
+{
+  "reconciliation_type": "LEGACY_TO_PRODUCTION_RECONCILIATION",
+  "timestamp": "2026-08-29T09:11:32.784Z",
+  "source_project": {
+    "ref": "sbayuqgomlflmxgicplz",
+    "status": "ONLINE_READ_ONLY_INVENTORY_CAPTURED"
+  },
+  "destination_project": {
+    "ref": "cenxckpxaqborfqyexot",
+    "name": "chatr-core",
+    "status": "PERMANENT_PRODUCTION_ACTIVE"
+  },
+  "counts_comparison": {
+    "auth_users": {
+      "source_active": 12,
+      "production_active": 16,
+      "delta": "+4 in prod (newly provisioned)"
+    },
+    "conversations": {
+      "source": 17,
+      "production": 2,
+      "net_eligible_migration": 17
+    },
+    "conversation_participants": {
+      "source": 26,
+      "production": 4,
+      "net_eligible_migration": 26
+    },
+    "messages": {
+      "source": 1031,
+      "production": 4,
+      "net_eligible_migration": 1031
+    },
+    "contacts": {
+      "source": 2078,
+      "production": 0,
+      "net_eligible_migration": 2078
+    },
+    "calls": {
+      "source": 9927,
+      "production": 0,
+      "net_eligible_migration": 9927
+    },
+    "session_rooms": {
+      "source": 41,
+      "production": 0,
+      "net_eligible_migration": 41
+    },
+    "user_devices": {
+      "source": 6,
+      "production": 3,
+      "net_eligible_migration": 6
+    },
+    "ai_agents": {
+      "source": 1,
+      "production": 0,
+      "net_eligible_migration": 1
+    }
+  },
+  "classification": {
+    "category_A_already_exists_and_preserved": [
+      "Production 16 Auth Users (including Arshid Wani UUID 91ff8778, Sanobar Jahan UUID a2a132ca)",
+      "Production 2 Native Conversations",
+      "Production 4 Native Messages",
+      "Production 3 Native User Devices",
+      "Production Super Admin Allowlist (2 entries)"
+    ],
+    "category_B_missing_from_production_eligible_for_migration": [
+      "1031 Historical Messages (2025-10 to 2026-08)",
+      "2078 Address Book Contacts (Arshid Wani's device sync)",
+      "9927 Historical Call Logs",
+      "17 Historical Conversations",
+      "26 Conversation Participant records",
+      "41 Historical Session Rooms",
+      "1 Custom AI Agent ('Sanobar')"
+    ],
+    "category_C_uuid_conflicts": [],
+    "category_D_identity_conflicts": [
+      {
+        "issue": "Arshid Wani legacy Auth UUID (63c1d4e4-bd98-4683-9a16-1182b5d0ded8) differs from Production Auth UUID (91ff8778-47d8-450c-8020-fffd3f6337e0)",
+        "resolution": "Map sender_id, user_id, created_by, caller_id from 63c1d4e4 to 91ff8778 deterministically during migration so all historical records attach cleanly to production user."
+      }
+    ],
+    "category_E_duplicates": [],
+    "category_F_invalid_or_orphaned": [
+      "Contacts with blank phone and empty contact_user_id (to be validated before import)",
+      "Quarantined fragment 971161809 (excluded)"
+    ],
+    "category_G_requires_manual_review": [
+      "Unconfirmed phone numbers for 6 team identities (Priya, Pooja, Amit, Aasim, Rahul, Rajesh)",
+      "8 TalentXcel demo migration SQL files in local repository"
+    ]
+  },
+  "user_mapping": {
+    "authoritative_arshid_wani_remapping": {
+      "source_uuid": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+      "production_uuid": "91ff8778-47d8-450c-8020-fffd3f6337e0",
+      "phone": "+919910678611",
+      "email": "919910678611@chatr.local",
+      "action": "REMAP_FOREIGN_KEYS_TO_PRODUCTION_UUID"
+    },
+    "remaining_source_user_uuids": [
+      {
+        "uuid": "29f65ca9-a811-492b-b024-09689a44dbf0",
+        "role": "participant / automated agent",
+        "messages": 448,
+        "calls": 6310
+      },
+      {
+        "uuid": "65b871c5-4f95-459e-8be5-230d99c011cd",
+        "role": "participant",
+        "messages": 270,
+        "calls": 2889
+      },
+      {
+        "uuid": "a9fe1864-7f68-40dc-8ef2-2d6db86cbf1b",
+        "role": "participant",
+        "messages": 58,
+        "calls": 679
+      },
+      {
+        "uuid": "ddaa5b15-13e2-40aa-a7fd-acc3b935daaa",
+        "role": "participant",
+        "calls": 32
+      },
+      {
+        "uuid": "37d4584c-7b4c-49ee-b9ea-17bfa5d6c3fc",
+        "role": "conversation creator",
+        "calls": 6
+      },
+      {
+        "uuid": "483b392d-c209-4405-82fe-c0a7aa9b0a4f",
+        "role": "participant",
+        "calls": 3
+      },
+      {
+        "uuid": "39c824d8-2f62-4f42-a1a7-324d4704dbc0",
+        "role": "participant",
+        "calls": 3
+      },
+      {
+        "uuid": "7618c787-2151-4be0-b583-6fe4c8073284",
+        "role": "participant",
+        "calls": 2
+      },
+      {
+        "uuid": "68cbb06d-89bb-4013-8b2c-6f3613914a6f",
+        "role": "participant",
+        "calls": 1
+      },
+      {
+        "uuid": "9a21fa06-195c-4bc8-8217-4cdb877ada4a",
+        "role": "participant",
+        "calls": 1
+      },
+      {
+        "uuid": "ff25a97c-64e8-408b-be2e-264b71ed64c3",
+        "role": "participant",
+        "calls": 1
+      }
+    ]
+  },
+  "safety_check": {
+    "import_authorized_in_this_phase": false,
+    "production_modifications_made": 0,
+    "legacy_modifications_made": 0,
+    "verdict": "READ-ONLY FORENSIC EXTRACTION COMPLETE"
+  }
+}

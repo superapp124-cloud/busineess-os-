@@ -58,41 +58,43 @@ const GlobalSearch = ({ open, onClose, onNavigate, currentUserId }: GlobalSearch
  .ilike('content', `%${searchQuery}%`)
  .limit(30);
 
- // Search all users by username
- const { data: allUsers } = await supabase
- .from('profiles')
- .select('id, username, avatar_url')
- .ilike('username', `%${searchQuery}%`)
- .limit(20);
+  // Search users by username, full_name or phone
+  const userQuery = supabase
+    .from('profiles')
+    .select('id, username, full_name, avatar_url, phone_number')
+    .or(`username.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%,phone_number.ilike.%${searchQuery}%`)
+    .limit(20);
 
- // Get sender profiles for messages
- const messageResults: SearchResult[] = await Promise.all((messages || []).map(async (m) => {
- const { data: sender } = await supabase
- .from('profiles')
- .select('username, avatar_url')
- .eq('id', m.sender_id)
- .single();
+  const { data: allUsers } = await userQuery;
 
- return {
- id: m.id,
- type: 'message' as const,
- content: m.content,
- sender: sender || undefined,
- conversation_id: m.conversation_id,
- message_type: m.message_type,
- created_at: m.created_at,
- };
- }));
+  // Get sender profiles for messages
+  const messageResults: SearchResult[] = await Promise.all((messages || []).map(async (m) => {
+    const { data: sender } = await supabase
+      .from('profiles')
+      .select('username, full_name, avatar_url, phone_number')
+      .eq('id', m.sender_id)
+      .maybeSingle();
 
- // Format user results
- const userResults: SearchResult[] = (allUsers || []).map((user) => ({
- id: user.id,
- type: 'contact' as const,
- content: user.username || 'Unknown User',
- contact_name: user.username,
- contact_avatar: user.avatar_url,
- contact_id: user.id,
- }));
+    return {
+      id: m.id,
+      type: 'message' as const,
+      content: m.content,
+      sender: sender || undefined,
+      conversation_id: m.conversation_id,
+      message_type: m.message_type,
+      created_at: m.created_at,
+    };
+  }));
+
+  // Format user results
+  const userResults: SearchResult[] = (allUsers || []).map((user) => ({
+    id: user.id,
+    type: 'contact' as const,
+    content: user.full_name || user.username || user.phone_number || 'User',
+    contact_name: user.full_name || user.username,
+    contact_avatar: user.avatar_url,
+    contact_id: user.id,
+  }));
 
  setResults([...userResults, ...messageResults]);
  } catch (error) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { FirebasePhoneAuth } from '@/components/FirebasePhoneAuth';
@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = React.useState(true);
   const [userId, setUserId] = React.useState<string | undefined>();
   const onboarding = useOnboarding(userId);
@@ -42,79 +43,37 @@ const Auth = () => {
           
           setUserId(session.user.id);
           
-          const { data: profile, error: profileError } = await (supabase as any)
+          const { data: profile } = await (supabase as any)
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .maybeSingle();
 
-          if (profileError) {
-            console.error('[AUTH] Profile fetch error:', profileError);
+          const { data: roles } = await (supabase as any)
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id);
+          
+          const isAdmin = roles?.some((r: any) => r.role === "admin");
+          const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+          const storedRedirect = sessionStorage.getItem('auth_redirect');
+          const redirectPath = stateFrom || storedRedirect;
+          if (storedRedirect) sessionStorage.removeItem('auth_redirect');
+          
+          if (isAdmin) {
+            navigate('/admin', { replace: true });
+            return;
           }
 
-          if (profile) {
-            const { data: roles } = await (supabase as any)
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", session.user.id);
-            
-            const isAdmin = roles?.some((r: any) => r.role === "admin");
-            
-            if (profile.onboarding_completed) {
-              const redirectPath = sessionStorage.getItem('auth_redirect');
-              sessionStorage.removeItem('auth_redirect');
-              
-              console.log('[AUTH] User signed in:', profile.username || profile.email);
-              
-              const inElectron = typeof window !== 'undefined' && (
-                !!(window as any).electronAPI ||
-                !!(window as any).chatrNative ||
-                navigator.userAgent.includes('Electron')
-              );
-
-              if (isAdmin) {
-                navigate('/admin', { replace: true });
-              } else if (!inElectron) {
-                navigate('/download', { replace: true });
-              } else {
-                navigate(redirectPath || '/desktop/home', { replace: true });
-              }
-              return;
-            }
+          if (profile?.onboarding_completed !== false) {
+            console.log('[AUTH] User authenticated, entering app:', profile?.username || session.user.email);
+            navigate(redirectPath || '/', { replace: true });
+            return;
           }
           
+          // New user needing onboarding
           setLoading(false);
           return;
-        }
-
-        // Skip device session re-hydration if user explicitly logged out
-        const explicitSignout = sessionStorage.getItem('chatr_explicit_signout');
-        if (!explicitSignout) {
-          const deviceFingerprint = await getDeviceFingerprint();
-          const { data: deviceSession } = await (supabase as any)
-            .from('device_sessions')
-            .select('*')
-            .eq('device_fingerprint', deviceFingerprint)
-            .eq('is_active', true)
-            .gt('expires_at', new Date().toISOString())
-            .maybeSingle();
-
-          if (deviceSession) {
-            setUserId(deviceSession.user_id);
-            
-            const { data: profile } = await (supabase as any)
-              .from('profiles')
-              .select('onboarding_completed')
-              .eq('id', deviceSession.user_id)
-              .single();
-            
-            if (profile?.onboarding_completed) {
-              navigate('/', { replace: true });
-              return;
-            }
-          }
-        } else {
-          sessionStorage.removeItem('chatr_explicit_signout');
         }
 
         setLoading(false);
@@ -126,26 +85,27 @@ const Auth = () => {
 
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
         setUserId(session.user.id);
         
-        setTimeout(async () => {
-          const { data: profile } = await (supabase as any)
-            .from('profiles')
-            .select('onboarding_completed, username, phone_number')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          
-          if (profile?.onboarding_completed) {
-            const redirectPath = sessionStorage.getItem('auth_redirect');
-            sessionStorage.removeItem('auth_redirect');
-            console.log('[AUTH] Welcome back');
-            navigate(redirectPath || '/', { replace: true });
-          } else {
-            console.log('[AUTH] New user - complete profile');
-          }
-        }, 0);
+        const { data: profile } = await (supabase as any)
+          .from('profiles')
+          .select('onboarding_completed, username, phone_number')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        
+        const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+        const storedRedirect = sessionStorage.getItem('auth_redirect');
+        const redirectPath = stateFrom || storedRedirect;
+        if (storedRedirect) sessionStorage.removeItem('auth_redirect');
+
+        if (profile?.onboarding_completed !== false) {
+          console.log('[AUTH] Welcome back, redirecting to', redirectPath || '/');
+          navigate(redirectPath || '/', { replace: true });
+        } else {
+          console.log('[AUTH] New user - onboarding initiated');
+        }
       }
       
       if (event === 'SIGNED_OUT') {

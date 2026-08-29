@@ -1,0 +1,15 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_RLS_VERIFICATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "tables_with_rls_enabled": 27,
+  "tables_without_rls": 0,
+  "public_rls_policy_count": 49,
+  "storage_rls_policy_count": 4,
+  "result": "PASS - All 27 physical public tables have RLS enabled. 49 public policies + 4 storage policies active.",
+  "super_admin_rls": {
+    "allowlist_select_policy": "super admins can view (is_super_admin guard)",
+    "allowlist_all_policy": "super admins can modify (is_super_admin guard)",
+    "is_super_admin_security_type": "DEFINER",
+    "client_side_bypass_possible": false
+  }
+}

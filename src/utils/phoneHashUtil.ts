@@ -1,41 +1,27 @@
-const E164_PHONE_REGEX = /^\+[1-9]\d{7,14}$/;
+import { 
+  normalizePhone, 
+  canonicalNationalPhone, 
+  formatPhoneDisplay, 
+  isSamePhone, 
+  findUserByPhone,
+  isValidPhone
+} from '@/core/phone/phoneIdentity';
 
-/**
- * Canonical phone normalization to E.164 international format.
- * Handles: +, 00 prefix, and bare digits.
- * Rejects placeholder, hash-like, and obviously invalid values.
- */
-export function normalizeToInternational(phone: string, defaultCountryCode: string = '+91'): string {
-  if (!phone) return '';
+export { 
+  normalizePhone, 
+  canonicalNationalPhone, 
+  formatPhoneDisplay, 
+  isSamePhone, 
+  findUserByPhone,
+  isValidPhone 
+};
 
-  const raw = phone.trim();
-  const hasPlus = raw.startsWith('+');
-  const hasDoubleZero = raw.startsWith('00');
-  const digits = raw.replace(/\D/g, '');
-
-  if (!digits) return '';
-
-  let candidate = '';
-
-  if (hasPlus) {
-    candidate = `+${digits}`;
-  } else if (hasDoubleZero) {
-    candidate = `+${digits.substring(2)}`;
-  } else if (digits.length > 10) {
-    candidate = `+${digits}`;
-  } else {
-    const codeDigits = defaultCountryCode.replace(/\D/g, '');
-    candidate = `+${codeDigits}${digits}`;
-  }
-
-  return E164_PHONE_REGEX.test(candidate) ? candidate : '';
-}
-
-// Backward-compatible alias
-export const normalizePhoneNumber = normalizeToInternational;
+// Backward-compatible aliases
+export const normalizeToInternational = normalizePhone;
+export const normalizePhoneNumber = normalizePhone;
 
 export function isUsablePhoneNumber(phone: string | null | undefined): boolean {
-  return E164_PHONE_REGEX.test((phone || '').trim());
+  return isValidPhone(phone);
 }
 
 // Utility for hashing phone numbers for privacy

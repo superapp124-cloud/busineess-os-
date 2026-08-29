@@ -8,4 +8,5 @@ export * from "./rateLimit.ts";
 export * from "./storage.ts";
 export * from "./telemetry.ts";
 export * from "./validate.ts";
+export * from "./aiProvider.ts";
 

@@ -12,6 +12,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,9 +56,6 @@ async function pickFeatureWithAI(opts: {
   recentSent: any[];
   slot: Slot;
 }): Promise<{ feature_key: string; title: string; body: string; reasoning: string } | null> {
-  const apiKey = Deno.env.get("LOVABLE_API_KEY");
-  if (!apiKey) return null;
-
   const candidates = opts.catalog.map((f) => ({
     key: f.feature_key,
     module: f.module,
@@ -72,62 +70,33 @@ async function pickFeatureWithAI(opts: {
   const recent = opts.recentSent.map((r) => r.feature_key);
 
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You pick the single best Chatr feature to push to a user right now. Prefer features the user has NEVER visited. Avoid features pushed in the last 3 days. Match tone to the time slot. Always pick from candidates list. Return JSON only.",
-          },
-          {
-            role: "user",
-            content: JSON.stringify({
-              slot: opts.slot,
-              recently_pushed: recent,
-              candidates,
-            }),
-          },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "pick_push",
-              description: "Pick the best feature and craft notification copy.",
-              parameters: {
-                type: "object",
-                properties: {
-                  feature_key: { type: "string" },
-                  title: { type: "string", description: "Push title, max 50 chars, with emoji" },
-                  body: { type: "string", description: "Push body, max 110 chars, action-oriented" },
-                  reasoning: { type: "string", description: "Why this feature, one sentence" },
-                },
-                required: ["feature_key", "title", "body", "reasoning"],
-              },
-            },
-          },
-        ],
-        tool_choice: { type: "function", function: { name: "pick_push" } },
-      }),
+    const aiResult = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash-lite",
+      responseFormat: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content:
+            "You pick the single best Chatr feature to push to a user right now. Prefer features the user has NEVER visited. Avoid features pushed in the last 3 days. Match tone to the time slot. Always pick from candidates list. Return valid JSON: {\"feature_key\": string, \"title\": string, \"body\": string, \"reasoning\": string}",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            slot: opts.slot,
+            recently_pushed: recent,
+            candidates,
+          }),
+        },
+      ],
+      temperature: 0.4,
+      maxTokens: 250,
     });
 
-    if (!res.ok) {
-      console.warn("[smart-push] AI gateway error", res.status);
-      return null;
-    }
-    const json = await res.json();
-    const call = json?.choices?.[0]?.message?.tool_calls?.[0];
-    if (!call) return null;
-    const args = JSON.parse(call.function.arguments);
-    if (!args.feature_key) return null;
-    return args;
+    const parsed = JSON.parse(aiResult.content);
+    if (!parsed?.feature_key) return null;
+    return parsed;
   } catch (e) {
     console.warn("[smart-push] AI failed, fallback", e);
     return null;

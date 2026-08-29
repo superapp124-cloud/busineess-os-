@@ -1,0 +1,74 @@
+{
+  "videoId": "meera_ep002_1787831985",
+  "totalDurationSec": 25,
+  "mode": "WALK_AND_TALK",
+  "location": "lajpat_nagar_market",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "india market street crowded",
+      "backgroundType": "lajpat_nagar_market \u2014 shot 1",
+      "dialogue": "Momos are spiritually important",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "delhi market vendors colorful",
+      "backgroundType": "lajpat_nagar_market \u2014 shot 2",
+      "dialogue": "Main Delhi market se live report de rahi hoon",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "indian bazaar walking people",
+      "backgroundType": "lajpat_nagar_market \u2014 shot 3",
+      "dialogue": "Maine aaj kuch khaya",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "india market street crowded",
+      "backgroundType": "lajpat_nagar_market \u2014 shot 4",
+      "dialogue": "It changed my understanding of what food can be",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 5,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "delhi market vendors colorful",
+      "backgroundType": "lajpat_nagar_market \u2014 shot 5",
+      "dialogue": "I'm being dramatic but I'm also not",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Character in motion or expression change.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

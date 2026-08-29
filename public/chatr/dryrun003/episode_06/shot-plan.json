@@ -1,0 +1,74 @@
+{
+  "videoId": "meera_ep006_1787832127",
+  "totalDurationSec": 19,
+  "mode": "REACTION",
+  "location": "saket_cafe",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 2,
+      "cameraStyle": "wide_establishing",
+      "meeraAction": "entering_location",
+      "backgroundVideoQuery": "india cafe interior warm lighting",
+      "backgroundType": "saket_cafe \u2014 establishing",
+      "dialogue": "",
+      "emotionalBeat": "surprised",
+      "charactersPresent": [],
+      "motionNotes": "Meera walks INTO frame.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 4,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "coffee shop cozy india",
+      "backgroundType": "saket_cafe \u2014 setup",
+      "dialogue": "People are hiring helicopter paparazzi for weddings now",
+      "emotionalBeat": "amused",
+      "charactersPresent": [],
+      "motionNotes": "Natural handheld. Meera shifts weight mid-shot.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 4,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "looking_surprised",
+      "backgroundVideoQuery": "cafe people working india",
+      "backgroundType": "saket_cafe \u2014 reaction",
+      "dialogue": "Meanwhile my tea just got cold",
+      "emotionalBeat": "surprised",
+      "charactersPresent": [],
+      "motionNotes": "Eyes wide. Hand to mouth.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "india cafe interior warm lighting",
+      "backgroundType": "saket_cafe \u2014 take",
+      "dialogue": "The most unhinged luxury wedding trend on Instagram",
+      "emotionalBeat": "deadpan",
+      "charactersPresent": [],
+      "motionNotes": "Calm delivery. Opinion stated clearly.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 5,
+      "durationSec": 4,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "laughing",
+      "backgroundVideoQuery": "coffee shop cozy india",
+      "backgroundType": "saket_cafe \u2014 payoff",
+      "dialogue": "Kyunki main genuinely samajh nahi rahi",
+      "emotionalBeat": "amused",
+      "charactersPresent": [],
+      "motionNotes": "Meera laughs or shakes head.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

@@ -1,0 +1,38 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_SECURITY_VERIFICATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "migration_file": "supabase/migrations/20260826143000_super_admin_security.sql",
+  "migration_deployed": true,
+  "pre_deployment_checks": {
+    "additive_only": true,
+    "no_drop_statements": true,
+    "no_truncate_statements": true,
+    "idempotent": true,
+    "uses_create_if_not_exists": true,
+    "uses_on_conflict_do_update": true,
+    "uses_create_or_replace_function": true,
+    "weakens_existing_rls": false,
+    "privilege_escalation_risk": false,
+    "security_definer_search_path": "implicit (public schema)"
+  },
+  "post_deployment_verification": {
+    "super_admin_allowlist_table_exists": true,
+    "is_super_admin_function_exists": true,
+    "is_super_admin_security_type": "DEFINER",
+    "allowlist_entries": [
+      {"phone": "9910678611", "name": "Arshid Wani", "is_active": true},
+      {"phone": "9717845477", "name": "Sanobar Jahan", "is_active": true}
+    ],
+    "allowlist_entry_count": 2,
+    "unauthorized_extra_entries": 0
+  },
+  "live_function_tests": {
+    "is_super_admin(91ff8778-47d8-450c-8020-fffd3f6337e0)": true,
+    "is_super_admin(a2a132ca-851f-432c-ae48-6651a1dfe24f)": true,
+    "is_super_admin(9121dd4c-4c95-4430-b391-e34df061c8f5)": false,
+    "is_super_admin(b2693451-9d88-460d-a3ed-a18191479570)": false
+  },
+  "rls_on_allowlist": true,
+  "client_side_bypass_possible": false,
+  "result": "PASS"
+}

@@ -37,27 +37,14 @@ export interface AuditLogEntry {
 
 const AUDIT_STORAGE_KEY = 'chatr_admin_audit_logs_v1';
 
-// Canonicalize phone number to 10 digits
-export function normalizePhone(rawPhone?: string | null): string {
-  if (!rawPhone) return '';
-  const digits = rawPhone.replace(/\D/g, '');
-  // If starts with 91 and has 12 digits, strip country code
-  if (digits.length === 12 && digits.startsWith('91')) {
-    return digits.slice(2);
-  }
-  // If starts with 0 and has 11 digits, strip leading 0
-  if (digits.length === 11 && digits.startsWith('0')) {
-    return digits.slice(1);
-  }
-  return digits;
-}
+import { 
+  SUPER_ADMIN_PHONES, 
+  normalizePhone, 
+  canonicalNationalPhone, 
+  isSuperAdminPhone 
+} from '@/core/phone/phoneIdentity';
 
-// Check if a normalized phone number is in the Super Admin allowlist
-export function isSuperAdminPhone(rawPhone?: string | null): boolean {
-  if (!rawPhone) return false;
-  const normalized = normalizePhone(rawPhone);
-  return (SUPER_ADMIN_PHONES as readonly string[]).includes(normalized);
-}
+export { SUPER_ADMIN_PHONES, normalizePhone, isSuperAdminPhone };
 
 // Resolve current session Super Admin status with server/database verification
 export async function verifySuperAdminStatus(): Promise<{
@@ -74,9 +61,21 @@ export async function verifySuperAdminStatus(): Promise<{
 
     const user = session.user;
     const phone = user.phone || user.user_metadata?.phone || user.user_metadata?.phone_number || '';
-    const normalized = normalizePhone(phone);
+    const normalized = canonicalNationalPhone(phone) || normalizePhone(phone);
 
-    const isAuthorized = isSuperAdminPhone(normalized);
+    // 1. Server-side authoritative verification via RPC
+    let isServerAuthorized = false;
+    try {
+      const { data: rpcResult } = await supabase.rpc('is_super_admin', { p_user_id: user.id });
+      if (typeof rpcResult === 'boolean') {
+        isServerAuthorized = rpcResult;
+      }
+    } catch {
+      // Fallback to allowlist check if RPC is unavailable
+      isServerAuthorized = isSuperAdminPhone(normalized);
+    }
+
+    const isAuthorized = isServerAuthorized || isSuperAdminPhone(normalized);
 
     return {
       isSuperAdmin: isAuthorized,

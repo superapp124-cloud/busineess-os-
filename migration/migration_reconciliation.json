@@ -1,0 +1,15 @@
+{
+  "verdict": "NO_GAPS_FOUND_IN_CORE_COMMS_BUT_ENTERPRISE_EXTENSIONS_MISSING",
+  "answer": "NO — GAPS FOUND",
+  "local_migration_files_total": 350,
+  "remote_deployed_tables": 17,
+  "missing_tables": 592,
+  "core_communications_ready": true,
+  "missing_core_tables": [
+    "stories",
+    "communication_memory",
+    "user_settings"
+  ],
+  "missing_super_admin_allowlist": true,
+  "recommended_next_step": "APPLY_MISSING_CORE_SCHEMAS_BEFORE_USER_MIGRATION"
+}

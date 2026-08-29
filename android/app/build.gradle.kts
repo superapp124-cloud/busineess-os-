@@ -51,8 +51,8 @@ android {
         manifestPlaceholders["appAuthRedirectScheme"] = "com.chatr.app"
         
         buildConfigField("String", "GEMINI_API_KEY", "\"${geminiApiKey}\"")
-        buildConfigField("String", "SUPABASE_URL", if (supabaseUrl.isNotEmpty()) "\"$supabaseUrl\"" else "\"https://sbayuqgomlflmxgicplz.supabase.co\"")
-        buildConfigField("String", "SUPABASE_KEY", if (supabaseKey.isNotEmpty()) "\"$supabaseKey\"" else "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMTk0ODQsImV4cCI6MjA5NjU5NTQ4NH0.L41a_j-GZ6jA0i7_Z7-XvS2yWv_uD2W-qH-uO7W-uO4\"")
+        buildConfigField("String", "SUPABASE_URL", if (supabaseUrl.isNotEmpty()) "\"$supabaseUrl\"" else "\"https://cenxckpxaqborfqyexot.supabase.co\"")
+        buildConfigField("String", "SUPABASE_KEY", if (supabaseKey.isNotEmpty()) "\"$supabaseKey\"" else "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE\"")
         buildConfigField("String", "SOCKET_URL", if (socketUrl.isNotEmpty()) "\"$socketUrl\"" else "\"http://192.168.31.37:3000\"")
     }
 

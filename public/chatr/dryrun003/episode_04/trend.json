@@ -1,0 +1,27 @@
+{
+  "topic": "Audience comment: 'Meera talks too fast and has zero patience'",
+  "category": "comment_reply",
+  "source": "Viewer Comment on Ep 2",
+  "discoveredAt": "2026-08-27T17:29:16.389858",
+  "trendAgeHours": 6,
+  "velocity": "peak",
+  "audienceFitScore": 98,
+  "contentAngle": "Someone commented that I talk too fast. Have you ever tried boarding Rajiv Chowk metro?",
+  "keyPhrases": [
+    "metro",
+    "delhi metro",
+    "patience",
+    "rajiv chowk",
+    "comments"
+  ],
+  "relatedHashtags": [
+    "#delhimetro",
+    "#rajivchowk",
+    "#commentreply",
+    "#creatorlife",
+    "#delhi"
+  ],
+  "episodeNumber": 4,
+  "mode": "COMMENT_REPLY",
+  "location": "delhi_metro"
+}

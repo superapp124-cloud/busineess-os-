@@ -1,0 +1,65 @@
+{
+  "videoId": "meera_ep003_1787832025",
+  "totalDurationSec": 17,
+  "mode": "COMEDY",
+  "location": "connaught_place",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 3,
+      "cameraStyle": "wide_establishing",
+      "meeraAction": "entering_location",
+      "backgroundVideoQuery": "delhi city center walking",
+      "backgroundType": "connaught_place",
+      "dialogue": "",
+      "emotionalBeat": "warm",
+      "charactersPresent": [],
+      "motionNotes": "Scene set.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "medium_shot_fixed",
+      "meeraAction": "talking_to_character",
+      "backgroundVideoQuery": "india urban street shopping",
+      "backgroundType": "connaught_place",
+      "dialogue": "Arjun claims he predicted the entire tech industry in 2018",
+      "emotionalBeat": "amused",
+      "charactersPresent": [
+        "arjun"
+      ],
+      "motionNotes": "Meera gestures while talking.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 4,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "connaught place india",
+      "backgroundType": "connaught_place",
+      "dialogue": "Sure, Arjun",
+      "emotionalBeat": "surprised",
+      "charactersPresent": [
+        "arjun"
+      ],
+      "motionNotes": "Character says something. Meera reacts.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "delhi city center walking",
+      "backgroundType": "connaught_place",
+      "dialogue": "Kyunki main abhi completely lost hoon",
+      "emotionalBeat": "deadpan",
+      "charactersPresent": [],
+      "motionNotes": "Meera looks at camera. Delivers punchline.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

@@ -8,21 +8,65 @@ const getEnv = (key: string) => {
   return undefined;
 };
 
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://sbayuqgomlflmxgicplz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://cenxckpxaqborfqyexot.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
 
-// Storage mock for Node.js tests and SSR
+// Resilient storage wrapper with memory fallback and cross-key recovery
 const memoryStorage = new Map<string, string>();
-const storage = typeof window !== 'undefined' ? window.localStorage : {
-  getItem: (key: string) => memoryStorage.get(key) || null,
-  setItem: (key: string, value: string) => memoryStorage.set(key, value),
-  removeItem: (key: string) => memoryStorage.delete(key)
+
+const resilientStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof window === 'undefined') return memoryStorage.get(key) || null;
+    try {
+      let val = window.localStorage.getItem(key);
+      if (!val && key.includes('cenxckpxaqborfqyexot')) {
+        // Fallback checks for legacy/generic stored sessions
+        val = window.localStorage.getItem('sb-auth-token') || 
+              window.localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token');
+        if (val) {
+          try { 
+            window.localStorage.setItem(key, val); 
+          } catch (storageErr) {
+            console.debug('[SupabaseStorage] Fallback key copy failed:', storageErr);
+          }
+        }
+      }
+      return val || memoryStorage.get(key) || null;
+    } catch {
+      return memoryStorage.get(key) || null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    memoryStorage.set(key, value);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(key, value);
+        // Also mirror generic key for cross-bridge compatibility
+        window.localStorage.setItem('sb-auth-token', value);
+      } catch (e) {
+        console.warn('[SupabaseStorage] LocalStorage write failed, preserved in memory:', e);
+      }
+    }
+  },
+  removeItem: (key: string): void => {
+    memoryStorage.delete(key);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(key);
+        window.localStorage.removeItem('sb-auth-token');
+      } catch (removeErr) {
+        console.debug('[SupabaseStorage] LocalStorage remove failed:', removeErr);
+      }
+    }
+  }
 };
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage,
+    storage: resilientStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 });

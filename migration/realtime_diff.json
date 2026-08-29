@@ -1,0 +1,12 @@
+{
+  "intended_realtime_tables_count": 61,
+  "core_realtime_tables": [
+    "messages",
+    "conversations",
+    "conversation_participants",
+    "notifications",
+    "calls"
+  ],
+  "deployed_core_realtime_active": true,
+  "pending_realtime_publications_count": 56
+}

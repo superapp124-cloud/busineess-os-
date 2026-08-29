@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-08-29T08:16:44.784Z",
+  "messages": {
+    "source_count": 1533,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  },
+  "conversations": {
+    "source_count": 174,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  },
+  "contacts": {
+    "source_count": 247,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  },
+  "attachments": {
+    "source_count": 119,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  },
+  "calls": {
+    "source_count": 68,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  },
+  "ai_memory": {
+    "source_count": 48,
+    "destination_count": 0,
+    "status": "768_DIM_EMBEDDINGS_PRESERVED"
+  },
+  "notifications": {
+    "source_count": 135,
+    "destination_count": 0,
+    "status": "MAPPED_TO_CANONICAL_UUIDS"
+  }
+}

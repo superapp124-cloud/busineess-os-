@@ -1,0 +1,33 @@
+{
+  "source_project": "sbayuqgomlflmxgicplz",
+  "authority_status": "INACTIVE_LEGACY_BACKEND",
+  "schema_tables_historically_defined": [
+    "users",
+    "profiles",
+    "user_devices",
+    "conversations",
+    "messages",
+    "contacts",
+    "attachments",
+    "calls",
+    "notifications",
+    "stories",
+    "communication_memory",
+    "user_settings",
+    "meetings",
+    "organizations"
+  ],
+  "functions": [
+    "handle_new_user",
+    "match_communication_memory"
+  ],
+  "storage_buckets": [
+    "avatars",
+    "chat_attachments",
+    "stories",
+    "media",
+    "voice_notes",
+    "documents"
+  ],
+  "vector_dimension": 768
+}

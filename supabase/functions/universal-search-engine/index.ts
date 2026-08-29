@@ -1,5 +1,6 @@
 // Universal Search Engine - Multi-source AI-powered search
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
+import { completeChat } from '../_core/aiProvider.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -51,23 +52,19 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 2: AI Intent Understanding
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    // Step 2: AI Intent Understanding via direct AI router
     let aiIntent: any = null;
 
-    if (LOVABLE_API_KEY) {
-      const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a universal search intent analyzer for Chatr.chat.
+    try {
+      const aiResult = await completeChat({
+        primaryProvider: "gemini",
+        fallbackProviders: ["groq", "openrouter"],
+        model: "gemini-2.5-flash",
+        responseFormat: { type: "json_object" },
+        messages: [
+          {
+            role: 'system',
+            content: `You are a universal search intent analyzer for Chatr.chat.
 Analyze queries and extract:
 1. intent: What user wants (find service, order food, book appointment, hire worker, etc.)
 2. category: Main category (plumbing, food, healthcare, jobs, beauty, etc.)
@@ -87,29 +84,33 @@ Respond in JSON format:
   "filters": {"price": "budget/premium", "minRating": 4.0},
   "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3", "suggestion 4", "suggestion 5"]
 }`
-            },
-            {
-              role: 'user',
-              content: `Analyze: "${query}"${latitude && longitude ? ` (User location: ${latitude}, ${longitude})` : ''}`
-            }
-          ],
-          temperature: 0.3,
-        }),
+          },
+          {
+            role: 'user',
+            content: `Analyze: "${query}"${latitude && longitude ? ` (User location: ${latitude}, ${longitude})` : ''}`
+          }
+        ],
+        temperature: 0.3,
       });
 
-      if (aiResponse.ok) {
-        const aiData = await aiResponse.json();
-        const aiMessage = aiData.choices?.[0]?.message?.content || '{}';
-        try {
-          aiIntent = JSON.parse(aiMessage);
-        } catch {
-          aiIntent = {
-            intent: 'general search',
-            category: 'general',
-            keywords: [query]
-          };
-        }
+      const aiMessage = aiResult.content || '{}';
+      try {
+        aiIntent = JSON.parse(aiMessage);
+      } catch {
+        const match = aiMessage.match(/\{[\s\S]*\}/);
+        aiIntent = match ? JSON.parse(match[0]) : {
+          intent: 'general search',
+          category: 'general',
+          keywords: [query]
+        };
       }
+    } catch (e) {
+      console.warn('AI intent detection fallback notice:', e);
+      aiIntent = {
+        intent: 'general search',
+        category: 'general',
+        keywords: [query]
+      };
     }
 
     // Step 3: Store search query

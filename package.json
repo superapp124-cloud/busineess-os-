@@ -47,7 +47,7 @@
     "edge:functions:update-baseline": "node scripts/edge-function-governance.cjs --update-baseline",
     "preview": "vite preview",
     "postinstall": "electron-builder install-app-deps && node scripts/download-whisper.js",
-    "typecheck": "tsc --noEmit --workspaces"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "axios": "^1.16.1",

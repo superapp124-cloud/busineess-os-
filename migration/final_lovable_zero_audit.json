@@ -1,0 +1,5 @@
+{
+  "lovable_zero_certified": true,
+  "runtime_references": 0,
+  "ci_governance_script": "scripts/edge-function-governance.cjs"
+}

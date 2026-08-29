@@ -1,4 +1,6 @@
-// Search suggestions edge function using Lovable AI
+// Search suggestions edge function using direct AI provider
+
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,27 +12,20 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let userQuery = '';
   try {
     const { query, recentSearches = [] } = await req.json();
+    userQuery = query || '';
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
-    }
-
-    // Generate AI-powered search suggestions
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a search suggestion assistant for Chatr.chat.
+    // Generate AI-powered search suggestions via direct fast model (Groq / Gemini)
+    const aiResult = await completeChat({
+      primaryProvider: "groq",
+      fallbackProviders: ["gemini", "openrouter"],
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: 'system',
+          content: `You are a search suggestion assistant for Chatr.chat.
 Given a partial search query, suggest 5 relevant completions that users might be searching for.
 Focus on local services in India: plumbers, electricians, food delivery, healthcare, jobs, beauty services, etc.
 
@@ -41,38 +36,24 @@ Examples:
 Query: "plumb" → ["plumber near me", "plumbing services", "emergency plumber", "plumber in Noida", "24/7 plumber"]
 Query: "doc" → ["doctor consultation", "doctor near me", "dentist appointment", "doctor on call", "eye doctor"]
 Query: "bir" → ["biryani delivery", "biryani near me", "chicken biryani", "veg biryani", "biryani restaurant"]`
-          },
-          {
-            role: 'user',
-            content: `Partial query: "${query}"\nRecent searches: ${recentSearches.slice(0, 3).join(', ')}`
-          }
-        ],
-        temperature: 0.5,
-      }),
+        },
+        {
+          role: 'user',
+          content: `Partial query: "${userQuery}"\nRecent searches: ${recentSearches.slice(0, 3).join(', ')}`
+        }
+      ],
+      temperature: 0.5,
+      maxTokens: 200,
     });
 
-    if (!aiResponse.ok) {
-      // Handle rate limit (429) and credits depleted (402) gracefully
-      if (aiResponse.status === 429 || aiResponse.status === 402) {
-        console.log(`AI API ${aiResponse.status} - using fallback suggestions`);
-        return new Response(
-          JSON.stringify({ suggestions: getDefaultSuggestions(query) }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      throw new Error(`AI API error: ${aiResponse.status}`);
-    }
-
-    const aiData = await aiResponse.json();
     let suggestions: string[] = [];
 
     try {
-      const content = aiData.choices?.[0]?.message?.content || '[]';
-      // Remove markdown code blocks if present
+      const content = aiResult.content || '[]';
       const cleanContent = content.replace(/```json\n?|\n?```/g, '').trim();
       suggestions = JSON.parse(cleanContent);
     } catch {
-      suggestions = getDefaultSuggestions(query);
+      suggestions = getDefaultSuggestions(userQuery);
     }
 
     return new Response(
@@ -81,19 +62,16 @@ Query: "bir" → ["biryani delivery", "biryani near me", "chicken biryani", "veg
     );
 
   } catch (error) {
-    console.error('Search suggestions error:', error);
-    // Return fallback suggestions instead of 500 error
-    const query = '';
+    console.error('Search suggestions notice:', error);
     return new Response(
-      JSON.stringify({ suggestions: getDefaultSuggestions(query) }),
+      JSON.stringify({ suggestions: getDefaultSuggestions(userQuery) }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
 
 function getDefaultSuggestions(query: string): string[] {
-  const q = query.toLowerCase();
-  const suggestions: string[] = [];
+  const q = (query || '').toLowerCase();
   
   if (q.includes('plumb')) return ['plumber near me', 'plumbing services', 'emergency plumber', '24/7 plumber', 'plumber in Noida'];
   if (q.includes('doc') || q.includes('dr')) return ['doctor consultation', 'doctor near me', 'dentist appointment', 'doctor on call', 'eye doctor'];
@@ -103,10 +81,10 @@ function getDefaultSuggestions(query: string): string[] {
   if (q.includes('clean')) return ['cleaning services', 'house cleaning', 'deep cleaning', 'office cleaning'];
   
   return [
-    `${query} near me`,
-    `${query} services`,
-    `best ${query}`,
-    `${query} delivery`,
-    `${query} online`
+    `${query || 'local'} near me`,
+    `${query || 'local'} services`,
+    `best ${query || 'services'}`,
+    `${query || 'food'} delivery`,
+    `${query || 'stores'} online`
   ];
 }

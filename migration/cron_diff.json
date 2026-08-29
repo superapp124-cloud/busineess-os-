@@ -1,0 +1,8 @@
+{
+  "intended_cron_jobs": [
+    "cleanup-expired-messages",
+    "scheduled-reminders",
+    "agent-health-check"
+  ],
+  "remote_status": "ENABLED_IN_POSTGRES_PG_CRON"
+}

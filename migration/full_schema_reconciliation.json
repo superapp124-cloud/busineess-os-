@@ -1,0 +1,126 @@
+{
+  "source_project": "sbayuqgomlflmxgicplz",
+  "destination_project": "cenxckpxaqborfqyexot",
+  "reconciliation_results": [
+    {
+      "table": "users",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core with 8 rows"
+    },
+    {
+      "table": "profiles",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core with 8 rows"
+    },
+    {
+      "table": "conversations",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "conversation_participants",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "messages",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "contacts",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "attachments",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "calls",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "notifications",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "user_devices",
+      "classification": "ALREADY_PRESENT_AND_IDENTICAL",
+      "action": "PRESERVE",
+      "reason": "Live in chatr-core"
+    },
+    {
+      "table": "trusted_devices",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "Hardware & biometric trust registry in chatr-core"
+    },
+    {
+      "table": "device_challenges",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "WebAuthn crypto challenge registry in chatr-core"
+    },
+    {
+      "table": "identity_providers",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "OAuth & phone binding table in chatr-core"
+    },
+    {
+      "table": "calendar_events",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "Chat meeting scheduling table in chatr-core"
+    },
+    {
+      "table": "meeting_participants",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "Group call participant tracking in chatr-core"
+    },
+    {
+      "table": "ai_memory",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "Canonical 768-dim AI semantic memory in chatr-core"
+    },
+    {
+      "table": "ai_sessions",
+      "classification": "DESTINATION_OBJECT_MORE_ADVANCED",
+      "action": "PRESERVE",
+      "reason": "AI chat threads in chatr-core"
+    },
+    {
+      "table": "communication_memory",
+      "classification": "ALREADY_PRESENT_WITH_COMPATIBLE_DIFFERENCE",
+      "action": "VIEW_BRIDGE",
+      "reason": "Satisfied via non-destructive view on ai_memory"
+    },
+    {
+      "table": "super_admin_allowlist",
+      "classification": "MISSING_FROM_DESTINATION",
+      "action": "SAFE_ADDITIVE_DEPLOYMENT",
+      "reason": "Required security table for 9910678611 & 9717845477"
+    },
+    {
+      "table": "stories",
+      "classification": "OBSOLETE / HISTORICAL",
+      "action": "OPTIONAL_ADDITIVE",
+      "reason": "Ephemeral status table"
+    }
+  ]
+}

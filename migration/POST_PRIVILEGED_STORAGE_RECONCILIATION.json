@@ -1,0 +1,26 @@
+﻿{
+  "report_type": "POST_PRIVILEGED_STORAGE_RECONCILIATION",
+  "timestamp": "2026-08-29T08:59:00Z",
+  "buckets_pre_write": 0,
+  "buckets_post_write": 1,
+  "buckets": [
+    {
+      "id": "chat_attachments",
+      "name": "chat_attachments",
+      "public": false,
+      "file_size_limit_bytes": 52428800,
+      "allowed_mime_types": ["image/jpeg","image/png","image/gif","image/webp","application/pdf","audio/mpeg","video/mp4","text/plain"],
+      "rls_policies": [
+        "Authenticated users can upload attachments (INSERT)",
+        "Authenticated users can view attachments (SELECT)",
+        "Users can update their own attachments (UPDATE)",
+        "Users can delete their own attachments (DELETE)"
+      ],
+      "object_count": 0,
+      "action": "CREATED (was missing despite migration 20260705000004 being applied remotely)"
+    }
+  ],
+  "source_objects_migrated": 0,
+  "source_objects_pending": "UNKNOWN - source sbayuqgomlflmxgicplz is paused, storage API inaccessible",
+  "result": "PARTIAL - bucket created and secured; no source objects could be migrated (source paused)"
+}

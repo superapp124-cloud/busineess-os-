@@ -13,7 +13,8 @@
 // closed.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +24,6 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -221,34 +221,29 @@ async function processUnreadMessages(userId: string, dryRun: boolean) {
 async function craftAINudge(
   hour: number,
 ): Promise<{ title: string; body: string } | null> {
-  if (!LOVABLE_API_KEY) return null;
   const slot = hour < 11 ? "morning" : hour < 14 ? "midday" : hour < 17 ? "afternoon" : hour < 21 ? "evening" : "night";
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a warm wellness coach. Output ONLY JSON {\"title\":string,\"body\":string}. Title <= 38 chars. Body <= 110 chars. Friendly, specific, time-of-day aware. Vary topics: hydration, stretch, walk, posture, breathing, calorie check, sleep wind-down, screen break. No emojis.",
-          },
-          {
-            role: "user",
-            content: `Time-of-day: ${slot}. Hour (IST): ${hour}. Generate one micro nudge.`,
-          },
-        ],
-        response_format: { type: "json_object" },
-      }),
+    const aiResult = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash-lite",
+      responseFormat: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a warm wellness coach. Output ONLY JSON {\"title\":string,\"body\":string}. Title <= 38 chars. Body <= 110 chars. Friendly, specific, time-of-day aware. Vary topics: hydration, stretch, walk, posture, breathing, calorie check, sleep wind-down, screen break. No emojis.",
+        },
+        {
+          role: "user",
+          content: `Time-of-day: ${slot}. Hour (IST): ${hour}. Generate one micro nudge.`,
+        },
+      ],
+      temperature: 0.5,
+      maxTokens: 150,
     });
-    if (!res.ok) return null;
-    const j = await res.json();
-    const txt = j?.choices?.[0]?.message?.content ?? "";
+
+    const txt = aiResult.content ?? "";
     const parsed = JSON.parse(txt);
     if (parsed?.title && parsed?.body) {
       return { title: String(parsed.title).slice(0, 60), body: String(parsed.body).slice(0, 140) };

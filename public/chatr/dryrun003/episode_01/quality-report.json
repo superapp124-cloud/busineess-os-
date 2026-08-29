@@ -1,0 +1,48 @@
+{
+  "checks": [
+    {
+      "name": "video.mp4 exists",
+      "passed": true,
+      "measured": true
+    },
+    {
+      "name": "Shot count \u2265 4 (got 5)",
+      "passed": true,
+      "measured": true
+    },
+    {
+      "name": "No AI clich\u00e9s in script",
+      "passed": true,
+      "measured": true,
+      "note": null
+    },
+    {
+      "name": "Face consistency (SSIM \u2265 0.82)",
+      "passed": false,
+      "measured": false,
+      "note": "NOT MEASURED \u2014 manual review required"
+    },
+    {
+      "name": "Lip sync offset < 200ms",
+      "passed": false,
+      "measured": false,
+      "note": "NOT MEASURED \u2014 manual review required"
+    }
+  ],
+  "passed": true,
+  "failReasons": [],
+  "warningReasons": [
+    "Face consistency not measured \u2014 check manually",
+    "Lip sync not measured \u2014 check manually"
+  ],
+  "humanReviewRequired": true,
+  "humanReviewNotes": [
+    "Watch the full video on a mobile screen.",
+    "Ask: 'Does this look like a real Indian creator Reel?'",
+    "Check: Does Meera look consistent across shots?",
+    "Check: Is voice natural?",
+    "Check: Does background have real motion?",
+    "APPROVE or REJECT manually."
+  ],
+  "state": "GATE_CHECKED"
+}

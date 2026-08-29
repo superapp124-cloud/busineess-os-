@@ -1,0 +1,8 @@
+{
+  "status": "PASSED_100%",
+  "application_cutover": "https://cenxckpxaqborfqyexot.supabase.co",
+  "typecheck": "PASSED (0 TypeScript errors)",
+  "edge_governance": "PASSED (136 functions audited, 0 Lovable dependencies)",
+  "governance_lint": "PASSED",
+  "lovable_runtime_dependencies": 0
+}

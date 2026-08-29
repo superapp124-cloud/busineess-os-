@@ -36,7 +36,7 @@ serve(async (req) => {
       );
     }
 
-    // Use Lovable AI for transcription (Gemini)
+    // Direct Gemini API for transcription
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_AI_API_KEY');
     
     let transcription = '';

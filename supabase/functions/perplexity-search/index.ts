@@ -1,4 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,22 +47,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
-    }
-
     // Step 1: Scrape DuckDuckGo for real web results (fast)
     console.log('Fetching DuckDuckGo results...');
     const duckResults = await searchDuckDuckGo(query, maxResults);
     console.log(`Got ${duckResults.length} DuckDuckGo results`);
 
-    // Step 2: Generate AI summary using Lovable AI (parallel)
+    // Step 2: Generate AI summary using Direct AI Router (Gemini / Groq)
     console.log('Generating AI summary...');
-    const aiSummaryPromise = generateAISummary(query, duckResults, LOVABLE_API_KEY);
-
-    // Wait for AI summary
-    const aiSummary = await aiSummaryPromise;
+    const aiSummary = await generateAISummary(query, duckResults);
     console.log('AI summary generated');
 
     return new Response(
@@ -92,7 +85,6 @@ Deno.serve(async (req) => {
 
 async function searchDuckDuckGo(query: string, maxResults: number) {
   try {
-    // Use DuckDuckGo Instant Answer API (free, fast, no API key)
     const encodedQuery = encodeURIComponent(query);
     const url = `https://api.duckduckgo.com/?q=${encodedQuery}&format=json&no_html=1&skip_disambig=1`;
     
@@ -102,10 +94,8 @@ async function searchDuckDuckGo(query: string, maxResults: number) {
     }
 
     const data = await response.json();
-    
     const results: any[] = [];
 
-    // Extract instant answer
     if (data.AbstractText) {
       results.push({
         title: data.Heading || query,
@@ -115,7 +105,6 @@ async function searchDuckDuckGo(query: string, maxResults: number) {
       });
     }
 
-    // Extract related topics
     if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
       for (const topic of data.RelatedTopics.slice(0, maxResults - results.length)) {
         if (topic.Text && topic.FirstURL) {
@@ -129,9 +118,7 @@ async function searchDuckDuckGo(query: string, maxResults: number) {
       }
     }
 
-    // If no results from API, use HTML scraping fallback
     if (results.length === 0) {
-      console.log('No API results, attempting HTML scraping...');
       const htmlResults = await scrapeDuckDuckGoHTML(query, maxResults);
       results.push(...htmlResults);
     }
@@ -139,13 +126,7 @@ async function searchDuckDuckGo(query: string, maxResults: number) {
     return results.slice(0, maxResults);
   } catch (error) {
     console.error('DuckDuckGo search error:', error);
-    // Return fallback results
-    return [{
-      title: `Search results for: ${query}`,
-      snippet: `DuckDuckGo search for "${query}". Please try the search again.`,
-      url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
-      source: 'fallback'
-    }];
+    return [];
   }
 }
 
@@ -156,33 +137,32 @@ async function scrapeDuckDuckGoHTML(query: string, maxResults: number) {
     
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
     });
-    
+
     if (!response.ok) {
-      throw new Error(`HTML fetch error: ${response.status}`);
+      throw new Error(`DuckDuckGo HTML error: ${response.status}`);
     }
 
     const html = await response.text();
     const results: any[] = [];
-
-    // Simple regex-based extraction (DuckDuckGo HTML is relatively stable)
-    const resultRegex = /<a[^>]*class="result__a"[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>[\s\S]*?<a[^>]*class="result__snippet"[^>]*>([^<]*)<\/a>/g;
+    const resultRegex = /<a class="result__snippet[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const titleRegex = /<a class="result__url[^>]*>([\s\S]*?)<\/a>/gi;
     
     let match;
-    while ((match = resultRegex.exec(html)) !== null && results.length < maxResults) {
-      const [, url, title, snippet] = match;
-      if (url && title) {
-        // Decode DuckDuckGo redirect URL
-        const actualUrl = decodeURIComponent(url.replace(/^\/\/duckduckgo\.com\/l\/\?uddg=/, '').split('&')[0]);
-        results.push({
-          title: title.trim(),
-          snippet: snippet.trim() || title.trim(),
-          url: actualUrl.startsWith('http') ? actualUrl : `https://${actualUrl}`,
-          source: 'html_scrape'
-        });
-      }
+    let count = 0;
+    while ((match = resultRegex.exec(html)) !== null && count < maxResults) {
+      const url = match[1];
+      const snippet = match[2].replace(/<[^>]*>/g, '').trim();
+      
+      results.push({
+        title: query,
+        snippet: snippet,
+        url: url.startsWith('//') ? `https:${url}` : url,
+        source: 'web'
+      });
+      count++;
     }
 
     return results;
@@ -192,9 +172,8 @@ async function scrapeDuckDuckGoHTML(query: string, maxResults: number) {
   }
 }
 
-async function generateAISummary(query: string, searchResults: any[], apiKey: string) {
+async function generateAISummary(query: string, searchResults: any[]) {
   try {
-    // Format search results for context
     const context = searchResults
       .slice(0, 5)
       .map((r, i) => `[${i + 1}] ${r.title}\n${r.snippet}\nSource: ${r.url}`)
@@ -213,42 +192,22 @@ ${context}
 
 Provide a detailed, informative summary:`;
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a research assistant that provides accurate, comprehensive summaries based on search results. Always cite sources using [number] notation.' 
-          },
-          { role: 'user', content: prompt }
-        ],
-        max_completion_tokens: 800,
-        temperature: 0.3,
-      }),
+    const response = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["groq", "openrouter"],
+      model: "gemini-2.5-flash",
+      messages: [
+        { 
+          role: 'system', 
+          content: 'You are a research assistant that provides accurate, comprehensive summaries based on search results. Always cite sources using [number] notation.' 
+        },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.3,
+      maxTokens: 800,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI summary error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return 'AI summary temporarily unavailable due to rate limits. Please try again in a moment.';
-      }
-      if (response.status === 402) {
-        return 'AI summary temporarily unavailable. Please contact support.';
-      }
-      
-      throw new Error(`AI request failed: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || 'No summary available.';
+    return response.content || 'No summary available.';
   } catch (error) {
     console.error('AI summary generation error:', error);
     return `Based on the search results, here's what we found about "${query}". The search returned ${searchResults.length} relevant results with detailed information.`;

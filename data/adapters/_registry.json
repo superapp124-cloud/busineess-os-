@@ -3,7 +3,7 @@
     "schema_version": "2.0.0",
     "description": "CHATR Adapter Registry — versioned, provenance-bound adapter catalog (13 trainable capabilities only; RAG is a knowledge system, not a trainable adapter)",
     "created_at": "2026-08-29T00:00:00Z",
-    "updated_at": "2026-08-29T15:05:00Z"
+    "updated_at": "2026-08-29T16:18:00Z"
   },
   "trainable_capabilities": [
     "general", "coding", "reasoning", "business", "finance",
@@ -11,8 +11,8 @@
     "support", "agent", "meera"
   ],
   "production": {
-    "general": null,
-    "coding": null,
+    "general": "v1.0.0",
+    "coding": "v1.0.0",
     "reasoning": null,
     "business": null,
     "finance": null,
@@ -23,7 +23,53 @@
     "research": null,
     "support": null,
     "agent": null,
-    "meera": null
+    "meera": "v1.0.0"
   },
-  "adapters": []
+  "adapters": [
+    {
+      "capability": "general",
+      "version": "v1.0.0",
+      "status": "VALIDATED_PHASE0",
+      "base_model_id": "qwen2.5-7b-instruct",
+      "method": "sft",
+      "dataset_id": "general_sft_v1",
+      "dataset_hash": "dc620faa8ac77cb4e8ec6ff4c7f0775d713c23e804f58c734a743144ef937e28",
+      "soup_ship_verdict": "SHIP",
+      "chatr_gate_verdict": "RECORDED",
+      "adapter_path": "data/adapters/capabilities/general/v1/adapter_model.safetensors",
+      "ollama_model_name": "chatr:general-v1",
+      "promoted_at": "2026-08-29T16:18:00Z",
+      "promoted_by": "chatr_director_phase0"
+    },
+    {
+      "capability": "coding",
+      "version": "v1.0.0",
+      "status": "VALIDATED_PHASE0",
+      "base_model_id": "qwen2.5-7b-instruct",
+      "method": "sft",
+      "dataset_id": "coding_sft_v1",
+      "dataset_hash": "ad35b2bde4a8fd8e5e8e826b528b36a188f615561a383d297a7eec6ee7c672b1",
+      "soup_ship_verdict": "SHIP",
+      "chatr_gate_verdict": "RECORDED",
+      "adapter_path": "data/adapters/capabilities/coding/v1/adapter_model.safetensors",
+      "ollama_model_name": "chatr:coding-v1",
+      "promoted_at": "2026-08-29T16:18:00Z",
+      "promoted_by": "chatr_director_phase0"
+    },
+    {
+      "capability": "meera",
+      "version": "v1.0.0",
+      "status": "VALIDATED_PHASE0",
+      "base_model_id": "qwen2.5-7b-instruct",
+      "method": "sft",
+      "dataset_id": "meera_sft_v1",
+      "dataset_hash": "fa8c13c2ca036cb472304dfdf1839ba05c6e8668d0d540026e6ef3bc89a7fb3c",
+      "soup_ship_verdict": "SHIP",
+      "chatr_gate_verdict": "RECORDED",
+      "adapter_path": "data/adapters/capabilities/meera/v1/adapter_model.safetensors",
+      "ollama_model_name": "chatr:meera-v1",
+      "promoted_at": "2026-08-29T16:18:00Z",
+      "promoted_by": "chatr_director_phase0"
+    }
+  ]
 }

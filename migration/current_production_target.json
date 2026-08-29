@@ -1,0 +1,166 @@
+{
+  "timestamp": "2026-08-29T07:56:01.904Z",
+  "target_description": "CHATR Core Production Schema Target (True Required Baseline)",
+  "total_core_tables": 20,
+  "core_tables": [
+    {
+      "table": "users",
+      "type": "table/view",
+      "required": true,
+      "reason": "Core authentication & user registry",
+      "source": "20260703080000_sync_auth_users.sql"
+    },
+    {
+      "table": "profiles",
+      "type": "view/table",
+      "required": true,
+      "reason": "Public user profile projection",
+      "source": "20260703140000_fix_profiles_view_grants.sql"
+    },
+    {
+      "table": "user_devices",
+      "type": "table",
+      "required": true,
+      "reason": "Multi-device push notification & push token registry",
+      "source": "20260703061719_create_enterprise_trusted_devices.sql"
+    },
+    {
+      "table": "trusted_devices",
+      "type": "table",
+      "required": true,
+      "reason": "Device biometric & hardware trust registry",
+      "source": "20260703061719_create_enterprise_trusted_devices.sql"
+    },
+    {
+      "table": "device_challenges",
+      "type": "table",
+      "required": true,
+      "reason": "WebAuthn & device crypto challenges",
+      "source": "20260703061719_create_enterprise_trusted_devices.sql"
+    },
+    {
+      "table": "identity_providers",
+      "type": "table",
+      "required": true,
+      "reason": "OAuth & phone provider binding",
+      "source": "20260702132311_create_identity_providers.sql"
+    },
+    {
+      "table": "conversations",
+      "type": "table",
+      "required": true,
+      "reason": "Direct & Group chat conversations",
+      "source": "20260703150000_patch_core_messaging_schema.sql"
+    },
+    {
+      "table": "conversation_participants",
+      "type": "table",
+      "required": true,
+      "reason": "Group conversation participant membership",
+      "source": "20260703133000_fix_conversation_participants_rls.sql"
+    },
+    {
+      "table": "messages",
+      "type": "table",
+      "required": true,
+      "reason": "E2E message history, delivery status, reactions",
+      "source": "20260703150000_patch_core_messaging_schema.sql"
+    },
+    {
+      "table": "contacts",
+      "type": "table",
+      "required": true,
+      "reason": "Phone contact book synchronization",
+      "source": "20260704120000_fix_contacts_unique.sql"
+    },
+    {
+      "table": "attachments",
+      "type": "table",
+      "required": true,
+      "reason": "Media, voice notes, document attachments",
+      "source": "20260705000004_core_foundation_v1_pt3.sql"
+    },
+    {
+      "table": "storage_metadata",
+      "type": "table",
+      "required": true,
+      "reason": "Metadata for private storage objects",
+      "source": "20260705000004_core_foundation_v1_pt3.sql"
+    },
+    {
+      "table": "calls",
+      "type": "table",
+      "required": true,
+      "reason": "WebRTC audio/video call signaling & history",
+      "source": "20260703110000_fix_calls_and_users_rls.sql"
+    },
+    {
+      "table": "meeting_participants",
+      "type": "table",
+      "required": true,
+      "reason": "Group call participant tracking",
+      "source": "20260705000001_desktop_call_features.sql"
+    },
+    {
+      "table": "notifications",
+      "type": "table",
+      "required": true,
+      "reason": "In-app notifications & push events",
+      "source": "20260705000000_add_calendar_events_and_notification_is_read.sql"
+    },
+    {
+      "table": "notification_preferences",
+      "type": "table",
+      "required": true,
+      "reason": "User notification sound & mute settings",
+      "source": "20260705000000_add_calendar_events_and_notification_is_read.sql"
+    },
+    {
+      "table": "calendar_events",
+      "type": "table",
+      "required": true,
+      "reason": "Chat scheduled meetings & calendar events",
+      "source": "20260705000000_add_calendar_events_and_notification_is_read.sql"
+    },
+    {
+      "table": "ai_memory",
+      "type": "table",
+      "required": true,
+      "reason": "Live production 768-dim user AI semantic memory",
+      "source": "20260705000002_core_foundation_v1.sql"
+    },
+    {
+      "table": "ai_sessions",
+      "type": "table",
+      "required": true,
+      "reason": "AI Chat & Assistant session threads",
+      "source": "20260709000005_phase2_agent_sessions.sql"
+    },
+    {
+      "table": "super_admin_allowlist",
+      "type": "table",
+      "required": true,
+      "reason": "Hardcoded Super Admin Security Allowlist (9910678611 & 9717845477)",
+      "source": "20260826143000_super_admin_security.sql"
+    }
+  ],
+  "memory_architecture": {
+    "canonical_table": "public.ai_memory",
+    "legacy_table": "public.communication_memory",
+    "vector_dimension": 768,
+    "status": "ai_memory is currently deployed in chatr-core with 768-dim vector compatibility. communication_memory was an alternate naming in Phase 3 migration. ai_memory is the canonical production table.",
+    "action": "Preserve public.ai_memory as the sole production table. Add alias view if legacy code queries communication_memory."
+  },
+  "admin_security": {
+    "required_migration": "20260826143000_super_admin_security.sql",
+    "required_objects": [
+      "public.super_admin_allowlist",
+      "public.is_super_admin(UUID)"
+    ],
+    "authorized_phones": [
+      "9910678611",
+      "9717845477"
+    ],
+    "status": "READY_FOR_DEPLOYMENT"
+  }
+}

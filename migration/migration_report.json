@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-08-29T07:51:07.919Z",
+  "phase": "PHASE_0_AND_PHASE_1_DISCOVERY_AND_RECONCILIATION",
+  "verdict": "READY_FOR_APPROVAL",
+  "source_identities_total": 75,
+  "distinct_canonical_users": 65,
+  "destination_users_count": 8,
+  "new_users_to_provision": 59,
+  "duplicate_records_flagged": 15,
+  "test_accounts_isolated": 4,
+  "malformed_records_quarantined": 3,
+  "super_admin_accounts": {
+    "9910678611_Arshid_Wani": "READY_FOR_PROVISION_AS_SUPER_ADMIN",
+    "9717845477_Sanobar_Jahan": "CURRENTLY_ACTIVE_IN_CORE"
+  },
+  "ai_runtime_dependencies": {
+    "lovable_api_gateway": 0,
+    "lovable_api": 0,
+    "lovable_api_key": 0,
+    "direct_providers_wired": [
+      "gemini-2.5-flash",
+      "llama-3.3-70b-versatile",
+      "openrouter",
+      "openai"
+    ]
+  }
+}

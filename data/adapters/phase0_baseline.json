@@ -1,0 +1,324 @@
+{
+  "_meta": {
+    "phase": "phase0_baseline",
+    "recorded_at": "2026-08-29T15:56:01.350516+00:00",
+    "purpose": "Baseline scores before adapter training. Compare against adapter-loaded models to prove improvement.",
+    "gate": "adapter_score > baseline_score AND regression_score > 0.90"
+  },
+  "baselines": {
+    "phi3:mini": {
+      "general": {
+        "model": "phi3:mini",
+        "capability": "general",
+        "avg_keyword_score": 0.556,
+        "avg_ttft_ms": 34326.1,
+        "tests": [
+          {
+            "prompt": "What is the difference between RAM and storage?",
+            "response_preview": "RAM (Random Access Memory) provides temporary, fast access to data needed by applications currently running on your comp",
+            "keywords_expected": [
+              "storage",
+              "RAM",
+              "memory"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 18921.2,
+            "error": null
+          },
+          {
+            "prompt": "Explain what an API is in one paragraph.",
+            "response_preview": "An Application Programming Interface (API) provides developers with a set of tools, protocols, and guideline to build so",
+            "keywords_expected": [
+              "application",
+              "interface",
+              "request"
+            ],
+            "keyword_score": 0.667,
+            "ttft_ms": 22003.5,
+            "error": null
+          },
+          {
+            "prompt": "What is compound interest? Give a brief example.",
+            "response_preview": "",
+            "keywords_expected": [
+              "interest",
+              "principal",
+              "compound"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 62053.5,
+            "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)"
+          }
+        ]
+      },
+      "coding": {
+        "model": "phi3:mini",
+        "capability": "coding",
+        "avg_keyword_score": 0.667,
+        "avg_ttft_ms": 44903.3,
+        "tests": [
+          {
+            "prompt": "Write a Python function that reverses a string.",
+            "response_preview": "def reverse_string(s):\n    return s[::-1]\n\nTest:\nprint(reverse_string('hello world')) # Output: 'dlrow olleh'",
+            "keywords_expected": [
+              "def",
+              "return",
+              "[::-1]"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 11900.2,
+            "error": null
+          },
+          {
+            "prompt": "What does the SQL keyword JOIN do?",
+            "response_preview": "The `JOIN` keyword in SQL is used to combine rows from two or more tables based on a related column between them. This r",
+            "keywords_expected": [
+              "table",
+              "rows",
+              "match"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 60741.6,
+            "error": null
+          },
+          {
+            "prompt": "Write a TypeScript type that makes all keys optional.",
+            "response_preview": "",
+            "keywords_expected": [
+              "Partial",
+              "optional",
+              "type"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 62068.2,
+            "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)"
+          }
+        ]
+      },
+      "meera": {
+        "model": "phi3:mini",
+        "capability": "meera",
+        "avg_keyword_score": 0.111,
+        "avg_ttft_ms": 38751.4,
+        "tests": [
+          {
+            "prompt": "Meera, what's your morning routine like?",
+            "response_preview": "Alright, first I wake up at around six, ya know after my eight hours of sleep! Then me mum makes some parathas and butte",
+            "keywords_expected": [
+              "chai",
+              "Delhi",
+              "morning"
+            ],
+            "keyword_score": 0.333,
+            "ttft_ms": 25527.1,
+            "error": null
+          },
+          {
+            "prompt": "Meera, give me a video hook idea for a Delhi street food Reel.",
+            "response_preview": "🍛 Alrighty then! 😎 Let's dive into the mouth-waterin', heart-warminess of Delhi’s bustling streets with \"Delhi in Dishes",
+            "keywords_expected": [
+              "hook",
+              "food",
+              "Reel"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 28686.2,
+            "error": null
+          },
+          {
+            "prompt": "Meera, how do you handle creative blocks?",
+            "response_preview": "",
+            "keywords_expected": [
+              "creative",
+              "idea",
+              "block"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 62041.0,
+            "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)"
+          }
+        ]
+      }
+    },
+    "llama3.2:3b": {
+      "general": {
+        "model": "llama3.2:3b",
+        "capability": "general",
+        "avg_keyword_score": 0.667,
+        "avg_ttft_ms": 42080.3,
+        "tests": [
+          {
+            "prompt": "What is the difference between RAM and storage?",
+            "response_preview": "",
+            "keywords_expected": [
+              "storage",
+              "RAM",
+              "memory"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 62048.1,
+            "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)"
+          },
+          {
+            "prompt": "Explain what an API is in one paragraph.",
+            "response_preview": "An Application Programming Interface (API) is a set of defined rules, protocols, and tools that allows different softwar",
+            "keywords_expected": [
+              "application",
+              "interface",
+              "request"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 27963.6,
+            "error": null
+          },
+          {
+            "prompt": "What is compound interest? Give a brief example.",
+            "response_preview": "Compound interest is the interest earned on both the principal amount and any accrued interest over time. It's calculate",
+            "keywords_expected": [
+              "interest",
+              "principal",
+              "compound"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 36229.2,
+            "error": null
+          }
+        ]
+      },
+      "coding": {
+        "model": "llama3.2:3b",
+        "capability": "coding",
+        "avg_keyword_score": 0.889,
+        "avg_ttft_ms": 43179.8,
+        "tests": [
+          {
+            "prompt": "Write a Python function that reverses a string.",
+            "response_preview": "**Reversing a String in Python**\n=====================================\n\nHere's a simple and efficient way to reverse a s",
+            "keywords_expected": [
+              "def",
+              "return",
+              "[::-1]"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 51172.0,
+            "error": null
+          },
+          {
+            "prompt": "What does the SQL keyword JOIN do?",
+            "response_preview": "The `JOIN` keyword in SQL is used to combine rows from two or more tables based on a related column between them. It ret",
+            "keywords_expected": [
+              "table",
+              "rows",
+              "match"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 42993.6,
+            "error": null
+          },
+          {
+            "prompt": "Write a TypeScript type that makes all keys optional.",
+            "response_preview": "You can use the `Record` type in TypeScript to create a type where all properties are optional. Here's how you can do it",
+            "keywords_expected": [
+              "Partial",
+              "optional",
+              "type"
+            ],
+            "keyword_score": 0.667,
+            "ttft_ms": 35373.7,
+            "error": null
+          }
+        ]
+      },
+      "meera": {
+        "model": "llama3.2:3b",
+        "capability": "meera",
+        "avg_keyword_score": 0.778,
+        "avg_ttft_ms": 40674.9,
+        "tests": [
+          {
+            "prompt": "Meera, what's your morning routine like?",
+            "response_preview": "Arre, chalo let's talk about my morning routine, yaar! Mera sabse pehle kaam hai paryapt aaram karne ka, jis se mujhe di",
+            "keywords_expected": [
+              "chai",
+              "Delhi",
+              "morning"
+            ],
+            "keyword_score": 0.333,
+            "ttft_ms": 39148.2,
+            "error": null
+          },
+          {
+            "prompt": "Meera, give me a video hook idea for a Delhi street food Reel.",
+            "response_preview": "Arre beta! Main toh ek super cool video hook idea leaungi!\n\nTumhari yeh Reel \"Delhi Street Food Challenge\" ho sakta hai,",
+            "keywords_expected": [
+              "hook",
+              "food",
+              "Reel"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 28495.8,
+            "error": null
+          },
+          {
+            "prompt": "Meera, how do you handle creative blocks?",
+            "response_preview": "Arre, creative blocks toh ek bahut bada problem hai, you know? (Oh, creative blocks, that's such a big problem!) Lekin m",
+            "keywords_expected": [
+              "creative",
+              "idea",
+              "block"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 54380.8,
+            "error": null
+          }
+        ]
+      }
+    },
+    "chatr:meera-v1": {
+      "meera": {
+        "model": "chatr:meera-v1",
+        "capability": "meera",
+        "avg_keyword_score": 0.333,
+        "avg_ttft_ms": 36203.1,
+        "tests": [
+          {
+            "prompt": "Meera, what's your morning routine like?",
+            "response_preview": "",
+            "keywords_expected": [
+              "chai",
+              "Delhi",
+              "morning"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 62037.9,
+            "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)"
+          },
+          {
+            "prompt": "Meera, give me a video hook idea for a Delhi street food Reel.",
+            "response_preview": "Sure! Here's my suggestion: \"Imagine this - the smoky air of Old Delhi at dusk as you follow our journey through lanes l",
+            "keywords_expected": [
+              "hook",
+              "food",
+              "Reel"
+            ],
+            "keyword_score": 0.0,
+            "ttft_ms": 26516.4,
+            "error": null
+          },
+          {
+            "prompt": "Meera, how do you handle creative blocks?",
+            "response_preview": "Sir, when I face these \"creative block\" situations, sir sahib tells me to take a break and go for a walk or listen to so",
+            "keywords_expected": [
+              "creative",
+              "idea",
+              "block"
+            ],
+            "keyword_score": 1.0,
+            "ttft_ms": 20055.1,
+            "error": null
+          }
+        ]
+      }
+    }
+  }
+}

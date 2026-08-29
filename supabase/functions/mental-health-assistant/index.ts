@@ -1,12 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const LOVABLE_AI_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // PHQ-9 Questions
 const PHQ9_QUESTIONS = [
@@ -269,15 +268,13 @@ Would you like me to help you find a mental health professional in your area?`,
           );
         }
 
-        // Regular supportive chat
-        const aiResponse = await fetch(LOVABLE_AI_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
+        // Regular supportive chat via direct AI router
+        let response = "I'm here to listen and support you. Would you like to tell me more about what you're going through?";
+        try {
+          const aiResult = await completeChat({
+            primaryProvider: "gemini",
+            fallbackProviders: ["openrouter", "groq"],
+            model: "gemini-2.5-flash",
             messages: [
               {
                 role: 'system',
@@ -296,15 +293,13 @@ Always be warm, non-judgmental, and supportive. If someone seems in crisis, urge
               }
             ],
             temperature: 0.7,
-            max_tokens: 500
-          })
-        });
-
-        let response = "I'm here to listen and support you. Would you like to tell me more about what you're going through?";
-        
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          response = aiData.choices[0]?.message?.content || response;
+            maxTokens: 500
+          });
+          if (aiResult.content) {
+            response = aiResult.content;
+          }
+        } catch (e) {
+          console.warn('Mental health AI notice:', e);
         }
 
         return new Response(

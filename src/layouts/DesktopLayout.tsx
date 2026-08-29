@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { performLogout } from '@/utils/logout';
 import { AIStatusBadge } from '@/components/desktop/AIStatusBadge';
 import { PerformanceObservatory } from '@/components/desktop/observatory/PerformanceObservatory';
 import { BootStatusIndicator } from '@/components/desktop/BootStatusIndicator';
@@ -266,8 +267,7 @@ const DesktopLayoutInner = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/web');
+    await performLogout();
   };
 
   if (loading) {
@@ -333,10 +333,12 @@ const DesktopLayoutInner = () => {
   const textPrimary = isDark ? 'text-white/90' : 'text-zinc-900';
   const hoverBg = isDark ? 'hover:bg-white/[0.06]' : 'hover:bg-zinc-100';
 
-  const rawDisplayName = profile?.full_name || profile?.display_name || profile?.username || user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email ? user.email.split('@')[0] : '') || 'User';
+  const rawDisplayName = profile?.full_name || profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || (profile?.username && !profile.username.startsWith('user_') ? profile.username : '') || 'User';
   const cleanDisplayName = rawDisplayName.trim();
-  const displayName = (!cleanDisplayName || /^\+?[0-9\s\-]+$/.test(cleanDisplayName)) ? 'User' : cleanDisplayName;
-  const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
+  const displayName = cleanDisplayName || 'User';
+  const initials = displayName !== 'User' 
+    ? displayName.split(' ').filter(Boolean).map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() 
+    : 'U';
   const currentPath = `${location.pathname}${location.search}`;
   const isNavItemActive = (path: string) => {
     if (path.includes('?')) return currentPath === path;

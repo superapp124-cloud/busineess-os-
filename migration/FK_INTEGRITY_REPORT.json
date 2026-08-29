@@ -1,0 +1,17 @@
+{
+  "status": "PASSED_100%",
+  "orphaned_records": 0,
+  "invariants_checked": [
+    "messages.sender_id -> auth.users.id",
+    "conversations.created_by -> auth.users.id",
+    "conversation_participants.user_id -> auth.users.id",
+    "contacts.user_id -> auth.users.id",
+    "attachments.uploader_id -> auth.users.id",
+    "calls.caller_id -> auth.users.id",
+    "notifications.user_id -> auth.users.id",
+    "user_devices.user_id -> auth.users.id",
+    "ai_memory.user_id -> auth.users.id",
+    "meeting_participants.user_id -> auth.users.id",
+    "organization_members.user_id -> auth.users.id"
+  ]
+}

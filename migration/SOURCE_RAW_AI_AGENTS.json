@@ -1,0 +1,20 @@
+[
+  {
+    "id": "3ac1b119-9829-4705-8dbe-d6f9f27c00fd",
+    "user_id": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+    "agent_name": "Sanobar ",
+    "agent_avatar_url": "",
+    "agent_description": "Help me to get the details about all subjects for my children \n\n\n\n\n\n\n\n",
+    "agent_personality": "helpful and professional",
+    "agent_purpose": "Student helper",
+    "knowledge_base": "",
+    "auto_reply_enabled": true,
+    "response_delay_seconds": 2,
+    "greeting_message": "",
+    "is_active": true,
+    "total_conversations": 0,
+    "total_messages": 0,
+    "created_at": "2025-11-05T05:49:11.04736+00:00",
+    "updated_at": "2025-11-05T05:49:11.04736+00:00"
+  }
+]

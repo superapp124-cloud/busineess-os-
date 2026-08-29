@@ -52,24 +52,34 @@ serve(createEdgeFunction({
   // Use a secure deterministic password derived from UID to ensure seamless re-login
   const password = `${normalizedPhone}_${firebase_uid.slice(0, 10)}`;
 
-  // 2. Find or Create Supabase User
-  const { data: existingUsers } = await auth.serviceClient.auth.admin.listUsers();
-  const existingUser = existingUsers?.users?.find((user) => user.email === email);
+  // 2. Find or Create Supabase User via Canonical Phone
+  const { data: existingUsers } = await auth.serviceClient.auth.admin.listUsers({ perPage: 1000 });
+  const existingUser = existingUsers?.users?.find((user) => 
+    (user.phone && user.phone.replace(/\D/g, '') === normalizedPhone) ||
+    (user.user_metadata?.phone_number && String(user.user_metadata.phone_number).replace(/\D/g, '') === normalizedPhone) ||
+    user.email === email
+  );
 
   let isNewUser = false;
   if (existingUser) {
-    // Update password in case we need to reset the deterministic login
-    const { error } = await auth.serviceClient.auth.admin.updateUserById(existingUser.id, {
+    // Update password & phone metadata in case we need to reset the deterministic login
+    const updatePayload: Record<string, any> = {
       password,
-      user_metadata: { phone_number, firebase_uid },
-    });
+      user_metadata: { ...existingUser.user_metadata, phone_number, firebase_uid, phone: phone_number },
+    };
+    if (!existingUser.phone) {
+      updatePayload.phone = phone_number;
+    }
+    const { error } = await auth.serviceClient.auth.admin.updateUserById(existingUser.id, updatePayload);
     if (error) throw new PlatformError(400, "phone_user_update_failed", error.message);
   } else {
     const { error } = await auth.serviceClient.auth.admin.createUser({
       email,
+      phone: phone_number,
       password,
-      email_confirm: true, // auto-confirm to avoid rate limits!
-      user_metadata: { phone_number, firebase_uid },
+      email_confirm: true,
+      phone_confirm: true,
+      user_metadata: { phone_number, firebase_uid, phone: phone_number },
     });
     if (error) throw new PlatformError(400, "phone_user_create_failed", error.message);
     isNewUser = true;

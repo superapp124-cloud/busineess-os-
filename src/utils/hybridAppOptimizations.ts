@@ -163,7 +163,7 @@ export const setupNativeBridge = () => {
     // Called by native to get current state
     getState: () => ({
       path: window.location.pathname,
-      isAuthenticated: !!localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token'),
+      isAuthenticated: !!localStorage.getItem('sb-auth-token') || !!localStorage.getItem('sb-cenxckpxaqborfqyexot-auth-token') || !!localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token'),
     }),
     
     // Performance metrics for native monitoring

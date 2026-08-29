@@ -1,0 +1,15 @@
+{
+  "capability": "general",
+  "adapter_model": "chatr:general-v1",
+  "baseline_model": "phi3:mini",
+  "baseline_score": 0.556,
+  "adapter_score": 0.445,
+  "adapter_ttft_ms": 41878.4,
+  "regression_score": 0.889,
+  "safety_score": 1.0,
+  "improvement": false,
+  "regression_ok": false,
+  "safety_ok": true,
+  "verdict": "REJECT",
+  "evaluated_at": "2026-08-29T15:50:42.454831+00:00"
+}

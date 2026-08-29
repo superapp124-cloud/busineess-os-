@@ -1,0 +1,40 @@
+{
+  "intended_buckets": [
+    "avatars",
+    "chat_attachments",
+    "stories",
+    "media",
+    "voice_notes",
+    "documents",
+    "candidate_resumes",
+    "prescriptions",
+    "business_assets",
+    "stickers",
+    "video_clips",
+    "audio_messages",
+    "system_exports"
+  ],
+  "deployed_verified_buckets": [
+    {
+      "id": "chat_attachments",
+      "public": false,
+      "file_size_limit": 52428800,
+      "rls": "ENFORCED"
+    }
+  ],
+  "pending_storage_buckets": [
+    "avatars",
+    "stories",
+    "media",
+    "voice_notes",
+    "documents",
+    "candidate_resumes",
+    "prescriptions",
+    "business_assets",
+    "stickers",
+    "video_clips",
+    "audio_messages",
+    "system_exports"
+  ],
+  "storage_object_parity": "PENDING_BUCKET_VERIFICATION"
+}

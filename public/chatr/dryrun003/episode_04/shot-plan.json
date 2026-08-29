@@ -1,0 +1,61 @@
+{
+  "videoId": "meera_ep004_1787832055",
+  "totalDurationSec": 19,
+  "mode": "COMMENT_REPLY",
+  "location": "delhi_metro",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 3,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "talking_to_camera_selfie",
+      "backgroundVideoQuery": "metro train india inside commute",
+      "backgroundType": "delhi_metro \u2014 hook",
+      "dialogue": "Someone commented that I talk too fast",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "Natural camera movement. Background has ambient motion.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "reacting_to_something",
+      "backgroundVideoQuery": "subway station india",
+      "backgroundType": "delhi_metro \u2014 reaction",
+      "dialogue": "Have you ever tried boarding Rajiv Chowk metro",
+      "emotionalBeat": "amused",
+      "charactersPresent": [],
+      "motionNotes": "Meera's expression changes mid-shot.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 6,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "walking_toward_camera",
+      "backgroundVideoQuery": "train india passengers",
+      "backgroundType": "delhi_metro \u2014 walking",
+      "dialogue": "Okay so Audience comment: 'Meera talks too fast and has zero patience' \u2014 yeh comment aya tha pichle video pe",
+      "emotionalBeat": "conspiratorial",
+      "charactersPresent": [],
+      "motionNotes": "Background scrolls, natural camera shake while walking.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 5,
+      "cameraStyle": "medium_shot_fixed",
+      "meeraAction": "looking_skeptical",
+      "backgroundVideoQuery": "metro train india inside commute",
+      "backgroundType": "delhi_metro \u2014 payoff",
+      "dialogue": "Here is my answer",
+      "emotionalBeat": "deadpan",
+      "charactersPresent": [],
+      "motionNotes": "One eyebrow up. Holds eye contact.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

@@ -1,0 +1,249 @@
+{
+  "forensic_audit_type": "READ_ONLY_SOURCE_FORENSIC_INVENTORY",
+  "source_project": {
+    "ref": "sbayuqgomlflmxgicplz",
+    "url": "https://sbayuqgomlflmxgicplz.supabase.co",
+    "status": "ONLINE_UNPAUSED_ACCESSIBLE",
+    "extracted_at": "2026-08-29T09:11:03.365Z"
+  },
+  "exact_source_row_counts": {
+    "conversations": 17,
+    "conversation_participants": 26,
+    "messages": 1031,
+    "contacts": 2078,
+    "calls": 9927,
+    "ai_agents": 1,
+    "session_rooms": 41,
+    "user_devices": 6,
+    "profiles": 1,
+    "calendar_events": 0,
+    "appointments": 0,
+    "mcp_api_keys": 0,
+    "mcp_request_logs": 0,
+    "storage_objects": 0
+  },
+  "source_unique_user_identities_referenced": 12,
+  "users_detail": [
+    {
+      "uuid": "63c1d4e4-bd98-4683-9a16-1182b5d0ded8",
+      "contexts": [
+        "profiles",
+        "conversations.created_by",
+        "conversation_participants",
+        "messages.sender_id",
+        "contacts.user_id",
+        "calls.receiver_id",
+        "calls.caller_id",
+        "session_rooms.host_id",
+        "user_devices.user_id",
+        "ai_agents.user_id"
+      ],
+      "messages_sent": 255,
+      "calls_made": 1712,
+      "calls_received": 8215,
+      "conversations_participated": 13,
+      "contacts_owned": 2078,
+      "rooms_hosted": 41,
+      "devices": 6,
+      "sample_names": [
+        "Sanobar Jahan",
+        "Sanobar "
+      ],
+      "sample_phones": []
+    },
+    {
+      "uuid": "29f65ca9-a811-492b-b024-09689a44dbf0",
+      "contexts": [
+        "conversation_participants",
+        "messages.sender_id",
+        "calls.caller_id",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 448,
+      "calls_made": 5305,
+      "calls_received": 1005,
+      "conversations_participated": 2,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "65b871c5-4f95-459e-8be5-230d99c011cd",
+      "contexts": [
+        "conversation_participants",
+        "messages.sender_id",
+        "calls.caller_id",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 270,
+      "calls_made": 2367,
+      "calls_received": 522,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "a9fe1864-7f68-40dc-8ef2-2d6db86cbf1b",
+      "contexts": [
+        "conversation_participants",
+        "messages.sender_id",
+        "calls.receiver_id",
+        "calls.caller_id"
+      ],
+      "messages_sent": 58,
+      "calls_made": 539,
+      "calls_received": 140,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "ddaa5b15-13e2-40aa-a7fd-acc3b935daaa",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 32,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "37d4584c-7b4c-49ee-b9ea-17bfa5d6c3fc",
+      "contexts": [
+        "conversations.created_by",
+        "conversation_participants",
+        "calls.caller_id",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 4,
+      "calls_received": 2,
+      "conversations_participated": 2,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "483b392d-c209-4405-82fe-c0a7aa9b0a4f",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 3,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "39c824d8-2f62-4f42-a1a7-324d4704dbc0",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 3,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "7618c787-2151-4be0-b583-6fe4c8073284",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 2,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "68cbb06d-89bb-4013-8b2c-6f3613914a6f",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 1,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "9a21fa06-195c-4bc8-8217-4cdb877ada4a",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 1,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    },
+    {
+      "uuid": "ff25a97c-64e8-408b-be2e-264b71ed64c3",
+      "contexts": [
+        "conversation_participants",
+        "calls.receiver_id"
+      ],
+      "messages_sent": 0,
+      "calls_made": 0,
+      "calls_received": 1,
+      "conversations_participated": 1,
+      "contacts_owned": 0,
+      "rooms_hosted": 0,
+      "devices": 0,
+      "sample_names": [],
+      "sample_phones": []
+    }
+  ],
+  "date_ranges": {
+    "messages": {
+      "earliest": "2025-10-10T05:11:15.600Z",
+      "latest": "2026-08-22T08:38:50.400Z"
+    },
+    "calls": {
+      "earliest": "2025-10-10T05:09:30.234Z",
+      "latest": "2026-08-27T11:34:43.588Z"
+    }
+  }
+}

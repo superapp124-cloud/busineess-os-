@@ -1,0 +1,61 @@
+{
+  "videoId": "meera_ep010_1787832330",
+  "totalDurationSec": 18,
+  "mode": "SING",
+  "location": "mumbai_bandra",
+  "shots": [
+    {
+      "shotNumber": 1,
+      "durationSec": 4,
+      "cameraStyle": "medium_shot_fixed",
+      "meeraAction": "singing",
+      "backgroundVideoQuery": "mumbai street india",
+      "backgroundType": "mumbai_bandra \u2014 performance",
+      "dialogue": "Late night acoustic session",
+      "emotionalBeat": "warm",
+      "charactersPresent": [],
+      "motionNotes": "Meera sings. Slight body sway.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 2,
+      "durationSec": 5,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "singing",
+      "backgroundVideoQuery": "india coastal city walking",
+      "backgroundType": "mumbai_bandra \u2014 close",
+      "dialogue": "Pure melody, no autotune, just vibes",
+      "emotionalBeat": "nostalgic",
+      "charactersPresent": [],
+      "motionNotes": "Close on face. Emotional line.",
+      "transitionOut": "cross_dissolve"
+    },
+    {
+      "shotNumber": 3,
+      "durationSec": 5,
+      "cameraStyle": "selfie_handheld",
+      "meeraAction": "singing",
+      "backgroundVideoQuery": "mumbai urban bandra",
+      "backgroundType": "mumbai_bandra \u2014 wide",
+      "dialogue": "This song has been in my head for three days now",
+      "emotionalBeat": "excited",
+      "charactersPresent": [],
+      "motionNotes": "She moves with the song.",
+      "transitionOut": "cut"
+    },
+    {
+      "shotNumber": 4,
+      "durationSec": 4,
+      "cameraStyle": "close_up_reaction",
+      "meeraAction": "laughing",
+      "backgroundVideoQuery": "mumbai street india",
+      "backgroundType": "mumbai_bandra \u2014 end beat",
+      "dialogue": "",
+      "emotionalBeat": "warm",
+      "charactersPresent": [],
+      "motionNotes": "Final note held. Meera smiles naturally at camera.",
+      "transitionOut": "fade"
+    }
+  ],
+  "validationErrors": []
+}

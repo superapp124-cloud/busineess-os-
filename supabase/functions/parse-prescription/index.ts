@@ -12,6 +12,7 @@ import {
   requireUser,
   requireUuid,
 } from "../_shared/security.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 serve(async (req) => {
   const cors = handleCors(req);
@@ -40,26 +41,25 @@ serve(async (req) => {
       throw new HttpError(403, "prescription_access_denied", "You are not allowed to parse this prescription");
     }
 
-    const aiResponse = await fetch("https://lovable.dev/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [{
-          role: "user",
-          content: [
-            { type: "text", text: "Analyze this prescription image and extract all medicines with their dosage, frequency, and timing. Return JSON format: { \"doctor_name\": \"...\", \"hospital_name\": \"...\", \"medicines\": [{ \"name\": \"...\", \"dosage\": \"...\", \"frequency\": \"once_daily|twice_daily|thrice_daily\", \"timing\": [\"morning\", \"evening\"], \"duration_days\": 30 }] }. Only return valid JSON." },
-            { type: "image_url", image_url: { url: imageUrl } },
-          ],
-        }],
-      }),
+    const aiResult = await completeChat({
+      primaryProvider: "gemini",
+      fallbackProviders: ["openrouter", "openai"],
+      model: "gemini-2.5-flash",
+      responseFormat: { type: "json_object" },
+      messages: [{
+        role: "user",
+        content: [
+          { type: "text", text: "Analyze this prescription image and extract all medicines with their dosage, frequency, and timing. Return JSON format: { \"doctor_name\": \"...\", \"hospital_name\": \"...\", \"medicines\": [{ \"name\": \"...\", \"dosage\": \"...\", \"frequency\": \"once_daily|twice_daily|thrice_daily\", \"timing\": [\"morning\", \"evening\"], \"duration_days\": 30 }] }. Only return valid JSON." },
+          { type: "image_url", image_url: { url: imageUrl } },
+        ],
+      }],
+      temperature: 0.2,
     });
 
-    const aiData = await aiResponse.json();
     let parsedData: { medicines: unknown[]; doctor_name?: string; hospital_name?: string } = { medicines: [] };
 
     try {
-      const content = aiData.choices?.[0]?.message?.content || "{}";
+      const content = aiResult.content || "{}";
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedData = JSON.parse(jsonMatch[0]);
@@ -72,7 +72,7 @@ serve(async (req) => {
       .from("prescription_uploads")
       .update({
         ocr_parsed_data: parsedData,
-        ocr_raw_text: JSON.stringify(aiData),
+        ocr_raw_text: JSON.stringify(aiResult.raw || aiResult.content),
         doctor_name: parsedData.doctor_name || null,
         hospital_name: parsedData.hospital_name || null,
         status: "processed",
