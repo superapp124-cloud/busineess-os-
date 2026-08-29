@@ -66,11 +66,11 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
       sing: '/characters/meera/crops/look_ethnic_vibes.jpg'
     },
     videoMap: {
-      walk: '/videos/dances/ai_dance_02.mp4',
-      talk: '/videos/dances/ai_bench_02.mp4',
-      podcast: '/videos/dances/ai_bench_02.mp4',
-      dance: '/videos/dances/ai_dance_01.mp4',
-      sing: '/videos/dances/ai_dance_07.mp4'
+      walk: '/videos/meera/meera_walk_4k.mp4',
+      talk: '/videos/meera/meera_talk_4k.mp4',
+      podcast: '/videos/meera/meera_podcast_4k.mp4',
+      dance: '/videos/meera/meera_dance_4k.mp4',
+      sing: '/videos/meera/meera_sing_4k.mp4'
     },
     audioMap: {
       talk: '/videos/gurugram_report_voice.mp3',
