@@ -305,18 +305,51 @@ export const VirtualInfluencerStudio: React.FC = () => {
             
             <div 
               onClick={handleTogglePlay}
-              className="w-full max-w-[320px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl border-4 border-indigo-500/40 relative cursor-pointer group flex items-center justify-center"
+              className="w-full max-w-[320px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl border-4 border-indigo-500/40 relative cursor-pointer group flex items-center justify-center select-none"
             >
-              <video
-                key={performance.videoSrc}
-                ref={videoRef}
-                src={performance.videoSrc}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-              />
+              {performance.videoSrc.endsWith('.mp4') ? (
+                <video
+                  key={performance.videoSrc}
+                  ref={videoRef}
+                  src={performance.videoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="relative w-full h-full overflow-hidden bg-slate-950 flex items-center justify-center">
+                  <img
+                    key={performance.videoSrc}
+                    src={performance.videoSrc}
+                    alt={selectedInfluencer.name}
+                    className={`w-full h-full object-cover transition-all duration-700 ${
+                      isPlaying ? 'scale-105' : 'scale-100'
+                    }`}
+                  />
+                  {/* Subtle Cinematic Vignette */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
+
+                  {/* Live Audio Reactive Waveform Bars */}
+                  {isPlaying && (
+                    <div className="absolute bottom-28 left-0 right-0 flex items-center justify-center space-x-1 z-20 pointer-events-none">
+                      {[16, 28, 40, 24, 36, 18, 32, 44, 20, 30].map((h, i) => (
+                        <span
+                          key={i}
+                          className="w-1 bg-gradient-to-t from-indigo-500 to-purple-400 rounded-full animate-pulse"
+                          style={{
+                            height: `${h}px`,
+                            animationDelay: `${i * 0.1}s`,
+                            animationDuration: '0.6s'
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
 
               <audio
                 key={vocalAudioUrl}

@@ -15,6 +15,14 @@ export interface VirtualInfluencerProfile {
   voiceKey: 'hindi_female_reporter' | 'urdu_female_sufi' | 'hindi_male_narrator' | 'english_female_journalist';
   languages: string[];
   avatarImage: string;
+  useImageAvatar?: boolean;
+  imageMap?: {
+    talk: string;
+    podcast: string;
+    sing: string;
+    dance: string;
+    walk: string;
+  };
   videoMap: {
     talk: string;
     podcast: string;
@@ -49,12 +57,20 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
     voiceKey: 'hindi_female_reporter',
     languages: ['Hinglish', 'Hindi', 'English'],
     avatarImage: '/characters/meera/master_face_crop.jpg',
+    useImageAvatar: true,
+    imageMap: {
+      walk: '/characters/meera/crops/full_body_street.jpg',
+      talk: '/characters/meera/crops/creator_vlog_camera.jpg',
+      podcast: '/characters/meera/crops/lifestyle_cafe.jpg',
+      dance: '/characters/meera/crops/vibe_dancing_fun.jpg',
+      sing: '/characters/meera/crops/look_ethnic_vibes.jpg'
+    },
     videoMap: {
-      walk: '/videos/dances/ai_dance_09.mp4',
-      talk: '/videos/dances/ai_bench_01.mp4',
-      podcast: '/videos/dances/ai_bench_02.mp4',
-      dance: '/videos/dances/ai_dance_01.mp4',
-      sing: '/videos/dances/ai_dance_07.mp4'
+      walk: '/characters/meera/crops/full_body_street.jpg',
+      talk: '/characters/meera/crops/creator_vlog_camera.jpg',
+      podcast: '/characters/meera/crops/lifestyle_cafe.jpg',
+      dance: '/characters/meera/crops/vibe_dancing_fun.jpg',
+      sing: '/characters/meera/crops/look_ethnic_vibes.jpg'
     },
     audioMap: {
       talk: '/videos/gurugram_report_voice.mp3',
