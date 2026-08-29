@@ -430,7 +430,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
       if (health.status === 'ONLINE') {
         setStatusMessage(`Worker ONLINE: ${health.gpuName} (${health.vramTotalGb}GB VRAM) — Ready for Wan 2.1`);
       } else {
-        setStatusMessage(`Worker OFFLINE. Run notebooks/meera_performance_worker.ipynb in Colab T4 and paste URL.`);
+        setStatusMessage(`Worker OFFLINE. Run notebooks/chatr_training_worker.ipynb in Colab T4 and paste URL.`);
       }
     } catch {
       setStatusMessage(`Worker OFFLINE. Paste Cloudflare tunnel URL from Colab.`);
@@ -810,7 +810,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
                 </div>
 
                 <p className="text-[11px] text-slate-400 leading-normal">
-                  💡 <strong className="text-slate-200">How to connect free GPU:</strong> Open <code className="text-violet-300 bg-slate-950 px-1.5 py-0.5 rounded">notebooks/meera_performance_worker.ipynb</code> in Google Colab with a free T4 GPU, click <em>Run All</em>, and copy the printed Cloudflare URL here.
+                  💡 <strong className="text-slate-200">How to connect free GPU:</strong> Open <code className="text-violet-300 bg-slate-950 px-1.5 py-0.5 rounded">notebooks/chatr_training_worker.ipynb</code> in Google Colab with a free T4 GPU, click <em>Run All</em>, and copy the printed Cloudflare URL here.
                 </p>
               </div>
 

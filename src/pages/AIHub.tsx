@@ -78,6 +78,22 @@ export const AIHub: React.FC = () => {
   const [policyStatus, setPolicyStatus] = useState<null | 'CHECKING' | 'PASSED' | 'FAILED'>(null);
   const [policyViolations, setPolicyViolations] = useState<string[]>([]);
 
+  // Live training job tracking
+  interface LiveJob {
+    jobId: string;
+    capability: string;
+    method: string;
+    state: string;
+    progressPercent: number;
+    submittedAt: string;
+    soupVerdict?: string;
+    error?: string;
+  }
+  const [activeJobs, setActiveJobs] = useState<LiveJob[]>([]);
+  const [isSubmittingJob, setIsSubmittingJob] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   // Phase 0 validated adapters state
   const [adapters] = useState<MockAdapter[]>([
     { capability: 'general', version: 'v1.0.0', status: 'PRODUCTION', method: 'sft', soupVerdict: 'SHIP', chatrGate: 'PASS', ollamaTag: 'chatr:general-v1', promotedAt: 'Phase 0' },
@@ -129,10 +145,103 @@ export const AIHub: React.FC = () => {
     setPolicyStatus(violations.length === 0 ? 'PASSED' : 'FAILED');
   };
 
+  const handleSubmitJob = async () => {
+    setIsSubmittingJob(true);
+    setSubmitError(null);
+    try {
+      // Fetch dataset from public path for local worker submission
+      const datasetPath = `/data/${selectedCapability}/${datasetId}.jsonl`;
+      let datasetB64 = '';
+      try {
+        const dsRes = await fetch(datasetPath);
+        if (dsRes.ok) {
+          const dsText = await dsRes.text();
+          datasetB64 = btoa(unescape(encodeURIComponent(dsText)));
+        }
+      } catch (_) {
+        // Dataset fetch failed - send placeholder
+        datasetB64 = btoa('{}');
+      }
+
+      soupClient.current.setEndpoint(workerUrl);
+      const result = await soupClient.current.submitTrainingJob(
+        {
+          capability: selectedCapability,
+          baseModel: selectedBaseModel,
+          method: selectedMethod as 'sft' | 'dpo' | 'orpo',
+          datasetId,
+          budgetMinutes,
+          humanApprovedBy: humanApproval || undefined,
+        },
+        datasetB64
+      );
+
+      const newJob: LiveJob = {
+        jobId: result.jobId,
+        capability: selectedCapability,
+        method: selectedMethod,
+        state: result.state ?? 'QUEUED',
+        progressPercent: 0,
+        submittedAt: new Date().toISOString(),
+      };
+      setActiveJobs(prev => [...prev, newJob]);
+      setSection('jobs');
+      setPolicyStatus(null);
+
+      // Start polling this job
+      const poll = async (jobId: string) => {
+        try {
+          const status = await soupClient.current.getTrainingStatus(jobId);
+          setActiveJobs(prev => prev.map(j =>
+            j.jobId === jobId
+              ? {
+                  ...j,
+                  state: status.state ?? j.state,
+                  progressPercent: status.progressPercent ?? j.progressPercent,
+                  error: status.error,
+                }
+              : j
+          ));
+          if (status.state === 'COMPLETED' || status.state === 'FAILED') {
+            if (status.state === 'COMPLETED') {
+              // Fetch ship verdict
+              try {
+                const verdict = await soupClient.current.getShipVerdict(jobId);
+                setActiveJobs(prev => prev.map(j =>
+                  j.jobId === jobId ? { ...j, soupVerdict: verdict.verdict } : j
+                ));
+              } catch (_) {}
+            }
+            return true; // stop polling
+          }
+        } catch (_) {}
+        return false;
+      };
+
+      // Poll every 3 seconds until done
+      let done = false;
+      const intervalId = setInterval(async () => {
+        done = await poll(result.jobId);
+        if (done) clearInterval(intervalId);
+      }, 3000);
+      pollIntervalRef.current = intervalId;
+
+    } catch (err: any) {
+      setSubmitError(err.message ?? 'Job submission failed');
+    } finally {
+      setIsSubmittingJob(false);
+    }
+  };
+
   useEffect(() => {
     checkOllama();
     checkWorker();
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
   }, []);
+
+
 
   // ============================================================
   // RENDER HELPERS
@@ -348,7 +457,7 @@ export const AIHub: React.FC = () => {
               <p className="text-xs text-slate-500 italic">Paste your Colab URL above and ping to check.</p>
             )}
             <p className="text-[11px] text-slate-400">
-              💡 Open <code className="text-violet-300 bg-slate-950 px-1 py-0.5 rounded">notebooks/meera_performance_worker.ipynb</code> in Colab T4 → Run All → paste tunnel URL.
+              💡 Open <code className="text-violet-300 bg-slate-950 px-1 py-0.5 rounded">notebooks/chatr_training_worker.ipynb</code> in Colab T4 → Run All → paste tunnel URL.
             </p>
           </div>
 
@@ -473,20 +582,32 @@ export const AIHub: React.FC = () => {
 
               {/* Submit */}
               <button
-                disabled={policyStatus !== 'PASSED'}
+                disabled={policyStatus !== 'PASSED' || isSubmittingJob}
+                onClick={handleSubmitJob}
                 className={`w-full py-3.5 rounded-2xl text-xs font-bold flex items-center justify-center space-x-2 transition ${
-                  policyStatus === 'PASSED'
+                  policyStatus === 'PASSED' && !isSubmittingJob
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl'
                     : 'bg-slate-800 text-slate-600 cursor-not-allowed'
                 }`}
               >
-                <Zap className="w-4 h-4" />
-                <span>Submit to Soup Worker ({selectedCapability} / {selectedMethod.toUpperCase()})</span>
+                {isSubmittingJob
+                  ? <RefreshCw className="w-4 h-4 animate-spin" />
+                  : <Zap className="w-4 h-4" />}
+                <span>{isSubmittingJob ? 'Submitting...' : `Submit to Soup Worker (${selectedCapability} / ${selectedMethod.toUpperCase()})`}</span>
               </button>
+
+              {/* Submit error */}
+              {submitError && (
+                <div className="bg-rose-950/40 border border-rose-500/40 rounded-2xl p-3 text-xs font-mono text-rose-300">
+                  ❌ {submitError}
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+
+
 
       {/* ======================================================== */}
       {/* SECTION: ADAPTER REGISTRY */}
@@ -620,15 +741,77 @@ export const AIHub: React.FC = () => {
       {/* ======================================================== */}
       {section === 'jobs' && (
         <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-3xl space-y-4">
-          <h2 className="text-sm font-bold text-white flex items-center space-x-2">
-            <Terminal className="w-4 h-4 text-violet-400" />
-            <span>Training Jobs</span>
-          </h2>
-          <div className="bg-slate-950 border border-slate-800 p-8 rounded-2xl text-center text-slate-500 text-sm">
-            No training jobs yet. Submit your first job in the <strong className="text-slate-300">New Training Job</strong> tab.
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-white flex items-center space-x-2">
+              <Terminal className="w-4 h-4 text-violet-400" />
+              <span>Training Jobs ({activeJobs.length})</span>
+            </h2>
+            <button onClick={() => setSection('new_job')}
+              className="px-3 py-1.5 text-[10px] font-mono bg-violet-600 hover:bg-violet-500 text-white rounded-xl flex items-center space-x-1 transition">
+              <span>+ New Job</span>
+            </button>
           </div>
+
+          {activeJobs.length === 0 ? (
+            <div className="bg-slate-950 border border-slate-800 p-8 rounded-2xl text-center text-slate-500 text-sm">
+              No training jobs yet. Submit your first job in the <strong className="text-slate-300">New Training Job</strong> tab.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {activeJobs.slice().reverse().map(job => (
+                <div key={job.jobId} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs font-bold text-white font-mono">{job.capability} / {job.method.toUpperCase()}</span>
+                        <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold font-mono ${
+                          job.state === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-300'
+                          : job.state === 'FAILED' ? 'bg-rose-500/20 text-rose-300'
+                          : job.state === 'SOUP_TRAINING' ? 'bg-amber-500/20 text-amber-300'
+                          : 'bg-slate-800 text-slate-400'
+                        }`}>{job.state}</span>
+                        {job.soupVerdict && (
+                          <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold font-mono ${
+                            job.soupVerdict === 'SHIP' ? 'bg-emerald-500/20 text-emerald-300'
+                            : 'bg-rose-500/20 text-rose-300'
+                          }`}>Soup: {job.soupVerdict}</span>
+                        )}
+                      </div>
+                      <p className="text-[10px] font-mono text-slate-500">Job: {job.jobId}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-500">
+                      {new Date(job.submittedAt).toLocaleTimeString()}
+                    </span>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                      <span>Progress</span>
+                      <span className="font-bold text-white">{job.progressPercent}%</span>
+                    </div>
+                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          job.state === 'COMPLETED' ? 'bg-emerald-500'
+                          : job.state === 'FAILED' ? 'bg-rose-500'
+                          : 'bg-violet-500'
+                        }`}
+                        style={{ width: `${job.progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {job.error && (
+                    <p className="text-[10px] font-mono text-rose-300 bg-rose-950/30 border border-rose-500/30 rounded-xl p-2">❌ {job.error}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
+
 
     </div>
   );

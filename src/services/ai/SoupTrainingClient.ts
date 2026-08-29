@@ -126,11 +126,20 @@ export class SoupTrainingClient {
   /** Check training worker health. */
   async healthCheck(): Promise<TrainingWorkerHealth> {
     try {
-      const res = await fetch(`${this.endpoint}/training-health`, {
+      const res = await fetch(`${this.endpoint}/health`, {
         signal: AbortSignal.timeout(5000),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const data = await res.json();
+      // Map from the actual worker response shape (snake_case) to interface
+      return {
+        status: (data.status === 'ONLINE' ? 'ONLINE' : 'DEGRADED') as 'ONLINE' | 'OFFLINE' | 'DEGRADED',
+        gpuName: data.gpu ?? data.gpu_name ?? 'Worker Host',
+        vramTotalGb: data.vram_total_gb ?? 0,
+        vramFreeGb: data.vram_free_gb ?? 0,
+        soupVersion: data.soup_version ?? '0.73.3',
+        backend: (data.backend ?? 'LOCAL_CUDA') as 'COLAB_T4' | 'KAGGLE_T4' | 'LOCAL_CUDA',
+      };
     } catch (err: any) {
       return {
         status: 'OFFLINE',
@@ -141,6 +150,7 @@ export class SoupTrainingClient {
       };
     }
   }
+
 
   /**
    * Submit a training job to the Soup worker.

@@ -15,6 +15,16 @@ export default defineConfig(({ mode }) => ({
         target: "http://localhost:8787",
         changeOrigin: true,
       },
+      "/ollama-proxy": {
+        target: "http://localhost:11434",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ollama-proxy/, ''),
+      },
+      "/chatr-worker": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/chatr-worker/, ''),
+      },
     },
   },
   plugins: [
