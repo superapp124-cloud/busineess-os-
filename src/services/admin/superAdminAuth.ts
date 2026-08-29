@@ -8,8 +8,14 @@
  */
 
 import { supabase } from '../../integrations/supabase/client';
+import { 
+  SUPER_ADMIN_PHONES, 
+  normalizePhone, 
+  canonicalNationalPhone, 
+  isSuperAdminPhone 
+} from '@/core/phone/phoneIdentity';
 
-export const SUPER_ADMIN_PHONES = ['9910678611', '9717845477'] as const;
+export { SUPER_ADMIN_PHONES, normalizePhone, canonicalNationalPhone, isSuperAdminPhone };
 
 export type SuperAdminRole = 
   | 'SUPER_ADMIN'
@@ -36,15 +42,6 @@ export interface AuditLogEntry {
 }
 
 const AUDIT_STORAGE_KEY = 'chatr_admin_audit_logs_v1';
-
-import { 
-  SUPER_ADMIN_PHONES, 
-  normalizePhone, 
-  canonicalNationalPhone, 
-  isSuperAdminPhone 
-} from '@/core/phone/phoneIdentity';
-
-export { SUPER_ADMIN_PHONES, normalizePhone, isSuperAdminPhone };
 
 // Resolve current session Super Admin status with server/database verification
 export async function verifySuperAdminStatus(): Promise<{
