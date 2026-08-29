@@ -47,6 +47,9 @@ export const VirtualInfluencerStudio: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [isAiBrainGenerating, setIsAiBrainGenerating] = useState<boolean>(false);
+  const [customTopic, setCustomTopic] = useState<string>('');
+
   const performance = directInfluencerPerformance(selectedInfluencer.id, currentMode, scriptText);
 
   // Handle Mode Change
@@ -63,7 +66,7 @@ export const VirtualInfluencerStudio: React.FC = () => {
     if (v) { v.src = perf.videoSrc; v.currentTime = 0; v.play().catch(() => {}); }
     if (a) { a.src = perf.audioSrc; a.currentTime = 0; a.play().catch(() => {}); }
     setIsPlaying(true);
-    setStatusMessage(`Switched to ${mode.toUpperCase()} mode`);
+    setStatusMessage(`Switched to ${mode.toUpperCase()} mode for ${selectedInfluencer.name}`);
   };
 
   // Handle Influencer Switch
@@ -80,14 +83,75 @@ export const VirtualInfluencerStudio: React.FC = () => {
     if (v) { v.src = perf.videoSrc; v.currentTime = 0; v.play().catch(() => {}); }
     if (a) { a.src = perf.audioSrc; a.currentTime = 0; a.play().catch(() => {}); }
     setIsPlaying(true);
-    setStatusMessage(`Active Influencer: ${inf.name}`);
+    setStatusMessage(`Active Creator: ${inf.name} (${inf.handle})`);
   };
 
-  // Synthesize Custom Dialogue / Performance via Local Python Engine
+  // Live AI Script Generation from Ollama (chatr:meera-v1 / phi3:mini)
+  const handleGenerateAiScript = async () => {
+    setIsAiBrainGenerating(true);
+    setStatusMessage(`🧠 Calling AI Brain (${selectedInfluencer.name} persona)...`);
+
+    const promptTopic = customTopic.trim() || 'something viral and relatable about Delhi lifestyle, street food, or modern creator struggles';
+    const systemPrompt = selectedInfluencer.id === 'meera_delhi'
+      ? 'You are Meera, a 23-year-old popular virtual content creator from Saket, Delhi. Write a punchy 15-second viral Reel monologue in natural Hinglish (mix of Hindi and English slang: "yaar", "literally", "listen", "crazy"). Start with a strong hook. Keep it strictly under 3 sentences.'
+      : `You are ${selectedInfluencer.name} (${selectedInfluencer.handle}), an Indian AI influencer in ${selectedInfluencer.niche}. Write a punchy 15-second viral script for a ${currentMode} video. Keep it strictly under 3 sentences.`;
+
+    try {
+      // 1. Try local Ollama chatr:meera-v1 / phi3
+      const modelTag = selectedInfluencer.id === 'meera_delhi' ? 'chatr:meera-v1' : 'phi3:mini';
+      const res = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: modelTag,
+          prompt: `${systemPrompt}\n\nTopic: ${promptTopic}\n\nReel Script:`,
+          stream: false,
+        }),
+        signal: AbortSignal.timeout(12000),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.response && data.response.trim().length > 10) {
+          const cleanText = data.response.replace(/^["']|["']$/g, '').trim();
+          setScriptText(cleanText);
+          setStatusMessage(`✨ Generated live script with ${modelTag}!`);
+          setIsAiBrainGenerating(false);
+          return;
+        }
+      }
+    } catch {
+      // fallback
+    }
+
+    // Fallback creative scripts
+    const fallbacks: Record<string, string[]> = {
+      meera_delhi: [
+        `Listen yaar, Delhi street food is not just food, it is a spiritual experience! Main abhi Lajpat Nagar se live hoon aur momos yahan ke is not even a debate.`,
+        `Okay I literally cannot look away from this new viral trend! Main samajhna chahti hoon why is everybody doing this in Delhi right now?`,
+        `South Delhi cafes versus Sarojini market bargaining — why is my entire personality split into these two extremes?!`
+      ],
+      aanya_sharma: [
+        `Mumbai monsoons and high fashion aesthetics — today we are testing how to look effortless even in heavy rain!`,
+        `The secret to viral fashion reels is bold colors and perfect movement. Let me show you how it is done!`
+      ]
+    };
+
+    const choices = fallbacks[selectedInfluencer.id] || fallbacks.meera_delhi;
+    const randomPick = choices[Math.floor(Math.random() * choices.length)];
+    setScriptText(randomPick);
+    setStatusMessage(`✨ Generated script from ${selectedInfluencer.name}'s persona repository.`);
+    setIsAiBrainGenerating(false);
+  };
+
+  // Synthesize Custom Dialogue / Performance via Local Python Engine or Web Speech API
   const handleGeneratePerformance = async () => {
     setIsGenerating(true);
-    setStatusMessage('Directing Influencer & Synthesizing Neural Voice...');
+    setStatusMessage(`Directing ${selectedInfluencer.name} & Synthesizing Neural Voice...`);
 
+    let audioGenerated = false;
+
+    // 1. Try local Python speech server (port 5055)
     try {
       const res = await fetch('http://127.0.0.1:5055/api/tts', {
         method: 'POST',
@@ -95,7 +159,8 @@ export const VirtualInfluencerStudio: React.FC = () => {
         body: JSON.stringify({
           text: scriptText,
           voice: selectedInfluencer.voiceKey
-        })
+        }),
+        signal: AbortSignal.timeout(4000)
       });
 
       if (res.ok) {
@@ -108,14 +173,36 @@ export const VirtualInfluencerStudio: React.FC = () => {
           if (v) { v.currentTime = 0; v.play().catch(() => {}); }
           setIsPlaying(true);
           setStatusMessage(`✅ ${selectedInfluencer.name} is performing your script live!`);
+          audioGenerated = true;
         }
       }
     } catch {
-      setStatusMessage('Local speech server fallback active.');
-    } finally {
-      setIsGenerating(false);
+      // Proceed to browser speech synthesis
     }
+
+    // 2. Browser Web Speech API fallback for zero-latency instant voice
+    if (!audioGenerated && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(scriptText);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.1;
+
+      // Select female voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const indianVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN')) || voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira'));
+      if (indianVoice) utterance.voice = indianVoice;
+
+      window.speechSynthesis.speak(utterance);
+
+      const v = videoRef.current;
+      if (v) { v.currentTime = 0; v.play().catch(() => {}); }
+      setIsPlaying(true);
+      setStatusMessage(`✅ ${selectedInfluencer.name} is speaking live in browser!`);
+    }
+
+    setIsGenerating(false);
   };
+
 
   const handleTogglePlay = () => {
     const v = videoRef.current;
@@ -335,22 +422,43 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   <Wand2 className="w-4 h-4 text-amber-400" />
                   <span>Direct {selectedInfluencer.name}'s Script & Speech:</span>
                 </h3>
-                <span className="text-xs font-mono text-emerald-400 font-bold">Local Python 5055</span>
+                <span className="text-xs font-mono text-emerald-400 font-bold">Live AI Persona Engine</span>
               </div>
 
+              {/* AI Brain Prompt Input */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={customTopic}
+                  onChange={(e) => setCustomTopic(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleGenerateAiScript()}
+                  placeholder='Ask AI Brain to write script: e.g. "React to Delhi metro viral video" or "Sarojini bargaining hacks"...'
+                  className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                />
+                <button
+                  onClick={handleGenerateAiScript}
+                  disabled={isAiBrainGenerating}
+                  className="px-4 py-3 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 rounded-2xl text-xs font-bold font-mono transition flex items-center justify-center space-x-1.5 whitespace-nowrap shadow"
+                >
+                  <Sparkles className={`w-3.5 h-3.5 ${isAiBrainGenerating ? 'animate-spin' : 'text-indigo-400'}`} />
+                  <span>{isAiBrainGenerating ? 'Writing...' : '🧠 AI Write Script'}</span>
+                </button>
+              </div>
+
+              {/* Script Textarea */}
               <textarea
                 value={scriptText}
                 onChange={(e) => setScriptText(e.target.value)}
-                rows={4}
+                rows={3}
                 className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition leading-relaxed"
-                placeholder="Type any podcast topic, vlog dialogue, custom lyrics or question for your influencer..."
+                placeholder="Type or edit the influencer script here..."
               />
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-400">
-                  <span>Voice Model:</span>
+                  <span>Persona Voice:</span>
                   <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">
-                    {selectedInfluencer.voiceKey}
+                    {selectedInfluencer.voiceKey} (Neural Swara / Local)
                   </span>
                 </div>
 
@@ -360,7 +468,7 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   className="w-full sm:w-auto px-6 py-3.5 rounded-2xl font-bold text-xs bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl shadow-indigo-900/40 flex items-center justify-center space-x-2 transition whitespace-nowrap"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>{isGenerating ? 'Directing...' : `🎬 Direct ${selectedInfluencer.name} Live`}</span>
+                  <span>{isGenerating ? 'Directing...' : `🎬 Direct ${selectedInfluencer.name} Live (${currentMode.toUpperCase()})`}</span>
                 </button>
               </div>
             </div>
@@ -369,30 +477,40 @@ export const VirtualInfluencerStudio: React.FC = () => {
             <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-3 shadow-xl">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
-                <span>1-Click Viral Scene Templates:</span>
+                <span>1-Click Delhi Viral Influencer Templates:</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {[
                   {
-                    title: '🎙️ Episode 01: Why AI Creators are Taking Over',
-                    mode: 'podcast' as InfluencerActivityMode,
-                    prompt: 'Welcome to episode 1! Today we are discussing why autonomous virtual influencers are generating millions of views without human burnout.'
-                  },
-                  {
-                    title: '🎶 Monsoon Anthem Song Performance',
-                    mode: 'sing' as InfluencerActivityMode,
-                    prompt: 'बारिश आई रे, बारिश आई रे! दिल की गली में धूम मचाई रे! छतों से गिरती बूंदों में भीग जाने दे।'
-                  },
-                  {
-                    title: '💃 Trending Reel Hook Dance Step',
-                    mode: 'dance' as InfluencerActivityMode,
-                    prompt: 'High-energy beat drop dance choreography synced to heavy dholak and electronic kicks.'
-                  },
-                  {
-                    title: '🚶 Mumbai Fashion Street Vlog',
+                    title: '🚶 Lajpat Nagar Street Walk & Talk',
                     mode: 'walk' as InfluencerActivityMode,
-                    prompt: 'Walking through Bandra in full designer attire, talking casually to the camera about modern creator lifestyle.'
+                    prompt: 'Walking through Lajpat Nagar market live report. Momos are spiritually important and Delhi street food versus anywhere else is not even a debate.'
+                  },
+                  {
+                    title: '🗣️ Viral OTT Thriller Climax Reaction',
+                    mode: 'talk' as InfluencerActivityMode,
+                    prompt: 'Okay listen yaar... main kal raat yeh climax dekhi and I was not ready! Yaar maine kal raat ek cheez dekhi aur main literally so nahi payi!'
+                  },
+                  {
+                    title: '☕ South Delhi Startup & Cafe Gossip',
+                    mode: 'podcast' as InfluencerActivityMode,
+                    prompt: 'Let us be completely honest for a second. Why does every single person sitting at a Saket cafe have the exact same AI startup pitch deck?'
+                  },
+                  {
+                    title: '💃 Delhi Metro Beat Drop Dance',
+                    mode: 'dance' as InfluencerActivityMode,
+                    prompt: 'High-energy hook step choreography on viral Delhi street remix beats with fast camera snap cuts.'
+                  },
+                  {
+                    title: '🎶 Late-Night Raw Acoustic Session',
+                    mode: 'sing' as InfluencerActivityMode,
+                    prompt: 'Late night acoustic session. Pure melody, no autotune, just vibes directly to camera before going to sleep.'
+                  },
+                  {
+                    title: '🛍️ Sarojini Nagar Bargaining Masterclass',
+                    mode: 'walk' as InfluencerActivityMode,
+                    prompt: 'Sarojini Nagar bargaining 101: if you do not walk away at least three times, you are doing it wrong!'
                   }
                 ].map((item, i) => (
                   <button
@@ -411,6 +529,7 @@ export const VirtualInfluencerStudio: React.FC = () => {
                 ))}
               </div>
             </div>
+
 
           </div>
         </div>

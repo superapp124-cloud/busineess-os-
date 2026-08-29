@@ -40,6 +40,38 @@ export interface VirtualInfluencerProfile {
 
 export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
   {
+    id: 'meera_delhi',
+    name: 'Meera',
+    handle: '@meera_wtf',
+    niche: 'Delhi Culture, Relatable Humor, Street Food & Vlogs',
+    bio: '23-year-old virtual creator from Saket, Delhi. Chaotic good, brutally honest reviews, street food connoisseur & late-night melodies.',
+    followers: '2.8M',
+    voiceKey: 'hindi_female_reporter',
+    languages: ['Hinglish', 'Hindi', 'English'],
+    avatarImage: '/characters/meera/master_face_crop.jpg',
+    videoMap: {
+      talk: '/chatr/dryrun003/episode_01/video.mp4',
+      podcast: '/chatr/dryrun003/episode_03/video.mp4',
+      sing: '/chatr/dryrun003/episode_10/video.mp4',
+      dance: '/videos/dances/ai_dance_01.mp4',
+      walk: '/outputs/meera/milestone-1/meera_delhi_walk_001.mp4'
+    },
+    audioMap: {
+      talk: '/chatr/dryrun003/episode_01/voice.mp3',
+      podcast: '/chatr/dryrun003/episode_03/voice.mp3',
+      sing: '/chatr/dryrun003/episode_10/voice.mp3',
+      dance: '/audio/real/hiphop_808.m4a',
+      walk: '/chatr/dryrun003/episode_02/voice.mp3'
+    },
+    defaultPrompts: {
+      talk: 'Okay so listen... main kal raat yeh climax dekhi and I was not ready! Yaar maine kal raat ek cheez dekhi aur main literally so nahi payi.',
+      podcast: 'Let us be completely honest for a second. Why does every person in South Delhi have the exact same startup idea?',
+      sing: 'Late night acoustic session. Pure melody, no autotune, just vibes directly to camera.',
+      dance: 'High-energy hook step choreography on viral Delhi street remix beats.',
+      walk: 'Walking through Lajpat Nagar market live report. Momos are spiritually important and this is not even a debate.'
+    }
+  },
+  {
     id: 'aanya_sharma',
     name: 'Aanya Sharma',
     handle: '@aanya.ai',
