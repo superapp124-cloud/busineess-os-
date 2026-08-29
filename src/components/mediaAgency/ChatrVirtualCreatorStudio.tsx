@@ -353,8 +353,8 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
   const [productionState, setProductionState] = useState<VideoProductionState>('GATE_CHECKED');
   const [gateResult, setGateResult] = useState<GateCheckResult | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
   const [shotPlan, setShotPlan] = useState<ReturnType<typeof buildShotPlan> | null>(null);
   const [episodeApprovedMap, setEpisodeApprovedMap] = useState<Record<number, boolean>>({});
   const [activeVisualPack, setActiveVisualPack] = useState<'pack1' | 'pack2'>('pack2');
@@ -611,16 +611,20 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Vertical 9:16 Video Player */}
-          <div className="relative aspect-[9/16] max-h-[520px] w-full rounded-3xl overflow-hidden border-2 border-violet-500/40 shadow-2xl bg-black">
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              playsInline
-              className="w-full h-full object-cover"
-            />
-            <audio ref={audioRef} muted={isMuted} />
+            {/* Vertical 9:16 Video Player */}
+            <div className="relative aspect-[9/16] max-h-[520px] w-full rounded-3xl overflow-hidden border-2 border-violet-500/40 shadow-2xl bg-black">
+              <video
+                ref={videoRef}
+                key={selectedEpisode.videoUrl}
+                src={selectedEpisode.videoUrl}
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <audio ref={audioRef} muted={isMuted} />
+
 
             {/* Top overlay badge */}
             <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between text-[10px] font-mono font-bold">
@@ -926,9 +930,12 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
                     <div className="relative aspect-[9/16] w-full max-w-[260px] rounded-3xl overflow-hidden border-2 border-violet-500/40 bg-black shadow-2xl">
                       <video
                         ref={m1VideoRef}
+                        key={m1VideoUrl}
                         src={m1VideoUrl}
                         controls
+                        autoPlay
                         loop
+                        muted
                         playsInline
                         className="w-full h-full object-cover"
                       />
