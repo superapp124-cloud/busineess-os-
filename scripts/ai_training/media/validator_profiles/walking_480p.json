@@ -1,0 +1,13 @@
+{
+  "profile_name": "walking_480p",
+  "description": "Calibrated thresholds for full-body walking and camera tracking shots",
+  "min_motion_score": 0.08,
+  "min_mean_flow": 0.05,
+  "min_bg_flow": 0.04,
+  "min_face_flow": 0.04,
+  "max_duplicate_ratio": 0.25,
+  "require_audio": false,
+  "min_fps": 15.0,
+  "min_duration": 4.0,
+  "check_frozen_face": true
+}

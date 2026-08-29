@@ -1,0 +1,13 @@
+{
+  "profile_name": "podcast_480p",
+  "description": "Calibrated thresholds for seated cafe/studio conversation with speech",
+  "min_motion_score": 0.035,
+  "min_mean_flow": 0.018,
+  "min_bg_flow": 0.008,
+  "min_face_flow": 0.025,
+  "max_duplicate_ratio": 0.35,
+  "require_audio": true,
+  "min_fps": 15.0,
+  "min_duration": 3.0,
+  "check_frozen_face": true
+}

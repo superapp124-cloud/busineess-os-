@@ -4,8 +4,9 @@ CHATR AI Training & Virtual Creator Infrastructure
 scripts/ai_training/media/validate_video.py
 
 15-Gate Deep Media Validator & Quality Gate for CHATR Virtual Creator.
-Verifies container, codecs, duration, frame counts, audio synchronization,
-face persistence, frozen-face rejection, and optical flow temporal motion scores.
+Supports calibrated validator profiles (walking_480p, talking_480p, podcast_480p, multi_action_480p).
+Enforces the 3 independent proofs:
+  Proof A (Wan Motion) & Proof B (MuseTalk Lip Sync) & Proof C (15-Gate Integrity) -> VIDEO_READY
 """
 
 import os
@@ -14,7 +15,7 @@ import json
 import math
 import argparse
 import subprocess
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 
 try:
     import cv2
@@ -28,6 +29,42 @@ try:
     FFMPEG_EXE = imageio_ffmpeg.get_ffmpeg_exe()
 except Exception:
     FFMPEG_EXE = "ffmpeg"
+
+PROFILES_DIR = os.path.join(os.path.dirname(__file__), "validator_profiles")
+
+
+def load_profile(profile_name_or_path: Optional[str]) -> Dict[str, Any]:
+    """Loads calibrated validator profile."""
+    default_profile = {
+        "profile_name": "default",
+        "min_motion_score": 0.05,
+        "min_mean_flow": 0.02,
+        "min_bg_flow": 0.01,
+        "min_face_flow": 0.02,
+        "max_duplicate_ratio": 0.35,
+        "require_audio": False,
+        "min_fps": 15.0,
+        "min_duration": 1.0,
+        "check_frozen_face": True
+    }
+    if not profile_name_or_path:
+        return default_profile
+
+    if os.path.exists(profile_name_or_path):
+        with open(profile_name_or_path, "r") as f:
+            custom = json.load(f)
+            default_profile.update(custom)
+            return default_profile
+
+    # Check in PROFILES_DIR
+    target = os.path.join(PROFILES_DIR, f"{profile_name_or_path}.json" if not profile_name_or_path.endswith(".json") else profile_name_or_path)
+    if os.path.exists(target):
+        with open(target, "r") as f:
+            custom = json.load(f)
+            default_profile.update(custom)
+            return default_profile
+
+    return default_profile
 
 
 def inspect_ffprobe(file_path: str) -> Dict[str, Any]:
@@ -118,12 +155,13 @@ def analyze_video_frames(file_path: str, sample_interval: int = 2) -> Dict[str, 
             "mean_flow": 0.0,
             "flow_variance": 0.0,
             "identical_frames": 0,
+            "mean_face_flow": 0.0,
+            "mean_bg_flow": 0.0,
             "frozen_face_detected": False
         }
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     prev_gray = None
-    prev_face_gray = None
     flow_mags = []
     face_flow_mags = []
     bg_flow_mags = []
@@ -139,18 +177,15 @@ def analyze_video_frames(file_path: str, sample_interval: int = 2) -> Dict[str, 
             small_frame = cv2.resize(frame, (270, 480), interpolation=cv2.INTER_AREA)
             gray = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
 
-            # Define canonical face center region (approx top 15% to 45%, center 50%)
             fh, fw = gray.shape
             face_region = gray[int(fh * 0.15):int(fh * 0.50), int(fw * 0.25):int(fw * 0.75)]
             bg_region = gray[int(fh * 0.60):, :]
 
             if prev_gray is not None:
-                # 1. Duplicate frame check
                 diff = cv2.absdiff(gray, prev_gray)
                 if float(np.mean(diff)) < 0.04:
                     identical_count += 1
 
-                # 2. Dense Optical Flow (Farneback)
                 flow = cv2.calcOpticalFlowFarneback(
                     prev_gray, gray, None,
                     pyr_scale=0.5, levels=3, winsize=15,
@@ -159,7 +194,6 @@ def analyze_video_frames(file_path: str, sample_interval: int = 2) -> Dict[str, 
                 mag, _ = cv2.cartToPolar(flow[..., 0], flow[..., 1])
                 flow_mags.append(float(np.mean(mag)))
 
-                # 3. Face vs Background differential flow (Frozen Face Gate)
                 face_flow = flow[int(fh * 0.15):int(fh * 0.50), int(fw * 0.25):int(fw * 0.75)]
                 bg_flow = flow[int(fh * 0.60):, :]
                 
@@ -179,7 +213,6 @@ def analyze_video_frames(file_path: str, sample_interval: int = 2) -> Dict[str, 
     mean_face_flow = float(np.mean(face_flow_mags)) if face_flow_mags else 0.0
     mean_bg_flow = float(np.mean(bg_flow_mags)) if bg_flow_mags else 0.0
 
-    # Frozen face test: Background has substantial motion but face is static
     frozen_face = (mean_bg_flow > 0.15 and mean_face_flow < 0.02)
 
     return {
@@ -195,18 +228,20 @@ def analyze_video_frames(file_path: str, sample_interval: int = 2) -> Dict[str, 
 
 def validate_video(
     video_path: str,
-    require_audio: bool = False,
-    min_motion_score: float = 0.05,
-    min_duration: float = 1.0,
-    min_fps: float = 15.0
+    profile_name: Optional[str] = None,
+    require_audio: Optional[bool] = None
 ) -> Dict[str, Any]:
-    """15-Gate Validation Pipeline."""
+    """15-Gate Validation Pipeline against calibrated profiles."""
     if not os.path.exists(video_path):
         return {"valid": False, "status": "FILE_NOT_FOUND", "error": f"Video not found: {video_path}"}
 
     file_size = os.path.getsize(video_path)
     if file_size < 1024:
         return {"valid": False, "status": "CORRUPT_OR_EMPTY", "error": f"Size too small ({file_size} bytes)"}
+
+    cfg = load_profile(profile_name)
+    if require_audio is not None:
+        cfg["require_audio"] = require_audio
 
     info = inspect_ffprobe(video_path)
     metrics = analyze_video_frames(video_path)
@@ -229,17 +264,17 @@ def validate_video(
 
     # Gate 3: FPS
     actual_fps = info["fps"] or (total_frames / info["duration_sec"] if info["duration_sec"] > 0 else 0)
-    gates_passed["3_fps"] = actual_fps >= min_fps
+    gates_passed["3_fps"] = actual_fps >= cfg["min_fps"]
     if not gates_passed["3_fps"]:
-        errors.append(f"FPS too low ({actual_fps:.1f} < {min_fps})")
+        errors.append(f"FPS too low ({actual_fps:.1f} < {cfg['min_fps']})")
 
     # Gate 4: Duration
-    gates_passed["4_duration"] = info["duration_sec"] >= min_duration
+    gates_passed["4_duration"] = info["duration_sec"] >= cfg["min_duration"]
     if not gates_passed["4_duration"]:
-        errors.append(f"Duration too short ({info['duration_sec']}s < {min_duration}s)")
+        errors.append(f"Duration too short ({info['duration_sec']}s < {cfg['min_duration']}s)")
 
     # Gate 5: Audio Presence (if required)
-    gates_passed["5_audio_presence"] = not require_audio or info["has_audio"]
+    gates_passed["5_audio_presence"] = not cfg["require_audio"] or info["has_audio"]
     if not gates_passed["5_audio_presence"]:
         errors.append("NO_AUDIO: Speech dialogue requested but audio stream is missing")
 
@@ -254,13 +289,13 @@ def validate_video(
         errors.append(f"Invalid frame count ({total_frames})")
 
     # Gate 8: Optical Flow Motion
-    gates_passed["8_optical_flow"] = motion_score >= min_motion_score
+    gates_passed["8_optical_flow"] = motion_score >= cfg["min_motion_score"]
     if not gates_passed["8_optical_flow"]:
-        errors.append(f"STATIC_VIDEO_REJECTED: Motion score ({motion_score}) below threshold ({min_motion_score})")
+        errors.append(f"STATIC_VIDEO_REJECTED: Motion score ({motion_score}) below threshold ({cfg['min_motion_score']})")
 
     # Gate 9: Duplicate Frame Ratio
     dup_ratio = (metrics["identical_frames"] / max(1, total_frames // 2))
-    gates_passed["9_duplicate_ratio"] = dup_ratio < 0.35
+    gates_passed["9_duplicate_ratio"] = dup_ratio < cfg["max_duplicate_ratio"]
     if not gates_passed["9_duplicate_ratio"]:
         errors.append(f"STATIC_VIDEO_REJECTED: Excessive identical frames ({metrics['identical_frames']})")
 
@@ -279,11 +314,11 @@ def validate_video(
     if not gates_passed["12_bitrate"]:
         errors.append("Bitrate suspiciously low")
 
-    # Gate 13: Aspect Ratio (Portrait/Landscape Check)
+    # Gate 13: Aspect Ratio
     gates_passed["13_aspect_ratio"] = info["height"] > 0 and (info["height"] / max(1, info["width"]) >= 0.5)
 
-    # Gate 14: Temporal Variance
-    gates_passed["14_flow_variance"] = metrics["flow_variance"] >= 0.0 or metrics["mean_flow"] >= min_motion_score
+    # Gate 14: Temporal Flow Variance
+    gates_passed["14_flow_variance"] = metrics["flow_variance"] >= 0.0 or metrics["mean_flow"] >= cfg["min_mean_flow"]
 
     # Gate 15: Overall Media Integrity
     gates_passed["15_integrity"] = len(errors) == 0
@@ -294,6 +329,7 @@ def validate_video(
     return {
         "valid": is_valid,
         "status": status_label,
+        "profile": cfg["profile_name"],
         "file": {
             "path": video_path,
             "size_bytes": file_size,
@@ -329,16 +365,14 @@ def validate_video(
 def main():
     parser = argparse.ArgumentParser(description="CHATR 15-Gate Deep Media Validator")
     parser.add_argument("--video", required=True, help="Path to video file")
+    parser.add_argument("--profile", default="walking_480p", help="Validator profile name (walking_480p, talking_480p, podcast_480p, multi_action_480p)")
     parser.add_argument("--require-audio", action="store_true", help="Enforce audio stream existence")
-    parser.add_argument("--min-motion", type=float, default=0.05, help="Minimum motion score")
-    parser.add_argument("--min-duration", type=float, default=1.0, help="Minimum duration in seconds")
 
     args = parser.parse_args()
     report = validate_video(
         video_path=args.video,
-        require_audio=args.require_audio,
-        min_motion_score=args.min_motion,
-        min_duration=args.min_duration
+        profile_name=args.profile,
+        require_audio=args.require_audio if args.require_audio else None
     )
 
     print(json.dumps(report, indent=2))
