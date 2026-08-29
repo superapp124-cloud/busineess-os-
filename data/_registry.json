@@ -1,0 +1,92 @@
+{
+  "_meta": {
+    "schema_version": "2.0.0",
+    "description": "CHATR Dataset Registry — provenance-tracked dataset catalog for all training capabilities",
+    "updated_at": "2026-08-29T15:26:05Z"
+  },
+  "trainable_capabilities": [
+    "general",
+    "coding",
+    "reasoning",
+    "business",
+    "finance",
+    "seo",
+    "marketing",
+    "creator",
+    "video",
+    "research",
+    "support",
+    "agent",
+    "meera"
+  ],
+  "knowledge_systems": [
+    "rag"
+  ],
+  "knowledge_system_notes": {
+    "rag": "RAG is a retrieval/knowledge mechanism, NOT a LoRA adapter capability. It has its own evaluation suite, retrieval benchmarks and citation benchmarks, but does NOT produce a chatr:rag-v1 model. Knowledge lives in vector stores and document retrieval, not in fine-tuned weights."
+  },
+  "learning_levels": {
+    "level_a_behavior": [
+      "general",
+      "coding",
+      "reasoning",
+      "business",
+      "creator",
+      "support",
+      "agent",
+      "meera"
+    ],
+    "level_b_knowledge": [
+      "rag",
+      "finance",
+      "research",
+      "seo",
+      "marketing",
+      "video"
+    ],
+    "level_c_actions": [
+      "agent"
+    ]
+  },
+  "datasets": [
+    {
+      "id": "general_sft_v1",
+      "capability": "general",
+      "method": "sft",
+      "path": "data/general/general_sft_v1.jsonl",
+      "sha256": "dc620faa8ac77cb4b151836a97e49f6a7c259f0242d4b990d83daca1661936e3",
+      "rows": 20,
+      "language": "en",
+      "description": "General assistant instruction pairs — reasoning, business, ML, engineering, productivity (20 turns)",
+      "license": "proprietary-internal",
+      "created_at": "2026-08-29T15:26:05Z",
+      "phase": "phase0_spike"
+    },
+    {
+      "id": "coding_sft_v1",
+      "capability": "coding",
+      "method": "sft",
+      "path": "data/coding/coding_sft_v1.jsonl",
+      "sha256": "ad35b2bde4a8fd8ef98a248aa732680ac38e6a071889eca451a258d82a078ea8",
+      "rows": 19,
+      "language": "en",
+      "description": "TypeScript/Python/SQL code tasks with production-quality answers (19 turns)",
+      "license": "proprietary-internal",
+      "created_at": "2026-08-29T15:26:05Z",
+      "phase": "phase0_spike"
+    },
+    {
+      "id": "meera_sft_v1",
+      "capability": "meera",
+      "method": "sft",
+      "path": "data/meera/meera_sft_v1.jsonl",
+      "sha256": "fa8c13c2ca036cb4c5fe1efae6d4226253c6e156c36e96c5b4685a55dc35eab4",
+      "rows": 19,
+      "language": "hi+en",
+      "description": "Meera Delhi Hinglish creator persona — voice, content strategy, scripts, personal philosophy (19 turns)",
+      "license": "proprietary-internal",
+      "created_at": "2026-08-29T15:26:05Z",
+      "phase": "phase0_spike"
+    }
+  ]
+}

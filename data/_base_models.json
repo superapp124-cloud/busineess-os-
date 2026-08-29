@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "description": "CHATR Base Model Registry — approved base models for adapter training and inference",
+    "updated_at": "2026-08-29T20:30:00Z"
+  },
+  "approved_base_models": [
+    {
+      "id": "qwen2.5-7b-instruct",
+      "huggingface_repo": "Qwen/Qwen2.5-7B-Instruct",
+      "ollama_tag": "qwen2.5:7b-instruct",
+      "parameters": "7.62B",
+      "quantization": "Q4_K_M",
+      "context_window": 32768,
+      "license": "Apache-2.0",
+      "recommended_for": ["general", "creator", "meera", "coding", "business", "finance", "marketing", "support", "seo", "video"]
+    },
+    {
+      "id": "llama3.1-8b-instruct",
+      "huggingface_repo": "meta-llama/Llama-3.1-8B-Instruct",
+      "ollama_tag": "llama3.1:8b-instruct",
+      "parameters": "8.03B",
+      "quantization": "Q4_K_M",
+      "context_window": 131072,
+      "license": "Meta-Llama-3.1",
+      "recommended_for": ["reasoning", "research", "agent", "rag"]
+    },
+    {
+      "id": "phi3.5-mini-instruct",
+      "huggingface_repo": "microsoft/Phi-3.5-mini-instruct",
+      "ollama_tag": "phi3:mini",
+      "parameters": "3.82B",
+      "quantization": "Q4_K_M",
+      "context_window": 128000,
+      "license": "MIT",
+      "recommended_for": ["fast_iteration", "low_latency_local"]
+    }
+  ]
+}

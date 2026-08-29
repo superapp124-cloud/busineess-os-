@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "schema_version": "2.0.0",
+    "description": "CHATR Adapter Registry — versioned, provenance-bound adapter catalog (13 trainable capabilities only; RAG is a knowledge system, not a trainable adapter)",
+    "created_at": "2026-08-29T00:00:00Z",
+    "updated_at": "2026-08-29T15:05:00Z"
+  },
+  "trainable_capabilities": [
+    "general", "coding", "reasoning", "business", "finance",
+    "seo", "marketing", "creator", "video", "research",
+    "support", "agent", "meera"
+  ],
+  "production": {
+    "general": null,
+    "coding": null,
+    "reasoning": null,
+    "business": null,
+    "finance": null,
+    "seo": null,
+    "marketing": null,
+    "creator": null,
+    "video": null,
+    "research": null,
+    "support": null,
+    "agent": null,
+    "meera": null
+  },
+  "adapters": []
+}
