@@ -249,10 +249,17 @@ serve(createEdgeFunction({
 
     // Step 2: If not found via identity_providers, try to create the user
     if (!user) {
+      const normalizedDigits = phoneDigits(normalizedPhone);
+      const email = `${normalizedDigits}@chatr.local`;
+      const deterministicPassword = `${normalizedDigits}_${firebase_uid.slice(0, 10)}`;
+
       const { data: newUser, error: createError } = await auth.serviceClient.auth.admin.createUser({
         phone: normalizedPhone,
+        email,
+        password: deterministicPassword,
+        email_confirm: true,
         phone_confirm: true,
-        user_metadata: { provider: "firebase" },
+        user_metadata: { provider: "firebase", phone_number: normalizedPhone, full_name: `User ${normalizedDigits.slice(-4)}` },
       });
 
       if (createError) {

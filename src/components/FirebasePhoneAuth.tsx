@@ -217,25 +217,6 @@ export const FirebasePhoneAuth: React.FC = () => {
                   </>
                 )}
               </Button>
-
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink mx-3 text-[11px] text-slate-500 uppercase tracking-wider">Or</span>
-                <div className="flex-grow border-t border-white/10"></div>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={async () => {
-                  setPhoneNumber('9717845477');
-                  await verifyOTP('777777', '+919717845477');
-                }}
-                disabled={loading}
-                className="w-full h-11 bg-white/[0.04] border border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-300 hover:text-cyan-200 text-xs font-semibold rounded-2xl transition-all"
-              >
-                ⚡ Instant Platform Entry (+91 9717845477)
-              </Button>
             </form>
           )}
 
@@ -297,18 +278,6 @@ export const FirebasePhoneAuth: React.FC = () => {
                     <CheckCircle className="ml-2 h-4 w-4" />
                   </>
                 )}
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={async () => {
-                  await verifyOTP('777777');
-                }}
-                disabled={loading}
-                className="w-full h-10 bg-white/[0.04] border border-cyan-500/30 hover:bg-cyan-500/10 text-cyan-300 text-xs font-medium rounded-xl transition-all"
-              >
-                ⚡ Instant Login with Bypass (777777)
               </Button>
             </div>
           )}

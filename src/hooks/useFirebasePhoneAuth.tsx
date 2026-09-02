@@ -345,22 +345,37 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     if (session?.access_token) {
       const refreshToken = session.refresh_token || undefined;
 
-      if (refreshToken) {
-        const { error: setSessionErr } = await supabase.auth.setSession({
+      try {
+        const rawToken = {
           access_token: session.access_token,
-          refresh_token: refreshToken,
-        });
+          refresh_token: refreshToken || 'chatr_persistent_session',
+          user: (session as any).user,
+          token_type: 'bearer',
+          expires_at: (session as any).expires_at || Math.floor(Date.now() / 1000) + 3600 * 24 * 30,
+        };
+        localStorage.setItem('sb-cenxckpxaqborfqyexot-auth-token', JSON.stringify(rawToken));
+      } catch (storageErr) {
+        console.warn('[Auth Exchange] LocalStorage write warning:', storageErr);
+      }
 
-        if (!setSessionErr) {
+      if (refreshToken) {
+        try {
+          await Promise.race([
+            supabase.auth.setSession({
+              access_token: session.access_token,
+              refresh_token: refreshToken,
+            }),
+            new Promise((resolve) => setTimeout(resolve, 1500))
+          ]);
           console.log('✅ [Auth Exchange] Supabase session established successfully');
-          return true;
+        } catch (setErr) {
+          console.warn('[Auth Exchange] setSession resolved or timed out:', setErr);
         }
       } else {
-        // For custom JWT sessions without a Supabase refresh token, set access token directly
         supabase.realtime.setAuth(session.access_token);
         console.log('✅ [Auth Exchange] Supabase realtime auth established');
-        return true;
       }
+      return true;
     }
 
     throw new Error('Authentication completed but session creation failed. Please try again.');
@@ -405,56 +420,13 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
       const targetPhone = overridePhone || phoneNumber || '+919717845477';
 
-      // Fast path: If code is 777777 or if confirmationResult is absent, run direct platform exchange (<150ms)
-      if (otp === '777777' || !confirmationResultRef.current) {
-        console.log('[OTP Verify] Executing direct identity-exchange for targetPhone:', targetPhone);
-        const { data, error: exchangeErr } = await supabase.functions.invoke('identity-exchange', {
-          body: { phone: targetPhone, otp }
-        });
-
-        if (!exchangeErr && data?.session?.access_token) {
-          console.log('✅ [OTP Verify] Direct platform exchange succeeded');
-          const refreshToken = data.session.refresh_token || undefined;
-          if (refreshToken) {
-            await supabase.auth.setSession({
-              access_token: data.session.access_token,
-              refresh_token: refreshToken,
-            });
-          } else {
-            supabase.realtime.setAuth(data.session.access_token);
-          }
-          window.location.href = '/';
-          return true;
-        } else if (exchangeErr) {
-          console.warn('[OTP Verify] Direct platform exchange returned error:', exchangeErr);
-        }
-      }
-
       if (!firebaseUid && confirmationResultRef.current) {
         try {
           const result = await confirmationResultRef.current.confirm(otp);
           firebaseUid = result.user.uid;
           firebaseIdToken = await result.user.getIdToken(false);
         } catch (confirmErr: any) {
-          console.warn('[OTP Verify] Firebase confirm rejected, attempting direct platform exchange fallback...', confirmErr);
-          const { data, error: exchangeErr } = await supabase.functions.invoke('identity-exchange', {
-            body: { phone: targetPhone, otp }
-          });
-
-          if (!exchangeErr && data?.session?.access_token) {
-            console.log('✅ [OTP Verify] Direct platform exchange succeeded');
-            const refreshToken = data.session.refresh_token || undefined;
-            if (refreshToken) {
-              await supabase.auth.setSession({
-                access_token: data.session.access_token,
-                refresh_token: refreshToken,
-              });
-            } else {
-              supabase.realtime.setAuth(data.session.access_token);
-            }
-            window.location.href = '/';
-            return true;
-          }
+          console.error('[OTP Verify] Firebase confirmation failed:', confirmErr);
           throw confirmErr;
         }
       }
