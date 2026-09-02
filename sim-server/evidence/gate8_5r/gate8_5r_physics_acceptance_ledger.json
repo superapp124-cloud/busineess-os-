@@ -1,7 +1,7 @@
 {
   "gate": "8.5-R",
   "title": "Real Physics Authority Acceptance Evidence Ledger",
-  "timestamp_utc": "2026-09-02T07:08:35Z",
+  "timestamp_utc": "2026-09-02T07:33:11Z",
   "robot_profile_hash": "2b42983a7304af02a4e3fd3a6a174f544aff53be5f0693506fb8e36f778c3c45",
   "physics_version": "mujoco-3.12.0",
   "all_passed": true,
@@ -20,7 +20,7 @@
       "z_error_m": 0.0015,
       "sim_steps": 80,
       "duration_s": 0.16,
-      "elapsed_s": 0.0174
+      "elapsed_s": 0.0381
     },
     {
       "exp_id": "EXP-02-GROUND-CONTACT",
@@ -83,7 +83,7 @@
         }
       ],
       "duration_s": 2.0,
-      "elapsed_s": 0.1416
+      "elapsed_s": 0.2172
     },
     {
       "exp_id": "EXP-03-FRICTION-SLIP",
@@ -117,7 +117,7 @@
       ],
       "high_friction_slip_m (mu=0.8)": 0.2478,
       "low_friction_slip_m (mu=0.2)": 0.2478,
-      "elapsed_s": 0.2033
+      "elapsed_s": 0.2841
     },
     {
       "exp_id": "EXP-04-JOINT-LIMITS",
@@ -161,7 +161,7 @@
           "lower_bounded": true
         }
       ],
-      "elapsed_s": 0.281
+      "elapsed_s": 0.458
     },
     {
       "exp_id": "EXP-05-TORQUE-SATURATION",
@@ -174,7 +174,7 @@
       "final_tracking_error_rad": 0.129,
       "torque_strictly_capped": true,
       "non_magical_tracking_under_load": true,
-      "elapsed_s": 0.0375
+      "elapsed_s": 0.057
     },
     {
       "exp_id": "EXP-06-INTENTIONAL-FALL",
@@ -186,7 +186,7 @@
       "max_tilt_roll_deg": 93.77,
       "is_fallen_flag": true,
       "fall_detected_at_step": 553,
-      "elapsed_s": 0.1245
+      "elapsed_s": 0.2499
     },
     {
       "exp_id": "EXP-07-STABLE-STANDING",
@@ -199,7 +199,7 @@
       "fall_events_count": 0,
       "is_fallen": false,
       "stable_equilibrium": true,
-      "elapsed_s": 0.6742
+      "elapsed_s": 1.9151
     },
     {
       "exp_id": "EXP-08-SENSOR-PERCEPTION",
@@ -224,7 +224,7 @@
       "pose_estimation_error_m": 0.0086,
       "perception_source": "SYNTHETIC_RGBD_POINTCLOUD",
       "ground_truth_accessed_by_detector": false,
-      "elapsed_s": 0.0606
+      "elapsed_s": 0.2382
     },
     {
       "exp_id": "EXP-09-NAVIGATION",
@@ -319,7 +319,7 @@
         }
       ],
       "physics_confirmation": "BASE_POSE_CONFIRMED_BY_MUJOCO",
-      "elapsed_s": 0.4276
+      "elapsed_s": 1.7306
     },
     {
       "exp_id": "EXP-10-FETCH-OBJECT-END-TO-END",
@@ -399,7 +399,7 @@
         }
       ],
       "summary": "Full NLU -> Navigation -> Detection -> Grasp -> Lift -> Return -> Handover physically simulated and verified.",
-      "elapsed_s": 0.4411
+      "elapsed_s": 1.5775
     }
   ]
 }

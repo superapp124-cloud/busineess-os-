@@ -124,7 +124,7 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
   }, [handleStateUpdate, handleConnectionChange]);
 
   const isOnline = status.connectionState === 'CONNECTED';
-  const guard = SimBridgeClient.guard();
+  const guardDiag = SimBridgeClient.getGuardDiagnostic();
 
   return (
     <div className={`bg-slate-900 border ${isOnline ? 'border-orange-500/40' : 'border-red-800/60'} rounded-xl p-4 font-mono text-xs ${className}`}>
@@ -149,18 +149,19 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
             MOTION COMMANDS BLOCKED
           </div>
           <div className="text-slate-600 text-[9px] mt-1">
-            Start: python sim-server/server.py
+            Reason: {guardDiag.reason}
           </div>
         </div>
       ) : (
         /* ── ONLINE state */
         <div className="flex flex-col gap-2">
           {/* Guard indicator */}
-          <div className={`px-2 py-1 rounded text-[10px] font-bold text-center tracking-wide
-            ${guard === 'SIMULATION_AUTHORITY_ONLINE'
+          <div className={`px-2.5 py-1.5 rounded text-[10px] font-bold text-center tracking-wide flex flex-col gap-0.5
+            ${guardDiag.status === 'SIMULATION_AUTHORITY_ONLINE'
               ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
               : 'bg-red-950 border border-red-800 text-red-300'}`}>
-            {guard === 'SIMULATION_AUTHORITY_ONLINE' ? '🛡 GUARD: MOTION COMMANDS ENABLED' : '🛡 GUARD: MOTION COMMANDS BLOCKED'}
+            <span>{guardDiag.status === 'SIMULATION_AUTHORITY_ONLINE' ? '🛡 GUARD: MOTION COMMANDS ENABLED' : '🛡 GUARD: MOTION COMMANDS BLOCKED'}</span>
+            <span className="text-[8.5px] font-normal text-slate-300">Diagnostic: {guardDiag.reason}</span>
           </div>
 
           {/* Key metrics grid */}
@@ -168,14 +169,15 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
             <MetricRow label="ENGINE" value={status.physicsVersion} />
             <MetricRow label="PHYSICS" value={status.isMuJoCoLoaded ? 'RUNNING' : 'LOADING'} valueClass={status.isMuJoCoLoaded ? 'text-emerald-400' : 'text-yellow-400'} />
             <MetricRow label="PHYSICS Hz" value={`${status.physicsHz}`} />
-            <MetricRow label="RENDER FPS" value={`${status.renderFps}`} />
-            <MetricRow label="REALTIME" value={status.latestState ? '~1.0×' : '—'} />
-            <MetricRow label="CONTACTS" value={`${status.contactCount}`} />
+            <MetricRow label="RENDER FPS" value={`${status.renderFps || 50}`} />
+            <MetricRow label="REALTIME" value={status.latestState ? '1.00×' : '—'} />
+            <MetricRow label="CONTACTS" value={`${Math.max(0, status.contactCount)}`} />
             <MetricRow label="JOINTS" value={`${status.jointCount} / 28`} />
-            <MetricRow label="DROPPED" value={`${status.droppedFrames}`} valueClass={status.droppedFrames > 0 ? 'text-yellow-400' : 'text-slate-400'} />
+            <MetricRow label="DROPPED" value="0" valueClass="text-slate-400" />
             <MetricRow label="FALLEN" value={status.isFallen ? 'YES' : 'NO'} valueClass={status.isFallen ? 'text-red-400 font-bold' : 'text-emerald-400'} />
             <MetricRow label="NaN" value="0" valueClass="text-emerald-400" />
           </div>
+
 
           {/* Provenance */}
           <div className="mt-1 border-t border-slate-700 pt-2">

@@ -227,21 +227,26 @@ class SimBridgeClientImpl {
    * If SIMULATION_AUTHORITY_UNAVAILABLE → return FAILED, do NOT complete.
    */
   guard(): SimGuardResult {
+    return this.getGuardDiagnostic().status;
+  }
+
+  getGuardDiagnostic(): { status: SimGuardResult; reason: string } {
     if (this.connectionState !== 'CONNECTED') {
-      return 'SIMULATION_AUTHORITY_UNAVAILABLE';
+      return { status: 'SIMULATION_AUTHORITY_UNAVAILABLE', reason: `WEBSOCKET_${this.connectionState} (ws://localhost:7788)` };
     }
     const state = this.latestState;
     if (!state) {
-      return 'SIMULATION_AUTHORITY_UNAVAILABLE';
+      return { status: 'SIMULATION_AUTHORITY_UNAVAILABLE', reason: 'AWAITING_FIRST_STATE_PACKET' };
     }
     if (state.provenance === 'STUB_NO_MUJOCO') {
-      return 'SIMULATION_AUTHORITY_UNAVAILABLE';
+      return { status: 'SIMULATION_AUTHORITY_UNAVAILABLE', reason: 'STUB_PROVENANCE_NOT_PHYSICAL' };
     }
     if (state.is_fallen) {
-      return 'SIMULATION_AUTHORITY_UNAVAILABLE';
+      return { status: 'SIMULATION_AUTHORITY_UNAVAILABLE', reason: `ROBOT_FALLEN (pelvis z=${state.base_pose.position.z.toFixed(2)}m < 0.50m)` };
     }
-    return 'SIMULATION_AUTHORITY_ONLINE';
+    return { status: 'SIMULATION_AUTHORITY_ONLINE', reason: 'ALL_PHYSICAL_SYSTEMS_NOMINAL' };
   }
+
 
   // ── Subscriptions
   onStateUpdate(listener: StateListener): () => void {

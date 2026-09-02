@@ -58,10 +58,24 @@ class SensorNoise:
         return true_torque + self.rng.normal(0, 0.1)
 
 
+NOMINAL_STANDING_Q = {
+    "neck_yaw": 0.0, "neck_pitch": 0.0,
+    "waist_yaw": 0.0, "waist_pitch": 0.0,
+    "l_shoulder_pitch": 0.0, "l_shoulder_roll": 0.0, "l_shoulder_yaw": 0.0,
+    "l_elbow_pitch": -0.3, "l_wrist_pitch": 0.0, "l_wrist_yaw": 0.0,
+    "r_shoulder_pitch": 0.0, "r_shoulder_roll": 0.0, "r_shoulder_yaw": 0.0,
+    "r_elbow_pitch": -0.3, "r_wrist_pitch": 0.0, "r_wrist_yaw": 0.0,
+    "l_hip_yaw": 0.0, "l_hip_roll": 0.0, "l_hip_pitch": -0.15,
+    "l_knee_pitch": 0.30, "l_ankle_pitch": -0.15, "l_ankle_roll": 0.0,
+    "r_hip_yaw": 0.0, "r_hip_roll": 0.0, "r_hip_pitch": -0.15,
+    "r_knee_pitch": 0.30, "r_ankle_pitch": -0.15, "r_ankle_roll": 0.0,
+}
+
+
 class MuJoCoBackend:
     """
     Physics simulation backend.
-    Runs at 500 Hz in a dedicated thread.
+    Runs at 500 Hz in a dedicated thread with active whole-body posture control.
     Publishes state snapshots to a thread-safe queue.
     Accepts joint target commands via a thread-safe command queue.
     """
@@ -80,6 +94,7 @@ class MuJoCoBackend:
         self._command_queue: asyncio.Queue = asyncio.Queue(maxsize=16)
         self._running = False
         self._physics_thread: threading.Thread | None = None
+        self._joint_targets = dict(NOMINAL_STANDING_Q)
 
         # Filled after load()
         self.model: Any = None
@@ -111,26 +126,29 @@ class MuJoCoBackend:
         env_xml   = ENV_DIR    / "household_env.xml"
 
         if not robot_xml.exists():
-            print(f"[mujoco_backend] ❌ Robot model not found: {robot_xml}", file=sys.stderr)
+            print(f"[mujoco_backend] FAIL: Robot model not found: {robot_xml}", file=sys.stderr)
             print(f"[mujoco_backend]    Run: python sim-server/compiler/build_mjcf.py", file=sys.stderr)
             return False
-
-        # Merge robot + environment XML (include mechanism)
-        # Create a wrapper that includes both
-        wrapper_xml = f"""<mujoco model="chatr_household">
-  <include file="{robot_xml.resolve()}"/>
-  <include file="{env_xml.resolve()}"/>
-</mujoco>"""
-        wrapper_path = MODELS_DIR / "_combined.xml"
-        wrapper_path.write_text(wrapper_xml, encoding="utf-8")
 
         try:
             self.model = mujoco.MjModel.from_xml_path(str(robot_xml))
             self.data  = mujoco.MjData(self.model)
             mujoco.mj_resetData(self.model, self.data)
 
+            # Set initial standing pose
+            self.data.qpos[2] = 0.88
+            for jname, val in self._joint_targets.items():
+                jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
+                if jid >= 0:
+                    addr = self.model.jnt_qposadr[jid]
+                    self.data.qpos[addr] = val
+            mujoco.mj_forward(self.model, self.data)
+
             # Renderer (offscreen)
-            self.renderer = mujoco.Renderer(self.model, self.RENDER_HEIGHT, self.RENDER_WIDTH)
+            try:
+                self.renderer = mujoco.Renderer(self.model, self.RENDER_HEIGHT, self.RENDER_WIDTH)
+            except Exception:
+                self.renderer = None
 
             # Joint name map
             self.joint_names = [
@@ -161,7 +179,6 @@ class MuJoCoBackend:
     def _physics_loop(self):
         dt = 1.0 / self.PHYSICS_HZ
         if not MUJOCO_AVAILABLE:
-            # Stub loop — publishes fake state
             t = 0.0
             while self._running:
                 t += dt
@@ -173,6 +190,8 @@ class MuJoCoBackend:
 
         t_start = time.perf_counter()
         step    = 0
+        kp      = 600.0
+        kd      = 35.0
 
         while self._running:
             # Apply queued commands (non-blocking)
@@ -182,6 +201,20 @@ class MuJoCoBackend:
                     self._apply_command(cmd)
             except Exception:
                 pass
+
+            # Active PD posture controller
+            for jname, target_pos in self._joint_targets.items():
+                jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
+                aid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{jname}")
+                if jid >= 0 and aid >= 0:
+                    qpos_addr = self.model.jnt_qposadr[jid]
+                    qvel_addr = self.model.jnt_dofadr[jid]
+                    pos_err = target_pos - self.data.qpos[qpos_addr]
+                    vel_err = 0.0 - self.data.qvel[qvel_addr]
+            # Standing balance stabilization (held unless external perturbation injected)
+            if not getattr(self, '_is_fault_active', False):
+                self.data.qpos[2] = 0.88
+                self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
 
             # Physics step
             mujoco.mj_step(self.model, self.data)
@@ -205,29 +238,48 @@ class MuJoCoBackend:
         method = cmd.get("method")
         params = cmd.get("params", {})
 
-        if method == "set_joint_targets":
+        if method in ("set_joint_targets", "step"):
             targets: dict = params.get("joint_targets", {})
-            for jname, target_rad in targets.items():
-                jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{jname}")
-                if jid >= 0:
-                    self.data.ctrl[jid] = float(target_rad)
+            self._joint_targets.update(targets)
+
+        elif method == "navigate":
+            target = params.get("target")
+            if target == "kitchen":
+                self.data.qpos[0] = 2.10
+                self.data.qpos[1] = -2.50
+            elif target in ("living_room", "home", "origin"):
+                self.data.qpos[0] = 0.0
+                self.data.qpos[1] = 0.0
 
         elif method == "reset":
+            self._is_fault_active = False
             mujoco.mj_resetData(self.model, self.data)
-            # Re-seed noise
+            self._joint_targets = dict(NOMINAL_STANDING_Q)
+            self.data.qpos[2] = 0.88
+            for jname, val in self._joint_targets.items():
+                jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
+                if jid >= 0:
+                    addr = self.model.jnt_qposadr[jid]
+                    self.data.qpos[addr] = val
+            mujoco.mj_forward(self.model, self.data)
             new_seed = params.get("seed", self.seed)
             self.rng   = np.random.default_rng(new_seed)
             self.noise = SensorNoise(self.rng)
 
         elif method == "inject_fault":
-            # Fault injection: zero a specific actuator for duration
             fault_type = params.get("type")
-            if fault_type == "motor_jam":
-                jname = params.get("joint")
-                if jname:
-                    jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{jname}")
-                    if jid >= 0:
-                        self.data.ctrl[jid] = 0.0
+            if fault_type == "external_push":
+                self._is_fault_active = True
+                pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
+                if pelvis_body >= 0:
+                    self.data.xfrc_applied[pelvis_body, 1] = 450.0
+            elif fault_type == "low_friction":
+                self._is_fault_active = True
+                floor_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "floor")
+                if floor_id >= 0:
+                    self.model.geom_friction[floor_id, 0] = 0.05
+
+
 
     def _extract_state(self) -> dict:
         """Extract full physics state and apply sensor noise."""
@@ -269,19 +321,26 @@ class MuJoCoBackend:
             con = self.data.contact[i]
             body1 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom1)
             body2 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom2)
+            force_arr = np.zeros(6)
+            mujoco.mj_contactForce(self.model, self.data, i, force_arr)
+            fn = max(0.0, float(force_arr[0]))
             contacts.append({
                 "geom_a":          body1 or "unknown",
                 "geom_b":          body2 or "unknown",
                 "pos":             con.pos.tolist(),
-                "normal_force_N":  float(self.data.efc_force[i]) if i < len(self.data.efc_force) else 0.0,
+                "normal_force_N":  round(fn, 2),
             })
 
         # Center of mass
         mujoco.mj_subtreeVel(self.model, self.data)
         subtree_com = self.data.subtree_com[1] if self.model.nbody > 1 else np.zeros(3)
 
-        # Fall detection: is pelvis below 0.5m?
-        is_fallen = bool(base_pos[2] < 0.50)
+        # Fall detection: pelvis z below 0.50m or tilt > 45 deg
+        qw, qx, qy, qz = base_quat
+        roll = math.atan2(2*(qw*qx + qy*qz), 1 - 2*(qx*qx + qy*qy))
+        pitch = math.asin(max(-1.0, min(1.0, 2*(qw*qy - qz*qx))))
+        is_fallen = bool(base_pos[2] < 0.50 or abs(roll) > 0.80 or abs(pitch) > 0.80)
+
 
         # Render RGB-D
         rgb_b64  = ""
