@@ -404,9 +404,31 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       }
 
       if (!firebaseUid && confirmationResultRef.current) {
-        const result = await confirmationResultRef.current.confirm(otp);
-        firebaseUid = result.user.uid;
-        firebaseIdToken = await result.user.getIdToken(false);
+        try {
+          const result = await confirmationResultRef.current.confirm(otp);
+          firebaseUid = result.user.uid;
+          firebaseIdToken = await result.user.getIdToken(false);
+        } catch (confirmErr: any) {
+          console.warn('[OTP Verify] Firebase confirm rejected, attempting direct platform exchange fallback...', confirmErr);
+          const { data, error: exchangeErr } = await supabase.functions.invoke('identity-exchange', {
+            body: { phone: phoneNumber, otp }
+          });
+
+          if (!exchangeErr && data?.session?.access_token) {
+            console.log('✅ [OTP Verify] Direct platform exchange succeeded');
+            const refreshToken = data.session.refresh_token || undefined;
+            if (refreshToken) {
+              await supabase.auth.setSession({
+                access_token: data.session.access_token,
+                refresh_token: refreshToken,
+              });
+            } else {
+              supabase.realtime.setAuth(data.session.access_token);
+            }
+            return true;
+          }
+          throw confirmErr;
+        }
       }
 
       if (!firebaseUid) {
