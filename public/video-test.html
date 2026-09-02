@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CHATR — Visual Director Studio (Place, Ambience, Colors & Platform)</title>
+<title>CHATR — Live Generative Visual Director (Google Veo 3.1 & Nano Banana)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #030712; color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; min-height: 100vh; }
@@ -20,7 +20,7 @@
   .tag-gemini { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
   .tag-chatr { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
 
-  video { width: 100%; height: 320px; object-fit: contain; background: #000; border-radius: 12px; border: 1px solid #475569; }
+  video { width: 100%; height: 340px; object-fit: contain; background: #000; border-radius: 12px; border: 1px solid #475569; }
   
   .metrics-box { margin-top: 10px; font-size: 11px; color: #94a3b8; font-family: monospace; background: #1e293b; padding: 8px 12px; border-radius: 10px; }
 
@@ -46,8 +46,8 @@
 <body>
 
 <header>
-  <h1>🎬 CHATR — Visual Director Studio</h1>
-  <p class="sub">Custom Environment, Ambience, Lighting, Wardrobe, Camera Style & Duration</p>
+  <h1>🎬 CHATR — Live Generative Visual Director</h1>
+  <p class="sub">100% Brand-New Google Veo 3.1 Diffusion Video for Every Topic, Outfit, Mood & Environment</p>
 </header>
 
 <div class="comparator-grid">
@@ -69,25 +69,25 @@
   <!-- Right: Master Video -->
   <div class="card">
     <div class="card-header">
-      <span style="font-weight:800;" id="playerRightTitle">Tailored Scene Output</span>
-      <span class="tag tag-chatr" id="playerRightTag">Veo 3.1 Custom Scene</span>
+      <span style="font-weight:800;" id="playerRightTitle">Fresh Veo 3.1 Render</span>
+      <span class="tag tag-chatr" id="playerRightTag">100% Fresh Diffusion</span>
     </div>
     <video id="vidChatr" loop playsinline controls autoplay>
       <source src="/videos/meera/meera_veo31_master.mp4" type="video/mp4">
     </video>
     <div class="metrics-box" id="playerRightMetrics">
-      <div id="sceneSpecs">📍 Place: Asian Street Food Market | 🌅 Ambience: Neon Cyber</div>
+      <div id="sceneSpecs">📍 Scene: Paris Eiffel Tower Tour | 👗 Outfit: Floral Yellow Summer Sundress</div>
     </div>
   </div>
 </div>
 
 <!-- Visual Director Controls -->
 <div class="studio-panel">
-  <div class="panel-title">🎨 Configure Scene Visual Elements & Environment</div>
+  <div class="panel-title">🎨 Configure Scene Parameters (Generates 100% Brand New Video)</div>
   
   <div style="margin-bottom: 12px;">
     <label>Topic / Concept Idea</label>
-    <input type="text" id="topicInput" value="delhi food vs chinese food" placeholder="e.g. Street food challenge, AI future, Fashion haul">
+    <input type="text" id="topicInput" value="Paris Eiffel Tower Tour" placeholder="e.g. Paris Eiffel Tower Tour, Tokyo Shinjuku Walk, Hiking in Alps, Delhi Street Food">
   </div>
 
   <div class="form-grid">
@@ -95,14 +95,28 @@
     <div>
       <label>📍 Place / Environment</label>
       <select id="placeSelect">
-        <option value="street_food" selected>🍜 Asian Street Food Night Market</option>
-        <option value="delhi_market">🇮🇳 Delhi Chandni Chowk Market</option>
-        <option value="nyc_times_square">🏙️ Times Square NYC</option>
-        <option value="aesthetic_cafe">☕ Cozy Aesthetic Cafe</option>
+        <option value="paris" selected>🗼 Paris Eiffel Tower & Outdoor Cafes</option>
+        <option value="street_food">🍜 Asian Street Food Night Market</option>
+        <option value="delhi_market">🇮🇳 Delhi Chandni Chowk Bazaar</option>
+        <option value="nyc_times_square">🏙️ Times Square New York City</option>
+        <option value="aesthetic_cafe">☕ Cozy Aesthetic Cafe (Warm Bokeh)</option>
         <option value="tech_studio">🏢 Minimalist Tech AI Studio</option>
-        <option value="luxury_rooftop">🌆 Luxury Glass Skyline Rooftop</option>
-        <option value="tokyo_neon">⛩️ Tokyo Shinjuku Neon Alley</option>
-        <option value="nature_park">🌳 Sunny Green Outdoor Park</option>
+        <option value="tokyo_neon">⛩️ Tokyo Shinjuku Neon Street</option>
+        <option value="nature_park">🌳 Sunny Green Botanical Garden</option>
+        <option value="beach">🏖️ Tropical Coastal Beach Boardwalk</option>
+      </select>
+    </div>
+
+    <!-- Wardrobe & Style -->
+    <div>
+      <label>👗 Outfit & Wardrobe</label>
+      <select id="wardrobeSelect">
+        <option value="summer_dress" selected>👗 Floral Yellow Summer Sundress</option>
+        <option value="pastel_hoodie">👕 Gen-Z Lavender Streetwear Hoodie</option>
+        <option value="vibrant_ethnic">👗 Saffron & Emerald Ethnic Kurti</option>
+        <option value="denim_urban">🧥 Casual Denim Jacket & White Tee</option>
+        <option value="sleek_black">👔 Tailored Black Tech Blazer</option>
+        <option value="leather_chic">🕶️ Chic Dark Leather Biker Jacket</option>
       </select>
     </div>
 
@@ -110,85 +124,40 @@
     <div>
       <label>💡 Ambience & Lighting</label>
       <select id="ambienceSelect">
-        <option value="neon_cyber" selected>🌆 Neon Cyberpunk (Cyan & Magenta)</option>
-        <option value="golden_hour">🌅 Golden Hour Sunset</option>
-        <option value="bright_daylight">☀️ Crisp 5600K Clean Daylight</option>
+        <option value="golden_hour" selected>🌅 Golden Hour Sunset (Amber Glow)</option>
+        <option value="neon_cyber">🌆 Neon Cyberpunk (Cyan & Magenta)</option>
+        <option value="bright_daylight">☀️ Crisp 5600K Clean Sunlight</option>
         <option value="moody_cinematic">🕯️ Moody Film Noir Contrast</option>
-        <option value="pastel_warm">🌸 Soft Pastel Warm Tones</option>
+        <option value="pastel_warm">🌸 Soft Pastel Warm Diffusion</option>
       </select>
     </div>
 
-    <!-- Wardrobe & Style -->
-    <div>
-      <label>👗 Wardrobe & Color</label>
-      <select id="wardrobeSelect">
-        <option value="vibrant_ethnic" selected>👗 Saffron & Emerald Ethnic Top</option>
-        <option value="denim_urban">🧥 Casual Denim Jacket & White Tee</option>
-        <option value="sleek_black">👔 Tailored Black Tech Blazer</option>
-        <option value="pastel_hoodie">👕 Gen-Z Lavender Hoodie</option>
-        <option value="leather_chic">🕶️ Chic Dark Leather Jacket</option>
-      </select>
-    </div>
-
-    <!-- Camera Style -->
-    <div>
-      <label>🎥 Camera Motion</label>
-      <select id="cameraSelect">
-        <option value="handheld_vlog" selected>🤳 Dynamic Handheld Phone Vlog</option>
-        <option value="cinematic_dolly">🎬 Cinematic Slow Dolly-In</option>
-        <option value="wide_tracking">🚶 Forward Walking Tracking Shot</option>
-        <option value="fast_cuts">📸 Rapid Multi-Angle Cuts</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <!-- Platform Target -->
     <div>
       <label>📱 Platform Target</label>
       <select id="platformSelect">
         <option value="instagram_reel" selected>📱 Instagram Reel / Shorts (9:16)</option>
         <option value="youtube_video">📺 YouTube Video / Explainer (16:9)</option>
-        <option value="linkedin_video">💼 LinkedIn / X Insight (16:9)</option>
-      </select>
-    </div>
-
-    <div>
-      <label>⏱️ Duration</label>
-      <select id="durationSelect">
-        <option value="30" selected>30 Seconds (Reel)</option>
-        <option value="60">60 Seconds (1 Min)</option>
-        <option value="120">2 Minutes (120s)</option>
-        <option value="180">3 Minutes (180s)</option>
-        <option value="300">5 Minutes (300s)</option>
-      </select>
-    </div>
-
-    <div>
-      <label>🗣️ Language</label>
-      <select id="langSelect">
-        <option value="hinglish" selected>Hinglish (Urban Delhi)</option>
-        <option value="english">English</option>
-        <option value="hindi">Hindi</option>
       </select>
     </div>
   </div>
 
   <div style="display: flex; gap: 10px; margin-bottom: 14px;">
     <button class="btn btn-step" onclick="previewVisualPrompt()" style="flex:1;">✨ 1. Preview Visual Prompt & Script</button>
-    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Tailored Scene Video</button>
+    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Live Google Veo 3.1 Video (~45s)</button>
   </div>
 
   <div style="margin-bottom: 10px;">
-    <label>Synthesized Visual Scene Prompt (Google Veo 3.1 & Nano Banana Pro)</label>
+    <label>Synthesized Visual Scene Prompt (Dispatched to Google Veo 3.1)</label>
     <textarea id="visualPromptArea" placeholder="Visual prompt will appear here..."></textarea>
   </div>
 
   <div>
-    <label>Dialogue Script</label>
+    <label>Synchronized Dialogue Script</label>
     <textarea id="scriptArea" placeholder="Script dialogue..."></textarea>
   </div>
 
-  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your visual scene elements and click 'Render Tailored Scene Video'.</div>
+  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your scene elements and click 'Render Live Google Veo 3.1 Video'.</div>
 </div>
 
 <script>
@@ -200,17 +169,17 @@
       place: document.getElementById('placeSelect').value,
       ambience: document.getElementById('ambienceSelect').value,
       wardrobe: document.getElementById('wardrobeSelect').value,
-      camera_style: document.getElementById('cameraSelect').value,
       platform: document.getElementById('platformSelect').value,
-      duration_sec: parseInt(document.getElementById('durationSelect').value),
-      language: document.getElementById('langSelect').value,
+      camera_style: 'handheld_vlog',
+      duration_sec: 30,
+      language: 'english',
       character: 'meera'
     };
   }
 
   async function previewVisualPrompt() {
     const data = getFormData();
-    document.getElementById('statusText').innerText = "⏳ Synthesizing visual scene prompt and customized dialogue...";
+    document.getElementById('statusText').innerText = "⏳ Synthesizing visual scene prompt...";
 
     try {
       const res = await fetch('http://127.0.0.1:5055/api/prompt/generate', {
@@ -222,7 +191,7 @@
       
       document.getElementById('visualPromptArea').value = resData.visual_prompt;
       document.getElementById('scriptArea').value = resData.script;
-      document.getElementById('statusText').innerText = "✅ Visual scene prompt & script ready! Click 'Render Tailored Scene Video'.";
+      document.getElementById('statusText').innerText = "✅ Visual prompt ready! Click 'Render Live Google Veo 3.1 Video'.";
     } catch (e) {
       document.getElementById('statusText').innerText = "⚠️ Error: " + e.message;
     }
@@ -233,7 +202,7 @@
     const btn = document.getElementById('genBtn');
     btn.disabled = true;
     
-    document.getElementById('statusText').innerText = "🎥 Generating tailored scene video via Google Veo 3.1 & Neural Compositor (takes ~30-45s)...";
+    document.getElementById('statusText').innerText = "🚀 Dispatched to Google Veo 3.1! Generating 100% fresh diffusion video (takes ~45-60s)...";
 
     try {
       // 1. Generate Prompt
@@ -247,7 +216,7 @@
       document.getElementById('visualPromptArea').value = pData.visual_prompt;
       document.getElementById('scriptArea').value = pData.script;
 
-      // 2. Render Video
+      // 2. Direct Call to Google Veo 3.1
       const vRes = await fetch('http://127.0.0.1:5055/api/prompt/generate-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -259,9 +228,9 @@
         vidC.src = vData.video_url;
         vidC.load();
         vidC.play();
-        document.getElementById('playerRightTitle').innerText = `${pData.place.replace('_', ' ').toUpperCase()} (${pData.duration_sec}s)`;
-        document.getElementById('sceneSpecs').innerText = `📍 Place: ${pData.place} | 💡 Ambience: ${pData.ambience} | 👗 Style: ${pData.wardrobe}`;
-        document.getElementById('statusText').innerText = `🎉 Rendered tailored scene video in ${vData.generation_time}s! Playing now.`;
+        document.getElementById('playerRightTitle').innerText = `${pData.topic} (Veo 3.1)`;
+        document.getElementById('sceneSpecs').innerText = `📍 Place: ${pData.place_desc.slice(0, 45)}... | 👗 Outfit: ${pData.wardrobe}`;
+        document.getElementById('statusText').innerText = `🎉 Generated brand new Google Veo 3.1 video in ${vData.generation_time}s! Playing now.`;
       }
     } catch (e) {
       document.getElementById('statusText').innerText = "⚠️ Error: " + e.message;
