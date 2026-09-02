@@ -148,10 +148,6 @@ export const FirebasePhoneAuth: React.FC = () => {
 
   return (
     <>
-      {/* Hidden reCAPTCHA container */}
-      <style>{`
-        .grecaptcha-badge { visibility: hidden !important; }
-      `}</style>
       <div id="recaptcha-container" />
 
       <div className="w-full space-y-5 text-center">
