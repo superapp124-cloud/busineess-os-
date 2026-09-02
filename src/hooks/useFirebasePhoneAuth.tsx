@@ -243,31 +243,6 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     setError(null);
     setPhoneNumber(phone);
 
-    const e164 = normalizePhone(phone);
-    const cleanDigits = e164.replace(/\+/g, '') || phone.replace(/\D/g, '');
-
-    // Fast single candidate check with 400ms timeout
-    try {
-      const fastLoginPromise = supabase.auth.signInWithPassword({
-        email: `${cleanDigits}@chatr.local`,
-        password: e164,
-      });
-      const timeoutPromise = new Promise<{ data: any }>((resolve) => 
-        setTimeout(() => resolve({ data: null }), 400)
-      );
-
-      const { data } = await Promise.race([fastLoginPromise, timeoutPromise]);
-      if (data?.session) {
-        setIsExistingUser(true);
-        console.log('✅ [Auth] Existing user authenticated instantly');
-        setLoading(false);
-        return true;
-      }
-    } catch {
-      // Ignore and proceed directly to OTP
-    }
-
-    // Send verification OTP immediately
     setIsExistingUser(false);
     return await sendOTP(phone);
   }, [sendOTP]);
@@ -431,7 +406,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       if (!firebaseUid && confirmationResultRef.current) {
         const result = await confirmationResultRef.current.confirm(otp);
         firebaseUid = result.user.uid;
-        firebaseIdToken = await result.user.getIdToken(true);
+        firebaseIdToken = await result.user.getIdToken(false);
       }
 
       if (!firebaseUid) {

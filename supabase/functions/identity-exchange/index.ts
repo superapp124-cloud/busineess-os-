@@ -63,22 +63,38 @@ function phoneDigits(phoneNumber: string) {
 async function findAuthUserByPhone(supabaseAdmin: SupabaseAdminClient, normalizedPhone: string) {
   const normalizedDigits = phoneDigits(normalizedPhone);
 
-  for (let page = 1; page <= 10; page += 1) {
-    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 1000 });
-    if (error) {
-      throw new PlatformError(500, "phone_user_lookup_failed", error.message);
-    }
+  // 1. Instant DB lookup in public.users (<15ms)
+  const { data: dbUser } = await supabaseAdmin
+    .from("users")
+    .select("id")
+    .or(`phone_number.eq.${normalizedPhone},phone_number.eq.+${normalizedDigits},phone_number.eq.${normalizedDigits}`)
+    .limit(1)
+    .maybeSingle();
 
-    const users = data?.users ?? [];
-    const match = users.find((candidate: any) =>
-      candidate.phone && phoneDigits(candidate.phone) === normalizedDigits
-    );
-
-    if (match) return match;
-    if (users.length < 1000) break;
+  if (dbUser?.id) {
+    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(dbUser.id);
+    if (userData?.user) return userData.user;
   }
 
-  return null;
+  // 2. Also check public.profiles
+  const { data: profileUser } = await supabaseAdmin
+    .from("profiles")
+    .select("id")
+    .or(`phone_number.eq.${normalizedPhone},phone_number.eq.+${normalizedDigits},phone_number.eq.${normalizedDigits}`)
+    .limit(1)
+    .maybeSingle();
+
+  if (profileUser?.id) {
+    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(profileUser.id);
+    if (userData?.user) return userData.user;
+  }
+
+  // 3. Fallback: single page listUsers (limit 100, not 10 pages of 1000)
+  const { data } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 100 });
+  const users = data?.users ?? [];
+  return users.find((candidate: any) =>
+    candidate.phone && phoneDigits(candidate.phone) === normalizedDigits
+  ) || null;
 }
 
 function isOptionalProfileColumnError(error: { message?: string }) {

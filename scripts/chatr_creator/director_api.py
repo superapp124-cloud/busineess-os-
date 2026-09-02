@@ -331,20 +331,25 @@ class SunoSongRequest(BaseModel):
     language: str = "hinglish"
     mood: str = "romantic"
     custom_lyrics: Optional[str] = None
+    instrumental: bool = False
+    title: Optional[str] = None
+    hf_token: Optional[str] = None
 
 @app.post("/api/suno/generate-song")
 def api_suno_song(req: SunoSongRequest):
     try:
-        from suno_music_engine import render_suno_song
+        from suno_music_engine import render_suno_generation
     except ImportError:
-        from scripts.chatr_creator.suno_music_engine import render_suno_song
-    return render_suno_song(
+        from scripts.chatr_creator.suno_music_engine import render_suno_generation
+    return render_suno_generation(
         topic=req.topic,
         genre=req.genre,
         vocal_character=req.vocal_character,
         language=req.language,
         mood=req.mood,
-        custom_lyrics=req.custom_lyrics
+        custom_lyrics=req.custom_lyrics,
+        instrumental=req.instrumental,
+        title_custom=req.title
     )
 
 @app.get("/api/suno/library")

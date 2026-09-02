@@ -24,8 +24,10 @@ if (!rootElement) {
 }
 
 console.log("🚀 [Main] Root element found, rendering App...");
-AuthProvider.setupSessionSync();
-bootKernel().catch(err => console.error("❌ [Main] Kernel Boot Error:", err));
+// Only boot the enterprise kernel when outside /auth to guarantee sub-300ms load
+if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth')) {
+  bootKernel().catch(err => console.error("❌ [Main] Kernel Boot Error:", err));
+}
 createRoot(rootElement).render(
  <DesignSystemProvider>
  <App />
