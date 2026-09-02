@@ -207,12 +207,12 @@ export const ManipulationInspectorPanel: React.FC<ManipulationInspectorPanelProp
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 shadow-lg">
       <div className="flex items-center justify-between border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-slate-200">28-DOF MANIPULATION & GRASPING KERNEL</span>
+          <span className="text-sm font-bold text-slate-200">MEERA DEXTEROUS HANDS & OBJECT INTERACTION</span>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-500/30 font-bold">
             PROVENANCE: MUJOCO_PHYSICS
           </span>
         </div>
-        <span className="text-[11px] font-mono text-slate-400">RIGHT ARM 7-DOF · LEFT ARM 7-DOF</span>
+        <span className="text-[11px] font-mono text-emerald-400 font-semibold">5-FINGER ADAPTIVE TOUCH · DUAL ARMS</span>
       </div>
 
       {/* Target Object & Arm Selection */}

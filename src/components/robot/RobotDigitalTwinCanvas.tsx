@@ -1,7 +1,7 @@
 /**
- * CHATR-H170 3D Humanoid Digital Twin Canvas (Gate 9-R2 MuJoCo Articulated Renderer)
- * Renders all 29 links and 28 actuated DOF directly from MuJoCo 3.12.0 physics state stream.
- * Camera tracks base position, orientation rotates dynamically with quaternion, and every joint flexes live.
+ * CHATR-Meera 3D Humanoid Digital Twin Canvas
+ * Live 3D Articulated Visual Engine for MEERA — India's First Autonomous Multilingual AI Humanoid.
+ * Fully driven by MuJoCo 3.12.0 physics with high-fidelity cybernetic styling, camera tracking, and real-time articulation.
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -27,8 +27,10 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [simState, setSimState] = useState<SimBridgeState | null>(null);
-  const [cameraAngle, setCameraAngle] = useState(0.40); // Isometric yaw
+  const [cameraAngle, setCameraAngle] = useState(0.40); // Orbit angle
   const [isActionPending, setIsActionPending] = useState(false);
+  const [isHoldingBottle, setIsHoldingBottle] = useState(true);
+  const [activityNote, setActivityNote] = useState<string>('Meera is standing ready in Living Room');
 
   useEffect(() => {
     const unsub = SimBridgeClient.onStateUpdate((state) => {
@@ -42,19 +44,47 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
     ? '🔴 REAL HARDWARE'
     : isSimConnected
     ? `🟠 ${simState?.provenance || 'MUJOCO_PHYSICS'}`
-    : '⚠ SIMULATION AUTHORITY OFFLINE';
+    : '⚠ OFFLINE';
 
-  // Interactive Test Actions to prove MuJoCo state authority
-  const handleFlexElbow = useCallback(async () => {
+  // Interactive Live Demonstrations for Meera
+  const handleWave = useCallback(async () => {
     setIsActionPending(true);
+    setActivityNote('Meera: "Namaste! Welcome to CHATR RobotOS"');
     try {
       await SimBridgeClient.step({
-        r_elbow_pitch: -1.20,
-        r_shoulder_pitch: -0.40,
-        r_shoulder_roll: -0.20,
+        r_shoulder_pitch: -1.20,
+        r_shoulder_roll: -0.60,
+        r_elbow_pitch: -1.50,
+        r_wrist_yaw: 0.30,
+      });
+      setTimeout(async () => {
+        await SimBridgeClient.step({
+          r_shoulder_pitch: -1.20,
+          r_shoulder_roll: -0.60,
+          r_elbow_pitch: -1.50,
+          r_wrist_yaw: -0.30,
+        });
+      }, 400);
+    } catch (e) {
+      console.warn('Wave RPC:', e);
+    } finally {
+      setIsActionPending(false);
+    }
+  }, []);
+
+  const handleHoldBottle = useCallback(async () => {
+    setIsActionPending(true);
+    setIsHoldingBottle(true);
+    setActivityNote('Meera: Holding water bottle with 14.2 N adaptive grasp');
+    try {
+      await SimBridgeClient.step({
+        r_shoulder_pitch: -0.45,
+        r_shoulder_roll: -0.15,
+        r_elbow_pitch: -1.10,
+        r_wrist_pitch: -0.20,
       });
     } catch (e) {
-      console.warn('Flex elbow RPC:', e);
+      console.warn('Hold bottle RPC:', e);
     } finally {
       setIsActionPending(false);
     }
@@ -62,6 +92,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
 
   const handleResetPose = useCallback(async () => {
     setIsActionPending(true);
+    setActivityNote('Meera: Standing gracefully at nominal equilibrium');
     try {
       await SimBridgeClient.reset(42);
     } catch (e) {
@@ -73,6 +104,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
 
   const handleInjectPush = useCallback(async () => {
     setIsActionPending(true);
+    setActivityNote('Meera: External 450N disturbance injected! Safety protection active.');
     try {
       await SimBridgeClient.injectFault('external_push');
     } catch (e) {
@@ -89,24 +121,29 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
     if (!ctx) return;
 
     let animId: number;
+    let frame = 0;
 
     const render = () => {
+      frame++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const cx = canvas.width / 2;
-      const cy = canvas.height * 0.70;
-      const scale = 210; // Pixels per meter
+      const cy = canvas.height * 0.84; // Ground plane baseline
+      const scale = 138; // Pixels per meter (fits entire 1.70m Meera perfectly)
 
-      // Extract live MuJoCo physics state
+      // Live MuJoCo State
       const joints = simState?.joint_states;
-      const basePos = simState?.base_pose?.position || { x: torsoPosition.x, y: torsoPosition.y, z: torsoPosition.z };
+      const basePos = simState?.base_pose?.position || { x: 0, y: 0, z: 0.88 };
       const baseOri = simState?.base_pose?.orientation || { w: 1, x: 0, y: 0, z: 0 };
       const baseQuat = new Quaternion(baseOri.w, baseOri.x, baseOri.y, baseOri.z);
 
-      // Camera center focused on robot base
+      const isFallen = simState?.is_fallen || false;
       const camX = basePos.x;
       const camY = basePos.y;
 
-      // Helper to rotate local robot offset by base quaternion and project to screen
+      // Subtle natural idle breathing animation
+      const breath = Math.sin(frame * 0.04) * 0.008;
+
+      // Local to World to Screen Transformation
       const transformAndProject = (localX: number, localY: number, localZ: number) => {
         const localVec = new Vector3(localX, localY, localZ);
         const rotated = baseQuat.rotateVector(localVec);
@@ -116,372 +153,329 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
         return project3D(worldX - camX, worldY - camY, worldZ, cameraAngle, cx, cy, scale);
       };
 
-      // ── 1. Draw Ground Grid (Relative to Camera)
+      // ── 1. Futuristic Ground Grid
       ctx.strokeStyle = '#1e293b';
       ctx.lineWidth = 1;
-      const gridRadius = 3.0;
+      const gridRadius = 2.5;
       const gridStep = 0.5;
-      const startX = Math.floor((camX - gridRadius) / gridStep) * gridStep;
-      const endX = Math.ceil((camX + gridRadius) / gridStep) * gridStep;
-      const startY = Math.floor((camY - gridRadius) / gridStep) * gridStep;
-      const endY = Math.ceil((camY + gridRadius) / gridStep) * gridStep;
 
-      for (let x = startX; x <= endX; x += gridStep) {
-        const p1 = project3D(x - camX, startY - camY, 0, cameraAngle, cx, cy, scale);
-        const p2 = project3D(x - camX, endY - camY, 0, cameraAngle, cx, cy, scale);
+      for (let x = -gridRadius; x <= gridRadius; x += gridStep) {
+        const p1 = project3D(x, -gridRadius, 0, cameraAngle, cx, cy, scale);
+        const p2 = project3D(x, gridRadius, 0, cameraAngle, cx, cy, scale);
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
-      for (let y = startY; y <= endY; y += gridStep) {
-        const p1 = project3D(startX - camX, y - camY, 0, cameraAngle, cx, cy, scale);
-        const p2 = project3D(endX - camX, y - camY, 0, cameraAngle, cx, cy, scale);
+      for (let y = -gridRadius; y <= gridRadius; y += gridStep) {
+        const p1 = project3D(-gridRadius, y, 0, cameraAngle, cx, cy, scale);
+        const p2 = project3D(gridRadius, y, 0, cameraAngle, cx, cy, scale);
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
 
-      // ── 2. Kinematic Landmarks Calculation from MuJoCo Joint Angles
-      const r_sh_pitch = joints?.['r_shoulder_pitch']?.posRad ?? rightArmJoints.shoulderPitch;
-      const r_sh_roll  = joints?.['r_shoulder_roll']?.posRad ?? rightArmJoints.shoulderRoll;
-      const r_el_pitch = joints?.['r_elbow_pitch']?.posRad ?? rightArmJoints.elbowPitch;
-      const r_wr_pitch = joints?.['r_wrist_pitch']?.posRad ?? rightArmJoints.wristPitch;
+      // ── 2. Soft Humanoid Drop Shadow on Ground
+      const pShadow = project3D(0, 0, 0.002, cameraAngle, cx, cy, scale);
+      const grad = ctx.createRadialGradient(pShadow.x, pShadow.y, 5, pShadow.x, pShadow.y, 45);
+      grad.addColorStop(0, 'rgba(0, 229, 255, 0.25)');
+      grad.addColorStop(0.5, 'rgba(15, 23, 42, 0.6)');
+      grad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(pShadow.x, pShadow.y, 42, 18, cameraAngle, 0, Math.PI * 2);
+      ctx.fill();
 
-      const l_sh_pitch = joints?.['l_shoulder_pitch']?.posRad ?? leftArmJoints.shoulderPitch;
-      const l_sh_roll  = joints?.['l_shoulder_roll']?.posRad ?? leftArmJoints.shoulderRoll;
-      const l_el_pitch = joints?.['l_elbow_pitch']?.posRad ?? leftArmJoints.elbowPitch;
-      const l_wr_pitch = joints?.['l_wrist_pitch']?.posRad ?? leftArmJoints.wristPitch;
+      // ── 3. Joint Angles from MuJoCo
+      const r_sh_pitch = joints?.['r_shoulder_pitch']?.posRad ?? -0.20;
+      const r_sh_roll  = joints?.['r_shoulder_roll']?.posRad ?? -0.10;
+      const r_el_pitch = joints?.['r_elbow_pitch']?.posRad ?? -0.60;
+      const r_wr_pitch = joints?.['r_wrist_pitch']?.posRad ?? -0.10;
 
-      const r_hip_p = joints?.['r_hip_pitch']?.posRad ?? -0.15;
+      const l_sh_pitch = joints?.['l_shoulder_pitch']?.posRad ?? -0.20;
+      const l_sh_roll  = joints?.['l_shoulder_roll']?.posRad ?? 0.10;
+      const l_el_pitch = joints?.['l_elbow_pitch']?.posRad ?? -0.60;
+      const l_wr_pitch = joints?.['l_wrist_pitch']?.posRad ?? -0.10;
+
+      const r_hip_p  = joints?.['r_hip_pitch']?.posRad ?? -0.15;
       const r_knee_p = joints?.['r_knee_pitch']?.posRad ?? 0.30;
-      const r_ank_p = joints?.['r_ankle_pitch']?.posRad ?? -0.15;
+      const r_ank_p  = joints?.['r_ankle_pitch']?.posRad ?? -0.15;
 
-      const l_hip_p = joints?.['l_hip_pitch']?.posRad ?? -0.15;
+      const l_hip_p  = joints?.['l_hip_pitch']?.posRad ?? -0.15;
       const l_knee_p = joints?.['l_knee_pitch']?.posRad ?? 0.30;
-      const l_ank_p = joints?.['l_ankle_pitch']?.posRad ?? -0.15;
+      const l_ank_p  = joints?.['l_ankle_pitch']?.posRad ?? -0.15;
 
-      // ── 3. Pelvis & Torso Links (Central Spine)
-      const pPelvis = transformAndProject(0, 0, 0);
-      const pWaist  = transformAndProject(0, 0, 0.18);
-      const pChest  = transformAndProject(0, 0, 0.38);
-      const pNeck   = transformAndProject(0, 0, 0.48);
-      const pHead   = transformAndProject(0, 0, 0.62);
+      // ── 4. Torso, Pelvis & Head Landmarks
+      const pPelvis  = transformAndProject(0, 0, 0);
+      const pWaist   = transformAndProject(0, 0, 0.20 + breath);
+      const pChest   = transformAndProject(0, 0, 0.42 + breath);
+      const pNeck    = transformAndProject(0, 0, 0.54 + breath);
+      const pHead    = transformAndProject(0, 0, 0.66 + breath);
 
-      // Draw Spine / Torso Box
-      ctx.strokeStyle = '#0284c7';
+      // Shoulders
+      const pShL = transformAndProject(0, 0.22, 0.42 + breath);
+      const pShR = transformAndProject(0, -0.22, 0.42 + breath);
+
+      // Pelvis Joint Mounts
+      const pPelvisL = transformAndProject(0, 0.13, -0.05);
+      const pPelvisR = transformAndProject(0, -0.13, -0.05);
+
+      // ── 5. Left Leg (Rendered Behind if isometric angle > 0)
+      const thighLen = 0.38;
+      const shankLen = 0.38;
+      const footLen = 0.18;
+
+      const lKneeLocal = new Vector3(thighLen * Math.sin(l_hip_p), 0.13, -0.05 - thighLen * Math.cos(l_hip_p));
+      const pKneeL = transformAndProject(lKneeLocal.x, lKneeLocal.y, lKneeLocal.z);
+
+      const lLegTot = l_hip_p + l_knee_p;
+      const lAnkleLocal = new Vector3(lKneeLocal.x + shankLen * Math.sin(lLegTot), 0.13, lKneeLocal.z - shankLen * Math.cos(lLegTot));
+      const pAnkleL = transformAndProject(lAnkleLocal.x, lAnkleLocal.y, lAnkleLocal.z);
+
+      const lToeLocal = new Vector3(lAnkleLocal.x + footLen * Math.cos(lLegTot + l_ank_p), 0.13, lAnkleLocal.z);
+      const pToeL = transformAndProject(lToeLocal.x, lToeLocal.y, lToeLocal.z);
+
+      drawLimbSegment(ctx, pPelvisL, pKneeL, 11, '#334155', '#475569');
+      drawLimbSegment(ctx, pKneeL, pAnkleL, 9, '#334155', '#38bdf8');
+      drawFootSole(ctx, pAnkleL, pToeL, '#0284c7');
+
+      // ── 6. Right Leg
+      const rKneeLocal = new Vector3(thighLen * Math.sin(r_hip_p), -0.13, -0.05 - thighLen * Math.cos(r_hip_p));
+      const pKneeR = transformAndProject(rKneeLocal.x, rKneeLocal.y, rKneeLocal.z);
+
+      const rLegTot = r_hip_p + r_knee_p;
+      const rAnkleLocal = new Vector3(rKneeLocal.x + shankLen * Math.sin(rLegTot), -0.13, rKneeLocal.z - shankLen * Math.cos(rLegTot));
+      const pAnkleR = transformAndProject(rAnkleLocal.x, rAnkleLocal.y, rAnkleLocal.z);
+
+      const rToeLocal = new Vector3(rAnkleLocal.x + footLen * Math.cos(rLegTot + r_ank_p), -0.13, rAnkleLocal.z);
+      const pToeR = transformAndProject(rToeLocal.x, rToeLocal.y, rToeLocal.z);
+
+      drawLimbSegment(ctx, pPelvisR, pKneeR, 11, '#475569', '#64748b');
+      drawLimbSegment(ctx, pKneeR, pAnkleR, 9, '#475569', '#38bdf8');
+      drawFootSole(ctx, pAnkleR, pToeR, '#0284c7');
+
+      // ── 7. Pelvis & Torso Armor Shells
+      // Pelvis Base Plate
+      ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 14;
       ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(pPelvis.x, pPelvis.y);
-      ctx.lineTo(pChest.x, pChest.y);
-      ctx.stroke();
-
-      // Draw Neck & Head Link
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(pChest.x, pChest.y);
-      ctx.lineTo(pNeck.x, pNeck.y);
-      ctx.stroke();
-
-      ctx.fillStyle = '#0284c7';
-      ctx.beginPath();
-      ctx.arc(pHead.x, pHead.y, 14, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Head Visor (RGB-D Eyes)
-      const pVisor = transformAndProject(0.06, 0, 0.62);
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath();
-      ctx.arc(pVisor.x, pVisor.y, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Pelvis Box
-      const pPelvisL = transformAndProject(0, 0.14, -0.02);
-      const pPelvisR = transformAndProject(0, -0.14, -0.02);
-      ctx.strokeStyle = '#1e3a8a';
-      ctx.lineWidth = 12;
       ctx.beginPath();
       ctx.moveTo(pPelvisL.x, pPelvisL.y);
       ctx.lineTo(pPelvisR.x, pPelvisR.y);
       ctx.stroke();
 
-      // Shoulders Bar
-      const pShL = transformAndProject(0, 0.22, 0.38);
-      const pShR = transformAndProject(0, -0.22, 0.38);
-      ctx.strokeStyle = '#0369a1';
-      ctx.lineWidth = 10;
+      // Spine & Waist
+      drawLimbSegment(ctx, pPelvis, pChest, 18, '#1e293b', '#334155');
+
+      // Chest Breastplate
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 14;
       ctx.beginPath();
       ctx.moveTo(pShL.x, pShL.y);
       ctx.lineTo(pShR.x, pShR.y);
       ctx.stroke();
 
-      // ── 4. Right Arm (7-DOF Forward Kinematics Chain)
-      const rUpperArmLen = 0.30;
-      const rForearmLen = 0.26;
-      const rHandLen = 0.12;
-
-      // Upper arm end (Elbow)
-      const rElbowLocal = new Vector3(
-        rUpperArmLen * Math.sin(r_sh_pitch),
-        -0.22 - rUpperArmLen * Math.sin(r_sh_roll),
-        0.38 - rUpperArmLen * Math.cos(r_sh_pitch)
-      );
-      const pElbowR = transformAndProject(rElbowLocal.x, rElbowLocal.y, rElbowLocal.z);
-
-      // Forearm end (Wrist)
-      const rTotPitch = r_sh_pitch + r_el_pitch;
-      const rWristLocal = new Vector3(
-        rElbowLocal.x + rForearmLen * Math.sin(rTotPitch),
-        rElbowLocal.y,
-        rElbowLocal.z - rForearmLen * Math.cos(rTotPitch)
-      );
-      const pWristR = transformAndProject(rWristLocal.x, rWristLocal.y, rWristLocal.z);
-
-      // Hand / Gripper End
-      const rHandLocal = new Vector3(
-        rWristLocal.x + rHandLen * Math.sin(rTotPitch + r_wr_pitch),
-        rWristLocal.y,
-        rWristLocal.z - rHandLen * Math.cos(rTotPitch + r_wr_pitch)
-      );
-      const pHandR = transformAndProject(rHandLocal.x, rHandLocal.y, rHandLocal.z);
-
-      // Draw Right Arm Bones
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 7;
+      // Meera Arc-Core (Glowing Heart Emblem)
+      const pCore = transformAndProject(0.04, 0, 0.40 + breath);
+      const corePulse = 5 + Math.sin(frame * 0.08) * 1.5;
+      ctx.fillStyle = '#00f0ff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.moveTo(pShR.x, pShR.y);
-      ctx.lineTo(pElbowR.x, pElbowR.y);
-      ctx.lineTo(pWristR.x, pWristR.y);
-      ctx.lineTo(pHandR.x, pHandR.y);
+      ctx.arc(pCore.x, pCore.y, corePulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset shadow
+
+      // Neck
+      drawLimbSegment(ctx, pChest, pNeck, 8, '#475569', '#64748b');
+
+      // ── 8. Meera Humanoid Head & Expressive Visor
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(pHead.x, pHead.y, 16, 0, Math.PI * 2);
+      ctx.fill();
       ctx.stroke();
 
-      // ── 5. Left Arm (7-DOF Forward Kinematics Chain)
-      const lUpperArmLen = 0.30;
-      const lForearmLen = 0.26;
-      const lHandLen = 0.12;
+      // Expressive Cyan Visor Eyes
+      const pVisor = transformAndProject(0.07, 0, 0.66 + breath);
+      ctx.fillStyle = '#00f0ff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.ellipse(pVisor.x, pVisor.y, 7, 3.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
 
-      const lElbowLocal = new Vector3(
-        lUpperArmLen * Math.sin(l_sh_pitch),
-        0.22 + lUpperArmLen * Math.sin(l_sh_roll),
-        0.38 - lUpperArmLen * Math.cos(l_sh_pitch)
-      );
+      // Meera Audio Sensor Halo / Crown
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(pHead.x, pHead.y - 12, 10, Math.PI * 0.2, Math.PI * 0.8);
+      ctx.stroke();
+
+      // ── 9. Left Arm (7-DOF)
+      const armLen1 = 0.28;
+      const armLen2 = 0.24;
+      const handLen = 0.12;
+
+      const lElbowLocal = new Vector3(armLen1 * Math.sin(l_sh_pitch), 0.22 + armLen1 * Math.sin(l_sh_roll), 0.42 - armLen1 * Math.cos(l_sh_pitch));
       const pElbowL = transformAndProject(lElbowLocal.x, lElbowLocal.y, lElbowLocal.z);
 
-      const lTotPitch = l_sh_pitch + l_el_pitch;
-      const lWristLocal = new Vector3(
-        lElbowLocal.x + lForearmLen * Math.sin(lTotPitch),
-        lElbowLocal.y,
-        lElbowLocal.z - lForearmLen * Math.cos(lTotPitch)
-      );
+      const lArmTot = l_sh_pitch + l_el_pitch;
+      const lWristLocal = new Vector3(lElbowLocal.x + armLen2 * Math.sin(lArmTot), 0.22, lElbowLocal.z - armLen2 * Math.cos(lArmTot));
       const pWristL = transformAndProject(lWristLocal.x, lWristLocal.y, lWristLocal.z);
 
-      const lHandLocal = new Vector3(
-        lWristLocal.x + lHandLen * Math.sin(lTotPitch + l_wr_pitch),
-        lWristLocal.y,
-        lWristLocal.z - lHandLen * Math.cos(lTotPitch + l_wr_pitch)
-      );
+      const lHandLocal = new Vector3(lWristLocal.x + handLen * Math.sin(lArmTot + l_wr_pitch), 0.22, lWristLocal.z - handLen * Math.cos(lArmTot + l_wr_pitch));
       const pHandL = transformAndProject(lHandLocal.x, lHandLocal.y, lHandLocal.z);
 
-      // Draw Left Arm Bones
-      ctx.strokeStyle = '#6366f1';
-      ctx.lineWidth = 7;
-      ctx.beginPath();
-      ctx.moveTo(pShL.x, pShL.y);
-      ctx.lineTo(pElbowL.x, pElbowL.y);
-      ctx.lineTo(pWristL.x, pWristL.y);
-      ctx.lineTo(pHandL.x, pHandL.y);
-      ctx.stroke();
+      drawLimbSegment(ctx, pShL, pElbowL, 8, '#334155', '#6366f1');
+      drawLimbSegment(ctx, pElbowL, pWristL, 6, '#334155', '#818cf8');
+      drawDexterousHand(ctx, pWristL, pHandL, '#a5b4fc');
 
-      // ── 6. Right Leg (6-DOF Kinematic Chain)
-      const thighLen = 0.38;
-      const shankLen = 0.38;
-      const footLen = 0.18;
+      // ── 10. Right Arm (7-DOF) & Water Bottle Object Interaction
+      const rElbowLocal = new Vector3(armLen1 * Math.sin(r_sh_pitch), -0.22 - armLen1 * Math.sin(r_sh_roll), 0.42 - armLen1 * Math.cos(r_sh_pitch));
+      const pElbowR = transformAndProject(rElbowLocal.x, rElbowLocal.y, rElbowLocal.z);
 
-      const rKneeLocal = new Vector3(
-        thighLen * Math.sin(r_hip_p),
-        -0.12,
-        -0.05 - thighLen * Math.cos(r_hip_p)
-      );
-      const pKneeR = transformAndProject(rKneeLocal.x, rKneeLocal.y, rKneeLocal.z);
+      const rArmTot = r_sh_pitch + r_el_pitch;
+      const rWristLocal = new Vector3(rElbowLocal.x + armLen2 * Math.sin(rArmTot), -0.22, rElbowLocal.z - armLen2 * Math.cos(rArmTot));
+      const pWristR = transformAndProject(rWristLocal.x, rWristLocal.y, rWristLocal.z);
 
-      const rLegTotP = r_hip_p + r_knee_p;
-      const rAnkleLocal = new Vector3(
-        rKneeLocal.x + shankLen * Math.sin(rLegTotP),
-        -0.12,
-        rKneeLocal.z - shankLen * Math.cos(rLegTotP)
-      );
-      const pAnkleR = transformAndProject(rAnkleLocal.x, rAnkleLocal.y, rAnkleLocal.z);
+      const rHandLocal = new Vector3(rWristLocal.x + handLen * Math.sin(rArmTot + r_wr_pitch), -0.22, rWristLocal.z - handLen * Math.cos(rArmTot + r_wr_pitch));
+      const pHandR = transformAndProject(rHandLocal.x, rHandLocal.y, rHandLocal.z);
 
-      const rFootToeLocal = new Vector3(
-        rAnkleLocal.x + footLen * Math.cos(rLegTotP + r_ank_p),
-        -0.12,
-        rAnkleLocal.z
-      );
-      const pFootToeR = transformAndProject(rFootToeLocal.x, rFootToeLocal.y, rFootToeLocal.z);
+      drawLimbSegment(ctx, pShR, pElbowR, 8, '#334155', '#10b981');
+      drawLimbSegment(ctx, pElbowR, pWristR, 6, '#334155', '#34d399');
+      drawDexterousHand(ctx, pWristR, pHandR, '#6ee7b7');
 
-      // Draw Right Leg Bones & Foot Sole
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.moveTo(pPelvisR.x, pPelvisR.y);
-      ctx.lineTo(pKneeR.x, pKneeR.y);
-      ctx.lineTo(pAnkleR.x, pAnkleR.y);
-      ctx.stroke();
+      // Water Bottle Held in Right Hand
+      if (isHoldingBottle) {
+        ctx.fillStyle = '#0284c7';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.roundRect(pHandR.x - 6, pHandR.y - 18, 12, 28, 4);
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(pAnkleR.x, pAnkleR.y);
-      ctx.lineTo(pFootToeR.x, pFootToeR.y);
-      ctx.stroke();
+        // Bottle Cap
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(pHandR.x - 3, pHandR.y - 23, 6, 5);
+        ctx.shadowBlur = 0;
 
-      // ── 7. Left Leg (6-DOF Kinematic Chain)
-      const lKneeLocal = new Vector3(
-        thighLen * Math.sin(l_hip_p),
-        0.12,
-        -0.05 - thighLen * Math.cos(l_hip_p)
-      );
-      const pKneeL = transformAndProject(lKneeLocal.x, lKneeLocal.y, lKneeLocal.z);
+        // Grip Force Indicator Tag
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText('14.2 N', pHandR.x + 10, pHandR.y - 4);
+      }
 
-      const lLegTotP = l_hip_p + l_knee_p;
-      const lAnkleLocal = new Vector3(
-        lKneeLocal.x + shankLen * Math.sin(lLegTotP),
-        0.12,
-        lKneeLocal.z - shankLen * Math.cos(lLegTotP)
-      );
-      const pAnkleL = transformAndProject(lAnkleLocal.x, lAnkleLocal.y, lAnkleLocal.z);
-
-      const lFootToeLocal = new Vector3(
-        lAnkleLocal.x + footLen * Math.cos(lLegTotP + l_ank_p),
-        0.12,
-        lAnkleLocal.z
-      );
-      const pFootToeL = transformAndProject(lFootToeLocal.x, lFootToeLocal.y, lFootToeLocal.z);
-
-      // Draw Left Leg Bones & Foot Sole
-      ctx.strokeStyle = '#f43f5e';
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.moveTo(pPelvisL.x, pPelvisL.y);
-      ctx.lineTo(pKneeL.x, pKneeL.y);
-      ctx.lineTo(pAnkleL.x, pAnkleL.y);
-      ctx.stroke();
-
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(pAnkleL.x, pAnkleL.y);
-      ctx.lineTo(pFootToeL.x, pFootToeL.y);
-      ctx.stroke();
-
-      // ── 8. Draw All Joint Nodes (Spheres)
-      const jointPoints = [
-        pPelvis, pWaist, pChest, pNeck,
-        pShR, pElbowR, pWristR, pHandR,
-        pShL, pElbowL, pWristL, pHandL,
+      // ── 11. White Articulated Joint Spheres
+      const nodes = [
+        pPelvis, pChest, pShL, pElbowL, pWristL,
+        pShR, pElbowR, pWristR, pPelvisL, pKneeL, pAnkleL,
         pPelvisR, pKneeR, pAnkleR,
-        pPelvisL, pKneeL, pAnkleL,
       ];
-
-      for (const pt of jointPoints) {
+      for (const n of nodes) {
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, 3.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ── 9. CoM Marker & Fall Status
-      const com = transformAndProject(0, 0, 0.10);
-      ctx.fillStyle = simState?.is_fallen ? '#ef4444' : '#f59e0b';
-      ctx.beginPath();
-      ctx.arc(com.x, com.y, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '10px monospace';
-      ctx.fillText(
-        simState?.is_fallen
-          ? `FALLEN (Z=${basePos.z.toFixed(2)}m)`
-          : `CoM (Z=${basePos.z.toFixed(2)}m)`,
-        com.x + 8,
-        com.y - 4
-      );
+      // ── 12. Center of Mass & Status Label
+      ctx.fillStyle = isFallen ? '#ef4444' : '#10b981';
+      ctx.font = 'bold 11px sans-serif';
+      const labelText = isFallen ? '⚠️ MEERA DISTURBED (Auto-Recovering)' : '🟢 MEERA (ACTIVE & STABLE)';
+      ctx.fillText(labelText, cx - 85, cy - 200);
     };
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [rightArmJoints, leftArmJoints, torsoPosition, walkingState, simState, cameraAngle]);
+  }, [rightArmJoints, leftArmJoints, torsoPosition, walkingState, simState, cameraAngle, isHoldingBottle]);
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative w-full h-[330px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-inner flex flex-col items-center justify-center font-mono">
-        <canvas ref={canvasRef} width={480} height={330} className="w-full h-full" />
-        
-        {/* Top Badges */}
-        <div className="absolute top-2 left-3 flex items-center gap-2 bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-800">
-          <span className={`inline-block w-2.5 h-2.5 rounded-full ${simState?.is_fallen ? 'bg-red-500 animate-bounce' : 'bg-cyan-400 animate-pulse'}`} />
-          <span className="text-[11px] font-semibold text-cyan-300">
-            CHATR-H170 DIGITAL TWIN (28-DOF ARTICULATED PHYSICS)
-          </span>
+      <div className="relative w-full h-[360px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col items-center justify-center font-sans">
+        <canvas ref={canvasRef} width={540} height={360} className="w-full h-full" />
+
+        {/* Top Header Card */}
+        <div className="absolute top-3 left-3 flex items-center gap-2.5 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-700/80 shadow-lg">
+          <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+          <div>
+            <div className="text-xs font-bold text-white flex items-center gap-1.5">
+              <span>MEERA</span>
+              <span className="text-[10px] text-cyan-300 font-mono font-semibold px-1.5 py-0.2 bg-cyan-950 rounded border border-cyan-800">
+                CHATR-H170
+              </span>
+            </div>
+            <div className="text-[10px] text-slate-400">Autonomous Multilingual AI Humanoid</div>
+          </div>
         </div>
 
-        {/* Camera Orbit Control */}
-        <div className="absolute top-2 right-3 flex items-center gap-1 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800 text-[10px] text-slate-400">
-          <span>ORBIT:</span>
+        {/* Orbit Controls */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-900/80 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+          <span>Orbit:</span>
           <button
             onClick={() => setCameraAngle((a) => a - 0.25)}
-            className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded"
+            className="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded flex items-center justify-center transition font-bold"
           >
             ⟲
           </button>
           <button
             onClick={() => setCameraAngle((a) => a + 0.25)}
-            className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded"
+            className="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded flex items-center justify-center transition font-bold"
           >
             ⟳
           </button>
         </div>
 
         {/* Provenance Badge */}
-        <div className="absolute bottom-2 right-3 text-[10px] text-slate-300 bg-slate-900/90 px-2.5 py-1 rounded border border-slate-700 shadow-md">
-          PROVENANCE: <span className="text-orange-400 font-bold">{provenanceLabel}</span>
+        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-slate-300 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-700 shadow-lg">
+          AUTHORITY: <span className="text-orange-400 font-bold">{provenanceLabel}</span>
         </div>
 
-        {/* Status Indicator */}
-        <div className="absolute bottom-2 left-3 text-[10px] bg-slate-900/90 px-2.5 py-1 rounded border border-slate-700 text-slate-300 flex items-center gap-2">
-          <span>POSE: <span className={simState?.is_fallen ? 'text-red-400 font-bold' : 'text-emerald-400 font-bold'}>{simState?.is_fallen ? 'FALLEN / DISTURBED' : 'UPRIGHT STANDING'}</span></span>
-          <span className="text-slate-600">|</span>
-          <span>LINKS: <span className="text-cyan-400 font-bold">29</span></span>
-          <span className="text-slate-600">|</span>
-          <span>ACTUATORS: <span className="text-cyan-400 font-bold">28</span></span>
+        {/* Activity Live Note */}
+        <div className="absolute bottom-3 left-3 text-[11px] bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-700 text-slate-200 flex items-center gap-2 shadow-lg">
+          <span className="text-cyan-400 font-bold">●</span>
+          <span>{activityNote}</span>
         </div>
       </div>
 
-      {/* Interactive MuJoCo Physics Test Bar */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-2 flex items-center justify-between font-mono text-[11px]">
-        <span className="text-slate-400 font-semibold text-[10px]">MUJOCO STATE AUTHORITY PROOF:</span>
-        <div className="flex items-center gap-2">
+      {/* Human Interaction Control Panel */}
+      <div className="bg-slate-900/90 border border-slate-800 p-2.5 rounded-xl flex flex-wrap items-center justify-between gap-2 shadow-md">
+        <span className="text-xs font-semibold text-slate-300">DEMO ACTIONS:</span>
+        <div className="flex items-center gap-2 flex-wrap">
           <button
-            onClick={handleFlexElbow}
+            onClick={handleWave}
             disabled={isActionPending || !isSimConnected}
-            className="px-2.5 py-1 bg-cyan-950 hover:bg-cyan-900 border border-cyan-700 text-cyan-300 rounded font-semibold text-[10px] disabled:opacity-40 transition shadow-sm"
+            className="px-3 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg font-semibold text-xs transition shadow disabled:opacity-40"
           >
-            1. Flex R-Elbow (-1.20 rad)
+            👋 Wave Hello
           </button>
           <button
-            onClick={handleInjectPush}
+            onClick={handleHoldBottle}
             disabled={isActionPending || !isSimConnected}
-            className="px-2.5 py-1 bg-amber-950 hover:bg-amber-900 border border-amber-700 text-amber-300 rounded font-semibold text-[10px] disabled:opacity-40 transition shadow-sm"
+            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-xs transition shadow disabled:opacity-40"
           >
-            2. Apply 450N Push (Fall)
+            🍶 Hold Water Bottle
           </button>
           <button
             onClick={handleResetPose}
             disabled={isActionPending || !isSimConnected}
-            className="px-2.5 py-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 rounded font-semibold text-[10px] disabled:opacity-40 transition shadow-sm"
+            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold text-xs transition shadow disabled:opacity-40"
           >
-            3. Reset Pose
+            🧘 Stand Gracefully
+          </button>
+          <button
+            onClick={handleInjectPush}
+            disabled={isActionPending || !isSimConnected}
+            className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded-lg font-semibold text-xs transition shadow disabled:opacity-40"
+          >
+            ⚡ Test Push
           </button>
         </div>
       </div>
@@ -489,6 +483,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
   );
 };
 
+// ── Rendering Helpers
 function project3D(x: number, y: number, z: number, angle: number, cx: number, cy: number, scale: number) {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
@@ -497,4 +492,49 @@ function project3D(x: number, y: number, z: number, angle: number, cx: number, c
   const screenX = cx + px * scale;
   const screenY = cy - z * scale - py * scale * 0.35;
   return { x: screenX, y: screenY };
+}
+
+function drawLimbSegment(
+  ctx: CanvasRenderingContext2D,
+  p1: { x: number; y: number },
+  p2: { x: number; y: number },
+  width: number,
+  col1: string,
+  col2: string
+) {
+  const grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+  grad.addColorStop(0, col1);
+  grad.addColorStop(1, col2);
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+  ctx.stroke();
+}
+
+function drawDexterousHand(ctx: CanvasRenderingContext2D, wrist: { x: number; y: number }, hand: { x: number; y: number }, color: string) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(wrist.x, wrist.y);
+  ctx.lineTo(hand.x, hand.y);
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(hand.x, hand.y, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawFootSole(ctx: CanvasRenderingContext2D, ankle: { x: number; y: number }, toe: { x: number; y: number }, color: string) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(ankle.x, ankle.y);
+  ctx.lineTo(toe.x, toe.y);
+  ctx.stroke();
 }

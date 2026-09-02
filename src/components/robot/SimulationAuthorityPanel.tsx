@@ -132,7 +132,7 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-700">
         <div className="flex items-center gap-2">
           <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-orange-400 animate-pulse' : 'bg-red-500'}`} />
-          <span className="text-slate-300 font-bold tracking-wider text-[11px]">SIMULATION AUTHORITY</span>
+          <span className="text-slate-300 font-bold tracking-wider text-[11px]">MEERA BRAIN & SIMULATION AUTHORITY</span>
         </div>
         <span className={`text-[10px] font-bold ${STATUS_COLORS[status.connectionState]}`}>
           {status.connectionState}
@@ -143,7 +143,7 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
         /* ── OFFLINE state */
         <div className="flex flex-col items-center gap-2 py-4 text-center">
           <div className="text-red-400 text-lg">⚠</div>
-          <div className="text-red-400 font-bold tracking-widest text-[11px]">SIMULATION AUTHORITY OFFLINE</div>
+          <div className="text-red-400 font-bold tracking-widest text-[11px]">MEERA SIMULATION AUTHORITY OFFLINE</div>
           <div className="text-slate-500 text-[10px]">ws://localhost:7788 unreachable</div>
           <div className="mt-2 px-3 py-1.5 rounded bg-red-950 border border-red-800 text-red-300 text-[10px]">
             MOTION COMMANDS BLOCKED
@@ -189,7 +189,7 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
             </div>
             <div className="flex items-center justify-between mt-0.5">
               <span className="text-slate-500">PROFILE</span>
-              <span className="text-slate-300">CHATR-H170 · 68 kg · 28 DOF · 29 links</span>
+              <span className="text-slate-300">MEERA (CHATR-H170) · 68 kg · 28 DOF</span>
             </div>
             <div className="flex items-center justify-between mt-0.5">
               <span className="text-slate-500">HASH</span>

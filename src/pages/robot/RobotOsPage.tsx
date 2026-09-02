@@ -219,13 +219,13 @@ export const RobotOsPage: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-white">CHATR RobotOS</h1>
+              <h1 className="text-xl font-bold tracking-tight text-white">CHATR RobotOS · Meera AI Humanoid</h1>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v1.0.0-GATE8
+                MEERA-H170
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Autonomous Humanoid Intelligence & Deterministic Gating Kernel (28 Controllable Joints)
+              India's Autonomous Multilingual AI Humanoid Assistant · Powered by MuJoCo 3.12.0 Physics Authority
             </p>
           </div>
         </div>

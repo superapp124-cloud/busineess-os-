@@ -55,7 +55,7 @@ export const ActuatorTelemetryPanel: React.FC<ActuatorTelemetryPanelProps> = ({
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 shadow-lg font-mono">
       <div className="flex items-center justify-between border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-slate-200">POWER & ACTUATOR TELEMETRY</span>
+          <span className="text-sm font-bold text-slate-200">MEERA POWER & ACTUATOR TELEMETRY</span>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
               isHardwareMode
