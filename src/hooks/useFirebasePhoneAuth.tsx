@@ -257,43 +257,41 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
     let session: { access_token?: string; refresh_token?: string | null } | null = null;
 
-    // Strategy 1: Call identity-exchange edge function via supabase client
+    // Strategy 1: Call firebase-phone-auth edge function via supabase client
+    const payload: Record<string, string> = {
+      phone_number: normalizedPhone,
+      firebase_uid: firebaseUid,
+    };
     if (firebaseIdToken) {
-      try {
-        console.log('[Auth Exchange] Attempting identity-exchange with Firebase ID token...');
-        const { data, error } = await supabase.functions.invoke('identity-exchange', {
-          body: { id_token: firebaseIdToken }
-        });
-
-        if (!error && data?.session?.access_token) {
-          session = data.session;
-          console.log('✅ [Auth Exchange] identity-exchange succeeded');
-        } else if (error) {
-          console.warn('[Auth Exchange] identity-exchange returned error:', error);
-        }
-      } catch (err) {
-        console.warn('[Auth Exchange] identity-exchange call failed:', err);
-      }
+      payload.firebase_id_token = firebaseIdToken;
     }
 
-    // Strategy 2: Call firebase-phone-auth edge function via fetch
+    try {
+      console.log('[Auth Exchange] Attempting firebase-phone-auth with Firebase credentials...');
+      const { data, error } = await supabase.functions.invoke('firebase-phone-auth', {
+        body: payload
+      });
+
+      if (!error && data?.session?.access_token) {
+        session = data.session;
+        console.log('✅ [Auth Exchange] firebase-phone-auth succeeded');
+      } else if (error) {
+        console.warn('[Auth Exchange] firebase-phone-auth returned error:', error);
+      }
+    } catch (err) {
+      console.warn('[Auth Exchange] firebase-phone-auth invoke failed:', err);
+    }
+
+    // Strategy 2: Call firebase-phone-auth edge function via direct fetch
     if (!session?.access_token) {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://cenxckpxaqborfqyexot.supabase.co';
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
         import.meta.env.VITE_SUPABASE_ANON_KEY || 
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
 
       if (supabaseUrl && supabaseKey) {
         try {
-          console.log('[Auth Exchange] Attempting firebase-phone-auth edge function...');
-          const payload: Record<string, string> = {
-            phone_number: normalizedPhone,
-            firebase_uid: firebaseUid,
-          };
-          if (firebaseIdToken) {
-            payload.firebase_id_token = firebaseIdToken;
-          }
-
+          console.log('[Auth Exchange] Attempting direct fetch to firebase-phone-auth...');
           const response = await fetch(
             `${supabaseUrl}/functions/v1/firebase-phone-auth`,
             {
@@ -312,7 +310,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
             const data = JSON.parse(responseText);
             if (data?.session?.access_token) {
               session = data.session;
-              console.log('✅ [Auth Exchange] firebase-phone-auth succeeded');
+              console.log('✅ [Auth Exchange] firebase-phone-auth fetch succeeded');
             } else if (data?.error || data?.message) {
               console.error('[Auth Exchange] Edge function error response:', data.error || data.message);
             }
@@ -353,7 +351,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
           token_type: 'bearer',
           expires_at: (session as any).expires_at || Math.floor(Date.now() / 1000) + 3600 * 24 * 30,
         };
-        localStorage.setItem('sb-cenxckpxaqborfqyexot-auth-token', JSON.stringify(rawToken));
+        localStorage.setItem('sb-sbayuqgomlflmxgicplz-auth-token', JSON.stringify(rawToken));
+        localStorage.setItem('sb-auth-token', session.access_token);
       } catch (storageErr) {
         console.warn('[Auth Exchange] LocalStorage write warning:', storageErr);
       }

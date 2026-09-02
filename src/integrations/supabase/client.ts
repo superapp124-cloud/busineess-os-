@@ -8,17 +8,17 @@ const getEnv = (key: string) => {
   return undefined;
 };
 
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://cenxckpxaqborfqyexot.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://sbayuqgomlflmxgicplz.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
 
 // Resilient storage wrapper with memory fallback
 const memoryStorage = new Map<string, string>();
 
-// One-time cleanup of poisoned legacy tokens from old projects
+// One-time cleanup of poisoned legacy tokens
 if (typeof window !== 'undefined') {
   try {
     const poisonedKeys = [
-      'sb-sbayuqgomlflmxgicplz-auth-token',
+      'sb-cenxckpxaqborfqyexot-auth-token',
       'sb-auth-token'
     ];
     for (const key of poisonedKeys) {
