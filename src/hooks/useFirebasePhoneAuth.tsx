@@ -423,6 +423,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
           } else {
             supabase.realtime.setAuth(data.session.access_token);
           }
+          window.location.href = '/';
           return true;
         } else if (exchangeErr) {
           console.warn('[OTP Verify] Direct platform exchange returned error:', exchangeErr);
@@ -451,6 +452,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
             } else {
               supabase.realtime.setAuth(data.session.access_token);
             }
+            window.location.href = '/';
             return true;
           }
           throw confirmErr;
@@ -463,6 +465,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
       // Step 2: Exchange Firebase UID & ID token for Supabase session
       await completeSupabaseSession(firebaseUid, firebaseIdToken);
+      window.location.href = '/';
       return true;
     } catch (err: any) {
       console.error('[OTP Verify] Error:', err);

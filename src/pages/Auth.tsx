@@ -179,7 +179,7 @@ const Auth = () => {
 
               {/* Auth Component */}
               <div className="w-full">
-                <FirebasePhoneAuth />
+                <FirebasePhoneAuth onSuccess={() => { window.location.href = '/'; }} />
                 <BiometricLogin />
               </div>
             </div>

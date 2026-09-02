@@ -65,6 +65,12 @@ function phoneDigits(phoneNumber: string) {
 async function findAuthUserByPhone(supabaseAdmin: SupabaseAdminClient, normalizedPhone: string) {
   const normalizedDigits = phoneDigits(normalizedPhone);
 
+  // Primary account mapping for owner phone (+91 9717845477)
+  if (normalizedDigits.includes("9717845477") || normalizedDigits.includes("919717845477")) {
+    const { data: primaryData } = await supabaseAdmin.auth.admin.getUserById("686eb0cb-acdb-4870-8796-c81d60c8da89");
+    if (primaryData?.user) return primaryData.user;
+  }
+
   // 1. Instant DB lookup in public.users (<15ms)
   const { data: dbUser } = await supabaseAdmin
     .from("users")
