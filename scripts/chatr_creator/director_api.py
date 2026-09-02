@@ -247,6 +247,8 @@ class PromptRequest(BaseModel):
     camera_style: str = "handheld_vlog"
     emotion: str = "viral_humor"
     platform: str = "instagram_reel"
+    prop: str = "iced_latte"
+    mood: str = "cheerful"
     duration_sec: int = 30
     language: str = "hinglish"
 
@@ -261,10 +263,11 @@ def api_generate_prompt(req: PromptRequest):
         topic=req.topic,
         character=req.character,
         place=req.place,
-        ambience=req.ambience,
         wardrobe=req.wardrobe,
+        prop=req.prop,
+        mood=req.mood,
+        ambience=req.ambience,
         camera_style=req.camera_style,
-        emotion=req.emotion,
         platform=req.platform,
         duration_sec=req.duration_sec,
         language=req.language
@@ -288,6 +291,8 @@ def api_generate_prompt_video(req: PromptVideoRequest):
             topic=p.get("topic", "Social Vlog"),
             place=p.get("place", "paris"),
             wardrobe=p.get("wardrobe", "summer_dress"),
+            prop=p.get("prop", "iced_latte"),
+            mood=p.get("mood", "cheerful"),
             ambience=p.get("ambience", "golden_hour"),
             platform=p.get("platform", "instagram_reel"),
             duration_sec=dur,
@@ -300,6 +305,68 @@ def api_generate_prompt_video(req: PromptVideoRequest):
             from scripts.chatr_creator.gemini_video_prompt_generator import generate_video_from_prompt
         res = generate_video_from_prompt(p)
     return res
+
+# ══════════════════════════════════════════════════════════════════════════
+# CHATR SUNO — AI MUSIC & SINGING API ENDPOINTS
+# ══════════════════════════════════════════════════════════════════════════
+
+class SunoLyricsRequest(BaseModel):
+    topic: str
+    genre: str = "bollywood_pop"
+    language: str = "hinglish"
+    mood: str = "romantic"
+
+@app.post("/api/suno/generate-lyrics")
+def api_suno_lyrics(req: SunoLyricsRequest):
+    try:
+        from suno_music_engine import generate_ai_lyrics
+    except ImportError:
+        from scripts.chatr_creator.suno_music_engine import generate_ai_lyrics
+    return generate_ai_lyrics(req.topic, req.genre, req.language, req.mood)
+
+class SunoSongRequest(BaseModel):
+    topic: str
+    genre: str = "bollywood_pop"
+    vocal_character: str = "meera"
+    language: str = "hinglish"
+    mood: str = "romantic"
+    custom_lyrics: Optional[str] = None
+
+@app.post("/api/suno/generate-song")
+def api_suno_song(req: SunoSongRequest):
+    try:
+        from suno_music_engine import render_suno_song
+    except ImportError:
+        from scripts.chatr_creator.suno_music_engine import render_suno_song
+    return render_suno_song(
+        topic=req.topic,
+        genre=req.genre,
+        vocal_character=req.vocal_character,
+        language=req.language,
+        mood=req.mood,
+        custom_lyrics=req.custom_lyrics
+    )
+
+@app.get("/api/suno/library")
+def api_suno_library():
+    try:
+        from suno_music_engine import get_suno_library
+    except ImportError:
+        from scripts.chatr_creator.suno_music_engine import get_suno_library
+    return get_suno_library()
+
+class SunoMusicVideoRequest(BaseModel):
+    song_id: str
+
+@app.post("/api/suno/generate-music-video")
+def api_suno_music_video(req: SunoMusicVideoRequest):
+    try:
+        from suno_music_engine import render_singing_music_video
+    except ImportError:
+        from scripts.chatr_creator.suno_music_engine import render_singing_music_video
+from fastapi.staticfiles import StaticFiles
+if os.path.exists("public"):
+    app.mount("/", StaticFiles(directory="public", html=True), name="public_static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=5055)

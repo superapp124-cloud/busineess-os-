@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CHATR — Live Generative Visual Director (Google Veo 3.1 & Nano Banana)</title>
+<title>CHATR — Live Generative Visual Director 2.0 (Google Veo 3.1 & Nano Banana)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #030712; color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; min-height: 100vh; }
   
-  header { text-align: center; margin-bottom: 16px; }
+  header { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
   h1 { font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   p.sub { color: #9ca3af; font-size: 13px; margin-top: 4px; }
   
+  .suno-btn { background: #1e293b; color: #a78bfa; border: 1px solid #8b5cf6; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 800; text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+  .suno-btn:hover { background: #8b5cf6; color: #fff; transform: translateY(-1px); }
+
   .comparator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1100px; width: 100%; margin-bottom: 20px; }
   @media(max-width: 800px) { .comparator-grid { grid-template-columns: 1fr; } }
   
@@ -28,7 +31,7 @@
   .studio-panel { background: #0f172a; border: 1px solid #334155; border-radius: 20px; padding: 20px; max-width: 1100px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
   .panel-title { font-size: 16px; font-weight: 800; color: #a78bfa; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   
-  .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+  .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
   @media(max-width: 900px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
   @media(max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
 
@@ -36,8 +39,7 @@
   input, select, textarea { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 10px; color: #fff; padding: 9px 12px; font-size: 13px; font-family: inherit; }
   textarea { resize: vertical; height: 65px; font-family: monospace; font-size: 12px; }
 
-  .btn { padding: 9px 18px; border-radius: 10px; border: none; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.15s; }
-  .btn-play { background: #10b981; color: #fff; }
+  .btn { padding: 10px 18px; border-radius: 10px; border: none; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.15s; }
   .btn-step { background: #374151; color: #f3f4f6; }
   .btn-gen { background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); color: #fff; }
   .btn-gen:hover { opacity: 0.9; transform: translateY(-1px); }
@@ -46,8 +48,11 @@
 <body>
 
 <header>
-  <h1>🎬 CHATR — Live Generative Visual Director</h1>
-  <p class="sub">100% Brand-New Google Veo 3.1 Diffusion Video for Every Topic, Outfit, Mood & Environment</p>
+  <div>
+    <h1>🎬 CHATR — Generative Visual Director 2.0</h1>
+    <p class="sub">100% Brand-New Videos with Custom Props, Outfits, Places, Moods & Synchronized Lip-Sync</p>
+  </div>
+  <a href="/suno.html" class="suno-btn">🎵 Open Suno AI Singing Studio ➔</a>
 </header>
 
 <div class="comparator-grid">
@@ -62,32 +67,32 @@
     </video>
     <div class="metrics-box">
       <div>📐 Resolution: 1280x720 (16:9 Landscape)</div>
-      <div>🌊 Environment: Warm Indoor Studio Room</div>
+      <div>🌊 Environment: New York City Street Walk</div>
     </div>
   </div>
 
   <!-- Right: Master Video -->
   <div class="card">
     <div class="card-header">
-      <span style="font-weight:800;" id="playerRightTitle">Fresh Veo 3.1 Render</span>
-      <span class="tag tag-chatr" id="playerRightTag">100% Fresh Diffusion</span>
+      <span style="font-weight:800;" id="playerRightTitle">Paris Influencer Reel (33.7s)</span>
+      <span class="tag tag-chatr" id="playerRightTag">Full Multi-Shot Reel</span>
     </div>
     <video id="vidChatr" loop playsinline controls autoplay>
       <source src="/videos/meera/meera_veo31_master.mp4" type="video/mp4">
     </video>
     <div class="metrics-box" id="playerRightMetrics">
-      <div id="sceneSpecs">📍 Scene: Paris Eiffel Tower Tour | 👗 Outfit: Floral Yellow Summer Sundress</div>
+      <div id="sceneSpecs">📍 Scene: Paris Eiffel Tower | 👗 Outfit: Yellow Floral Dress | ☕ Prop: Iced Latte</div>
     </div>
   </div>
 </div>
 
 <!-- Visual Director Controls -->
 <div class="studio-panel">
-  <div class="panel-title">🎨 Configure Scene Parameters (Generates 100% Brand New Video)</div>
+  <div class="panel-title">🎨 Configure Scene Parameters (Props, Clothes, Places, Moods & Durations)</div>
   
   <div style="margin-bottom: 12px;">
     <label>Topic / Concept Idea</label>
-    <input type="text" id="topicInput" value="Paris Eiffel Tower Tour" placeholder="e.g. Paris Eiffel Tower Tour, Tokyo Shinjuku Walk, Hiking in Alps, Delhi Street Food">
+    <input type="text" id="topicInput" value="Paris Eiffel Tower Tour" placeholder="e.g. Paris Eiffel Tower Tour, Tokyo Shinjuku Walk, Old Delhi Street Food, Swiss Alps Chalet">
   </div>
 
   <div class="form-grid">
@@ -95,15 +100,16 @@
     <div>
       <label>📍 Place / Environment</label>
       <select id="placeSelect">
-        <option value="paris" selected>🗼 Paris Eiffel Tower & Outdoor Cafes</option>
-        <option value="street_food">🍜 Asian Street Food Night Market</option>
-        <option value="delhi_market">🇮🇳 Delhi Chandni Chowk Bazaar</option>
+        <option value="paris" selected>🗼 Paris Eiffel Tower & Cobblestone Cafes</option>
+        <option value="delhi_market">🍜 Old Delhi Chandni Chowk Food Street</option>
+        <option value="tokyo_neon">⛩️ Tokyo Shinjuku Cyberpunk Neon Alley</option>
         <option value="nyc_times_square">🏙️ Times Square New York City</option>
-        <option value="aesthetic_cafe">☕ Cozy Aesthetic Cafe (Warm Bokeh)</option>
-        <option value="tech_studio">🏢 Minimalist Tech AI Studio</option>
-        <option value="tokyo_neon">⛩️ Tokyo Shinjuku Neon Street</option>
-        <option value="nature_park">🌳 Sunny Green Botanical Garden</option>
-        <option value="beach">🏖️ Tropical Coastal Beach Boardwalk</option>
+        <option value="aesthetic_cafe">☕ Aesthetic Minimalist Seoul Cafe</option>
+        <option value="tech_studio">🏢 Silicon Valley AI Podcast Studio</option>
+        <option value="goa_beach">🏖️ Goa Coastal Sunset Beach</option>
+        <option value="swiss_chalet">🏔️ Swiss Alps Snow Mountain Chalet</option>
+        <option value="jaipur_palace">🏰 Jaipur Royal Palace Courtyard</option>
+        <option value="london_park">🌿 London Hyde Park Botanical Garden</option>
       </select>
     </div>
 
@@ -111,12 +117,44 @@
     <div>
       <label>👗 Outfit & Wardrobe</label>
       <select id="wardrobeSelect">
-        <option value="summer_dress" selected>👗 Floral Yellow Summer Sundress</option>
+        <option value="summer_dress" selected>👗 Breezy Floral Yellow Summer Sundress</option>
         <option value="pastel_hoodie">👕 Gen-Z Lavender Streetwear Hoodie</option>
-        <option value="vibrant_ethnic">👗 Saffron & Emerald Ethnic Kurti</option>
-        <option value="denim_urban">🧥 Casual Denim Jacket & White Tee</option>
+        <option value="vibrant_ethnic">👗 Saffron & Emerald Royal Fusion Kurti</option>
         <option value="sleek_black">👔 Tailored Black Tech Blazer</option>
-        <option value="leather_chic">🕶️ Chic Dark Leather Biker Jacket</option>
+        <option value="denim_urban">🧥 Casual Distressed Denim Jacket & Tee</option>
+        <option value="leather_chic">🕶️ Edgy Dark Leather Biker Jacket</option>
+        <option value="cozy_knit">🧶 Cozy Pastel Cashmere Turtleneck</option>
+        <option value="athleisure">🏃‍♀️ Sleek Athleisure Gym Crop Top</option>
+        <option value="silk_saree">🥻 Traditional Crimson Banarasi Saree</option>
+      </select>
+    </div>
+
+    <!-- Props -->
+    <div>
+      <label>🎒 Prop / Action Item</label>
+      <select id="propSelect">
+        <option value="iced_latte" selected>☕ Takeaway Caramel Iced Latte</option>
+        <option value="vlog_phone">📱 iPhone 16 Pro on Vlogging Tripod</option>
+        <option value="street_food">🥡 Street Food Noodles with Chopsticks</option>
+        <option value="shopping_bags">🛍️ Designer Boutique Shopping Bags</option>
+        <option value="sunglasses">🕶️ Gradient Aviator Sunglasses</option>
+        <option value="headphones">🎧 Studio Over-Ear Headphones</option>
+        <option value="vintage_camera">📷 Vintage 35mm Film Camera</option>
+        <option value="croissant">🥐 Fresh French Butter Croissant</option>
+        <option value="laptop">💻 Sleek Silver MacBook</option>
+      </select>
+    </div>
+
+    <!-- Mood & Expression -->
+    <div>
+      <label>🎭 Mood & Expression</label>
+      <select id="moodSelect">
+        <option value="cheerful" selected>😄 Cheerful & Magnetic (Warm Smile)</option>
+        <option value="thoughtful">🧐 Thoughtful & Explanatory (Articulate)</option>
+        <option value="sarcastic">😏 Wry & Sarcastic Humor (Playful Smirk)</option>
+        <option value="awestruck">😮 Awestruck & Wonder (Eyes Wide)</option>
+        <option value="calm_luxury">😌 Calm & Relaxed Luxury (Serene Poise)</option>
+        <option value="high_energy">⚡ High-Energy Hype (Dynamic Vlog)</option>
       </select>
     </div>
 
@@ -129,15 +167,6 @@
         <option value="bright_daylight">☀️ Crisp 5600K Clean Sunlight</option>
         <option value="moody_cinematic">🕯️ Moody Film Noir Contrast</option>
         <option value="pastel_warm">🌸 Soft Pastel Warm Diffusion</option>
-      </select>
-    </div>
-
-    <!-- Platform Target -->
-    <div>
-      <label>📱 Platform Target</label>
-      <select id="platformSelect">
-        <option value="instagram_reel" selected>📱 Instagram Reel / Shorts (9:16)</option>
-        <option value="youtube_video">📺 YouTube Video / Explainer (16:9)</option>
       </select>
     </div>
 
@@ -156,7 +185,7 @@
 
   <div style="display: flex; gap: 10px; margin-bottom: 14px;">
     <button class="btn btn-step" onclick="previewVisualPrompt()" style="flex:1;">✨ 1. Preview Visual Prompt & Script</button>
-    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Full Social Video</button>
+    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Full Social Video with Lip-Sync</button>
   </div>
 
   <div style="margin-bottom: 10px;">
@@ -169,7 +198,7 @@
     <textarea id="scriptArea" placeholder="Script dialogue..."></textarea>
   </div>
 
-  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your scene elements and click 'Render Full Social Video'.</div>
+  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your scene elements and click 'Render Full Social Video with Lip-Sync'.</div>
 </div>
 
 <script>
@@ -179,9 +208,11 @@
     return {
       topic: document.getElementById('topicInput').value,
       place: document.getElementById('placeSelect').value,
-      ambience: document.getElementById('ambienceSelect').value,
       wardrobe: document.getElementById('wardrobeSelect').value,
-      platform: document.getElementById('platformSelect').value,
+      prop: document.getElementById('propSelect').value,
+      mood: document.getElementById('moodSelect').value,
+      ambience: document.getElementById('ambienceSelect').value,
+      platform: 'instagram_reel',
       camera_style: 'handheld_vlog',
       duration_sec: parseInt(document.getElementById('durationSelect').value),
       language: 'english',
@@ -191,7 +222,7 @@
 
   async function previewVisualPrompt() {
     const data = getFormData();
-    document.getElementById('statusText').innerText = "⏳ Synthesizing visual scene prompt...";
+    document.getElementById('statusText').innerText = "⏳ Synthesizing visual scene prompt with props, wardrobe & mood...";
 
     try {
       const res = await fetch('http://127.0.0.1:5055/api/prompt/generate', {
@@ -203,7 +234,7 @@
       
       document.getElementById('visualPromptArea').value = resData.visual_prompt;
       document.getElementById('scriptArea').value = resData.script;
-      document.getElementById('statusText').innerText = "✅ Visual prompt ready! Click 'Render Live Google Veo 3.1 Video'.";
+      document.getElementById('statusText').innerText = "✅ Visual prompt ready! Click 'Render Full Social Video with Lip-Sync'.";
     } catch (e) {
       document.getElementById('statusText').innerText = "⚠️ Error: " + e.message;
     }
@@ -214,7 +245,7 @@
     const btn = document.getElementById('genBtn');
     btn.disabled = true;
     
-    document.getElementById('statusText').innerText = "🚀 Dispatched to Google Veo 3.1! Generating 100% fresh diffusion video (takes ~45-60s)...";
+    document.getElementById('statusText').innerText = `🚀 Rendering authentic ${data.duration_sec}s multi-shot social video with lip-sync and music mastering...`;
 
     try {
       // 1. Generate Prompt
@@ -228,7 +259,7 @@
       document.getElementById('visualPromptArea').value = pData.visual_prompt;
       document.getElementById('scriptArea').value = pData.script;
 
-      // 2. Direct Call to Google Veo 3.1
+      // 2. Render Full Video
       const vRes = await fetch('http://127.0.0.1:5055/api/prompt/generate-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -240,9 +271,9 @@
         vidC.src = vData.video_url;
         vidC.load();
         vidC.play();
-        document.getElementById('playerRightTitle').innerText = `${pData.topic} (Veo 3.1)`;
-        document.getElementById('sceneSpecs').innerText = `📍 Place: ${pData.place_desc.slice(0, 45)}... | 👗 Outfit: ${pData.wardrobe}`;
-        document.getElementById('statusText').innerText = `🎉 Generated brand new Google Veo 3.1 video in ${vData.generation_time}s! Playing now.`;
+        document.getElementById('playerRightTitle').innerText = `${pData.topic} (${vData.duration_sec}s)`;
+        document.getElementById('sceneSpecs').innerText = `📍 Place: ${pData.place_desc.slice(0, 35)}... | 👗 Outfit: ${pData.wardrobe} | 🎒 Prop: ${pData.prop}`;
+        document.getElementById('statusText').innerText = `🎉 Rendered complete ${vData.duration_sec}s video (${vData.num_shots || 1} shots) in ${vData.generation_time}s! Playing now.`;
       }
     } catch (e) {
       document.getElementById('statusText').innerText = "⚠️ Error: " + e.message;

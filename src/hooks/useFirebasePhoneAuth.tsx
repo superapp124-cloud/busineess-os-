@@ -450,9 +450,13 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     } catch (err: any) {
       console.error('[OTP Verify] Error:', err);
       const codeStr: string = err?.code || err?.message || '';
-      const msg = /invalid.*(verification|code)|code.*invalid/i.test(codeStr)
-        ? 'Invalid code. Please check and try again.'
-        : err.message || 'Verification failed';
+      let msg = err.message || 'Verification failed';
+      if (/invalid.*(verification|code)|code.*invalid/i.test(codeStr)) {
+        msg = 'Invalid code. Please check and try again.';
+      } else if (/code-expired/i.test(codeStr)) {
+        msg = 'OTP code has expired. Please click "Resend OTP" below to receive a new code.';
+        setCountdown(0);
+      }
       setError(msg);
       setLoading(false);
       return false;

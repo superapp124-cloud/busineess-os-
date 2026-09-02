@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 type JsonRecord = Record<string, unknown>;
 
 const DEFAULT_ALLOWED_ORIGINS = [
+  "https://chatrchat.in",
+  "https://www.chatrchat.in",
   "https://chatr.chat",
   "https://www.chatr.chat",
   "http://localhost:5173",
@@ -29,17 +31,26 @@ export class HttpError extends Error {
 function allowedOrigins() {
   const configured = Deno.env.get("ALLOWED_ORIGINS");
   if (!configured) return DEFAULT_ALLOWED_ORIGINS;
-  return configured.split(",").map((origin) => origin.trim()).filter(Boolean);
+  return [...DEFAULT_ALLOWED_ORIGINS, ...configured.split(",").map((origin) => origin.trim()).filter(Boolean)];
 }
 
 function isLocalNetwork(origin: string): boolean {
   return /^http:\/\/(192\.168\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+|10\.\d+\.\d+\.\d+):\d+$/.test(origin);
 }
 
+function isDomainPermitted(origin: string, allowed: string[]): boolean {
+  if (!origin) return false;
+  if (allowed.includes(origin)) return true;
+  if (isLocalNetwork(origin)) return true;
+  if (/^https:\/\/([a-zA-Z0-9-]+\.)?(chatrchat\.in|chatr\.chat)$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  return false;
+}
+
 export function corsHeaders(req: Request): HeadersInit {
   const origin = req.headers.get("Origin");
   const allowed = allowedOrigins();
-  const allowOrigin = origin && (allowed.includes(origin) || isLocalNetwork(origin)) ? origin : allowed[0];
+  const allowOrigin = origin && isDomainPermitted(origin, allowed) ? origin : (origin || allowed[0]);
 
   return {
     "Access-Control-Allow-Origin": allowOrigin,

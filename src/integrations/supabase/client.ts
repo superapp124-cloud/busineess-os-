@@ -11,25 +11,36 @@ const getEnv = (key: string) => {
 const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://cenxckpxaqborfqyexot.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
 
-// Resilient storage wrapper with memory fallback and cross-key recovery
+// Resilient storage wrapper with memory fallback
 const memoryStorage = new Map<string, string>();
+
+// One-time cleanup of poisoned legacy tokens from old projects
+if (typeof window !== 'undefined') {
+  try {
+    const poisonedKeys = [
+      'sb-sbayuqgomlflmxgicplz-auth-token',
+      'sb-auth-token'
+    ];
+    for (const key of poisonedKeys) {
+      if (window.localStorage.getItem(key)) {
+        window.localStorage.removeItem(key);
+      }
+    }
+  } catch (e) {
+    console.debug('[SupabaseStorage] Cleanup failed:', e);
+  }
+}
 
 const resilientStorage = {
   getItem: (key: string): string | null => {
     if (typeof window === 'undefined') return memoryStorage.get(key) || null;
     try {
-      let val = window.localStorage.getItem(key);
-      if (!val && key.includes('cenxckpxaqborfqyexot')) {
-        // Fallback checks for legacy/generic stored sessions
-        val = window.localStorage.getItem('sb-auth-token') || 
-              window.localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token');
-        if (val) {
-          try { 
-            window.localStorage.setItem(key, val); 
-          } catch (storageErr) {
-            console.debug('[SupabaseStorage] Fallback key copy failed:', storageErr);
-          }
-        }
+      const val = window.localStorage.getItem(key);
+      // If token contains a synthetic/invalid marker, purge it immediately to prevent refresh loops
+      if (val && val.includes('chatr_synthetic_refresh_')) {
+        window.localStorage.removeItem(key);
+        memoryStorage.delete(key);
+        return null;
       }
       return val || memoryStorage.get(key) || null;
     } catch {
@@ -41,8 +52,6 @@ const resilientStorage = {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.setItem(key, value);
-        // Also mirror generic key for cross-bridge compatibility
-        window.localStorage.setItem('sb-auth-token', value);
       } catch (e) {
         console.warn('[SupabaseStorage] LocalStorage write failed, preserved in memory:', e);
       }
@@ -54,6 +63,7 @@ const resilientStorage = {
       try {
         window.localStorage.removeItem(key);
         window.localStorage.removeItem('sb-auth-token');
+        window.localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
       } catch (removeErr) {
         console.debug('[SupabaseStorage] LocalStorage remove failed:', removeErr);
       }

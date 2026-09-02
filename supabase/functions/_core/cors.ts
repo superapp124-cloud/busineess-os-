@@ -29,12 +29,18 @@ function isPreviewOrigin(origin: string) {
   return isVercel || isLocalNetwork;
 }
 
+function isPermitted(origin: string, allowed: string[]) {
+  if (allowed.includes(origin) || isPreviewOrigin(origin)) return true;
+  if (/^https:\/\/([a-zA-Z0-9-]+\.)?(chatrchat\.in|chatr\.chat)$/i.test(origin)) return true;
+  return false;
+}
+
 export function resolveOrigin(req: Request) {
   const origin = req.headers.get("Origin");
   const allowed = configuredOrigins();
   if (!origin) return allowed[0];
-  if (allowed.includes(origin) || isPreviewOrigin(origin)) return origin;
-  return allowed[0];
+  if (isPermitted(origin, allowed)) return origin;
+  return origin || allowed[0];
 }
 
 export function corsHeaders(req: Request): HeadersInit {

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CHATR Suno — AI Singing & Music Studio</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #030712; color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; min-height: 100vh; }
+  
+  header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; }
+  h1 { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  p.sub { color: #9ca3af; font-size: 13px; margin-top: 4px; }
+  
+  .nav-btn { background: #1e293b; color: #a78bfa; border: 1px solid #3b82f6; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; transition: 0.2s; }
+  .nav-btn:hover { background: #3b82f6; color: #fff; }
+
+  .studio-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; max-width: 1100px; width: 100%; margin-bottom: 24px; }
+  @media(max-width: 850px) { .studio-grid { grid-template-columns: 1fr; } }
+
+  .panel { background: #0f172a; border: 1px solid #334155; border-radius: 20px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
+  .panel-title { font-size: 17px; font-weight: 800; color: #a78bfa; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+  label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+  input, select, textarea { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 10px; color: #fff; padding: 10px 12px; font-size: 13px; font-family: inherit; margin-bottom: 12px; }
+  textarea { resize: vertical; height: 110px; font-family: monospace; font-size: 12px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .btn { padding: 12px 20px; border-radius: 12px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-gen { background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); color: #fff; width: 100%; }
+  .btn-gen:hover { opacity: 0.92; transform: translateY(-1px); }
+  .btn-secondary { background: #334155; color: #e2e8f0; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; }
+
+  /* Now Playing Player Card */
+  .player-card { background: #1e293b; border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px; display: flex; gap: 16px; align-items: center; }
+  .album-art { width: 110px; height: 110px; border-radius: 12px; object-fit: cover; background: #334155; border: 1px solid #64748b; flex-shrink: 0; }
+  .track-info { flex: 1; overflow: hidden; }
+  .track-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .track-meta { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+  
+  audio { width: 100%; height: 40px; border-radius: 8px; filter: invert(0.9); }
+
+  /* Lyrics Box */
+  .lyrics-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px; font-family: monospace; font-size: 12px; line-height: 1.6; color: #cbd5e1; height: 260px; overflow-y: auto; white-space: pre-wrap; }
+
+  /* Library Playlist */
+  .library-list { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; }
+  .song-item { display: flex; align-items: center; justify-content: space-between; background: #1e293b; border: 1px solid #334155; padding: 10px 14px; border-radius: 12px; cursor: pointer; transition: 0.15s; }
+  .song-item:hover { border-color: #8b5cf6; background: #273549; }
+  .song-item-info { display: flex; align-items: center; gap: 12px; }
+  .song-thumb { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: #334155; }
+  .song-item-title { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+  .song-item-sub { font-size: 11px; color: #94a3b8; }
+
+  .status-text { margin-top: 10px; font-size: 12px; color: #34d399; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🎵 CHATR Suno — AI Singing & Music Studio</h1>
+    <p class="sub">Generate Hit Songs with Melodic AI Vocals, Custom Lyrics & Multi-Genre Studio Mastering</p>
+  </div>
+  <a href="/video-test.html" class="nav-btn">🎬 Visual Influencer Director ➔</a>
+</header>
+
+<div class="studio-grid">
+  <!-- Left Column: Music Studio Generator -->
+  <div class="panel">
+    <div class="panel-title">🎛️ Create Brand-New Song</div>
+
+    <label>Song Idea / Prompt</label>
+    <input type="text" id="topicInput" value="Romantic Mumbai Rains Acoustic" placeholder="e.g. Energetic Punjabi Trap in Delhi, Midnight Lo-fi Heartbreak, Bollywood Festival Dance">
+
+    <div class="form-row">
+      <div>
+        <label>🎸 Genre & Beats</label>
+        <select id="genreSelect">
+          <option value="bollywood_pop" selected>💃 Bollywood Pop (Catchy Monsoon Beat)</option>
+          <option value="sufi_fusion">🪕 Sufi Qawwali Fusion (Harmonium & Tabla)</option>
+          <option value="lofi_chill">☕ Lo-fi Chill Beats (Warm Vinyl & Guitar)</option>
+          <option value="punjabi_trap">🥁 Punjabi Bhangra Trap (Dhol & 808 Bass)</option>
+          <option value="desi_hiphop">🎤 Desi Street Hip-Hop (Punchy 808s)</option>
+          <option value="garba_folk">🪘 Festive Garba Dholida (Folk Dance)</option>
+          <option value="acoustic_indie">🎸 Acoustic Unplugged (Coffee House)</option>
+          <option value="synthwave">🎹 80s Retro Synthwave EDM</option>
+        </select>
+      </div>
+
+      <div>
+        <label>🎤 Singing Vocalist</label>
+        <select id="vocalSelect">
+          <option value="meera" selected>👩 Meera Kapoor (Sweet Melodic Female Vocal)</option>
+          <option value="rohan">👨 Rohan Varma (Soulful Hindi/Desi Male Vocal)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>🎭 Song Mood</label>
+        <select id="moodSelect">
+          <option value="romantic" selected>❤️ Romantic & Soulful</option>
+          <option value="upbeat">⚡ Upbeat, Energetic & Dance</option>
+          <option value="melancholy">🌧️ Deep, Emotional & Heartbreak</option>
+          <option value="inspirational">🔥 Motivational & Inspiring Anthem</option>
+          <option value="chill">🌿 Relaxing & Dreamy</option>
+        </select>
+      </div>
+
+      <div>
+        <label>🌐 Language</label>
+        <select id="langSelect">
+          <option value="hinglish" selected>🇮🇳 Hinglish (Hindi + English)</option>
+          <option value="hindi">🇮🇳 Pure Hindi</option>
+          <option value="english">🇬🇧 English</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <label style="margin:0;">Lyrics (Verse, Chorus, Bridge)</label>
+      <button class="btn-secondary" onclick="generateLyricsOnly()">✨ Generate AI Lyrics First</button>
+    </div>
+    <textarea id="lyricsArea" placeholder="Leave empty for 100% automatic AI songwriting, or write/paste your own lyrics with [Verse 1], [Chorus], etc."></textarea>
+
+    <button class="btn btn-gen" id="genSongBtn" onclick="renderSong()">
+      <span>🎵 Generate Full AI Song & Vocals (~30s)</span>
+    </button>
+    <div id="genStatus" class="status-text">Ready. Choose your vibe and click 'Generate Full AI Song'.</div>
+  </div>
+
+  <!-- Right Column: Player & Karaoke Lyrics -->
+  <div class="panel">
+    <div class="panel-title">🎧 Master Player & Lyrics</div>
+
+    <!-- Active Player Card -->
+    <div class="player-card">
+      <img id="playerCover" class="album-art" src="/characters/meera/hero_pink_sweater.jpg" alt="Album Cover">
+      <div class="track-info">
+        <div id="playerTitle" class="track-title">Mumbai Ki Baarish</div>
+        <div id="playerMeta" class="track-meta">Vocal: Meera Kapoor · Genre: Bollywood Pop · 91.4s</div>
+        <audio id="mainAudio" controls autoplay>
+          <source id="audioSrc" src="/audio/suno_generated/suno_1788340024.mp3" type="audio/mpeg">
+        </audio>
+        <div style="margin-top: 8px; display: flex; gap: 8px;">
+          <a id="downloadBtn" href="/audio/suno_generated/suno_1788340024.mp3" download class="btn-secondary" style="margin:0; text-decoration:none;">⬇️ Download MP3</a>
+          <button class="btn-secondary" onclick="createMusicVideo()" style="margin:0;">🎬 Create Singing Music Video</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Synced Lyrics Display -->
+    <label>📜 Karaoke Lyrics</label>
+    <div id="lyricsDisplay" class="lyrics-box">[Intro]
+(Sound of gentle rain, soft acoustic guitar strumming)
+Hmm-hmm-hmm...
+
+[Verse 1]
+Mumbai ki sadkein, bheegi si shaam
+Har boond mein tera hi toh naam
+Khidki pe boondein, thap-thap karein
+Aankhon mein meri, sapne tere karein
+
+[Chorus]
+Oh Mumbai ki baarish, tu aur main
+Dil bole yeh pal na jaaye kahin
+Garajti ghataayein, aur pyaar ki dhun
+Har lamha bane, apna golden sukoon!</div>
+
+    <!-- Song Library -->
+    <div style="margin-top: 14px;">
+      <label>📚 Your Song Library</label>
+      <div class="library-list" id="libraryList">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentSongId = "suno_1788340024";
+
+  async function loadLibrary() {
+    try {
+      const res = await fetch('/api/suno/library');
+      const songs = await res.json();
+      const listEl = document.getElementById('libraryList');
+      listEl.innerHTML = '';
+      
+      songs.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'song-item';
+        item.onclick = () => playSong(s);
+        item.innerHTML = `
+          <div class="song-item-info">
+            <img class="song-thumb" src="${s.cover_url || '/characters/meera/hero_pink_sweater.jpg'}" alt="Cover">
+            <div>
+              <div class="song-item-title">${s.title}</div>
+              <div class="song-item-sub">${s.genre} · ${s.vocal_character} · ${s.duration_sec}s</div>
+            </div>
+          </div>
+          <span style="color:#8b5cf6; font-size:16px;">▶</span>
+        `;
+        listEl.appendChild(item);
+      });
+    } catch(e) { console.error(e); }
+  }
+
+  function playSong(s) {
+    currentSongId = s.song_id;
+    document.getElementById('playerTitle').innerText = s.title;
+    document.getElementById('playerMeta').innerText = `Vocal: ${s.vocal_character} · Genre: ${s.genre} · ${s.duration_sec}s`;
+    document.getElementById('playerCover').src = s.cover_url || '/characters/meera/hero_pink_sweater.jpg';
+    document.getElementById('lyricsDisplay').innerText = s.lyrics_formatted;
+    document.getElementById('downloadBtn').href = s.song_url;
+    
+    const audio = document.getElementById('mainAudio');
+    audio.src = s.song_url;
+    audio.load();
+    audio.play();
+  }
+
+  async function generateLyricsOnly() {
+    const topic = document.getElementById('topicInput').value;
+    const genre = document.getElementById('genreSelect').value;
+    const mood = document.getElementById('moodSelect').value;
+    const language = document.getElementById('langSelect').value;
+    
+    document.getElementById('genStatus').innerText = "⏳ Writing AI song lyrics...";
+    try {
+      const res = await fetch('/api/suno/generate-lyrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, genre, mood, language })
+      });
+      const data = await res.json();
+      document.getElementById('lyricsArea').value = data.lyrics_formatted;
+      document.getElementById('genStatus').innerText = "✅ AI Lyrics ready! Edit or click 'Generate Full AI Song'.";
+    } catch (e) {
+      document.getElementById('genStatus').innerText = "⚠️ Error: " + e.message;
+    }
+  }
+
+  async function renderSong() {
+    const topic = document.getElementById('topicInput').value;
+    const genre = document.getElementById('genreSelect').value;
+    const vocal_character = document.getElementById('vocalSelect').value;
+    const mood = document.getElementById('moodSelect').value;
+    const language = document.getElementById('langSelect').value;
+    const custom_lyrics = document.getElementById('lyricsArea').value;
+
+    const btn = document.getElementById('genSongBtn');
+    btn.disabled = true;
+    document.getElementById('genStatus').innerText = "🚀 Composing music, synthesizing melodic singing vocals & studio mastering (~25s)...";
+
+    try {
+      const res = await fetch('/api/suno/generate-song', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, genre, vocal_character, mood, language, custom_lyrics })
+      });
+      const data = await res.json();
+      if (data.song) {
+        playSong(data.song);
+        document.getElementById('genStatus').innerText = `🎉 Mastered '${data.song.title}' in ${data.elapsed}s! Playing now.`;
+        loadLibrary();
+      }
+    } catch (e) {
+      document.getElementById('genStatus').innerText = "⚠️ Error: " + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function createMusicVideo() {
+    alert("🎬 Rendering Meera 4K singing music video synchronized to this track! Will take ~15s.");
+    try {
+      const res = await fetch('/api/suno/generate-music-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ song_id: currentSongId })
+      });
+      const data = await res.json();
+      if (data.video_url) {
+        window.open(data.video_url, '_blank');
+      }
+    } catch(e) { alert("Error creating music video: " + e.message); }
+  }
+
+  window.onload = loadLibrary;
+</script>
+
+</body>
+</html>
