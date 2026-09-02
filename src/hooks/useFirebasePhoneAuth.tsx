@@ -348,61 +348,60 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       }
     }
 
-    // Strategy 3: Direct fallback sign-in using candidate passwords
+    // Strategy 3: Direct fallback sign-in using deterministic password
     if (!session?.access_token && firebaseUid) {
-      console.log('[Auth Exchange] Attempting direct Supabase password sign-in candidates...');
-      const candidatePwds = [
-        `${cleanDigits}_${firebaseUid.slice(0, 10)}`,
-        normalizedPhone,
-        cleanDigits,
-        `chatr_${cleanDigits}`,
-        `+${cleanDigits}`,
-      ];
+      try {
+        const deterministicPwd = `${cleanDigits}_${firebaseUid.slice(0, 10)}`;
+        const { data: signInData } = await supabase.auth.signInWithPassword({
+          email,
+          password: deterministicPwd,
+        });
 
-      for (const pwd of candidatePwds) {
-        try {
-          const { data: signInData } = await supabase.auth.signInWithPassword({
-            email,
-            password: pwd,
-          });
-
-          if (signInData?.session?.access_token) {
-            session = signInData.session;
-            console.log('✅ [Auth Exchange] Direct password sign-in succeeded');
-            break;
-          }
-        } catch {
-          // Continue to next password candidate
+        if (signInData?.session?.access_token) {
+          session = signInData.session;
+          console.log('✅ [Auth Exchange] Direct password sign-in succeeded');
         }
+      } catch {
+        // Fallback exhausted
       }
     }
 
     // Strategy 4: If session access_token was obtained, set it in Supabase client
     if (session?.access_token) {
-      const refreshToken =
-        session.refresh_token ||
-        `chatr_synthetic_refresh_${Date.now().toString(36)}_${Math.random().toString(36).substring(2)}`;
+      const refreshToken = session.refresh_token || undefined;
 
-      const { error: setSessionErr } = await supabase.auth.setSession({
-        access_token: session.access_token,
-        refresh_token: refreshToken,
-      });
+      if (refreshToken) {
+        const { error: setSessionErr } = await supabase.auth.setSession({
+          access_token: session.access_token,
+          refresh_token: refreshToken,
+        });
 
-      if (!setSessionErr) {
-        console.log('✅ [Auth Exchange] Supabase session established successfully');
-        return true;
+        if (!setSessionErr) {
+          console.log('✅ [Auth Exchange] Supabase session established successfully');
+          return true;
+        }
       } else {
-        console.error('[Auth Exchange] Failed to set Supabase session:', setSessionErr);
+        // For custom JWT sessions without a Supabase refresh token, set access token directly
+        supabase.realtime.setAuth(session.access_token);
+        console.log('✅ [Auth Exchange] Supabase realtime auth established');
+        return true;
       }
     }
 
     throw new Error('Authentication completed but session creation failed. Please try again.');
   };
 
+  const verifyingRef = useRef(false);
+
   /**
    * Verify OTP entered by user (Native vs Web)
    */
   const verifyOTP = useCallback(async (otp: string): Promise<boolean> => {
+    if (verifyingRef.current) {
+      console.warn('[OTP Verify] Duplicate verify call ignored');
+      return false;
+    }
+    verifyingRef.current = true;
     setLoading(true);
     setError(null);
 
@@ -413,13 +412,11 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       if (isNative) {
         if (!verificationIdRef.current) {
           setError('Session expired. Please try again.');
-          setLoading(false);
           return false;
         }
 
         const NativeAuth = await getNativeAuthPlugin();
         if (NativeAuth) {
-          // Step 1: Confirm code with native Firebase SDK
           await NativeAuth.confirmVerificationCode({
             verificationId: verificationIdRef.current,
             verificationCode: otp,
@@ -432,7 +429,6 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       }
 
       if (!firebaseUid && confirmationResultRef.current) {
-        // Web verification step
         const result = await confirmationResultRef.current.confirm(otp);
         firebaseUid = result.user.uid;
         firebaseIdToken = await result.user.getIdToken(true);
@@ -444,8 +440,6 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
       // Step 2: Exchange Firebase UID & ID token for Supabase session
       await completeSupabaseSession(firebaseUid, firebaseIdToken);
-
-      setLoading(false);
       return true;
     } catch (err: any) {
       console.error('[OTP Verify] Error:', err);
@@ -458,8 +452,10 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         setCountdown(0);
       }
       setError(msg);
-      setLoading(false);
       return false;
+    } finally {
+      verifyingRef.current = false;
+      setLoading(false);
     }
   }, [phoneNumber]);
 

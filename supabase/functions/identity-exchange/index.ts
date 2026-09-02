@@ -25,7 +25,11 @@ function firebaseProjectIds() {
     Deno.env.get("VITE_FIREBASE_PROJECT_ID") ||
     DEFAULT_FIREBASE_PROJECT_ID;
 
-  return raw.split(",").map((projectId) => projectId.trim()).filter(Boolean);
+  const list = raw.split(",").map((projectId) => projectId.trim()).filter(Boolean);
+  if (!list.includes(DEFAULT_FIREBASE_PROJECT_ID)) {
+    list.unshift(DEFAULT_FIREBASE_PROJECT_ID);
+  }
+  return list;
 }
 
 async function verifyFirebaseIdToken(idToken: string) {
@@ -254,7 +258,42 @@ serve(createEdgeFunction({
   }
 
   // Common: Mint the unified CHATR session
-  const session = await mintChatrSession(user, authProvider, phone);
+  let session: any = null;
+  if (user?.id) {
+    try {
+      const normalizedDigits = phoneDigits(phone || user.phone || user.id);
+      const email = user.email || `${normalizedDigits}@chatr.local`;
+      const deterministicPassword = `${normalizedDigits}_${user.id.slice(0, 10)}`;
+
+      await auth.serviceClient.auth.admin.updateUserById(user.id, {
+        password: deterministicPassword,
+        email,
+        email_confirm: true,
+        phone_confirm: true,
+      });
+
+      const supabaseClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
+
+      const { data: signInData, error: signInErr } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password: deterministicPassword,
+      });
+
+      if (!signInErr && signInData?.session) {
+        session = signInData.session;
+      }
+    } catch (err) {
+      console.warn("Direct session generation fallback:", err);
+    }
+  }
+
+  if (!session) {
+    session = await mintChatrSession(user, authProvider, phone);
+  }
 
   return jsonResponse(req, {
     session,
