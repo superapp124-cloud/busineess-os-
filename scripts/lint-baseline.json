@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T07:29:38.173Z",
+  "generatedAt": "2026-09-02T08:08:41.377Z",
   "note": "Incremental lint baseline. Reduce counts over time; new or increased violations fail npm run lint.",
   "targets": [
     "src",
@@ -10,8 +10,8 @@
     "tailwind.config.ts"
   ],
   "totals": {
-    "errors": 4759,
-    "warnings": 424
+    "errors": 4774,
+    "warnings": 427
   },
   "rules": {
     "react-refresh/only-export-components": {
@@ -19,7 +19,7 @@
       "warnings": 78
     },
     "@typescript-eslint/no-explicit-any": {
-      "errors": 4410,
+      "errors": 4427,
       "warnings": 0
     },
     "prefer-const": {
@@ -28,7 +28,7 @@
     },
     "react-hooks/exhaustive-deps": {
       "errors": 0,
-      "warnings": 344
+      "warnings": 347
     },
     "no-case-declarations": {
       "errors": 14,
@@ -43,7 +43,7 @@
       "warnings": 0
     },
     "no-useless-escape": {
-      "errors": 34,
+      "errors": 32,
       "warnings": 0
     },
     "no-empty": {

@@ -26,7 +26,14 @@ const Auth = () => {
       try {
         logAuthEvent('Auth page: Checking session');
         
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const timeoutPromise = new Promise<{ data: { session: any }, error: any }>((resolve) => 
+          setTimeout(() => resolve({ data: { session: null }, error: null }), 2500)
+        );
+        
+        const { data: { session }, error: sessionError } = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ]);
         
         if (sessionError) {
           logAuthError('Session check', sessionError);

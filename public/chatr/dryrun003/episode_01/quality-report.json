@@ -6,40 +6,53 @@
       "measured": true
     },
     {
-      "name": "Shot count \u2265 4 (got 5)",
+      "name": "Shot count ≥ 7 (got 7)",
       "passed": true,
       "measured": true
     },
     {
-      "name": "No AI clich\u00e9s in script",
+      "name": "Human writing score ≥ 70 (got 79)",
       "passed": true,
       "measured": true,
       "note": null
     },
     {
-      "name": "Face consistency (SSIM \u2265 0.82)",
+      "name": "Face consistency (SSIM ≥ 0.82)",
       "passed": false,
       "measured": false,
-      "note": "NOT MEASURED \u2014 manual review required"
+      "note": "NOT MEASURED — manual review required"
     },
     {
       "name": "Lip sync offset < 200ms",
       "passed": false,
       "measured": false,
-      "note": "NOT MEASURED \u2014 manual review required"
+      "note": "NOT MEASURED — manual review required"
     }
   ],
   "passed": true,
   "failReasons": [],
+  "writingAnalysis": {
+    "status": "PASS",
+    "humanity_score": 79,
+    "novelty_score": 50,
+    "curiosity_score": 55,
+    "emotion_score": 45,
+    "specificity_score": 95,
+    "composite_score": 64.8,
+    "reject_reason": null,
+    "banned_phrases_found": [],
+    "word_count": 53,
+    "sentence_count": 4
+  },
   "warningReasons": [
-    "Face consistency not measured \u2014 check manually",
-    "Lip sync not measured \u2014 check manually"
+    "Face consistency not measured — requires GPU SSIM",
+    "Lip sync not measured — requires MuseTalk worker"
   ],
   "humanReviewRequired": true,
   "humanReviewNotes": [
     "Watch the full video on a mobile screen.",
     "Ask: 'Does this look like a real Indian creator Reel?'",
-    "Check: Does Meera look consistent across shots?",
+    "Check: Does character look consistent across shots?",
     "Check: Is voice natural?",
     "Check: Does background have real motion?",
     "APPROVE or REJECT manually."

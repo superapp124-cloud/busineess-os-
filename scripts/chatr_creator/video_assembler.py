@@ -68,23 +68,23 @@ def check_ffmpeg():
 
 def compose_shot(
     background_path: str,
-    face_video_path: Optional[str],
+    character_video_path: Optional[str],
     voice_path: str,
     duration_sec: float,
     output_path: str,
     shot_number: int,
     caption_text: str = "",
-    character_image_path: Optional[str] = None,
-    location_label: str = "Delhi"
-) -> str:
+    location_label: str = "Delhi",
+    is_b_roll: bool = False
+) -> Optional[str]:
     """
     Compose a single shot:
     - Background: real environment video (trimmed to duration)
-    - Character overlay: Meera's locked pose (matching shot action) or face video
+    - Character overlay: character_video_path
     - Voice: audio track
     - Caption: burned-in text overlay with creator branding
 
-    Returns output path.
+    Returns output path or None if failed.
     """
     ffmpeg = check_ffmpeg()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -93,37 +93,11 @@ def compose_shot(
     safe_caption = caption_text.replace("\\", "\\\\").replace("'", "").replace(":", " - ").replace("%", "%%")[:75]
     safe_loc = location_label.replace("\\", "\\\\").replace("'", "").replace(":", " - ")[:35]
 
-    if character_image_path and os.path.exists(character_image_path):
-        # Professional vertical creator composite:
-        # Background video + Meera's authentic pose overlay + verified creator badge + dynamic subtitles
-        filter_complex = (
-            f"[0:v]trim=duration={duration_sec},setpts=PTS-STARTPTS,"
-            f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=25[bg];"
-            f"[1:v]scale=540:700:force_original_aspect_ratio=decrease,pad=540:700:(ow-iw)/2:(oh-ih)/2:color=black@0,format=rgba[fg];"
-            f"[bg][fg]overlay=(W-w)/2:H-h-220[comp];"
-            f"[comp]drawtext=text='@meera_wtf  •  {safe_loc}':fontcolor=white:fontsize=36:box=1:boxcolor=black@0.6:boxborderw=12:x=(w-tw)/2:y=120"
-        )
-        if safe_caption:
-            filter_complex += f",drawtext=text='{safe_caption}':fontcolor=yellow:fontsize=38:bordercolor=black:borderw=3:x=(w-tw)/2:y=h-140[out]"
-        else:
-            filter_complex += "[out]"
+    if not is_b_roll and (not character_video_path or not os.path.exists(character_video_path)):
+        print(f"STATIC_FRAME_TRICK_DETECTED = true for shot {shot_number}")
+        return None
 
-        cmd = [
-            ffmpeg, "-y",
-            "-stream_loop", "-1", "-i", background_path,
-            "-loop", "1", "-i", character_image_path,
-            "-i", voice_path,
-            "-filter_complex", filter_complex,
-            "-map", "[out]",
-            "-map", "2:a",
-            "-t", str(duration_sec),
-            "-c:v", "libx264", "-preset", "fast", "-crf", "22",
-            "-c:a", "aac", "-b:a", "128k",
-            "-pix_fmt", "yuv420p",
-            "-aspect", "9:16",
-            output_path
-        ]
-    elif face_video_path and os.path.exists(face_video_path):
+    if not is_b_roll:
         filter_complex = (
             f"[0:v]trim=duration={duration_sec},setpts=PTS-STARTPTS,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=25[bg];"
             f"[1:v]trim=duration={duration_sec},setpts=PTS-STARTPTS,scale=480:640[face];"
@@ -141,7 +115,7 @@ def compose_shot(
         cmd = [
             ffmpeg, "-y",
             "-stream_loop", "-1", "-i", background_path,
-            "-stream_loop", "-1", "-i", face_video_path,
+            "-stream_loop", "-1", "-i", character_video_path,
             "-i", voice_path,
             "-filter_complex", filter_complex,
             "-map", map_out,
@@ -257,7 +231,7 @@ def assemble_video(
     shot_plan: dict,
     bg_map: dict,         # shot_number → background_path
     voice_path: str,      # full voice audio
-    face_video_path: Optional[str],  # optional lip-synced face
+    character_video_path: Optional[str],  # full character generated video
     output_dir: str
 ) -> dict:
     """
@@ -269,6 +243,8 @@ def assemble_video(
 
     shots = shot_plan.get("shots", [])
     shot_output_paths = []
+    
+    static_frame_violations = 0
 
     # Split voice audio per shot
     total_duration = shot_plan.get("totalDurationSec", 30)
@@ -278,6 +254,7 @@ def assemble_video(
         shot_num = shot["shotNumber"]
         duration = shot["durationSec"]
         bg_path = bg_map.get(shot_num)
+        is_b_roll = shot.get("b_roll", False)
 
         if not bg_path or not os.path.exists(bg_path):
             print(f"  ⚠️  Shot {shot_num}: no background — skipping")
@@ -299,54 +276,30 @@ def assemble_video(
         if not os.path.exists(shot_voice_path):
             shot_voice_path = voice_path  # fallback: use full voice
 
-        # Compose shot with Meera's locked character action
+        # Compose shot
         shot_output = os.path.join(output_dir, f"shot_{shot_num:02d}.mp4")
         caption = (shot.get("dialogue") or "")[:80]
-        meera_action = shot.get("meeraAction", "talking_to_camera_selfie")
-
-        # Map action to Meera's locked character visual packs (Pack 1 & Pack 2)
-        crops_dir = "public/characters/meera/crops"
-        action_map = {
-            "talking_to_camera_selfie": os.path.join(crops_dir, "vibe_selfie_phone.jpg"),
-            "reacting_to_something": os.path.join(crops_dir, "creator_phone_shock.jpg"),
-            "looking_surprised": os.path.join(crops_dir, "exp_surprised_v2.jpg"),
-            "walking_toward_camera": os.path.join(crops_dir, "vibe_delhi_streets.jpg"),
-            "entering_location": os.path.join(crops_dir, "look_casual_dayout.jpg"),
-            "looking_skeptical": os.path.join(crops_dir, "exp_sarcastic_v2.jpg"),
-            "laughing": os.path.join(crops_dir, "exp_laughing_v2.jpg"),
-            "singing": os.path.join(crops_dir, "lifestyle_party.jpg"),
-            "dancing": os.path.join(crops_dir, "vibe_dancing_fun.jpg"),
-            "talking_to_character": os.path.join(crops_dir, "creator_talking_hands.jpg"),
-            "eating_food": os.path.join(crops_dir, "vibe_foodie_pizza.jpg"),
-            "drinking_coffee": os.path.join(crops_dir, "vibe_cafe_talks.jpg"),
-            "traveling": os.path.join(crops_dir, "vibe_travel_mountains.jpg"),
-            "cozy_talk": os.path.join(crops_dir, "hero_pink_sweater.jpg"),
-        }
-        char_img = action_map.get(meera_action)
-        if not char_img or not os.path.exists(char_img):
-            char_img = os.path.join(crops_dir, "hero_pink_sweater.jpg")
-        if not os.path.exists(char_img):
-            char_img = os.path.join(crops_dir, "front_portrait.jpg")
-        if not os.path.exists(char_img):
-            char_img = "public/characters/meera/master_face_crop.jpg"
-
         loc_label = shot_plan.get("location", "Delhi").replace("_", " ").title()
 
-        print(f"  Composing shot {shot_num}/{len(shots)} ({duration}s, action: {meera_action})...")
+        print(f"  Composing shot {shot_num}/{len(shots)} ({duration}s)...")
         try:
-            compose_shot(
+            result_path = compose_shot(
                 background_path=bg_path,
-                face_video_path=face_video_path,
+                character_video_path=character_video_path,
                 voice_path=shot_voice_path,
                 duration_sec=duration,
                 output_path=shot_output,
                 shot_number=shot_num,
                 caption_text=caption,
-                character_image_path=char_img if os.path.exists(char_img) else None,
-                location_label=loc_label
+                location_label=loc_label,
+                is_b_roll=is_b_roll
             )
-            shot_output_paths.append(shot_output)
-            print(f"  ✅ Shot {shot_num} done")
+            if result_path:
+                shot_output_paths.append(result_path)
+                print(f"  ✅ Shot {shot_num} done")
+            else:
+                static_frame_violations += 1
+                print(f"  ❌ Shot {shot_num} skipped due to missing character video")
         except Exception as e:
             print(f"  ❌ Shot {shot_num} failed: {e}")
 
@@ -376,7 +329,9 @@ def assemble_video(
         "thumbnailPath": thumbnail_path,
         "shotsAssembled": len(shot_output_paths),
         "totalShotsPlanned": len(shots),
-        "totalDurationSec": total_duration
+        "totalDurationSec": total_duration,
+        "NO_STATIC_FRAME_TRICK_VERIFIED": static_frame_violations == 0,
+        "static_frame_violations": static_frame_violations
     }
 
 

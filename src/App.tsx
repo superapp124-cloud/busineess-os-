@@ -98,6 +98,7 @@ const CustomerSuccessOSDashboard = React.lazy(() => import("./components/Custome
 const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
 const PermanentMarketingOS = React.lazy(() => import("./pages/desktop/PermanentMarketingOS"));
+const RobotOsPage = React.lazy(() => import("./pages/robot/RobotOsPage"));
 const MediaDistributionControlCenter = React.lazy(() => import("./pages/desktop/MediaDistributionControlCenter").then(m => ({ default: m.MediaDistributionControlCenter })));
 const AIHubPage = React.lazy(() => import("./pages/AIHub").then(m => ({ default: m.AIHub })));
 const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));
@@ -599,6 +600,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <GlobalBackHandler />
  <Routes>
    {/* Developer & Direct Integrations Routes */}
+   <Route path="/robotOs" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
+   <Route path="/robotos" element={<Navigate to="/robotOs" replace />} />
+   <Route path="/robot-os" element={<Navigate to="/robotOs" replace />} />
    <Route path="/dev" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
    <Route path="/media-distribution" element={<SuperAdminGuard><Suspense fallback={<PageLoader message="Verifying Super Admin Authorization..." />}><MediaDistributionControlCenter /></Suspense></SuperAdminGuard>} />
    <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />
@@ -610,6 +614,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   {/* Desktop Execution OS & Chief of Staff Home */}
   <Route element={<ProtectedRoute><DesktopLayout /></ProtectedRoute>}>
   <Route index element={<Navigate to="home" replace />} />
+  <Route path="robotOs" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
   <Route path="home" element={<Suspense fallback={<PageLoader message="Loading Home..." />}><ChiefOfStaffHome /></Suspense>} />
   <Route path="inbox" element={<ProtectedLazyRoute component={UniversalInbox} />} />
   <Route path="workspace-ide" element={<LazyRoute component={LazyPages.WorkspaceIDE} />} />

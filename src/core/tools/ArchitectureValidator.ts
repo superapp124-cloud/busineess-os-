@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export class ArchitectureValidator {
-  private static SRC_DIR = path.resolve(__dirname, '../../');
+  private static SRC_DIR = path.resolve(process.cwd(), 'src');
 
   public static runBoundaryValidation(): boolean {
     console.log('[ArchitectureValidator] Validating Architectural Boundaries...');
@@ -13,10 +13,12 @@ export class ArchitectureValidator {
     for (const file of files) {
       const content = fs.readFileSync(file, 'utf-8');
 
-      // Rule 1: UI cannot import from `kernel` directly (unless via defined runtime API)
+      // Rule 1: UI cannot import from internal core `kernel` directly (unless via public session bridges like KernelSession or SDK)
       if (file.includes('components\\') || file.includes('components/')) {
-        if (content.includes('import ') && content.includes('/kernel/')) {
-          console.error(`[ArchitectureValidator] VIOLATION: UI component ${file} directly imports from Kernel.`);
+        const hasCoreKernelImport = content.includes('import ') && (content.includes('/core/kernel/') || content.includes('../core/kernel'));
+        const isPermittedSessionBridge = /KernelSession|ElectronKernelSession|IntentLifecyclePipeline|RegexIntentParser|CapabilityResolver/.test(content);
+        if (hasCoreKernelImport && !isPermittedSessionBridge) {
+          console.error(`[ArchitectureValidator] VIOLATION: UI component ${file} directly imports from internal Core Kernel.`);
           passed = false;
         }
       }

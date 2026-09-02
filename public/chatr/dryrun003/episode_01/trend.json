@@ -1,25 +1,21 @@
 {
-  "topic": "The OTT thriller climax that broke the internet",
-  "category": "bollywood_ott",
-  "source": "Reddit India r/bollywood",
-  "discoveredAt": "2026-08-27T17:29:16.389812",
-  "trendAgeHours": 8,
-  "velocity": "peak",
-  "audienceFitScore": 94,
-  "contentAngle": "Okay so listen... main kal raat yeh climax dekhi and I was not ready!",
+  "topic": "Tamil Nadu police solve suitcase murder case; couple arrested in Manipur after pan-India hunt - Deccan Herald",
+  "category": "india",
+  "source": "google_news",
+  "discoveredAt": "2026-08-31T03:37:06.240723+00:00",
+  "trendAgeHours": 20.947289080277777,
+  "velocity": "TODAY",
+  "audienceFitScore": 80,
+  "contentAngle": "Reaction to Tamil Nadu police solve suitcase murder case; couple arrested in Manipur after pan-India hunt - Deccan Herald",
   "keyPhrases": [
-    "OTT",
-    "thriller",
-    "climax",
-    "plot twist",
-    "binge"
+    "india",
+    "trending",
+    "india"
   ],
   "relatedHashtags": [
-    "#OTT",
-    "#bollywood",
-    "#thriller",
-    "#delhi",
-    "#meera"
+    "#india",
+    "#india",
+    "#trending"
   ],
   "episodeNumber": 1,
   "mode": "REACTION",

@@ -148,8 +148,26 @@ def generate_voice(
     output_path: str,
     voice_override: Optional[str] = None
 ) -> dict:
-    """Synchronous wrapper."""
-    return asyncio.run(generate_voice_async(script, output_path, voice_override))
+    """
+    Synchronous wrapper — safe to call from both sync and async contexts.
+    If already inside a running event loop (uvicorn), runs in a new thread.
+    """
+    import concurrent.futures
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop and loop.is_running():
+        # We're inside uvicorn's event loop — run in a thread pool
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(
+                asyncio.run,
+                generate_voice_async(script, output_path, voice_override)
+            )
+            return future.result(timeout=60)
+    else:
+        return asyncio.run(generate_voice_async(script, output_path, voice_override))
 
 
 def generate_captions_srt(word_timings: list, output_path: str) -> str:

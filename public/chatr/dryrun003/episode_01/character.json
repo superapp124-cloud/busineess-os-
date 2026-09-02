@@ -1,16 +1,10 @@
 {
-  "name": "Meera",
-  "handle": "@meera_wtf",
-  "voice": "hi-IN-SwaraNeural",
-  "masterImagePath": "/characters/meera/master_face.jpg",
-  "catchphrases": [
-    "Okay so listen\u2014",
-    "Be honest with me.",
-    "Yaar sach mein?",
-    "This is genuinely insane to me.",
-    "Matlab seriously?"
-  ],
-  "personalityNote": "Delhi girl, 23, warm + dry wit, Hinglish, not corporate",
+  "character_id": "meera",
+  "name": "Meera Kapoor",
+  "personality": "Marketing & Growth Lead, warm + dry wit",
+  "voice_id": "hi-IN-SwaraNeural",
+  "canonical_face_path": "public/characters/meera/master_face.jpg",
+  "asset_status": "ASSETS_READY",
   "outfit": "casual_mustard_kurti",
   "location": "saket_cafe"
 }

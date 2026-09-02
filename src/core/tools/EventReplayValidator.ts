@@ -10,7 +10,7 @@ export class EventReplayValidator {
     
     // 1. Get raw event store
     const bus = EnterpriseEventBus.getInstance();
-    const eventStore = (bus as any).eventStore; // Extracting for test purposes
+    const eventStore = (bus as any).store || (bus as any).eventStore; // Extracting for test purposes
     if (!eventStore) throw new Error("EventStore not accessible");
 
     const events = eventStore.replay();
@@ -25,7 +25,7 @@ export class EventReplayValidator {
 
     // 4. Replay Events (Run 2)
     for (const event of events) {
-      await bus.publish(event);
+      await (bus as any).dispatch(event);
     }
     
     // Allow asynchronous projections to settle
@@ -45,12 +45,12 @@ export class EventReplayValidator {
   }
 
   private static hashSystemState(): string {
-    const graph = EnterpriseGraph.getInstance();
+    const graphDb = (EnterpriseGraph.getInstance() as any).db || DistributedGraphStore.getInstance();
     const knowledge = EnterpriseKnowledgeRuntime.getInstance();
 
-    const graphNodes = Array.from((graph as any).nodes.values()).map((n:any) => n.id).sort();
-    const graphEdges = Array.from((graph as any).edges.values()).map((e:any) => `${e.sourceId}->${e.targetId}`).sort();
-    const knNodes = Array.from((knowledge as any).store.knowledgeNodes.values()).map((n:any) => n.id).sort();
+    const graphNodes = (graphDb as any).nodes ? Array.from((graphDb as any).nodes.values()).map((n: any) => n.id).sort() : [];
+    const graphEdges = (graphDb as any).edges ? Array.from((graphDb as any).edges).map((e: any) => `${e.sourceId}->${e.targetId}`).sort() : [];
+    const knNodes = (knowledge as any).store?.getAll ? (knowledge as any).store.getAll().map((n: any) => n.id).sort() : [];
     
     const stateObj = {
       graphNodes,
@@ -63,11 +63,11 @@ export class EventReplayValidator {
 
   private static clearState() {
     console.log(`[EventReplayValidator] Clearing System State...`);
-    const graph = EnterpriseGraph.getInstance();
+    const graphDb = (EnterpriseGraph.getInstance() as any).db || DistributedGraphStore.getInstance();
     const knowledge = EnterpriseKnowledgeRuntime.getInstance();
     
-    (graph as any).nodes.clear();
-    (graph as any).edges.clear();
-    (knowledge as any).store.knowledgeNodes.clear();
+    if ((graphDb as any).nodes?.clear) (graphDb as any).nodes.clear();
+    if (Array.isArray((graphDb as any).edges)) (graphDb as any).edges.length = 0;
+    if ((knowledge as any).store?.knowledgeMap?.clear) (knowledge as any).store.knowledgeMap.clear();
   }
 }

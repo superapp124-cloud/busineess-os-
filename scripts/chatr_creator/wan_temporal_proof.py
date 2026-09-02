@@ -211,42 +211,103 @@ class WanTemporalProofHarness:
         temporal_metrics = self.compute_deep_temporal_metrics(frame_paths)
         print(f"[METRICS] Computed temporal metrics: flow={temporal_metrics['dense_optical_flow_magnitude']}, face={temporal_metrics['face_region_optical_flow']}")
 
-        # Provenance verification
+        # 1. Milestone 1 Duration & Frame Count Check (8s @ 24fps = 192 frames)
+        total_frames = len(frame_paths)
+        frame_count_valid = 188 <= total_frames <= 196
+        frame_error = None if frame_count_valid else f"Milestone 1 artifact must be exactly 8s @ 24fps (192 frames). Found {total_frames} frames ({total_frames/24.0:.2f}s)."
+
+        # 2. Cryptographic SHA-256 Provenance Verification
+        import hashlib
+        with open(video_path, "rb") as vf:
+            actual_sha256 = hashlib.sha256(vf.read()).hexdigest()
+
+        manifest_sha256 = manifest.get("OUTPUT_SHA256")
+        sha256_match = (manifest_sha256 == actual_sha256) if manifest_sha256 else False
+
+        valid_models = (
+            "Wan-AI/Wan2.1-I2V-14B-480P",
+            "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers",
+            "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+            "Wan-AI/Wan2.2-I2V-14B-480P"
+        )
         provenance_valid = (
-            manifest.get("MODEL_ID") == "Wan-AI/Wan2.1-I2V-14B-480P" and
+            manifest.get("MODEL_ID") in valid_models and
             manifest.get("GPU_NAME") is not None and
-            manifest.get("OOM_STATUS") == "NONE" and
-            manifest.get("GENERATION_PASSED") is True
+            manifest.get("OOM_STATUS", "NONE") == "NONE" and
+            manifest.get("GENERATION_PASSED") is True and
+            sha256_match
         )
 
+        provenance_error = None
+        if not provenance_valid:
+            if not sha256_match and manifest_sha256:
+                provenance_error = f"Cryptographic hash mismatch: video ({actual_sha256[:8]}...) != manifest ({manifest_sha256[:8]}...)"
+            elif not manifest.get("GENERATION_PASSED"):
+                provenance_error = "Unverified provenance: Wan 2.1 I2V-14B GPU execution not proven (GENERATION_PASSED=false)"
+            else:
+                provenance_error = "Invalid or incomplete GPU execution manifest"
+
+        # 3. Overall Milestone 1 Verdict
         overall_milestone_1_pass = (
+            frame_count_valid and
             provenance_valid and
             temporal_metrics["temporal_motion_proven"]
         )
 
         status_verdict = "PASS" if overall_milestone_1_pass else "NOT_PROVEN"
 
+        errors = []
+        if frame_error:
+            errors.append(frame_error)
+        if provenance_error:
+            errors.append(provenance_error)
+        if not temporal_metrics["temporal_motion_proven"]:
+            errors.append("Temporal motion metrics below threshold")
+
+        certification_record = {
+            "MODEL_ID": manifest.get("MODEL_ID", "UNKNOWN"),
+            "MODEL_REVISION": manifest.get("MODEL_REVISION", "main"),
+            "MODEL_SOURCE": manifest.get("MODEL_SOURCE", "UNKNOWN"),
+            "GPU": manifest.get("GPU_NAME", "UNKNOWN"),
+            "VRAM": manifest.get("GPU_VRAM", "UNKNOWN"),
+            "RESOLUTION": f"{temporal_metrics.get('width', 480)}x{temporal_metrics.get('height', 832)}",
+            "FPS": manifest.get("FPS", 24),
+            "FRAME_COUNT": total_frames,
+            "DURATION": round(total_frames / max(1, manifest.get("FPS", 24)), 2),
+            "GENERATION_TIME": manifest.get("GENERATION_TIME", 0.0),
+            "SHA256": actual_sha256,
+            "OPTICAL_FLOW": temporal_metrics.get("dense_optical_flow_magnitude", 0.0),
+            "DUPLICATE_RATIO": temporal_metrics.get("duplicate_frame_ratio", 0.0),
+            "FROZEN_FACE": not temporal_metrics.get("temporal_motion_proven", False),
+            "VALIDATOR_RESULT": status_verdict
+        }
+
         report = {
             "milestone": "MILESTONE_1_REAL_TEMPORAL_PROOF",
             "verdict": status_verdict,
+            "certification_record": certification_record,
             "provenance": {
-                "motion_source": "wan_2.1_i2v_14b",
+                "motion_source": manifest.get("MODEL_ID", "wan_2.1_i2v_14b"),
                 "provenance_verified": provenance_valid,
+                "video_sha256": actual_sha256,
+                "manifest_sha256": manifest_sha256,
                 "manifest": manifest
             },
             "temporal_evidence": temporal_metrics,
             "artifacts": {
                 "raw_video": video_path,
                 "contact_sheet": contact_sheet_path,
-                "total_frames_extracted": len(frame_paths),
+                "total_frames_extracted": total_frames,
                 "sampled_frames_dir": self.frames_dir
-            }
+            },
+            "errors": errors
         }
 
         with open(output_report_json, "w") as f:
             json.dump(report, f, indent=2)
 
         return report
+
 
 
 def main():

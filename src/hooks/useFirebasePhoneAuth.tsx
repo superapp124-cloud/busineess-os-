@@ -251,6 +251,9 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       `${cleanDigits}@chatr.local`,
       `91${national}@chatr.local`,
       `${national}@chatr.local`,
+      `${cleanDigits}@chatr.chat`,
+      `91${national}@chatr.chat`,
+      `${national}@chatr.chat`,
     ];
 
     const candidatePwds = [
@@ -297,69 +300,120 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     const cleanDigits = normalizedPhone.replace(/\+/g, '');
     const email = `${cleanDigits}@chatr.local`;
 
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://cenxckpxaqborfqyexot.supabase.co';
-    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
-      import.meta.env.VITE_SUPABASE_ANON_KEY || 
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
+    let session: { access_token?: string; refresh_token?: string | null } | null = null;
 
-    let session: { access_token?: string; refresh_token?: string } | null = null;
-
-    if (supabaseUrl && supabaseKey) {
+    // Strategy 1: Call identity-exchange edge function via supabase client
+    if (firebaseIdToken) {
       try {
-        const payload: Record<string, string> = {
-          phone_number: normalizedPhone,
-          firebase_uid: firebaseUid,
-        };
-        if (firebaseIdToken) {
-          payload.firebase_id_token = firebaseIdToken;
-        }
+        console.log('[Auth Exchange] Attempting identity-exchange with Firebase ID token...');
+        const { data, error } = await supabase.functions.invoke('identity-exchange', {
+          body: { id_token: firebaseIdToken }
+        });
 
-        const response = await fetch(
-          `${supabaseUrl}/functions/v1/firebase-phone-auth`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseKey}`,
-              'apikey': supabaseKey,
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-
-        const responseText = await response.text();
-        if (responseText) {
-          const data = JSON.parse(responseText);
-          if (data?.session?.access_token && data?.session?.refresh_token) {
-            session = data.session;
-          } else if (data?.error || data?.message) {
-            console.error('[Auth Exchange] Edge function error response:', data.error || data.message);
-          }
+        if (!error && data?.session?.access_token) {
+          session = data.session;
+          console.log('✅ [Auth Exchange] identity-exchange succeeded');
+        } else if (error) {
+          console.warn('[Auth Exchange] identity-exchange returned error:', error);
         }
-      } catch (e) {
-        console.warn('[Auth Exchange] Edge function call failed:', e);
+      } catch (err) {
+        console.warn('[Auth Exchange] identity-exchange call failed:', err);
       }
     }
 
-    // Direct fallback if edge function is unavailable or didn't return a session
-    if (!session && firebaseUid) {
-      const deterministicPassword = `${cleanDigits}_${firebaseUid.slice(0, 10)}`;
-      const { data: signInData } = await supabase.auth.signInWithPassword({
-        email,
-        password: deterministicPassword,
-      });
+    // Strategy 2: Call firebase-phone-auth edge function via fetch
+    if (!session?.access_token) {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://cenxckpxaqborfqyexot.supabase.co';
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
+        import.meta.env.VITE_SUPABASE_ANON_KEY || 
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE';
 
-      if (signInData?.session) {
-        session = signInData.session;
+      if (supabaseUrl && supabaseKey) {
+        try {
+          console.log('[Auth Exchange] Attempting firebase-phone-auth edge function...');
+          const payload: Record<string, string> = {
+            phone_number: normalizedPhone,
+            firebase_uid: firebaseUid,
+          };
+          if (firebaseIdToken) {
+            payload.firebase_id_token = firebaseIdToken;
+          }
+
+          const response = await fetch(
+            `${supabaseUrl}/functions/v1/firebase-phone-auth`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseKey}`,
+                'apikey': supabaseKey,
+              },
+              body: JSON.stringify(payload),
+            }
+          );
+
+          const responseText = await response.text();
+          if (responseText) {
+            const data = JSON.parse(responseText);
+            if (data?.session?.access_token) {
+              session = data.session;
+              console.log('✅ [Auth Exchange] firebase-phone-auth succeeded');
+            } else if (data?.error || data?.message) {
+              console.error('[Auth Exchange] Edge function error response:', data.error || data.message);
+            }
+          }
+        } catch (e) {
+          console.warn('[Auth Exchange] firebase-phone-auth call failed:', e);
+        }
       }
     }
 
-    if (session?.access_token && session?.refresh_token) {
-      await supabase.auth.setSession({
+    // Strategy 3: Direct fallback sign-in using candidate passwords
+    if (!session?.access_token && firebaseUid) {
+      console.log('[Auth Exchange] Attempting direct Supabase password sign-in candidates...');
+      const candidatePwds = [
+        `${cleanDigits}_${firebaseUid.slice(0, 10)}`,
+        normalizedPhone,
+        cleanDigits,
+        `chatr_${cleanDigits}`,
+        `+${cleanDigits}`,
+      ];
+
+      for (const pwd of candidatePwds) {
+        try {
+          const { data: signInData } = await supabase.auth.signInWithPassword({
+            email,
+            password: pwd,
+          });
+
+          if (signInData?.session?.access_token) {
+            session = signInData.session;
+            console.log('✅ [Auth Exchange] Direct password sign-in succeeded');
+            break;
+          }
+        } catch {
+          // Continue to next password candidate
+        }
+      }
+    }
+
+    // Strategy 4: If session access_token was obtained, set it in Supabase client
+    if (session?.access_token) {
+      const refreshToken =
+        session.refresh_token ||
+        `chatr_synthetic_refresh_${Date.now().toString(36)}_${Math.random().toString(36).substring(2)}`;
+
+      const { error: setSessionErr } = await supabase.auth.setSession({
         access_token: session.access_token,
-        refresh_token: session.refresh_token,
+        refresh_token: refreshToken,
       });
-      return true;
+
+      if (!setSessionErr) {
+        console.log('✅ [Auth Exchange] Supabase session established successfully');
+        return true;
+      } else {
+        console.error('[Auth Exchange] Failed to set Supabase session:', setSessionErr);
+      }
     }
 
     throw new Error('Authentication completed but session creation failed. Please try again.');

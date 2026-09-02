@@ -101,32 +101,20 @@ def run_milestone_1(worker_url: str = None, reference_img: str = None, mock: boo
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
     else:
-        print("⚠️  Worker offline or mock requested.")
-        print("   Generating local baseline reference clip for contract/UI testing...")
-        # Create an 8-second MP4 from reference asset using ffmpeg
-        cmd = [
-            "ffmpeg", "-y",
-            "-loop", "1",
-            "-i", reference_img,
-            "-c:v", "libx264",
-            "-t", "8",
-            "-pix_fmt", "yuv420p",
-            "-r", "16",
-            "-vf", "scale=480:854:force_original_aspect_ratio=decrease,pad=480:854:(ow-iw)/2:(oh-ih)/2",
-            target_mp4
-        ]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print(f"✅ Baseline reference MP4 generated at: {target_mp4}")
+        print("❌ Worker offline or worker-url not provided.")
+        print("   Real Wan 2.1 I2V-14B requires an active CUDA GPU Worker (Tesla T4 or higher).")
+        print("   No fake MP4 will be generated. MILESTONE_1 remains NOT_PROVEN.")
 
         metadata = {
             "milestone": "M1_WALK",
             "jobId": f"meera_m1_local_{int(time.time())}",
-            "backend": "LOCAL_MOCK_AWAITING_GPU_WORKER",
+            "backend": "NO_GPU_WORKER_CONNECTED",
             "workerUrl": worker_url or "NOT_CONNECTED",
-            "targetMp4": target_mp4,
+            "targetMp4": None,
             "durationSec": 8,
-            "state": "VIDEO_MOTION_AWAITING_WORKER",
+            "state": "WORKER_OFFLINE_NOT_PROVEN",
             "humanDecision": None,
+            "error": "No GPU worker connected. Wan 2.1 I2V-14B requires active CUDA session.",
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
 

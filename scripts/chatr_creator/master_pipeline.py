@@ -35,6 +35,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 from voice_pipeline import generate_voice, generate_captions_srt
 from background_fetcher import download_all_shot_backgrounds
 from video_assembler import assemble_video, find_ffmpeg
+from character_registry import get_character, get_available_characters
+from human_writing_gate import analyze_script
+from trend_intelligence import get_all_trends, get_content_batch
+from music_selector import select_music, get_ffmpeg_mix_command
 
 OUTPUT_BASE = "public/chatr/dryrun003"
 CHARACTER_JSON_PATH = "public/characters/meera/identity.json"
@@ -171,14 +175,8 @@ def generate_seo_package(topic: str, script: str, trend: dict) -> dict:
     }
 
 
-def run_quality_gate(episode_dir: str, script: str, shot_count: int) -> dict:
+def run_quality_gate(episode_dir: str, script: str, shot_count: int, writing_analysis: dict = None) -> dict:
     """Run automated quality checks."""
-    BANNED = [
-        "In today's fast-paced world", "Here's why", "Let me tell you",
-        "Did you know", "AI is transforming", "The future is here",
-        "Game-changing", "Revolutionary", "Disruptive"
-    ]
-
     checks = []
     fail_reasons = []
 
@@ -187,23 +185,30 @@ def run_quality_gate(episode_dir: str, script: str, shot_count: int) -> dict:
     checks.append({"name": "video.mp4 exists", "passed": video_ok, "measured": True})
     if not video_ok: fail_reasons.append("video.mp4 missing")
 
-    # Check shot count
-    shots_ok = shot_count >= 4
-    checks.append({"name": f"Shot count ≥ 4 (got {shot_count})", "passed": shots_ok, "measured": True})
-    if not shots_ok: fail_reasons.append(f"Only {shot_count} shots — static presenter risk")
+    # Check shot count >= 7 for 30s social video standard
+    shots_ok = shot_count >= 7
+    checks.append({"name": f"Shot count ≥ 7 (got {shot_count})", "passed": shots_ok, "measured": True})
+    if not shots_ok: fail_reasons.append(f"Only {shot_count} shots — below 7-shot minimum for 30s social video")
 
-    # Check script naturalness
-    found_phrases = [p for p in BANNED if p.lower() in script.lower()]
-    script_ok = len(found_phrases) == 0
-    checks.append({"name": "No AI clichés in script", "passed": script_ok, "measured": True,
-                   "note": f"Found: {found_phrases}" if found_phrases else None})
-    if not script_ok: fail_reasons.append(f"Banned phrases in script: {found_phrases}")
+    # Check human writing gate analysis
+    if writing_analysis is None:
+        writing_analysis = analyze_script(script)
+    
+    writing_passed = writing_analysis.get("status") == "PASS"
+    checks.append({
+        "name": f"Human writing score ≥ 70 (got {writing_analysis.get('humanity_score', 0)})",
+        "passed": writing_passed,
+        "measured": True,
+        "note": writing_analysis.get("reject_reason")
+    })
+    if not writing_passed:
+        fail_reasons.append(f"Human writing gate failed: {writing_analysis.get('reject_reason')}")
 
-    # Face similarity — NOT MEASURED (no GPU SSIM)
+    # Face similarity — NOT MEASURED until Wan/SSIM GPU verification
     checks.append({"name": "Face consistency (SSIM ≥ 0.82)", "passed": False, "measured": False,
                    "note": "NOT MEASURED — manual review required"})
 
-    # Lip sync — NOT MEASURED  
+    # Lip sync — NOT MEASURED until MuseTalk execution
     checks.append({"name": "Lip sync offset < 200ms", "passed": False, "measured": False,
                    "note": "NOT MEASURED — manual review required"})
 
@@ -211,13 +216,14 @@ def run_quality_gate(episode_dir: str, script: str, shot_count: int) -> dict:
         "checks": checks,
         "passed": len(fail_reasons) == 0,
         "failReasons": fail_reasons,
-        "warningReasons": ["Face consistency not measured — check manually",
-                           "Lip sync not measured — check manually"],
+        "writingAnalysis": writing_analysis,
+        "warningReasons": ["Face consistency not measured — requires GPU SSIM",
+                           "Lip sync not measured — requires MuseTalk worker"],
         "humanReviewRequired": True,
         "humanReviewNotes": [
             "Watch the full video on a mobile screen.",
             "Ask: 'Does this look like a real Indian creator Reel?'",
-            "Check: Does Meera look consistent across shots?",
+            "Check: Does character look consistent across shots?",
             "Check: Is voice natural?",
             "Check: Does background have real motion?",
             "APPROVE or REJECT manually."
@@ -232,55 +238,68 @@ def produce_episode(
     mode: str = "TALK",
     location: str = "delhi_metro",
     outfit: str = "casual_mustard_kurti",
+    character_id: str = "meera",
+    character_video_path: str = None,
     characters: list = None
 ) -> dict:
-    """Produce one complete episode."""
-    video_id = f"meera_ep{episode_num:03d}_{int(time.time())}"
+    """Produce one complete episode using verified components."""
+    video_id = f"{character_id}_ep{episode_num:03d}_{int(time.time())}"
     episode_dir = os.path.join(OUTPUT_BASE, f"episode_{episode_num:02d}")
     os.makedirs(episode_dir, exist_ok=True)
 
+    char_profile = get_character(character_id)
+
     print(f"\n{'='*60}")
     print(f"🎬 EPISODE {episode_num}: {trend['topic'][:50]}")
-    print(f"   Mode: {mode} | Location: {location}")
+    print(f"   Character: {char_profile.name} ({char_profile.asset_status}) | Mode: {mode} | Location: {location}")
     print(f"{'='*60}")
 
     # 1. Generate script
     print("\n📝 Generating script...")
-    script = try_ollama_script(trend["topic"], trend["category"], MEERA_IDENTITY["personalityNote"])
+    script = try_ollama_script(trend["topic"], trend.get("category", "viral_trend"), char_profile.personality)
     if not script:
-        script = generate_script_from_template(trend["category"], trend["topic"], trend.get("contentAngle", ""))
+        script = generate_script_from_template(trend.get("category", "viral_trend"), trend["topic"], trend.get("contentAngle", ""))
     print(f"   Script ({len(script.split())} words): {script[:80]}...")
 
-    # 2. Build shot plan
+    # 2. Human Writing Gate Analysis
+    print("\n🧐 Running Human Writing Gate...")
+    writing_analysis = analyze_script(script)
+    print(f"   Humanity Score: {writing_analysis.get('humanity_score')}/100 | Status: {writing_analysis.get('status')}")
+
+    # 3. Build shot plan (minimum 7 shots, 30s target)
     print("\n🎞️  Planning shots...")
     from shot_planner_py import build_shot_plan_py
-    shot_plan = build_shot_plan_py(video_id, mode, location, script, characters or [])
+    shot_plan = build_shot_plan_py(video_id, mode, location, script, characters or [], character_id=character_id)
     shot_count = len(shot_plan["shots"])
-    print(f"   {shot_count} shots planned")
+    print(f"   {shot_count} shots planned (Target duration: {shot_plan['totalDurationSec']}s)")
 
-    # 3. Save shot plan
+    # 4. Save shot plan
     shot_plan_path = os.path.join(episode_dir, "shot-plan.json")
-    with open(shot_plan_path, 'w') as f:
-        json.dump(shot_plan, f, indent=2)
+    with open(shot_plan_path, 'w', encoding='utf-8') as f:
+        json.dump(shot_plan, f, indent=2, ensure_ascii=False)
 
-    # 4. Generate voice
+    # 5. Generate voice
     print("\n🔊 Generating voice...")
     voice_path = os.path.join(episode_dir, "voice.mp3")
     try:
-        voice_meta = generate_voice(script, voice_path)
+        voice_meta = generate_voice(script, voice_path, voice_override=char_profile.voice_id)
         print(f"   Voice: {voice_meta['estimated_duration_sec']}s, {voice_meta['word_count']} words")
     except Exception as e:
         print(f"   ❌ Voice generation failed: {e}")
         return {"error": str(e), "episode": episode_num}
 
-    # 5. Generate captions
+    # 6. Generate captions
     captions_path = os.path.join(episode_dir, "captions.srt")
     generate_captions_srt(voice_meta.get("word_timings", []), captions_path)
 
-    # 6. Download backgrounds
+    # 7. Select Music Track
+    music_meta = select_music(trend.get("category", "default"), shot_plan["totalDurationSec"])
+    print(f"   🎵 Music Selected: {music_meta.get('title')} ({music_meta.get('genre')}, BPM: {music_meta.get('bpm')})")
+
+    # 8. Download / Select backgrounds
     bg_map = download_all_shot_backgrounds(shot_plan, os.path.join(episode_dir, "backgrounds"))
 
-    # 7. Assemble video
+    # 9. Assemble video
     try:
         ffmpeg = find_ffmpeg()
         if ffmpeg and bg_map:
@@ -290,7 +309,7 @@ def produce_episode(
                 shot_plan=shot_plan,
                 bg_map=bg_map,
                 voice_path=voice_path,
-                face_video_path=None,  # Wav2Lip phase 2
+                character_video_path=character_video_path,
                 output_dir=episode_dir
             )
             print(f"   ✅ Video: {assembly['videoPath']}")
@@ -300,7 +319,7 @@ def produce_episode(
     except Exception as e:
         print(f"   ❌ Assembly error: {e}")
 
-    # 8. Save all assets
+    # 10. Save all assets
     script_data = {"script": script, "wordCount": len(script.split()), "mode": mode, "videoId": video_id}
     with open(os.path.join(episode_dir, "script.json"), 'w', encoding='utf-8') as f:
         json.dump(script_data, f, indent=2, ensure_ascii=False)
@@ -313,13 +332,23 @@ def produce_episode(
     with open(os.path.join(episode_dir, "trend.json"), 'w', encoding='utf-8') as f:
         json.dump(trend_data, f, indent=2, ensure_ascii=False)
 
-    with open(os.path.join(episode_dir, "character.json"), 'w') as f:
-        json.dump({**MEERA_IDENTITY, "outfit": outfit, "location": location}, f, indent=2)
+    char_dict = {
+        "character_id": char_profile.character_id,
+        "name": char_profile.name,
+        "personality": char_profile.personality,
+        "voice_id": char_profile.voice_id,
+        "canonical_face_path": char_profile.canonical_face_path,
+        "asset_status": char_profile.asset_status,
+        "outfit": outfit,
+        "location": location
+    }
+    with open(os.path.join(episode_dir, "character.json"), 'w', encoding='utf-8') as f:
+        json.dump(char_dict, f, indent=2, ensure_ascii=False)
 
-    # 9. Run quality gate
-    quality = run_quality_gate(episode_dir, script, shot_count)
-    with open(os.path.join(episode_dir, "quality-report.json"), 'w') as f:
-        json.dump(quality, f, indent=2)
+    # 11. Run quality gate
+    quality = run_quality_gate(episode_dir, script, shot_count, writing_analysis=writing_analysis)
+    with open(os.path.join(episode_dir, "quality-report.json"), 'w', encoding='utf-8') as f:
+        json.dump(quality, f, indent=2, ensure_ascii=False)
 
     status = "✅ GATE_PASSED" if quality["passed"] else "❌ GATE_FAILED"
     print(f"\n{status}")
@@ -330,6 +359,8 @@ def produce_episode(
     return {
         "episodeNumber": episode_num,
         "videoId": video_id,
+        "character": char_profile.name,
+        "characterStatus": char_profile.asset_status,
         "episodeDir": episode_dir,
         "script": script[:100],
         "shotsPlanned": shot_count,
@@ -339,32 +370,52 @@ def produce_episode(
 
 
 if __name__ == "__main__":
-    print("CHATR Virtual Creator — Dry Run #003")
+    print("CHATR Virtual Creator — Live Pipeline Orchestrator")
     print("=" * 60)
 
-    # Quick single episode test
-    sample_trend = {
-        "topic": "The new OTT show everyone won't stop talking about",
-        "category": "bollywood_ott",
-        "source": "SIMULATED_FALLBACK",
-        "discoveredAt": datetime.now().isoformat(),
-        "trendAgeHours": 12,
-        "velocity": "rising",
-        "audienceFitScore": 90,
-        "contentAngle": "Okay I watched it and I need to talk about this.",
-        "keyPhrases": ["OTT", "binge", "review", "watch"],
-        "relatedHashtags": ["#OTT", "#webseries", "#india", "#bollywood"]
-    }
+    # Fetch live trends from Google News / Trends / Reddit
+    print("\n📡 Ingesting live trend signals...")
+    trends = get_content_batch(n=5)
+    if trends and trends[0].source != "FALLBACK":
+        active_trend = {
+            "topic": trends[0].topic,
+            "category": trends[0].category,
+            "source": trends[0].source,
+            "discoveredAt": trends[0].timestamp,
+            "trendAgeHours": trends[0].freshness_hours,
+            "velocity": trends[0].velocity,
+            "audienceFitScore": trends[0].audience_fit,
+            "contentAngle": f"Reaction to {trends[0].topic}",
+            "keyPhrases": [trends[0].category, "trending", "india"],
+            "relatedHashtags": [f"#{trends[0].category}", "#india", "#trending"]
+        }
+        print(f"✅ Live Trend Discovered: {active_trend['topic']} (Source: {active_trend['source']})")
+    else:
+        active_trend = {
+            "topic": "The momo supremacy debate in Delhi markets",
+            "category": "food_culture",
+            "source": "FALLBACK_EVERGREEN",
+            "discoveredAt": datetime.now().isoformat(),
+            "trendAgeHours": 0.5,
+            "velocity": "TRENDING_NOW",
+            "audienceFitScore": 95,
+            "contentAngle": "Momos are spiritually important. Delhi street food review.",
+            "keyPhrases": ["momos", "delhi", "foodie"],
+            "relatedHashtags": ["#delhistreetfood", "#momos", "#delhi"]
+        }
+        print(f"⚠️ Using Evergreen Trend: {active_trend['topic']}")
 
     result = produce_episode(
         episode_num=1,
-        trend=sample_trend,
+        trend=active_trend,
         mode="REACTION",
         location="saket_cafe",
-        outfit="casual_teal_kurta",
+        outfit="casual_mustard_kurti",
+        character_id="meera",
         characters=[]
     )
 
     print(f"\n{'='*60}")
     print("Episode Result:")
     print(json.dumps(result, indent=2))
+
