@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-locomotion",
+  "version": "1.0.0",
+  "description": "Locomotion, Whole-Body Balance, ZMP Preview Control & Bipedal Gait Engine for CHATR Humanoid OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

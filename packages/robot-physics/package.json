@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-physics",
+  "version": "1.0.0",
+  "description": "Deterministic 500Hz 3D Spatial Rigid-Body & Multibody Physics Engine for CHATR Humanoid OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

@@ -1,0 +1,13 @@
+{
+  "chemistry": "LiFePO4",
+  "nominalVoltageVolts": 48.0,
+  "capacityAh": 30.0,
+  "energyWattHours": 1440.0,
+  "cellConfiguration": "15S2P",
+  "maxContinuousDischargeA": 60.0,
+  "peakDischargeA": 120.0,
+  "standardChargeCurrentA": 15.0,
+  "maxChargeVoltageVolts": 54.0,
+  "cutoffVoltageVolts": 42.0,
+  "internalResistanceOhms": 0.025
+}

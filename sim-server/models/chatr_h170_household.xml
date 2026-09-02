@@ -1,0 +1,346 @@
+<mujoco model="CHATR-H170">
+  <!--
+  CHATR-H170 MJCF — auto-compiled by build_mjcf.py
+  Profile hash : 2b42983a7304af02a4e3fd3a6a174f544aff53be5f0693506fb8e36f778c3c45
+  Model        : CHATR-H170 v1.0.0
+  Mass         : 68.0 kg
+  DOF          : 28
+  Base link    : pelvis
+  DO NOT EDIT MANUALLY — regenerate with: python build_mjcf.py
+-->
+  <compiler angle="radian" coordinate="local" autolimits="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" cone="pyramidal" impratio="10"/>
+  <default>
+    <default class="collision">
+      <geom contype="1" conaffinity="1" friction="0.8 0.02 0.001" rgba="0.3 0.5 0.8 0.3"/>
+    </default>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="1" rgba="0.7 0.7 0.8 1.0"/>
+    </default>
+    <default class="revolute">
+      <joint type="hinge" damping="2.5" armature="0.05" frictionloss="0.5"/>
+    </default>
+  </default>
+  <worldbody>
+    <geom name="floor" type="plane" size="20 20 0.1" rgba="0.6 0.6 0.6 1" contype="1" conaffinity="1" friction="0.8 0.02 0.001"/>
+    <light directional="true" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" pos="0 0 5" dir="0 0 -1"/>
+    <body name="pelvis" pos="0 0 0.88">
+      <inertial pos="0.0 0.0 0.0" mass="12.2" fullinertia="0.1 0.08 0.09 0.0 0.0 0.0"/>
+      <geom name="pelvis_col" class="collision" pos="0.0 0.0 0.0" type="box" size="0.11 0.14 0.09"/>
+      <freejoint name="root"/>
+      <body name="waist_intermediate_link" pos="0.0 0.0 0.12">
+        <inertial pos="0.0 0.0 0.02" mass="1.0" fullinertia="0.005 0.005 0.006 0.0 0.0 0.0"/>
+        <geom name="waist_intermediate_link_col" class="collision" pos="0.0 0.0 0.0" type="cylinder" size="0.08 0.03"/>
+        <joint name="waist_yaw" class="revolute" axis="0.0 0.0 1.0" range="-1.57 1.57"/>
+        <site name="waist_yaw_site" size="0.01"/>
+        <body name="torso" pos="0.0 0.0 0.06">
+          <inertial pos="0.01 0.0 0.22" mass="16.2" fullinertia="0.3 0.25 0.22 0.0 0.0 0.0"/>
+          <geom name="torso_col" class="collision" pos="0.0 0.0 0.22" type="box" size="0.13 0.19 0.24"/>
+          <joint name="waist_pitch" class="revolute" axis="0.0 1.0 0.0" range="-0.52 0.87"/>
+          <site name="waist_pitch_site" size="0.01"/>
+          <body name="neck_link" pos="0.0 0.0 0.52">
+            <inertial pos="0.0 0.0 0.04" mass="0.6" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+            <geom name="neck_link_col" class="collision" pos="0.0 0.0 0.04" type="cylinder" size="0.05 0.04"/>
+            <joint name="neck_yaw" class="revolute" axis="0.0 0.0 1.0" range="-1.57 1.57"/>
+            <site name="neck_yaw_site" size="0.01"/>
+            <body name="head" pos="0.0 0.0 0.08">
+              <inertial pos="0.02 0.0 0.1" mass="2.8" fullinertia="0.022 0.02 0.019 0.0 0.0 0.0"/>
+              <geom name="head_col" class="collision" pos="0.0 0.0 0.1" type="sphere" size="0.12"/>
+              <joint name="neck_pitch" class="revolute" axis="0.0 1.0 0.0" range="-0.78 0.78"/>
+              <site name="neck_pitch_site" size="0.01"/>
+            </body>
+          </body>
+          <body name="l_shoulder_pitch_link" pos="0.0 0.22 0.42">
+            <inertial pos="0.0 0.02 0.0" mass="0.7" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+            <geom name="l_shoulder_pitch_link_col" class="collision" pos="0.0 0.02 0.0" type="cylinder" size="0.05 0.03"/>
+            <joint name="l_shoulder_pitch" class="revolute" axis="0.0 1.0 0.0" range="-3.14 1.57"/>
+            <site name="l_shoulder_pitch_site" size="0.01"/>
+            <body name="l_shoulder_roll_link" pos="0.0 0.06 0.0">
+              <inertial pos="0.0 0.0 -0.03" mass="0.6" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+              <geom name="l_shoulder_roll_link_col" class="collision" pos="0.0 0.0 -0.03" type="cylinder" size="0.05 0.03"/>
+              <joint name="l_shoulder_roll" class="revolute" axis="1.0 0.0 0.0" range="-0.35 2.35"/>
+              <site name="l_shoulder_roll_site" size="0.01"/>
+              <body name="l_upper_arm" pos="0.0 0.0 -0.08">
+                <inertial pos="0.0 0.0 -0.12" mass="1.8" fullinertia="0.012 0.012 0.003 0.0 0.0 0.0"/>
+                <geom name="l_upper_arm_col" class="collision" pos="0.0 0.0 -0.12" type="capsule" size="0.05 0.12"/>
+                <joint name="l_shoulder_yaw" class="revolute" axis="0.0 0.0 1.0" range="-2.09 2.09"/>
+                <site name="l_shoulder_yaw_site" size="0.01"/>
+                <body name="l_forearm" pos="0.0 0.0 -0.26">
+                  <inertial pos="0.0 0.0 -0.11" mass="1.4" fullinertia="0.008 0.008 0.002 0.0 0.0 0.0"/>
+                  <geom name="l_forearm_col" class="collision" pos="0.0 0.0 -0.11" type="capsule" size="0.045 0.11"/>
+                  <joint name="l_elbow_pitch" class="revolute" axis="0.0 1.0 0.0" range="-2.61 0.0"/>
+                  <site name="l_elbow_pitch_site" size="0.01"/>
+                  <body name="l_wrist_intermediate_link" pos="0.0 0.0 -0.24">
+                    <inertial pos="0.0 0.0 -0.02" mass="0.3" fullinertia="0.001 0.001 0.001 0.0 0.0 0.0"/>
+                    <geom name="l_wrist_intermediate_link_col" class="collision" pos="0.0 0.0 -0.02" type="cylinder" size="0.035 0.02"/>
+                    <joint name="l_wrist_pitch" class="revolute" axis="0.0 1.0 0.0" range="-1.57 1.57"/>
+                    <site name="l_wrist_pitch_site" size="0.01"/>
+                    <body name="l_hand" pos="0.0 0.0 -0.04">
+                      <inertial pos="0.0 0.0 -0.07" mass="0.7" fullinertia="0.002 0.002 0.001 0.0 0.0 0.0"/>
+                      <geom name="l_hand_col" class="collision" pos="0.0 0.0 -0.07" type="box" size="0.025 0.045 0.07"/>
+                      <joint name="l_wrist_yaw" class="revolute" axis="0.0 0.0 1.0" range="-1.57 1.57"/>
+                      <site name="l_wrist_yaw_site" size="0.01"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="r_shoulder_pitch_link" pos="0.0 -0.22 0.42">
+            <inertial pos="0.0 -0.02 0.0" mass="0.7" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+            <geom name="r_shoulder_pitch_link_col" class="collision" pos="0.0 -0.02 0.0" type="cylinder" size="0.05 0.03"/>
+            <joint name="r_shoulder_pitch" class="revolute" axis="0.0 1.0 0.0" range="-3.14 1.57"/>
+            <site name="r_shoulder_pitch_site" size="0.01"/>
+            <body name="r_shoulder_roll_link" pos="0.0 -0.06 0.0">
+              <inertial pos="0.0 0.0 -0.03" mass="0.6" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+              <geom name="r_shoulder_roll_link_col" class="collision" pos="0.0 0.0 -0.03" type="cylinder" size="0.05 0.03"/>
+              <joint name="r_shoulder_roll" class="revolute" axis="1.0 0.0 0.0" range="-2.35 0.35"/>
+              <site name="r_shoulder_roll_site" size="0.01"/>
+              <body name="r_upper_arm" pos="0.0 0.0 -0.08">
+                <inertial pos="0.0 0.0 -0.12" mass="1.8" fullinertia="0.012 0.012 0.003 0.0 0.0 0.0"/>
+                <geom name="r_upper_arm_col" class="collision" pos="0.0 0.0 -0.12" type="capsule" size="0.05 0.12"/>
+                <joint name="r_shoulder_yaw" class="revolute" axis="0.0 0.0 1.0" range="-2.09 2.09"/>
+                <site name="r_shoulder_yaw_site" size="0.01"/>
+                <body name="r_forearm" pos="0.0 0.0 -0.26">
+                  <inertial pos="0.0 0.0 -0.11" mass="1.4" fullinertia="0.008 0.008 0.002 0.0 0.0 0.0"/>
+                  <geom name="r_forearm_col" class="collision" pos="0.0 0.0 -0.11" type="capsule" size="0.045 0.11"/>
+                  <joint name="r_elbow_pitch" class="revolute" axis="0.0 1.0 0.0" range="-2.61 0.0"/>
+                  <site name="r_elbow_pitch_site" size="0.01"/>
+                  <body name="r_wrist_intermediate_link" pos="0.0 0.0 -0.24">
+                    <inertial pos="0.0 0.0 -0.02" mass="0.3" fullinertia="0.001 0.001 0.001 0.0 0.0 0.0"/>
+                    <geom name="r_wrist_intermediate_link_col" class="collision" pos="0.0 0.0 -0.02" type="cylinder" size="0.035 0.02"/>
+                    <joint name="r_wrist_pitch" class="revolute" axis="0.0 1.0 0.0" range="-1.57 1.57"/>
+                    <site name="r_wrist_pitch_site" size="0.01"/>
+                    <body name="r_hand" pos="0.0 0.0 -0.04">
+                      <inertial pos="0.0 0.0 -0.07" mass="0.7" fullinertia="0.002 0.002 0.001 0.0 0.0 0.0"/>
+                      <geom name="r_hand_col" class="collision" pos="0.0 0.0 -0.07" type="box" size="0.025 0.045 0.07"/>
+                      <joint name="r_wrist_yaw" class="revolute" axis="0.0 0.0 1.0" range="-1.57 1.57"/>
+                      <site name="r_wrist_yaw_site" size="0.01"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="l_hip_yaw_link" pos="0.0 0.1 -0.08">
+        <inertial pos="0.0 0.02 -0.02" mass="1.0" fullinertia="0.003 0.003 0.003 0.0 0.0 0.0"/>
+        <geom name="l_hip_yaw_link_col" class="collision" pos="0.0 0.02 -0.02" type="cylinder" size="0.06 0.03"/>
+        <joint name="l_hip_yaw" class="revolute" axis="0.0 0.0 1.0" range="-0.78 0.78"/>
+        <site name="l_hip_yaw_site" size="0.01"/>
+        <body name="l_hip_roll_link" pos="0.0 0.04 -0.04">
+          <inertial pos="0.0 0.0 -0.03" mass="1.0" fullinertia="0.003 0.003 0.003 0.0 0.0 0.0"/>
+          <geom name="l_hip_roll_link_col" class="collision" pos="0.0 0.0 -0.03" type="cylinder" size="0.06 0.03"/>
+          <joint name="l_hip_roll" class="revolute" axis="1.0 0.0 0.0" range="-0.52 0.87"/>
+          <site name="l_hip_roll_site" size="0.01"/>
+          <body name="l_thigh" pos="0.0 0.0 -0.05">
+            <inertial pos="0.0 0.0 -0.18" mass="4.8" fullinertia="0.075 0.075 0.014 0.0 0.0 0.0"/>
+            <geom name="l_thigh_col" class="collision" pos="0.0 0.0 -0.18" type="capsule" size="0.07 0.19"/>
+            <joint name="l_hip_pitch" class="revolute" axis="0.0 1.0 0.0" range="-1.57 1.05"/>
+            <site name="l_hip_pitch_site" size="0.01"/>
+            <body name="l_shank" pos="0.0 0.0 -0.42">
+              <inertial pos="0.0 0.0 -0.17" mass="3.4" fullinertia="0.045 0.045 0.008 0.0 0.0 0.0"/>
+              <geom name="l_shank_col" class="collision" pos="0.0 0.0 -0.17" type="capsule" size="0.06 0.18"/>
+              <joint name="l_knee_pitch" class="revolute" axis="0.0 1.0 0.0" range="0.0 2.61"/>
+              <site name="l_knee_pitch_site" size="0.01"/>
+              <body name="l_ankle_pitch_link" pos="0.0 0.0 -0.4">
+                <inertial pos="0.0 0.0 -0.02" mass="0.6" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+                <geom name="l_ankle_pitch_link_col" class="collision" pos="0.0 0.0 -0.02" type="cylinder" size="0.045 0.025"/>
+                <joint name="l_ankle_pitch" class="revolute" axis="0.0 1.0 0.0" range="-0.87 0.78"/>
+                <site name="l_ankle_pitch_site" size="0.01"/>
+                <body name="l_foot" pos="0.0 0.0 -0.05">
+                  <inertial pos="0.04 0.0 -0.03" mass="1.3" fullinertia="0.005 0.011 0.013 0.0 0.0 0.0"/>
+                  <geom name="l_foot_col" class="collision" pos="0.04 0.0 -0.03" type="box" size="0.12 0.06 0.03"/>
+                  <joint name="l_ankle_roll" class="revolute" axis="1.0 0.0 0.0" range="-0.52 0.52"/>
+                  <site name="l_ankle_roll_site" size="0.01"/>
+                  <site name="l_foot_touch_site" pos="0 0 -0.02" size="0.05 0.12" type="box"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="r_hip_yaw_link" pos="0.0 -0.1 -0.08">
+        <inertial pos="0.0 -0.02 -0.02" mass="1.0" fullinertia="0.003 0.003 0.003 0.0 0.0 0.0"/>
+        <geom name="r_hip_yaw_link_col" class="collision" pos="0.0 -0.02 -0.02" type="cylinder" size="0.06 0.03"/>
+        <joint name="r_hip_yaw" class="revolute" axis="0.0 0.0 1.0" range="-0.78 0.78"/>
+        <site name="r_hip_yaw_site" size="0.01"/>
+        <body name="r_hip_roll_link" pos="0.0 -0.04 -0.04">
+          <inertial pos="0.0 0.0 -0.03" mass="1.0" fullinertia="0.003 0.003 0.003 0.0 0.0 0.0"/>
+          <geom name="r_hip_roll_link_col" class="collision" pos="0.0 0.0 -0.03" type="cylinder" size="0.06 0.03"/>
+          <joint name="r_hip_roll" class="revolute" axis="1.0 0.0 0.0" range="-0.87 0.52"/>
+          <site name="r_hip_roll_site" size="0.01"/>
+          <body name="r_thigh" pos="0.0 0.0 -0.05">
+            <inertial pos="0.0 0.0 -0.18" mass="4.8" fullinertia="0.075 0.075 0.014 0.0 0.0 0.0"/>
+            <geom name="r_thigh_col" class="collision" pos="0.0 0.0 -0.18" type="capsule" size="0.07 0.19"/>
+            <joint name="r_hip_pitch" class="revolute" axis="0.0 1.0 0.0" range="-1.57 1.05"/>
+            <site name="r_hip_pitch_site" size="0.01"/>
+            <body name="r_shank" pos="0.0 0.0 -0.42">
+              <inertial pos="0.0 0.0 -0.17" mass="3.4" fullinertia="0.045 0.045 0.008 0.0 0.0 0.0"/>
+              <geom name="r_shank_col" class="collision" pos="0.0 0.0 -0.17" type="capsule" size="0.06 0.18"/>
+              <joint name="r_knee_pitch" class="revolute" axis="0.0 1.0 0.0" range="0.0 2.61"/>
+              <site name="r_knee_pitch_site" size="0.01"/>
+              <body name="r_ankle_pitch_link" pos="0.0 0.0 -0.4">
+                <inertial pos="0.0 0.0 -0.02" mass="0.6" fullinertia="0.002 0.002 0.002 0.0 0.0 0.0"/>
+                <geom name="r_ankle_pitch_link_col" class="collision" pos="0.0 0.0 -0.02" type="cylinder" size="0.045 0.025"/>
+                <joint name="r_ankle_pitch" class="revolute" axis="0.0 1.0 0.0" range="-0.87 0.78"/>
+                <site name="r_ankle_pitch_site" size="0.01"/>
+                <body name="r_foot" pos="0.0 0.0 -0.05">
+                  <inertial pos="0.04 0.0 -0.03" mass="1.3" fullinertia="0.005 0.011 0.013 0.0 0.0 0.0"/>
+                  <geom name="r_foot_col" class="collision" pos="0.04 0.0 -0.03" type="box" size="0.12 0.06 0.03"/>
+                  <joint name="r_ankle_roll" class="revolute" axis="1.0 0.0 0.0" range="-0.52 0.52"/>
+                  <site name="r_ankle_roll_site" size="0.01"/>
+                  <site name="r_foot_touch_site" pos="0 0 -0.02" size="0.05 0.12" type="box"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <site name="pelvis" pos="0 0 0" size="0.02"/>
+    </body>
+    <camera name="head_rgbd" pos="0.05 0 1.65" xyaxes="0 -1 0 0 0 1" fovy="60" resolution="640 480"/>
+    <geom name="kitchen_counter" type="box" pos="2.5 -2.5 0.45" size="1.0 0.325 0.45" rgba="0.72 0.58 0.42 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="refrigerator" type="box" pos="3.5 -1.0 0.9" size="0.35 0.35 0.9" rgba="0.85 0.85 0.90 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="dining_table_top" type="box" pos="1.5 -1.5 0.735" size="0.7 0.4 0.035" rgba="0.60 0.45 0.30 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="sofa_seat" type="box" pos="-2.0 -2.5 0.2" size="1.05 0.45 0.2" rgba="0.4 0.3 0.7 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="coffee_table_top" type="box" pos="-2.0 -1.5 0.48" size="0.55 0.3 0.02" rgba="0.55 0.40 0.25 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="bed_base" type="box" pos="-2.5 2.5 0.15" size="1.0 0.8 0.15" rgba="0.55 0.45 0.35 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="bed_mattress" type="box" pos="-2.5 2.5 0.37" size="1.0 0.8 0.08" rgba="0.90 0.88 0.85 1" group="2" contype="1" conaffinity="1"/>
+    <geom name="nightstand" type="box" pos="-1.2 3.2 0.3" size="0.25 0.25 0.3" rgba="0.55 0.45 0.30 1" group="2" contype="1" conaffinity="1"/>
+    <body name="water_bottle_01" pos="2.5 -2.5 1.025">
+      <inertial mass="0.55" pos="0 0 0" diaginertia="0.001 0.001 0.0003"/>
+      <geom name="bottle_body" type="cylinder" pos="0 0 0" size="0.04 0.125" rgba="0.2 0.6 0.9 0.85" contype="1" conaffinity="1"/>
+      <freejoint name="bottle_joint"/>
+    </body>
+    <body name="cup_01" pos="2.2 -2.4 0.95">
+      <inertial mass="0.20" pos="0 0 0" diaginertia="0.0003 0.0003 0.0002"/>
+      <geom name="cup_body" type="cylinder" pos="0 0 0" size="0.04 0.05" rgba="0.9 0.8 0.4 1.0" contype="1" conaffinity="1"/>
+      <freejoint name="cup_joint"/>
+    </body>
+    <body name="medicine_box_01" pos="-1.2 3.2 0.63">
+      <inertial mass="0.08" pos="0 0 0" diaginertia="0.00005 0.00008 0.00006"/>
+      <geom name="medicine_box_col" type="box" pos="0 0 0" size="0.05 0.03 0.025" rgba="0.8 0.2 0.2 1.0" group="2" contype="1" conaffinity="1"/>
+      <freejoint name="medicine_box_joint"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="act_neck_yaw" joint="neck_yaw" gear="30.0" forcelimited="true" forcerange="-20.0 20.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_neck_pitch" joint="neck_pitch" gear="30.0" forcelimited="true" forcerange="-20.0 20.0" ctrllimited="true" ctrlrange="-0.78 0.78"/>
+    <motor name="act_waist_yaw" joint="waist_yaw" gear="100.0" forcelimited="true" forcerange="-150.0 150.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_waist_pitch" joint="waist_pitch" gear="100.0" forcelimited="true" forcerange="-150.0 150.0" ctrllimited="true" ctrlrange="-0.52 0.87"/>
+    <motor name="act_l_shoulder_pitch" joint="l_shoulder_pitch" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-3.14 1.57"/>
+    <motor name="act_l_shoulder_roll" joint="l_shoulder_roll" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-0.35 2.35"/>
+    <motor name="act_l_shoulder_yaw" joint="l_shoulder_yaw" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-2.09 2.09"/>
+    <motor name="act_l_elbow_pitch" joint="l_elbow_pitch" gear="60.0" forcelimited="true" forcerange="-50.0 50.0" ctrllimited="true" ctrlrange="-2.61 0.0"/>
+    <motor name="act_l_wrist_pitch" joint="l_wrist_pitch" gear="50.0" forcelimited="true" forcerange="-25.0 25.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_l_wrist_yaw" joint="l_wrist_yaw" gear="50.0" forcelimited="true" forcerange="-25.0 25.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_r_shoulder_pitch" joint="r_shoulder_pitch" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-3.14 1.57"/>
+    <motor name="act_r_shoulder_roll" joint="r_shoulder_roll" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-2.35 0.35"/>
+    <motor name="act_r_shoulder_yaw" joint="r_shoulder_yaw" gear="80.0" forcelimited="true" forcerange="-80.0 80.0" ctrllimited="true" ctrlrange="-2.09 2.09"/>
+    <motor name="act_r_elbow_pitch" joint="r_elbow_pitch" gear="60.0" forcelimited="true" forcerange="-50.0 50.0" ctrllimited="true" ctrlrange="-2.61 0.0"/>
+    <motor name="act_r_wrist_pitch" joint="r_wrist_pitch" gear="50.0" forcelimited="true" forcerange="-25.0 25.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_r_wrist_yaw" joint="r_wrist_yaw" gear="50.0" forcelimited="true" forcerange="-25.0 25.0" ctrllimited="true" ctrlrange="-1.57 1.57"/>
+    <motor name="act_l_hip_yaw" joint="l_hip_yaw" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-0.78 0.78"/>
+    <motor name="act_l_hip_roll" joint="l_hip_roll" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-0.52 0.87"/>
+    <motor name="act_l_hip_pitch" joint="l_hip_pitch" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-1.57 1.05"/>
+    <motor name="act_l_knee_pitch" joint="l_knee_pitch" gear="130.0" forcelimited="true" forcerange="-300.0 300.0" ctrllimited="true" ctrlrange="0.0 2.61"/>
+    <motor name="act_l_ankle_pitch" joint="l_ankle_pitch" gear="90.0" forcelimited="true" forcerange="-160.0 160.0" ctrllimited="true" ctrlrange="-0.87 0.78"/>
+    <motor name="act_l_ankle_roll" joint="l_ankle_roll" gear="90.0" forcelimited="true" forcerange="-160.0 160.0" ctrllimited="true" ctrlrange="-0.52 0.52"/>
+    <motor name="act_r_hip_yaw" joint="r_hip_yaw" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-0.78 0.78"/>
+    <motor name="act_r_hip_roll" joint="r_hip_roll" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-0.87 0.52"/>
+    <motor name="act_r_hip_pitch" joint="r_hip_pitch" gear="120.0" forcelimited="true" forcerange="-250.0 250.0" ctrllimited="true" ctrlrange="-1.57 1.05"/>
+    <motor name="act_r_knee_pitch" joint="r_knee_pitch" gear="130.0" forcelimited="true" forcerange="-300.0 300.0" ctrllimited="true" ctrlrange="0.0 2.61"/>
+    <motor name="act_r_ankle_pitch" joint="r_ankle_pitch" gear="90.0" forcelimited="true" forcerange="-160.0 160.0" ctrllimited="true" ctrlrange="-0.87 0.78"/>
+    <motor name="act_r_ankle_roll" joint="r_ankle_roll" gear="90.0" forcelimited="true" forcerange="-160.0 160.0" ctrllimited="true" ctrlrange="-0.52 0.52"/>
+  </actuator>
+  <sensor>
+    <jointpos name="pos_neck_yaw" joint="neck_yaw"/>
+    <jointvel name="vel_neck_yaw" joint="neck_yaw"/>
+    <actuatorfrc name="torque_neck_yaw" actuator="act_neck_yaw" noise="0.1"/>
+    <jointpos name="pos_neck_pitch" joint="neck_pitch"/>
+    <jointvel name="vel_neck_pitch" joint="neck_pitch"/>
+    <actuatorfrc name="torque_neck_pitch" actuator="act_neck_pitch" noise="0.1"/>
+    <jointpos name="pos_waist_yaw" joint="waist_yaw"/>
+    <jointvel name="vel_waist_yaw" joint="waist_yaw"/>
+    <actuatorfrc name="torque_waist_yaw" actuator="act_waist_yaw" noise="0.1"/>
+    <jointpos name="pos_waist_pitch" joint="waist_pitch"/>
+    <jointvel name="vel_waist_pitch" joint="waist_pitch"/>
+    <actuatorfrc name="torque_waist_pitch" actuator="act_waist_pitch" noise="0.1"/>
+    <jointpos name="pos_l_shoulder_pitch" joint="l_shoulder_pitch"/>
+    <jointvel name="vel_l_shoulder_pitch" joint="l_shoulder_pitch"/>
+    <actuatorfrc name="torque_l_shoulder_pitch" actuator="act_l_shoulder_pitch" noise="0.1"/>
+    <jointpos name="pos_l_shoulder_roll" joint="l_shoulder_roll"/>
+    <jointvel name="vel_l_shoulder_roll" joint="l_shoulder_roll"/>
+    <actuatorfrc name="torque_l_shoulder_roll" actuator="act_l_shoulder_roll" noise="0.1"/>
+    <jointpos name="pos_l_shoulder_yaw" joint="l_shoulder_yaw"/>
+    <jointvel name="vel_l_shoulder_yaw" joint="l_shoulder_yaw"/>
+    <actuatorfrc name="torque_l_shoulder_yaw" actuator="act_l_shoulder_yaw" noise="0.1"/>
+    <jointpos name="pos_l_elbow_pitch" joint="l_elbow_pitch"/>
+    <jointvel name="vel_l_elbow_pitch" joint="l_elbow_pitch"/>
+    <actuatorfrc name="torque_l_elbow_pitch" actuator="act_l_elbow_pitch" noise="0.1"/>
+    <jointpos name="pos_l_wrist_pitch" joint="l_wrist_pitch"/>
+    <jointvel name="vel_l_wrist_pitch" joint="l_wrist_pitch"/>
+    <actuatorfrc name="torque_l_wrist_pitch" actuator="act_l_wrist_pitch" noise="0.1"/>
+    <jointpos name="pos_l_wrist_yaw" joint="l_wrist_yaw"/>
+    <jointvel name="vel_l_wrist_yaw" joint="l_wrist_yaw"/>
+    <actuatorfrc name="torque_l_wrist_yaw" actuator="act_l_wrist_yaw" noise="0.1"/>
+    <jointpos name="pos_r_shoulder_pitch" joint="r_shoulder_pitch"/>
+    <jointvel name="vel_r_shoulder_pitch" joint="r_shoulder_pitch"/>
+    <actuatorfrc name="torque_r_shoulder_pitch" actuator="act_r_shoulder_pitch" noise="0.1"/>
+    <jointpos name="pos_r_shoulder_roll" joint="r_shoulder_roll"/>
+    <jointvel name="vel_r_shoulder_roll" joint="r_shoulder_roll"/>
+    <actuatorfrc name="torque_r_shoulder_roll" actuator="act_r_shoulder_roll" noise="0.1"/>
+    <jointpos name="pos_r_shoulder_yaw" joint="r_shoulder_yaw"/>
+    <jointvel name="vel_r_shoulder_yaw" joint="r_shoulder_yaw"/>
+    <actuatorfrc name="torque_r_shoulder_yaw" actuator="act_r_shoulder_yaw" noise="0.1"/>
+    <jointpos name="pos_r_elbow_pitch" joint="r_elbow_pitch"/>
+    <jointvel name="vel_r_elbow_pitch" joint="r_elbow_pitch"/>
+    <actuatorfrc name="torque_r_elbow_pitch" actuator="act_r_elbow_pitch" noise="0.1"/>
+    <jointpos name="pos_r_wrist_pitch" joint="r_wrist_pitch"/>
+    <jointvel name="vel_r_wrist_pitch" joint="r_wrist_pitch"/>
+    <actuatorfrc name="torque_r_wrist_pitch" actuator="act_r_wrist_pitch" noise="0.1"/>
+    <jointpos name="pos_r_wrist_yaw" joint="r_wrist_yaw"/>
+    <jointvel name="vel_r_wrist_yaw" joint="r_wrist_yaw"/>
+    <actuatorfrc name="torque_r_wrist_yaw" actuator="act_r_wrist_yaw" noise="0.1"/>
+    <jointpos name="pos_l_hip_yaw" joint="l_hip_yaw"/>
+    <jointvel name="vel_l_hip_yaw" joint="l_hip_yaw"/>
+    <actuatorfrc name="torque_l_hip_yaw" actuator="act_l_hip_yaw" noise="0.1"/>
+    <jointpos name="pos_l_hip_roll" joint="l_hip_roll"/>
+    <jointvel name="vel_l_hip_roll" joint="l_hip_roll"/>
+    <actuatorfrc name="torque_l_hip_roll" actuator="act_l_hip_roll" noise="0.1"/>
+    <jointpos name="pos_l_hip_pitch" joint="l_hip_pitch"/>
+    <jointvel name="vel_l_hip_pitch" joint="l_hip_pitch"/>
+    <actuatorfrc name="torque_l_hip_pitch" actuator="act_l_hip_pitch" noise="0.1"/>
+    <jointpos name="pos_l_knee_pitch" joint="l_knee_pitch"/>
+    <jointvel name="vel_l_knee_pitch" joint="l_knee_pitch"/>
+    <actuatorfrc name="torque_l_knee_pitch" actuator="act_l_knee_pitch" noise="0.1"/>
+    <jointpos name="pos_l_ankle_pitch" joint="l_ankle_pitch"/>
+    <jointvel name="vel_l_ankle_pitch" joint="l_ankle_pitch"/>
+    <actuatorfrc name="torque_l_ankle_pitch" actuator="act_l_ankle_pitch" noise="0.1"/>
+    <jointpos name="pos_l_ankle_roll" joint="l_ankle_roll"/>
+    <jointvel name="vel_l_ankle_roll" joint="l_ankle_roll"/>
+    <actuatorfrc name="torque_l_ankle_roll" actuator="act_l_ankle_roll" noise="0.1"/>
+    <jointpos name="pos_r_hip_yaw" joint="r_hip_yaw"/>
+    <jointvel name="vel_r_hip_yaw" joint="r_hip_yaw"/>
+    <actuatorfrc name="torque_r_hip_yaw" actuator="act_r_hip_yaw" noise="0.1"/>
+    <jointpos name="pos_r_hip_roll" joint="r_hip_roll"/>
+    <jointvel name="vel_r_hip_roll" joint="r_hip_roll"/>
+    <actuatorfrc name="torque_r_hip_roll" actuator="act_r_hip_roll" noise="0.1"/>
+    <jointpos name="pos_r_hip_pitch" joint="r_hip_pitch"/>
+    <jointvel name="vel_r_hip_pitch" joint="r_hip_pitch"/>
+    <actuatorfrc name="torque_r_hip_pitch" actuator="act_r_hip_pitch" noise="0.1"/>
+    <jointpos name="pos_r_knee_pitch" joint="r_knee_pitch"/>
+    <jointvel name="vel_r_knee_pitch" joint="r_knee_pitch"/>
+    <actuatorfrc name="torque_r_knee_pitch" actuator="act_r_knee_pitch" noise="0.1"/>
+    <jointpos name="pos_r_ankle_pitch" joint="r_ankle_pitch"/>
+    <jointvel name="vel_r_ankle_pitch" joint="r_ankle_pitch"/>
+    <actuatorfrc name="torque_r_ankle_pitch" actuator="act_r_ankle_pitch" noise="0.1"/>
+    <jointpos name="pos_r_ankle_roll" joint="r_ankle_roll"/>
+    <jointvel name="vel_r_ankle_roll" joint="r_ankle_roll"/>
+    <actuatorfrc name="torque_r_ankle_roll" actuator="act_r_ankle_roll" noise="0.1"/>
+    <touch name="touch_l_foot" site="l_foot_touch_site"/>
+    <touch name="touch_r_foot" site="r_foot_touch_site"/>
+  </sensor>
+</mujoco>

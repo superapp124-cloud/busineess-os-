@@ -1,0 +1,4 @@
+<mujoco model="chatr_household">
+  <include file="C:\Users\Arshid.Wani\chatrchat\sim-server\models\chatr_h170.xml"/>
+  <include file="C:\Users\Arshid.Wani\chatrchat\sim-server\environments\household_env.xml"/>
+</mujoco>

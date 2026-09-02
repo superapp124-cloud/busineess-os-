@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-ai-bridge",
+  "version": "1.0.0",
+  "description": "Multi-Lingual 7-Language Indian NLU, Local Ollama Bridge, Spatial Grounding & Operational Explainer for CHATR Humanoid OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

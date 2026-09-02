@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-skills",
+  "version": "1.0.0",
+  "description": "30 Canonical Household Skills with Typed Contracts, Preconditions & Safety Gates for CHATR Humanoid OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

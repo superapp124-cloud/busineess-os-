@@ -1,0 +1,18 @@
+{
+  "name": "@chatr/sim-bridge",
+  "version": "1.0.0",
+  "description": "CHATR Simulation Authority Bridge — Gate 8.5. Connects RobotOS to MuJoCo / Isaac Sim physics engine.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@chatr/robot-physics": "*",
+    "@chatr/robot-profiles": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^4.1.0"
+  }
+}

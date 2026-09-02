@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-rhab",
+  "version": "1.0.0",
+  "description": "Robot Hardware Abstraction Layer (RHAB) for CHATR Humanoid / Home Robot OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

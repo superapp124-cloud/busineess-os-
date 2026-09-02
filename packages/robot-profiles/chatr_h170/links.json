@@ -1,0 +1,234 @@
+[
+  {
+    "id": "pelvis",
+    "name": "Pelvis Base Link",
+    "massKg": 12.2,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": 0.0 },
+    "inertia": { "ixx": 0.10, "iyy": 0.08, "izz": 0.09, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.22, "width": 0.28, "height": 0.18 }, "offset": { "x": 0.0, "y": 0.0, "z": 0.0 } }
+  },
+  {
+    "id": "waist_intermediate_link",
+    "name": "Waist Intermediate Link",
+    "massKg": 1.0,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": 0.02 },
+    "inertia": { "ixx": 0.005, "iyy": 0.005, "izz": 0.006, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.08, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.0, "z": 0.0 } }
+  },
+  {
+    "id": "torso",
+    "name": "Upper Torso",
+    "massKg": 16.2,
+    "centerOfMassMeters": { "x": 0.01, "y": 0.0, "z": 0.22 },
+    "inertia": { "ixx": 0.30, "iyy": 0.25, "izz": 0.22, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.26, "width": 0.38, "height": 0.48 }, "offset": { "x": 0.0, "y": 0.0, "z": 0.22 } }
+  },
+  {
+    "id": "neck_link",
+    "name": "Neck Link",
+    "massKg": 0.6,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": 0.04 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.05, "height": 0.08 }, "offset": { "x": 0.0, "y": 0.0, "z": 0.04 } }
+  },
+  {
+    "id": "head",
+    "name": "Head Sensor Pod",
+    "massKg": 2.8,
+    "centerOfMassMeters": { "x": 0.02, "y": 0.0, "z": 0.10 },
+    "inertia": { "ixx": 0.022, "iyy": 0.020, "izz": 0.019, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "sphere", "dimensions": { "radius": 0.12 }, "offset": { "x": 0.0, "y": 0.0, "z": 0.10 } }
+  },
+  {
+    "id": "l_shoulder_pitch_link",
+    "name": "Left Shoulder Pitch Link",
+    "massKg": 0.7,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.02, "z": 0.0 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.05, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.02, "z": 0.0 } }
+  },
+  {
+    "id": "l_shoulder_roll_link",
+    "name": "Left Shoulder Roll Link",
+    "massKg": 0.6,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.05, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.03 } }
+  },
+  {
+    "id": "l_upper_arm",
+    "name": "Left Upper Arm",
+    "massKg": 1.8,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.12 },
+    "inertia": { "ixx": 0.012, "iyy": 0.012, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.05, "height": 0.24 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.12 } }
+  },
+  {
+    "id": "l_forearm",
+    "name": "Left Forearm",
+    "massKg": 1.4,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.11 },
+    "inertia": { "ixx": 0.008, "iyy": 0.008, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.045, "height": 0.22 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.11 } }
+  },
+  {
+    "id": "l_wrist_intermediate_link",
+    "name": "Left Wrist Intermediate Link",
+    "massKg": 0.3,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.02 },
+    "inertia": { "ixx": 0.001, "iyy": 0.001, "izz": 0.001, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.035, "height": 0.04 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.02 } }
+  },
+  {
+    "id": "l_hand",
+    "name": "Left Dexterous Hand",
+    "massKg": 0.7,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.07 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.001, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.05, "width": 0.09, "height": 0.14 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.07 } }
+  },
+  {
+    "id": "r_shoulder_pitch_link",
+    "name": "Right Shoulder Pitch Link",
+    "massKg": 0.7,
+    "centerOfMassMeters": { "x": 0.0, "y": -0.02, "z": 0.0 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.05, "height": 0.06 }, "offset": { "x": 0.0, "y": -0.02, "z": 0.0 } }
+  },
+  {
+    "id": "r_shoulder_roll_link",
+    "name": "Right Shoulder Roll Link",
+    "massKg": 0.6,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.05, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.03 } }
+  },
+  {
+    "id": "r_upper_arm",
+    "name": "Right Upper Arm",
+    "massKg": 1.8,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.12 },
+    "inertia": { "ixx": 0.012, "iyy": 0.012, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.05, "height": 0.24 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.12 } }
+  },
+  {
+    "id": "r_forearm",
+    "name": "Right Forearm",
+    "massKg": 1.4,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.11 },
+    "inertia": { "ixx": 0.008, "iyy": 0.008, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.045, "height": 0.22 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.11 } }
+  },
+  {
+    "id": "r_wrist_intermediate_link",
+    "name": "Right Wrist Intermediate Link",
+    "massKg": 0.3,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.02 },
+    "inertia": { "ixx": 0.001, "iyy": 0.001, "izz": 0.001, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.035, "height": 0.04 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.02 } }
+  },
+  {
+    "id": "r_hand",
+    "name": "Right Dexterous Hand",
+    "massKg": 0.7,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.07 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.001, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.05, "width": 0.09, "height": 0.14 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.07 } }
+  },
+  {
+    "id": "l_hip_yaw_link",
+    "name": "Left Hip Yaw Link",
+    "massKg": 1.0,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.02, "z": -0.02 },
+    "inertia": { "ixx": 0.003, "iyy": 0.003, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.06, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.02, "z": -0.02 } }
+  },
+  {
+    "id": "l_hip_roll_link",
+    "name": "Left Hip Roll Link",
+    "massKg": 1.0,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.003, "iyy": 0.003, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.06, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.03 } }
+  },
+  {
+    "id": "l_thigh",
+    "name": "Left Thigh",
+    "massKg": 4.8,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.18 },
+    "inertia": { "ixx": 0.075, "iyy": 0.075, "izz": 0.014, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.07, "height": 0.38 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.18 } }
+  },
+  {
+    "id": "l_shank",
+    "name": "Left Shank",
+    "massKg": 3.4,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.17 },
+    "inertia": { "ixx": 0.045, "iyy": 0.045, "izz": 0.008, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.06, "height": 0.36 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.17 } }
+  },
+  {
+    "id": "l_ankle_pitch_link",
+    "name": "Left Ankle Pitch Link",
+    "massKg": 0.6,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.02 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.045, "height": 0.05 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.02 } }
+  },
+  {
+    "id": "l_foot",
+    "name": "Left Foot",
+    "massKg": 1.3,
+    "centerOfMassMeters": { "x": 0.04, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.005, "iyy": 0.011, "izz": 0.013, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.24, "width": 0.12, "height": 0.06 }, "offset": { "x": 0.04, "y": 0.0, "z": -0.03 } }
+  },
+  {
+    "id": "r_hip_yaw_link",
+    "name": "Right Hip Yaw Link",
+    "massKg": 1.0,
+    "centerOfMassMeters": { "x": 0.0, "y": -0.02, "z": -0.02 },
+    "inertia": { "ixx": 0.003, "iyy": 0.003, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.06, "height": 0.06 }, "offset": { "x": 0.0, "y": -0.02, "z": -0.02 } }
+  },
+  {
+    "id": "r_hip_roll_link",
+    "name": "Right Hip Roll Link",
+    "massKg": 1.0,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.003, "iyy": 0.003, "izz": 0.003, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.06, "height": 0.06 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.03 } }
+  },
+  {
+    "id": "r_thigh",
+    "name": "Right Thigh",
+    "massKg": 4.8,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.18 },
+    "inertia": { "ixx": 0.075, "iyy": 0.075, "izz": 0.014, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.07, "height": 0.38 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.18 } }
+  },
+  {
+    "id": "r_shank",
+    "name": "Right Shank",
+    "massKg": 3.4,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.17 },
+    "inertia": { "ixx": 0.045, "iyy": 0.045, "izz": 0.008, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "capsule", "dimensions": { "radius": 0.06, "height": 0.36 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.17 } }
+  },
+  {
+    "id": "r_ankle_pitch_link",
+    "name": "Right Ankle Pitch Link",
+    "massKg": 0.6,
+    "centerOfMassMeters": { "x": 0.0, "y": 0.0, "z": -0.02 },
+    "inertia": { "ixx": 0.002, "iyy": 0.002, "izz": 0.002, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "cylinder", "dimensions": { "radius": 0.045, "height": 0.05 }, "offset": { "x": 0.0, "y": 0.0, "z": -0.02 } }
+  },
+  {
+    "id": "r_foot",
+    "name": "Right Foot",
+    "massKg": 1.3,
+    "centerOfMassMeters": { "x": 0.04, "y": 0.0, "z": -0.03 },
+    "inertia": { "ixx": 0.005, "iyy": 0.011, "izz": 0.013, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 },
+    "collision": { "type": "box", "dimensions": { "length": 0.24, "width": 0.12, "height": 0.06 }, "offset": { "x": 0.04, "y": 0.0, "z": -0.03 } }
+  }
+]

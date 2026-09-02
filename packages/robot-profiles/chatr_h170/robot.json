@@ -1,0 +1,18 @@
+{
+  "modelName": "CHATR-H170",
+  "version": "1.0.0",
+  "heightMeters": 1.75,
+  "totalMassKg": 68.0,
+  "dofCount": 28,
+  "baseLink": "pelvis",
+  "nominalStandingHeightMeters": 0.88,
+  "nominalComMeters": {
+    "x": 0.005,
+    "y": 0.0,
+    "z": 0.92
+  },
+  "footprintDimensionsMeters": {
+    "length": 0.24,
+    "width": 0.12
+  }
+}

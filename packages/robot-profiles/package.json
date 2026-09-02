@@ -1,0 +1,8 @@
+{
+  "name": "@chatr/robot-profiles",
+  "version": "1.0.0",
+  "description": "Digital Twin Profiles & Validated Physical Models for CHATR Humanoid / Home Robot OS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module"
+}

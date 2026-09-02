@@ -1,0 +1,74 @@
+{
+  "cameras": [
+    {
+      "id": "head_rgb",
+      "parentLink": "head",
+      "mountOffsetMeters": { "x": 0.08, "y": 0.03, "z": 0.05 },
+      "mountOrientationRpyRad": { "x": 0.0, "y": 0.15, "z": 0.0 },
+      "resolution": { "width": 1280, "height": 720 },
+      "fovHorizontalDeg": 86.0,
+      "fovVerticalDeg": 57.0,
+      "frameRateHz": 30,
+      "minRangeMeters": 0.1,
+      "maxRangeMeters": 10.0,
+      "noiseStandardDeviation": 0.01
+    },
+    {
+      "id": "head_depth",
+      "parentLink": "head",
+      "mountOffsetMeters": { "x": 0.08, "y": -0.03, "z": 0.05 },
+      "mountOrientationRpyRad": { "x": 0.0, "y": 0.15, "z": 0.0 },
+      "resolution": { "width": 640, "height": 480 },
+      "fovHorizontalDeg": 86.0,
+      "fovVerticalDeg": 57.0,
+      "frameRateHz": 30,
+      "minRangeMeters": 0.2,
+      "maxRangeMeters": 5.0,
+      "noiseStandardDeviation": 0.02
+    }
+  ],
+  "imus": [
+    {
+      "id": "torso_imu_01",
+      "parentLink": "torso",
+      "mountOffsetMeters": { "x": 0.0, "y": 0.0, "z": 0.10 },
+      "accelerometerNoiseDensity": 0.0001,
+      "gyroscopeNoiseDensity": 0.00005,
+      "updateRateHz": 500
+    },
+    {
+      "id": "pelvis_imu_02",
+      "parentLink": "pelvis",
+      "mountOffsetMeters": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "accelerometerNoiseDensity": 0.0001,
+      "gyroscopeNoiseDensity": 0.00005,
+      "updateRateHz": 500
+    }
+  ],
+  "footSensors": [
+    {
+      "id": "l_foot_contact_array",
+      "parentLink": "l_foot",
+      "gaugePositionsMeters": [
+        { "x": 0.08, "y": 0.04, "z": -0.03 },
+        { "x": 0.08, "y": -0.04, "z": -0.03 },
+        { "x": -0.08, "y": 0.04, "z": -0.03 },
+        { "x": -0.08, "y": -0.04, "z": -0.03 }
+      ],
+      "maxNormalForcePerGaugeN": 500.0,
+      "updateRateHz": 500
+    },
+    {
+      "id": "r_foot_contact_array",
+      "parentLink": "r_foot",
+      "gaugePositionsMeters": [
+        { "x": 0.08, "y": 0.04, "z": -0.03 },
+        { "x": 0.08, "y": -0.04, "z": -0.03 },
+        { "x": -0.08, "y": 0.04, "z": -0.03 },
+        { "x": -0.08, "y": -0.04, "z": -0.03 }
+      ],
+      "maxNormalForcePerGaugeN": 500.0,
+      "updateRateHz": 500
+    }
+  ]
+}
