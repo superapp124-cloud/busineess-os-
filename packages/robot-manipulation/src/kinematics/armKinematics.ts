@@ -27,6 +27,24 @@ export class ArmKinematics {
   };
 
   /**
+   * Alias for computeForwardKinematics matching UI canvas expectations.
+   */
+  public static computeFK(
+    joints: ArmJointAngles,
+    side: ArmSide = 'RIGHT',
+    torsoPos: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0.95 }
+  ): { endEffectorPose: EndEffectorPose; jointPositionsWorld: Vector3[] } {
+    return this.computeForwardKinematics(
+      side,
+      joints,
+      {
+        position: new Vector3(torsoPos.x, torsoPos.y, torsoPos.z),
+        orientation: new Quaternion(1, 0, 0, 0),
+      }
+    );
+  }
+
+  /**
    * Computes Forward Kinematics (FK) for 7-DOF arm given joint angles and base torso position.
    */
   public static computeForwardKinematics(

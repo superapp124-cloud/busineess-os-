@@ -135,20 +135,41 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
       ctx.stroke();
 
       // Compute Forward Kinematics for Arms
-      const fkRight = ArmKinematics.computeFK(currentRightArm, 'RIGHT', {
-        x: currentTorsoX,
-        y: currentTorsoY - 0.20,
-        z: torsoZ + 0.32,
-      });
+      let fkRight = { jointPositionsWorld: [] as any[] };
+      let fkLeft  = { jointPositionsWorld: [] as any[] };
 
-      const fkLeft = ArmKinematics.computeFK(currentLeftArm, 'LEFT', {
-        x: currentTorsoX,
-        y: currentTorsoY + 0.20,
-        z: torsoZ + 0.32,
-      });
+      try {
+        if (typeof ArmKinematics.computeFK === 'function') {
+          fkRight = ArmKinematics.computeFK(currentRightArm, 'RIGHT', {
+            x: currentTorsoX,
+            y: currentTorsoY - 0.20,
+            z: torsoZ + 0.32,
+          });
+          fkLeft = ArmKinematics.computeFK(currentLeftArm, 'LEFT', {
+            x: currentTorsoX,
+            y: currentTorsoY + 0.20,
+            z: torsoZ + 0.32,
+          });
+        } else if (typeof ArmKinematics.computeForwardKinematics === 'function') {
+          fkRight = ArmKinematics.computeForwardKinematics('RIGHT', currentRightArm, {
+            position: new Vector3(currentTorsoX, currentTorsoY - 0.20, torsoZ + 0.32),
+            orientation: new Quaternion(1, 0, 0, 0),
+          });
+          fkLeft = ArmKinematics.computeForwardKinematics('LEFT', currentLeftArm, {
+            position: new Vector3(currentTorsoX, currentTorsoY + 0.20, torsoZ + 0.32),
+            orientation: new Quaternion(1, 0, 0, 0),
+          });
+        }
+      } catch (e) {
+        // Safe fallback
+      }
 
-      drawArmChain(ctx, fkRight.jointPositionsWorld, rotationAngle, cx, cy, scale, '#10b981');
-      drawArmChain(ctx, fkLeft.jointPositionsWorld, rotationAngle, cx, cy, scale, '#6366f1');
+      if (fkRight.jointPositionsWorld.length > 0) {
+        drawArmChain(ctx, fkRight.jointPositionsWorld, rotationAngle, cx, cy, scale, '#10b981');
+      }
+      if (fkLeft.jointPositionsWorld.length > 0) {
+        drawArmChain(ctx, fkLeft.jointPositionsWorld, rotationAngle, cx, cy, scale, '#6366f1');
+      }
 
       // Draw Legs & Feet based on Walking State & Physics
       drawLegs(ctx, new Vector3(currentTorsoX, currentTorsoY, currentTorsoZ), walkingState, rotationAngle, cx, cy, scale);
