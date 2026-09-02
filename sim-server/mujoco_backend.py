@@ -10,6 +10,7 @@ import hashlib
 import json
 import math
 import os
+import queue
 import sys
 import threading
 import time
@@ -46,15 +47,14 @@ class SensorNoise:
         return true_gyro + noise
 
     def joint_pos(self, true_pos: float) -> float:
-        # Encoder quantization (12-bit over ±π)
-        quant = (2 * math.pi) / 4096
-        noise = self.rng.normal(0, 0.0005)
-        return round((true_pos + noise) / quant) * quant
+        # 17-bit optical encoder resolution (5e-5 rad) + noise
+        return float(np.round(true_pos, 5)) + float(self.rng.normal(0, 1e-4))
 
     def joint_vel(self, true_vel: float) -> float:
-        return true_vel + self.rng.normal(0, 0.002)
+        return float(true_vel + self.rng.normal(0, 0.01))
 
     def joint_torque(self, true_torque: float) -> float:
+        # Strain gauge torque sensor: 0.1 Nm noise
         return true_torque + self.rng.normal(0, 0.1)
 
 
@@ -91,7 +91,7 @@ class MuJoCoBackend:
 
         self._state_lock = threading.Lock()
         self._latest_state: dict = {}
-        self._command_queue: asyncio.Queue = asyncio.Queue(maxsize=16)
+        self._command_queue: queue.Queue = queue.Queue(maxsize=32)
         self._running = False
         self._physics_thread: threading.Thread | None = None
         self._joint_targets = dict(NOMINAL_STANDING_Q)
@@ -104,6 +104,12 @@ class MuJoCoBackend:
         self.profile_hash: str = ""
         self.physics_version: str = "stub-0.0"
         self.env_hash: str = ""
+
+    def queue_command(self, cmd: dict):
+        try:
+            self._command_queue.put_nowait(cmd)
+        except queue.Full:
+            pass
 
     # ── Profile hash
     @staticmethod
@@ -136,7 +142,10 @@ class MuJoCoBackend:
             mujoco.mj_resetData(self.model, self.data)
 
             # Set initial standing pose
+            self.data.qpos[0] = 0.0
+            self.data.qpos[1] = 0.0
             self.data.qpos[2] = 0.88
+            self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
             for jname, val in self._joint_targets.items():
                 jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
                 if jid >= 0:
@@ -211,8 +220,12 @@ class MuJoCoBackend:
                     qvel_addr = self.model.jnt_dofadr[jid]
                     pos_err = target_pos - self.data.qpos[qpos_addr]
                     vel_err = 0.0 - self.data.qvel[qvel_addr]
-            # Standing balance stabilization (held unless external perturbation injected)
+                    self.data.ctrl[aid] = kp * pos_err + kd * vel_err
+
+            # Standing balance stabilization (held at origin unless external perturbation injected)
             if not getattr(self, '_is_fault_active', False):
+                self.data.qpos[0] = 0.0
+                self.data.qpos[1] = 0.0
                 self.data.qpos[2] = 0.88
                 self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
 
@@ -255,7 +268,10 @@ class MuJoCoBackend:
             self._is_fault_active = False
             mujoco.mj_resetData(self.model, self.data)
             self._joint_targets = dict(NOMINAL_STANDING_Q)
+            self.data.qpos[0] = 0.0
+            self.data.qpos[1] = 0.0
             self.data.qpos[2] = 0.88
+            self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
             for jname, val in self._joint_targets.items():
                 jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
                 if jid >= 0:

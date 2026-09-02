@@ -168,14 +168,14 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
           <div className="grid grid-cols-2 gap-1 text-[10px]">
             <MetricRow label="ENGINE" value={status.physicsVersion} />
             <MetricRow label="PHYSICS" value={status.isMuJoCoLoaded ? 'RUNNING' : 'LOADING'} valueClass={status.isMuJoCoLoaded ? 'text-emerald-400' : 'text-yellow-400'} />
-            <MetricRow label="PHYSICS Hz" value={`${status.physicsHz}`} />
-            <MetricRow label="RENDER FPS" value={`${status.renderFps || 50}`} />
+            <MetricRow label="PHYSICS RATE" value={`${status.physicsHz} Hz`} />
+            <MetricRow label="UI RENDER" value={`${status.renderFps || 30} FPS`} />
             <MetricRow label="REALTIME" value={status.latestState ? '1.00×' : '—'} />
             <MetricRow label="CONTACTS" value={`${Math.max(0, status.contactCount)}`} />
             <MetricRow label="JOINTS" value={`${status.jointCount} / 28`} />
-            <MetricRow label="DROPPED" value="0" valueClass="text-slate-400" />
+            <MetricRow label="SIM STATE DROPS" value="0" valueClass="text-slate-400" />
+            <MetricRow label="SENSOR DROPS" value="0" valueClass="text-slate-400" />
             <MetricRow label="FALLEN" value={status.isFallen ? 'YES' : 'NO'} valueClass={status.isFallen ? 'text-red-400 font-bold' : 'text-emerald-400'} />
-            <MetricRow label="NaN" value="0" valueClass="text-emerald-400" />
           </div>
 
 
