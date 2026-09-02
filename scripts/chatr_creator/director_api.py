@@ -277,12 +277,28 @@ class PromptVideoRequest(BaseModel):
 
 @app.post("/api/prompt/generate-video")
 def api_generate_prompt_video(req: PromptVideoRequest):
-    try:
-        from gemini_video_prompt_generator import generate_video_from_prompt
-    except ImportError:
-        from scripts.chatr_creator.gemini_video_prompt_generator import generate_video_from_prompt
-        
-    res = generate_video_from_prompt(req.prompt_data)
+    p = req.prompt_data
+    dur = int(p.get("duration_sec", 30))
+    if dur > 10:
+        try:
+            from influencer_vlog_engine import generate_influencer_vlog
+        except ImportError:
+            from scripts.chatr_creator.influencer_vlog_engine import generate_influencer_vlog
+        res = generate_influencer_vlog(
+            topic=p.get("topic", "Social Vlog"),
+            place=p.get("place", "paris"),
+            wardrobe=p.get("wardrobe", "summer_dress"),
+            ambience=p.get("ambience", "golden_hour"),
+            platform=p.get("platform", "instagram_reel"),
+            duration_sec=dur,
+            language=p.get("language", "english")
+        )
+    else:
+        try:
+            from gemini_video_prompt_generator import generate_video_from_prompt
+        except ImportError:
+            from scripts.chatr_creator.gemini_video_prompt_generator import generate_video_from_prompt
+        res = generate_video_from_prompt(p)
     return res
 
 if __name__ == "__main__":

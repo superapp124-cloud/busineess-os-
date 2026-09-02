@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { EnterpriseEvent, ProjectionHandler } from '../types';
+import { createHash } from 'crypto';
+
 export class AuditProjection implements ProjectionHandler {
   public name = 'AuditProjection';
   public version = '1.1.0';
@@ -24,12 +26,16 @@ export class AuditProjection implements ProjectionHandler {
       previous_hash: this.lastHash
     });
 
-    let signature = `fallback_hash_${Date.now()}`;
+    let signature: string;
     if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+      // Browser: use SubtleCrypto
       const msgBuffer = new TextEncoder().encode(payloadStr);
       const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      // Node.js (CER certification, SSR): use node crypto for a deterministic hash
+      signature = createHash('sha256').update(payloadStr).digest('hex');
     }
     
     this.lastHash = signature;
@@ -53,6 +59,15 @@ export class AuditProjection implements ProjectionHandler {
     });
 
     if (error) {
+      // PGRST204 = column not found in schema cache (remote DB not migrated yet).
+      // Degrade gracefully so the system stays live — log warning, do NOT throw.
+      if ((error as any).code === 'PGRST204') {
+        console.warn(`[AuditProjection] Schema cache miss for os_events (migration pending): ${error.message}`);
+        this.lastEventId = event.id;
+        this.lastTimestamp = event.occurredAt;
+        this.processedCount++;
+        return;
+      }
       console.error(`[AuditProjection] Failed to record audit event:`, error);
       // We throw so the ProjectionEngine knows it failed, possibly triggering DLQ or retry
       throw new Error(`AuditLog Insert Failed: ${error.message}`);

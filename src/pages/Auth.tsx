@@ -27,7 +27,7 @@ const Auth = () => {
         logAuthEvent('Auth page: Checking session');
         
         const timeoutPromise = new Promise<{ data: { session: any }, error: any }>((resolve) => 
-          setTimeout(() => resolve({ data: { session: null }, error: null }), 2500)
+          setTimeout(() => resolve({ data: { session: null }, error: null }), 800)
         );
         
         const { data: { session }, error: sessionError } = await Promise.race([
@@ -35,54 +35,54 @@ const Auth = () => {
           timeoutPromise
         ]);
         
-        if (sessionError) {
-          logAuthError('Session check', sessionError);
+        if (sessionError || !session) {
+          if (sessionError) logAuthError('Session check', sessionError);
           setLoading(false);
           return;
         }
 
-        if (session) {
-          logAuthEvent('Active session found', {
-            userId: session.user.id,
-            email: session.user.email,
-            provider: session.user.app_metadata?.provider,
-          });
-          
-          setUserId(session.user.id);
-          
-          const { data: profile } = await (supabase as any)
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
+        logAuthEvent('Active session found', {
+          userId: session.user.id,
+          email: session.user.email,
+          provider: session.user.app_metadata?.provider,
+        });
+        
+        setUserId(session.user.id);
+        
+        const dbTimeout = new Promise<any>((resolve) => setTimeout(() => resolve({ data: null }), 1200));
 
-          const { data: roles } = await (supabase as any)
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id);
-          
-          const isAdmin = roles?.some((r: any) => r.role === "admin");
-          const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
-          const storedRedirect = sessionStorage.getItem('auth_redirect');
-          const redirectPath = stateFrom || storedRedirect;
-          if (storedRedirect) sessionStorage.removeItem('auth_redirect');
-          
-          if (isAdmin) {
-            navigate('/admin', { replace: true });
-            return;
-          }
+        const [profileRes, rolesRes] = await Promise.all([
+          Promise.race([
+            (supabase as any).from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+            dbTimeout
+          ]),
+          Promise.race([
+            (supabase as any).from("user_roles").select("role").eq("user_id", session.user.id),
+            dbTimeout
+          ])
+        ]);
 
-          if (profile?.onboarding_completed !== false) {
-            console.log('[AUTH] User authenticated, entering app:', profile?.username || session.user.email);
-            navigate(redirectPath || '/', { replace: true });
-            return;
-          }
-          
-          // New user needing onboarding
-          setLoading(false);
+        const profile = profileRes?.data;
+        const roles = rolesRes?.data;
+        
+        const isAdmin = roles?.some((r: any) => r.role === "admin");
+        const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+        const storedRedirect = sessionStorage.getItem('auth_redirect');
+        const redirectPath = stateFrom || storedRedirect;
+        if (storedRedirect) sessionStorage.removeItem('auth_redirect');
+        
+        if (isAdmin) {
+          navigate('/admin', { replace: true });
           return;
         }
 
+        if (profile?.onboarding_completed !== false) {
+          console.log('[AUTH] User authenticated, entering app:', profile?.username || session.user.email);
+          navigate(redirectPath || '/', { replace: true });
+          return;
+        }
+        
+        // New user needing onboarding
         setLoading(false);
       } catch (error) {
         console.error('Session check error:', error);

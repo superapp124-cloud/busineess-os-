@@ -406,6 +406,7 @@ export const RecruiterWorkspace: React.FC = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         const CHUNK_SIZE = 50;
+        let successCount = 0;
         for (let i = 0; i < newCandidates.length; i += CHUNK_SIZE) {
           const chunk = newCandidates.slice(i, i + CHUNK_SIZE);
           const rows = chunk.map((c) => ({
@@ -430,9 +431,13 @@ export const RecruiterWorkspace: React.FC = () => {
             intelligence_artifact: c.source_artifact || null,
           }));
           const { error } = await supabase.from('rec_candidates').upsert(rows as any, { onConflict: 'id' });
-          if (error) console.warn(`[BatchImport] Supabase upsert chunk ${i / CHUNK_SIZE + 1} error:`, error.message);
+          if (!error) {
+            successCount += rows.length;
+          } else {
+            console.warn(`[BatchImport] Supabase upsert chunk ${i / CHUNK_SIZE + 1} error:`, error.message);
+          }
         }
-        console.log(`[BatchImport] ✅ Persisted ${newCandidates.length} candidates to Supabase.`);
+        console.log(`[BatchImport] ✅ Persisted ${successCount}/${newCandidates.length} candidates to Supabase.`);
       } catch (e) {
         console.warn('[BatchImport] Supabase persist error:', e);
       }

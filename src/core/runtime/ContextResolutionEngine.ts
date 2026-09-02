@@ -26,35 +26,38 @@ export class ContextResolutionEngine {
       // SIMULATED METADATA RESOLUTION
       if (text.includes('contract') || text.includes('alois') || text.includes('addendum')) {
         // High confidence vendor contract
-        const vendorNode = this.graph.getNode('org:alois');
+        const vendorNode = await this.graph.getNode('org:alois');
         if (vendorNode) {
+          const relatedRaw = await this.graph.getRelatedNodes('org:alois');
           resolvedNodes.push({
             node: vendorNode,
             confidence: 96,
             evidence: ['✓ Contract Title Detected', '✓ Vendor Email Match', '✓ Previous Agreement Found'],
-            relatedNodes: this.graph.getRelatedNodes('org:alois').map(r => r.node)
+            relatedNodes: Array.isArray(relatedRaw) ? relatedRaw.map(r => r.target) : []
           });
         }
       } else if (text.includes('resume') || text.includes('cv') || text.includes('deepu')) {
         // Hiring candidate context
-        const candidateNode = this.graph.getNode('person:deepu');
+        const candidateNode = await this.graph.getNode('person:deepu');
         if (candidateNode) {
+          const relatedRaw = await this.graph.getRelatedNodes('person:deepu');
           resolvedNodes.push({
             node: candidateNode,
             confidence: 92,
             evidence: ['✓ Resume Format Detected', '✓ HR System Record Match'],
-            relatedNodes: this.graph.getRelatedNodes('person:deepu').map(r => r.node)
+            relatedNodes: Array.isArray(relatedRaw) ? relatedRaw.map(r => r.target) : []
           });
         }
       } else {
         // Default to internal employee / expense context
-        const employeeNode = this.graph.getNode('person:arshid');
+        const employeeNode = await this.graph.getNode('person:arshid');
         if (employeeNode) {
+          const relatedRaw = await this.graph.getRelatedNodes('person:arshid');
           resolvedNodes.push({
             node: employeeNode,
             confidence: 88,
             evidence: ['✓ Employee ID Detected', '✓ Expense Policy Keyword'],
-            relatedNodes: this.graph.getRelatedNodes('person:arshid').map(r => r.node)
+            relatedNodes: Array.isArray(relatedRaw) ? relatedRaw.map(r => r.target) : []
           });
         }
       }

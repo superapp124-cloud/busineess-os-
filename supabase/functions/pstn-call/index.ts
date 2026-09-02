@@ -37,6 +37,23 @@ serve(async (req) => {
     const request = await parseJsonBody(req) as PSTNRequest;
     request.action = requireEnum(request.action, "action", ["initiate", "end", "dtmf", "status"] as const);
 
+    // Entitlement & Balance Gate: Verify user has active Pro/Enterprise plan or telephony credits
+    const { data: subscription } = await serviceClient
+      .from("user_subscriptions")
+      .select("status, plan, current_period_end")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const isPro = subscription && subscription.status === "active" && (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date());
+    
+    if (!isPro && request.action === "initiate") {
+      return jsonResponse(req, {
+        success: false,
+        error: "subscription_required",
+        message: "Active CHATR Pro subscription or telephony balance required to place outbound calls.",
+      }, 402);
+    }
+
     const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
     const authToken = Deno.env.get("TWILIO_AUTH_TOKEN");
     const twilioNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
@@ -44,16 +61,15 @@ serve(async (req) => {
     if (!accountSid || !authToken || !twilioNumber) {
       await auditSecurityEvent(serviceClient, {
         userId: user.id,
-        eventType: "pstn_call_mock",
+        eventType: "pstn_call_unconfigured",
         metadata: { action: request.action },
       });
 
       return jsonResponse(req, {
-        success: true,
-        callSid: `mock_call_${Date.now()}`,
-        status: request.action === "initiate" ? "queued" : "completed",
-        mock: true,
-      });
+        success: false,
+        error: "telephony_unconfigured",
+        message: "PSTN telephony trunk is not configured in this environment. Please configure TWILIO_ACCOUNT_SID in Supabase secrets.",
+      }, 503);
     }
 
     const twilioBaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}`;

@@ -140,15 +140,27 @@
         <option value="youtube_video">📺 YouTube Video / Explainer (16:9)</option>
       </select>
     </div>
+
+    <!-- Duration -->
+    <div>
+      <label>⏱️ Target Duration</label>
+      <select id="durationSelect">
+        <option value="30" selected>📱 30 Seconds (Complete Reel - 5 Shots)</option>
+        <option value="60">⏱️ 60 Seconds (Full 1-Minute Story - 10 Shots)</option>
+        <option value="120">📺 2 Minutes (YouTube Explainer)</option>
+        <option value="300">🎙️ 5 Minutes (Extended Masterclass)</option>
+        <option value="8">🎬 8 Seconds (Quick Diffusion Scene)</option>
+      </select>
+    </div>
   </div>
 
   <div style="display: flex; gap: 10px; margin-bottom: 14px;">
     <button class="btn btn-step" onclick="previewVisualPrompt()" style="flex:1;">✨ 1. Preview Visual Prompt & Script</button>
-    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Live Google Veo 3.1 Video (~45s)</button>
+    <button class="btn btn-gen" id="genBtn" onclick="renderVisualVideo()" style="flex:2;">🎬 2. Render Full Social Video</button>
   </div>
 
   <div style="margin-bottom: 10px;">
-    <label>Synthesized Visual Scene Prompt (Dispatched to Google Veo 3.1)</label>
+    <label>Synthesized Visual Scene Prompt (Google Veo 3.1 & Nano Banana Pro)</label>
     <textarea id="visualPromptArea" placeholder="Visual prompt will appear here..."></textarea>
   </div>
 
@@ -157,7 +169,7 @@
     <textarea id="scriptArea" placeholder="Script dialogue..."></textarea>
   </div>
 
-  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your scene elements and click 'Render Live Google Veo 3.1 Video'.</div>
+  <div id="statusText" style="margin-top: 12px; font-size: 12px; color: #34d399; font-family: monospace;">Ready. Configure your scene elements and click 'Render Full Social Video'.</div>
 </div>
 
 <script>
@@ -171,7 +183,7 @@
       wardrobe: document.getElementById('wardrobeSelect').value,
       platform: document.getElementById('platformSelect').value,
       camera_style: 'handheld_vlog',
-      duration_sec: 30,
+      duration_sec: parseInt(document.getElementById('durationSelect').value),
       language: 'english',
       character: 'meera'
     };

@@ -122,7 +122,7 @@ export class OAuthManagerImpl {
     try {
       const result = await this.activeProvider.authenticate(code);
       
-      const mockToken: ProviderToken = {
+      const providerToken: ProviderToken = {
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
         expiresAt: result.expiresAt,
@@ -131,7 +131,7 @@ export class OAuthManagerImpl {
 
       // Ensure account ID is unique to the user profile
       const accountId = `${this.activeProvider.manifest.id}-${result.profile.email}`;
-      await tokenVault.storeToken(accountId, mockToken);
+      await tokenVault.storeToken(accountId, providerToken);
       
       eventBus.publish('chatr:oauth-success', { 
         providerId: this.activeProvider.manifest.id, 

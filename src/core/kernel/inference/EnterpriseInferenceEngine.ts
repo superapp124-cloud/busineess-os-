@@ -68,14 +68,19 @@ export class EnterpriseInferenceEngine {
     // 2. Execute Plugins Parallel
     const plugins = Array.from(this.pluginRegistry.values());
     const hypothesisPromises = plugins.map(async p => {
-       const childSpan = tracer.startSpan(`Plugin.${p.id}`, span.context);
+       const childSpan = tracer.startSpan(`Plugin.${p?.id ?? 'unknown'}`, span.context);
        try {
+          if (!p || typeof p.execute !== 'function') {
+            console.warn(`[EnterpriseInferenceEngine] Plugin ${p?.id ?? 'unknown'} has no execute method — skipping.`);
+            childSpan.end();
+            return [];
+          }
           const res = await p.execute(context);
           childSpan.setAttribute('hypotheses.count', res.length);
           childSpan.end();
           return res;
        } catch (err: any) {
-          console.error(`[EnterpriseInferenceEngine] Plugin ${p.id} failed:`, err);
+          console.error(`[EnterpriseInferenceEngine] Plugin ${p?.id ?? 'unknown'} failed:`, err);
           childSpan.setAttribute('error', err.message);
           childSpan.end();
           return [];

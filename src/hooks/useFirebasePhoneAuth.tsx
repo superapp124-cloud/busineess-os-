@@ -244,53 +244,33 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     setPhoneNumber(phone);
 
     const e164 = normalizePhone(phone);
-    const national = canonicalNationalPhone(phone);
     const cleanDigits = e164.replace(/\+/g, '') || phone.replace(/\D/g, '');
 
-    const candidateEmails = [
-      `${cleanDigits}@chatr.local`,
-      `91${national}@chatr.local`,
-      `${national}@chatr.local`,
-      `${cleanDigits}@chatr.chat`,
-      `91${national}@chatr.chat`,
-      `${national}@chatr.chat`,
-    ];
+    // Fast single candidate check with 400ms timeout
+    try {
+      const fastLoginPromise = supabase.auth.signInWithPassword({
+        email: `${cleanDigits}@chatr.local`,
+        password: e164,
+      });
+      const timeoutPromise = new Promise<{ data: any }>((resolve) => 
+        setTimeout(() => resolve({ data: null }), 400)
+      );
 
-    const candidatePwds = [
-      e164,
-      `+${cleanDigits}`,
-      cleanDigits,
-      `chatr_${cleanDigits}`,
-      `chatr_${e164}`,
-      `91${national}`,
-      `+91${national}`,
-      national,
-    ];
-
-    for (const email of candidateEmails) {
-      for (const pwd of candidatePwds) {
-        try {
-          const { data } = await supabase.auth.signInWithPassword({
-            email,
-            password: pwd,
-          });
-          
-          if (data?.session) {
-            setIsExistingUser(true);
-            console.log('✅ [Auth] Existing user authenticated instantly with candidate credentials');
-            setLoading(false);
-            return true;
-          }
-        } catch {
-          // Try next candidate
-        }
+      const { data } = await Promise.race([fastLoginPromise, timeoutPromise]);
+      if (data?.session) {
+        setIsExistingUser(true);
+        console.log('✅ [Auth] Existing user authenticated instantly');
+        setLoading(false);
+        return true;
       }
+    } catch {
+      // Ignore and proceed directly to OTP
     }
 
-    // If instant login not matched, send verification OTP immediately
+    // Send verification OTP immediately
     setIsExistingUser(false);
     return await sendOTP(phone);
-  }, []);
+  }, [sendOTP]);
 
   /**
    * Exchange a verified Firebase UID & ID Token for a Supabase session via Edge Function or fallback
