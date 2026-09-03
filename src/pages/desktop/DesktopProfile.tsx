@@ -39,7 +39,7 @@ export const DesktopProfile: React.FC = () => {
 
       const [{ data: profileData }, { data: userData }] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
-        supabase.from('users').select('*').eq('id', user.id).maybeSingle()
+        supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
       ]);
 
       const fullName = profileData?.full_name || userData?.full_name || user.user_metadata?.full_name || '';
@@ -88,7 +88,7 @@ export const DesktopProfile: React.FC = () => {
 
       await Promise.all([
         supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', userId),
-        supabase.from('users').update({ avatar_url: publicUrl }).eq('id', userId)
+        supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', userId)
       ]);
 
       toast.success('Profile picture updated!');
@@ -107,7 +107,7 @@ export const DesktopProfile: React.FC = () => {
       setProfile(prev => ({ ...prev, avatar_url: '' }));
       await Promise.all([
         supabase.from('profiles').update({ avatar_url: null }).eq('id', userId),
-        supabase.from('users').update({ avatar_url: null }).eq('id', userId)
+        supabase.from('profiles').update({ avatar_url: null }).eq('id', userId)
       ]);
       toast.success('Profile picture removed');
     } catch (err: unknown) {
@@ -134,7 +134,7 @@ export const DesktopProfile: React.FC = () => {
           occupation: profile.occupation,
         } as unknown as Record<string, unknown>).eq('id', userId),
 
-        supabase.from('users').update({
+        supabase.from('profiles').update({
           full_name: profile.full_name,
           display_name: profile.full_name,
           username: cleanUsername,

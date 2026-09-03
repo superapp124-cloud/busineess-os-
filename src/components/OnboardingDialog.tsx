@@ -28,7 +28,7 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ isOpen, user
     const loadProfile = async () => {
       try {
         const { data: existingUser } = await supabase
-          .from('users')
+          .from('profiles')
           .select('full_name, display_name, avatar_url')
           .eq('id', userId)
           .maybeSingle();
@@ -130,7 +130,7 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ isOpen, user
       const completedAt = new Date().toISOString();
 
       await Promise.all([
-        supabase.from('users').update({
+        supabase.from('profiles').update({
           full_name: trimmedName,
           display_name: trimmedName,
           username,
