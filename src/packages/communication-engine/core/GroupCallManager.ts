@@ -187,13 +187,15 @@ export class GroupCallManager {
         await session.handleIncomingSignal(message);
         await session.accept(state.localStream, state.capabilities);
 
-        // Drain any buffered ICE for this call+peer
-        const iceKey = `${callId}:${peerId}`;
-        const bufferedIce = this.pendingIce.get(iceKey) || [];
-        for (const ice of bufferedIce) {
-          await session.handleIncomingSignal(ice);
+        // Drain any buffered ICE for this peer
+        for (const [key, ices] of this.pendingIce.entries()) {
+          if (key.toLowerCase().endsWith(`:${peerId.toLowerCase()}`)) {
+            for (const ice of ices) {
+              await session.handleIncomingSignal(ice);
+            }
+            this.pendingIce.delete(key);
+          }
         }
-        this.pendingIce.delete(iceKey);
         return;
       } else if (!session && message.type === 'ice') {
         // Buffer ICE candidate if session isn't created yet (arrived before offer)
@@ -273,24 +275,40 @@ export class GroupCallManager {
     // This handles the Desktop-to-Desktop race: the offer arrived while the
     // user was reading the incoming call notification. Now that we have room
     // state, we can process it.
+    // Include any peer who has a buffered offer into peers array
+    for (const offerPeerId of this.pendingOffers.keys()) {
+      if (!peers.some(p => p.toLowerCase() === offerPeerId.toLowerCase())) {
+        peers.push(offerPeerId);
+      }
+    }
+
     for (const peerId of peers) {
-      const buffered = this.pendingOffers.get(peerId);
+      let offerPeerKey = peerId;
+      for (const k of this.pendingOffers.keys()) {
+        if (k.toLowerCase() === peerId.toLowerCase()) {
+          offerPeerKey = k;
+          break;
+        }
+      }
+      const buffered = this.pendingOffers.get(offerPeerKey);
       if (buffered && buffered.length > 0) {
-        const { callId, message } = buffered[0]; // Process the first (most recent) offer
-        console.log(`[GroupCallManager] Replaying buffered offer from ${peerId}`);
+        const { callId, message } = buffered[buffered.length - 1]; // Process the LATEST offer
+        console.log(`[GroupCallManager] Replaying latest buffered offer from ${peerId} (call: ${callId})`);
 
         const session = this._createSession(roomId, peerId, callId, rtcConfig);
         await session.handleIncomingSignal(message);
         await session.accept(localStream, capabilities);
 
-        // Drain buffered ICE for this call+peer
-        const iceKey = `${callId}:${peerId}`;
-        const bufferedIce = this.pendingIce.get(iceKey) || [];
-        for (const ice of bufferedIce) {
-          await session.handleIncomingSignal(ice);
+        // Drain all buffered ICE for this peer
+        for (const [key, ices] of this.pendingIce.entries()) {
+          if (key.toLowerCase().endsWith(`:${peerId.toLowerCase()}`)) {
+            for (const ice of ices) {
+              await session.handleIncomingSignal(ice);
+            }
+            this.pendingIce.delete(key);
+          }
         }
-        this.pendingIce.delete(iceKey);
-        this.pendingOffers.delete(peerId);
+        this.pendingOffers.delete(offerPeerKey);
         // Don't initiate to this peer — we already answered their offer
         continue;
       }
@@ -438,9 +456,10 @@ export class GroupCallManager {
     const streamUnsub = EventBus.getInstance().subscribe(
       CommunicationEvent.REMOTE_STREAM_READY,
       (payload: { userId?: string; stream: MediaStream; track?: MediaStreamTrack }) => {
-        if (payload.userId !== peerId) return;
+        if (!payload.userId || payload.userId.toLowerCase() !== peerId.toLowerCase()) return;
         const roomPeers = this.roomSessions.get(roomId);
-        if (!roomPeers?.has(peerId)) return;
+        const hasPeer = roomPeers && Array.from(roomPeers.keys()).some(k => k.toLowerCase() === peerId.toLowerCase());
+        if (!hasPeer) return;
 
         EventBus.getInstance().emit(CommunicationEvent.ROOM_PARTICIPANT_JOINED, {
           userId: peerId,

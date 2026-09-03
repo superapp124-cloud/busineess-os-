@@ -388,25 +388,8 @@ export async function resolveCallerIdentities(
             .in('phone_hash', hashes) as any
         )
       : Promise.resolve([]),
-    userId && hashes.length
-      ? safeArray<any>(
-          'caller observations',
-          (supabase as any)
-            .from('caller_identity_observations')
-            .select('hashed_number, observed_name, confidence, source, phone_number')
-            .eq('reporter_id', userId)
-            .in('hashed_number', hashes)
-        )
-      : Promise.resolve([]),
-    hashes.length
-      ? safeArray<any>(
-          'contacts_hash',
-          (supabase as any)
-            .from('contacts_hash')
-            .select('hashed_number, name, frequency, trust_score')
-            .in('hashed_number', hashes)
-        )
-      : Promise.resolve([]),
+    Promise.resolve([]),
+    Promise.resolve([]),
     allVariants.length
       ? safeArray<any>(
           'caller aggregates',

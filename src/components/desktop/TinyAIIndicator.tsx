@@ -45,6 +45,12 @@ export const TinyAIIndicator = () => {
       // Platform services fallback
     }
 
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !('electron' in window)) {
+      setAIMode('cloud');
+      setStatus('healthy');
+      return;
+    }
+
     for (const endpoint of LOCAL_OLLAMA_ENDPOINTS) {
       try {
         const t0 = performance.now();

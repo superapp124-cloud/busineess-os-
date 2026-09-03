@@ -18,6 +18,9 @@ import type {
 const CHATR_CORE_URL = 'http://127.0.0.1:8087';
 
 async function post<T>(path: string, body: unknown): Promise<T> {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !('electron' in window)) {
+    throw new Error('Local kernel transport disabled on web');
+  }
   const res = await fetch(`${CHATR_CORE_URL}${path}`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -31,6 +34,9 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 }
 
 async function get<T>(path: string): Promise<T> {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !('electron' in window)) {
+    throw new Error('Local kernel transport disabled on web');
+  }
   const res = await fetch(`${CHATR_CORE_URL}${path}`);
   if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
   return res.json();

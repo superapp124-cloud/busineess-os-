@@ -141,18 +141,41 @@ export class WebRTCEngine {
 
   public addStream(stream: MediaStream) {
     this.ensureInitialized();
+    const transceivers = this.peerConnection!.getTransceivers();
+
     stream.getTracks().forEach((track) => {
-      this.peerConnection!.addTrack(track, stream);
+      // Find matching transceiver created by remote offer
+      const match = transceivers.find(t => 
+        (t.receiver.track?.kind === track.kind || t.sender.track?.kind === track.kind) &&
+        (!t.sender.track || t.sender.track === track)
+      );
+
+      if (match) {
+        if (match.sender.track !== track) {
+          match.sender.replaceTrack(track).catch(() => {});
+        }
+        if (match.direction === 'recvonly') {
+          match.direction = 'sendrecv';
+        }
+      } else {
+        try {
+          this.peerConnection!.addTrack(track, stream);
+        } catch (e) {
+          console.warn('[WebRTC] addTrack fallback notice:', e);
+        }
+      }
     });
 
-    // Ensure audio & video transceivers exist
-    const hasAudio = this.peerConnection!.getSenders().some(s => s.track?.kind === 'audio');
-    if (!hasAudio) {
-      try { this.peerConnection!.addTransceiver('audio', { direction: 'sendrecv' }); } catch {}
-    }
-    const hasVideo = this.peerConnection!.getSenders().some(s => s.track?.kind === 'video');
-    if (!hasVideo) {
-      try { this.peerConnection!.addTransceiver('video', { direction: 'sendrecv' }); } catch {}
+    // Ensure audio & video transceivers exist ONLY when initiating (offer)
+    if (this.peerConnection!.signalingState === 'stable' && !this.peerConnection!.remoteDescription) {
+      const hasAudio = this.peerConnection!.getSenders().some(s => s.track?.kind === 'audio');
+      if (!hasAudio) {
+        try { this.peerConnection!.addTransceiver('audio', { direction: 'sendrecv' }); } catch {}
+      }
+      const hasVideo = this.peerConnection!.getSenders().some(s => s.track?.kind === 'video');
+      if (!hasVideo) {
+        try { this.peerConnection!.addTransceiver('video', { direction: 'sendrecv' }); } catch {}
+      }
     }
   }
 

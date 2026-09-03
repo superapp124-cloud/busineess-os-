@@ -634,17 +634,21 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  .then(({ error }) => { if (error) console.error(error) });
  }
 
- const { data: parts } = await supabase.from('session_room_participants').select('user_id').eq('room_id', roomId);
- let peers = (parts || []).map((p: any) => p.user_id).filter((id: string) => id !== currentUserId);
+    const { data: parts } = await supabase.from('session_room_participants').select('user_id').eq('room_id', roomId);
+    let peers = (parts || []).map((p: any) => p.user_id).filter((id: string) => id !== currentUserId);
 
- if (peers.length === 0 && callerId) {
- peers = [callerId];
- }
+    if (callerId && !peers.includes(callerId)) {
+      peers.push(callerId);
+    }
 
- const stream = await getStream(isVideoCall);
- if (!stream) { endCall(); return; }
- await gcm.joinRoom(roomId, peers, stream, { video: isVideoCall, audio: true }, false);
- navigate('/desktop/calls');
+    const stream = await getStream(isVideoCall);
+    if (!stream) { endCall(); return; }
+    setLocalStream(stream);
+    localStreamRef.current = stream;
+
+    const peerCallIds = incomingCallId && callerId ? { [callerId]: incomingCallId } : undefined;
+    await gcm.joinRoom(roomId, peers, stream, { video: isVideoCall, audio: true }, false, peerCallIds);
+    navigate('/desktop/calls');
  };
 
  const declineCall = () => setIncomingRoom(null);
