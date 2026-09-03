@@ -436,6 +436,9 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
       // Step 2: Exchange Firebase UID & ID token for Supabase session
       await completeSupabaseSession(firebaseUid, firebaseIdToken);
+      try {
+        sessionStorage.removeItem('chatr_explicit_signout');
+      } catch {}
       window.location.href = '/';
       return true;
     } catch (err: any) {

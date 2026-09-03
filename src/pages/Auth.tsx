@@ -17,17 +17,45 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(() => {
+    if (typeof window === 'undefined') return true;
+    if (sessionStorage.getItem('chatr_explicit_signout') === '1') return false;
+    const tokenStr = localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token') || localStorage.getItem('sb-auth-token');
+    return !tokenStr;
+  });
   const [userId, setUserId] = React.useState<string | undefined>();
   const onboarding = useOnboarding(userId);
 
+  // Fast-track navigation if already logged in
   React.useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('chatr_explicit_signout') !== '1') {
+      const tokenStr = localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token') || localStorage.getItem('sb-auth-token');
+      if (tokenStr) {
+        try {
+          const parsed = JSON.parse(tokenStr);
+          if (parsed?.access_token) {
+            const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+            const storedRedirect = sessionStorage.getItem('auth_redirect');
+            const redirectPath = stateFrom || storedRedirect || '/';
+            if (storedRedirect) sessionStorage.removeItem('auth_redirect');
+            navigate(redirectPath, { replace: true });
+            return;
+          }
+        } catch {
+          if (typeof tokenStr === 'string' && tokenStr.length > 20) {
+            navigate('/', { replace: true });
+            return;
+          }
+        }
+      }
+    }
+
     const checkSession = async () => {
       try {
         logAuthEvent('Auth page: Checking session');
         
         const timeoutPromise = new Promise<{ data: { session: any }, error: any }>((resolve) => 
-          setTimeout(() => resolve({ data: { session: null }, error: null }), 800)
+          setTimeout(() => resolve({ data: { session: null }, error: null }), 300)
         );
         
         const { data: { session }, error: sessionError } = await Promise.race([
@@ -41,49 +69,14 @@ const Auth = () => {
           return;
         }
 
-        logAuthEvent('Active session found', {
-          userId: session.user.id,
-          email: session.user.email,
-          provider: session.user.app_metadata?.provider,
-        });
-        
         setUserId(session.user.id);
-        
-        const dbTimeout = new Promise<any>((resolve) => setTimeout(() => resolve({ data: null }), 1200));
-
-        const [profileRes, rolesRes] = await Promise.all([
-          Promise.race([
-            (supabase as any).from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
-            dbTimeout
-          ]),
-          Promise.race([
-            (supabase as any).from("user_roles").select("role").eq("user_id", session.user.id),
-            dbTimeout
-          ])
-        ]);
-
-        const profile = profileRes?.data;
-        const roles = rolesRes?.data;
-        
-        const isAdmin = roles?.some((r: any) => r.role === "admin");
         const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
-        const redirectPath = stateFrom || storedRedirect;
+        const redirectPath = stateFrom || storedRedirect || '/';
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
         
-        if (isAdmin) {
-          navigate('/admin', { replace: true });
-          return;
-        }
-
-        if (profile?.onboarding_completed !== false) {
-          console.log('[AUTH] User authenticated, entering app:', profile?.username || session.user.email);
-          navigate(redirectPath || '/', { replace: true });
-          return;
-        }
-        
-        // New user needing onboarding
-        setLoading(false);
+        console.log('⚡ [AUTH] Active session verified, entering app...');
+        navigate(redirectPath, { replace: true });
       } catch (error) {
         console.error('Session check error:', error);
         setLoading(false);
@@ -95,24 +88,12 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
         setUserId(session.user.id);
-        
-        const { data: profile } = await (supabase as any)
-          .from('profiles')
-          .select('onboarding_completed, username, phone_number')
-          .eq('id', session.user.id)
-          .maybeSingle();
-        
         const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
-        const redirectPath = stateFrom || storedRedirect;
+        const redirectPath = stateFrom || storedRedirect || '/';
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
-
-        if (profile?.onboarding_completed !== false) {
-          console.log('[AUTH] Welcome back, redirecting to', redirectPath || '/');
-          navigate(redirectPath || '/', { replace: true });
-        } else {
-          console.log('[AUTH] New user - onboarding initiated');
-        }
+        console.log('⚡ [AUTH] Signed in, redirecting to', redirectPath);
+        navigate(redirectPath, { replace: true });
       }
       
       if (event === 'SIGNED_OUT') {
@@ -121,7 +102,7 @@ const Auth = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [toast, navigate]);
+  }, [location, navigate]);
 
   if (loading) {
     return <AuthLoadingSkeleton />;

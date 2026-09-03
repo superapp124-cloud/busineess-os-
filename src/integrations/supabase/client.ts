@@ -14,12 +14,11 @@ const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Resilient storage wrapper with memory fallback
 const memoryStorage = new Map<string, string>();
 
-// One-time cleanup of poisoned legacy tokens
+// One-time cleanup of poisoned legacy project tokens
 if (typeof window !== 'undefined') {
   try {
     const poisonedKeys = [
-      'sb-cenxckpxaqborfqyexot-auth-token',
-      'sb-auth-token'
+      'sb-cenxckpxaqborfqyexot-auth-token'
     ];
     for (const key of poisonedKeys) {
       if (window.localStorage.getItem(key)) {
@@ -35,12 +34,10 @@ const resilientStorage = {
   getItem: (key: string): string | null => {
     if (typeof window === 'undefined') return memoryStorage.get(key) || null;
     try {
-      const val = window.localStorage.getItem(key);
-      // If token contains a synthetic/invalid marker, purge it immediately to prevent refresh loops
-      if (val && val.includes('chatr_synthetic_refresh_')) {
-        window.localStorage.removeItem(key);
-        memoryStorage.delete(key);
-        return null;
+      let val = window.localStorage.getItem(key);
+      // Fallback cross-check between storage keys to ensure session continuity
+      if (!val && key === 'sb-sbayuqgomlflmxgicplz-auth-token') {
+        val = window.localStorage.getItem('sb-auth-token');
       }
       return val || memoryStorage.get(key) || null;
     } catch {
@@ -52,6 +49,9 @@ const resilientStorage = {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.setItem(key, value);
+        if (key === 'sb-sbayuqgomlflmxgicplz-auth-token') {
+          window.localStorage.setItem('sb-auth-token', value);
+        }
       } catch (e) {
         console.warn('[SupabaseStorage] LocalStorage write failed, preserved in memory:', e);
       }
@@ -62,8 +62,6 @@ const resilientStorage = {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.removeItem(key);
-        window.localStorage.removeItem('sb-auth-token');
-        window.localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
       } catch (removeErr) {
         console.debug('[SupabaseStorage] LocalStorage remove failed:', removeErr);
       }
