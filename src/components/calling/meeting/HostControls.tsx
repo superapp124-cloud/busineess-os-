@@ -19,40 +19,21 @@ export const HostControls: React.FC<HostControlsProps> = ({ onClose, onMuteAll, 
  const [showTransfer, setShowTransfer] = useState(false);
  const [participants, setParticipants] = useState<{user_id: string, name: string}[]>([]);
 
- useEffect(() => {
-    if (!roomId) return;
-    
-    const fetchState = async () => {
-      try {
-        const { data, error } = await supabase.from('session_rooms').select('is_locked, chat_disabled, waiting_room_enabled').eq('id', roomId).maybeSingle();
-        if (!error && data) {
-          setLocked((data as any).is_locked || false);
-          setChatDisabled((data as any).chat_disabled || false);
-          setWaitingRoomEnabled((data as any).waiting_room_enabled || false);
-        }
-      } catch {
-        // Non-critical fallback if columns don't exist
-      }
-    };
-    fetchState();
-  }, [roomId]);
-
- const updateRoomSetting = async (key: string, value: boolean) => {
- if (!roomId) {
- toast.error('No active room to update.');
- return;
- }
- try {
- await supabase.channel(`room-settings-${roomId}`).send({
- type: 'broadcast',
- event: 'host_control',
- payload: { key, value },
- });
- await supabase.from('session_rooms').update({ [key]: value }).eq('id', roomId);
- } catch {
- // Non-critical
- }
- };
+  const updateRoomSetting = async (key: string, value: boolean) => {
+    if (!roomId) {
+      toast.error('No active room to update.');
+      return;
+    }
+    try {
+      await supabase.channel(`room-settings-${roomId}`).send({
+        type: 'broadcast',
+        event: 'host_control',
+        payload: { key, value },
+      });
+    } catch {
+      // Non-critical
+    }
+  };
 
  const handleLockMeeting = async () => {
  const next = !locked;

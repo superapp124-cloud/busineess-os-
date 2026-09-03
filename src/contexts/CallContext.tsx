@@ -617,22 +617,6 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  if (!gcm || !incomingRoom || !currentUserId) return;
  const { roomId, callerName, callerAvatar, callerFlag, goal, callId: incomingCallId, callerId } = incomingRoom;
 
-    // Security Check: Is the room locked? (optional, non-blocking)
-    try {
-      const { data: roomData } = await supabase.from('session_rooms').select('is_locked, waiting_room_enabled').eq('id', roomId).maybeSingle();
-      if (roomData?.is_locked) {
-        toast.error('The host has locked this meeting. You cannot join.');
-        setIncomingRoom(null);
-        return;
-      }
-      if (roomData?.waiting_room_enabled) {
-        toast.info('The host has enabled the waiting room. (Approval flow coming soon, joining blocked for now)');
-        setIncomingRoom(null);
-        return;
-      }
-    } catch {
-      // Non-critical fallback
-    }
 
  setIncomingRoom(null);
  setSessionGoal(goal);

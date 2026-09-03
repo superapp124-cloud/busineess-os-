@@ -192,6 +192,11 @@ export class WebRTCEngine {
 
   public async createAnswer(): Promise<RTCSessionDescriptionInit> {
     this.ensureInitialized();
+    const state = this.peerConnection!.signalingState;
+    if (state !== 'have-remote-offer' && state !== 'have-local-pranswer') {
+      console.warn(`[WebRTC] Cannot create answer in state "${state}" — must be have-remote-offer or have-local-pranswer`);
+      throw new Error(`[WebRTC] PeerConnection cannot create answer in state: ${state}`);
+    }
     const answer = await this.peerConnection!.createAnswer();
     await this.peerConnection!.setLocalDescription(answer);
     return answer;

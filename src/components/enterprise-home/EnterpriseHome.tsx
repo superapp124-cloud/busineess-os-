@@ -67,11 +67,11 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
 
           const { data: profile } = await supabase
             .from('profiles')
-            .select('username, primary_handle, business_name, company_name')
+            .select('username, primary_handle, full_name')
             .eq('id', user.id)
             .maybeSingle();
 
-          const profileName = cleanName(profile?.username || profile?.business_name || profile?.company_name || profile?.primary_handle);
+          const profileName = cleanName(profile?.full_name || profile?.username || profile?.primary_handle);
           if (profileName && profileName.toLowerCase() !== 'talentxcel' && profileName.toLowerCase() !== 'user') {
             setUserName(profileName);
             return;

@@ -109,15 +109,6 @@ export const MeetingLogsDrawer: React.FC<MeetingLogsDrawerProps> = ({
  // Sync chat disabled status
  useEffect(() => {
     if (!roomId) return;
-    const fetchSettings = async () => {
-      try {
-        const { data, error } = await supabase.from('session_rooms').select('chat_disabled').eq('id', roomId).maybeSingle();
-        if (!error && data) setChatDisabled((data as any).chat_disabled || false);
-      } catch {
-        // Non-critical
-      }
-    };
-    fetchSettings();
 
  const channel = supabase.channel(`room-settings-drawer-${roomId}`)
  .on('broadcast', { event: 'host_control' }, (payload) => {

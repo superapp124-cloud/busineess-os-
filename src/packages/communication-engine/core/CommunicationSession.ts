@@ -143,18 +143,26 @@ export class CommunicationSession {
     const callType = this.localCapabilities.video ? 'video' : 'audio';
     await this.signaling.updateCallState(this.callId, this.targetUserId, this.currentUserId, 'active', callType);
 
-    // 2. Create and send Answer
-    const answer = this.addSdpMetadata(await this.webrtc.createAnswer());
-    await this.signaling.sendSignal(this.targetUserId, this.callId, {
-      type: 'answer',
-      sdp: answer,
-      from: this.currentUserId,
-      protocolVersion: PROTOCOL_VERSION,
-      capabilities: Object.keys(this.localCapabilities).filter(k => (this.localCapabilities as any)[k]),
-      roomId: this.roomId,
-    });
-    
-    console.log(`[CommunicationSession] ✅ Answered offer from ${this.targetUserId} with local tracks: audio=${localStream.getAudioTracks().length} video=${localStream.getVideoTracks().length}`);
+    // 2. Create and send Answer ONLY if remote offer is ready in have-remote-offer state
+    const sigState = this.webrtc.getSignalingState();
+    if (sigState === 'have-remote-offer' || sigState === 'have-local-pranswer') {
+      try {
+        const answer = this.addSdpMetadata(await this.webrtc.createAnswer());
+        await this.signaling.sendSignal(this.targetUserId, this.callId, {
+          type: 'answer',
+          sdp: answer,
+          from: this.currentUserId,
+          protocolVersion: PROTOCOL_VERSION,
+          capabilities: Object.keys(this.localCapabilities).filter(k => (this.localCapabilities as any)[k]),
+          roomId: this.roomId,
+        });
+        console.log(`[CommunicationSession] ✅ Answered offer from ${this.targetUserId} with local tracks: audio=${localStream.getAudioTracks().length} video=${localStream.getVideoTracks().length}`);
+      } catch (err) {
+        console.error('[CommunicationSession] Failed to create or send answer in accept():', err);
+      }
+    } else {
+      console.log(`[CommunicationSession] ⏳ Waiting for remote offer before creating answer (current state: ${sigState}). Will answer when offer arrives.`);
+    }
   }
 
   public async handleIncomingSignal(message: SignalingMessage) {
@@ -186,16 +194,21 @@ export class CommunicationSession {
 
         await this.webrtc.handleRemoteOffer(message.sdp);
         if (this.hasAccepted) {
-          console.log(`[CommunicationSession] Auto-answering mid-call offer from ${this.targetUserId}`);
-          const answer = this.addSdpMetadata(await this.webrtc.createAnswer());
-          await this.signaling.sendSignal(this.targetUserId, this.callId, {
-            type: 'answer',
-            sdp: answer,
-            from: this.currentUserId,
-            protocolVersion: PROTOCOL_VERSION,
-            capabilities: Object.keys(this.localCapabilities).filter(k => (this.localCapabilities as any)[k]),
-            roomId: this.roomId,
-          });
+          console.log(`[CommunicationSession] Answering offer from ${this.targetUserId}`);
+          try {
+            const answer = this.addSdpMetadata(await this.webrtc.createAnswer());
+            await this.signaling.sendSignal(this.targetUserId, this.callId, {
+              type: 'answer',
+              sdp: answer,
+              from: this.currentUserId,
+              protocolVersion: PROTOCOL_VERSION,
+              capabilities: Object.keys(this.localCapabilities).filter(k => (this.localCapabilities as any)[k]),
+              roomId: this.roomId,
+            });
+            console.log(`[CommunicationSession] ✅ Sent answer to ${this.targetUserId}`);
+          } catch (err) {
+            console.error('[CommunicationSession] Failed to answer offer:', err);
+          }
         }
         break;
       }

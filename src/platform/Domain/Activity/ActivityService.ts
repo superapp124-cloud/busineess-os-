@@ -102,17 +102,7 @@ class ActivityServiceClass implements IService {
   }
 
   private subscribeToActivityUpdates(): void {
-    this.realtimeChannel = supabase
-      .channel('activity_logs_global')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'activity_logs' },
-        (payload) => {
-          const item = this.mapActivityLog(payload.new as any);
-          this.listeners.forEach(cb => cb(item));
-        }
-      )
-      .subscribe();
+    // activity_logs table is not present in this schema
   }
 
   private mapActivityLog(row: any): ActivityItem {
@@ -136,58 +126,11 @@ class ActivityServiceClass implements IService {
     metadata: Record<string, any>;
     userId?: string;
   }): Promise<void> {
-    try {
-      const entityTypeMap: Record<string, string> = {
-        message: 'system',
-        task: 'system',
-        meeting: 'system',
-        file: 'system',
-        system: 'system',
-        candidate: 'candidate',
-        requisition: 'requisition',
-        call: 'call',
-        project: 'project',
-      };
-      const safeEntityType = entityTypeMap[input.entityType] || 'system';
-
-      await supabase.from('activity_logs').insert({
-        user_id: input.userId || null,
-        entity_type: safeEntityType,
-        entity_id: input.entityId || null,
-        action: input.description,
-        metadata: { ...input.metadata, originalType: input.entityType },
-      });
-    } catch (err) {
-      Logger.warn('[ActivityService] writeActivity failed (non-critical)', err);
-    }
+    // Activity logs are disabled when table is not in schema
   }
 
   async getRecentActivity(limit = 30, filter?: ActivityFilter): Promise<ActivityItem[]> {
-    try {
-      let query = supabase
-        .from('activity_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (filter && filter !== 'all') {
-        // Filter by metadata.originalType
-        query = query.contains('metadata', { originalType: filter === 'messages' ? 'message' : filter.slice(0, -1) });
-      }
-
-      const { data, error } = await query;
-      if (error) { 
-        // Suppress known 404s/403s on fresh workspaces to avoid log spam
-        if (error.code !== 'PGRST116') {
-          // Logger.warn('[ActivityService] getRecentActivity error', error); 
-        }
-        return []; 
-      }
-      return (data || []).map(this.mapActivityLog);
-    } catch (err) {
-      Logger.error('[ActivityService] getRecentActivity failed', err);
-      return [];
-    }
+    return [];
   }
 
   onNewActivity(callback: (item: ActivityItem) => void): () => void {

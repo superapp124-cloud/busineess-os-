@@ -100,10 +100,12 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   private async pollSignals() {
     if (!this.userId) return;
     try {
+      const cutoff = new Date(Date.now() - 60000).toISOString();
       let query = this.supabase
         .from('webrtc_signals')
         .select('*')
         .eq('to_user', this.userId)
+        .gte('created_at', cutoff)
         .order('created_at', { ascending: false })
         .limit(50);
 

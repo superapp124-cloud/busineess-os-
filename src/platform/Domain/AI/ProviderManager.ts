@@ -39,6 +39,9 @@ async function fetchWithTimeout(url: string, opts: RequestInit = {}, timeoutMs =
 }
 
 async function getReachableOllamaBase(): Promise<string | null> {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !('electron' in window)) {
+    return null;
+  }
   for (const base of OLLAMA_BASES) {
     try {
       const res = await fetchWithTimeout(`${base}/api/tags`, {}, 1500);

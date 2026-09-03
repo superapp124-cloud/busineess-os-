@@ -205,12 +205,12 @@ class MessagingServiceClass implements IService {
       // 2. Fetch all real registered profiles from Supabase profiles table
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, username, full_name, display_name, avatar_url, email, phone_number')
+        .select('id, username, full_name, avatar_url, email, phone_number')
         .neq('id', user.id);
 
       if (profiles) {
         for (const prof of profiles) {
-          const cleanName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
+          const cleanName = prof.full_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
           if (!cleanName) continue;
 
           const convId = stringToUuid(`usr-${prof.id}`);
@@ -230,18 +230,16 @@ class MessagingServiceClass implements IService {
       // 3. Fetch all real contacts from Supabase contacts table
       const { data: contacts } = await supabase
         .from('contacts')
-        .select('id, name, full_name, email, phone, contact_user_id')
+        .select('id, contact_user_id')
         .eq('user_id', user.id);
 
       if (contacts) {
         for (const c of contacts) {
-          const cName = c.full_name || c.name || (c.email ? c.email.split('@')[0] : (c.phone ? `Member (${c.phone.slice(-4)})` : null));
-          if (!cName) continue;
           const targetId = c.contact_user_id || c.id;
           if (!roomMap.has(targetId)) {
             roomMap.set(targetId, {
               id: targetId,
-              name: cName,
+              name: 'Contact',
               type: 'dm',
               unreadCount: 0,
             });
@@ -269,37 +267,28 @@ class MessagingServiceClass implements IService {
             r.lastMessageAt = latestMsg.created_at;
           }
 
-          // Query peer message where sender_id != user.id to get real peer sender_name & avatar
+          // Query peer message where sender_id != user.id to get real peer sender
           const { data: peerMsg } = await supabase
             .from('messages')
-            .select('sender_name, sender_id, sender_avatar_url')
+            .select('sender_id')
             .or(`conversation_id.eq.${r.id},conversation_id.eq.${targetConvId}`)
             .neq('sender_id', user.id)
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
 
-          if (peerMsg) {
-            if (peerMsg.sender_name && peerMsg.sender_name !== 'Unknown User' && peerMsg.sender_name !== 'Unknown') {
-              r.name = peerMsg.sender_name;
-            }
-            if (peerMsg.sender_avatar_url) {
-              r.avatarUrl = peerMsg.sender_avatar_url;
-            }
+          if (peerMsg && peerMsg.sender_id) {
+            // Query profile for avatar and name
+            const { data: prof } = await supabase
+              .from('profiles')
+              .select('full_name, username, avatar_url, email, phone_number')
+              .eq('id', peerMsg.sender_id)
+              .maybeSingle();
 
-            // Also query profile for avatar if missing
-            if (peerMsg.sender_id) {
-              const { data: prof } = await supabase
-                .from('profiles')
-                .select('full_name, display_name, username, avatar_url, email, phone_number')
-                .eq('id', peerMsg.sender_id)
-                .maybeSingle();
-
-              if (prof) {
-                const cleanName = prof.full_name || prof.display_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
-                if (cleanName) r.name = cleanName;
-                if (prof.avatar_url) r.avatarUrl = prof.avatar_url;
-              }
+            if (prof) {
+              const cleanName = prof.full_name || prof.username || (prof.email ? prof.email.split('@')[0] : (prof.phone_number ? `Member (${prof.phone_number.slice(-4)})` : null));
+              if (cleanName) r.name = cleanName;
+              if (prof.avatar_url) r.avatarUrl = prof.avatar_url;
             }
           }
         } catch {
@@ -601,11 +590,11 @@ class MessagingServiceClass implements IService {
       if (m.sender_id) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('username, full_name, display_name, avatar_url, email, phone_number')
+          .select('username, full_name, avatar_url, email, phone_number')
           .eq('id', m.sender_id)
           .maybeSingle();
         if (profile) {
-          const profName = profile.full_name || profile.display_name || profile.username || (profile.email ? profile.email.split('@')[0] : (profile.phone_number ? `Member (${profile.phone_number.slice(-4)})` : null));
+          const profName = profile.full_name || profile.username || (profile.email ? profile.email.split('@')[0] : (profile.phone_number ? `Member (${profile.phone_number.slice(-4)})` : null));
           senderName = profName || senderName;
           senderAvatar = profile.avatar_url || senderAvatar;
         }

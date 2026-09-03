@@ -46,6 +46,9 @@ export function useIntentObserver({ conversationId, userId, workspaceId = 'defau
   // Connect Event Router to Projection Store
   useEffect(() => {
     if (!conversationId) return;
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !('electron' in window)) {
+      return;
+    }
     
     const es = new EventSource(`${CHATR_CORE_URL}/kernel/stream?scope=${workspaceId}`);
     eventSourceRef.current = es;

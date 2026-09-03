@@ -36,22 +36,29 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // 2. In web browser — check if CHATR Desktop Runtime is running on loopback 127.0.0.1:3717
+    let attempts = 0;
     let intervalId: any = null;
 
     const pollDesktopStatus = async () => {
+      attempts++;
       const status = await DesktopDetectionService.checkDesktopStatus();
       if (status.isDesktopRunning) {
         setIsDesktopRunning(true);
         localStorage.setItem('chatr_desktop_installed', 'true');
         setHasInstalledBefore(true);
+        if (intervalId) clearInterval(intervalId);
+      } else if (attempts >= 2) {
+        if (intervalId) clearInterval(intervalId);
       }
       setIsChecking(false);
     };
 
     pollDesktopStatus();
-    intervalId = setInterval(pollDesktopStatus, 3000); // Re-check every 3s to auto-unlock once launched
+    intervalId = setInterval(pollDesktopStatus, 5000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   const handleInstallClick = async () => {

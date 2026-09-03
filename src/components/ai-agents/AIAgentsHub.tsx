@@ -64,11 +64,11 @@ export const AIAgentsHub: React.FC = () => {
           // Try fetching from profiles table
           const { data: profile } = await supabase
             .from('profiles')
-            .select('username, primary_handle, business_name, company_name')
+            .select('username, primary_handle, full_name')
             .eq('id', user.id)
             .maybeSingle();
 
-          const profileName = cleanName(profile?.username || profile?.business_name || profile?.company_name || profile?.primary_handle);
+          const profileName = cleanName(profile?.full_name || profile?.username || profile?.primary_handle);
           if (profileName) {
             setUserName(profileName);
             return;
