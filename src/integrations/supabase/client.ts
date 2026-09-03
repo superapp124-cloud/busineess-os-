@@ -14,19 +14,42 @@ const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Resilient storage wrapper with memory fallback
 const memoryStorage = new Map<string, string>();
 
-// One-time cleanup of poisoned legacy project tokens
+// One-time cleanup: remove tokens from old/wrong Supabase projects
 if (typeof window !== 'undefined') {
   try {
-    const poisonedKeys = [
-      'sb-cenxckpxaqborfqyexot-auth-token'
+    const keysToCheck = [
+      'sb-cenxckpxaqborfqyexot-auth-token',
+      'sb-sbayuqgomlflmxgicplz-auth-token',
+      'sb-auth-token',
     ];
-    for (const key of poisonedKeys) {
-      if (window.localStorage.getItem(key)) {
+    for (const key of keysToCheck) {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) continue;
+      try {
+        const parsed = JSON.parse(raw);
+        const accessToken = parsed?.access_token as string | undefined;
+        if (accessToken) {
+          // Decode JWT payload to check project ref
+          const parts = accessToken.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(atob(parts[1]));
+            // If token is not from sbayuqgomlflmxgicplz, purge it
+            if (payload?.iss && !payload.iss.includes('sbayuqgomlflmxgicplz')) {
+              console.debug('[SupabaseStorage] Purging stale token from wrong project:', key);
+              window.localStorage.removeItem(key);
+            }
+          }
+        } else {
+          // No access_token, remove garbage
+          window.localStorage.removeItem(key);
+        }
+      } catch {
+        // Corrupt JSON — remove it
         window.localStorage.removeItem(key);
       }
     }
   } catch (e) {
-    console.debug('[SupabaseStorage] Cleanup failed:', e);
+    console.debug('[SupabaseStorage] Startup cleanup failed:', e);
   }
 }
 

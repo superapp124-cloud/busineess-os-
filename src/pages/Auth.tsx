@@ -17,65 +17,40 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = React.useState(() => {
-    if (typeof window === 'undefined') return true;
-    if (sessionStorage.getItem('chatr_explicit_signout') === '1') return false;
-    const tokenStr = localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token') || localStorage.getItem('sb-auth-token');
-    return !tokenStr;
-  });
+  const [loading, setLoading] = React.useState(true);
   const [userId, setUserId] = React.useState<string | undefined>();
   const onboarding = useOnboarding(userId);
+  // Run once only — prevent re-triggering
+  const hasChecked = React.useRef(false);
 
-  // Fast-track navigation if already logged in
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('chatr_explicit_signout') !== '1') {
-      const tokenStr = localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token') || localStorage.getItem('sb-auth-token');
-      if (tokenStr) {
-        try {
-          const parsed = JSON.parse(tokenStr);
-          if (parsed?.access_token) {
-            const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
-            const storedRedirect = sessionStorage.getItem('auth_redirect');
-            const redirectPath = stateFrom || storedRedirect || '/';
-            if (storedRedirect) sessionStorage.removeItem('auth_redirect');
-            navigate(redirectPath, { replace: true });
-            return;
-          }
-        } catch {
-          if (typeof tokenStr === 'string' && tokenStr.length > 20) {
-            navigate('/', { replace: true });
-            return;
-          }
-        }
-      }
-    }
+    if (hasChecked.current) return;
+    hasChecked.current = true;
 
     const checkSession = async () => {
       try {
-        logAuthEvent('Auth page: Checking session');
-        
-        const timeoutPromise = new Promise<{ data: { session: any }, error: any }>((resolve) => 
-          setTimeout(() => resolve({ data: { session: null }, error: null }), 300)
-        );
-        
-        const { data: { session }, error: sessionError } = await Promise.race([
-          supabase.auth.getSession(),
-          timeoutPromise
-        ]);
-        
+        // Validate session with Supabase — this is the single source of truth
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
         if (sessionError || !session) {
-          if (sessionError) logAuthError('Session check', sessionError);
+          // No valid session — clear any stale tokens from old backend that could cause loops
+          try {
+            localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
+            localStorage.removeItem('sb-auth-token');
+            localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');
+          } catch {}
           setLoading(false);
           return;
         }
 
+        // Valid Supabase session confirmed
         setUserId(session.user.id);
-        const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+        const stateFrom = (location.state as any)?.from?.pathname ||
+          (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
         const redirectPath = stateFrom || storedRedirect || '/';
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
-        
-        console.log('⚡ [AUTH] Active session verified, entering app...');
+        logAuthEvent('Active session confirmed, entering app');
         navigate(redirectPath, { replace: true });
       } catch (error) {
         console.error('Session check error:', error);
@@ -85,24 +60,25 @@ const Auth = () => {
 
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         setUserId(session.user.id);
-        const stateFrom = (location.state as any)?.from?.pathname || (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
+        const stateFrom = (location.state as any)?.from?.pathname ||
+          (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
         const redirectPath = stateFrom || storedRedirect || '/';
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
-        console.log('⚡ [AUTH] Signed in, redirecting to', redirectPath);
         navigate(redirectPath, { replace: true });
       }
-      
       if (event === 'SIGNED_OUT') {
         setUserId(undefined);
+        setLoading(false);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [location, navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return <AuthLoadingSkeleton />;

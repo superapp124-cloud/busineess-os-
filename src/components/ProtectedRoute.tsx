@@ -1,35 +1,21 @@
-import React from 'react';
+﻿import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ProtectedRouteProps {
- children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-const getFastAuthStatus = (): boolean | null => {
-  if (typeof window === 'undefined') return null;
-  // If explicitly signed out in this browser session, respect it
-  if (sessionStorage.getItem('chatr_explicit_signout') === '1') return false;
-
-  const token = localStorage.getItem('sb-sbayuqgomlflmxgicplz-auth-token') || 
-                localStorage.getItem('sb-auth-token');
-  if (token) {
-    try {
-      const parsed = JSON.parse(token);
-      if (parsed?.access_token) return true;
-    } catch {
-      if (typeof token === 'string' && token.length > 20) return true;
-    }
-  }
-  return null;
-};
-
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  // Synchronously initialize from persistent storage for 0ms perceived latency
-  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(() => getFastAuthStatus());
+  // Start with null = still checking. We do NOT blindly read localStorage here.
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
   const location = useLocation();
+  const hasChecked = React.useRef(false);
 
   React.useEffect(() => {
+    if (hasChecked.current) return;
+    hasChecked.current = true;
+
     let isMounted = true;
 
     const checkAuth = async () => {
@@ -38,33 +24,30 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         if (isMounted) {
           if (session) {
             setIsAuthenticated(true);
-          } else if (sessionStorage.getItem('chatr_explicit_signout') === '1') {
-            setIsAuthenticated(false);
           } else {
-            // Keep user authenticated if tokens are still present in local storage
-            const fastAuth = getFastAuthStatus();
-            setIsAuthenticated(fastAuth ?? false);
+            // Session invalid — clear stale tokens so Auth.tsx doesn't fast-track again
+            try {
+              localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
+              localStorage.removeItem('sb-auth-token');
+            } catch {}
+            setIsAuthenticated(false);
           }
         }
       } catch {
         if (isMounted) {
-          const fastAuth = getFastAuthStatus();
-          setIsAuthenticated(fastAuth ?? false);
+          setIsAuthenticated(false);
         }
       }
     };
 
     checkAuth();
 
-    // Listen for auth changes
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || (event === 'INITIAL_SESSION' && session)) {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         setIsAuthenticated(true);
-      } else if (event === 'SIGNED_OUT') {
-        // Only kick user to auth if they explicitly clicked sign out
-        if (sessionStorage.getItem('chatr_explicit_signout') === '1') {
-          setIsAuthenticated(false);
-        }
+      } else if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
+        setIsAuthenticated(false);
       }
     });
 
@@ -74,7 +57,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     };
   }, []);
 
-  // Show loading state while checking auth ONLY if no token was found and we're verifying
+  // Show loading spinner while Supabase verifies
   if (isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
