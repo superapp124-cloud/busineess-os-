@@ -42,6 +42,8 @@ class SimBridgeServer:
         client = websocket.remote_address
         self._connected_clients.add(websocket)
         log.info(f"Client connected: {client}")
+        # Ensure fresh nominal standing pose on client connect
+        self.backend.queue_command({"method": "reset", "params": {"seed": 42}})
 
         try:
             async for raw_msg in websocket:
