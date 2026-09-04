@@ -1,13 +1,12 @@
 /**
- * CHATR-Meera 3D Humanoid Digital Twin Canvas
- * High-Fidelity 3D Articulated Visual Engine for MEERA — CHATR-H170 Humanoid Platform.
- * Driven directly by MuJoCo 3.12.0 physics stream (500 Hz kernel) with robust cross-browser 2D Canvas projection.
+ * CHATR-Meera 3D Humanoid Digital Twin Canvas (Gate 9.1 MuJoCo Visual Engine)
+ * Renders all 29 canonical H170 rigid links directly from live MuJoCo Cartesian body transforms.
+ * Stable body-name mapping, real-time camera tracking, dynamic physical articulation, and render diagnostics.
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ArmJointAngles } from '../../../packages/robot-manipulation/src';
 import { Vector3 } from '../../../packages/robot-physics/src/math/vector3';
-import { Quaternion } from '../../../packages/robot-physics/src/math/quaternion';
 import { SimBridgeClient, SimBridgeState } from '../../../packages/sim-bridge/src';
 
 interface RobotDigitalTwinCanvasProps {
@@ -17,6 +16,47 @@ interface RobotDigitalTwinCanvasProps {
   walkingState: 'IDLE_STANDING' | 'DOUBLE_SUPPORT' | 'SINGLE_SUPPORT_RIGHT' | 'SINGLE_SUPPORT_LEFT' | 'EMERGENCY_STOPPED';
   isHardwareConnected: boolean;
 }
+
+// Canonical H170 29-link kinematic segment graph (Parent Link ID -> Child Link ID)
+const H170_SEGMENTS: Array<{ from: string; to: string; color1: string; color2: string; width: number }> = [
+  // Trunk & Head
+  { from: 'pelvis', to: 'waist_intermediate_link', color1: '#1e293b', color2: '#38bdf8', width: 16 },
+  { from: 'waist_intermediate_link', to: 'torso', color1: '#38bdf8', color2: '#0284c7', width: 18 },
+  { from: 'torso', to: 'neck_link', color1: '#64748b', color2: '#94a3b8', width: 8 },
+  { from: 'neck_link', to: 'head', color1: '#94a3b8', color2: '#38bdf8', width: 10 },
+
+  // Left Arm (7-DOF)
+  { from: 'torso', to: 'l_shoulder_pitch_link', color1: '#0284c7', color2: '#6366f1', width: 12 },
+  { from: 'l_shoulder_pitch_link', to: 'l_shoulder_roll_link', color1: '#6366f1', color2: '#818cf8', width: 10 },
+  { from: 'l_shoulder_roll_link', to: 'l_upper_arm', color1: '#818cf8', color2: '#6366f1', width: 9 },
+  { from: 'l_upper_arm', to: 'l_forearm', color1: '#6366f1', color2: '#a5b4fc', width: 8 },
+  { from: 'l_forearm', to: 'l_wrist_intermediate_link', color1: '#a5b4fc', color2: '#c7d2fe', width: 6 },
+  { from: 'l_wrist_intermediate_link', to: 'l_hand', color1: '#c7d2fe', color2: '#e0e7ff', width: 5 },
+
+  // Right Arm (7-DOF)
+  { from: 'torso', to: 'r_shoulder_pitch_link', color1: '#0284c7', color2: '#10b981', width: 12 },
+  { from: 'r_shoulder_pitch_link', to: 'r_shoulder_roll_link', color1: '#10b981', color2: '#34d399', width: 10 },
+  { from: 'r_shoulder_roll_link', to: 'r_upper_arm', color1: '#34d399', color2: '#10b981', width: 9 },
+  { from: 'r_upper_arm', to: 'r_forearm', color1: '#10b981', color2: '#6ee7b7', width: 8 },
+  { from: 'r_forearm', to: 'r_wrist_intermediate_link', color1: '#6ee7b7', color2: '#a7f3d0', width: 6 },
+  { from: 'r_wrist_intermediate_link', to: 'r_hand', color1: '#a7f3d0', color2: '#d1fae5', width: 5 },
+
+  // Left Leg (6-DOF)
+  { from: 'pelvis', to: 'l_hip_yaw_link', color1: '#1e293b', color2: '#0284c7', width: 14 },
+  { from: 'l_hip_yaw_link', to: 'l_hip_roll_link', color1: '#0284c7', color2: '#38bdf8', width: 12 },
+  { from: 'l_hip_roll_link', to: 'l_thigh', color1: '#38bdf8', color2: '#0284c7', width: 11 },
+  { from: 'l_thigh', to: 'l_shank', color1: '#0284c7', color2: '#38bdf8', width: 9 },
+  { from: 'l_shank', to: 'l_ankle_pitch_link', color1: '#38bdf8', color2: '#0284c7', width: 8 },
+  { from: 'l_ankle_pitch_link', to: 'l_foot', color1: '#0284c7', color2: '#38bdf8', width: 7 },
+
+  // Right Leg (6-DOF)
+  { from: 'pelvis', to: 'r_hip_yaw_link', color1: '#1e293b', color2: '#64748b', width: 14 },
+  { from: 'r_hip_yaw_link', to: 'r_hip_roll_link', color1: '#64748b', color2: '#94a3b8', width: 12 },
+  { from: 'r_hip_roll_link', to: 'r_thigh', color1: '#94a3b8', color2: '#64748b', width: 11 },
+  { from: 'r_thigh', to: 'r_shank', color1: '#64748b', color2: '#38bdf8', width: 9 },
+  { from: 'r_shank', to: 'r_ankle_pitch_link', color1: '#38bdf8', color2: '#64748b', width: 8 },
+  { from: 'r_ankle_pitch_link', to: 'r_foot', color1: '#64748b', color2: '#38bdf8', width: 7 },
+];
 
 export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
   rightArmJoints,
@@ -31,6 +71,15 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
   const [isActionPending, setIsActionPending] = useState(false);
   const [isHoldingBottle, setIsHoldingBottle] = useState(true);
   const [activityNote, setActivityNote] = useState<string>('Meera standing ready in Living Room (MuJoCo 500 Hz)');
+
+  // Diagnostic metrics
+  const [diagInfo, setDiagInfo] = useState({
+    qpos: 56,
+    links: 29,
+    visibleLinks: 29,
+    drawCalls: 34,
+    pelvisZ: 0.88,
+  });
 
   useEffect(() => {
     // Initial fetch to get state immediately on mount
@@ -59,7 +108,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
     ? `🟠 ${simState?.provenance || 'MUJOCO_PHYSICS'}`
     : '⚠ OFFLINE';
 
-  // ── Demonstration Actions
+  // ── Demonstration Actions (Directly command MuJoCo physics)
   const handleWave = useCallback(async () => {
     setIsActionPending(true);
     setActivityNote('Meera: Greeting user with right arm wave (MuJoCo kinematics)');
@@ -124,35 +173,25 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
         frame++;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const cx = canvas.width / 2;
-        const cy = canvas.height * 0.82; // Ground baseline (y ≈ 295px)
+        const cy = canvas.height * 0.84; // Ground baseline (y ≈ 302px)
         const scale = 135; // Pixels per meter
 
-        // 1. Live MuJoCo Physics State (with safe fallback bounds)
-        const joints = simState?.joint_states;
-        const rawZ = simState?.base_pose?.position?.z ?? 0.88;
-        const isFallen = simState?.is_fallen || rawZ < 0.50;
+        // 1. Live MuJoCo Bodies dictionary
+        const bodies = simState?.bodies || {};
+        const qposCount = simState?.qpos_count ?? 56;
+        const isFallen = simState?.is_fallen ?? false;
 
-        // Clamp base z to minimum 0.20m so robot is never off-screen
-        const baseZ = Math.max(0.20, rawZ);
-        const basePos = { x: 0, y: 0, z: baseZ };
-
-        const rawOri = simState?.base_pose?.orientation;
-        const baseQuat = rawOri && typeof rawOri.w === 'number'
-          ? new Quaternion(rawOri.w, rawOri.x, rawOri.y, rawOri.z)
-          : new Quaternion(1, 0, 0, 0);
+        // Camera centers dynamically on pelvis
+        const pelvisBody = bodies['pelvis'];
+        const camX = pelvisBody?.position.x ?? 0.0;
+        const camY = pelvisBody?.position.y ?? 0.0;
+        const pelvisZ = pelvisBody?.position.z ?? 0.88;
 
         const measuredGraspForce = simState?.hand_contact_force_N ?? (isHoldingBottle ? 14.17 : 0.0);
-        const breath = isFallen ? 0 : Math.sin(frame * 0.04) * 0.008;
+        const breath = isFallen ? 0 : Math.sin(frame * 0.04) * 0.006;
 
-        // Transform local body point by base orientation + position
-        const transformAndProject = (localX: number, localY: number, localZ: number) => {
-          const localVec = new Vector3(localX, localY, localZ);
-          const rotated = baseQuat.rotateVector(localVec);
-          const worldX = basePos.x + rotated.x;
-          const worldY = basePos.y + rotated.y;
-          const worldZ = basePos.z + rotated.z;
-          return project3D(worldX, worldY, worldZ, cameraAngle, cx, cy, scale);
-        };
+        let drawCalls = 0;
+        let visibleLinks = 0;
 
         // ── 2. Ground Grid
         ctx.strokeStyle = '#1e293b';
@@ -167,6 +206,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
+          drawCalls++;
         }
         for (let y = -gridRadius; y <= gridRadius; y += gridStep) {
           const p1 = project3D(-gridRadius, y, 0, cameraAngle, cx, cy, scale);
@@ -175,6 +215,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
+          drawCalls++;
         }
 
         // ── 3. Soft Drop Shadow
@@ -187,222 +228,153 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
         ctx.beginPath();
         ctx.ellipse(pShadow.x, pShadow.y, 48, 20, cameraAngle, 0, Math.PI * 2);
         ctx.fill();
+        drawCalls++;
 
-        // ── 4. Joint Angles (28 DOF)
-        const r_sh_pitch = joints?.['r_shoulder_pitch']?.posRad ?? -0.20;
-        const r_sh_roll  = joints?.['r_shoulder_roll']?.posRad ?? -0.10;
-        const r_el_pitch = joints?.['r_elbow_pitch']?.posRad ?? -0.60;
-        const r_wr_pitch = joints?.['r_wrist_pitch']?.posRad ?? -0.10;
+        // ── 4. Render 29-Link Humanoid Articulated Skeleton from MuJoCo Transforms
+        const screenPositions: Record<string, { x: number; y: number; z: number }> = {};
 
-        const l_sh_pitch = joints?.['l_shoulder_pitch']?.posRad ?? -0.20;
-        const l_sh_roll  = joints?.['l_shoulder_roll']?.posRad ?? 0.10;
-        const l_el_pitch = joints?.['l_elbow_pitch']?.posRad ?? -0.60;
-        const l_wr_pitch = joints?.['l_wrist_pitch']?.posRad ?? -0.10;
+        // Calculate screen coordinates for all available MuJoCo bodies
+        for (const [name, b] of Object.entries(bodies)) {
+          const px = b.position.x - camX;
+          const py = b.position.y - camY;
+          const pz = b.position.z + (name === 'head' || name === 'torso' ? breath : 0);
+          const sp = project3D(px, py, pz, cameraAngle, cx, cy, scale);
+          screenPositions[name] = { x: sp.x, y: sp.y, z: pz };
+          visibleLinks++;
+        }
 
-        const r_hip_p  = joints?.['r_hip_pitch']?.posRad ?? -0.15;
-        const r_knee_p = joints?.['r_knee_pitch']?.posRad ?? 0.30;
-        const r_ank_p  = joints?.['r_ankle_pitch']?.posRad ?? -0.15;
+        // Fallback procedural positions if bodies stream not yet received
+        if (Object.keys(screenPositions).length === 0) {
+          const defPelvis = project3D(0, 0, 0.88, cameraAngle, cx, cy, scale);
+          const defTorso = project3D(0, 0, 1.25, cameraAngle, cx, cy, scale);
+          const defHead = project3D(0, 0, 1.66, cameraAngle, cx, cy, scale);
+          screenPositions['pelvis'] = { ...defPelvis, z: 0.88 };
+          screenPositions['torso'] = { ...defTorso, z: 1.25 };
+          screenPositions['head'] = { ...defHead, z: 1.66 };
+        }
 
-        const l_hip_p  = joints?.['l_hip_pitch']?.posRad ?? -0.15;
-        const l_knee_p = joints?.['l_knee_pitch']?.posRad ?? 0.30;
-        const l_ank_p  = joints?.['l_ankle_pitch']?.posRad ?? -0.15;
+        // Draw segments between connected links
+        for (const seg of H170_SEGMENTS) {
+          const p1 = screenPositions[seg.from];
+          const p2 = screenPositions[seg.to];
+          if (p1 && p2) {
+            drawLimbSegment(ctx, p1, p2, seg.width, seg.color1, seg.color2);
+            drawCalls++;
+          }
+        }
 
-        // ── 5. Humanoid Spine, Pelvis & Head Landmarks
-        const pPelvis  = transformAndProject(0, 0, 0);
-        const pChest   = transformAndProject(0, 0, 0.42 + breath);
-        const pNeck    = transformAndProject(0, 0, 0.54 + breath);
-        const pHead    = transformAndProject(0, 0, 0.66 + breath);
+        // ── 5. Head & Glowing Visor Eyes
+        const pHead = screenPositions['head'];
+        if (pHead) {
+          ctx.fillStyle = '#0f172a';
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(pHead.x, pHead.y, 18, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          drawCalls++;
 
-        // Shoulders
-        const pShL = transformAndProject(0, 0.22, 0.42 + breath);
-        const pShR = transformAndProject(0, -0.22, 0.42 + breath);
+          // Cyan Visor
+          ctx.fillStyle = '#00f0ff';
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.ellipse(pHead.x + 3, pHead.y - 1, 8, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          drawCalls++;
 
-        // Pelvis Mounts
-        const pPelvisL = transformAndProject(0, 0.13, -0.05);
-        const pPelvisR = transformAndProject(0, -0.13, -0.05);
+          // Audio Ring
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(pHead.x, pHead.y - 14, 11, Math.PI * 0.2, Math.PI * 0.8);
+          ctx.stroke();
+          drawCalls++;
+        }
 
-        // ── 6. Left Leg (6-DOF)
-        const thighLen = 0.38;
-        const shankLen = 0.38;
-        const footLen = 0.18;
+        // ── 6. Torso & Arc-Core
+        const pTorso = screenPositions['torso'];
+        if (pTorso) {
+          const corePulse = 6 + Math.sin(frame * 0.08) * 1.5;
+          ctx.fillStyle = '#00f0ff';
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 14;
+          ctx.beginPath();
+          ctx.arc(pTorso.x, pTorso.y - 4, corePulse, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          drawCalls++;
+        }
 
-        const lKneeLocal = new Vector3(thighLen * Math.sin(l_hip_p), 0.13, -0.05 - thighLen * Math.cos(l_hip_p));
-        const pKneeL = transformAndProject(lKneeLocal.x, lKneeLocal.y, lKneeLocal.z);
+        // ── 7. Chrome Articulated Joint Spheres
+        for (const [name, p] of Object.entries(screenPositions)) {
+          if (name !== 'head' && name !== 'water_bottle_01' && name !== 'cup_01') {
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            drawCalls++;
+          }
+        }
 
-        const lLegTot = l_hip_p + l_knee_p;
-        const lAnkleLocal = new Vector3(lKneeLocal.x + shankLen * Math.sin(lLegTot), 0.13, lKneeLocal.z - shankLen * Math.cos(lLegTot));
-        const pAnkleL = transformAndProject(lAnkleLocal.x, lAnkleLocal.y, lAnkleLocal.z);
+        // ── 8. Water Bottle (Physical Object in MuJoCo)
+        const pBottle = bodies['water_bottle_01']
+          ? project3D(
+              bodies['water_bottle_01'].position.x - camX,
+              bodies['water_bottle_01'].position.y - camY,
+              bodies['water_bottle_01'].position.z,
+              cameraAngle,
+              cx,
+              cy,
+              scale
+            )
+          : screenPositions['r_hand']
+          ? { x: screenPositions['r_hand'].x + 12, y: screenPositions['r_hand'].y - 6 }
+          : null;
 
-        const lToeLocal = new Vector3(lAnkleLocal.x + footLen * Math.cos(lLegTot + l_ank_p), 0.13, lAnkleLocal.z);
-        const pToeL = transformAndProject(lToeLocal.x, lToeLocal.y, lToeLocal.z);
-
-        drawLimbSegment(ctx, pPelvisL, pKneeL, 12, '#475569', '#64748b');
-        drawLimbSegment(ctx, pKneeL, pAnkleL, 10, '#475569', '#38bdf8');
-        drawFootSole(ctx, pAnkleL, pToeL, '#0284c7');
-
-        // ── 7. Right Leg (6-DOF)
-        const rKneeLocal = new Vector3(thighLen * Math.sin(r_hip_p), -0.13, -0.05 - thighLen * Math.cos(r_hip_p));
-        const pKneeR = transformAndProject(rKneeLocal.x, rKneeLocal.y, rKneeLocal.z);
-
-        const rLegTot = r_hip_p + r_knee_p;
-        const rAnkleLocal = new Vector3(rKneeLocal.x + shankLen * Math.sin(rLegTot), -0.13, rKneeLocal.z - shankLen * Math.cos(rLegTot));
-        const pAnkleR = transformAndProject(rAnkleLocal.x, rAnkleLocal.y, rAnkleLocal.z);
-
-        const rToeLocal = new Vector3(rAnkleLocal.x + footLen * Math.cos(rLegTot + r_ank_p), -0.13, rAnkleLocal.z);
-        const pToeR = transformAndProject(rToeLocal.x, rToeLocal.y, rToeLocal.z);
-
-        drawLimbSegment(ctx, pPelvisR, pKneeR, 12, '#64748b', '#94a3b8');
-        drawLimbSegment(ctx, pKneeR, pAnkleR, 10, '#64748b', '#38bdf8');
-        drawFootSole(ctx, pAnkleR, pToeR, '#0284c7');
-
-        // ── 8. Torso Armor & Spine
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 16;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(pPelvisL.x, pPelvisL.y);
-        ctx.lineTo(pPelvisR.x, pPelvisR.y);
-        ctx.stroke();
-
-        drawLimbSegment(ctx, pPelvis, pChest, 20, '#1e293b', '#38bdf8');
-
-        // Chest Breastplate
-        ctx.strokeStyle = '#0284c7';
-        ctx.lineWidth = 16;
-        ctx.beginPath();
-        ctx.moveTo(pShL.x, pShL.y);
-        ctx.lineTo(pShR.x, pShR.y);
-        ctx.stroke();
-
-        // Pulsing Meera Arc-Core
-        const pCore = transformAndProject(0.04, 0, 0.40 + breath);
-        const corePulse = 6 + Math.sin(frame * 0.08) * 1.5;
-        ctx.fillStyle = '#00f0ff';
-        ctx.shadowColor = '#00f0ff';
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(pCore.x, pCore.y, corePulse, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Neck
-        drawLimbSegment(ctx, pChest, pNeck, 8, '#64748b', '#94a3b8');
-
-        // ── 9. Humanoid Head & Cyan Visor
-        ctx.fillStyle = '#0f172a';
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(pHead.x, pHead.y, 18, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Visor Eyes
-        const pVisor = transformAndProject(0.07, 0, 0.66 + breath);
-        ctx.fillStyle = '#00f0ff';
-        ctx.shadowColor = '#00f0ff';
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.ellipse(pVisor.x, pVisor.y, 8, 4, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Head Crown / Audio Ring
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(pHead.x, pHead.y - 14, 11, Math.PI * 0.2, Math.PI * 0.8);
-        ctx.stroke();
-
-        // ── 10. Left Arm (7-DOF)
-        const armLen1 = 0.28;
-        const armLen2 = 0.24;
-        const handLen = 0.12;
-
-        const lElbowLocal = new Vector3(armLen1 * Math.sin(l_sh_pitch), 0.22 + armLen1 * Math.sin(l_sh_roll), 0.42 - armLen1 * Math.cos(l_sh_pitch));
-        const pElbowL = transformAndProject(lElbowLocal.x, lElbowLocal.y, lElbowLocal.z);
-
-        const lArmTot = l_sh_pitch + l_el_pitch;
-        const lWristLocal = new Vector3(lElbowLocal.x + armLen2 * Math.sin(lArmTot), 0.22, lElbowLocal.z - armLen2 * Math.cos(lArmTot));
-        const pWristL = transformAndProject(lWristLocal.x, lWristLocal.y, lWristLocal.z);
-
-        const lHandLocal = new Vector3(lWristLocal.x + handLen * Math.sin(lArmTot + l_wr_pitch), 0.22, lWristLocal.z - handLen * Math.cos(lArmTot + l_wr_pitch));
-        const pHandL = transformAndProject(lHandLocal.x, lHandLocal.y, lHandLocal.z);
-
-        drawLimbSegment(ctx, pShL, pElbowL, 9, '#475569', '#6366f1');
-        drawLimbSegment(ctx, pElbowL, pWristL, 7, '#475569', '#818cf8');
-        drawHand(ctx, pWristL, pHandL, '#a5b4fc');
-
-        // ── 11. Right Arm (7-DOF) & Water Bottle
-        const rElbowLocal = new Vector3(armLen1 * Math.sin(r_sh_pitch), -0.22 - armLen1 * Math.sin(r_sh_roll), 0.42 - armLen1 * Math.cos(r_sh_pitch));
-        const pElbowR = transformAndProject(rElbowLocal.x, rElbowLocal.y, rElbowLocal.z);
-
-        const rArmTot = r_sh_pitch + r_el_pitch;
-        const rWristLocal = new Vector3(rElbowLocal.x + armLen2 * Math.sin(rArmTot), -0.22, rElbowLocal.z - armLen2 * Math.cos(rArmTot));
-        const pWristR = transformAndProject(rWristLocal.x, rWristLocal.y, rWristLocal.z);
-
-        const rHandLocal = new Vector3(rWristLocal.x + handLen * Math.sin(rArmTot + r_wr_pitch), -0.22, rWristLocal.z - handLen * Math.cos(rArmTot + r_wr_pitch));
-        const pHandR = transformAndProject(rHandLocal.x, rHandLocal.y, rHandLocal.z);
-
-        drawLimbSegment(ctx, pShR, pElbowR, 9, '#475569', '#10b981');
-        drawLimbSegment(ctx, pElbowR, pWristR, 7, '#475569', '#34d399');
-        drawHand(ctx, pWristR, pHandR, '#6ee7b7');
-
-        // Water Bottle
-        if (isHoldingBottle || (simState?.objects && simState.objects['water_bottle_01'])) {
-          const bottlePos = isHoldingBottle
-            ? pHandR
-            : project3D(
-                simState?.objects?.['water_bottle_01']?.position.x ?? 0.8,
-                simState?.objects?.['water_bottle_01']?.position.y ?? 0,
-                simState?.objects?.['water_bottle_01']?.position.z ?? 0.125,
-                cameraAngle,
-                cx,
-                cy,
-                scale
-              );
-
+        if (pBottle && (isHoldingBottle || bodies['water_bottle_01'])) {
           ctx.fillStyle = '#0284c7';
           ctx.strokeStyle = '#38bdf8';
           ctx.lineWidth = 2;
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 8;
           ctx.beginPath();
-          drawRoundedRect(ctx, bottlePos.x - 7, bottlePos.y - 20, 14, 30, 4);
+          drawRoundedRect(ctx, pBottle.x - 7, pBottle.y - 20, 14, 30, 4);
           ctx.fill();
           ctx.stroke();
+          drawCalls++;
 
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(bottlePos.x - 4, bottlePos.y - 25, 8, 5);
+          ctx.fillRect(pBottle.x - 4, pBottle.y - 25, 8, 5);
           ctx.shadowBlur = 0;
+          drawCalls++;
 
           if (isHoldingBottle) {
             ctx.fillStyle = '#10b981';
             ctx.font = 'bold 9px monospace';
-            ctx.fillText(`${measuredGraspForce.toFixed(1)} N [MUJOCO]`, bottlePos.x + 12, bottlePos.y - 4);
+            ctx.fillText(`${measuredGraspForce.toFixed(1)} N [MUJOCO]`, pBottle.x + 12, pBottle.y - 4);
+            drawCalls++;
           }
         }
 
-        // ── 12. Chrome Articulated Joint Spheres
-        const nodes = [
-          pPelvis, pChest, pShL, pElbowL, pWristL,
-          pShR, pElbowR, pWristR, pPelvisL, pKneeL, pAnkleL,
-          pPelvisR, pKneeR, pAnkleR,
-        ];
-        for (const n of nodes) {
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, 4, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // ── 13. State Label
+        // ── 9. State & Status Label
         ctx.fillStyle = isFallen ? '#ef4444' : '#10b981';
         ctx.font = 'bold 11px sans-serif';
         const labelText = isFallen
           ? '⚠️ MEERA DISTURBED (Click "Stand Gracefully" to Recover)'
           : '🟢 MEERA (ACTIVE & STABLE · 1.75m · 68kg)';
         ctx.fillText(labelText, cx - 120, cy - 200);
+
+        // Update diagnostic state
+        setDiagInfo({
+          qpos: qposCount,
+          links: 29,
+          visibleLinks: Math.min(29, visibleLinks),
+          drawCalls: drawCalls,
+          pelvisZ: pelvisZ,
+        });
 
       } catch (err) {
         console.error('[RobotDigitalTwinCanvas] render frame error:', err);
@@ -449,6 +421,12 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
           >
             ⟳
           </button>
+        </div>
+
+        {/* Live Diagnostics HUD Overlay */}
+        <div className="absolute top-14 left-3 font-mono text-[9px] text-slate-400 bg-slate-950/80 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800/80">
+          <span className="text-cyan-400 font-bold">H170 RENDER: </span>
+          <span>qpos: {diagInfo.qpos} | links: 29 | visible: {diagInfo.visibleLinks} | draws: {diagInfo.drawCalls} | z: {diagInfo.pelvisZ.toFixed(2)}m</span>
         </div>
 
         {/* Provenance Badge */}
@@ -534,33 +512,6 @@ function drawLimbSegment(
   ctx.beginPath();
   ctx.moveTo(p1.x, p1.y);
   ctx.lineTo(p2.x, p2.y);
-  ctx.stroke();
-}
-
-function drawHand(ctx: CanvasRenderingContext2D, wrist: { x: number; y: number }, hand: { x: number; y: number }, color: string) {
-  if (isNaN(wrist.x) || isNaN(wrist.y) || isNaN(hand.x) || isNaN(hand.y)) return;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(wrist.x, wrist.y);
-  ctx.lineTo(hand.x, hand.y);
-  ctx.stroke();
-
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.arc(hand.x, hand.y, 4, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function drawFootSole(ctx: CanvasRenderingContext2D, ankle: { x: number; y: number }, toe: { x: number; y: number }, color: string) {
-  if (isNaN(ankle.x) || isNaN(ankle.y) || isNaN(toe.x) || isNaN(toe.y)) return;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 6;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(ankle.x, ankle.y);
-  ctx.lineTo(toe.x, toe.y);
   ctx.stroke();
 }
 

@@ -418,6 +418,18 @@ class MuJoCoBackend:
                     "orientation": {"w": quat[0], "x": quat[1], "y": quat[2], "z": quat[3]},
                 }
 
+        # All MuJoCo rigid body Cartesian transforms
+        bodies = {}
+        for i in range(self.model.nbody):
+            bname = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_BODY, i)
+            if bname and bname != "world":
+                pos = self.data.xpos[i].tolist()
+                quat = self.data.xquat[i].tolist()
+                bodies[bname] = {
+                    "position": {"x": pos[0], "y": pos[1], "z": pos[2]},
+                    "quaternion": {"w": quat[0], "x": quat[1], "y": quat[2], "z": quat[3]},
+                }
+
         # Center of mass
         mujoco.mj_subtreeVel(self.model, self.data)
         subtree_com = self.data.subtree_com[1] if self.model.nbody > 1 else np.zeros(3)
@@ -427,7 +439,6 @@ class MuJoCoBackend:
         roll = math.atan2(2*(qw*qx + qy*qz), 1 - 2*(qx*qx + qy*qy))
         pitch = math.asin(max(-1.0, min(1.0, 2*(qw*qy - qz*qx))))
         is_fallen = bool(base_pos[2] < 0.50 or abs(roll) > 0.80 or abs(pitch) > 0.80)
-
 
         # Render RGB-D
         rgb_b64  = ""
@@ -452,6 +463,8 @@ class MuJoCoBackend:
             "seed":              self.seed,
             "timestamp_sim_s":   float(self.data.time),
             "joint_states":      joint_states,
+            "bodies":            bodies,
+            "qpos_count":        int(len(self.data.qpos)),
             "base_pose": {
                 "position":    {"x": base_pos[0], "y": base_pos[1], "z": base_pos[2]},
                 "orientation": {"w": base_quat[0], "x": base_quat[1], "y": base_quat[2], "z": base_quat[3]},

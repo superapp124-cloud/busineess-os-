@@ -50,6 +50,8 @@ export interface SimBridgeState {
   seed: number;
   timestamp_sim_s: number;
   joint_states: Record<string, SimJointState>;
+  bodies?: Record<string, { position: SimVector3; quaternion: SimQuaternion }>;
+  qpos_count?: number;
   base_pose: {
     position: SimVector3;
     orientation: SimQuaternion;
