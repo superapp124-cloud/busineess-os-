@@ -225,7 +225,7 @@ export const RobotOsPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              India's Autonomous Multilingual AI Humanoid Assistant · Powered by MuJoCo 3.12.0 Physics Authority
+              MEERA — CHATR-H170, an autonomous multilingual AI humanoid platform · MuJoCo 3.12.0 Physics Authority (1.75m · 68kg · 28 DOF)
             </p>
           </div>
         </div>

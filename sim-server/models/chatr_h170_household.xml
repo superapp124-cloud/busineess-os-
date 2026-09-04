@@ -1,7 +1,7 @@
 <mujoco model="CHATR-H170">
   <!--
   CHATR-H170 MJCF — auto-compiled by build_mjcf.py
-  Profile hash : 2b42983a7304af02a4e3fd3a6a174f544aff53be5f0693506fb8e36f778c3c45
+  Profile hash : c7ce6b22b495b72fadd622bb72bbe95ee1d7b3c1974e362bcd113475519e5e75
   Model        : CHATR-H170 v1.0.0
   Mass         : 68.0 kg
   DOF          : 28

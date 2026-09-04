@@ -189,7 +189,7 @@ export const SimulationAuthorityPanel: React.FC<SimAuthorityPanelProps> = ({ cla
             </div>
             <div className="flex items-center justify-between mt-0.5">
               <span className="text-slate-500">PROFILE</span>
-              <span className="text-slate-300">MEERA (CHATR-H170) · 68 kg · 28 DOF</span>
+              <span className="text-slate-300">MEERA (CHATR-H170) · 1.75m · 68 kg · 28 DOF</span>
             </div>
             <div className="flex items-center justify-between mt-0.5">
               <span className="text-slate-500">HASH</span>

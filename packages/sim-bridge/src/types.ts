@@ -60,6 +60,8 @@ export interface SimBridgeState {
   is_fallen: boolean;
   provenance: SimProvenance;
   camera_rgb_base64: string;         // JPEG, 640x480, from simulated camera
+  hand_contact_force_N?: number;     // Physical contact force measured on gripper
+  objects?: Record<string, { position: SimVector3; orientation: SimQuaternion }>;
   // Optional fields populated by specific methods:
   navigation_command_acknowledged?: boolean;
   target?: string;

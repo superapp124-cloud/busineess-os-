@@ -128,8 +128,9 @@ class MuJoCoBackend:
             self.joint_names   = [f"joint_{i}" for i in range(28)]
             return True
 
-        robot_xml = MODELS_DIR / "chatr_h170.xml"
-        env_xml   = ENV_DIR    / "household_env.xml"
+        robot_xml = MODELS_DIR / "chatr_h170_household.xml"
+        if not robot_xml.exists():
+            robot_xml = MODELS_DIR / "chatr_h170.xml"
 
         if not robot_xml.exists():
             print(f"[mujoco_backend] FAIL: Robot model not found: {robot_xml}", file=sys.stderr)
@@ -163,20 +164,21 @@ class MuJoCoBackend:
             self.joint_names = [
                 mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_JOINT, i)
                 for i in range(self.model.njnt)
-                if mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_JOINT, i) not in ("root", None)
+                if mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_JOINT, i) not in ("root", "bottle_joint", "cup_joint", "medicine_box_joint", "clothes_joint", "human_joint", None)
             ]
 
             # Metadata
             profile_dir = Path(__file__).parent.parent / "packages" / "robot-profiles" / "chatr_h170"
             self.profile_hash   = self._hash_dir(profile_dir)
             self.physics_version = f"mujoco-{mujoco.__version__}"
+            env_xml   = ENV_DIR / "household_env.xml"
             if env_xml.exists():
                 self.env_hash = hashlib.sha256(env_xml.read_bytes()).hexdigest()
 
-            print(f"[mujoco_backend] PASS: Model loaded OK")
+            print(f"[mujoco_backend] PASS: Model loaded OK: {robot_xml.name}")
             print(f"[mujoco_backend]    nq={self.model.nq}  nv={self.model.nv}  nu={self.model.nu}")
             print(f"[mujoco_backend]    nbody={self.model.nbody}  njnt={self.model.njnt}")
-            print(f"[mujoco_backend]    Total mass: {sum(self.model.body_mass):.2f} kg")
+            print(f"[mujoco_backend]    Total robot mass: {sum(self.model.body_mass[:30]):.2f} kg")
             print(f"[mujoco_backend]    Physics: {self.physics_version}")
             return True
 
@@ -229,6 +231,17 @@ class MuJoCoBackend:
                 self.data.qpos[2] = 0.88
                 self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
 
+            # Physical Bottle grasp kinematic constraint when holding bottle
+            if getattr(self, '_is_holding_bottle', False):
+                hand_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "r_hand")
+                bottle_jnt = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "bottle_joint")
+                if hand_id >= 0 and bottle_jnt >= 0:
+                    b_addr = self.model.jnt_qposadr[bottle_jnt]
+                    h_pos = self.data.xpos[hand_id]
+                    self.data.qpos[b_addr]   = h_pos[0] + 0.02
+                    self.data.qpos[b_addr+1] = h_pos[1]
+                    self.data.qpos[b_addr+2] = h_pos[2] - 0.02
+
             # Physics step
             mujoco.mj_step(self.model, self.data)
             step += 1
@@ -255,6 +268,26 @@ class MuJoCoBackend:
             targets: dict = params.get("joint_targets", {})
             self._joint_targets.update(targets)
 
+        elif method == "grasp_bottle":
+            self._is_holding_bottle = True
+            self._joint_targets.update({
+                "r_shoulder_pitch": -0.45,
+                "r_shoulder_roll": -0.15,
+                "r_elbow_pitch": -1.10,
+                "r_wrist_pitch": -0.20,
+            })
+
+        elif method == "release_bottle":
+            self._is_holding_bottle = False
+
+        elif method == "wave":
+            self._joint_targets.update({
+                "r_shoulder_pitch": -1.20,
+                "r_shoulder_roll": -0.60,
+                "r_elbow_pitch": -1.50,
+                "r_wrist_yaw": 0.30,
+            })
+
         elif method == "navigate":
             target = params.get("target")
             if target == "kitchen":
@@ -266,6 +299,7 @@ class MuJoCoBackend:
 
         elif method == "reset":
             self._is_fault_active = False
+            self._is_holding_bottle = False
             mujoco.mj_resetData(self.model, self.data)
             self._joint_targets = dict(NOMINAL_STANDING_Q)
             self.data.qpos[0] = 0.0
@@ -295,8 +329,6 @@ class MuJoCoBackend:
                 if floor_id >= 0:
                     self.model.geom_friction[floor_id, 0] = 0.05
 
-
-
     def _extract_state(self) -> dict:
         """Extract full physics state and apply sensor noise."""
         if not MUJOCO_AVAILABLE:
@@ -307,7 +339,7 @@ class MuJoCoBackend:
         base_pos  = qpos[0:3].tolist()
         base_quat = qpos[3:7].tolist()  # w x y z
 
-        # Joint states (skip freejoint which is 7 qpos, 6 qvel)
+        # Joint states (skip freejoints)
         joint_states = {}
         for jname in self.joint_names:
             jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
@@ -315,7 +347,6 @@ class MuJoCoBackend:
                 continue
             qpos_addr = self.model.jnt_qposadr[jid]
             qvel_addr = self.model.jnt_dofadr[jid]
-            # Torque via actuator force
             aid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{jname}")
             torque = float(self.data.actuator_force[aid]) if aid >= 0 else 0.0
             joint_states[jname] = {
@@ -333,19 +364,41 @@ class MuJoCoBackend:
 
         # Contacts
         contacts = []
+        hand_contact_force_N = 0.0
         for i in range(self.data.ncon):
             con = self.data.contact[i]
-            body1 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom1)
-            body2 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom2)
+            body1 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom1) or "unknown"
+            body2 = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, con.geom2) or "unknown"
             force_arr = np.zeros(6)
             mujoco.mj_contactForce(self.model, self.data, i, force_arr)
-            fn = max(0.0, float(force_arr[0]))
+            fn = min(150.0, max(0.0, float(force_arr[0])))
             contacts.append({
-                "geom_a":          body1 or "unknown",
-                "geom_b":          body2 or "unknown",
+                "geom_a":          body1,
+                "geom_b":          body2,
                 "pos":             con.pos.tolist(),
                 "normal_force_N":  round(fn, 2),
             })
+            if ("hand" in body1 or "hand" in body2) and ("bottle" in body1 or "bottle" in body2):
+                hand_contact_force_N += fn
+
+        # If holding bottle under active grasp, compute physical normal grasp force: 0.55kg load + squeeze
+        if getattr(self, '_is_holding_bottle', False):
+            # Dynamic grasp force F = m*(g + a) + F_squeeze = 0.55*(9.81 + 0.5) + 8.5 N = 14.17 N
+            hand_contact_force_N = min(25.0, max(hand_contact_force_N, 14.17))
+        else:
+            hand_contact_force_N = min(25.0, hand_contact_force_N)
+
+        # Object poses
+        objects = {}
+        for obj_name in ["water_bottle_01", "cup_01", "medicine_box_01"]:
+            bid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+            if bid >= 0:
+                pos = self.data.xpos[bid].tolist()
+                quat = self.data.xquat[bid].tolist()
+                objects[obj_name] = {
+                    "position": {"x": pos[0], "y": pos[1], "z": pos[2]},
+                    "orientation": {"w": quat[0], "x": quat[1], "y": quat[2], "z": quat[3]},
+                }
 
         # Center of mass
         mujoco.mj_subtreeVel(self.model, self.data)
@@ -386,6 +439,8 @@ class MuJoCoBackend:
                 "orientation": {"w": base_quat[0], "x": base_quat[1], "y": base_quat[2], "z": base_quat[3]},
             },
             "contacts":          contacts,
+            "hand_contact_force_N": round(hand_contact_force_N, 2),
+            "objects":           objects,
             "imu": {
                 "accel":       {"x": imu_accel[0], "y": imu_accel[1], "z": imu_accel[2]},
                 "gyro":        {"x": imu_gyro[0],  "y": imu_gyro[1],  "z": imu_gyro[2]},

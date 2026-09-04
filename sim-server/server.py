@@ -111,13 +111,28 @@ class SimBridgeServer:
                     "is_mujoco_loaded": bool(self.backend.model is not None),
                 }
 
+            elif method == "grasp_bottle":
+                self.backend.queue_command({"method": "grasp_bottle", "params": params})
+                await asyncio.sleep(0.05)
+                result = self.backend.get_latest_state()
+
+            elif method == "release_bottle":
+                self.backend.queue_command({"method": "release_bottle", "params": params})
+                await asyncio.sleep(0.05)
+                result = self.backend.get_latest_state()
+
+            elif method == "wave":
+                self.backend.queue_command({"method": "wave", "params": params})
+                await asyncio.sleep(0.05)
+                result = self.backend.get_latest_state()
+
             elif method == "navigate":
-                # High-level: command base to a room. Returns state after nav.
-                # In real bridge, this dispatches through skill engine.
-                # Here we return current state (skill engine handles the loop).
+                target = params.get("target", "kitchen")
+                self.backend.queue_command({"method": "navigate", "params": params})
+                await asyncio.sleep(0.05)
                 result = self.backend.get_latest_state()
                 result["navigation_command_acknowledged"] = True
-                result["target"] = params.get("target", "unknown")
+                result["target"] = target
 
             else:
                 return {

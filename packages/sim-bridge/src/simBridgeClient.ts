@@ -212,6 +212,18 @@ class SimBridgeClientImpl {
     return this._rpc<SimBridgeState>('navigate', { target });
   }
 
+  async graspBottle(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('grasp_bottle', {});
+  }
+
+  async releaseBottle(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('release_bottle', {});
+  }
+
+  async wave(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('wave', {});
+  }
+
   async injectFault(type: SimFaultType, params: Record<string, unknown> = {}): Promise<void> {
     await this._rpc('inject_fault', { type, ...params });
   }
