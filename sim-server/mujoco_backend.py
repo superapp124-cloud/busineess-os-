@@ -204,6 +204,17 @@ class MuJoCoBackend:
         kp      = 600.0
         kd      = 35.0
 
+        # Locomotion & State tracker
+        self._pos_x = 0.0
+        self._pos_y = 0.0
+        self._yaw = 0.0
+        self._gait_phase = 0.0
+        self._is_walking = False
+        self._walk_vx = 0.0
+        self._walk_vy = 0.0
+        self._walk_vyaw = 0.0
+        self._recovery_timer = 0
+
         while self._running:
             # Apply queued commands (non-blocking)
             try:
@@ -212,6 +223,34 @@ class MuJoCoBackend:
                     self._apply_command(cmd)
             except Exception:
                 pass
+
+            # Walking gait oscillation generator if walking
+            if self._is_walking or abs(self._walk_vx) > 0.01 or abs(self._walk_vyaw) > 0.01:
+                self._gait_phase += 2.0 * math.pi * 1.6 * dt
+                self._yaw += self._walk_vyaw * dt
+                # Advance position in heading direction
+                dx = (self._walk_vx * math.cos(self._yaw)) * dt
+                dy = (self._walk_vx * math.sin(self._yaw)) * dt
+                self._pos_x += dx
+                self._pos_y += dy
+
+                # Dynamic bipedal joint oscillations
+                leg_swing = math.sin(self._gait_phase) * 0.35
+                arm_swing = math.sin(self._gait_phase) * 0.30
+                bounce = abs(math.sin(self._gait_phase * 2.0)) * 0.025
+
+                self._joint_targets.update({
+                    "l_hip_pitch": -0.15 + leg_swing,
+                    "r_hip_pitch": -0.15 - leg_swing,
+                    "l_knee_pitch": 0.30 + max(0.0, -leg_swing * 1.2),
+                    "r_knee_pitch": 0.30 + max(0.0, leg_swing * 1.2),
+                    "l_ankle_pitch": -0.15 - leg_swing * 0.5,
+                    "r_ankle_pitch": -0.15 + leg_swing * 0.5,
+                    "l_shoulder_pitch": -arm_swing,
+                    "r_shoulder_pitch": arm_swing if not getattr(self, '_is_holding_bottle', False) else -0.45,
+                })
+            else:
+                bounce = 0.0
 
             # Active PD posture controller
             for jname, target_pos in self._joint_targets.items():
@@ -224,17 +263,23 @@ class MuJoCoBackend:
                     vel_err = 0.0 - self.data.qvel[qvel_addr]
                     self.data.ctrl[aid] = kp * pos_err + kd * vel_err
 
-            # Standing balance stabilization (held at origin unless external perturbation injected)
+            # Standing balance stabilization & game position sync
             if not getattr(self, '_is_fault_active', False):
-                self.data.qpos[0] = 0.0
-                self.data.qpos[1] = 0.0
-                self.data.qpos[2] = 0.88
-                self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
+                self.data.qpos[0] = self._pos_x
+                self.data.qpos[1] = self._pos_y
+                self.data.qpos[2] = 0.88 + bounce
+                cy = math.cos(self._yaw / 2.0)
+                sy = math.sin(self._yaw / 2.0)
+                self.data.qpos[3:7] = [cy, 0.0, 0.0, sy]
             else:
-                # Prevent numerical tunneling through floor when fallen
-                if self.data.qpos[2] < 0.18:
-                    self.data.qpos[2] = 0.18
-                    self.data.qvel[2] = 0.0
+                # External disturbance active — countdown to active balance recovery
+                self._recovery_timer += 1
+                if self._recovery_timer > 150: # After 0.3s disturbance, trigger active balance recovery
+                    self._is_fault_active = False
+                    self._recovery_timer = 0
+                    self.data.qvel.fill(0.0)
+                    self.data.qpos[2] = 0.88
+                    self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
 
             # Pulse push decay
             if getattr(self, '_push_steps_remaining', 0) > 0:
@@ -281,6 +326,12 @@ class MuJoCoBackend:
             targets: dict = params.get("joint_targets", {})
             self._joint_targets.update(targets)
 
+        elif method == "teleop":
+            self._walk_vx = float(params.get("vx", 0.0))
+            self._walk_vy = float(params.get("vy", 0.0))
+            self._walk_vyaw = float(params.get("vyaw", 0.0))
+            self._is_walking = bool(abs(self._walk_vx) > 0.01 or abs(self._walk_vyaw) > 0.01)
+
         elif method == "grasp_bottle":
             self._is_holding_bottle = True
             self._joint_targets.update({
@@ -292,6 +343,12 @@ class MuJoCoBackend:
 
         elif method == "release_bottle":
             self._is_holding_bottle = False
+            self._joint_targets.update({
+                "r_shoulder_pitch": 0.0,
+                "r_shoulder_roll": 0.0,
+                "r_elbow_pitch": -0.3,
+                "r_wrist_pitch": 0.0,
+            })
 
         elif method == "wave":
             self._joint_targets.update({
@@ -301,26 +358,41 @@ class MuJoCoBackend:
                 "r_wrist_yaw": 0.30,
             })
 
+        elif method == "dance":
+            self._joint_targets.update({
+                "l_shoulder_pitch": -1.10,
+                "r_shoulder_pitch": -1.10,
+                "l_elbow_pitch": -1.40,
+                "r_elbow_pitch": -1.40,
+                "waist_yaw": 0.25,
+            })
+
         elif method == "navigate":
             target = params.get("target")
             if target == "kitchen":
-                self.data.qpos[0] = 2.10
-                self.data.qpos[1] = -2.50
+                self._pos_x = 2.10
+                self._pos_y = -2.50
+                self._yaw = -1.57
             elif target in ("living_room", "home", "origin"):
-                self.data.qpos[0] = 0.0
-                self.data.qpos[1] = 0.0
+                self._pos_x = 0.0
+                self._pos_y = 0.0
+                self._yaw = 0.0
 
-        elif method == "reset":
+        elif method in ("reset", "stand", "recover_balance"):
             self._is_fault_active = False
             self._is_holding_bottle = False
+            self._is_walking = False
+            self._walk_vx = 0.0
+            self._walk_vyaw = 0.0
             self._push_steps_remaining = 0
+            self._recovery_timer = 0
             self.data.xfrc_applied.fill(0.0)
             self.data.qvel.fill(0.0)
             self.data.qacc.fill(0.0)
             mujoco.mj_resetData(self.model, self.data)
             self._joint_targets = dict(NOMINAL_STANDING_Q)
-            self.data.qpos[0] = 0.0
-            self.data.qpos[1] = 0.0
+            self.data.qpos[0] = self._pos_x
+            self.data.qpos[1] = self._pos_y
             self.data.qpos[2] = 0.88
             self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
             for jname, val in self._joint_targets.items():
@@ -337,6 +409,7 @@ class MuJoCoBackend:
             fault_type = params.get("type")
             if fault_type == "external_push":
                 self._is_fault_active = True
+                self._recovery_timer = 0
                 self._push_steps_remaining = 30  # 60ms impulse
                 pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
                 if pelvis_body >= 0:

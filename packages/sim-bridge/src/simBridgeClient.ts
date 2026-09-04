@@ -224,6 +224,22 @@ class SimBridgeClientImpl {
     return this._rpc<SimBridgeState>('wave', {});
   }
 
+  async teleop(vx: number, vy: number, vyaw: number): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('teleop', { vx, vy, vyaw });
+  }
+
+  async dance(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('dance', {});
+  }
+
+  async stand(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('stand', {});
+  }
+
+  async recoverBalance(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('recover_balance', {});
+  }
+
   async injectFault(type: SimFaultType, params: Record<string, unknown> = {}): Promise<void> {
     await this._rpc('inject_fault', { type, ...params });
   }
