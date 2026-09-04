@@ -113,21 +113,6 @@ class SimBridgeServer:
                     "is_mujoco_loaded": bool(self.backend.model is not None),
                 }
 
-            elif method == "teleop":
-                self.backend.queue_command({"method": "teleop", "params": params})
-                await asyncio.sleep(0.01)
-                result = self.backend.get_latest_state()
-
-            elif method == "dance":
-                self.backend.queue_command({"method": "dance", "params": params})
-                await asyncio.sleep(0.05)
-                result = self.backend.get_latest_state()
-
-            elif method in ("stand", "recover_balance"):
-                self.backend.queue_command({"method": "stand", "params": params})
-                await asyncio.sleep(0.05)
-                result = self.backend.get_latest_state()
-
             elif method == "grasp_bottle":
                 self.backend.queue_command({"method": "grasp_bottle", "params": params})
                 await asyncio.sleep(0.05)
@@ -140,11 +125,6 @@ class SimBridgeServer:
 
             elif method == "wave":
                 self.backend.queue_command({"method": "wave", "params": params})
-                await asyncio.sleep(0.05)
-                result = self.backend.get_latest_state()
-
-            elif method == "execute_task":
-                self.backend.queue_command({"method": "execute_task", "params": params})
                 await asyncio.sleep(0.05)
                 result = self.backend.get_latest_state()
 

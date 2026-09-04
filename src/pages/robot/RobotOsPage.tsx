@@ -18,6 +18,7 @@ import { FailureInjectionPanel } from '../../components/robot/FailureInjectionPa
 import { Vector3 } from '../../../packages/robot-physics/src/math/vector3';
 import { ArmJointAngles } from '../../../packages/robot-manipulation/src/types';
 import { SimBridgeClient } from '../../../packages/sim-bridge/src';
+import { RobotCommandEngine } from '../../services/robotCommandEngine';
 
 export const RobotOsPage: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState('RobotOS');
@@ -225,7 +226,15 @@ export const RobotOsPage: React.FC = () => {
           </span>
 
           <button
-            onClick={() => setIsEstop(!isEstop)}
+            onClick={() => {
+              const nextEstop = !isEstop;
+              setIsEstop(nextEstop);
+              if (nextEstop) {
+                RobotCommandEngine.executeCommand('emergency stop');
+              } else {
+                RobotCommandEngine.executeCommand('stand gracefully');
+              }
+            }}
             className={`px-3 py-1 rounded-xl font-bold text-[10px] transition shadow flex items-center gap-1 ${
               isEstop
                 ? 'bg-red-600 text-white animate-pulse'
