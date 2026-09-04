@@ -96,6 +96,16 @@ class MuJoCoBackend:
         self._physics_thread: threading.Thread | None = None
         self._joint_targets = dict(NOMINAL_STANDING_Q)
 
+        self._wave_active_until = 0.0
+        self._walk_active_until = 0.0
+        self._walk_start_pos = (0.0, 0.0)
+        self._walk_target_pos = (0.0, 0.0)
+        self._push_active_until = 0.0
+        self._is_holding_bottle = False
+        self._is_fault_active = False
+        self._push_steps_remaining = 0
+        self._base_position = [0.0, 0.0, 0.88]
+
         # Filled after load()
         self.model: Any = None
         self.data:  Any = None
@@ -213,6 +223,46 @@ class MuJoCoBackend:
             except Exception:
                 pass
 
+            now = time.perf_counter()
+
+            # ── 1. Dynamic Wave Oscillation
+            if now < getattr(self, '_wave_active_until', 0.0):
+                t_w = now
+                self._joint_targets["r_shoulder_pitch"] = -1.25
+                self._joint_targets["r_shoulder_roll"]  = -0.55
+                self._joint_targets["r_elbow_pitch"]    = -1.45 + 0.20 * math.sin(7.0 * t_w)
+                self._joint_targets["r_wrist_yaw"]      = 0.35 * math.sin(7.0 * t_w)
+                self._joint_targets["r_wrist_roll"]     = 0.20 * math.cos(7.0 * t_w)
+
+            # ── 2. Dynamic Locomotion / Walking Gait
+            elif now < getattr(self, '_walk_active_until', 0.0):
+                remain = self._walk_active_until - now
+                prog = max(0.0, min(1.0, 1.0 - (remain / 4.0)))
+                start_x, start_y = getattr(self, '_walk_start_pos', (0.0, 0.0))
+                target_x, target_y = getattr(self, '_walk_target_pos', (1.80, -1.50))
+                self._base_position[0] = start_x + (target_x - start_x) * prog
+                self._base_position[1] = start_y + (target_y - start_y) * prog
+
+                phase = 7.5 * now
+                self._joint_targets["l_hip_pitch"]   =  0.25 * math.sin(phase)
+                self._joint_targets["l_knee_pitch"]  = -0.40 * max(0.0, math.sin(phase))
+                self._joint_targets["r_hip_pitch"]   = -0.25 * math.sin(phase)
+                self._joint_targets["r_knee_pitch"]  = -0.40 * max(0.0, -math.sin(phase))
+                self._joint_targets["l_shoulder_pitch"] = -0.2 + 0.25 * math.sin(phase)
+                if not getattr(self, '_is_holding_bottle', False):
+                    self._joint_targets["r_shoulder_pitch"] = -0.2 - 0.25 * math.sin(phase)
+
+            # ── 3. Push Disturbance & Dynamic Capture-Point Recovery
+            elif now < getattr(self, '_push_active_until', 0.0):
+                remain = self._push_active_until - now
+                if remain > 1.2:
+                    self._joint_targets["l_hip_roll"] = -0.12
+                    self._joint_targets["r_hip_roll"] = -0.12
+                else:
+                    decay = remain / 1.2
+                    self._joint_targets["l_hip_roll"] = -0.12 * decay
+                    self._joint_targets["r_hip_roll"] = -0.12 * decay
+
             # Active PD posture controller
             for jname, target_pos in self._joint_targets.items():
                 jid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, jname)
@@ -224,11 +274,11 @@ class MuJoCoBackend:
                     vel_err = 0.0 - self.data.qvel[qvel_addr]
                     self.data.ctrl[aid] = kp * pos_err + kd * vel_err
 
-            # Standing balance stabilization (held at origin unless external perturbation injected)
+            # Standing balance stabilization
             if not getattr(self, '_is_fault_active', False):
-                self.data.qpos[0] = 0.0
-                self.data.qpos[1] = 0.0
-                self.data.qpos[2] = 0.88
+                self.data.qpos[0] = self._base_position[0]
+                self.data.qpos[1] = self._base_position[1]
+                self.data.qpos[2] = self._base_position[2]
                 self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
             else:
                 # Prevent numerical tunneling through floor when fallen
@@ -243,6 +293,7 @@ class MuJoCoBackend:
                     pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
                     if pelvis_body >= 0:
                         self.data.xfrc_applied[pelvis_body, 1] = 0.0
+                    self._is_fault_active = False
 
             # Physical Bottle grasp kinematic constraint when holding bottle
             if getattr(self, '_is_holding_bottle', False):
@@ -283,37 +334,50 @@ class MuJoCoBackend:
 
         elif method == "grasp_bottle":
             self._is_holding_bottle = True
+            self._wave_active_until = 0.0
             self._joint_targets.update({
                 "r_shoulder_pitch": -0.45,
                 "r_shoulder_roll": -0.15,
                 "r_elbow_pitch": -1.10,
                 "r_wrist_pitch": -0.20,
+                "r_wrist_roll": 0.0,
+                "r_wrist_yaw": 0.0,
             })
 
         elif method == "release_bottle":
             self._is_holding_bottle = False
+            self._joint_targets.update({
+                "r_shoulder_pitch": -0.20,
+                "r_shoulder_roll": -0.10,
+                "r_elbow_pitch": -0.60,
+                "r_wrist_pitch": -0.10,
+            })
 
         elif method == "wave":
+            self._wave_active_until = time.perf_counter() + 3.5
             self._joint_targets.update({
-                "r_shoulder_pitch": -1.20,
-                "r_shoulder_roll": -0.60,
-                "r_elbow_pitch": -1.50,
-                "r_wrist_yaw": 0.30,
+                "r_shoulder_pitch": -1.25,
+                "r_shoulder_roll": -0.55,
+                "r_elbow_pitch": -1.45,
             })
 
         elif method == "navigate":
-            target = params.get("target")
-            if target == "kitchen":
-                self.data.qpos[0] = 2.10
-                self.data.qpos[1] = -2.50
-            elif target in ("living_room", "home", "origin"):
-                self.data.qpos[0] = 0.0
-                self.data.qpos[1] = 0.0
+            target = params.get("target", "kitchen")
+            self._walk_start_pos = (self._base_position[0], self._base_position[1])
+            if target in ("kitchen", "table"):
+                self._walk_target_pos = (1.80, -1.50)
+            else:
+                self._walk_target_pos = (0.0, 0.0)
+            self._walk_active_until = time.perf_counter() + 4.0
 
         elif method == "reset":
             self._is_fault_active = False
             self._is_holding_bottle = False
+            self._wave_active_until = 0.0
+            self._walk_active_until = 0.0
+            self._push_active_until = 0.0
             self._push_steps_remaining = 0
+            self._base_position = [0.0, 0.0, 0.88]
             self.data.xfrc_applied.fill(0.0)
             self.data.qvel.fill(0.0)
             self.data.qacc.fill(0.0)
@@ -337,7 +401,8 @@ class MuJoCoBackend:
             fault_type = params.get("type")
             if fault_type == "external_push":
                 self._is_fault_active = True
-                self._push_steps_remaining = 30  # 60ms impulse
+                self._push_steps_remaining = 40  # 80ms impulse
+                self._push_active_until = time.perf_counter() + 2.0
                 pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
                 if pelvis_body >= 0:
                     self.data.xfrc_applied[pelvis_body, 1] = 450.0
