@@ -1,356 +1,246 @@
 /**
- * CHATR RobotOS Master Interface (Gate 8 UI: Household Task Engine & Skills)
- * Live Product Route connecting 3D Digital Twin, Multi-Lingual AI Bridge, 11 Household Tasks,
- * 30 Canonical Skills, 7-DOF Manipulation Inspector, Actuator Telemetry, and Deterministic Gating.
+ * CHATR RobotOS Master Cockpit (Meera AI Humanoid Platform)
+ * Unified High-Fidelity Robotics Interface matching the user design reference.
+ * Integrated with MuJoCo 3.12.0 physics, Web Speech API Voice synthesis, and multi-modal perception.
  */
 
-import React, { useState } from 'react';
-import { RobotDigitalTwinCanvas } from '../../components/robot/RobotDigitalTwinCanvas';
-import { PerceptionWorldModelCanvas } from '../../components/robot/PerceptionWorldModelCanvas';
-import { ActuatorTelemetryPanel } from '../../components/robot/ActuatorTelemetryPanel';
-import { VoiceConsolePanel } from '../../components/robot/VoiceConsolePanel';
-import { ExecutionGraphPanel } from '../../components/robot/ExecutionGraphPanel';
+import React, { useState, useEffect } from 'react';
+import { MeeraHeroView } from '../../components/robot/MeeraHeroView';
+import { VoiceConversationConsole } from '../../components/robot/VoiceConversationConsole';
+import { SimulationAuthorityPanel } from '../../components/robot/SimulationAuthorityPanel';
+import { RobotStateCard } from '../../components/robot/RobotStateCard';
+import { ManipulationCard } from '../../components/robot/ManipulationCard';
+import { TaskExecutionPipeline } from '../../components/robot/TaskExecutionPipeline';
+import { SensorFeedsGrid } from '../../components/robot/SensorFeedsGrid';
 import { SpatialSafetyPanel, MasterSafetyState } from '../../components/robot/SpatialSafetyPanel';
 import { FailureInjectionPanel } from '../../components/robot/FailureInjectionPanel';
-import { ManipulationInspectorPanel } from '../../components/robot/ManipulationInspectorPanel';
-import { HouseholdTaskEnginePanel } from '../../components/robot/HouseholdTaskEnginePanel';
-import { SimulationAuthorityPanel } from '../../components/robot/SimulationAuthorityPanel';
 
-import { RobotAiBridgePipeline } from '../../../packages/robot-ai-bridge/src/pipeline/robotAiBridgePipeline';
-import { ValidatedRobotTaskPlan } from '../../../packages/robot-ai-bridge/src/types';
-import { TemporalWorldModel } from '../../../packages/robot-perception/src/worldModel/temporalWorldModel';
-import { PerceptionWorldModelSnapshot } from '../../../packages/robot-perception/src/types';
 import { Vector3 } from '../../../packages/robot-physics/src/math/vector3';
-import { Quaternion } from '../../../packages/robot-physics/src/math/quaternion';
-import { ArmSide, ArmJointAngles, HumanSafetyZone } from '../../../packages/robot-manipulation/src/types';
+import { ArmJointAngles } from '../../../packages/robot-manipulation/src/types';
+import { SimBridgeClient } from '../../../packages/sim-bridge/src';
 
 export const RobotOsPage: React.FC = () => {
-  // Mode & Access Level
-  const [operationalMode, setOperationalMode] = useState<'SIMULATION' | 'HARDWARE'>('SIMULATION');
-  const [accessLevel, setAccessLevel] = useState<'FAMILY' | 'OPERATOR' | 'ENGINEERING'>('ENGINEERING');
+  const [activeSidebar, setActiveSidebar] = useState('RobotOS');
+  const [activeTab, setActiveTab] = useState('RobotOS');
+  const [isEstop, setIsEstop] = useState(false);
+  const [timeStr, setTimeStr] = useState('');
 
-  // Master Safety State Machine
-  const [masterSafetyState, setMasterSafetyState] = useState<MasterSafetyState>('NORMAL');
-
-  // Core Subsystem States
-  const [worldModel] = useState(() => new TemporalWorldModel());
-  const [pipeline] = useState(() => new RobotAiBridgePipeline());
-  const [worldSnapshot, setWorldSnapshot] = useState<PerceptionWorldModelSnapshot>(() => worldModel.getSnapshot(0.0));
-
-  const [robotPosition, setRobotPosition] = useState<Vector3>(new Vector3(0.0, -1.5, 0.95));
+  // Robot Arm & Base state
   const [rightArmJoints, setRightArmJoints] = useState<ArmJointAngles>({
     shoulderPitch: -0.2,
-    shoulderRoll: 0.2,
+    shoulderRoll: -0.1,
     shoulderYaw: 0.0,
-    elbowPitch: 0.6,
+    elbowPitch: -0.6,
     wristYaw: 0.0,
     wristRoll: 0.0,
-    wristPitch: 0.0,
+    wristPitch: -0.1,
   });
+
   const [leftArmJoints, setLeftArmJoints] = useState<ArmJointAngles>({
     shoulderPitch: -0.2,
-    shoulderRoll: -0.2,
+    shoulderRoll: 0.1,
     shoulderYaw: 0.0,
-    elbowPitch: 0.6,
+    elbowPitch: -0.6,
     wristYaw: 0.0,
     wristRoll: 0.0,
-    wristPitch: 0.0,
+    wristPitch: -0.1,
   });
 
-  const [batterySoc, setBatterySoc] = useState(85.0);
-  const [walkingState, setWalkingState] = useState<'IDLE_STANDING' | 'DOUBLE_SUPPORT' | 'SINGLE_SUPPORT_RIGHT' | 'SINGLE_SUPPORT_LEFT' | 'EMERGENCY_STOPPED'>('IDLE_STANDING');
-  const [activePlan, setActivePlan] = useState<ValidatedRobotTaskPlan | null>(null);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [torsoPosition] = useState<Vector3>(new Vector3(0.0, 0.0, 0.88));
 
-  // Spatial Safety State
-  const [safetyZone, setSafetyZone] = useState<HumanSafetyZone>('ZONE_3_NORMAL_OPERATING');
-  const [humanDistance, setHumanDistance] = useState(2.4);
-  const [ttc, setTtc] = useState(4.8);
-  const [velocityScale, setVelocityScale] = useState(1.0);
-  const [isEstop, setIsEstop] = useState(false);
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeStr(
+        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+          ' ' +
+          now.toLocaleDateString([], { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  // Failure Injection
-  const [lastFault, setLastFault] = useState<{
-    failureMode: string;
-    robotOsResponse: string;
-    recoveryAction: string;
-    isSafetyMaintained: boolean;
-  } | null>(null);
+  const sidebarItems = [
+    { id: 'RobotOS', icon: '🤖', label: 'RobotOS' },
+    { id: 'Dashboard', icon: '📊', label: 'Dashboard' },
+    { id: 'Conversation', icon: '💬', label: 'Conversation' },
+    { id: 'Skills', icon: '⚡', label: 'Skills' },
+    { id: 'Perception', icon: '👁️', label: 'Perception' },
+    { id: 'Navigation', icon: '🧭', label: 'Navigation' },
+    { id: 'Manipulation', icon: '🦾', label: 'Manipulation' },
+    { id: 'Simulation Studio', icon: '🔬', label: 'Simulation Studio' },
+    { id: 'World Model', icon: '🌐', label: 'World Model' },
+    { id: 'Safety & Faults', icon: '🛡️', label: 'Safety & Faults' },
+    { id: 'Evidence', icon: '📑', label: 'Evidence' },
+    { id: 'System', icon: '⚙️', label: 'System' },
+  ];
 
-  // Interactive Arm Update
-  const handleUpdateArmJoints = (side: ArmSide, joints: ArmJointAngles) => {
-    if (side === 'RIGHT') {
-      setRightArmJoints(joints);
-    } else {
-      setLeftArmJoints(joints);
-    }
-  };
-
-  // Command Execution Handler
-  const handleExecutePrompt = async (promptText: string) => {
-    setIsProcessing(true);
-    try {
-      const snap = worldModel.getSnapshot(Date.now() / 1000);
-      setWorldSnapshot(snap);
-
-      const plan = await pipeline.processUserPrompt(promptText, snap, robotPosition, batterySoc);
-      setActivePlan(plan);
-
-      if (plan.isApprovedForExecution && plan.subTasks.length > 0) {
-        setMasterSafetyState('NORMAL');
-        setCurrentStepIndex(1);
-        simulateExecutionSequence(plan);
-      } else {
-        setCurrentStepIndex(0);
-        if (plan.validationStatus === 'BLOCKED_BATTERY_LOW') {
-          setMasterSafetyState('CAUTION');
-        } else if (plan.validationStatus === 'BLOCKED_LOW_PERCEPTION_CONFIDENCE') {
-          setMasterSafetyState('PERCEPTION_DEGRADED');
-        }
-      }
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const simulateExecutionSequence = (plan: ValidatedRobotTaskPlan) => {
-    let step = 1;
-    const interval = setInterval(() => {
-      step++;
-      if (step <= plan.subTasks.length) {
-        setCurrentStepIndex(step);
-
-        if (step === 4) {
-          setRightArmJoints({
-            shoulderPitch: -0.6,
-            shoulderRoll: 0.3,
-            shoulderYaw: 0.1,
-            elbowPitch: 1.2,
-            wristYaw: 0.0,
-            wristRoll: 0.0,
-            wristPitch: 0.0,
-          });
-        } else if (step === 6) {
-          setRightArmJoints({
-            shoulderPitch: -0.8,
-            shoulderRoll: 0.4,
-            shoulderYaw: 0.2,
-            elbowPitch: 1.4,
-            wristYaw: 0.1,
-            wristRoll: 0.0,
-            wristPitch: -0.1,
-          });
-        }
-      } else {
-        clearInterval(interval);
-      }
-    }, 1200);
-  };
-
-  // Failure Injection Handler
-  const handleInjectFailure = (failureMode: string) => {
-    const fault = pipeline.handleFailureInjection(failureMode);
-    setLastFault({
-      failureMode,
-      robotOsResponse: fault.robotOsResponse,
-      recoveryAction: fault.recoveryAction,
-      isSafetyMaintained: fault.isSafetyMaintained,
-    });
-
-    switch (failureMode) {
-      case 'HUMAN_ENTERED_PATH':
-        setMasterSafetyState('CAUTION');
-        setSafetyZone('ZONE_1_EMERGENCY_STOP');
-        setHumanDistance(0.32);
-        setTtc(0.35);
-        setVelocityScale(0.0);
-        break;
-      case 'EMERGENCY_STOP':
-        setMasterSafetyState('E_STOP');
-        setIsEstop(true);
-        setWalkingState('EMERGENCY_STOPPED');
-        setSafetyZone('ZONE_1_EMERGENCY_STOP');
-        setVelocityScale(0.0);
-        break;
-      case 'BATTERY_LOW':
-        setMasterSafetyState('CAUTION');
-        setBatterySoc(10.0);
-        break;
-      case 'CAMERA_DISCONNECTED':
-        setMasterSafetyState('PERCEPTION_DEGRADED');
-        break;
-      case 'OLLAMA_UNAVAILABLE':
-        setMasterSafetyState('LOCAL_AI_UNAVAILABLE');
-        break;
-      case 'MOTOR_SATURATION':
-        setMasterSafetyState('ACTUATOR_FAULT');
-        break;
-      default:
-        setMasterSafetyState('SAFE_HOLD');
-        break;
-    }
-  };
-
-  const handleToggleEstop = () => {
-    if (isEstop) {
-      setIsEstop(false);
-      setMasterSafetyState('NORMAL');
-      setWalkingState('IDLE_STANDING');
-      setSafetyZone('ZONE_3_NORMAL_OPERATING');
-      setVelocityScale(1.0);
-    } else {
-      setIsEstop(true);
-      setMasterSafetyState('E_STOP');
-      setWalkingState('EMERGENCY_STOPPED');
-      setSafetyZone('ZONE_1_EMERGENCY_STOP');
-      setVelocityScale(0.0);
-      handleInjectFailure('EMERGENCY_STOP');
-    }
-  };
+  const topTabs = ['Home', 'RobotOS', 'Perception', 'Tasks', 'World Model', 'Logs', 'Settings'];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6 flex flex-col gap-5">
-      {/* Top Header Bar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+      {/* ── Top Header Navigation Bar ── */}
+      <header className="h-16 bg-slate-900/90 border-b border-slate-800 px-4 md:px-6 flex items-center justify-between backdrop-blur-md sticky top-0 z-50">
+        {/* Logo & Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-black text-xl">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-900/40">
             ⚡
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-white">CHATR RobotOS · Meera AI Humanoid</h1>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                MEERA-H170
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              MEERA — CHATR-H170, an autonomous multilingual AI humanoid platform · MuJoCo 3.12.0 Physics Authority (1.75m · 68kg · 28 DOF)
+            <h1 className="text-base font-black tracking-tight text-white flex items-center gap-1.5">
+              <span>CHATR RobotOS</span>
+            </h1>
+            <p className="text-[10px] text-slate-400 font-medium">
+              Humanoid Intelligence for a Better Tomorrow
             </p>
           </div>
         </div>
 
-        {/* Dual Mode & Controls */}
-        <div className="flex items-center gap-3 self-end md:self-auto">
-          {/* Mode Switcher */}
-          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+        {/* Top Navigation Tabs */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-950/80 p-1 rounded-2xl border border-slate-800 text-xs font-semibold">
+          {topTabs.map((tab) => (
             <button
-              onClick={() => setOperationalMode('SIMULATION')}
-              className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition ${
-                operationalMode === 'SIMULATION' ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-white'
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-3.5 py-1.5 rounded-xl transition ${
+                activeTab === tab
+                  ? 'bg-cyan-600 text-white shadow'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🟢 SIMULATION
+              {tab}
             </button>
-            <button
-              onClick={() => setOperationalMode('HARDWARE')}
-              className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition ${
-                operationalMode === 'HARDWARE' ? 'bg-rose-600 text-white shadow' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              🔴 PHYSICAL HARDWARE
-            </button>
+          ))}
+        </nav>
+
+        {/* Right Status Indicators */}
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-slate-200 font-bold">MuJoCo Connected</span>
+            <span className="text-slate-600">|</span>
+            <span className="text-cyan-400 font-bold">500 Hz</span>
           </div>
 
-          {/* Access Level */}
-          <select
-            value={accessLevel}
-            onChange={(e) => setAccessLevel(e.target.value as any)}
-            className="bg-slate-950 border border-slate-800 text-xs text-slate-200 px-3 py-2 rounded-xl focus:outline-none"
-          >
-            <option value="FAMILY">Family View</option>
-            <option value="OPERATOR">Operator View</option>
-            <option value="ENGINEERING">Engineering View</option>
-          </select>
+          <div className="hidden md:block text-xs font-mono text-slate-400">
+            {timeStr || '13:52 Thu, 04 Sep 2026'}
+          </div>
 
-          {/* Big Red Emergency Stop Button */}
+          {/* User Avatar */}
+          <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-bold text-xs shadow">
+            👤
+          </div>
+        </div>
+      </header>
+
+      {/* ── Main Workspace Body ── */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar */}
+        <aside className="w-16 md:w-56 bg-slate-900/60 border-r border-slate-800 p-2.5 flex flex-col gap-1 shrink-0 overflow-y-auto">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveSidebar(item.id)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition ${
+                activeSidebar === item.id
+                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-950/60'
+                  : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+              }`}
+              title={item.label}
+            >
+              <span className="text-base">{item.icon}</span>
+              <span className="hidden md:inline">{item.label}</span>
+            </button>
+          ))}
+        </aside>
+
+        {/* Center Main Dashboard Content */}
+        <main className="flex-1 p-4 md:p-5 overflow-y-auto flex flex-col gap-4">
+          {/* ── ROW 1: Hero Character & Voice/Authority ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Left 7 Cols: Meera Lifelike Character & Demonstration Actions */}
+            <div className="lg:col-span-7 flex flex-col">
+              <MeeraHeroView
+                rightArmJoints={rightArmJoints}
+                leftArmJoints={leftArmJoints}
+                torsoPosition={torsoPosition}
+                walkingState="IDLE_STANDING"
+                isHardwareConnected={false}
+              />
+            </div>
+
+            {/* Right 5 Cols: Voice Conversation & Simulation Authority */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              <div className="flex-1">
+                <VoiceConversationConsole />
+              </div>
+              <div>
+                <SimulationAuthorityPanel />
+              </div>
+            </div>
+          </div>
+
+          {/* ── ROW 2: Robot State, Manipulation & Task Pipeline ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <RobotStateCard />
+            <ManipulationCard />
+            <TaskExecutionPipeline />
+          </div>
+
+          {/* ── ROW 3: Multi-Modal Sensor Feeds (RGB, Depth, World Map, Point Cloud) ── */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">
+              PERCEPTION & SENSORS (LIVE MUJOCO FEED)
+            </h3>
+            <SensorFeedsGrid />
+          </div>
+        </main>
+      </div>
+
+      {/* ── Bottom Master Status Footer Bar ── */}
+      <footer className="h-14 bg-slate-900 border-t border-slate-800 px-4 md:px-6 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-lg bg-cyan-600 flex items-center justify-center text-white text-[10px] font-black">
+            M
+          </div>
+          <span className="font-bold text-white">MEERA — CHATR-H170</span>
+          <span className="hidden sm:inline text-slate-500 text-[11px]">
+            Autonomous Multilingual AI Humanoid Platform
+          </span>
+        </div>
+
+        {/* Voice Active Pill */}
+        <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-slate-300 font-mono text-[11px]">
+          <span className="text-cyan-400 animate-pulse">🔊</span>
+          <span>Voice active. Speak to Meera...</span>
+        </div>
+
+        {/* Safety & Mode Status */}
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-1 rounded-xl bg-emerald-950 border border-emerald-700 text-emerald-300 font-bold text-[10px] flex items-center gap-1">
+            <span>🛡️</span>
+            <span>Human Safe Zone: ACTIVE</span>
+          </span>
+
           <button
-            onClick={handleToggleEstop}
-            className={`px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition shadow-lg ${
+            onClick={() => setIsEstop(!isEstop)}
+            className={`px-3 py-1 rounded-xl font-bold text-[10px] transition shadow flex items-center gap-1 ${
               isEstop
-                ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse'
-                : 'bg-rose-600 hover:bg-rose-500 text-white'
+                ? 'bg-red-600 text-white animate-pulse'
+                : 'bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300'
             }`}
           >
-            {isEstop ? 'RESET E-STOP' : '🛑 EMERGENCY STOP'}
+            <span>🔴</span>
+            <span>{isEstop ? 'E-STOP ACTIVATED' : 'E-Stop: READY'}</span>
           </button>
+
+          <span className="hidden lg:inline-block px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-bold text-[10px]">
+            ⚙️ Simulation Mode [No Real Hardware]
+          </span>
         </div>
-      </div>
-
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left Column: Simulation Authority, 3D Digital Twin & Perception (6 cols) */}
-        <div className="lg:col-span-6 flex flex-col gap-5">
-          <SimulationAuthorityPanel />
-
-          <RobotDigitalTwinCanvas
-            rightArmJoints={rightArmJoints}
-            leftArmJoints={leftArmJoints}
-            torsoPosition={robotPosition}
-            walkingState={walkingState}
-            isHardwareConnected={operationalMode === 'HARDWARE'}
-          />
-
-          <PerceptionWorldModelCanvas
-            worldModelSnapshot={worldSnapshot}
-            robotPosition={robotPosition}
-            cameraLatencyMs={33}
-          />
-
-          <SpatialSafetyPanel
-            masterSafetyState={masterSafetyState}
-            currentSafetyZone={safetyZone}
-            distanceToHumanMeters={humanDistance}
-            timeToCollisionSeconds={ttc}
-            permittedVelocityScale={velocityScale}
-            isEstopActive={isEstop}
-          />
-
-          <HouseholdTaskEnginePanel
-            worldModelSnapshot={worldSnapshot}
-            robotPose={{ position: robotPosition, orientation: new Quaternion(1, 0, 0, 0) }}
-            batterySoc={batterySoc}
-            safetyZone={safetyZone}
-            isEstopActive={isEstop}
-            activeArmJoints={{ RIGHT: rightArmJoints, LEFT: leftArmJoints }}
-          />
-        </div>
-
-        {/* Right Column: AI Console, Manipulation Inspector, Telemetry & Failure Console (6 cols) */}
-        <div className="lg:col-span-6 flex flex-col gap-5">
-          <VoiceConsolePanel
-            onExecutePrompt={handleExecutePrompt}
-            activePlan={activePlan}
-            isProcessing={isProcessing}
-          />
-
-          {accessLevel === 'ENGINEERING' && (
-            <ManipulationInspectorPanel
-              worldModelSnapshot={worldSnapshot}
-              onUpdateArmJoints={handleUpdateArmJoints}
-            />
-          )}
-
-          <ExecutionGraphPanel
-            activePlan={activePlan}
-            currentStepIndex={currentStepIndex}
-          />
-
-          <ActuatorTelemetryPanel
-            batterySocPercent={batterySoc}
-            batteryVoltageV={51.2}
-            currentDrawA={3.5}
-            rightArmJoints={rightArmJoints}
-            isHardwareMode={operationalMode === 'HARDWARE'}
-          />
-
-          <FailureInjectionPanel
-            onInjectFailure={handleInjectFailure}
-            lastFaultResponse={lastFault}
-          />
-        </div>
-      </div>
+      </footer>
     </div>
   );
 };
-export default RobotOsPage;
