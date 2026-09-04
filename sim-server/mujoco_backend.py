@@ -230,6 +230,19 @@ class MuJoCoBackend:
                 self.data.qpos[1] = 0.0
                 self.data.qpos[2] = 0.88
                 self.data.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
+            else:
+                # Prevent numerical tunneling through floor when fallen
+                if self.data.qpos[2] < 0.18:
+                    self.data.qpos[2] = 0.18
+                    self.data.qvel[2] = 0.0
+
+            # Pulse push decay
+            if getattr(self, '_push_steps_remaining', 0) > 0:
+                self._push_steps_remaining -= 1
+                if self._push_steps_remaining == 0:
+                    pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
+                    if pelvis_body >= 0:
+                        self.data.xfrc_applied[pelvis_body, 1] = 0.0
 
             # Physical Bottle grasp kinematic constraint when holding bottle
             if getattr(self, '_is_holding_bottle', False):
@@ -300,6 +313,10 @@ class MuJoCoBackend:
         elif method == "reset":
             self._is_fault_active = False
             self._is_holding_bottle = False
+            self._push_steps_remaining = 0
+            self.data.xfrc_applied.fill(0.0)
+            self.data.qvel.fill(0.0)
+            self.data.qacc.fill(0.0)
             mujoco.mj_resetData(self.model, self.data)
             self._joint_targets = dict(NOMINAL_STANDING_Q)
             self.data.qpos[0] = 0.0
@@ -320,6 +337,7 @@ class MuJoCoBackend:
             fault_type = params.get("type")
             if fault_type == "external_push":
                 self._is_fault_active = True
+                self._push_steps_remaining = 30  # 60ms impulse
                 pelvis_body = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
                 if pelvis_body >= 0:
                     self.data.xfrc_applied[pelvis_body, 1] = 450.0
