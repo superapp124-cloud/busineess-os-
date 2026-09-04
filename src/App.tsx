@@ -98,7 +98,7 @@ const CustomerSuccessOSDashboard = React.lazy(() => import("./components/Custome
 const BusinessIntelligenceDashboard = React.lazy(() => import("./components/BusinessIntelligenceDashboard").then(m => ({ default: m.BusinessIntelligenceDashboard })));
 const ExecutiveAICopilotDashboard = React.lazy(() => import("./components/ExecutiveAICopilotDashboard").then(m => ({ default: m.ExecutiveAICopilotDashboard })));
 const PermanentMarketingOS = React.lazy(() => import("./pages/desktop/PermanentMarketingOS"));
-const RobotOsPage = React.lazy(() => import("./pages/robot/RobotOsPage"));
+const RobotOsPage = React.lazy(() => import("./pages/robot/RobotOsPage").then(m => ({ default: m.RobotOsPage || m.default })));
 const MediaDistributionControlCenter = React.lazy(() => import("./pages/desktop/MediaDistributionControlCenter").then(m => ({ default: m.MediaDistributionControlCenter })));
 const AIHubPage = React.lazy(() => import("./pages/AIHub").then(m => ({ default: m.AIHub })));
 const WhatsAppCandidateScreeningPage = React.lazy(() => import("./pages/landing/WhatsAppCandidateScreeningPage").then(m => ({ default: m.WhatsAppCandidateScreeningPage })));

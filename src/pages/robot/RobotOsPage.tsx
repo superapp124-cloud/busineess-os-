@@ -244,3 +244,5 @@ export const RobotOsPage: React.FC = () => {
     </div>
   );
 };
+
+export default RobotOsPage;
