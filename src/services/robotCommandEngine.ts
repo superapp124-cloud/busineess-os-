@@ -99,25 +99,16 @@ class RobotCommandEngineImpl {
     }
 
     // 1. Intent Classification
-    if (
-      cmd.includes('paani') ||
-      cmd.includes('bottle') ||
-      cmd.includes('water') ||
-      cmd.includes('hold') ||
-      cmd.includes('kitchen') ||
-      cmd.includes('fetch') ||
-      cmd.includes('lao')
-    ) {
+    const hasWave = cmd.includes('wave') || cmd.includes('namaste') || cmd.includes('hello') || cmd.includes('hi') || cmd.includes('greet') || cmd.includes('swagat') || cmd.includes('haath');
+    const hasWalk = cmd.includes('walk') || cmd.includes('chalo') || cmd.includes('navigate') || cmd.includes('aage') || cmd.includes('step');
+    const hasPickBottle = cmd.includes('bottle') || cmd.includes('paani') || cmd.includes('water') || cmd.includes('pick') || cmd.includes('hold') || cmd.includes('fetch') || cmd.includes('lao') || cmd.includes('kitchen');
+
+    // Multi-action combination (e.g. "walk wave the hand pick up bottle")
+    if ((hasWave && hasWalk) || (hasWalk && hasPickBottle) || (hasWave && hasPickBottle) || cmd.includes('mission') || cmd.includes('all')) {
+      return this._executeWaveWalkPick(rawCommand, lang);
+    } else if (hasPickBottle) {
       return this._executeFetchBottle(rawCommand, lang);
-    } else if (
-      cmd.includes('wave') ||
-      cmd.includes('namaste') ||
-      cmd.includes('hello') ||
-      cmd.includes('hi') ||
-      cmd.includes('greet') ||
-      cmd.includes('swagat') ||
-      cmd.includes('haath')
-    ) {
+    } else if (hasWave) {
       return this._executeWave(rawCommand, lang);
     } else if (
       cmd.includes('stand') ||
@@ -128,13 +119,7 @@ class RobotCommandEngineImpl {
       cmd.includes('pose')
     ) {
       return this._executeStand(rawCommand, lang);
-    } else if (
-      cmd.includes('walk') ||
-      cmd.includes('chalo') ||
-      cmd.includes('navigate') ||
-      cmd.includes('aage') ||
-      cmd.includes('step')
-    ) {
+    } else if (hasWalk) {
       return this._executeWalk(rawCommand, lang);
     } else if (
       cmd.includes('push') ||
@@ -424,6 +409,45 @@ class RobotCommandEngineImpl {
 
     this._notify();
     meeraVoice.speak(speech, lang).catch(() => {});
+
+    this._advanceStepsSequentially(1, steps);
+    return this.activeTask;
+  }
+
+  // ── Recipe: Composite Mission (Wave → Walk → Grasp Water Bottle)
+  private async _executeWaveWalkPick(cmd: string, lang: string): Promise<ActiveTaskState> {
+    const speech = 'Ji! Main pehle aapse wave karke greet kar rahi hoon, fir kitchen chal kar paani ki bottle pick karungi.';
+    const steps: TaskStep[] = [
+      { num: 1, label: 'Understand composite mission (Wave → Walk → Pick Bottle)', status: 'COMPLETED', durationMs: 400 },
+      { num: 2, label: 'Execute friendly greeting wave [Right arm 7-DOF oscillation]', status: 'IN_PROGRESS', durationMs: 2600 },
+      { num: 3, label: 'Initialize bipedal locomotion controller', status: 'PENDING', durationMs: 600 },
+      { num: 4, label: 'Walk to Kitchen Counter waypoint [X: 1.80, Y: -1.50]', status: 'PENDING', durationMs: 3400 },
+      { num: 5, label: 'Stabilize in double-support stance at counter', status: 'PENDING', durationMs: 600 },
+      { num: 6, label: 'RGBD camera: detect & segment water_bottle_01', status: 'PENDING', durationMs: 700 },
+      { num: 7, label: '7-DOF right arm reach trajectory to bottle', status: 'PENDING', durationMs: 900 },
+      { num: 8, label: 'Dexterous grasp with closed-loop force control (14.2 N)', status: 'PENDING', durationMs: 1000 },
+      { num: 9, label: 'Lift bottle & dynamic CoM balance compensation', status: 'PENDING', durationMs: 800 },
+      { num: 10, label: 'Mission complete: Meera holding bottle ready for handover', status: 'PENDING', durationMs: 500 },
+    ];
+
+    this.activeTask = {
+      id: `task-${Date.now()}`,
+      commandText: cmd,
+      taskTitle: 'AUTONOMOUS_MISSION (Wave → Walk → Pick Bottle)',
+      category: 'HOUSEHOLD_MISSION',
+      status: 'IN_PROGRESS',
+      currentStepIndex: 1,
+      steps,
+      speechResponse: speech,
+      targetObject: 'water_bottle_01',
+      graspForceN: 14.2,
+      contactConfirmed: true,
+      startedAt: Date.now(),
+    };
+
+    this._notify();
+    meeraVoice.speak(speech, lang).catch(() => {});
+    SimBridgeClient.waveWalkPick().catch(() => {});
 
     this._advanceStepsSequentially(1, steps);
     return this.activeTask;

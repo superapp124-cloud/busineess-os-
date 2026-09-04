@@ -224,6 +224,10 @@ class SimBridgeClientImpl {
     return this._rpc<SimBridgeState>('wave', {});
   }
 
+  async waveWalkPick(): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('wave_walk_pick', {});
+  }
+
   async injectFault(type: SimFaultType, params: Record<string, unknown> = {}): Promise<void> {
     await this._rpc('inject_fault', { type, ...params });
   }

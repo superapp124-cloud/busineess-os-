@@ -105,6 +105,17 @@ export const MeeraHeroView: React.FC<MeeraHeroViewProps> = ({
     }
   };
 
+  const handleWalkWavePick = async () => {
+    setIsActionPending(true);
+    try {
+      await RobotCommandEngine.executeCommand('walk wave the hand pick up bottle', 'hi-IN');
+    } catch (e) {
+      console.warn('Walk Wave Pick error:', e);
+    } finally {
+      setIsActionPending(false);
+    }
+  };
+
   const handlePush = async () => {
     setIsActionPending(true);
     try {
@@ -239,6 +250,19 @@ export const MeeraHeroView: React.FC<MeeraHeroViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Primary Composite Autonomous Mission Button */}
+      <button
+        onClick={handleWalkWavePick}
+        disabled={isActionPending}
+        className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-emerald-500 hover:from-cyan-400 hover:via-indigo-500 hover:to-emerald-400 text-white rounded-2xl font-black text-xs tracking-wide transition shadow-xl flex items-center justify-center gap-2.5 disabled:opacity-50 border border-cyan-400/30 group"
+      >
+        <span className="text-base group-hover:scale-125 transition-transform">🚀</span>
+        <span>AUTONOMOUS MISSION: Walk, Wave Hand & Pick Up Water Bottle</span>
+        <span className="text-[10px] font-mono bg-slate-950/60 px-2 py-0.5 rounded-full border border-cyan-400/40 text-cyan-200">
+          MuJoCo 500 Hz
+        </span>
+      </button>
 
       {/* Action Buttons Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">

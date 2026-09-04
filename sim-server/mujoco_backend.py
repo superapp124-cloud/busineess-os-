@@ -101,6 +101,8 @@ class MuJoCoBackend:
         self._walk_start_pos = (0.0, 0.0)
         self._walk_target_pos = (0.0, 0.0)
         self._push_active_until = 0.0
+        self._mission_active_until = 0.0
+        self._mission_start_time = 0.0
         self._is_holding_bottle = False
         self._is_fault_active = False
         self._push_steps_remaining = 0
@@ -225,8 +227,53 @@ class MuJoCoBackend:
 
             now = time.perf_counter()
 
+            # ── 0. Full Composite Mission: Wave → Walk → Grasp Bottle
+            if now < getattr(self, '_mission_active_until', 0.0):
+                t_m = now - getattr(self, '_mission_start_time', now)
+                if t_m < 3.0:
+                    # Phase 1: Wave to user
+                    self._joint_targets["r_shoulder_pitch"] = -1.25
+                    self._joint_targets["r_shoulder_roll"]  = -0.55
+                    self._joint_targets["r_elbow_pitch"]    = -1.45 + 0.20 * math.sin(7.0 * now)
+                    self._joint_targets["r_wrist_yaw"]      = 0.35 * math.sin(7.0 * now)
+                    self._joint_targets["r_wrist_roll"]     = 0.20 * math.cos(7.0 * now)
+                elif t_m < 7.0:
+                    # Phase 2: Walk to kitchen counter
+                    prog = (t_m - 3.0) / 4.0
+                    self._base_position[0] = 0.0 + 1.80 * prog
+                    self._base_position[1] = 0.0 - 1.50 * prog
+                    phase = 7.5 * now
+                    self._joint_targets["l_hip_pitch"]   =  0.25 * math.sin(phase)
+                    self._joint_targets["l_knee_pitch"]  = -0.40 * max(0.0, math.sin(phase))
+                    self._joint_targets["r_hip_pitch"]   = -0.25 * math.sin(phase)
+                    self._joint_targets["r_knee_pitch"]  = -0.40 * max(0.0, -math.sin(phase))
+                    self._joint_targets["l_shoulder_pitch"] = -0.2 + 0.25 * math.sin(phase)
+                    self._joint_targets["r_shoulder_pitch"] = -0.2 - 0.25 * math.sin(phase)
+                    self._joint_targets["r_shoulder_roll"] = -0.10
+                    self._joint_targets["r_elbow_pitch"] = -0.60
+                elif t_m < 9.5:
+                    # Phase 3: Reach & Grasp Bottle
+                    self._base_position[0] = 1.80
+                    self._base_position[1] = -1.50
+                    self._joint_targets["l_hip_pitch"] = 0.0
+                    self._joint_targets["l_knee_pitch"] = 0.0
+                    self._joint_targets["r_hip_pitch"] = 0.0
+                    self._joint_targets["r_knee_pitch"] = 0.0
+                    self._joint_targets["r_shoulder_pitch"] = -0.45
+                    self._joint_targets["r_shoulder_roll"]  = -0.15
+                    self._joint_targets["r_elbow_pitch"]    = -1.10
+                    self._joint_targets["r_wrist_pitch"]    = -0.20
+                    self._is_holding_bottle = True
+                else:
+                    # Phase 4: Lift & Hold Bottle securely
+                    self._base_position[0] = 1.80
+                    self._base_position[1] = -1.50
+                    self._joint_targets["r_shoulder_pitch"] = -0.35
+                    self._joint_targets["r_elbow_pitch"] = -1.25
+                    self._is_holding_bottle = True
+
             # ── 1. Dynamic Wave Oscillation
-            if now < getattr(self, '_wave_active_until', 0.0):
+            elif now < getattr(self, '_wave_active_until', 0.0):
                 t_w = now
                 self._joint_targets["r_shoulder_pitch"] = -1.25
                 self._joint_targets["r_shoulder_roll"]  = -0.55
@@ -370,12 +417,22 @@ class MuJoCoBackend:
                 self._walk_target_pos = (0.0, 0.0)
             self._walk_active_until = time.perf_counter() + 4.0
 
+        elif method in ("wave_walk_pick", "walk_wave_pick", "mission_fetch_bottle"):
+            self._wave_active_until = 0.0
+            self._walk_active_until = 0.0
+            self._push_active_until = 0.0
+            self._is_holding_bottle = False
+            self._mission_start_time = time.perf_counter()
+            self._mission_active_until = time.perf_counter() + 11.0
+
         elif method == "reset":
             self._is_fault_active = False
             self._is_holding_bottle = False
             self._wave_active_until = 0.0
             self._walk_active_until = 0.0
             self._push_active_until = 0.0
+            self._mission_active_until = 0.0
+            self._mission_start_time = 0.0
             self._push_steps_remaining = 0
             self._base_position = [0.0, 0.0, 0.88]
             self.data.xfrc_applied.fill(0.0)

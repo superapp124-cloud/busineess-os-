@@ -128,6 +128,13 @@ class SimBridgeServer:
                 await asyncio.sleep(0.05)
                 result = self.backend.get_latest_state()
 
+            elif method in ("wave_walk_pick", "walk_wave_pick", "mission_fetch_bottle"):
+                self.backend.queue_command({"method": "wave_walk_pick", "params": params})
+                await asyncio.sleep(0.05)
+                result = self.backend.get_latest_state()
+                result["mission_acknowledged"] = True
+                result["mission_type"] = "wave_walk_pick"
+
             elif method == "navigate":
                 target = params.get("target", "kitchen")
                 self.backend.queue_command({"method": "navigate", "params": params})
