@@ -143,6 +143,11 @@ class SimBridgeServer:
                 await asyncio.sleep(0.05)
                 result = self.backend.get_latest_state()
 
+            elif method == "execute_task":
+                self.backend.queue_command({"method": "execute_task", "params": params})
+                await asyncio.sleep(0.05)
+                result = self.backend.get_latest_state()
+
             elif method == "navigate":
                 target = params.get("target", "kitchen")
                 self.backend.queue_command({"method": "navigate", "params": params})

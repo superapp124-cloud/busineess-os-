@@ -240,6 +240,10 @@ class SimBridgeClientImpl {
     return this._rpc<SimBridgeState>('recover_balance', {});
   }
 
+  async executeTask(taskType = 'FETCH_OBJECT', target = 'water_bottle_01'): Promise<SimBridgeState> {
+    return this._rpc<SimBridgeState>('execute_task', { task_type: taskType, target });
+  }
+
   async injectFault(type: SimFaultType, params: Record<string, unknown> = {}): Promise<void> {
     await this._rpc('inject_fault', { type, ...params });
   }
