@@ -889,6 +889,30 @@ PUBLIC_SEO_PAGES.push({
 
 // Programmatic Location Pages Generator (Build-time / Server-side only)
 const { CITIES } = require('./citiesData.cjs');
+
+// Tier 1 & Tier 2 Indian Metros & State Capitals
+const topIndianKeywords = [
+  'mumbai', 'delhi', 'bengaluru', 'bangalore', 'hyderabad', 'chennai', 'kolkata', 'pune',
+  'ahmedabad', 'gurugram', 'gurgaon', 'noida', 'jaipur', 'surat', 'lucknow', 'indore',
+  'chandigarh', 'kochi', 'coimbatore', 'nagpur', 'patna', 'bhopal', 'vadodara', 'ludhiana',
+  'agra', 'nashik', 'varanasi', 'rajkot', 'visakhapatnam', 'kanpur', 'faridabad', 'ghaziabad',
+  'thiruvananthapuram', 'mysore', 'dehradun', 'guwahati', 'bhubaneswar', 'ranchi', 'amritsar',
+  'jodhpur', 'raipur', 'allahabad', 'prayagraj', 'jabalpur', 'gwalior', 'vijayawada', 'madurai'
+];
+
+// High-GDP Global Hubs
+const globalCountries = ['uae', 'saudi arabia', 'qatar', 'oman', 'kuwait', 'bahrain', 'singapore', 'united kingdom', 'united states', 'canada', 'australia', 'germany', 'france', 'netherlands', 'ireland', 'japan'];
+
+const canaries = ['kasungu', 'erdenet', 'nicosia', 'hawassa', 'buraidah', 'cayenne', 'belize city bz', 'georgetown gy'];
+
+const PRERENDER_CITIES = CITIES.filter(([city, state]) => {
+  const c = city.toLowerCase();
+  const s = (state || '').toLowerCase();
+  if (canaries.some(can => c.includes(can))) return true;
+  if (globalCountries.some(gc => s.includes(gc))) return true;
+  if (topIndianKeywords.some(tik => c.includes(tik) || s.includes(tik))) return true;
+  return false;
+});
 const {
   LOCATION_USE_CASES,
   getLocalEntityProfile,
@@ -1100,7 +1124,7 @@ function prerender() {
 
   // 2. Render City Hub Pages (/locations/:citySlug)
   let cityHubCount = 0;
-  for (const [city, state, region] of CITIES) {
+  for (const [city, state, region] of PRERENDER_CITIES) {
     const citySlug = slugify(city);
     const hubPath = `/locations/${citySlug}`;
     const canonical = `${DOMAIN}${hubPath}`;
@@ -1143,7 +1167,7 @@ function prerender() {
 
   // 3. Render Location Pillar Pages (/location/:useCase-:citySlug)
   let pillarCount = 0;
-  for (const [city, state, region] of CITIES) {
+  for (const [city, state, region] of PRERENDER_CITIES) {
     const citySlug = slugify(city);
 
     for (const uc of LOCATION_USE_CASES) {
