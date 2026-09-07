@@ -609,8 +609,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Routes>
    {/* Developer & Direct Integrations Routes */}
    <Route path="/robotOs" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
-   <Route path="/robotos" element={<Navigate to="/robotOs" replace />} />
-   <Route path="/robot-os" element={<Navigate to="/robotOs" replace />} />
+   <Route path="/robotos" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
+   <Route path="/robot-os" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
    <Route path="/dev" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
    <Route path="/media-distribution" element={<SuperAdminGuard><Suspense fallback={<PageLoader message="Verifying Super Admin Authorization..." />}><MediaDistributionControlCenter /></Suspense></SuperAdminGuard>} />
    <Route path="/connectors" element={<LazyRoute component={LazyPages.DesktopConnectorStore} />} />

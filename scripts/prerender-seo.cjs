@@ -877,6 +877,25 @@ const PUBLIC_SEO_PAGES = [
   }
 ];
 
+// CHATR RobotOS Simulator Cockpit
+PUBLIC_SEO_PAGES.push({
+  path: '/robotos',
+  title: 'CHATR RobotOS — Autonomous Humanoid AI & MuJoCo 3D Simulation Cockpit',
+  description: 'Interactive RobotOS simulator and digital twin cockpit. Test 29-DOF humanoid kinematics, real-time joint velocity telemetry, and natural language voice control in your browser.',
+  keywords: 'CHATR RobotOS, Robotics Simulator, MuJoCo 3D Web, Humanoid Robot Cockpit, Embodied AI Simulator',
+  canonical: DOMAIN + '/robotos',
+  schemas: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'CHATR RobotOS Simulator',
+      applicationCategory: 'SimulationApplication',
+      url: DOMAIN + '/robotos',
+      description: 'Interactive 3D digital twin cockpit and physics simulator for CHATR Robotics OS.'
+    }
+  ]
+});
+
 // Global Locations Hub Directory
 PUBLIC_SEO_PAGES.push({
   path: '/locations',
