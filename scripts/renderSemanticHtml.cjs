@@ -1237,12 +1237,22 @@ function renderToolPageHtml(tool) {
     </div>
   `;
 }
+const {
+  INTEGRATION_PAGES,
+  COMPARISON_PAGES,
+  TELECOM_COUNTRY_PAGES,
+  WAVE2_TOOLS
+} = require('../src/data/chatrSearchUniverseData.ts');
 
 module.exports = {
   AUTHORITY_PAGES,
   TERMINOLOGY_PAGES,
   ROBOTICS_CLUSTER_PAGES,
   NATIVE_TOOLS,
+  INTEGRATION_PAGES,
+  COMPARISON_PAGES,
+  TELECOM_COUNTRY_PAGES,
+  WAVE2_TOOLS,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,
   renderToolPageHtml

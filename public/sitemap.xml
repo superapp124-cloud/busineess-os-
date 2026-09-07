@@ -9,6 +9,18 @@
     <lastmod>2026-09-07</lastmod>
   </sitemap>
   <sitemap>
+    <loc>https://www.chatrchat.in/sitemaps/sitemap-integrations.xml</loc>
+    <lastmod>2026-09-07</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml</loc>
+    <lastmod>2026-09-07</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.chatrchat.in/sitemaps/sitemap-telecom.xml</loc>
+    <lastmod>2026-09-07</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>https://www.chatrchat.in/sitemaps/sitemap-robotics.xml</loc>
     <lastmod>2026-09-07</lastmod>
   </sitemap>
@@ -26,10 +38,6 @@
   </sitemap>
   <sitemap>
     <loc>https://www.chatrchat.in/sitemaps/sitemap-workflows.xml</loc>
-    <lastmod>2026-09-07</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml</loc>
     <lastmod>2026-09-07</lastmod>
   </sitemap>
   <sitemap>

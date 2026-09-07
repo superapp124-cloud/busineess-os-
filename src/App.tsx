@@ -208,6 +208,8 @@ const ChatrLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/Cha
 const ChatrContactQrTool = React.lazy(() => import('./pages/public/tools/ChatrContactQrTool'));
 const VoipCostCalculatorTool = React.lazy(() => import('./pages/public/tools/VoipCostCalculatorTool'));
 const AiWorkflowGeneratorTool = React.lazy(() => import('./pages/public/tools/AiWorkflowGeneratorTool'));
+const CallQualityCheckerTool = React.lazy(() => import('./pages/public/tools/CallQualityCheckerTool'));
+const AiAgentPromptBuilderTool = React.lazy(() => import('./pages/public/tools/AiAgentPromptBuilderTool'));
 
 // Super Admin Control Plane (Strictly Authorized: 9910678611, 9717845477)
 const SuperAdminRoute = React.lazy(() => import('./components/SuperAdminRoute'));
@@ -962,6 +964,20 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/tools/voip-calculator" element={<LazyRoute component={VoipCostCalculatorTool} />} />
   <Route path="/tools/intent-to-workflow-generator" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
   <Route path="/tools/ai-workflow-builder" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
+  <Route path="/tools/call-quality-checker" element={<LazyRoute component={CallQualityCheckerTool} />} />
+  <Route path="/tools/webrtc-test" element={<LazyRoute component={CallQualityCheckerTool} />} />
+  <Route path="/tools/ai-agent-prompt-builder" element={<LazyRoute component={AiAgentPromptBuilderTool} />} />
+  <Route path="/tools/prompt-builder" element={<LazyRoute component={AiAgentPromptBuilderTool} />} />
+
+  {/* Enterprise Integration Directory (Zapier Playbook) */}
+  <Route path="/integrations" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/integrations/:slug" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* High-Intent Software Comparisons (ClickUp / G2 Playbook) */}
+  <Route path="/compare/:slug" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* Country-Level Telecom & Regulatory Hubs */}
+  <Route path="/telecom/:slug" element={<LazyRoute component={AuthorityPage} />} />
 
   {/* Layer A — Supreme Authority Hubs (The 10 Pillars) */}
   <Route path="/chatr" element={<LazyRoute component={AuthorityPage} />} />

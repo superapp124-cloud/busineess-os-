@@ -93,7 +93,7 @@ export const AuthorityPage: React.FC = () => {
           <section className="space-y-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
               {getUniverseIcon(page.universe)}
-              <span>AUTHORITY PILLAR • {page.universe.toUpperCase()}</span>
+              <span className="uppercase">{page.layer.replace('-', ' ')} • {page.universe}</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-[1.1]">
               {page.h1}

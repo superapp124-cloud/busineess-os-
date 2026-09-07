@@ -163,14 +163,27 @@ const semanticTestUrls = [
   '/chatr-ai',
   '/chatr-intent-os',
   '/chatr-business-os',
+  '/chatr-robotics-os',
+  '/robotics-os',
   '/what-is-an-intent-operating-system',
   '/what-is-an-ai-business-os',
   '/what-is-smartsession-calling',
   '/what-is-a-universal-business-inbox',
+  '/what-is-a-robotics-operating-system',
   '/tools/communication-link-generator',
   '/tools/contact-qr-generator',
   '/tools/business-voip-cost-calculator',
-  '/tools/intent-to-workflow-generator'
+  '/tools/intent-to-workflow-generator',
+  '/tools/sla-calculator',
+  '/tools/call-quality-checker',
+  '/tools/ai-agent-prompt-builder',
+  '/integrations',
+  '/integrations/shopify',
+  '/integrations/salesforce',
+  '/compare/chatr-vs-twilio',
+  '/compare/chatr-vs-intercom',
+  '/telecom/uae-business-calling',
+  '/telecom/saudi-arabia-voip'
 ];
 
 semanticTestUrls.forEach(urlPath => {
@@ -223,12 +236,15 @@ if (fs.existsSync(sitemapIndexPath)) {
 
   const expectedSubSitemaps = [
     'sitemap-products.xml',
+    'sitemap-integrations.xml',
+    'sitemap-comparisons.xml',
+    'sitemap-telecom.xml',
+    'sitemap-robotics.xml',
     'sitemap-terminology.xml',
     'sitemap-tools.xml',
     'sitemap-core.xml',
     'sitemap-problems.xml',
     'sitemap-workflows.xml',
-    'sitemap-comparisons.xml',
     'sitemap-industries.xml',
     'sitemap-research.xml',
     'sitemap-blog.xml',

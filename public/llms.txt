@@ -108,10 +108,43 @@
 
 ---
 
-## 6. SITEMAP INDEX REFERENCE (15 SEGMENTED SUB-SITEMAPS)
+---
+
+## 5B. ENTERPRISE INTEGRATION DIRECTORY
+- Master Integrations Hub: https://www.chatrchat.in/integrations
+- Shopify WhatsApp Integration: https://www.chatrchat.in/integrations/shopify
+- Salesforce VoIP & CRM Connector: https://www.chatrchat.in/integrations/salesforce
+- HubSpot WhatsApp Sync: https://www.chatrchat.in/integrations/hubspot
+- Zoho CRM Multi-Channel Inbox: https://www.chatrchat.in/integrations/zoho
+- Meta WhatsApp Cloud API: https://www.chatrchat.in/integrations/whatsapp-business-api
+- Stripe Payment & Invoice Automation: https://www.chatrchat.in/integrations/stripe
+- Google Workspace Email & Calendar: https://www.chatrchat.in/integrations/google-workspace
+- Slack Team Bridge: https://www.chatrchat.in/integrations/slack
+- Zendesk Omnichannel Support: https://www.chatrchat.in/integrations/zendesk
+
+## 5C. HIGH-INTENT SOFTWARE COMPARISONS
+- CHATR vs Twilio: https://www.chatrchat.in/compare/chatr-vs-twilio
+- CHATR vs Intercom: https://www.chatrchat.in/compare/chatr-vs-intercom
+- CHATR vs WATI: https://www.chatrchat.in/compare/chatr-vs-wati
+- CHATR vs Slack: https://www.chatrchat.in/compare/chatr-vs-slack
+- CHATR vs HubSpot: https://www.chatrchat.in/compare/chatr-vs-hubspot
+- CHATR vs ROS 2: https://www.chatrchat.in/compare/chatr-vs-ros2
+
+## 5D. COUNTRY-LEVEL TELECOM & REGULATORY COMPLIANCE
+- UAE TDRA Compliance: https://www.chatrchat.in/telecom/uae-business-calling
+- Saudi Arabia CST / CITC: https://www.chatrchat.in/telecom/saudi-arabia-voip
+- India DoT / TRAI Compliance: https://www.chatrchat.in/telecom/india-telecom-compliance
+- UK Ofcom Calling Regulations: https://www.chatrchat.in/telecom/uk-business-voip
+- US FCC STIR/SHAKEN Compliance: https://www.chatrchat.in/telecom/us-enterprise-calling
+- Singapore IMDA Regulations: https://www.chatrchat.in/telecom/singapore-cloud-pbx
+
+## 6. SITEMAP INDEX REFERENCE (17 SEGMENTED SUB-SITEMAPS)
 
 - Master Sitemap Index: https://www.chatrchat.in/sitemap_index.xml
 - Products & 10 Authority Pillars: https://www.chatrchat.in/sitemaps/sitemap-products.xml
+- Enterprise Integrations: https://www.chatrchat.in/sitemaps/sitemap-integrations.xml
+- Comparisons & Versus Pages: https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml
+- Telecom & Regulatory Hubs: https://www.chatrchat.in/sitemaps/sitemap-telecom.xml
 - Robotics OS & Embodied AI Cluster: https://www.chatrchat.in/sitemaps/sitemap-robotics.xml
 - Terminology Hubs: https://www.chatrchat.in/sitemaps/sitemap-terminology.xml
 - Interactive Web Tools: https://www.chatrchat.in/sitemaps/sitemap-tools.xml

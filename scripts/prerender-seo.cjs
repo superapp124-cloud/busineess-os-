@@ -867,14 +867,6 @@ const PUBLIC_SEO_PAGES = [
       }
     ]
   },
-  {
-    path: '/tools/sla-calculator',
-    title: 'WhatsApp Response Time & Revenue Loss SLA Calculator | CHATR',
-    description: 'Calculate how much lead leakage and pipeline revenue your business loses due to slow WhatsApp response times.',
-    keywords: 'whatsapp sla calculator, lead response time loss, customer service response calculator',
-    canonical: DOMAIN + '/tools/sla-calculator',
-    schemas: []
-  }
 ];
 
 // CHATR RobotOS Simulator Cockpit
@@ -945,6 +937,10 @@ const {
   TERMINOLOGY_PAGES,
   ROBOTICS_CLUSTER_PAGES,
   NATIVE_TOOLS,
+  INTEGRATION_PAGES,
+  COMPARISON_PAGES,
+  TELECOM_COUNTRY_PAGES,
+  WAVE2_TOOLS,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,
   renderToolPageHtml
@@ -1093,9 +1089,127 @@ function prerender() {
     ]
   }));
 
+  // Transform Integration Directory Pages
+  const integrationSeoPages = (INTEGRATION_PAGES || []).map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: p.h1,
+        applicationCategory: 'BusinessApplication',
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Comparison Pages
+  const comparisonSeoPages = (COMPARISON_PAGES || []).map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: p.h1,
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Telecom Regulatory Pages
+  const telecomSeoPages = (TELECOM_COUNTRY_PAGES || []).map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: p.h1,
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Wave 2 Tools
+  const wave2ToolSeoPages = (WAVE2_TOOLS || []).map(t => ({
+    path: t.path,
+    title: t.title,
+    description: t.description,
+    keywords: t.keywords,
+    canonical: DOMAIN + t.path,
+    type: 'tool',
+    pageData: t,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: t.h1,
+        applicationCategory: 'UtilityApplication',
+        url: DOMAIN + t.path,
+        description: t.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (t.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
   // Merge and deduplicate pages
   const existingPaths = new Set(PUBLIC_SEO_PAGES.map(p => p.path));
-  const newSemanticPages = [...authoritySeoPages, ...roboticsSeoPages, ...terminologySeoPages, ...toolSeoPages].filter(p => !existingPaths.has(p.path));
+  const newSemanticPages = [...authoritySeoPages, ...roboticsSeoPages, ...terminologySeoPages, ...toolSeoPages, ...integrationSeoPages, ...comparisonSeoPages, ...telecomSeoPages, ...wave2ToolSeoPages].filter(p => !existingPaths.has(p.path));
   const allCorePages = [...PUBLIC_SEO_PAGES, ...newSemanticPages];
 
   // 1. Render Core Public SEO Pages

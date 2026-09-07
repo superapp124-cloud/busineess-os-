@@ -110,19 +110,41 @@ const terminologyUrls = [
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-terminology.xml'), wrapUrlset(terminologyUrls), 'utf8');
 
 // 5. CHATR-Native Interactive Web Tools
+const {
+  INTEGRATION_PAGES,
+  COMPARISON_PAGES,
+  TELECOM_COUNTRY_PAGES,
+  WAVE2_TOOLS
+} = require('../src/data/chatrSearchUniverseData.ts');
+
 const toolUrls = [
   createUrlXml(DOMAIN + '/tools/communication-link-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/contact-qr-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/business-voip-cost-calculator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/intent-to-workflow-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/resume-grader', '0.8', 'weekly'),
-  createUrlXml(DOMAIN + '/tools/sla-calculator', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/tools/sla-calculator', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/tools/call-quality-checker', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/tools/ai-agent-prompt-builder', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/chatr-link', '0.7', 'weekly'),
   createUrlXml(DOMAIN + '/tools/chatr-qr', '0.7', 'weekly'),
   createUrlXml(DOMAIN + '/tools/voip-calculator', '0.7', 'weekly'),
   createUrlXml(DOMAIN + '/tools/ai-workflow-builder', '0.7', 'weekly')
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-tools.xml'), wrapUrlset(toolUrls), 'utf8');
+
+// 5B. Enterprise Integration Directory (Zapier Playbook)
+const integrationUrls = INTEGRATION_PAGES.map(p => 
+  createUrlXml(DOMAIN + p.path, p.path === '/integrations' ? '1.0' : '0.9', 'weekly')
+);
+fs.writeFileSync(path.join(sitemapsDir, 'sitemap-integrations.xml'), wrapUrlset(integrationUrls), 'utf8');
+
+// 5C. Country-Level Telecom & Regulatory Hubs
+const telecomUrls = TELECOM_COUNTRY_PAGES.map(p => 
+  createUrlXml(DOMAIN + p.path, '0.8', 'weekly')
+);
+fs.writeFileSync(path.join(sitemapsDir, 'sitemap-telecom.xml'), wrapUrlset(telecomUrls), 'utf8');
+
 
 // 6. Problems, Workflows, Comparisons, Industries (from expansion pages)
 const { EXPANSION_PAGES } = require('../src/data/expansionPagesData.ts');
@@ -144,9 +166,13 @@ fs.writeFileSync(
   'utf8'
 );
 
+const allComparisonEntries = [
+  ...COMPARISON_PAGES.map(p => createUrlXml(DOMAIN + p.path, '0.9', 'weekly')),
+  ...comparisonPages.map(p => createUrlXml(DOMAIN + p.path, '0.8', 'weekly'))
+];
 fs.writeFileSync(
   path.join(sitemapsDir, 'sitemap-comparisons.xml'),
-  wrapUrlset(comparisonPages.map(p => createUrlXml(DOMAIN + p.path, '0.8', 'weekly'))),
+  wrapUrlset(allComparisonEntries),
   'utf8'
 );
 
@@ -250,12 +276,14 @@ fs.writeFileSync(path.join(sitemapsDir, 'sitemap-video.xml'), wrapUrlset(videoUr
 const childSitemaps = [
   'sitemap-core.xml',
   'sitemap-products.xml',
+  'sitemap-integrations.xml',
+  'sitemap-comparisons.xml',
+  'sitemap-telecom.xml',
   'sitemap-robotics.xml',
   'sitemap-terminology.xml',
   'sitemap-tools.xml',
   'sitemap-problems.xml',
   'sitemap-workflows.xml',
-  'sitemap-comparisons.xml',
   'sitemap-industries.xml',
   'sitemap-research.xml',
   'sitemap-blog.xml',
