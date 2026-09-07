@@ -24,6 +24,7 @@ export const AuthorityPage: React.FC = () => {
       case 'identity': return <Fingerprint className="w-5 h-5 text-cyan-400" />;
       case 'ai': return <Sparkles className="w-5 h-5 text-purple-400" />;
       case 'intent-os': return <Workflow className="w-5 h-5 text-amber-400" />;
+      case 'robotics-os': return <Cpu className="w-5 h-5 text-amber-400" />;
       default: return <Layers className="w-5 h-5 text-indigo-400" />;
     }
   };
@@ -114,6 +115,29 @@ export const AuthorityPage: React.FC = () => {
               {page.directAnswer}
             </p>
           </section>
+
+          {/* Interactive Digital Twin Simulator Link (For Robotics Pages) */}
+          {page.universe === 'robotics-os' && (
+            <section className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-950 border border-amber-500/40 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+              <div className="space-y-2 text-left">
+                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-amber-400 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded">
+                  <span>LIVE DIGITAL TWIN</span>
+                  <span>•</span>
+                  <span>MUJOCO 29-DOF COCKPIT</span>
+                </div>
+                <h3 className="text-xl font-bold text-white">Experience CHATR RobotOS Simulator</h3>
+                <p className="text-sm text-slate-300 max-w-xl">
+                  Interact with the live 3D humanoid avatar, real-time joint velocity telemetry, voice command loop, and spatial safety governor.
+                </p>
+              </div>
+              <Link
+                to="/robotos"
+                className="shrink-0 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm inline-flex items-center gap-2"
+              >
+                Launch 3D Cockpit <ArrowRight className="w-4 h-4" />
+              </Link>
+            </section>
+          )}
 
           {/* Performance Metrics Matrix */}
           {page.metrics && page.metrics.length > 0 && (

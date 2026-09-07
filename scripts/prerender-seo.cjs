@@ -924,6 +924,7 @@ const {
 const {
   AUTHORITY_PAGES,
   TERMINOLOGY_PAGES,
+  ROBOTICS_CLUSTER_PAGES,
   NATIVE_TOOLS,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,
@@ -1013,6 +1014,36 @@ function prerender() {
     ]
   }));
 
+  // Transform Robotics OS Cluster Pages
+  const roboticsSeoPages = ROBOTICS_CLUSTER_PAGES.map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: p.h1,
+        applicationCategory: 'BusinessApplication',
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
   // Transform Native Interactive Tools
   const toolSeoPages = NATIVE_TOOLS.map(t => ({
     path: t.path,
@@ -1045,7 +1076,7 @@ function prerender() {
 
   // Merge and deduplicate pages
   const existingPaths = new Set(PUBLIC_SEO_PAGES.map(p => p.path));
-  const newSemanticPages = [...authoritySeoPages, ...terminologySeoPages, ...toolSeoPages].filter(p => !existingPaths.has(p.path));
+  const newSemanticPages = [...authoritySeoPages, ...roboticsSeoPages, ...terminologySeoPages, ...toolSeoPages].filter(p => !existingPaths.has(p.path));
   const allCorePages = [...PUBLIC_SEO_PAGES, ...newSemanticPages];
 
   // 1. Render Core Public SEO Pages

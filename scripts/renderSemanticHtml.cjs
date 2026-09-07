@@ -59,9 +59,9 @@ const AUTHORITY_PAGES = [
     title: 'CHATR Communication — Universal Inbox, Messaging & Team Collaboration',
     h1: 'CHATR Communication: Unified Business Messaging',
     tagline: 'Consolidate every customer and team thread into a single, collision-free operating queue.',
-    description: 'Transform multi-channel communication into synchronized operational momentum. Unify WhatsApp Business API, email, web chat, and internal notes with automated AI triage.',
+    description: 'Transform multi-channel communication into synchronized operational momentum. Unify real-time business messaging, email, web chat, team threads, and external messaging connectors with automated AI triage.',
     keywords: 'CHATR Communication, Universal Business Inbox, Multi-Agent WhatsApp, Shared Team Inbox, Business Messaging Platform',
-    directAnswer: 'CHATR Communication is a unified messaging substrate that aggregates inbound customer and internal conversations across WhatsApp Business API, email, and live chat into a single queue equipped with collision detection, round-robin assignment, and automated AI lead triage.',
+    directAnswer: 'CHATR Communication is a universal communication substrate and real-time business messaging platform. It unifies enterprise communication streams—including email, WebRTC voice/video, website live chat, and external messaging connectors (such as WhatsApp Business API)—into a single collaborative thread queue equipped with collision detection, round-robin assignment, and automated AI lead triage.',
     keyCapabilities: [
       'Multi-Agent Single Number WhatsApp Business API routing',
       'Visual agent collision detection and live typing lockouts',
@@ -265,6 +265,45 @@ const AUTHORITY_PAGES = [
     ]
   },
   {
+    path: '/chatr-robotics-os',
+    slug: 'chatr-robotics-os',
+    universe: 'robotics-os',
+    layer: 'authority',
+    title: 'CHATR Robotics OS — Autonomous Physical AI & Hardware Execution Platform',
+    h1: 'CHATR Robotics OS: Physical AI & Autonomous Execution',
+    tagline: 'From human intent to physical action. The operating system bridging AI reasoning and robotic hardware.',
+    description: 'CHATR Robotics OS connects high-level intent, multi-agent reasoning, and real-time communication to autonomous robotic hardware, MuJoCo physics simulation, and low-latency device teleoperation.',
+    keywords: 'CHATR Robotics OS, Robotics Operating System, Robot AI, Embodied AI, Autonomous Robotics Platform, MuJoCo SimBridge',
+    directAnswer: 'CHATR Robotics OS is an embodied AI and robotic execution substrate that translates natural language intents into deterministic multi-stage hardware action DAGs. It bridges digital AI agent reasoning with physical robotic actuators, sub-12ms WebSocket telemetry, MuJoCo 29-DOF kinematics simulation, and WebRTC teleoperation.',
+    keyCapabilities: [
+      'Intent-to-Actuator Compiler translating natural language goals into multi-stage robotic task DAGs',
+      'MuJoCo 3.x Physics Engine & SimBridge protocol with 29-DOF full-body kinematics and sub-12ms joint sync',
+      'Full-duplex human-to-robot voice loops with WebRTC audio streaming, Whisper transcription, and neural TTS',
+      'Zero-trust hardware identity verification, cryptographic device attestation, and immutable audit ledgers',
+      'Interactive 3D Digital Twin cockpit with real-time joint velocity telemetry and remote override at /robotos'
+    ],
+    metrics: [
+      { label: 'Joint Sync Latency', value: '<12ms', context: 'WebSocket SimBridge telemetry' },
+      { label: 'Kinematic DoF', value: '29-DOF', context: 'Full-body humanoid inverse solver' },
+      { label: 'Safety Determinism', value: '99.8%', context: 'Action DAG boundary verification' }
+    ],
+    faqs: [
+      { q: 'What is CHATR Robotics OS?', a: 'CHATR Robotics OS is the physical execution layer of CHATR, transforming intent and AI agent decisions into physical robot actions, hardware telemetry, and simulated digital twin operations.' },
+      { q: 'How does CHATR connect to physical robots?', a: 'Through the SimBridge protocol and low-latency WebSockets, CHATR streams joint states, sensor telemetry, and safety-verified velocity commands to robots or simulation environments.' },
+      { q: 'Where can I see the live simulator?', a: 'CHATR includes a live 3D digital twin cockpit and physics simulator accessible directly at /robotos.' }
+    ],
+    relatedTools: [
+      { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Compile natural language goals into execution DAGs.' },
+      { name: 'Business VoIP Cost Calculator', path: '/tools/business-voip-cost-calculator', description: 'Estimate infrastructure savings.' }
+    ],
+    relatedPages: [
+      { title: 'CHATR Intent OS', path: '/chatr-intent-os' },
+      { title: 'CHATR AI', path: '/chatr-ai' },
+      { title: 'What is a Robotics Operating System?', path: '/what-is-a-robotics-operating-system' },
+      { title: 'Robotics OS Cockpit', path: '/robotos' }
+    ]
+  },
+  {
     path: '/chatr-ecosystem',
     slug: 'chatr-ecosystem',
     universe: 'ecosystem',
@@ -335,6 +374,42 @@ const AUTHORITY_PAGES = [
 ];
 
 const TERMINOLOGY_PAGES = [
+  {
+    path: '/what-is-a-robotics-operating-system',
+    slug: 'what-is-a-robotics-operating-system',
+    universe: 'robotics-os',
+    layer: 'terminology',
+    title: 'What is a Robotics Operating System? Complete Guide | CHATR Robotics OS',
+    h1: 'What is a Robotics Operating System?',
+    tagline: 'The software architecture orchestrating hardware sensing, physical intelligence, and autonomous action.',
+    description: 'An architectural breakdown of modern Robotics Operating Systems: how embodied AI, physics simulation engines, real-time message buses, and hardware abstraction layers unite.',
+    keywords: 'What is a Robotics Operating System, Robotics OS Definition, Embodied AI Architecture, Robot Software Platform, CHATR Robotics OS',
+    directAnswer: 'A Robotics Operating System is a distributed software platform that manages communication, sensor telemetry, state estimation, motion planning, and actuator control across robotic hardware and digital twins, enabling autonomous machines to perceive environments and safely execute complex tasks.',
+    keyCapabilities: [
+      'Hardware Abstraction Layer (HAL) decoupling high-level intent from low-level joint actuators',
+      'Real-time publish-subscribe telemetry bus for sub-12ms joint and sensor synchronization',
+      'Sim-to-Real physics bridging enabling zero-risk digital twin testing in MuJoCo before hardware deployment',
+      'Safety governor enforcing kinematic torque limits and fail-safe emergency stop protocols'
+    ],
+    metrics: [
+      { label: 'Control Frequency', value: '1000 Hz', context: 'Low-level motor torque control loop' },
+      { label: 'Sim-to-Real Gap', value: '<3.2%', context: 'MuJoCo physics calibration accuracy' },
+      { label: 'E-Stop Response', value: '<5ms', context: 'Hardware-level fail-safe interrupt' }
+    ],
+    faqs: [
+      { q: 'How does CHATR Robotics OS differ from ROS/ROS 2?', a: 'While ROS 2 focuses on low-level node communication, CHATR Robotics OS integrates the entire stack from natural language human intent and autonomous multi-agent reasoning down to MuJoCo physics and hardware execution.' },
+      { q: 'Can CHATR Robotics OS run in a browser?', a: 'Yes. CHATR features an interactive browser-based 3D digital twin cockpit and WebAssembly/WebSocket physics bridge available at /robotos.' }
+    ],
+    relatedTools: [
+      { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Test intent parsing and action DAG generation.' }
+    ],
+    relatedPages: [
+      { title: 'CHATR Robotics OS', path: '/chatr-robotics-os' },
+      { title: 'CHATR Intent OS', path: '/chatr-intent-os' },
+      { title: 'Robotics OS Cockpit', path: '/robotos' }
+    ]
+  },
+
   {
     path: '/what-is-an-intent-operating-system',
     slug: 'what-is-an-intent-operating-system',
@@ -538,6 +613,324 @@ const NATIVE_TOOLS = [
     ],
     faqs: [
       { q: 'What is an Intent DAG?', a: 'A Directed Acyclic Graph (DAG) represents a sequence of dependent tasks where each step executes only after its prerequisites have succeeded, ensuring zero execution collisions.' }
+    ]
+  }
+];
+
+
+const ROBOTICS_CLUSTER_PAGES = [
+  {
+    path: '/robotics-os',
+    slug: 'robotics-os',
+    universe: 'robotics-os',
+    layer: 'authority',
+    title: 'Robotics OS — The AI Operating System for Physical Automation | CHATR',
+    h1: 'Robotics OS: The Platform for Physical Automation',
+    tagline: 'Bridging generative AI intelligence with real-world robotic execution.',
+    description: 'Robotics OS by CHATR provides the complete runtime for autonomous machines: intent translation, physics simulation in MuJoCo, kinematic control, and real-time telemetry.',
+    keywords: 'Robotics OS, Robot Operating System, Autonomous Robotics, Physical Automation, CHATR RobotOS',
+    directAnswer: 'Robotics OS is an enterprise operating system that translates digital business intent into autonomous physical actions. It integrates multi-agent task planning, MuJoCo physics simulation, sub-12ms joint telemetry, and spatial safety bounds into a single deployable architecture.',
+    keyCapabilities: [
+      'Universal Hardware Abstraction Layer supporting diverse robotic kinematics',
+      'SimBridge telemetry streaming joint states and sensor feeds at sub-12ms latency',
+      'Embedded MuJoCo physics engine for digital twin verification prior to real-world actuation',
+      'Full-duplex voice control and multimodal perception for human-robot interaction'
+    ],
+    metrics: [
+      { label: 'Latency', value: '<12ms', context: 'SimBridge WebSocket telemetry' },
+      { label: 'Degrees of Freedom', value: '29-DOF', context: 'Humanoid kinematic model' },
+      { label: 'Safety Gate', value: '100%', context: 'Deterministic workspace boundaries' }
+    ],
+    faqs: [
+      { q: 'What is Robotics OS?', a: 'Robotics OS is the software layer that sits between business intent and physical hardware, orchestrating perception, planning, and control.' },
+      { q: 'How can I test Robotics OS?', a: 'Visit /robotos to test the interactive 3D digital twin cockpit directly in your browser.' }
+    ],
+    relatedTools: [
+      { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Test intent parsing and DAG generation.' }
+    ],
+    relatedPages: [
+      { title: 'CHATR Robotics OS', path: '/chatr-robotics-os' },
+      { title: 'Robotics AI', path: '/robotics-ai' },
+      { title: 'Robotics Control', path: '/robotics-control' },
+      { title: 'Robotics Cockpit', path: '/robotos' }
+    ]
+  },
+  {
+    path: '/robotics',
+    slug: 'robotics',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics & Embodied AI Solutions | CHATR Robotics',
+    h1: 'CHATR Robotics: Enterprise Embodied AI',
+    tagline: 'Transforming industrial and service operations with intelligent, autonomous robotic systems.',
+    description: 'Explore CHATR Robotics solutions: humanoid kinematics, autonomous material handling, digital twin simulation, and intent-driven robotic orchestration.',
+    keywords: 'Robotics, Embodied AI, Humanoid Robotics, Autonomous Machines, Industrial Robotics, CHATR Robotics',
+    directAnswer: 'CHATR Robotics is an embodied artificial intelligence ecosystem that enables enterprises to deploy autonomous physical systems. From warehouse material movement to humanoid service tasks, CHATR connects conversational intent to verified physical actions.',
+    keyCapabilities: [
+      'Comprehensive humanoid and mobile manipulator kinematic libraries',
+      'Sim-to-real deployment pipeline powered by high-fidelity MuJoCo simulation',
+      'Multi-modal sensor fusion combining stereo vision, LiDAR, IMU, and force-torque feedback',
+      'Enterprise orchestration dashboard coordinating robotic fleets alongside human teams'
+    ],
+    metrics: [
+      { label: 'Task Success', value: '98.7%', context: 'Multi-stage manipulation tasks' },
+      { label: 'Cycle Time', value: '-40%', context: 'Automated intent dispatch vs manual teleop' },
+      { label: 'Deployment', value: 'Days', context: 'Zero-hardware digital twin staging' }
+    ],
+    faqs: [
+      { q: 'What types of robots does CHATR support?', a: 'CHATR supports bipedal humanoids, wheeled mobile bases, articulated arms, and custom multi-DOF manipulators via standardized SimBridge interfaces.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Robotics OS', path: '/robotics-os' },
+      { title: 'Robotics Automation', path: '/robotics-automation' },
+      { title: 'Robotics Cockpit', path: '/robotos' }
+    ]
+  },
+  {
+    path: '/robotics-ai',
+    slug: 'robotics-ai',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics AI — Physical AI & Embodied Foundation Models | CHATR',
+    h1: 'Robotics AI: Intelligence for the Physical World',
+    tagline: 'Moving beyond conversational chatbots to spatial reasoning, vision-language-action, and physical intelligence.',
+    description: 'Discover how CHATR Robotics AI unites Vision-Language-Action (VLA) models, spatial affordance reasoning, and closed-loop motor control for autonomous machines.',
+    keywords: 'Robotics AI, Physical AI, Embodied AI, Vision Language Action, VLA Models, Spatial Intelligence',
+    directAnswer: 'Robotics AI refers to artificial intelligence systems designed to perceive 3D physical environments, reason about spatial constraints and object affordances, and generate continuous motor control commands to execute real-world tasks autonomously.',
+    keyCapabilities: [
+      'Vision-Language-Action (VLA) models mapping visual inputs and natural language to trajectory commands',
+      'Spatial affordance estimation identifying graspable surfaces, obstacles, and reachable volumes',
+      'Reinforcement learning from physics simulation with rapid sim-to-real transfer',
+      'Real-time anomaly detection and collision avoidance running on sovereign edge compute'
+    ],
+    metrics: [
+      { label: 'Inference Latency', value: '<35ms', context: 'Edge VLA trajectory generation' },
+      { label: 'Grasp Accuracy', value: '99.1%', context: 'Unknown object manipulation' }
+    ],
+    faqs: [
+      { q: 'How does Robotics AI differ from standard LLMs?', a: 'Standard LLMs process and generate text strings. Robotics AI processes sensory 3D point clouds and generates physical joint torques and kinematic trajectories.' }
+    ],
+    relatedTools: [
+      { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Simulate natural language intent parsing.' }
+    ],
+    relatedPages: [
+      { title: 'Robotics Agents', path: '/robotics-agents' },
+      { title: 'Robotics Control', path: '/robotics-control' },
+      { title: 'CHATR AI', path: '/chatr-ai' }
+    ]
+  },
+  {
+    path: '/robotics-automation',
+    slug: 'robotics-automation',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Automation — Autonomous Enterprise & Warehouse Operations | CHATR',
+    h1: 'Robotics Automation: The Autonomous Enterprise',
+    tagline: 'Eliminate manual bottlenecks with end-to-end intent-driven physical workflows.',
+    description: 'Scale operational throughput with CHATR Robotics Automation. Unify warehouse pick-and-pack, material transport, and facility inspection into a synchronized software pipeline.',
+    keywords: 'Robotics Automation, Warehouse Automation, Autonomous Mobile Robots, Industrial Automation, Robotic Process Automation',
+    directAnswer: 'Robotics Automation is the systematic orchestration of autonomous physical machines to execute repetitive or complex industrial operations—such as warehouse logistics, precision assembly, and facility inspection—under deterministic software supervision.',
+    keyCapabilities: [
+      'Automated dispatch of physical task DAGs based on ERP and inventory triggers',
+      'Dynamic path planning and fleet traffic management preventing congestion',
+      'Predictive maintenance monitoring joint wear, thermal loads, and battery telemetry',
+      'Human-in-the-loop exception handling allowing seamless remote teleoperation override'
+    ],
+    metrics: [
+      { label: 'Throughput Lift', value: '+320%', context: 'Continuous 24/7 autonomous operation' },
+      { label: 'Error Rate', value: '<0.05%', context: 'Precision automated handling' }
+    ],
+    faqs: [
+      { q: 'How does CHATR Robotics Automation integrate with existing ERPs?', a: 'CHATR connects via standard webhooks and API connectors in the CHATR Ecosystem, translating ERP orders into physical task DAGs.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Robotics Orchestration', path: '/robotics-orchestration' },
+      { title: 'CHATR Business OS', path: '/chatr-business-os' }
+    ]
+  },
+  {
+    path: '/robotics-agents',
+    slug: 'robotics-agents',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Agents — Autonomous Embodied Task Execution Swarms | CHATR',
+    h1: 'Robotics Agents: Embodied Autonomous Agents',
+    tagline: 'Goal-driven AI agents possessing physical bodies, sensory perception, and manipulation capabilities.',
+    description: 'Deploy embodied robotics agents that formulate multi-step plans, coordinate with peer agents, and safely navigate complex physical environments to accomplish high-level objectives.',
+    keywords: 'Robotics Agents, Embodied Agents, Multi-Robot Swarms, Autonomous Task Planning, Embodied AI Agents',
+    directAnswer: 'Robotics Agents are autonomous AI entities deployed on physical machines that break down high-level business goals into sequential manipulation and navigation primitives, adapting their plans dynamically when physical environment conditions change.',
+    keyCapabilities: [
+      'Hierarchical task networks decomposing abstract goals into verified physical steps',
+      'Multi-agent peer communication coordinating swarms across shared spatial zones',
+      'Epistemic memory of physical workspace layout, tool locations, and obstacle histories',
+      'Fail-safe recovery actions dynamically rerouting paths when unexpected obstacles appear'
+    ],
+    metrics: [
+      { label: 'Replanning Time', value: '<80ms', context: 'Dynamic obstacle rerouting' },
+      { label: 'Task Autonomy', value: '96.4%', context: 'Zero human intervention required' }
+    ],
+    faqs: [
+      { q: 'Can robotics agents collaborate with human workers safely?', a: 'Yes. CHATR Robotics Agents enforce spatial safety envelopes and ISO/TS 15066 collaborative robotics limits, slowing or halting when humans enter active zones.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Robotics AI', path: '/robotics-ai' },
+      { title: 'CHATR Intent OS', path: '/chatr-intent-os' }
+    ]
+  },
+  {
+    path: '/robotics-control',
+    slug: 'robotics-control',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Control — MuJoCo Physics, Kinematics & Low-Latency Teleoperation | CHATR',
+    h1: 'Robotics Control: Precision Kinematics & Physics',
+    tagline: 'Sub-millisecond trajectory generation, 29-DOF whole-body kinematics, and MuJoCo simulation.',
+    description: 'Deep dive into CHATR Robotics Control architecture: 29-DOF humanoid kinematics, inverse dynamics solvers, MuJoCo 3.x integration, and sub-12ms teleoperation pipelines.',
+    keywords: 'Robotics Control, MuJoCo Physics, Inverse Kinematics, 29-DOF Humanoid, Low Latency Teleoperation, SimBridge',
+    directAnswer: 'Robotics Control is the low-level computing and mathematical foundation of CHATR Robotics OS that converts abstract motion plans into exact motor joint positions, velocities, and torques while rigorously maintaining dynamic balance and contact physics.',
+    keyCapabilities: [
+      'Whole-body 29-DOF kinematic inverse solver with center-of-mass balance preservation',
+      'MuJoCo 3.x physics simulation with exact contact normal force and friction modeling',
+      'Sub-12ms WebSocket SimBridge streaming joint states and actuator commands',
+      'Bilateral teleoperation with force feedback and predictive latency compensation'
+    ],
+    metrics: [
+      { label: 'Control Loop', value: '1 kHz', context: 'Deterministic real-time execution' },
+      { label: 'Joint Accuracy', value: '<0.02 rad', context: 'Closed-loop tracking precision' }
+    ],
+    faqs: [
+      { q: 'What physics engine powers CHATR Robotics Control?', a: 'CHATR utilizes MuJoCo 3.x for ultra-fast, numerically stable multi-body dynamics and contact modeling.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Robotics OS Cockpit', path: '/robotos' },
+      { title: 'Robotics Orchestration', path: '/robotics-orchestration' }
+    ]
+  },
+  {
+    path: '/robotics-orchestration',
+    slug: 'robotics-orchestration',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Orchestration — Fleet Coordination & Transactional Task Graphs | CHATR',
+    h1: 'Robotics Orchestration: Fleet Coordination at Scale',
+    tagline: 'Coordinate hundreds of heterogeneous robots and human teams with unified transactional integrity.',
+    description: 'Manage fleet missions, dynamic charging schedules, workspace exclusion zones, and transactional execution graphs with CHATR Robotics Orchestration.',
+    keywords: 'Robotics Orchestration, Fleet Management, Multi-Robot Coordination, Task Graphs, Warehouse Fleet OS',
+    directAnswer: 'Robotics Orchestration is the centralized fleet management and operational coordination layer that allocates tasks among heterogeneous robots, schedules charging, resolves spatial conflicts, and guarantees end-to-end transactional integrity.',
+    keyCapabilities: [
+      'Transactional task graphs with automatic rollback and failover if a machine encounters an anomaly',
+      'Spatial reservation system preventing corridor deadlocks and intersection collisions',
+      'Battery state of charge (SoC) management with proactive autonomous docking',
+      'Unified enterprise telemetry dashboard displaying 3D fleet positions and health states'
+    ],
+    metrics: [
+      { label: 'Fleet Scale', value: '500+ units', context: 'Simultaneous coordinated machines' },
+      { label: 'Fleet Utilization', value: '94.2%', context: 'Active duty cycle efficiency' }
+    ],
+    faqs: [
+      { q: 'Can CHATR orchestrate robots from different manufacturers?', a: 'Yes. By adopting the standard SimBridge and ROS 2 bridge protocols, CHATR unifies mixed-vendor fleets under one operating graph.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Robotics Automation', path: '/robotics-automation' },
+      { title: 'CHATR Infrastructure', path: '/chatr-infrastructure' }
+    ]
+  },
+  {
+    path: '/robotics-communication',
+    slug: 'robotics-communication',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Communication — Full-Duplex Human-to-Robot Voice & WebRTC Telemetry | CHATR',
+    h1: 'Robotics Communication: Human-Robot Dialog & Telemetry',
+    tagline: 'Natural conversational speech, sub-second video feeds, and real-time SimBridge data channels.',
+    description: 'Enable fluid human-to-robot collaboration with CHATR Robotics Communication: full-duplex WebRTC voice, on-device Whisper transcription, neural TTS, and sub-12ms telemetry.',
+    keywords: 'Robotics Communication, Human Robot Interaction, WebRTC Telemetry, Robot Voice Control, Full Duplex Audio',
+    directAnswer: 'Robotics Communication is the real-time networking and interaction layer that enables bi-directional voice dialog between humans and robots, low-latency WebRTC video streaming for teleoperation, and high-frequency telemetry over SimBridge WebSockets.',
+    keyCapabilities: [
+      'Full-duplex WebRTC audio streaming with echo cancellation and beamforming integration',
+      'On-device Whisper transcription parsing commands in English, Hindi, and regional dialects',
+      'Neural text-to-speech engine providing conversational confirmation and status updates',
+      'Multiplexed data channels carrying sensor streams and joint positions over a single connection'
+    ],
+    metrics: [
+      { label: 'Audio Latency', value: '<150ms', context: 'Glass-to-ear voice round-trip' },
+      { label: 'Speech Accuracy', value: '97.6%', context: 'Noisy industrial speech recognition' }
+    ],
+    faqs: [
+      { q: 'Can I speak to the robot naturally or do I need specific keywords?', a: 'You can speak naturally. CHATR RobotCommandEngine parses conversational intent, extracting spatial targets and action verbs automatically.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'CHATR Calling', path: '/chatr-calling' },
+      { title: 'Robotics OS Cockpit', path: '/robotos' }
+    ]
+  },
+  {
+    path: '/robotics-identity',
+    slug: 'robotics-identity',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Identity — Zero-Trust Hardware Attestation & Audit Ledgers | CHATR',
+    h1: 'Robotics Identity: Cryptographic Hardware Trust',
+    tagline: 'Authenticate every machine, sign every command, and audit every physical action.',
+    description: 'Secure your autonomous operations with CHATR Robotics Identity: TPM-backed hardware certificates, cryptographic command signing, role-based teleop access, and immutable audit trails.',
+    keywords: 'Robotics Identity, Hardware Security Module, Robot Authentication, Cryptographic Attestation, Zero Trust Robotics',
+    directAnswer: 'Robotics Identity provides zero-trust cryptographic security for physical machines. Every robot is issued an immutable hardware identity, every command is cryptographically authenticated, and all actions are recorded in an audit ledger to prevent unauthorized tampering.',
+    keyCapabilities: [
+      'Hardware Security Module (HSM) and TPM integration for non-exportable private keys',
+      'Cryptographic signature verification on all remote execution and teleoperation commands',
+      'Fine-grained role-based access control (RBAC) restricting hazardous actuation permissions',
+      'Immutable cryptographic action ledger capturing complete sensor and joint state history'
+    ],
+    metrics: [
+      { label: 'Unauthorized Access', value: '0.0%', context: 'Cryptographically signed execution' },
+      { label: 'Attestation Speed', value: '<10ms', context: 'Hardware handshake verification' }
+    ],
+    faqs: [
+      { q: 'Why is identity critical for robotics?', a: 'Because an autonomous robot executes physical actions in human spaces. Cryptographic identity guarantees that only authorized operators and verified algorithms can issue commands.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'CHATR Identity', path: '/chatr-identity' },
+      { title: 'Robotics OS', path: '/robotics-os' }
+    ]
+  },
+  {
+    path: '/robotics-intent-os',
+    slug: 'robotics-intent-os',
+    universe: 'robotics-os',
+    layer: 'category',
+    title: 'Robotics Intent OS — High-Level Natural Language to Actuator Execution | CHATR',
+    h1: 'Robotics Intent OS: The Intent-to-Actuator Compiler',
+    tagline: 'Say what you want done. The operating system handles the spatial planning and physical execution.',
+    description: 'Bridge the semantic gap between human language and robotic actuators. CHATR Robotics Intent OS translates goals into spatial DAGs, safety checks, and deterministic motor commands.',
+    keywords: 'Robotics Intent OS, Intent to Actuator, Natural Language to Robot, Action DAG Compiler, Embodied Intent',
+    directAnswer: 'Robotics Intent OS is the semantic translation engine within CHATR that compiles high-level human goals (e.g., "Transport palette B to staging dock 4") into verified, multi-stage Directed Acyclic Graphs of physical robotic motions, with continuous safety verification.',
+    keyCapabilities: [
+      'Intent parsing engine extracting spatial coordinates, objects, and task objectives from speech or text',
+      'Dynamic Directed Acyclic Graph (DAG) generation sequencing navigation, grasp, and placement steps',
+      'Pre-execution safety validation verifying clearance, payload weight, and reachability',
+      'Automatic exception handling and replanning when real-world objects have shifted'
+    ],
+    metrics: [
+      { label: 'Goal Translation', value: '<120ms', context: 'Natural language to kinematic DAG' },
+      { label: 'Execution Accuracy', value: '99.4%', context: 'Verified physical completion' }
+    ],
+    faqs: [
+      { q: 'How does Intent OS compile physical commands?', a: 'It passes human requests through the Intent Engine, queries spatial world models, builds a capability DAG, verifies joint kinematic limits in MuJoCo, and dispatches to hardware.' }
+    ],
+    relatedTools: [
+      { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Visual DAG generation demonstration.' }
+    ],
+    relatedPages: [
+      { title: 'CHATR Intent OS', path: '/chatr-intent-os' },
+      { title: 'CHATR Robotics OS', path: '/chatr-robotics-os' },
+      { title: 'Robotics OS Cockpit', path: '/robotos' }
     ]
   }
 ];
@@ -848,6 +1241,7 @@ function renderToolPageHtml(tool) {
 module.exports = {
   AUTHORITY_PAGES,
   TERMINOLOGY_PAGES,
+  ROBOTICS_CLUSTER_PAGES,
   NATIVE_TOOLS,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,

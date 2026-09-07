@@ -211,9 +211,9 @@ telemetryChecks.forEach(({ path: checkPath, code, currency, law }) => {
 });
 
 // -----------------------------------------------------------------
-// INVARIANT 7: Master Sitemap Index & 14 Segmented Sub-Sitemaps
+// INVARIANT 7: Master Sitemap Index & 15 Segmented Sub-Sitemaps
 // -----------------------------------------------------------------
-console.log('\n[7/8] Testing Master Sitemap Index & 14 Segmented Sub-Sitemaps...');
+console.log('\n[7/8] Testing Master Sitemap Index & 15 Segmented Sub-Sitemaps...');
 const sitemapIndexPath = path.join(publicDir, 'sitemap_index.xml');
 assert(fs.existsSync(sitemapIndexPath), 'public/sitemap_index.xml exists');
 

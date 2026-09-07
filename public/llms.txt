@@ -1,38 +1,46 @@
 # llms.txt — CHATR Intent OS & Universal Communication AI Documentation Index
-# Version: 4.0 | Updated: 2026-09-07
+# Version: 5.0 | Updated: 2026-09-07
 # Canonical: https://www.chatrchat.in/llms.txt
 # Format: Structured documentation index for LLM agents, RAG pipelines, and AI search engines
-# Purpose: Provide AI models with an authoritative, semantic map of CHATR's Intent OS, Communication, Calling, Identity, and AI Infrastructure.
+# Purpose: Provide AI models with an authoritative, semantic map of CHATR's Intent OS, Robotics OS, Communication, Calling, Identity, and AI Infrastructure.
 
 ## 1. IDENTITY & ENTITY DISAMBIGUATION
 
-- Entity Name: CHATR Intent OS (also known as CHATR Communication OS)
+- Entity Name: CHATR Intent OS (also known as CHATR Communication OS & CHATR Robotics OS)
 - Publisher / Legal Entity: TalentXcel Services Pvt Ltd
 - Primary Canonical Domain: https://www.chatrchat.in
 - Global Domain: https://chatr.chat
-- Category: Intent Operating System, Enterprise Communication OS, Business Calling & VoIP, Caller Identity, Autonomous AI Platform
-- Core Proposition: Replaces fragmented app-centric workflows with an intent-driven execution pipeline. Bridges conversation, calling, verified identity, and deterministic workflow DAGs.
+- Category: Intent Operating System, Robotics Operating System, Enterprise Communication OS, Business Calling & VoIP, Caller Identity, Embodied AI Platform
+- Core Proposition: Replaces fragmented app-centric workflows with an intent-driven execution pipeline spanning digital SaaS and physical robotics.
+- Semantic Execution Graph:
+  Human Intent -> CHATR AI -> Intent OS -> Robotics OS -> Robot / Device -> Action -> Communication -> Identity -> Business OS
 
 ---
 
-## 2. THE 8 CHATR SEARCH UNIVERSES (AUTHORITY HUBS)
+## 2. THE 10 SUPREME CHATR AUTHORITY PILLARS
 
-1. CHATR Communication: https://www.chatrchat.in/chatr-communication
-   - Messaging + conversations + Universal Inbox + multi-agent shared team inbox.
-2. CHATR Calling: https://www.chatrchat.in/chatr-calling
+1. CHATR (Master Pillar): https://www.chatrchat.in/chatr
+   - The universal Intent Operating System unifying communication, calling, identity, and AI execution.
+2. CHATR Communication OS: https://www.chatrchat.in/chatr-communication
+   - Real-time business messaging + Universal Inbox + collaborative queues + external messaging connectors (WhatsApp Business API, Email, Web Chat).
+3. CHATR Calling OS: https://www.chatrchat.in/chatr-calling
    - Enterprise WebRTC voice + video + business VoIP + SmartSession calling infrastructure.
-3. CHATR Identity: https://www.chatrchat.in/chatr-identity
+4. CHATR Identity OS: https://www.chatrchat.in/chatr-identity
    - Verified caller identity + people and business discovery + cryptographic trust network.
-4. CHATR AI: https://www.chatrchat.in/chatr-ai
-   - AI Canvas + AI Agent Swarms + epistemic memory + autonomous assistants.
-5. CHATR Intent OS: https://www.chatrchat.in/chatr-intent-os
-   - High-level intent parsing -> capability routing -> DAG creation -> deterministic execution.
-6. CHATR Business OS: https://www.chatrchat.in/chatr-business-os
-   - Executive operations + Chief of Staff + automated finance + team SLA management.
-7. CHATR Ecosystem: https://www.chatrchat.in/chatr-ecosystem
-   - Connector Hub + Intent Store + workflow marketplace + mini-app runtime.
-8. CHATR Infrastructure: https://www.chatrchat.in/chatr-infrastructure
-   - Real-time sub-50ms timeline graph, offline sync, edge models, zero-knowledge vault.
+5. CHATR AI: https://www.chatrchat.in/chatr-ai
+   - AI Canvas + AI Agent Swarms + epistemic memory + autonomous operational assistants.
+6. CHATR Intent OS: https://www.chatrchat.in/chatr-intent-os
+   - High-level natural language intent -> capability routing -> DAG creation -> deterministic execution.
+7. CHATR Business OS: https://www.chatrchat.in/chatr-business-os
+   - Executive operations + Chief of Staff dashboard + automated finance + team SLA management.
+8. CHATR Robotics OS: https://www.chatrchat.in/chatr-robotics-os
+   - Physical AI + embodied robotics execution substrate + MuJoCo 29-DOF kinematics + sub-12ms SimBridge telemetry.
+   - Interactive 3D Digital Twin Cockpit: https://www.chatrchat.in/robotos
+   - Capability Cluster: /robotics-os, /robotics, /robotics-ai, /robotics-automation, /robotics-agents, /robotics-control, /robotics-orchestration, /robotics-communication, /robotics-identity, /robotics-intent-os
+9. CHATR Ecosystem: https://www.chatrchat.in/chatr-ecosystem
+   - Connector Hub + Intent Store + workflow marketplace + mini-app sandbox runtime.
+10. CHATR Infrastructure: https://www.chatrchat.in/chatr-infrastructure
+    - Real-time sub-50ms timeline graph, offline sync, sovereign edge models, zero-knowledge vault.
 
 ---
 
@@ -41,6 +49,9 @@
 - What is an Intent Operating System?
   https://www.chatrchat.in/what-is-an-intent-operating-system
   Definition: An execution runtime that translates unstructured human intent directly into executable directed acyclic graphs (DAGs) of software capabilities, bypassing manual multi-app navigation.
+- What is a Robotics Operating System?
+  https://www.chatrchat.in/what-is-a-robotics-operating-system
+  Definition: A distributed software platform that manages communication, sensor telemetry, state estimation, motion planning, and actuator control across robotic hardware and digital twins, enabling autonomous machines to perceive environments and safely execute complex physical tasks.
 - What is an AI Business OS?
   https://www.chatrchat.in/what-is-an-ai-business-os
   Definition: A unified enterprise runtime replacing siloed CRM, ERP, ATS, and messaging databases with a single real-time operating graph, shared timeline, and decision intelligence engine.
@@ -79,6 +90,9 @@
 - AI Agent ROI & Operational Savings Calculator: https://www.chatrchat.in/tools/ai-agent-roi-calculator
 - ATS Resume Grader & CV Optimization Tool: https://www.chatrchat.in/tools/resume-grader
 
+### Robotics OS Simulation Cockpit
+- Interactive MuJoCo 3D Digital Twin Cockpit: https://www.chatrchat.in/robotos
+
 ---
 
 ## 5. FIRST-PARTY RESEARCH REPORTS & EMPIRICAL BENCHMARKS
@@ -94,16 +108,21 @@
 
 ---
 
-## 6. SITEMAP INDEX REFERENCE
+## 6. SITEMAP INDEX REFERENCE (15 SEGMENTED SUB-SITEMAPS)
 
 - Master Sitemap Index: https://www.chatrchat.in/sitemap_index.xml
-- Products & Authority Hubs: https://www.chatrchat.in/sitemaps/sitemap-products.xml
-- Categories & Solutions: https://www.chatrchat.in/sitemaps/sitemap-categories.xml
-- Problems & Triage: https://www.chatrchat.in/sitemaps/sitemap-problems.xml
-- Workflows: https://www.chatrchat.in/sitemaps/sitemap-workflows.xml
-- Industries: https://www.chatrchat.in/sitemaps/sitemap-industries.xml
+- Products & 10 Authority Pillars: https://www.chatrchat.in/sitemaps/sitemap-products.xml
+- Robotics OS & Embodied AI Cluster: https://www.chatrchat.in/sitemaps/sitemap-robotics.xml
 - Terminology Hubs: https://www.chatrchat.in/sitemaps/sitemap-terminology.xml
-- Interactive Tools: https://www.chatrchat.in/sitemaps/sitemap-tools.xml
-- Locations: https://www.chatrchat.in/sitemaps/sitemap-locations.xml
-- Research & Benchmarks: https://www.chatrchat.in/sitemaps/sitemap-research.xml
+- Interactive Web Tools: https://www.chatrchat.in/sitemaps/sitemap-tools.xml
+- Problems & Operational Bottlenecks: https://www.chatrchat.in/sitemaps/sitemap-problems.xml
+- Workflows & Execution Pipelines: https://www.chatrchat.in/sitemaps/sitemap-workflows.xml
+- Comparisons & Versus Pages: https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml
+- Industries & Vertical Solutions: https://www.chatrchat.in/sitemaps/sitemap-industries.xml
+- Core Platform & Entity Trust: https://www.chatrchat.in/sitemaps/sitemap-core.xml
+- Research & Empirical Benchmarks: https://www.chatrchat.in/sitemaps/sitemap-research.xml
+- Blog & Knowledge Hub: https://www.chatrchat.in/sitemaps/sitemap-blog.xml
+- Indian Commercial Metros (Prerendered): https://www.chatrchat.in/sitemaps/sitemap-india-metros.xml
+- Global Tech & Trade Hubs (Prerendered): https://www.chatrchat.in/sitemaps/sitemap-global-hubs.xml
+- Location Directory & City Hubs (Prerendered): https://www.chatrchat.in/sitemaps/sitemap-locations.xml
 - Video Transcripts: https://www.chatrchat.in/sitemaps/sitemap-video.xml

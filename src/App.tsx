@@ -963,7 +963,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/tools/intent-to-workflow-generator" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
   <Route path="/tools/ai-workflow-builder" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
 
-  {/* Layer A — Supreme Authority Hubs */}
+  {/* Layer A — Supreme Authority Hubs (The 10 Pillars) */}
   <Route path="/chatr" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-communication" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-calling" element={<LazyRoute component={AuthorityPage} />} />
@@ -971,14 +971,28 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/chatr-ai" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-intent-os" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-business-os" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-robotics-os" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-ecosystem" element={<LazyRoute component={AuthorityPage} />} />
   <Route path="/chatr-infrastructure" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* Robotics OS Cluster & Direct Aliases */}
+  <Route path="/robotics-os" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-ai" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-automation" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-agents" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-control" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-orchestration" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-communication" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-identity" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/robotics-intent-os" element={<LazyRoute component={AuthorityPage} />} />
 
   {/* Proprietary Terminology Hubs */}
   <Route path="/what-is-an-intent-operating-system" element={<LazyRoute component={TerminologyPage} />} />
   <Route path="/what-is-an-ai-business-os" element={<LazyRoute component={TerminologyPage} />} />
   <Route path="/what-is-smartsession-calling" element={<LazyRoute component={TerminologyPage} />} />
   <Route path="/what-is-a-universal-business-inbox" element={<LazyRoute component={TerminologyPage} />} />
+  <Route path="/what-is-a-robotics-operating-system" element={<LazyRoute component={TerminologyPage} />} />
 
   <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
   <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />

@@ -15,7 +15,7 @@
 export interface SemanticPageDefinition {
   path: string;
   slug: string;
-  universe: 'communication' | 'calling' | 'identity' | 'ai' | 'intent-os' | 'business-os' | 'ecosystem' | 'infrastructure' | 'cross-cutting';
+  universe: 'communication' | 'calling' | 'identity' | 'ai' | 'intent-os' | 'business-os' | 'robotics-os' | 'ecosystem' | 'infrastructure' | 'cross-cutting';
   layer: 'authority' | 'category' | 'problem' | 'workflow' | 'industry' | 'terminology' | 'tool' | 'research';
   title: string;
   h1: string;
@@ -84,9 +84,9 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
     title: 'CHATR Communication — Universal Inbox, Messaging & Team Collaboration',
     h1: 'CHATR Communication: Unified Business Messaging',
     tagline: 'Consolidate every customer and team thread into a single, collision-free operating queue.',
-    description: 'Transform multi-channel communication into synchronized operational momentum. Unify WhatsApp Business API, email, web chat, and internal notes with automated AI triage.',
+    description: 'Transform multi-channel communication into synchronized operational momentum. Unify real-time business messaging, email, web chat, team threads, and external messaging connectors with automated AI triage.',
     keywords: 'CHATR Communication, Universal Business Inbox, Multi-Agent WhatsApp, Shared Team Inbox, Business Messaging Platform',
-    directAnswer: 'CHATR Communication is a unified messaging substrate that aggregates inbound customer and internal conversations across WhatsApp Business API, email, and live chat into a single queue equipped with collision detection, round-robin assignment, and automated AI lead triage.',
+    directAnswer: 'CHATR Communication is a universal communication substrate and real-time business messaging platform. It unifies enterprise communication streams—including email, WebRTC voice/video, website live chat, and external messaging connectors (such as WhatsApp Business API)—into a single collaborative thread queue equipped with collision detection, round-robin assignment, and automated AI lead triage.',
     keyCapabilities: [
       'Multi-Agent Single Number WhatsApp Business API routing',
       'Visual agent collision detection and live typing lockouts',

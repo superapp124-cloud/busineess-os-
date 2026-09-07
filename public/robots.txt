@@ -1,7 +1,7 @@
 # CHATR Business OS — robots.txt
 # Updated: 2026-08-11 | GEO v3 & Canonical Host Alignment (www.chatrchat.in)
 # Primary Production Domain: https://www.chatrchat.in
-# Architecture: 19,340 pre-rendered static HTML pages (zero JS execution required)
+# Architecture: Fully pre-rendered static HTML pages across 10 Supreme Pillars & 15 Segmented Sitemaps
 
 # ============================================================
 # GOOGLE — Primary Search & Gemini AI Overviews
@@ -224,6 +224,8 @@ Disallow: /account
 
 Sitemap: https://www.chatrchat.in/sitemap_index.xml
 Sitemap: https://www.chatrchat.in/sitemap.xml
+Sitemap: https://www.chatrchat.in/sitemaps/sitemap-robotics.xml
+Sitemap: https://www.chatrchat.in/sitemaps/sitemap-products.xml
 
 # llms.txt — AI Agent Documentation Index
 # https://www.chatrchat.in/llms.txt

@@ -3,19 +3,20 @@
  * 
  * Generates an observable, segmented sitemap architecture:
  * 1. public/sitemap_index.xml (Master Index)
- * 2. public/sitemaps/sitemap-products.xml (Layer A Authority Hubs)
- * 3. public/sitemaps/sitemap-terminology.xml (Proprietary Category Ownership)
- * 4. public/sitemaps/sitemap-tools.xml (18 Interactive Web Tools)
- * 5. public/sitemaps/sitemap-problems.xml (Problem Ingestion Guides)
- * 6. public/sitemaps/sitemap-workflows.xml (Step-by-step Execution Pipelines)
- * 7. public/sitemaps/sitemap-comparisons.xml (Versus & Migration Pages)
- * 8. public/sitemaps/sitemap-industries.xml (Vertical Industry Solutions)
- * 9. public/sitemaps/sitemap-core.xml (Homepage, Pricing, About, Entity Trust)
- * 10. public/sitemaps/sitemap-research.xml (Empirical Benchmark Reports)
- * 11. public/sitemaps/sitemap-blog.xml (Knowledge Hub Posts & News)
- * 12. public/sitemaps/sitemap-india-metros.xml (High-GDP Indian Commercial Centers)
- * 13. public/sitemaps/sitemap-global-hubs.xml (GCC, SE Asia, UK, US Tech Capitals)
- * 14. public/sitemaps/sitemap-locations.xml (Locations Directory & City Hubs)
+ * 2. public/sitemaps/sitemap-products.xml (Layer A Authority Hubs - The 10 Supreme Pillars)
+ * 3. public/sitemaps/sitemap-robotics.xml (Dedicated Robotics OS & Embodied AI Cluster)
+ * 4. public/sitemaps/sitemap-terminology.xml (Proprietary Category Ownership)
+ * 5. public/sitemaps/sitemap-tools.xml (Interactive Web Tools)
+ * 6. public/sitemaps/sitemap-problems.xml (Problem Ingestion Guides)
+ * 7. public/sitemaps/sitemap-workflows.xml (Step-by-step Execution Pipelines)
+ * 8. public/sitemaps/sitemap-comparisons.xml (Versus & Migration Pages)
+ * 9. public/sitemaps/sitemap-industries.xml (Vertical Industry Solutions)
+ * 10. public/sitemaps/sitemap-core.xml (Homepage, Pricing, About, Entity Trust)
+ * 11. public/sitemaps/sitemap-research.xml (Empirical Benchmark Reports)
+ * 12. public/sitemaps/sitemap-blog.xml (Knowledge Hub Posts & News)
+ * 13. public/sitemaps/sitemap-india-metros.xml (Prerendered Indian Commercial Centers)
+ * 14. public/sitemaps/sitemap-global-hubs.xml (Prerendered Global Tech & Commercial Hubs)
+ * 15. public/sitemaps/sitemap-locations.xml (Prerendered 255 City Hubs & Directory)
  */
 
 const fs = require('fs');
@@ -49,7 +50,7 @@ ${urlEntries.join('\n')}
 </urlset>`;
 }
 
-console.log('[SITEMAP ENGINE] Building 14 Semantic Sitemaps...');
+console.log('[SITEMAP ENGINE] Building 15 Semantic Sitemaps...');
 
 // 1. Core Platform Pages
 const coreUrls = [
@@ -65,7 +66,7 @@ const coreUrls = [
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-core.xml'), wrapUrlset(coreUrls), 'utf8');
 
-// 2. Layer A Authority Hubs
+// 2. Layer A Authority Hubs (The 10 Supreme Pillars)
 const productUrls = [
   createUrlXml(DOMAIN + '/chatr', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/chatr-communication', '0.9', 'weekly'),
@@ -74,21 +75,41 @@ const productUrls = [
   createUrlXml(DOMAIN + '/chatr-ai', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-intent-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-business-os', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/chatr-robotics-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-ecosystem', '0.8', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-infrastructure', '0.8', 'weekly')
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-products.xml'), wrapUrlset(productUrls), 'utf8');
 
-// 3. Proprietary Terminology Hubs
+// 3. Dedicated Robotics OS & Embodied AI Cluster
+const roboticsUrls = [
+  createUrlXml(DOMAIN + '/chatr-robotics-os', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/robotics-os', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/what-is-a-robotics-operating-system', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-ai', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-automation', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-agents', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-control', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-orchestration', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-communication', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-identity', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotics-intent-os', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/robotos', '0.9', 'weekly')
+];
+fs.writeFileSync(path.join(sitemapsDir, 'sitemap-robotics.xml'), wrapUrlset(roboticsUrls), 'utf8');
+
+// 4. Proprietary Terminology Hubs
 const terminologyUrls = [
   createUrlXml(DOMAIN + '/what-is-an-intent-operating-system', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/what-is-an-ai-business-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/what-is-smartsession-calling', '0.8', 'weekly'),
-  createUrlXml(DOMAIN + '/what-is-a-universal-business-inbox', '0.8', 'weekly')
+  createUrlXml(DOMAIN + '/what-is-a-universal-business-inbox', '0.8', 'weekly'),
+  createUrlXml(DOMAIN + '/what-is-a-robotics-operating-system', '0.9', 'weekly')
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-terminology.xml'), wrapUrlset(terminologyUrls), 'utf8');
 
-// 4. CHATR-Native Interactive Web Tools
+// 5. CHATR-Native Interactive Web Tools
 const toolUrls = [
   createUrlXml(DOMAIN + '/tools/communication-link-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/contact-qr-generator', '0.9', 'weekly'),
@@ -103,7 +124,7 @@ const toolUrls = [
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-tools.xml'), wrapUrlset(toolUrls), 'utf8');
 
-// 5. Problems, Workflows, Comparisons, Industries (from expansion pages)
+// 6. Problems, Workflows, Comparisons, Industries (from expansion pages)
 const { EXPANSION_PAGES } = require('../src/data/expansionPagesData.ts');
 
 const problemPages = EXPANSION_PAGES.filter(p => p.category === 'Problem');
@@ -135,7 +156,7 @@ fs.writeFileSync(
   'utf8'
 );
 
-// 6. Research Reports & Benchmarks
+// 7. Research Reports & Benchmarks
 const researchUrls = [
   createUrlXml(DOMAIN + '/research/state-of-business-communication-2026', '0.8', 'monthly'),
   createUrlXml(DOMAIN + '/research/state-of-business-calling-voip-2026', '0.8', 'monthly'),
@@ -148,7 +169,7 @@ const researchUrls = [
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-research.xml'), wrapUrlset(researchUrls), 'utf8');
 
-// 7. Blog & News
+// 8. Blog & News
 const blogUrls = [
   createUrlXml(DOMAIN + '/blog', '0.8', 'daily'),
   createUrlXml(DOMAIN + '/news', '0.8', 'daily'),
@@ -158,37 +179,58 @@ const blogUrls = [
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-blog.xml'), wrapUrlset(blogUrls), 'utf8');
 
-// 8. India Metros & Global Hubs (Segmented from high-value locations)
+// 9. Locations, Metros & Global Hubs — Strictly Aligned to the 255 Prerendered Hubs
 const { CITIES } = require('./citiesData.cjs');
 const { LOCATION_USE_CASES, slugify } = require('./renderLocationHtml.cjs');
 
-const indiaMetros = [
-  'Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Ahmedabad',
-  'Surat', 'Jaipur', 'Lucknow', 'Indore', 'Chandigarh', 'Kochi', 'Nagpur', 'Noida', 'Gurgaon'
+const topIndianKeywords = [
+  'mumbai', 'delhi', 'bengaluru', 'bangalore', 'hyderabad', 'chennai', 'kolkata', 'pune',
+  'ahmedabad', 'surat', 'jaipur', 'lucknow', 'kanpur', 'nagpur', 'indore', 'thane', 'bhopal',
+  'visakhapatnam', 'patna', 'vadodara', 'ghaziabad', 'ludhiana', 'agra', 'nashik', 'faridabad',
+  'meerut', 'rajkot', 'kalyan', 'vasai', 'varanasi', 'srinagar', 'aurangabad', 'dhanbad',
+  'amritsar', 'navi mumbai', 'allahabad', 'ranchi', 'howrah', 'coimbatore', 'jabalpur', 'gwalior',
+  'vijayawada', 'jodhpur', 'madurai', 'raipur', 'kota', 'chandigarh', 'guwahati', 'solapur',
+  'hubli', 'dharwad', 'bareilly', 'moradabad', 'mysore', 'gurgaon', 'aligarh', 'jalandhar',
+  'tiruchirappalli', 'bhubaneswar', 'salem', 'mira', 'bhayandar', 'thiruvananthapuram', 'bhiwandi',
+  'saharanpur', 'gorakhpur', 'guntur', 'bikaner', 'amravati', 'noida', 'jamshedpur', 'bhilai',
+  'cuttack', 'firozabad', 'kochi', 'nellore', 'bhavnagar', 'dehradun', 'durgapur', 'asansol',
+  'rourkela', 'nanded', 'kolhapur', 'ajmer', 'akola', 'gulbarga', 'jamnagar', 'ujjain', 'loni',
+  'siliguri', 'jhansi', 'ulhasnagar', 'jammu', 'sangli', 'mangalore', 'erode', 'belgaum',
+  'ambattur', 'tirunelveli', 'malegaon', 'gaya', 'jalgaon', 'udaipur', 'maheshtala', 'panipat',
+  'jodhpur', 'raipur', 'allahabad', 'prayagraj', 'jabalpur', 'gwalior', 'vijayawada', 'madurai'
 ];
 
-const globalHubs = [
-  'Dubai', 'Abu Dhabi', 'Riyadh', 'Jeddah', 'Doha', 'Muscat', 'Kuwait City', 'Manama',
-  'Singapore', 'Kuala Lumpur', 'London', 'New York', 'San Francisco', 'Toronto', 'Sydney'
-];
+const globalCountries = ['uae', 'saudi arabia', 'qatar', 'oman', 'kuwait', 'bahrain', 'singapore', 'united kingdom', 'united states', 'canada', 'australia', 'germany', 'france', 'netherlands', 'ireland', 'japan'];
+
+const canaries = ['kasungu', 'erdenet', 'nicosia', 'hawassa', 'buraidah', 'cayenne', 'belize city bz', 'georgetown gy'];
+
+const PRERENDER_CITIES = CITIES.filter(([city, state]) => {
+  const c = city.toLowerCase();
+  const s = (state || '').toLowerCase();
+  if (canaries.some(can => c.includes(can))) return true;
+  if (globalCountries.some(gc => s.includes(gc))) return true;
+  if (topIndianKeywords.some(tik => c.includes(tik) || s.includes(tik))) return true;
+  return false;
+});
 
 const indiaUrls = [];
 const globalUrls = [];
-const locationHubUrls = [];
+const locationHubUrls = [createUrlXml(DOMAIN + '/locations', '0.9', 'weekly')];
 
-indiaMetros.forEach(cityName => {
+PRERENDER_CITIES.forEach(([cityName, stateName]) => {
   const citySlug = slugify(cityName);
-  locationHubUrls.push(createUrlXml(DOMAIN + '/locations/' + citySlug, '0.8', 'weekly'));
-  LOCATION_USE_CASES.forEach(uc => {
-    indiaUrls.push(createUrlXml(DOMAIN + '/location/' + uc.slug + '-' + citySlug, '0.7', 'monthly'));
-  });
-});
+  const s = (stateName || '').toLowerCase();
+  const isGlobal = globalCountries.some(gc => s.includes(gc)) || canaries.some(can => cityName.toLowerCase().includes(can));
 
-globalHubs.forEach(cityName => {
-  const citySlug = slugify(cityName);
   locationHubUrls.push(createUrlXml(DOMAIN + '/locations/' + citySlug, '0.8', 'weekly'));
+
   LOCATION_USE_CASES.forEach(uc => {
-    globalUrls.push(createUrlXml(DOMAIN + '/location/' + uc.slug + '-' + citySlug, '0.7', 'monthly'));
+    const locUrl = createUrlXml(DOMAIN + '/location/' + uc.slug + '-' + citySlug, '0.7', 'monthly');
+    if (isGlobal) {
+      globalUrls.push(locUrl);
+    } else {
+      indiaUrls.push(locUrl);
+    }
   });
 });
 
@@ -196,7 +238,7 @@ fs.writeFileSync(path.join(sitemapsDir, 'sitemap-india-metros.xml'), wrapUrlset(
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-global-hubs.xml'), wrapUrlset(globalUrls), 'utf8');
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-locations.xml'), wrapUrlset(locationHubUrls), 'utf8');
 
-// 9. Video Sitemap
+// 10. Video Sitemap
 const videoUrls = [
   createUrlXml(DOMAIN + '/video/what-is-chatr', '0.8', 'monthly'),
   createUrlXml(DOMAIN + '/video/what-is-an-intent-operating-system', '0.8', 'monthly'),
@@ -204,10 +246,11 @@ const videoUrls = [
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-video.xml'), wrapUrlset(videoUrls), 'utf8');
 
-// 10. Master Sitemap Index
+// 11. Master Sitemap Index (15 Segmented Sub-Sitemaps)
 const childSitemaps = [
   'sitemap-core.xml',
   'sitemap-products.xml',
+  'sitemap-robotics.xml',
   'sitemap-terminology.xml',
   'sitemap-tools.xml',
   'sitemap-problems.xml',
@@ -236,3 +279,4 @@ fs.writeFileSync(path.join(publicDir, 'sitemap_index.xml'), sitemapIndexXml, 'ut
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapIndexXml, 'utf8');
 
 console.log(`[SITEMAP ENGINE] Generated sitemap_index.xml referencing ${childSitemaps.length} segmented sub-sitemaps.`);
+console.log(`[SITEMAP ENGINE] Locations aligned: ${PRERENDER_CITIES.length} cities -> ${locationHubUrls.length} hubs, ${indiaUrls.length} India use cases, ${globalUrls.length} Global use cases.`);
