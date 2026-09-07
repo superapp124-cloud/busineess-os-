@@ -222,6 +222,7 @@ Disallow: /account
 # SITEMAP DECLARATION — Canonical Domain Alignment
 # ============================================================
 
+Sitemap: https://www.chatrchat.in/sitemap_index.xml
 Sitemap: https://www.chatrchat.in/sitemap.xml
 
 # llms.txt — AI Agent Documentation Index

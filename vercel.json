@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
   "buildCommand": "bun run build",
   "outputDirectory": "dist",
   "framework": "vite",
@@ -24,9 +25,22 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "chatrchat.in"
+        }
+      ],
+      "destination": "https://www.chatrchat.in/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
-      "source": "/((?!assets/|images/|icons/|sitemap\\.xml|robots\\.txt|llms\\.txt|.*\\..*).*)",
+      "source": "/((?!assets/|images/|icons/|sitemaps/|sitemap.*\\.xml|robots\\.txt|llms.*\\.txt|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]

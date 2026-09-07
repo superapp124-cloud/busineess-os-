@@ -201,6 +201,14 @@ const WhatsAppLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/
 const SlaCalculatorTool = React.lazy(() => import('./pages/public/tools/SlaCalculatorTool'));
 const AcquisitionDashboard = React.lazy(() => import('./pages/desktop/AcquisitionDashboard'));
 
+// CHATR Search Universe & Semantic Authority Engine (2026-09-07)
+const AuthorityPage = React.lazy(() => import('./pages/public/authority/AuthorityPage'));
+const TerminologyPage = React.lazy(() => import('./pages/public/terminology/TerminologyPage'));
+const ChatrLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/ChatrLinkGeneratorTool'));
+const ChatrContactQrTool = React.lazy(() => import('./pages/public/tools/ChatrContactQrTool'));
+const VoipCostCalculatorTool = React.lazy(() => import('./pages/public/tools/VoipCostCalculatorTool'));
+const AiWorkflowGeneratorTool = React.lazy(() => import('./pages/public/tools/AiWorkflowGeneratorTool'));
+
 // Super Admin Control Plane (Strictly Authorized: 9910678611, 9717845477)
 const SuperAdminRoute = React.lazy(() => import('./components/SuperAdminRoute'));
 const SuperAdminLayout = React.lazy(() => import('./pages/admin/SuperAdminLayout'));
@@ -944,6 +952,34 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/tools/wa-link" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
   <Route path="/tools/sla-calculator" element={<LazyRoute component={SlaCalculatorTool} />} />
   <Route path="/tools/sla" element={<LazyRoute component={SlaCalculatorTool} />} />
+  
+  {/* CHATR-Native Interactive Web Tools */}
+  <Route path="/tools/communication-link-generator" element={<LazyRoute component={ChatrLinkGeneratorTool} />} />
+  <Route path="/tools/chatr-link" element={<LazyRoute component={ChatrLinkGeneratorTool} />} />
+  <Route path="/tools/contact-qr-generator" element={<LazyRoute component={ChatrContactQrTool} />} />
+  <Route path="/tools/chatr-qr" element={<LazyRoute component={ChatrContactQrTool} />} />
+  <Route path="/tools/business-voip-cost-calculator" element={<LazyRoute component={VoipCostCalculatorTool} />} />
+  <Route path="/tools/voip-calculator" element={<LazyRoute component={VoipCostCalculatorTool} />} />
+  <Route path="/tools/intent-to-workflow-generator" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
+  <Route path="/tools/ai-workflow-builder" element={<LazyRoute component={AiWorkflowGeneratorTool} />} />
+
+  {/* Layer A — Supreme Authority Hubs */}
+  <Route path="/chatr" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-communication" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-calling" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-identity" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-ai" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-intent-os" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-business-os" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-ecosystem" element={<LazyRoute component={AuthorityPage} />} />
+  <Route path="/chatr-infrastructure" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* Proprietary Terminology Hubs */}
+  <Route path="/what-is-an-intent-operating-system" element={<LazyRoute component={TerminologyPage} />} />
+  <Route path="/what-is-an-ai-business-os" element={<LazyRoute component={TerminologyPage} />} />
+  <Route path="/what-is-smartsession-calling" element={<LazyRoute component={TerminologyPage} />} />
+  <Route path="/what-is-a-universal-business-inbox" element={<LazyRoute component={TerminologyPage} />} />
+
   <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
   <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
 

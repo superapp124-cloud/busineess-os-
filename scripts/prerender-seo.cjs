@@ -891,11 +891,20 @@ PUBLIC_SEO_PAGES.push({
 const { CITIES } = require('./citiesData.cjs');
 const {
   LOCATION_USE_CASES,
+  getLocalEntityProfile,
   renderLocationPillarHtml,
   renderCityHubHtml,
   renderLocationsDirectoryHtml,
   slugify
 } = require('./renderLocationHtml.cjs');
+const {
+  AUTHORITY_PAGES,
+  TERMINOLOGY_PAGES,
+  NATIVE_TOOLS,
+  renderAuthorityPageHtml,
+  renderTerminologyPageHtml,
+  renderToolPageHtml
+} = require('./renderSemanticHtml.cjs');
 
 function injectRootHtml(html, bodyContent) {
   return html.replace(/<div id="root">[\s\S]*?<\/body>/, `<div id="root">\n${bodyContent}\n    </div>\n  </body>`);
@@ -916,8 +925,107 @@ function prerender() {
 
   console.log(`[PRERENDER] Starting full static HTML generation...`);
 
+  // Transform Layer A Authority Pages
+  const authoritySeoPages = AUTHORITY_PAGES.map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: p.h1,
+        applicationCategory: 'BusinessApplication',
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: p.faqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Proprietary Terminology Pages
+  const terminologySeoPages = TERMINOLOGY_PAGES.map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'terminology',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'DefinedTerm',
+        name: p.h1,
+        description: p.directAnswer,
+        url: DOMAIN + p.path,
+        inDefinedTermSet: {
+          '@type': 'DefinedTermSet',
+          name: 'CHATR Intent OS Technical Lexicon',
+          url: DOMAIN + '/what-is-an-intent-operating-system'
+        }
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: p.faqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Native Interactive Tools
+  const toolSeoPages = NATIVE_TOOLS.map(t => ({
+    path: t.path,
+    title: t.title,
+    description: t.description,
+    keywords: t.keywords,
+    canonical: DOMAIN + t.path,
+    type: 'tool',
+    pageData: t,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: t.h1,
+        applicationCategory: 'UtilityApplication',
+        url: DOMAIN + t.path,
+        description: t.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (t.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Merge and deduplicate pages
+  const existingPaths = new Set(PUBLIC_SEO_PAGES.map(p => p.path));
+  const newSemanticPages = [...authoritySeoPages, ...terminologySeoPages, ...toolSeoPages].filter(p => !existingPaths.has(p.path));
+  const allCorePages = [...PUBLIC_SEO_PAGES, ...newSemanticPages];
+
   // 1. Render Core Public SEO Pages
-  for (const page of PUBLIC_SEO_PAGES) {
+  for (const page of allCorePages) {
     let customHtml = baseHtml;
 
     // Head tags
@@ -966,10 +1074,19 @@ function prerender() {
     const schemaScripts = allSchemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n    ');
     customHtml = customHtml.replace('</head>', `    ${schemaScripts}\n  </head>`);
 
-    // Inject Directory HTML for /locations
+    // Inject semantic HTML into root
     if (page.path === '/locations') {
       const dirBody = renderLocationsDirectoryHtml(CITIES);
       customHtml = injectRootHtml(customHtml, dirBody);
+    } else if (page.type === 'authority') {
+      const authBody = renderAuthorityPageHtml(page.pageData);
+      customHtml = injectRootHtml(customHtml, authBody);
+    } else if (page.type === 'terminology') {
+      const termBody = renderTerminologyPageHtml(page.pageData);
+      customHtml = injectRootHtml(customHtml, termBody);
+    } else if (page.type === 'tool') {
+      const toolBody = renderToolPageHtml(page.pageData);
+      customHtml = injectRootHtml(customHtml, toolBody);
     }
 
     const targetDir = path.join(distDir, page.path.replace(/^\//, ''));
@@ -1086,10 +1203,23 @@ function prerender() {
         dateModified: '2026-08-11'
       };
 
+      const profile = getLocalEntityProfile(city, state, region);
+      const allFaqs = [
+        ...uc.faqs(city),
+        {
+          q: `How does CHATR adhere to local data regulations in ${city}?`,
+          a: `CHATR enforces strict compliance with ${profile.complianceLaw}. Inbound customer communications, voice logs, and contact registries in ${city} are encrypted at rest (AES-256) and in transit (TLS 1.3), with local regional data residency options.`
+        },
+        {
+          q: `What telephony and calling codes are supported for ${city}?`,
+          a: `CHATR natively provisions ${profile.callingCode} phone numbers and supports outbound WebRTC SmartSession calling formatted for ${city} (${profile.phoneFormat}) with low-latency edge routing (${profile.edgeLatency}).`
+        }
+      ];
+
       const faqSchema = {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        mainEntity: uc.faqs(city).map(f => ({
+        mainEntity: allFaqs.map(f => ({
           '@type': 'Question',
           name: f.q,
           acceptedAnswer: { '@type': 'Answer', text: f.a }
