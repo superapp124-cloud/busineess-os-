@@ -5,104 +5,77 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "bun install",
-  "headers": [
+  "routes": [
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "src": "/assets/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
     },
     {
-      "source": "/download/Chatr-Plus.apk",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/vnd.android.package-archive"
-        },
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"Chatr-Plus.apk\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        },
-        {
-          "key": "Accept-Ranges",
-          "value": "bytes"
-        }
-      ]
+      "src": "/download/Chatr-Plus.apk",
+      "headers": {
+        "Content-Type": "application/vnd.android.package-archive",
+        "Content-Disposition": "attachment; filename=\"Chatr-Plus.apk\"",
+        "Cache-Control": "public, max-age=86400",
+        "Accept-Ranges": "bytes"
+      }
     },
     {
-      "source": "/download/chatr.apk",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/vnd.android.package-archive"
-        },
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"Chatr-Plus.apk\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        },
-        {
-          "key": "Accept-Ranges",
-          "value": "bytes"
-        }
-      ]
+      "src": "/download/chatr.apk",
+      "headers": {
+        "Content-Type": "application/vnd.android.package-archive",
+        "Content-Disposition": "attachment; filename=\"Chatr-Plus.apk\"",
+        "Cache-Control": "public, max-age=86400",
+        "Accept-Ranges": "bytes"
+      }
     },
     {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        }
-      ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/apk",
-      "destination": "/download/Chatr-Plus.apk",
-      "permanent": false
+      "src": "/sw.js",
+      "headers": {
+        "Cache-Control": "no-cache"
+      }
     },
     {
-      "source": "/download/chatr-android.apk",
-      "destination": "/download/Chatr-Plus.apk",
-      "permanent": false
+      "src": "/apk",
+      "status": 302,
+      "headers": {
+        "Location": "/download/Chatr-Plus.apk"
+      }
     },
     {
-      "source": "/download/android/apk",
-      "destination": "/download/Chatr-Plus.apk",
-      "permanent": false
+      "src": "/download/chatr-android.apk",
+      "status": 302,
+      "headers": {
+        "Location": "/download/Chatr-Plus.apk"
+      }
     },
     {
-      "source": "/(.*)",
+      "src": "/download/android/apk",
+      "status": 302,
+      "headers": {
+        "Location": "/download/Chatr-Plus.apk"
+      }
+    },
+    {
+      "src": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "chatrchat.in"
         }
       ],
-      "destination": "https://www.chatrchat.in/$1",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/download/Chatr-Plus.apk",
-      "destination": "/download/Chatr-Plus.apk"
+      "status": 308,
+      "headers": {
+        "Location": "https://www.chatrchat.in/$1"
+      }
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
