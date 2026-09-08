@@ -65,6 +65,7 @@ export const Footer = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Trust & Data</h3>
             <ul className="space-y-2">
+              <li><Link to="/download/android" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors flex items-center gap-1"><span>Download for Android</span> <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded border border-emerald-500/30">APK</span></Link></li>
               <li><Link to="/pricing" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">Commercial Pricing</Link></li>
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">About CHATR</Link></li>
               <li><Link to="/authors" className="hover:text-indigo-400 transition-colors">Authors & Experts</Link></li>

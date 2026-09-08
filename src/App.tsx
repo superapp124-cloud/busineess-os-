@@ -48,6 +48,7 @@ import { networkMonitor } from "./utils/networkMonitor";
 import { ChatrAIFab } from "./components/ChatrAIFab";
 import { GlobalBackHandler } from "./components/GlobalBackHandler";
 import { FloatingHomeFab } from "./components/FloatingHomeFab";
+import { AndroidDownloadBanner } from "./components/AndroidDownloadBanner";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
 import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
 import { TenantProvider } from "./core/tenant/TenantContext";
@@ -608,6 +609,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <OfflineIndicator />
  <DeferredGlobalServices />
  <GlobalBackHandler />
+ <AndroidDownloadBanner />
  <Routes>
    {/* Developer & Direct Integrations Routes */}
    <Route path="/robotOs" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />
@@ -824,7 +826,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/workspace-selector" element={<LazyRoute component={LazyPages.WorkspaceSelector} />} />
  <Route path="/launcher" element={<ProtectedLazyRoute component={LazyPages.Launcher} />} />
  <Route path="/auth" element={<LazyRoute component={LazyPages.Auth} />} />
- <Route path="/download" element={<LazyRoute component={LazyPages.Download} />} />
+  <Route path="/download" element={<LazyRoute component={LazyPages.Download} />} />
+  <Route path="/download/android" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
  <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
  <Route path="/install" element={<LazyRoute component={LazyPages.Install} />} />
  <Route path="/onboarding" element={<LazyRoute component={LazyPages.Onboarding} />} />

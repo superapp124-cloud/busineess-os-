@@ -183,7 +183,8 @@ const semanticTestUrls = [
   '/compare/chatr-vs-twilio',
   '/compare/chatr-vs-intercom',
   '/telecom/uae-business-calling',
-  '/telecom/saudi-arabia-voip'
+  '/telecom/saudi-arabia-voip',
+  '/download/android'
 ];
 
 semanticTestUrls.forEach(urlPath => {
@@ -200,6 +201,14 @@ semanticTestUrls.forEach(urlPath => {
     assert(canonicalMatch && canonicalMatch[1] === `${DOMAIN}${urlPath}`, `${urlPath} canonical matches target`);
   }
 });
+
+// Verify APK File Integrity
+const apkFilePath = path.join(distDir, 'download', 'chatr.apk');
+assert(fs.existsSync(apkFilePath), 'dist/download/chatr.apk exists for direct downloads');
+if (fs.existsSync(apkFilePath)) {
+  const stat = fs.statSync(apkFilePath);
+  assert(stat.size > 50 * 1024 * 1024, `chatr.apk is valid non-empty Android APK (${(stat.size / (1024*1024)).toFixed(1)} MB)`);
+}
 
 // -----------------------------------------------------------------
 // INVARIANT 6: Localized Telemetry Invariant

@@ -386,6 +386,7 @@ export const About = lazy(() => import('@/pages/About'));
 export const Help = lazy(() => import('@/pages/Help'));
 export const Contact = lazy(() => import('@/pages/Contact'));
 export const Download = lazy(() => import('@/pages/Download'));
+export const AndroidDownload = lazy(() => import('@/pages/AndroidDownload'));
 export const Install = lazy(() => import('@/pages/Install'));
 export const Onboarding = lazy(() => import('@/pages/Onboarding'));
 export const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));

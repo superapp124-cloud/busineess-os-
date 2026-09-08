@@ -65,6 +65,7 @@ backups/
 
 # Large binary / build artifacts
 *.apk
+!public/download/chatr.apk
 *.aab
 *.jar
 *.zip

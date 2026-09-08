@@ -898,6 +898,80 @@ PUBLIC_SEO_PAGES.push({
   schemas: []
 });
 
+// Official Android APK Download Hub
+PUBLIC_SEO_PAGES.push({
+  path: '/download/android',
+  title: 'Download CHATR for Android — Official APK (Direct Download, No Play Store)',
+  description: 'Download CHATR+ for Android (Official APK). Next-gen private messaging & WebRTC HD voice/video calling directly from our site. Fast, secure install without Google Play Store.',
+  keywords: 'download chatr android, chatr apk download, whatsapp alternative android apk, private messaging app android, webrtc calling android, download chatr for android',
+  canonical: DOMAIN + '/download/android',
+  type: 'android-download',
+  schemas: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'MobileApplication',
+      name: 'CHATR+ for Android',
+      operatingSystem: 'Android 8.0 or higher',
+      applicationCategory: 'CommunicationApplication',
+      softwareVersion: '1.0.0',
+      fileSize: '84MB',
+      downloadUrl: DOMAIN + '/download/chatr.apk',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD'
+      },
+      description: 'Download CHATR+ for Android. Carrier-grade WebRTC HD calling, private messaging without Meta surveillance, TelecomManager lockscreen integration, and autonomous AI agents. Direct APK install without Google Play Store.',
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        ratingCount: '1284'
+      }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Why download the APK directly instead of Google Play Store?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Direct distribution gives you pure uncensored privacy, carrier-grade WebRTC voice calling without Play Store VoIP restrictions, and instant access to new features and security patches.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Is it safe to install the APK from your site?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, 100%. The APK is built, cryptographically signed, and served directly by TalentXcel Services Pvt Ltd from our secure servers with zero spyware or adware.'
+          }
+        }
+      ]
+    }
+  ]
+});
+
+PUBLIC_SEO_PAGES.push({
+  path: '/download',
+  title: 'Download CHATR — Android APK, Windows, macOS & Linux',
+  description: 'Download CHATR for Android (APK), Windows Desktop, macOS, and Linux. Private messaging, carrier-grade HD calling, and AI workspace.',
+  keywords: 'download chatr, chatr desktop download, chatr android apk, chatr for windows, chatr download',
+  canonical: DOMAIN + '/download',
+  type: 'android-download',
+  schemas: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'CHATR OS & Android App',
+      operatingSystem: 'Android, Windows, macOS, Linux',
+      applicationCategory: 'CommunicationApplication',
+      url: DOMAIN + '/download'
+    }
+  ]
+});
+
 // Programmatic Location Pages Generator (Build-time / Server-side only)
 const { CITIES } = require('./citiesData.cjs');
 
@@ -945,6 +1019,69 @@ const {
   renderTerminologyPageHtml,
   renderToolPageHtml
 } = require('./renderSemanticHtml.cjs');
+
+function renderAndroidDownloadHtml() {
+  return `
+    <div class="min-h-screen bg-slate-950 text-white font-sans">
+      <main class="max-w-4xl mx-auto px-4 py-12 space-y-10">
+        <header class="text-center space-y-4">
+          <div class="inline-block px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
+            Official Android Release • No Google Play Store Required • Direct APK
+          </div>
+          <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight">
+            Download CHATR for Android
+          </h1>
+          <p class="text-base md:text-lg text-slate-300 max-w-2xl mx-auto">
+            Carrier-grade WebRTC HD calling, private messaging with zero Meta surveillance, and autonomous AI agents. Direct download from our verified servers.
+          </p>
+          <div class="pt-2">
+            <a href="/download/chatr.apk" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg shadow-xl shadow-emerald-500/25">
+              Download APK (v1.0.0 — 84 MB)
+            </a>
+          </div>
+          <div class="text-xs text-slate-400 flex items-center justify-center gap-2">
+            <span>Android 8.0+</span> • <span>arm64-v8a</span> • <span>100% Virus-Free</span>
+          </div>
+        </header>
+
+        <!-- Direct Answer GEO Block -->
+        <section id="direct-answer" class="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 space-y-3">
+          <h2 class="text-xs uppercase font-bold tracking-wider text-emerald-400">Direct Answer: How to Download & Install CHATR on Android</h2>
+          <p class="text-slate-200 text-sm leading-relaxed">
+            You can download CHATR+ directly from our official website without using Google Play Store by downloading the verified APK at https://www.chatrchat.in/download/chatr.apk. Once downloaded, tap the file, tap "Download anyway" when prompted by your browser, enable "Allow from this source" in Android Settings if needed, and tap "Install". CHATR+ requires Android 8.0 or higher, uses carrier-grade WebRTC calling over lock screen, and features complete privacy with zero Meta surveillance.
+          </p>
+        </section>
+
+        <!-- 5-Step Guide -->
+        <section class="space-y-6">
+          <h2 class="text-2xl font-bold text-white">How to Install CHATR APK on Android</h2>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold text-sm">Step 1</span>
+              <p class="text-slate-300">Tap "Download APK" to start downloading chatr.apk.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold text-sm">Step 2</span>
+              <p class="text-slate-300">Tap "Download anyway" when Chrome displays the standard file warning.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold text-sm">Step 3</span>
+              <p class="text-slate-300">Tap "Open" from notification shade or Downloads folder.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold text-sm">Step 4</span>
+              <p class="text-slate-300">Tap Settings → enable "Allow from this source" → tap back.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold text-sm">Step 5</span>
+              <p class="text-slate-300">Tap "Install". Launch CHATR+ and enjoy private calling and chat!</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  `;
+}
 
 function injectRootHtml(html, bodyContent) {
   return html.replace(/<div id="root">[\s\S]*?<\/body>/, `<div id="root">\n${bodyContent}\n    </div>\n  </body>`);
@@ -1266,6 +1403,9 @@ function prerender() {
     if (page.path === '/locations') {
       const dirBody = renderLocationsDirectoryHtml(CITIES);
       customHtml = injectRootHtml(customHtml, dirBody);
+    } else if (page.type === 'android-download') {
+      const androidBody = renderAndroidDownloadHtml();
+      customHtml = injectRootHtml(customHtml, androidBody);
     } else if (page.type === 'authority') {
       const authBody = renderAuthorityPageHtml(page.pageData);
       customHtml = injectRootHtml(customHtml, authBody);

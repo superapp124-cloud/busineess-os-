@@ -55,6 +55,8 @@ console.log('[SITEMAP ENGINE] Building 15 Semantic Sitemaps...');
 // 1. Core Platform Pages
 const coreUrls = [
   createUrlXml(DOMAIN + '/', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/download/android', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/download', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/pricing', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/about', '0.8', 'monthly'),
   createUrlXml(DOMAIN + '/editorial-policy', '0.7', 'monthly'),
