@@ -84,28 +84,20 @@
       "permanent": false
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "chatrchat.in"
         }
       ],
-      "destination": "https://www.chatrchat.in/:path*",
+      "destination": "https://www.chatrchat.in/$1",
       "permanent": true
     }
   ],
   "rewrites": [
     {
-      "source": "/assets/:path*",
-      "destination": "/assets/:path*"
-    },
-    {
-      "source": "/download/Chatr-Plus.apk",
-      "destination": "/download/Chatr-Plus.apk"
-    },
-    {
-      "source": "/:path*",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
