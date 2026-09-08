@@ -187,8 +187,7 @@ const semanticTestUrls = [
   '/calling/uae-dubai-free-calls',
   '/alternative/whatsapp-without-phone-number',
   '/download/android',
-  '/download/samsung',
-  '/call'
+  '/download/samsung'
 ];
 
 semanticTestUrls.forEach(urlPath => {

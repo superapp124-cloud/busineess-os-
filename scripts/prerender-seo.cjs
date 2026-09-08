@@ -1002,14 +1002,6 @@ const OEM_HUBS = [
     keywords: 'download chatr oppo, chatr coloros apk, install apk oppo, chatr plus oppo',
     canonical: DOMAIN + '/download/oppo',
     type: 'android-download'
-  },
-  {
-    path: '/call',
-    title: 'Free WebRTC HD Voice & Video Calling Online — CHATR+ Instant Call',
-    description: 'Join crystal-clear WebRTC audio and video calls directly in your browser with zero installation. 128 kbps OPUS HD voice, sub-40ms latency, peer-to-peer encrypted.',
-    keywords: 'free webrtc call, browser video call, instant web call no download, online voice call free, chatr web call',
-    canonical: DOMAIN + '/call',
-    type: 'android-download'
   }
 ];
 
