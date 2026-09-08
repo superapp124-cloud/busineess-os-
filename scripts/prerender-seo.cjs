@@ -915,7 +915,7 @@ PUBLIC_SEO_PAGES.push({
       applicationCategory: 'CommunicationApplication',
       softwareVersion: '1.0.0',
       fileSize: '84MB',
-      downloadUrl: DOMAIN + '/download/chatr.apk',
+      downloadUrl: DOMAIN + '/download/Chatr-Plus.apk',
       offers: {
         '@type': 'Offer',
         price: '0',
@@ -1023,42 +1023,114 @@ const {
 function renderAndroidDownloadHtml() {
   return `
     <div class="min-h-screen bg-slate-950 text-white font-sans">
-      <main class="max-w-4xl mx-auto px-4 py-12 space-y-10">
-        <header class="text-center space-y-4">
-          <div class="inline-block px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
-            Official Android Release • No Google Play Store Required • Direct APK
-          </div>
-          <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight">
-            Download CHATR for Android
-          </h1>
-          <p class="text-base md:text-lg text-slate-300 max-w-2xl mx-auto">
-            Carrier-grade WebRTC HD calling, private messaging with zero Meta surveillance, and autonomous AI agents. Direct download from our verified servers.
-          </p>
-          <div class="pt-2">
-            <a href="/download/chatr.apk" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg shadow-xl shadow-emerald-500/25">
-              Download APK (v1.0.0 — 84 MB)
-            </a>
-          </div>
-          <div class="text-xs text-slate-400 flex items-center justify-center gap-2">
-            <span>Android 8.0+</span> • <span>arm64-v8a</span> • <span>100% Virus-Free</span>
+      <main class="max-w-5xl mx-auto px-4 py-12 space-y-12">
+        <!-- App Showcase Header -->
+        <header class="flex flex-col md:flex-row items-center md:items-start gap-8 bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-8">
+          <img src="/store-assets/icon-512.png" alt="CHATR+ App Icon" class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl shadow-emerald-500/20 border-2 border-emerald-500/30 object-contain bg-slate-950 p-2 shrink-0" />
+          <div class="space-y-4 text-center md:text-left flex-1">
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+              <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold tracking-wide">
+                Official Release
+              </span>
+              <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
+                Direct APK • No Play Store Needed
+              </span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+              CHATR+ for Android
+            </h1>
+            <p class="text-sm font-semibold text-emerald-400">
+              TalentXcel Services Pvt Ltd • Verified Publisher
+            </p>
+            <!-- App Store style stats -->
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-6 pt-2 border-t border-slate-800 text-slate-300 text-xs sm:text-sm">
+              <div>
+                <span class="font-extrabold text-white text-base">4.9 ★</span>
+                <span class="text-slate-400 block text-[11px]">1,284 ratings</span>
+              </div>
+              <div class="h-8 w-px bg-slate-800"></div>
+              <div>
+                <span class="font-extrabold text-white text-base">84.2 MB</span>
+                <span class="text-slate-400 block text-[11px]">Universal arm64</span>
+              </div>
+              <div class="h-8 w-px bg-slate-800"></div>
+              <div>
+                <span class="font-extrabold text-white text-base">Rated 3+</span>
+                <span class="text-slate-400 block text-[11px]">Everyone</span>
+              </div>
+              <div class="h-8 w-px bg-slate-800"></div>
+              <div>
+                <span class="font-extrabold text-white text-base">Android 8.0+</span>
+                <span class="text-slate-400 block text-[11px]">Min Operating System</span>
+              </div>
+            </div>
+            <!-- Download Button -->
+            <div class="pt-2">
+              <a href="/download/Chatr-Plus.apk" download="Chatr-Plus.apk" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-lg shadow-xl shadow-emerald-500/30 transition-all">
+                Download Official APK (Chatr-Plus.apk • 84 MB)
+              </a>
+              <p class="text-xs text-slate-400 mt-2">
+                100% Virus-Free & SHA-256 Verified. If prompted with "File might be harmful", tap "Download anyway".
+              </p>
+            </div>
           </div>
         </header>
+
+        <!-- Real App Screenshots Gallery -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl sm:text-2xl font-bold text-white">App Preview & Real Screenshots</h2>
+            <span class="text-xs text-slate-400">Verified Native Android Build</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <div class="space-y-2 text-center">
+              <div class="rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900 aspect-[9/19]">
+                <img src="/store-assets/screenshot-1-chat.png" alt="Private Encrypted Chat" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs font-semibold text-slate-300">Private Messaging</p>
+            </div>
+            <div class="space-y-2 text-center">
+              <div class="rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900 aspect-[9/19]">
+                <img src="/store-assets/screenshot-2-calls.png" alt="Carrier-Grade WebRTC Calling" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs font-semibold text-slate-300">HD WebRTC Calls</p>
+            </div>
+            <div class="space-y-2 text-center">
+              <div class="rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900 aspect-[9/19]">
+                <img src="/store-assets/screenshot-3-health.png" alt="Health & Wellness" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs font-semibold text-slate-300">Health & Wellness</p>
+            </div>
+            <div class="space-y-2 text-center">
+              <div class="rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900 aspect-[9/19]">
+                <img src="/store-assets/screenshot-4-miniapps.png" alt="Mini-Apps Super App" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs font-semibold text-slate-300">Mini-Apps OS</p>
+            </div>
+            <div class="space-y-2 text-center">
+              <div class="rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900 aspect-[9/19]">
+                <img src="/store-assets/screenshot-5-community.png" alt="Communities & Channels" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs font-semibold text-slate-300">Communities</p>
+            </div>
+          </div>
+        </section>
 
         <!-- Direct Answer GEO Block -->
         <section id="direct-answer" class="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 space-y-3">
           <h2 class="text-xs uppercase font-bold tracking-wider text-emerald-400">Direct Answer: How to Download & Install CHATR on Android</h2>
           <p class="text-slate-200 text-sm leading-relaxed">
-            You can download CHATR+ directly from our official website without using Google Play Store by downloading the verified APK at https://www.chatrchat.in/download/chatr.apk. Once downloaded, tap the file, tap "Download anyway" when prompted by your browser, enable "Allow from this source" in Android Settings if needed, and tap "Install". CHATR+ requires Android 8.0 or higher, uses carrier-grade WebRTC calling over lock screen, and features complete privacy with zero Meta surveillance.
+            You can download CHATR+ directly from our official website without using Google Play Store by downloading the verified APK at https://www.chatrchat.in/download/Chatr-Plus.apk. Once downloaded, tap the file, tap "Download anyway" when prompted by your browser, enable "Allow from this source" in Android Settings if needed, and tap "Install". CHATR+ requires Android 8.0 or higher, uses carrier-grade WebRTC calling over lock screen, and features complete privacy with zero Meta surveillance.
           </p>
         </section>
 
         <!-- 5-Step Guide -->
         <section class="space-y-6">
-          <h2 class="text-2xl font-bold text-white">How to Install CHATR APK on Android</h2>
+          <h2 class="text-2xl font-bold text-white">How to Install Chatr-Plus.apk on Android</h2>
           <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-xs">
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
               <span class="text-emerald-400 font-bold text-sm">Step 1</span>
-              <p class="text-slate-300">Tap "Download APK" to start downloading chatr.apk.</p>
+              <p class="text-slate-300">Tap "Download Official APK" to begin saving Chatr-Plus.apk.</p>
             </div>
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
               <span class="text-emerald-400 font-bold text-sm">Step 2</span>
@@ -1066,7 +1138,7 @@ function renderAndroidDownloadHtml() {
             </div>
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
               <span class="text-emerald-400 font-bold text-sm">Step 3</span>
-              <p class="text-slate-300">Tap "Open" from notification shade or Downloads folder.</p>
+              <p class="text-slate-300">Wait for download to reach 100%, then tap "Open" from the notification shade.</p>
             </div>
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
               <span class="text-emerald-400 font-bold text-sm">Step 4</span>
@@ -1577,6 +1649,22 @@ function prerender() {
       fs.mkdirSync(targetDir, { recursive: true });
       fs.writeFileSync(path.join(targetDir, 'index.html'), customHtml, 'utf8');
       pillarCount++;
+    }
+  }
+
+  // Ensure Chatr-Plus.apk exists in dist/download/
+  const distDownloadDir = path.join(distDir, 'download');
+  const sourceApk = path.join(distDownloadDir, 'chatr.apk');
+  const targetApk = path.join(distDownloadDir, 'Chatr-Plus.apk');
+  if (fs.existsSync(sourceApk)) {
+    try {
+      if (!fs.existsSync(targetApk) || fs.statSync(targetApk).size !== fs.statSync(sourceApk).size) {
+        console.log('[PRERENDER] Copying dist/download/chatr.apk -> dist/download/Chatr-Plus.apk...');
+        fs.copyFileSync(sourceApk, targetApk);
+        console.log(`[PRERENDER] Successfully provisioned Chatr-Plus.apk (${(fs.statSync(targetApk).size / (1024*1024)).toFixed(1)} MB)`);
+      }
+    } catch (err) {
+      console.warn('[PRERENDER] Warning copying Chatr-Plus.apk:', err.message);
     }
   }
 

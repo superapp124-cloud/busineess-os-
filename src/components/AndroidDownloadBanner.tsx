@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, X, Smartphone, ShieldCheck } from 'lucide-react';
 import logo from '@/assets/chatr-icon-logo.png';
 
+const APP_ICON = '/store-assets/icon-512.png';
+
 export const AndroidDownloadBanner: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,11 +37,15 @@ export const AndroidDownloadBanner: React.FC = () => {
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = '/download/chatr.apk';
-    link.setAttribute('download', 'chatr.apk');
+    link.href = '/download/Chatr-Plus.apk';
+    link.setAttribute('download', 'Chatr-Plus.apk');
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    setTimeout(() => {
+      if (document.body.contains(link)) {
+        document.body.removeChild(link);
+      }
+    }, 1000);
     navigate('/download/android');
   };
 
@@ -50,7 +56,7 @@ export const AndroidDownloadBanner: React.FC = () => {
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
         {/* Left: App Icon & Text */}
         <div className="flex items-center gap-3 min-w-0">
-          <img src={logo} alt="CHATR" className="w-10 h-10 object-contain rounded-xl shrink-0 p-1 bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md" />
+          <img src={APP_ICON} alt="CHATR+" className="w-10 h-10 object-contain rounded-xl shrink-0 p-0.5 bg-slate-900 border border-emerald-500/30 shadow-md" />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <span className="font-extrabold text-sm text-white tracking-tight">CHATR+ for Android</span>

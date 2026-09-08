@@ -204,11 +204,21 @@ semanticTestUrls.forEach(urlPath => {
 
 // Verify APK File Integrity
 const apkFilePath = path.join(distDir, 'download', 'chatr.apk');
+const plusApkFilePath = path.join(distDir, 'download', 'Chatr-Plus.apk');
 assert(fs.existsSync(apkFilePath), 'dist/download/chatr.apk exists for direct downloads');
 if (fs.existsSync(apkFilePath)) {
   const stat = fs.statSync(apkFilePath);
   assert(stat.size > 50 * 1024 * 1024, `chatr.apk is valid non-empty Android APK (${(stat.size / (1024*1024)).toFixed(1)} MB)`);
 }
+assert(fs.existsSync(plusApkFilePath), 'dist/download/Chatr-Plus.apk exists for branded direct downloads');
+if (fs.existsSync(plusApkFilePath)) {
+  const statPlus = fs.statSync(plusApkFilePath);
+  assert(statPlus.size > 50 * 1024 * 1024, `Chatr-Plus.apk is valid non-empty Android APK (${(statPlus.size / (1024*1024)).toFixed(1)} MB)`);
+}
+
+// Verify Store Assets
+const storeIconPath = path.join(distDir, 'store-assets', 'icon-512.png');
+assert(fs.existsSync(storeIconPath), 'dist/store-assets/icon-512.png exists for official App Showcase');
 
 // -----------------------------------------------------------------
 // INVARIANT 6: Localized Telemetry Invariant

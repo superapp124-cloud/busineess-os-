@@ -21,7 +21,7 @@ function detectPlatform(): PlatformInfo {
   const ua = navigator.userAgent.toLowerCase();
   const platform = (navigator.platform || '').toLowerCase();
   if (ua.includes('android')) {
-    return { filename: 'chatr.apk', label: 'Android', isWindows: false, isAndroid: true };
+    return { filename: 'Chatr-Plus.apk', label: 'Android', isWindows: false, isAndroid: true };
   }
   if (platform.includes('mac') || ua.includes('mac')) {
     return { filename: 'chatr-desktop.dmg', label: 'macOS', isWindows: false, isAndroid: false };
@@ -32,51 +32,32 @@ function detectPlatform(): PlatformInfo {
   return { filename: 'chatr-desktop-setup.exe', label: 'Windows', isWindows: true, isAndroid: false };
 }
 
-async function triggerDownload(filename: string) {
+function triggerDownload(filename: string) {
   const isLocal =
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1';
 
-  // For Android APK, always download from /download/chatr.apk
-  const downloadUrl =
-    filename === 'chatr.apk'
-      ? '/download/chatr.apk'
-      : isLocal || filename !== 'chatr-desktop-setup.exe'
-        ? `/download/${filename}`
-        : GITHUB_RELEASE_DOWNLOAD_URL;
+  const isAndroid = filename === 'Chatr-Plus.apk' || filename === 'chatr.apk';
+  const targetFilename = isAndroid ? 'Chatr-Plus.apk' : filename;
+  const downloadUrl = isAndroid
+    ? '/download/Chatr-Plus.apk'
+    : isLocal || targetFilename !== 'chatr-desktop-setup.exe'
+      ? `/download/${targetFilename}`
+      : GITHUB_RELEASE_DOWNLOAD_URL;
 
-  try {
-    const res = await fetch(downloadUrl);
-    const contentType = res.headers.get('content-type') || '';
-    if (res.ok && !contentType.includes('text/html')) {
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      return;
-    }
-  } catch {
-    /* fallthrough to direct link */
-  }
-
-  const targetUrl =
-    filename === 'chatr.apk'
-      ? '/download/chatr.apk'
-      : filename === 'chatr-desktop-setup.exe' && !isLocal
-        ? GITHUB_RELEASE_DOWNLOAD_URL
-        : `/download/${filename}`;
+  // Direct native browser navigation / anchor download.
+  // We NEVER buffer 84MB into JS fetch(blob) memory or call revokeObjectURL,
+  // preventing Chrome from losing the file stream and freezing on 'Unconfirmed .crdownload'!
   const link = document.createElement('a');
-  link.href = targetUrl;
-  link.download = filename;
+  link.href = downloadUrl;
+  link.setAttribute('download', targetFilename);
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  setTimeout(() => {
+    if (document.body.contains(link)) {
+      document.body.removeChild(link);
+    }
+  }, 1500);
 }
 
 export default function Download() {
@@ -143,7 +124,7 @@ export default function Download() {
       {/* Platform Selector Strip */}
       <div className="border-b border-white/5 bg-[#0d0d1a]/40 px-6 py-3 flex justify-center gap-2 text-xs">
         {[
-          { filename: 'chatr.apk', label: 'Android (APK)', isWindows: false, isAndroid: true },
+          { filename: 'Chatr-Plus.apk', label: 'Android (APK)', isWindows: false, isAndroid: true },
           { filename: 'chatr-desktop-setup.exe', label: 'Windows', isWindows: true, isAndroid: false },
           { filename: 'chatr-desktop.dmg', label: 'macOS', isWindows: false, isAndroid: false },
           { filename: 'chatr-desktop.AppImage', label: 'Linux', isWindows: false, isAndroid: false },
@@ -190,7 +171,7 @@ export default function Download() {
             <h1 className="text-4xl font-extrabold tracking-tight text-white mb-3">
               Preparing your download…
             </h1>
-            <p className="text-white/50 text-base">CHATR {platform.isAndroid ? 'Android APK' : 'Desktop'} is getting ready</p>
+            <p className="text-white/50 text-base">CHATR {platform.isAndroid ? 'Android APK (Chatr-Plus.apk)' : 'Desktop'} is getting ready</p>
           </>
         )}
 
@@ -203,7 +184,7 @@ export default function Download() {
             <p className="text-white/50 text-base max-w-md mx-auto leading-relaxed">
               {platform.isAndroid ? (
                 <>
-                  Your Android APK (<strong className="text-emerald-300 font-mono text-xs">chatr.apk</strong>) is downloading automatically. When prompted with <em>"File might be harmful"</em>, tap <strong className="text-white/80">"Download anyway"</strong>, then tap <strong className="text-white/80">Open</strong>.
+                  Your Android APK (<strong className="text-emerald-300 font-mono text-xs">Chatr-Plus.apk</strong>) is downloading automatically. When prompted with <em>"File might be harmful"</em>, tap <strong className="text-white/80">"Download anyway"</strong>, then tap <strong className="text-white/80">Open</strong> once complete.
                 </>
               ) : (
                 <>
@@ -256,7 +237,7 @@ export default function Download() {
               {platform.isAndroid ? (
                 <>
                   Open your <strong className="text-white/80">Downloads folder</strong> or notification shade, tap{' '}
-                  <strong className="text-emerald-400">chatr.apk</strong>, and tap <strong className="text-white/80">Install</strong>.
+                  <strong className="text-emerald-400">Chatr-Plus.apk</strong>, and tap <strong className="text-white/80">Install</strong>.
                 </>
               ) : (
                 <>
@@ -265,6 +246,16 @@ export default function Download() {
                 </>
               )}
             </p>
+            {platform.isAndroid && (
+              <div className="mt-4">
+                <button
+                  onClick={() => navigate('/download/android')}
+                  className="px-5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all"
+                >
+                  View Full Android App Showcase & Screenshots →
+                </button>
+              </div>
+            )}
             <button
               onClick={() => triggerDownload(platform.filename)}
               className="mt-6 px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-white/60 hover:text-white transition-all"
