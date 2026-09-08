@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Download, ShieldCheck, CheckCircle2, AlertTriangle, 
   Smartphone, QrCode, PhoneCall, MessageSquare, 
@@ -112,10 +112,35 @@ const DEVICE_GUIDES = [
 ];
 
 export const AndroidDownload: React.FC = () => {
+  const location = useLocation();
   const [downloadStarted, setDownloadStarted] = useState(false);
-  const [activeDevice, setActiveDevice] = useState('samsung');
+  
+  const getInitialDevice = () => {
+    const path = (location.pathname || '').toLowerCase();
+    if (path.includes('samsung')) return 'samsung';
+    if (path.includes('xiaomi') || path.includes('redmi') || path.includes('poco')) return 'xiaomi';
+    if (path.includes('oneplus') || path.includes('oppo') || path.includes('realme')) return 'oneplus';
+    if (path.includes('vivo') || path.includes('iqoo')) return 'vivo';
+    if (path.includes('pixel') || path.includes('motorola')) return 'pixel';
+
+    if (typeof navigator !== 'undefined' && navigator.userAgent) {
+      const ua = navigator.userAgent.toLowerCase();
+      if (ua.includes('samsung') || ua.includes('sm-')) return 'samsung';
+      if (ua.includes('xiaomi') || ua.includes('redmi') || ua.includes('poco') || ua.includes('mi ')) return 'xiaomi';
+      if (ua.includes('oneplus') || ua.includes('oppo') || ua.includes('cph') || ua.includes('rmx')) return 'oneplus';
+      if (ua.includes('vivo') || ua.includes('v2') || ua.includes('iqoo')) return 'vivo';
+      if (ua.includes('pixel')) return 'pixel';
+    }
+    return 'samsung';
+  };
+
+  const [activeDevice, setActiveDevice] = useState(getInitialDevice);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
+
+  useEffect(() => {
+    setActiveDevice(getInitialDevice());
+  }, [location.pathname]);
 
   const handleDownloadClick = () => {
     setDownloadStarted(true);
@@ -149,7 +174,7 @@ export const AndroidDownload: React.FC = () => {
         title="Download CHATR for Android — Official APK (Direct Download, No Play Store)"
         description="Download CHATR+ for Android (Official APK). Next-gen private messaging & WebRTC HD voice/video calling directly from our site. Fast, secure install without Google Play Store."
         keywords="download chatr android, chatr apk download, whatsapp alternative android apk, private messaging app android, webrtc calling android, download chatr for android, chatr plus apk"
-        canonical="https://www.chatrchat.in/download/android"
+        canonical={`https://www.chatrchat.in${location.pathname}`}
         schemaData={schemaData}
       />
 

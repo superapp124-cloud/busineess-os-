@@ -55,7 +55,13 @@ console.log('[SITEMAP ENGINE] Building 15 Semantic Sitemaps...');
 // 1. Core Platform Pages
 const coreUrls = [
   createUrlXml(DOMAIN + '/', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/call', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/download/android', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/download/samsung', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/download/xiaomi', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/download/oneplus', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/download/pixel', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/download/vivo', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/download', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/pricing', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/about', '0.8', 'monthly'),
@@ -116,7 +122,9 @@ const {
   INTEGRATION_PAGES,
   COMPARISON_PAGES,
   TELECOM_COUNTRY_PAGES,
-  WAVE2_TOOLS
+  WAVE2_TOOLS,
+  UNBLOCKED_CALLING_PAGES,
+  ALTERNATIVE_PAGES
 } = require('../src/data/chatrSearchUniverseData.ts');
 
 const toolUrls = [
@@ -146,6 +154,19 @@ const telecomUrls = TELECOM_COUNTRY_PAGES.map(p =>
   createUrlXml(DOMAIN + p.path, '0.8', 'weekly')
 );
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-telecom.xml'), wrapUrlset(telecomUrls), 'utf8');
+
+// 5D. Unblocked Gulf/UAE Calling Matrix
+const callingUrls = [
+  createUrlXml(DOMAIN + '/call', '1.0', 'daily'),
+  ...UNBLOCKED_CALLING_PAGES.map(p => createUrlXml(DOMAIN + p.path, '0.9', 'weekly'))
+];
+fs.writeFileSync(path.join(sitemapsDir, 'sitemap-calling.xml'), wrapUrlset(callingUrls), 'utf8');
+
+// 5E. WhatsApp & Truecaller Alternatives Matrix
+const alternativeUrls = ALTERNATIVE_PAGES.map(p => 
+  createUrlXml(DOMAIN + p.path, '0.9', 'weekly')
+);
+fs.writeFileSync(path.join(sitemapsDir, 'sitemap-alternatives.xml'), wrapUrlset(alternativeUrls), 'utf8');
 
 
 // 6. Problems, Workflows, Comparisons, Industries (from expansion pages)
@@ -281,6 +302,8 @@ const childSitemaps = [
   'sitemap-integrations.xml',
   'sitemap-comparisons.xml',
   'sitemap-telecom.xml',
+  'sitemap-calling.xml',
+  'sitemap-alternatives.xml',
   'sitemap-robotics.xml',
   'sitemap-terminology.xml',
   'sitemap-tools.xml',

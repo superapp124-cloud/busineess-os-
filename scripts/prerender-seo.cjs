@@ -953,6 +953,84 @@ PUBLIC_SEO_PAGES.push({
   ]
 });
 
+// OEM Download Hubs & Web Call Entry
+const OEM_HUBS = [
+  {
+    path: '/download/samsung',
+    title: 'Download CHATR+ for Samsung Galaxy — Official APK (One UI Install Guide)',
+    description: 'Download CHATR+ APK for Samsung Galaxy smartphones. Carrier-grade WebRTC calls & encrypted chat. Step-by-step One UI install guide without Play Store.',
+    keywords: 'download chatr samsung, chatr samsung galaxy apk, install chatr one ui, chatr plus apk samsung',
+    canonical: DOMAIN + '/download/samsung',
+    type: 'android-download'
+  },
+  {
+    path: '/download/xiaomi',
+    title: 'Download CHATR+ for Xiaomi, Redmi & Poco — Official APK (HyperOS / MIUI)',
+    description: 'Download CHATR+ APK for Xiaomi, Redmi, and Poco devices. High quality WebRTC voice/video calls. HyperOS and MIUI installation guide without Play Store.',
+    keywords: 'download chatr xiaomi, chatr redmi apk, chatr poco download, install apk hyperos, chatr miui',
+    canonical: DOMAIN + '/download/xiaomi',
+    type: 'android-download'
+  },
+  {
+    path: '/download/oneplus',
+    title: 'Download CHATR+ for OnePlus, Oppo & Realme — Official APK (OxygenOS / ColorOS)',
+    description: 'Download CHATR+ APK for OnePlus, Oppo, and Realme phones. Direct official install, carrier-grade WebRTC HD calling, and zero Meta tracking.',
+    keywords: 'download chatr oneplus, chatr oppo apk, chatr realme download, install apk oxygenos, chatr coloros',
+    canonical: DOMAIN + '/download/oneplus',
+    type: 'android-download'
+  },
+  {
+    path: '/download/pixel',
+    title: 'Download CHATR+ for Google Pixel & Motorola — Official APK (Stock Android)',
+    description: 'Download CHATR+ APK for Google Pixel and Motorola. Stock Android installation instructions, carrier-grade WebRTC calling, and zero bloatware.',
+    keywords: 'download chatr pixel, chatr google pixel apk, install apk stock android, chatr motorola',
+    canonical: DOMAIN + '/download/pixel',
+    type: 'android-download'
+  },
+  {
+    path: '/download/vivo',
+    title: 'Download CHATR+ for Vivo & iQOO — Official APK (Funtouch OS / OriginOS)',
+    description: 'Download CHATR+ APK for Vivo and iQOO phones. Fast install without Play Store, carrier-grade WebRTC voice and video calls.',
+    keywords: 'download chatr vivo, chatr iqoo apk, install apk funtouch os, chatr plus vivo',
+    canonical: DOMAIN + '/download/vivo',
+    type: 'android-download'
+  },
+  {
+    path: '/download/oppo',
+    title: 'Download CHATR+ for Oppo — Official APK (ColorOS Guide)',
+    description: 'Download CHATR+ APK for Oppo devices. Fast install without Play Store, carrier-grade WebRTC voice and video calls.',
+    keywords: 'download chatr oppo, chatr coloros apk, install apk oppo, chatr plus oppo',
+    canonical: DOMAIN + '/download/oppo',
+    type: 'android-download'
+  },
+  {
+    path: '/call',
+    title: 'Free WebRTC HD Voice & Video Calling Online — CHATR+ Instant Call',
+    description: 'Join crystal-clear WebRTC audio and video calls directly in your browser with zero installation. 128 kbps OPUS HD voice, sub-40ms latency, peer-to-peer encrypted.',
+    keywords: 'free webrtc call, browser video call, instant web call no download, online voice call free, chatr web call',
+    canonical: DOMAIN + '/call',
+    type: 'android-download'
+  }
+];
+
+OEM_HUBS.forEach(hub => {
+  PUBLIC_SEO_PAGES.push({
+    ...hub,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'MobileApplication',
+        name: 'CHATR+ for Android',
+        operatingSystem: 'Android 8.0 or higher',
+        applicationCategory: 'CommunicationApplication',
+        downloadUrl: DOMAIN + '/download/Chatr-Plus.apk',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        description: hub.description
+      }
+    ]
+  });
+});
+
 PUBLIC_SEO_PAGES.push({
   path: '/download',
   title: 'Download CHATR — Android APK, Windows, macOS & Linux',
@@ -1015,6 +1093,8 @@ const {
   COMPARISON_PAGES,
   TELECOM_COUNTRY_PAGES,
   WAVE2_TOOLS,
+  UNBLOCKED_CALLING_PAGES,
+  ALTERNATIVE_PAGES,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,
   renderToolPageHtml
@@ -1416,9 +1496,69 @@ function prerender() {
     ]
   }));
 
+  // Transform Unblocked Calling Pages
+  const callingSeoPages = (UNBLOCKED_CALLING_PAGES || []).map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: p.h1,
+        applicationCategory: 'CommunicationApplication',
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
+  // Transform Alternative Pages
+  const alternativeSeoPages = (ALTERNATIVE_PAGES || []).map(p => ({
+    path: p.path,
+    title: p.title,
+    description: p.description,
+    keywords: p.keywords,
+    canonical: DOMAIN + p.path,
+    type: 'authority',
+    pageData: p,
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: p.h1,
+        applicationCategory: 'CommunicationApplication',
+        url: DOMAIN + p.path,
+        description: p.description
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: (p.faqs || []).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a }
+        }))
+      }
+    ]
+  }));
+
   // Merge and deduplicate pages
   const existingPaths = new Set(PUBLIC_SEO_PAGES.map(p => p.path));
-  const newSemanticPages = [...authoritySeoPages, ...roboticsSeoPages, ...terminologySeoPages, ...toolSeoPages, ...integrationSeoPages, ...comparisonSeoPages, ...telecomSeoPages, ...wave2ToolSeoPages].filter(p => !existingPaths.has(p.path));
+  const newSemanticPages = [...authoritySeoPages, ...roboticsSeoPages, ...terminologySeoPages, ...toolSeoPages, ...integrationSeoPages, ...comparisonSeoPages, ...telecomSeoPages, ...wave2ToolSeoPages, ...callingSeoPages, ...alternativeSeoPages].filter(p => !existingPaths.has(p.path));
   const allCorePages = [...PUBLIC_SEO_PAGES, ...newSemanticPages];
 
   // 1. Render Core Public SEO Pages

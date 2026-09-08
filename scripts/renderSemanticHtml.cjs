@@ -1241,7 +1241,9 @@ const {
   INTEGRATION_PAGES,
   COMPARISON_PAGES,
   TELECOM_COUNTRY_PAGES,
-  WAVE2_TOOLS
+  WAVE2_TOOLS,
+  UNBLOCKED_CALLING_PAGES,
+  ALTERNATIVE_PAGES
 } = require('../src/data/chatrSearchUniverseData.ts');
 
 module.exports = {
@@ -1253,6 +1255,8 @@ module.exports = {
   COMPARISON_PAGES,
   TELECOM_COUNTRY_PAGES,
   WAVE2_TOOLS,
+  UNBLOCKED_CALLING_PAGES,
+  ALTERNATIVE_PAGES,
   renderAuthorityPageHtml,
   renderTerminologyPageHtml,
   renderToolPageHtml

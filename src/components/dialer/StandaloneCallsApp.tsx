@@ -12,6 +12,7 @@ import { normalizePhoneNumber } from '@/utils/phoneHashUtil';
 import { resolveCallAvatar, resolveCallDisplayName } from '@/utils/callIdentity';
 import { setPreCallMediaStream, clearPreCallMediaStream } from '@/utils/preCallMedia';
 import { toast } from 'sonner';
+import { InviteToWebCallDialog } from './InviteToWebCallDialog';
 
 export const StandaloneCallsApp = () => {
  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -32,9 +33,10 @@ export const StandaloneCallsApp = () => {
  });
  }, []);
  
- // ... handleNonChatrNumber and handleCall remain same ...
+ const [inviteTarget, setInviteTarget] = useState<string | null>(null);
+
  const handleNonChatrNumber = async (target: string) => {
- toast.error('ChatrCalls supports VoIP calls to Chatr users only');
+   setInviteTarget(target);
  };
 
  const handleCall = async (target: string, callType: 'voice' | 'video' = 'voice') => {
@@ -119,6 +121,11 @@ export const StandaloneCallsApp = () => {
  </Routes>
  </Suspense>
  <StandaloneCallsNav {...({ themeColor, themeMode } as any)} />
+ <InviteToWebCallDialog
+   isOpen={Boolean(inviteTarget)}
+   onClose={() => setInviteTarget(null)}
+   target={inviteTarget || ''}
+ />
  </div>
  );
 };

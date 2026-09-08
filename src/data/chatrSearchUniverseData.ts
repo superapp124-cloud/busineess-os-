@@ -1449,11 +1449,264 @@ export const WAVE2_TOOLS: SemanticPageDefinition[] = [
   }
 ];
 
+// ─────────────────────────────────────────────────────────────────────────────
+// UNBLOCKED GULF/UAE CALLING MATRIX (EXPATRIATE & GLOBAL INTENT)
+// ─────────────────────────────────────────────────────────────────────────────
+export const UNBLOCKED_CALLING_PAGES: SemanticPageDefinition[] = [
+  {
+    path: '/calling/uae-dubai-free-calls',
+    slug: 'uae-dubai-free-calls',
+    universe: 'calling',
+    layer: 'authority',
+    title: 'Free Voice & Video Calling in UAE & Dubai — Unblocked WebRTC Calls | CHATR+',
+    h1: 'Free Voice & Video Calling in UAE & Dubai: 100% Unblocked HD Calls',
+    tagline: 'Connect with family, clients, and friends from Dubai and Abu Dhabi without VPN restrictions.',
+    description: 'Looking for a working voice and video calling app in Dubai and the UAE? CHATR+ uses carrier-grade WebRTC over standard TLS (Port 443), providing crystal-clear 128 kbps OPUS calls that run unblocked without VPNs or disconnects.',
+    keywords: 'free calling app dubai, uae unblocked video call, call to uae without vpn, whatsapp call alternative uae, chatr dubai calls',
+    directAnswer: 'CHATR+ provides 100% unblocked, crystal-clear voice and video calling across the United Arab Emirates (Dubai, Abu Dhabi, Sharjah). Because CHATR+ utilizes peer-to-peer WebRTC over encrypted HTTPS/WSS (Port 443) rather than standard SIP ports intercepted by telecom DPI, calls connect instantly with zero VPN requirements and sub-50ms regional latency.',
+    keyCapabilities: [
+      'Unblocked WebRTC voice and video calling in Dubai, Abu Dhabi, and across the UAE',
+      'No VPN required — operates over standard HTTPS/WSS (Port 443) TLS encrypted channels',
+      'High-fidelity 128 kbps OPUS audio codec with active background noise suppression',
+      'Full-screen incoming call UI over lock screen with official signed Android APK',
+      'Instant Web Guest Calling: invite non-users to join directly in Chrome or Safari without an app'
+    ],
+    metrics: [
+      { label: 'Audio Quality', value: '128 kbps', context: 'Ultra-wideband OPUS HD' },
+      { label: 'Regional Latency', value: '<50ms', context: 'Middle East edge peering' },
+      { label: 'Connection Rate', value: '99.8%', context: 'Direct TLS bypass' }
+    ],
+    faqs: [
+      { q: 'Why do WhatsApp and FaceTime calls get blocked in Dubai and the UAE?', a: 'UAE telecom regulations restrict standard VoIP SIP protocols. CHATR+ uses modern browser-grade WebRTC over encrypted web ports (TLS 443), allowing calls to flow freely without being throttled.' },
+      { q: 'Do I need to install a VPN to use CHATR+ in Dubai?', a: 'No. CHATR+ requires zero VPN. You can download the official Chatr-Plus.apk or make web calls directly from your browser.' },
+      { q: 'Can I call people who do not have the CHATR app installed?', a: 'Yes! You can share an instant web call link (chatrchat.in/call/...) and your contact can join in 1 click from their mobile browser.' }
+    ],
+    relatedTools: [
+      { name: 'Call Quality Checker', path: '/tools/call-quality-checker', iconName: 'Activity', description: 'Test your UAE network latency and audio quality.' },
+      { name: 'Communication Link Generator', path: '/tools/communication-link-generator', iconName: 'Link', description: 'Generate instant click-to-call guest links.' }
+    ],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'CHATR Calling Overview', path: '/chatr-calling' },
+      { title: 'Dubai Business Calling', path: '/locations/dubai' }
+    ]
+  },
+  {
+    path: '/calling/saudi-arabia-free-calling',
+    slug: 'saudi-arabia-free-calling',
+    universe: 'calling',
+    layer: 'authority',
+    title: 'Free HD Voice & Video Calling in Saudi Arabia — CHATR+ Android APK',
+    h1: 'Free HD Voice & Video Calling in Saudi Arabia: Riyadh & Jeddah',
+    tagline: 'High-definition unblocked audio and video communication for expatriates and businesses in KSA.',
+    description: 'Free voice and video calling app in Saudi Arabia. Make stable, unthrottled WebRTC audio and video calls across Riyadh, Jeddah, Dammam, and Mecca with CHATR+.',
+    keywords: 'saudi arabia calling app, free calls to saudi arabia, best calling app riyadh, unblocked calls ksa, chatr plus saudi',
+    directAnswer: 'CHATR+ delivers carrier-grade unblocked HD voice and video calling across the Kingdom of Saudi Arabia (Riyadh, Jeddah, Dammam). Built with adaptive WebRTC bitrate steering and zero ads, CHATR+ guarantees uninterrupted family and business calls across cellular 4G/5G and home Wi-Fi networks.',
+    keyCapabilities: [
+      'Uninterrupted voice and video calling across Riyadh, Jeddah, and all Saudi provinces',
+      'Direct APK download for Android with zero Google Play Store restrictions',
+      'Encrypted peer-to-peer connections protecting family calls and business privacy',
+      'Dual audio mode: works smoothly even over congested 3G/4G cellular networks',
+      'Guest calling via web link: call non-CHATR users without forcing an immediate install'
+    ],
+    metrics: [
+      { label: 'Voice Bitrate', value: '128 kbps', context: 'Studio-grade OPUS audio' },
+      { label: 'KSA Latency', value: '<60ms', context: 'Riyadh edge acceleration' },
+      { label: 'Cost', value: '100% Free', context: 'Unlimited peer-to-peer calls' }
+    ],
+    faqs: [
+      { q: 'Is CHATR+ free to use in Saudi Arabia?', a: 'Yes, CHATR+ peer-to-peer voice and video calling is 100% free with zero in-app advertisements.' },
+      { q: 'How do I install CHATR+ on my Android phone in KSA?', a: 'Visit chatrchat.in/download/android and tap Download Official APK. Once downloaded, tap Install.' }
+    ],
+    relatedTools: [
+      { name: 'Call Quality Checker', path: '/tools/call-quality-checker', iconName: 'Activity', description: 'Test Saudi network jitter and packet loss.' }
+    ],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'Saudi Arabia Telecom', path: '/telecom/saudi-arabia-voip' }
+    ]
+  },
+  {
+    path: '/calling/qatar-doha-calling',
+    slug: 'qatar-doha-calling',
+    universe: 'calling',
+    layer: 'authority',
+    title: 'Free Video & Voice Calls in Qatar & Doha — Unblocked CHATR+',
+    h1: 'Free Voice & Video Calls in Qatar & Doha: Unblocked WebRTC',
+    tagline: 'Crystal-clear HD calling for Qatar residents, tourists, and international expatriates.',
+    description: 'Experience reliable, unblocked voice and video calling in Doha and Qatar. CHATR+ enables high-definition communication with zero VPN requirements and end-to-end security.',
+    keywords: 'free video calling qatar, doha calling app, unblocked calls qatar, call to qatar free, chatr qatar apk',
+    directAnswer: 'CHATR+ provides unblocked, high-definition voice and video calls in Doha and across Qatar. Operating via modern WebRTC over TLS, CHATR+ bypasses carrier SIP throttling and delivers smooth 60 FPS video and 128 kbps audio without requiring third-party VPNs.',
+    keyCapabilities: [
+      'Crystal-clear WebRTC voice and video calls throughout Qatar (Doha, Al Rayyan, Lusail)',
+      'Zero VPN required — works directly on Ooredoo and Vodafone Qatar networks',
+      'Direct APK install with background incoming call notifications',
+      'End-to-end encrypted messaging with zero Meta surveillance'
+    ],
+    metrics: [
+      { label: 'Audio Quality', value: 'HD Voice', context: '128 kbps OPUS codec' },
+      { label: 'Doha Latency', value: '<55ms', context: 'Direct edge connection' }
+    ],
+    faqs: [
+      { q: 'Can I make free video calls to India, Philippines, and the UK from Qatar?', a: 'Yes. CHATR+ connects international calls peer-to-peer with zero roaming or international calling fees.' }
+    ],
+    relatedTools: [
+      { name: 'Call Quality Checker', path: '/tools/call-quality-checker', iconName: 'Activity', description: 'Test Qatar network throughput.' }
+    ],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'CHATR Calling', path: '/chatr-calling' }
+    ]
+  },
+  {
+    path: '/calling/kuwait-free-voice-calls',
+    slug: 'kuwait-free-voice-calls',
+    universe: 'calling',
+    layer: 'authority',
+    title: 'Free HD Voice Calling in Kuwait — Unblocked CHATR+ Android App',
+    h1: 'Free HD Voice & Video Calling in Kuwait: Kuwait City & Hawalli',
+    tagline: 'High-speed, unblocked WebRTC communication for Kuwait citizens and expatriates.',
+    description: 'Make free HD voice and video calls in Kuwait with CHATR+. Fast, secure, unblocked communication over Zain, Ooredoo, and STC networks.',
+    keywords: 'free calling app kuwait, kuwait unblocked video calls, call kuwait free, chatr kuwait apk',
+    directAnswer: 'CHATR+ provides free, unblocked WebRTC audio and video calling across Kuwait City and all governorates. Engineered to bypass SIP inspection using standard encrypted HTTPS/WSS tunnels, CHATR+ connects calls in under 500 milliseconds.',
+    keyCapabilities: [
+      'Unrestricted HD voice and video calling across Kuwait',
+      'Fast WebRTC connectivity on Zain, Ooredoo, and STC 5G networks',
+      'Official signed Android APK with fullscreen incoming call alerts',
+      'Zero advertising and zero phone number harvesting'
+    ],
+    metrics: [
+      { label: 'Call Connect', value: '<500ms', context: 'Sub-second signaling' },
+      { label: 'Cost', value: 'Free', context: 'Unlimited calls' }
+    ],
+    faqs: [
+      { q: 'Does CHATR+ work on Kuwait 5G networks?', a: 'Yes. CHATR+ automatically adapts video resolution and audio bitrate to take full advantage of 5G speeds.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ALTERNATIVES MATRIX (PRIVACY & TRUECALLER / WHATSAPP REPLACEMENTS)
+// ─────────────────────────────────────────────────────────────────────────────
+export const ALTERNATIVE_PAGES: SemanticPageDefinition[] = [
+  {
+    path: '/alternative/whatsapp-without-phone-number',
+    slug: 'whatsapp-without-phone-number',
+    universe: 'communication',
+    layer: 'authority',
+    title: 'WhatsApp Alternative Without Phone Number — CHATR+ Private Calling',
+    h1: 'WhatsApp Alternative Without Phone Number: True Cryptographic Identity',
+    tagline: 'Communicate, message, and call freely without exposing your personal SIM phone number.',
+    description: 'Looking for a private WhatsApp alternative that does not require revealing your phone number? CHATR+ uses cryptographic user handles and device-bound keys for anonymous, private communication.',
+    keywords: 'whatsapp alternative without phone number, private messaging no phone number, anonymous calling app, chatr private handle',
+    directAnswer: 'CHATR+ is the leading WhatsApp alternative that does not force you to broadcast your private SIM phone number to strangers, clients, or group chats. By replacing traditional phone numbers with cryptographic usernames and vanity handles (chatrchat.in/c/yourname), CHATR+ gives you total identity sovereignty while preserving carrier-grade WebRTC voice and video calling.',
+    keyCapabilities: [
+      'Zero SIM phone number broadcast — connect via private username or QR code',
+      'End-to-end encrypted messaging and peer-to-peer WebRTC voice/video calls',
+      'No Meta surveillance, no contact address book uploading, no behavioral tracking',
+      'Direct APK installation without Google account linking or Play Store logging',
+      'Vanity web handles: share your link anywhere so anyone can call you in their browser'
+    ],
+    metrics: [
+      { label: 'Privacy', value: '100%', context: 'No phone number required' },
+      { label: 'Ad Tracking', value: 'Zero', context: 'No Meta ad targeting' },
+      { label: 'Encryption', value: 'E2EE', context: 'End-to-end cryptographic keys' }
+    ],
+    faqs: [
+      { q: 'Can I use CHATR+ without giving my mobile number?', a: 'Yes. CHATR+ allows sign-in and profile creation using email or cryptographic handles, protecting your private mobile number.' },
+      { q: 'Can other people call me without knowing my number?', a: 'Yes. Share your personal CHATR link (chatrchat.in/c/yourname) or QR code. Anyone can call or message you securely.' }
+    ],
+    relatedTools: [
+      { name: 'Contact QR Generator', path: '/tools/contact-qr-generator', iconName: 'QrCode', description: 'Create dynamic contact QR codes.' },
+      { name: 'Communication Link Generator', path: '/tools/communication-link-generator', iconName: 'Link', description: 'Build direct vanity chat links.' }
+    ],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'CHATR Identity', path: '/chatr-identity' }
+    ]
+  },
+  {
+    path: '/alternative/whatsapp-zero-meta-tracking',
+    slug: 'whatsapp-zero-meta-tracking',
+    universe: 'communication',
+    layer: 'authority',
+    title: 'Private Messaging & Calling App with Zero Meta Surveillance — CHATR+',
+    h1: 'The Independent Messaging Platform with Zero Meta Tracking & Zero Ads',
+    tagline: 'Escape behavioral surveillance, cross-platform profiling, and ad targeting.',
+    description: 'Switch from WhatsApp to CHATR+. Enjoy private encrypted messaging, HD WebRTC calling, and community channels with zero data harvesting, zero ads, and zero Meta tracking.',
+    keywords: 'whatsapp alternative privacy, messaging app without meta, secure private messaging, stop meta tracking, chatr plus',
+    directAnswer: 'CHATR+ is an independent communication platform engineered for users who want modern messaging and video calling without Meta’s invasive advertising algorithms. CHATR+ collects zero ad telemetry, does not sell user interaction graphs, and serves direct cryptographically signed APKs independent of Big Tech app store surveillance.',
+    keyCapabilities: [
+      'Zero Meta data collection, zero ad pixels, zero behavioral retargeting',
+      'Carrier-grade WebRTC voice and video calling with 128 kbps OPUS fidelity',
+      'Local device-level biometric app locking (fingerprint / Face unlock)',
+      'Decentralized identity architecture with verified cryptographic caller attestation',
+      'Clean, ad-free user interface designed for human focus, not attention harvesting'
+    ],
+    metrics: [
+      { label: 'Data Sold', value: '0 bytes', context: 'Absolute zero third-party sharing' },
+      { label: 'Ad Clutter', value: '0%', context: '100% ad-free experience' }
+    ],
+    faqs: [
+      { q: 'Why switch from WhatsApp to CHATR+?', a: 'WhatsApp is owned by Meta and shares metadata, interaction frequency, and device identifiers for commercial ad targeting. CHATR+ is independently operated with zero advertising interests.' }
+    ],
+    relatedTools: [],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'Privacy Policy', path: '/privacy' }
+    ]
+  },
+  {
+    path: '/alternative/truecaller-ad-free-caller-id',
+    slug: 'truecaller-ad-free-caller-id',
+    universe: 'identity',
+    layer: 'authority',
+    title: 'Truecaller Alternative Without Ads or Contact Uploads — CHATR+ Caller ID',
+    h1: 'Truecaller Alternative: Verified Caller ID Without Ad Spam or Contact Harvesting',
+    tagline: 'Protect yourself from scams and identify callers without sacrificing your personal contacts.',
+    description: 'Tired of Truecaller battery drain, invasive ads, and address book harvesting? CHATR+ provides cryptographic caller verification and scam defense without uploading your contacts.',
+    keywords: 'truecaller alternative, ad free caller id, private caller id app, best caller id without ads, chatr scam defense',
+    directAnswer: 'CHATR+ is the clean, ad-free alternative to Truecaller. While legacy caller ID apps harvest your entire personal address book to build public telephone directories and bombard you with full-screen ads, CHATR+ uses cryptographic business verification and zero-knowledge scam heuristics with zero contact uploading and zero advertisements.',
+    keyCapabilities: [
+      'Ad-free caller identity verification: zero intrusive popups, banners, or video ads',
+      'Zero contact book harvesting: your private contacts are never uploaded to any public database',
+      'Real-time scam & digital arrest fraud detection alerting you before you answer',
+      'Native Android Telecom integration waking the screen cleanly during incoming calls',
+      'Lightweight native build with minimal battery and memory overhead'
+    ],
+    metrics: [
+      { label: 'Ads Displayed', value: '0', context: 'Clean, distraction-free calling' },
+      { label: 'Contact Privacy', value: '100%', context: 'Address book stays on your device' }
+    ],
+    faqs: [
+      { q: 'Does CHATR+ upload my phone contacts to the internet?', a: 'Never. Unlike Truecaller, CHATR+ never crowd-sources or uploads your personal contact list.' },
+      { q: 'How does CHATR+ verify caller identity without contact scraping?', a: 'CHATR+ uses official cryptographic business certificates, domain verification, and community fraud reputation algorithms.' }
+    ],
+    relatedTools: [
+      { name: 'Communication Link Generator', path: '/tools/communication-link-generator', iconName: 'Link', description: 'Create verified caller links.' }
+    ],
+    relatedPages: [
+      { title: 'Download CHATR+ for Android', path: '/download/android' },
+      { title: 'CHATR Identity', path: '/chatr-identity' }
+    ]
+  }
+];
+
 // Helper lookup combining all searchable semantic pages
 export const ALL_SEMANTIC_PAGES: SemanticPageDefinition[] = [
   ...AUTHORITY_PAGES,
   ...TERMINOLOGY_PAGES,
-  ...CHATR_NATIVE_TOOLS
+  ...CHATR_NATIVE_TOOLS,
+  ...INTEGRATION_PAGES,
+  ...COMPARISON_PAGES,
+  ...TELECOM_COUNTRY_PAGES,
+  ...WAVE2_TOOLS,
+  ...UNBLOCKED_CALLING_PAGES,
+  ...ALTERNATIVE_PAGES
 ];
 
 export function getSemanticPageByPath(path: string): SemanticPageDefinition | undefined {

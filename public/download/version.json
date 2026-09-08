@@ -1,0 +1,18 @@
+{
+  "latestVersion": "1.0.0",
+  "versionCode": 1,
+  "minSupportedVersion": "1.0.0",
+  "releaseDate": "2026-09-08",
+  "apkUrl": "https://www.chatrchat.in/download/Chatr-Plus.apk",
+  "apkSize": "78.2 MB",
+  "apkSizeBytes": 82046015,
+  "sha256": "4ae4549852d7611b4f30438566f3996cc4189d154209c56bcb640c86beeeec02",
+  "signer": "CN=Chatr Plus, OU=Engineering, O=TalentXcel Services, L=Srinagar, ST=JK, C=IN",
+  "releaseNotes": [
+    "Official cryptographically signed release with APK Signature Scheme v2 & v3",
+    "Carrier-grade WebRTC voice & video calling with sub-40ms latency",
+    "Full-screen incoming call UI over lock screen via TelecomManager",
+    "Zero background SMS/telephony spyware permissions — 100% Google Play Protect compliant",
+    "Direct browser-to-app guest calling support"
+  ]
+}

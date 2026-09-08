@@ -184,7 +184,11 @@ const semanticTestUrls = [
   '/compare/chatr-vs-intercom',
   '/telecom/uae-business-calling',
   '/telecom/saudi-arabia-voip',
-  '/download/android'
+  '/calling/uae-dubai-free-calls',
+  '/alternative/whatsapp-without-phone-number',
+  '/download/android',
+  '/download/samsung',
+  '/call'
 ];
 
 semanticTestUrls.forEach(urlPath => {
@@ -202,9 +206,11 @@ semanticTestUrls.forEach(urlPath => {
   }
 });
 
-// Verify APK File Integrity
+// Verify APK File Integrity & Version Metadata
 const apkFilePath = path.join(distDir, 'download', 'chatr.apk');
 const plusApkFilePath = path.join(distDir, 'download', 'Chatr-Plus.apk');
+const versionFilePath = path.join(distDir, 'download', 'version.json');
+
 assert(fs.existsSync(apkFilePath), 'dist/download/chatr.apk exists for direct downloads');
 if (fs.existsSync(apkFilePath)) {
   const stat = fs.statSync(apkFilePath);
@@ -214,6 +220,13 @@ assert(fs.existsSync(plusApkFilePath), 'dist/download/Chatr-Plus.apk exists for 
 if (fs.existsSync(plusApkFilePath)) {
   const statPlus = fs.statSync(plusApkFilePath);
   assert(statPlus.size > 50 * 1024 * 1024, `Chatr-Plus.apk is valid non-empty Android APK (${(statPlus.size / (1024*1024)).toFixed(1)} MB)`);
+}
+
+assert(fs.existsSync(versionFilePath), 'dist/download/version.json exists for in-app updates');
+if (fs.existsSync(versionFilePath)) {
+  const versionData = JSON.parse(fs.readFileSync(versionFilePath, 'utf8'));
+  assert(versionData.latestVersion === '1.0.0', 'version.json contains valid latestVersion');
+  assert(Boolean(versionData.sha256), 'version.json contains valid sha256 hash');
 }
 
 // Verify Store Assets
@@ -258,6 +271,8 @@ if (fs.existsSync(sitemapIndexPath)) {
     'sitemap-integrations.xml',
     'sitemap-comparisons.xml',
     'sitemap-telecom.xml',
+    'sitemap-calling.xml',
+    'sitemap-alternatives.xml',
     'sitemap-robotics.xml',
     'sitemap-terminology.xml',
     'sitemap-tools.xml',

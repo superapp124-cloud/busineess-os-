@@ -828,7 +828,18 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/auth" element={<LazyRoute component={LazyPages.Auth} />} />
   <Route path="/download" element={<LazyRoute component={LazyPages.Download} />} />
   <Route path="/download/android" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
- <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
+  <Route path="/download/samsung" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/download/xiaomi" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/download/oneplus" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/download/pixel" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/download/vivo" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/download/oppo" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
+  <Route path="/call/:roomId" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/call" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/meet/:roomId" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/meet" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/c/:handle" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
  <Route path="/install" element={<LazyRoute component={LazyPages.Install} />} />
  <Route path="/onboarding" element={<LazyRoute component={LazyPages.Onboarding} />} />
  <Route path="/onboarding/welcome" element={<React.Suspense fallback={null}><WelcomePage /></React.Suspense>} />
@@ -981,6 +992,12 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
 
   {/* Country-Level Telecom & Regulatory Hubs */}
   <Route path="/telecom/:slug" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* Gulf / UAE Unblocked Calling Matrix */}
+  <Route path="/calling/:slug" element={<LazyRoute component={AuthorityPage} />} />
+
+  {/* Privacy & Truecaller Alternatives Matrix */}
+  <Route path="/alternative/:slug" element={<LazyRoute component={AuthorityPage} />} />
 
   {/* Layer A — Supreme Authority Hubs (The 10 Pillars) */}
   <Route path="/chatr" element={<LazyRoute component={AuthorityPage} />} />
