@@ -98,10 +98,10 @@
   "rewrites": [
     {
       "source": "/download/Chatr-Plus.apk",
-      "destination": "/download/chatr.apk"
+      "destination": "/download/Chatr-Plus.apk"
     },
     {
-      "source": "/((?!assets/|images/|icons/|sitemaps/|sitemap.*\\.xml|robots\\.txt|llms.*\\.txt|.*\\..*).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
