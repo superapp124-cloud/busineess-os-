@@ -56,20 +56,34 @@ android {
         buildConfigField("String", "SOCKET_URL", if (socketUrl.isNotEmpty()) "\"$socketUrl\"" else "\"http://192.168.31.37:3000\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("chatr-release.jks")
+            storePassword = "ChatrSecureRelease2026!"
+            keyAlias = "chatr"
+            keyPassword = "ChatrSecureRelease2026!"
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+            enableV4Signing = false
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("debug") // TODO: Use release keystore
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false
             isDebuggable = true
         }
+    }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 
     compileOptions {

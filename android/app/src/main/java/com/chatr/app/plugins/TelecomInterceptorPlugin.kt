@@ -27,12 +27,7 @@ import android.util.Log
  *   const { TelecomInterceptor } = Plugins;
  *   const state = await TelecomInterceptor.getCallState();
  */
-@CapacitorPlugin(
-    name = "TelecomInterceptor",
-    permissions = [
-        Permission(strings = [Manifest.permission.READ_PHONE_STATE], alias = "phone")
-    ]
-)
+@CapacitorPlugin(name = "TelecomInterceptor")
 class TelecomInterceptorPlugin : Plugin() {
 
     companion object {
@@ -41,24 +36,7 @@ class TelecomInterceptorPlugin : Plugin() {
 
     @PluginMethod
     fun getCallState(call: PluginCall) {
-        val hasPermission = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.READ_PHONE_STATE
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (!hasPermission) {
-            requestPermissionForAlias("phone", call, "callStatePermissionCallback")
-            return
-        }
-
         resolveCallState(call)
-    }
-
-    @com.getcapacitor.annotation.PermissionCallback
-    private fun callStatePermissionCallback(call: PluginCall) {
-        val granted = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.READ_PHONE_STATE
-        ) == PackageManager.PERMISSION_GRANTED
-        if (granted) resolveCallState(call) else call.reject("READ_PHONE_STATE denied")
     }
 
     private fun resolveCallState(call: PluginCall) {

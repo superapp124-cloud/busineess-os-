@@ -18,67 +18,36 @@ import com.chatr.app.sms.NativeSmsMessage
 import com.getcapacitor.annotation.Permission
 import com.getcapacitor.annotation.PermissionCallback
 
-@CapacitorPlugin(
-    name = "ChatrSafeSms",
-    permissions = [
-        Permission(strings = [Manifest.permission.READ_SMS], alias = "sms")
-    ]
-)
+@CapacitorPlugin(name = "ChatrSafeSms")
 class ChatrSafeSmsPlugin : Plugin() {
 
     @PluginMethod
     fun getConversations(call: PluginCall) {
-        val limit = call.getInt("limit", 100) ?: 100
-        val repo = NativeSmsRepository.getInstance(context)
-        val jsonArrayStr = repo.conversationsJson(limit).toString()
         val result = JSObject()
-        result.put("conversations", JSArray(jsonArrayStr))
+        result.put("conversations", JSArray())
         call.resolve(result)
     }
 
     @PluginMethod
     fun getMessages(call: PluginCall) {
-        val conversationId = call.getString("conversationId")
-        val limit = call.getInt("limit", 200) ?: 200
-        
-        if (conversationId.isNullOrBlank()) {
-            call.reject("Must provide 'conversationId'")
-            return
-        }
-        
-        val repo = NativeSmsRepository.getInstance(context)
-        val jsonArrayStr = repo.messagesJson(conversationId, limit).toString()
         val result = JSObject()
-        result.put("messages", JSArray(jsonArrayStr))
+        result.put("messages", JSArray())
         call.resolve(result)
     }
 
     @PluginMethod
     fun getStats(call: PluginCall) {
-        val repo = NativeSmsRepository.getInstance(context)
-        val statsObjStr = repo.statsJson().toString()
-        call.resolve(JSObject(statsObjStr))
+        val stats = JSObject()
+        stats.put("total", 0)
+        stats.put("spam", 0)
+        call.resolve(stats)
     }
 
     @PluginMethod
     fun syncExistingMessages(call: PluginCall) {
-        val hasRead = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
-        if (!hasRead) {
-            requestPermissionForAlias("sms", call, "syncExistingMessagesCallback")
-            return
-        }
-        
-        syncMessagesInternal(call)
-    }
-
-    @PermissionCallback
-    private fun syncExistingMessagesCallback(call: PluginCall) {
-        val hasRead = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
-        if (hasRead) {
-            syncMessagesInternal(call)
-        } else {
-            call.reject("Permission denied")
-        }
+        val result = JSObject()
+        result.put("synced", 0)
+        call.resolve(result)
     }
 
     private fun syncMessagesInternal(call: PluginCall) {

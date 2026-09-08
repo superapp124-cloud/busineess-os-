@@ -33,12 +33,7 @@ import android.app.Activity
  *   await ChatrCallScreening.requestScreeningRole();
  *   const { active } = await ChatrCallScreening.isScreeningActive();
  */
-@CapacitorPlugin(
-    name = "ChatrCallScreening",
-    permissions = [
-        Permission(strings = [Manifest.permission.READ_PHONE_STATE], alias = "phone")
-    ]
-)
+@CapacitorPlugin(name = "ChatrCallScreening")
 class ChatrCallScreeningPlugin : Plugin() {
 
     companion object {

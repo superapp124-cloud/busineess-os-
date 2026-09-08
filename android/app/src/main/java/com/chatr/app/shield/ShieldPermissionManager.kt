@@ -65,12 +65,6 @@ object ShieldPermissionManager {
         val appContext = context.applicationContext
 
         array.put(runtimePermission(appContext, context, "read_contacts", Manifest.permission.READ_CONTACTS, "Contacts", "Allow contact trust graph checks.", "request_contacts"))
-        array.put(runtimePermission(appContext, context, "read_phone_state", Manifest.permission.READ_PHONE_STATE, "Phone State", "Detect live carrier call state.", "request_call_permissions"))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            array.put(runtimePermission(appContext, context, "answer_phone_calls", Manifest.permission.ANSWER_PHONE_CALLS, "Answer Calls", "Let CHATR reject or silence risky calls.", "request_call_permissions"))
-        } else {
-            array.put(unavailable("answer_phone_calls", "Answer Calls", "Android 8.0 or newer is required.", "unavailable"))
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             array.put(runtimePermission(appContext, context, "post_notifications", Manifest.permission.POST_NOTIFICATIONS, "Notifications", "Show caller warnings and remediation alerts.", "request_notifications"))
         } else {
@@ -103,27 +97,13 @@ object ShieldPermissionManager {
                     false
                 }
             }
-            "request_accessibility" -> {
-                activity.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                true
-            }
-            "request_usage_stats" -> {
-                activity.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
-                true
-            }
+            "request_accessibility" -> false
+            "request_usage_stats" -> false
             "request_battery" -> {
                 activity.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
                 true
             }
-            "request_vpn" -> {
-                val intent = VpnService.prepare(activity)
-                if (intent != null) {
-                    activity.startActivity(intent)
-                } else {
-                    activity.startService(Intent(activity, TrackerProtectionService::class.java))
-                }
-                true
-            }
+            "request_vpn" -> false
             else -> false
         }
     }
@@ -221,59 +201,29 @@ object ShieldPermissionManager {
     }
 
     private fun accessibilityPermission(context: Context): JSONObject {
-        val component = ComponentName(context, ChatrShieldAccessibilityService::class.java).flattenToString()
-        val enabledServices = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-        ).orEmpty()
-        val enabled = enabledServices.split(':').any {
-            it.equals(component, ignoreCase = true) || it.contains(context.packageName, ignoreCase = true)
-        }
-        return settingPermission(
+        return unavailable(
             key = "accessibility",
             title = "Accessibility",
-            granted = enabled,
-            detail = "Required only for optional on-screen scam prompts outside the dialer.",
-            actionKey = "request_accessibility",
-            required = false,
+            detail = "Accessibility context capture is disabled for privacy and compliance.",
+            actionKey = "unavailable",
         )
     }
 
     private fun vpnPermission(context: Context): JSONObject {
-        val prepared = VpnService.prepare(context) == null
-        return settingPermission(
+        return unavailable(
             key = "vpn",
             title = "VPN Tracker Filter",
-            granted = prepared,
-            detail = "Required before CHATR can run local DNS tracker filtering.",
-            actionKey = "request_vpn",
-            required = false,
+            detail = "VPN Tracker filter is disabled for Play Protect compliance.",
+            actionKey = "unavailable",
         )
     }
 
     private fun usageStatsPermission(context: Context): JSONObject {
-        val appOps = context.getSystemService(AppOpsManager::class.java)
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps?.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                context.packageName,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            appOps?.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                context.packageName,
-            )
-        }
-        return settingPermission(
+        return unavailable(
             key = "usage_stats",
             title = "Usage Stats",
-            granted = mode == AppOpsManager.MODE_ALLOWED,
-            detail = "Lets CHATR attribute tracker events to apps when Android exposes usage data.",
-            actionKey = "request_usage_stats",
-            required = false,
+            detail = "Usage access is disabled for user privacy.",
+            actionKey = "unavailable",
         )
     }
 

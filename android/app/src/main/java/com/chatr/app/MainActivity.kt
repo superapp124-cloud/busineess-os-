@@ -2015,26 +2015,13 @@ class MainActivity : BridgeActivity() {
         val permissions = mutableListOf<String>()
         permissions.add(Manifest.permission.CAMERA)
         permissions.add(Manifest.permission.RECORD_AUDIO)
-        permissions.add(Manifest.permission.READ_PHONE_STATE)
-        permissions.add(Manifest.permission.CALL_PHONE)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            permissions.add(Manifest.permission.ANSWER_PHONE_CALLS)
-        }
-
         permissions.add(Manifest.permission.READ_CONTACTS)
-        permissions.add(Manifest.permission.WRITE_CONTACTS)
-        permissions.add(Manifest.permission.READ_CALL_LOG)
-        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
             permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
             permissions.add(Manifest.permission.READ_MEDIA_VIDEO)
             permissions.add(Manifest.permission.READ_MEDIA_AUDIO)
-        } else {
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
 
         val missingPermissions = permissions.filter {
