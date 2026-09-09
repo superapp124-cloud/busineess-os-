@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { ViralTelemetry } from '@/services/viralTelemetry';
+
 interface InviteToWebCallDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,20 +20,58 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  if (!isOpen) return null;
+  // PRIVACY RULE: Never put phone numbers in room URLs.
+  // Generate a cryptographically random 128-bit UUID token.
+  const [roomToken] = useState(() => `c-${crypto.randomUUID()}`);
+  const [inviteId, setInviteId] = useState<string>('');
 
+  const callUrl = `https://www.chatrchat.in/call/${roomToken}`;
+
+  // Derive target hash for rate limiting without storing raw phone number
   const cleanTarget = target.replace(/[^0-9+]/g, '');
-  const roomSlug = cleanTarget.replace(/\+/g, '') || Math.random().toString(36).substring(2, 9);
-  const callUrl = `https://www.chatrchat.in/call/call-${roomSlug}`;
+  const destinationHash = React.useMemo(() => {
+    let hash = 0;
+    for (let i = 0; i < cleanTarget.length; i++) {
+      hash = ((hash << 5) - hash) + cleanTarget.charCodeAt(i);
+      hash |= 0;
+    }
+    return 'dst_' + Math.abs(hash).toString(36);
+  }, [cleanTarget]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      ViralTelemetry.deriveInviteId(roomToken).then(derivedId => {
+        setInviteId(derivedId);
+        ViralTelemetry.track({ type: 'invite_dialog_opened', inviteId: derivedId });
+      });
+    }
+  }, [isOpen, roomToken]);
+
+  if (!isOpen) return null;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(callUrl);
     setCopied(true);
     toast.success('Call link copied to clipboard!');
+    if (inviteId) {
+      ViralTelemetry.track({ type: 'invite_link_copied', inviteId });
+    }
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleWhatsApp = () => {
+    // Anti-abuse rate limit check
+    const rateCheck = ViralTelemetry.checkInviteRateLimit(destinationHash);
+    if (!rateCheck.allowed) {
+      toast.error(rateCheck.reason || 'Rate limit exceeded');
+      return;
+    }
+
+    ViralTelemetry.recordInviteSent(destinationHash);
+    if (inviteId) {
+      ViralTelemetry.track({ type: 'invite_sent_whatsapp', inviteId });
+    }
+
     const text = encodeURIComponent(`Hey, join my private HD voice/video call on CHATR+ (no app install needed): ${callUrl}`);
     const cleanPhone = cleanTarget.replace(/\+/g, '');
     const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${text}` : `https://wa.me/?text=${text}`;
@@ -39,6 +79,18 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
   };
 
   const handleSMS = () => {
+    // Anti-abuse rate limit check
+    const rateCheck = ViralTelemetry.checkInviteRateLimit(destinationHash);
+    if (!rateCheck.allowed) {
+      toast.error(rateCheck.reason || 'Rate limit exceeded');
+      return;
+    }
+
+    ViralTelemetry.recordInviteSent(destinationHash);
+    if (inviteId) {
+      ViralTelemetry.track({ type: 'invite_sent_sms', inviteId });
+    }
+
     const body = encodeURIComponent(`Join my secure CHATR+ call (runs in your browser): ${callUrl}`);
     window.open(`sms:${cleanTarget}?body=${body}`, '_blank');
   };

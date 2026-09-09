@@ -165,7 +165,7 @@ const JoinInvite = () => {
               {/* Trust & Compliance Badge */}
               <div className="pt-4 border-t border-border/50 flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
                 <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                  ✓ Google Play Protect Audited
+                  ✓ TalentXcel Signed Keystore (RSA 4096)
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1 font-medium">

@@ -10,6 +10,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SEOHead } from '@/components/SEOHead';
+import { ViralTelemetry } from '@/services/viralTelemetry';
 
 const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
@@ -18,6 +19,9 @@ const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.cloudflare.com:3478' }
 ];
 
+const MAX_MESH_PARTICIPANTS = 4;
+const MAX_CALL_DURATION_SEC = 3600; // 60 minutes session cap
+
 export const GuestCallPage: React.FC = () => {
   const { roomId: rawRoomId } = useParams<{ roomId?: string }>();
   const navigate = useNavigate();
@@ -25,8 +29,14 @@ export const GuestCallPage: React.FC = () => {
   // Generate or sanitize roomId
   const roomId = React.useMemo(() => {
     if (rawRoomId) return rawRoomId.replace(/[^a-zA-Z0-9-_]/g, '');
-    return 'room-' + Math.random().toString(36).substring(2, 9);
+    return 'c-' + crypto.randomUUID();
   }, [rawRoomId]);
+
+  // PRIVACY BOUNDARY: Derive a one-way telemetry ID so the usable room credential is NEVER logged in analytics
+  const [roomSessionId, setRoomSessionId] = useState<string>('');
+  React.useEffect(() => {
+    ViralTelemetry.deriveInviteId(roomId).then(setRoomSessionId);
+  }, [roomId]);
 
   const [guestName, setGuestName] = useState(() => {
     return localStorage.getItem('chatr-guest-name') || 'Guest-' + Math.floor(1000 + Math.random() * 9000);
@@ -275,6 +285,9 @@ export const GuestCallPage: React.FC = () => {
         });
 
       toast.success('Connected to call room');
+      if (roomSessionId) {
+        ViralTelemetry.track({ type: 'guest_call_joined', roomSessionId });
+      }
     } catch (err: any) {
       toast.error('Permission denied or microphone/camera unavailable');
       console.error('Failed to join call:', err);
@@ -301,6 +314,24 @@ export const GuestCallPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (hasJoined && !callEnded) {
+      timerRef.current = setInterval(() => {
+        setCallDuration(prev => {
+          if (prev >= MAX_CALL_DURATION_SEC) {
+            toast.info('Maximum guest session limit (60 mins) reached');
+            endCall();
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [hasJoined, callEnded]);
+
   const endCall = () => {
     if (channelRef.current) {
       channelRef.current.send({
@@ -317,6 +348,19 @@ export const GuestCallPage: React.FC = () => {
       peerConnectionRef.current.close();
     }
     setCallEnded(true);
+
+    // Track call completion telemetry with derived privacy session ID
+    if (roomSessionId) {
+      ViralTelemetry.track({
+        type: 'guest_call_completed',
+        roomSessionId,
+        durationSec: callDuration
+      });
+      ViralTelemetry.track({
+        type: 'post_call_cta_viewed',
+        roomSessionId
+      });
+    }
   };
 
   const copyCallLink = () => {
@@ -362,6 +406,7 @@ export const GuestCallPage: React.FC = () => {
             <a
               href="/download/Chatr-Plus.apk"
               download="Chatr-Plus.apk"
+              onClick={() => ViralTelemetry.track({ type: 'apk_download_clicked', source: 'call_banner' })}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all shadow-md shadow-emerald-500/20"
             >
               <Download className="w-3.5 h-3.5" />
@@ -600,6 +645,7 @@ export const GuestCallPage: React.FC = () => {
               <a
                 href="/download/Chatr-Plus.apk"
                 download="Chatr-Plus.apk"
+                onClick={() => ViralTelemetry.track({ type: 'apk_download_clicked', source: 'post_call' })}
                 className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-base shadow-xl shadow-emerald-500/30 transition-all"
               >
                 <Download className="w-5 h-5" />

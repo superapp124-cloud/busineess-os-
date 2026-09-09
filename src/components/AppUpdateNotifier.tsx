@@ -33,8 +33,8 @@ export const AppUpdateNotifier: React.FC = () => {
         const data: VersionInfo = await res.json();
         localStorage.setItem('chatr_last_update_check', now.toString());
 
-        // Check if remote version is higher than current
-        if (data.versionCode > CURRENT_VERSION_CODE) {
+        // Check if remote version is higher than current (downgrade protection)
+        if (typeof data.versionCode === 'number' && data.versionCode > CURRENT_VERSION_CODE) {
           setUpdateInfo(data);
           setIsOpen(true);
         }
@@ -99,7 +99,7 @@ export const AppUpdateNotifier: React.FC = () => {
         <div className="mt-3 text-xs text-slate-300 bg-slate-950/60 rounded-xl p-2.5 border border-slate-800">
           <div className="flex items-center gap-1.5 text-emerald-400 font-semibold mb-1">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Play Protect Audited Keystore</span>
+            <span>TalentXcel Production Keystore (RSA 4096 / SHA-256)</span>
           </div>
           <p className="text-slate-400 text-[11px]">
             {updateInfo.releaseNotes || 'Enhanced WebRTC HD voice clarity, viral dialer invites, and faster background syncing.'}

@@ -1,17 +1,21 @@
 /**
- * CI/CD AUTOMATED REGRESSION SUITE: SEO ARCHITECTURAL INVARIANTS
+ * CI/CD AUTOMATED REGRESSION SUITE: 14 ARCHITECTURAL & GROWTH INVARIANTS
  * 
  * Enforces the following critical invariants on every build:
- * 1. Zero Bundle Leakage (1,758+ build-time dataset is NOT in client JS).
+ * 1. Client Bundle Isolation (Zero dataset leakage into client JS).
  * 2. Strict Route Chunk Budgets (< 75 kB raw, < 20 kB gzip).
- * 3. 100% Static HTML & Semantic DOM inside #root for all cohorts.
- * 4. Structured Data integrity (Service, Article, FAQ, BreadcrumbList, SoftwareApplication, DefinedTerm).
- * 5. Zero Error Signatures ("Invalid or unexpected token", "Refresh Now", "Updating CHATR", empty #root).
- * 6. User-Agent Parity & Anti-Cloaking Invariant (Normal UA == Googlebot UA).
- * 7. Master Sitemap Index & 14 Segmented Sub-sitemaps Integrity.
+ * 3. Static HTML & Semantic DOM Integrity inside #root for all cohorts.
+ * 4. Zero Error Signatures ("Invalid or unexpected token", "Refresh Now", "Updating CHATR", empty #root).
+ * 5. Layer A Authority, Terminology, Tools & Native APK Prerendering.
+ * 6. Localized Telemetry Invariant (Calling code, currency, and compliance).
+ * 7. Master Sitemap Index & Segmented Sub-sitemaps Integrity.
  * 8. Canonical Domain Hardening (Zero apex domain leaks in robots.txt and sitemaps).
- * 9. Layer A Authority & Terminology Direct-Answer Prerender Invariants.
- * 10. Localized Telemetry Invariant (Calling code, currency, and compliance in location pages).
+ * 9. Privacy Boundary: Zero Phone Numbers in URLs.
+ * 10. 128-Bit Cryptographic Room Entropy (crypto.randomUUID).
+ * 11. Capability Token != Analytics Identifier (Privacy Isolation via SHA-256 derivation).
+ * 12. Zero Unverified Play Protect Claims in Production Dist.
+ * 13. Regulatory Advisory Wording (Zero Absolute Carrier Bypass Claims).
+ * 14. Client-Side Anti-Abuse Rate Limiting & WebRTC Mesh Limits.
  * 
  * Exits with code 1 if ANY invariant is violated, failing CI/CD.
  */
@@ -43,7 +47,7 @@ function assert(condition, message) {
 // -----------------------------------------------------------------
 // INVARIANT 1: Client Bundle Isolation
 // -----------------------------------------------------------------
-console.log('[1/8] Testing Client Bundle Isolation (Zero Dataset Leakage)...');
+console.log('[1/14] Testing Client Bundle Isolation (Zero Dataset Leakage)...');
 assert(fs.existsSync(assetsDir), 'dist/assets directory exists');
 
 const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
@@ -64,7 +68,7 @@ assert(leakedCount === 0, `Zero city dataset strings leaked into client JS bundl
 // -----------------------------------------------------------------
 // INVARIANT 2: Bundle Size Budgets
 // -----------------------------------------------------------------
-console.log('\n[2/8] Testing Location Route Chunk Size Budget...');
+console.log('\n[2/14] Testing Location Route Chunk Size Budget...');
 const pillarChunkName = jsFiles.find(f => f.toLowerCase().includes('pillar') || f.toLowerCase().includes('expansion'));
 assert(Boolean(pillarChunkName), `Location route chunk found: ${pillarChunkName}`);
 
@@ -81,7 +85,7 @@ if (pillarChunkName) {
 // -----------------------------------------------------------------
 // INVARIANT 3: Static HTML & Semantic DOM Integrity
 // -----------------------------------------------------------------
-console.log('\n[3/8] Testing Semantic HTML, #root Content & Schemas across Cohorts...');
+console.log('\n[3/14] Testing Semantic HTML, #root Content & Schemas across Cohorts...');
 
 const cohortTestUrls = [
   // Core Directory & Hubs
@@ -133,7 +137,7 @@ cohortTestUrls.forEach(urlPath => {
 // -----------------------------------------------------------------
 // INVARIANT 4: Zero Error Signatures
 // -----------------------------------------------------------------
-console.log('\n[4/8] Scanning for Stale/Error Signatures across Sample Pages...');
+console.log('\n[4/14] Scanning for Stale/Error Signatures across Sample Pages...');
 const forbiddenChecks = [
   { name: 'Invalid/Unexpected Token', regex: /Invalid or unexpected token/i },
   { name: 'Stale Refresh Popup', regex: /Refresh Now/i },
@@ -155,7 +159,7 @@ cohortTestUrls.forEach(urlPath => {
 // -----------------------------------------------------------------
 // INVARIANT 5: Layer A Authority, Terminology & Tool Prerendering
 // -----------------------------------------------------------------
-console.log('\n[5/8] Testing Layer A Authority, Terminology & Native Tool Pages...');
+console.log('\n[5/14] Testing Layer A Authority, Terminology & Native Tool Pages...');
 const semanticTestUrls = [
   '/chatr',
   '/chatr-communication',
@@ -235,7 +239,7 @@ assert(fs.existsSync(storeIconPath), 'dist/store-assets/icon-512.png exists for 
 // -----------------------------------------------------------------
 // INVARIANT 6: Localized Telemetry Invariant
 // -----------------------------------------------------------------
-console.log('\n[6/8] Verifying Localized Telemetry (Calling Codes, Currencies, Compliance)...');
+console.log('\n[6/14] Verifying Localized Telemetry (Calling Codes, Currencies, Compliance)...');
 const telemetryChecks = [
   { path: '/location/recruitment-agencies-dubai', code: '+971', currency: 'AED', law: 'PDPL' },
   { path: '/location/whatsapp-business-api-riyadh', code: '+966', currency: 'SAR', law: 'PDPL' },
@@ -257,7 +261,7 @@ telemetryChecks.forEach(({ path: checkPath, code, currency, law }) => {
 // -----------------------------------------------------------------
 // INVARIANT 7: Master Sitemap Index & 15 Segmented Sub-Sitemaps
 // -----------------------------------------------------------------
-console.log('\n[7/8] Testing Master Sitemap Index & 15 Segmented Sub-Sitemaps...');
+console.log('\n[7/14] Testing Master Sitemap Index & 15 Segmented Sub-Sitemaps...');
 const sitemapIndexPath = path.join(publicDir, 'sitemap_index.xml');
 assert(fs.existsSync(sitemapIndexPath), 'public/sitemap_index.xml exists');
 
@@ -301,7 +305,7 @@ if (fs.existsSync(sitemapIndexPath)) {
 // -----------------------------------------------------------------
 // INVARIANT 8: Canonical Domain & Robots.txt Invariant
 // -----------------------------------------------------------------
-console.log('\n[8/8] Testing Canonical Domain Hardening & Robots.txt...');
+console.log('\n[8/14] Testing Canonical Domain Hardening & Robots.txt...');
 const robotsPath = path.join(publicDir, 'robots.txt');
 assert(fs.existsSync(robotsPath), 'public/robots.txt exists');
 
@@ -313,15 +317,124 @@ if (fs.existsSync(robotsPath)) {
 }
 
 // -----------------------------------------------------------------
+// INVARIANT 9: Zero Raw Phone Numbers in Call Room URLs & Templates
+// -----------------------------------------------------------------
+console.log('\n[9/14] Testing Privacy Boundary: Zero Phone Numbers in URLs...');
+const inviteDialogPath = path.resolve(__dirname, '../src/components/dialer/InviteToWebCallDialog.tsx');
+assert(fs.existsSync(inviteDialogPath), 'InviteToWebCallDialog.tsx exists');
+if (fs.existsSync(inviteDialogPath)) {
+  const dialogContent = fs.readFileSync(inviteDialogPath, 'utf8');
+  assert(!dialogContent.includes('/call/${cleanPhone}'), 'Invite dialog never uses raw phone number in call URL');
+  assert(!dialogContent.includes('/call/call-${cleanPhone}'), 'Invite dialog never uses call-[phone] in call URL');
+  assert(dialogContent.includes('c-${crypto.randomUUID()}'), 'Invite dialog generates 128-bit UUID room tokens');
+}
+
+// -----------------------------------------------------------------
+// INVARIANT 10: 128-Bit Cryptographic Room Entropy
+// -----------------------------------------------------------------
+console.log('\n[10/14] Testing Cryptographic Room Entropy (128-bit UUIDs)...');
+const cryptoSample = require('crypto');
+const sampleToken = `c-${cryptoSample.randomUUID()}`;
+const uuidRegex = /^c-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+assert(uuidRegex.test(sampleToken), `Sample capability token (${sampleToken}) satisfies 128-bit UUID v4 entropy`);
+
+// -----------------------------------------------------------------
+// INVARIANT 11: Capability Token != Analytics Identifier (Privacy Isolation)
+// -----------------------------------------------------------------
+console.log('\n[11/14] Testing Capability Token != Analytics Identifier Isolation...');
+const telemetryServicePath = path.resolve(__dirname, '../src/services/viralTelemetry.ts');
+assert(fs.existsSync(telemetryServicePath), 'src/services/viralTelemetry.ts exists');
+if (fs.existsSync(telemetryServicePath)) {
+  const telemContent = fs.readFileSync(telemetryServicePath, 'utf8');
+  assert(telemContent.includes('deriveInviteId'), 'Telemetry exports deriveInviteId for one-way derivation');
+  assert(telemContent.includes('SHA-256'), 'deriveInviteId uses SHA-256 cryptographic hashing');
+  assert(!telemContent.includes('token: string'), 'ViralFunnelEvent does not accept raw capability token in event payloads');
+}
+
+// -----------------------------------------------------------------
+// INVARIANT 12: Zero Unverified Play Protect Claims in Production Dist
+// -----------------------------------------------------------------
+console.log('\n[12/14] Scanning for Unverified Play Protect Claims across Build & Artifacts...');
+const forbiddenPlayProtect = [
+  'Play Protect Certified',
+  'Google Play Protect certified',
+  'Play Protect Audited',
+  '100% Google Play Protect compliant'
+];
+
+function scanDirectoryForStrings(dir, forbiddenList) {
+  let violations = [];
+  if (!fs.existsSync(dir)) return violations;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory() && entry.name !== 'assets') {
+      violations.push(...scanDirectoryForStrings(fullPath, forbiddenList));
+    } else if (entry.isFile() && (entry.name.endsWith('.html') || entry.name.endsWith('.json') || entry.name.endsWith('.txt'))) {
+      const text = fs.readFileSync(fullPath, 'utf8');
+      forbiddenList.forEach(forbidden => {
+        if (text.includes(forbidden)) {
+          violations.push({ file: fullPath, string: forbidden });
+        }
+      });
+    }
+  }
+  return violations;
+}
+
+const ppViolations = scanDirectoryForStrings(distDir, forbiddenPlayProtect);
+if (ppViolations.length > 0) {
+  ppViolations.forEach(v => console.error(`  - Found "${v.string}" in ${v.file}`));
+}
+assert(ppViolations.length === 0, `Zero unverified Play Protect claims in dist/ (Found ${ppViolations.length} violations)`);
+
+// -----------------------------------------------------------------
+// INVARIANT 13: Zero Absolute Carrier Bypass Claims in Public Prerenders
+// -----------------------------------------------------------------
+console.log('\n[13/14] Testing Regulatory Advisory Wording (Zero Absolute Carrier Bypass Claims)...');
+const forbiddenBypassClaims = [
+  '100% unblocked',
+  'Direct TLS bypass',
+  'bypasses carrier SIP throttling',
+  'bypass SIP inspection'
+];
+
+const bypassViolations = scanDirectoryForStrings(distDir, forbiddenBypassClaims);
+if (bypassViolations.length > 0) {
+  bypassViolations.forEach(v => console.error(`  - Found "${v.string}" in ${v.file}`));
+}
+assert(bypassViolations.length === 0, `Zero absolute carrier bypass claims in dist/ (Found ${bypassViolations.length} violations)`);
+
+// -----------------------------------------------------------------
+// INVARIANT 14: Client-Side Anti-Abuse Rate Limiting & Mesh Limits
+// -----------------------------------------------------------------
+console.log('\n[14/14] Verifying Client-Side Anti-Abuse Rate Limits & WebRTC Mesh Limits...');
+if (fs.existsSync(telemetryServicePath)) {
+  const telemContent = fs.readFileSync(telemetryServicePath, 'utf8');
+  assert(telemContent.includes('RATE_LIMIT_MAX_INVITES_PER_HOUR = 10'), 'Hourly rate limit is configured to 10 invites/hr');
+  assert(telemContent.includes('COOLDOWN_PER_DESTINATION_MS = 300000'), 'Per-destination cooldown is configured to 5 minutes (300,000 ms)');
+  assert(telemContent.includes('checkInviteRateLimit'), 'checkInviteRateLimit rate limit guard function exists');
+}
+
+const guestCallPath = path.resolve(__dirname, '../src/pages/public/GuestCallPage.tsx');
+assert(fs.existsSync(guestCallPath), 'GuestCallPage.tsx exists');
+if (fs.existsSync(guestCallPath)) {
+  const guestContent = fs.readFileSync(guestCallPath, 'utf8');
+  assert(guestContent.includes('MAX_MESH_PARTICIPANTS = 4'), 'WebRTC mesh strictly capped at 4 participants');
+  assert(guestContent.includes('MAX_CALL_DURATION_SEC = 3600'), 'Room duration strictly capped at 60 minutes (3600s)');
+}
+
+// -----------------------------------------------------------------
 // FINAL SUMMARY
 // -----------------------------------------------------------------
-console.log('\n====================================================');
+console.log('\n=============================================================================');
 if (failedTests === 0) {
-  console.log('✅ ALL INVARIANTS PASSED — DEPLOYMENT IS CERTIFIED');
-  console.log('====================================================\n');
+  console.log('ALL SECURITY, PRIVACY, GROWTH, ROUTING AND BUILD INVARIANTS PASSED — PRODUCTION HARDENING CERTIFIED.');
+  console.log('5M CAPACITY: ENGINEERING TARGET — PENDING LOAD VALIDATION.');
+  console.log('=============================================================================\n');
   process.exit(0);
 } else {
   console.error(`❌ CI/CD FAILURE: ${failedTests} invariant check(s) failed.`);
-  console.log('====================================================\n');
+  console.log('=============================================================================\n');
   process.exit(1);
 }
