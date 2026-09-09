@@ -64,22 +64,33 @@ To prevent mobile CPU throttling and mobile network uplink collapse, CHATR+ stri
 - **Payload Size**: ~120 bytes per heartbeat $\approx 200\text{ KB/sec}$ background signaling throughput.
 - **Burst Signaling**: During peak call initiation (50 new calls/sec $\times 12$ SDP/ICE candidates) $\approx 600\text{ msg/sec}$, well within cluster limits.
 
-### 3.2 TURN Media Relay Sizing
+### 3.2 TURN Media Relay Sizing & Directional Bandwidth Accounting
 
 While WebRTC establishes direct peer-to-peer UDP connections for ~85% of calls (using STUN and ICE NAT traversal), approximately **15%** of connections encounter Symmetric NATs, carrier-grade NATs (CGNAT), or enterprise firewalls requiring TURN relaying:
 
-- **Relayed Calls**: $3,500 \times 15\% = 525\text{ calls}$ (1,050 relayed streams).
-- **Per-Stream Bandwidth**:
-  - Voice (OPUS): 40 kbps (average with DTX)
+- **Relayed Calls**: $3,500\text{ simultaneous calls} \times 15\% = 525\text{ relayed 1-to-1 calls}$.
+- **Calling Endpoints**: Each 1-to-1 call has 2 active endpoints (Alice and Bob) $\implies 525 \times 2 = 1,050\text{ active relayed endpoints}$.
+- **Per-Endpoint Media Stream**:
+  - Voice (OPUS with DTX): 40 kbps
   - Video (H.264 / VP8 720p 30fps): ~1,200 kbps
   - Total per stream: ~1.24 Mbps
-- **Relay Throughput Requirement**:
-  $$\text{Total TURN Bandwidth} = 1,050 \times 1.24\text{ Mbps} \approx 1.30\text{ Gbps sustained bi-directional throughput}$$
-- **TURN Cluster Topology**:
-  - 3 geographically distributed Coturn nodes:
-    1. **me-central-1 (UAE/GCC)**: Lowest latency for Middle East corridors.
+- **Directional Media Flow Geometry**:
+  - In a TURN-relayed session, each endpoint uploads their media stream to the TURN server, and the TURN server forwards that stream downstream to the peer.
+  - **Aggregate Ingress (Upload to TURN)**:
+    $$\text{Ingress Traffic} = 1,050\text{ streams} \times 1.24\text{ Mbps} = 1,302\text{ Mbps} \approx \mathbf{1.30\text{ Gbps}}$$
+  - **Aggregate Egress (Download from TURN)**:
+    $$\text{Egress Traffic} = 1,050\text{ streams} \times 1.24\text{ Mbps} = 1,302\text{ Mbps} \approx \mathbf{1.30\text{ Gbps}}$$
+  - **Protocol Overhead**:
+    - TURN framing, STUN indications, RTP/SRTP headers, and UDP/IP encapsulation add $\approx 6\%$ protocol overhead:
+    $$\text{Overhead} = (1.30\text{ Gbps} + 1.30\text{ Gbps}) \times 6\% \approx \mathbf{156\text{ Mbps (0.16 Gbps)}}$$
+  - **Total Aggregate Bi-Directional Throughput**:
+    $$\text{TURN Aggregate Traffic} = \text{Ingress (1.30 Gbps)} + \text{Egress (1.30 Gbps)} + \text{Overhead (0.16 Gbps)} \approx \mathbf{2.76\text{ Gbps}}$$
+- **Coturn Regional Node Allocation**:
+  - 3 geographically distributed Coturn Points of Presence (PoPs):
+    1. **me-central-1 (UAE/GCC)**: Dedicated lowest-latency relay for Middle East and Gulf corridors.
     2. **ap-south-1 (Mumbai, India)**: High-density South Asian corridor.
     3. **eu-central-1 (Frankfurt, Europe)**: International roaming and transatlantic peering.
+  - **Node Sizing Dimension**: Each regional node must be provisioned with a minimum of **1.0 Gbps symmetric dedicated bandwidth** (Total cluster capacity = 3.0 Gbps symmetric / 6.0 Gbps total throughput) to absorb peak regional skew during diurnal traffic surges.
   - Geo-DNS routing (`turn.chatrchat.in`) directs clients to the lowest latency node via STUN round-trip measurement.
 
 ---
@@ -137,21 +148,53 @@ Where:
 
 ---
 
-## 6. Anti-Abuse Rate Limiting Controls
+## 6. Server-Authoritative Anti-Abuse & Rate Limiting Engine
 
-To protect users against SMS spam, telephony flooding, and signaling room saturation, the following client and edge controls are enforced:
+To protect the platform against bot-nets, invitation spam, telephony flooding, and signaling room saturation, rate limiting is enforced **server-side** rather than merely on client devices:
 
-1. **Device-Level Invite Budget**: Maximum **10 invites per rolling 60-minute window** (`RATE_LIMIT_MAX_INVITES_PER_HOUR = 10`).
-2. **Per-Destination Cooldown**: Minimum **300 seconds (5 minutes)** between consecutive invites to the same destination hash (`COOLDOWN_PER_DESTINATION_MS = 300,000`).
-3. **Room Entropy**: All call rooms utilize 128-bit cryptographic UUIDs (`crypto.randomUUID()`), eliminating phone numbers and guessable room IDs.
-4. **Room Session Cap**: Unattended or long-running mesh sessions are automatically terminated after 60 minutes (`MAX_CALL_DURATION_SEC = 3600`).
+### 6.1 Server-Authoritative Policy (Client Cannot Override)
+- **Policy Enforcement**: The client cannot supply `p_limit` or `p_window_seconds`. The server defines limits and windows strictly per action type in `enforce_server_abuse_limit()`:
+  - `invite_dispatch`: 10 invites per rolling 3600 seconds (1 hour).
+  - `invite_dest_cooldown`: 1 invite per 300 seconds (5 minutes) per destination hash.
+  - `room_create`: 20 rooms per rolling hour.
+  - `guest_join`: 30 joins per rolling hour.
+  - `telemetry_batch`: 120 batches per 60 seconds.
+
+### 6.2 Trusted Identity Hierarchy
+Client requests are mapped to server-authoritative rate keys using a strict identity hierarchy:
+1. **Authenticated User**: Mapped to `uid:<user_id>` from verified JWT (`auth.uid()`).
+2. **Anonymous Guest**: Mapped to trusted edge-derived identity from `CF-Connecting-IP` / `x-real-ip` (`ip:<hash>`).
+3. **Destination Target**: Mapped to deterministic HMAC/hash of destination (`dst:<hash>`). **Zero raw phone numbers** are stored in the rate-limiting tables.
+
+### 6.3 Room Session & Mesh Caps
+- **Room Entropy**: All call rooms utilize 128-bit cryptographic UUIDs (`crypto.randomUUID()`), eliminating phone numbers and guessable room IDs.
+- **Mesh Boundary**: Maximum 4 participants (`MAX_MESH_PARTICIPANTS = 4`).
+- **Room Session Cap**: Automatic session termination after 60 minutes (`MAX_CALL_DURATION_SEC = 3600`).
 
 ---
 
-## 7. Verification & Stress-Testing Roadmap
+## 7. Staged Capacity Validation & Load Testing Roadmap
 
-| Phase | Objective | Status | Tooling |
-| :--- | :--- | :---: | :--- |
-| **Phase 1: Invariant Enforcement** | 14 automated build-time invariants validating routing, privacy, rate limits, entropy, and claims. | **Certified** | Node test runner (`test-seo-invariants.cjs`) |
-| **Phase 2: Signaling Stress Test** | Simulate 50,000 concurrent WebSocket connections; measure message latency at 1,000 msg/sec. | *Scheduled* | K6 / Locust distributed load agents |
-| **Phase 3: Media Relay Saturation** | Push 1,000 synthetic WebRTC media streams through Coturn; measure packet loss and jitter at 1.3 Gbps. | *Scheduled* | Headless Chrome WebRTC testbed |
+Proving the 5,000,000-user architecture requires progressing through staged empirical load validation:
+
+### Phase A: 1,000 Concurrent Users (CCU)
+- **A1 — Synthetic Application Benchmark**:
+  - Simulates 1,000 concurrent virtual users executing realistic state transitions.
+  - 100 simultaneous WebRTC signaling handshakes.
+  - Telemetry event queue batching and rate-limit flood testing.
+- **A2 — Real Network Concurrency Verification**:
+  - Establishes 1,000 real concurrent WebSocket / Supabase Realtime sessions.
+  - 100 concurrent peer-to-peer signaling negotiations.
+  - Measures: p50/p95/p99 signaling latency, connection success %, drop rate, and edge response times.
+- **A3 — WebRTC Media Relay Capacity Model**:
+  - Simulates 100 simultaneous relayed audio/video calls through Coturn.
+  - Measures: Packet loss, jitter, RTT, and sustained throughput at ~78 Mbps.
+
+### Phase B: 10,000 Concurrent Users (CCU)
+- 10,000 concurrent sessions, 500–1,000 simultaneous calls.
+- Validates horizontal scaling of Realtime broadcast channels and Edge Function concurrency.
+
+### Phase C: 50,000 Concurrent Users (CCU) — The 5M Milestone
+- 50,000 CCU, 3,500 simultaneous calls (7,000 streaming participants).
+- Validates sustained 2.76 Gbps aggregate bi-directional TURN relay throughput across the 3 regional Coturn PoPs.
+- Empirically proves the 5M registered user sizing hypothesis.

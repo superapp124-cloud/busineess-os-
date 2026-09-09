@@ -6,6 +6,7 @@ import {
 import { toast } from 'sonner';
 
 import { ViralTelemetry } from '@/services/viralTelemetry';
+import { ServerAbuseGuard } from '@/services/serverAbuseGuard';
 
 interface InviteToWebCallDialogProps {
   isOpen: boolean;
@@ -59,11 +60,11 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleWhatsApp = () => {
-    // Anti-abuse rate limit check
-    const rateCheck = ViralTelemetry.checkInviteRateLimit(destinationHash);
-    if (!rateCheck.allowed) {
-      toast.error(rateCheck.reason || 'Rate limit exceeded');
+  const handleWhatsApp = async () => {
+    // 1. Server-authoritative abuse limit check
+    const serverCheck = await ServerAbuseGuard.checkLimit('invite_dispatch', destinationHash);
+    if (!serverCheck.allowed) {
+      toast.error(serverCheck.reason || 'Server rate limit exceeded. Please try again later.');
       return;
     }
 
@@ -78,11 +79,11 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
     window.open(url, '_blank');
   };
 
-  const handleSMS = () => {
-    // Anti-abuse rate limit check
-    const rateCheck = ViralTelemetry.checkInviteRateLimit(destinationHash);
-    if (!rateCheck.allowed) {
-      toast.error(rateCheck.reason || 'Rate limit exceeded');
+  const handleSMS = async () => {
+    // 1. Server-authoritative abuse limit check
+    const serverCheck = await ServerAbuseGuard.checkLimit('invite_dispatch', destinationHash);
+    if (!serverCheck.allowed) {
+      toast.error(serverCheck.reason || 'Server rate limit exceeded. Please try again later.');
       return;
     }
 

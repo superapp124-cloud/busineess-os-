@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SEOHead } from '@/components/SEOHead';
 import { ViralTelemetry } from '@/services/viralTelemetry';
+import { ServerAbuseGuard } from '@/services/serverAbuseGuard';
 
 const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
@@ -196,6 +197,13 @@ export const GuestCallPage: React.FC = () => {
   const joinCall = async (withVideo: boolean = true) => {
     localStorage.setItem('chatr-guest-name', guestName);
     setIsAudioOnly(!withVideo);
+
+    // Server-authoritative abuse check
+    const serverCheck = await ServerAbuseGuard.checkLimit('guest_join');
+    if (!serverCheck.allowed) {
+      toast.error(serverCheck.reason || 'Server rate limit exceeded. Please try again later.');
+      return;
+    }
 
     try {
       const stream = await setupLocalMedia(withVideo);

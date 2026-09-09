@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 
 import { PUBLIC_ACCOUNT_REGISTRY, getAccountsSummary, CANONICAL_FOUNDER_IDENTITY, CANONICAL_COMPANY_IDENTITY } from '@/data/accountRegistryData';
+import { GrowthControlCenter } from './growth/GrowthControlCenter';
 
 interface GrowthEventRecord {
   event_id: string;
@@ -35,7 +36,7 @@ interface GrowthEventRecord {
 }
 
 export const GrowthOSDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'phase1_seo' | 'phase2_distribution' | 'batch_a' | 'provenance' | 'external_accounts' | 'phase1_5_discovery'>('phase1_seo');
+  const [activeTab, setActiveTab] = useState<'growth_control_center' | 'phase1_seo' | 'phase2_distribution' | 'batch_a' | 'provenance' | 'external_accounts' | 'phase1_5_discovery'>('growth_control_center');
   const [selectedEvent, setSelectedEvent] = useState<GrowthEventRecord | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEngineLive, setIsEngineLive] = useState(true);
@@ -637,14 +638,26 @@ export const GrowthOSDashboard: React.FC = () => {
       {/* Navigation Tabs */}
       <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto">
         <button
-          onClick={() => setActiveTab('phase1_5_discovery')}
+          onClick={() => setActiveTab('growth_control_center')}
           className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ${
-            activeTab === 'phase1_5_discovery' || activeTab === 'phase1_seo'
+            activeTab === 'growth_control_center'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <SearchCode className="w-3.5 h-3.5 text-emerald-300" />
+          <TrendingUp className="w-3.5 h-3.5 text-emerald-300" />
+          <span>GROWTH CONTROL CENTER (VIRAL ENGINE)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('phase1_5_discovery')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ${
+            activeTab === 'phase1_5_discovery'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <SearchCode className="w-3.5 h-3.5 text-indigo-300" />
           <span>PHASE 1.5 — DISCOVERY PROOF (10-STEP TELEMETRY)</span>
         </button>
 
@@ -706,8 +719,13 @@ export const GrowthOSDashboard: React.FC = () => {
         </button>
       </div>
 
+      {/* TAB: GROWTH CONTROL CENTER (VIRAL ENGINE) */}
+      {activeTab === 'growth_control_center' && (
+        <GrowthControlCenter />
+      )}
+
       {/* TAB 0: PHASE 1.5 — DISCOVERY PROOF (10-STEP TELEMETRY MONITOR) */}
-      {(activeTab === 'phase1_5_discovery' || !activeTab) && (
+      {activeTab === 'phase1_5_discovery' && (
         <div className="space-y-6 font-mono text-xs">
           <div className="bg-slate-950 text-white p-6 rounded-2xl border border-emerald-500/40 space-y-4 shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
