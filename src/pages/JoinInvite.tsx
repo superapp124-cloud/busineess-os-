@@ -78,91 +78,115 @@ const JoinInvite = () => {
  );
  }
 
- return (
- <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20">
- <motion.div
- initial={{ opacity: 0, scale: 0.9 }}
- animate={{ opacity: 1, scale: 1 }}
- transition={{ duration: 0.5 }}
- className="w-full max-w-md"
- >
- <Card className="overflow-hidden border-primary/20 backdrop-blur-xl bg-background/80">
- <div className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 p-6 text-white text-center">
- <motion.div
- initial={{ y: -20, opacity: 0 }}
- animate={{ y: 0, opacity: 1 }}
- transition={{ delay: 0.2 }}
- >
- <Gift className="h-16 w-16 mx-auto mb-4" />
- <h1 className="text-page font-bold mb-2">You're Invited! 🎉</h1>
- {inviterName && (
- <p className="text-white/80">
- {inviterName} wants you to join Chatr
- </p>
- )}
- </motion.div>
- </div>
+  const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
 
- <CardContent className="p-6 space-y-6">
- <motion.div
- initial={{ y: 20, opacity: 0 }}
- animate={{ y: 0, opacity: 1 }}
- transition={{ delay: 0.3 }}
- className="text-center"
- >
- <p className="text-section mb-4">
- Join India's #1 super app for messaging, jobs, healthcare & more!
- </p>
- 
- <div className="bg-yellow-500/20 rounded-xl p-4 mb-6">
- <div className="flex items-center justify-center gap-2 text-yellow-500 font-bold text-workspace">
- <Sparkles className="h-6 w-6" />
- Get 25 FREE Coins!
- <Sparkles className="h-6 w-6" />
- </div>
- <p className="text-secondary text-muted-foreground mt-2">
- Sign up now and start earning rewards
- </p>
- </div>
+  const handleDownloadApk = () => {
+    const link = document.createElement('a');
+    link.href = '/download/Chatr-Plus.apk';
+    link.setAttribute('download', 'Chatr-Plus.apk');
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      if (document.body.contains(link)) document.body.removeChild(link);
+    }, 1000);
+    navigate('/download/android');
+  };
 
- <div className="grid grid-cols-3 gap-4 mb-6">
- <div className="text-center p-3 rounded-lg bg-accent/50">
- <Users className="h-6 w-6 mx-auto mb-2 text-primary" />
- <p className="text-label">Chat & Call</p>
- </div>
- <div className="text-center p-3 rounded-lg bg-accent/50">
- <Gift className="h-6 w-6 mx-auto mb-2 text-green-500" />
- <p className="text-label">Local Jobs</p>
- </div>
- <div className="text-center p-3 rounded-lg bg-accent/50">
- <Sparkles className="h-6 w-6 mx-auto mb-2 text-purple-500" />
- <p className="text-label">Healthcare</p>
- </div>
- </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <Card className="overflow-hidden border-primary/20 backdrop-blur-xl bg-background/80 shadow-2xl">
+          <div className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 p-6 text-white text-center">
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Gift className="h-16 w-16 mx-auto mb-4 drop-shadow-md" />
+              <h1 className="text-2xl font-black tracking-tight mb-2">You're Invited! 🎉</h1>
+              {inviterName && (
+                <p className="text-white/90 font-medium">
+                  {inviterName} invited you to join <span className="font-bold underline decoration-white/50">CHATR+</span>
+                </p>
+              )}
+            </motion.div>
+          </div>
 
- <Button 
- onClick={handleJoin}
- size="lg"
- className="w-full gap-2 bg-gradient-to-r from-primary to-purple-500 hover:opacity-90"
- >
- Join Chatr Now
- <ArrowRight className="h-5 w-5" />
- </Button>
+          <CardContent className="p-6 space-y-6">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-center"
+            >
+              <p className="text-sm text-muted-foreground mb-4">
+                Universal private messaging, unblocked WebRTC HD calling, and AI agents.
+              </p>
+              
+              <div className="bg-yellow-500/15 border border-yellow-500/30 rounded-xl p-3.5 mb-5">
+                <div className="flex items-center justify-center gap-2 text-yellow-600 dark:text-yellow-400 font-bold text-sm">
+                  <Sparkles className="h-5 w-5" />
+                  Get 25 Welcome Coins & Free HD Calls!
+                  <Sparkles className="h-5 w-5" />
+                </div>
+              </div>
 
- <p className="text-label text-muted-foreground mt-4">
- Already have an account?{' '}
- <span 
- className="text-primary cursor-pointer hover:underline"
- onClick={() => navigate('/auth')}
- >
- Login here
- </span>
- </p>
- </motion.div>
- </CardContent>
- </Card>
- </motion.div>
- </div>
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                {isAndroid && (
+                  <Button 
+                    onClick={handleDownloadApk}
+                    size="lg"
+                    className="w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-500/25 py-6 cursor-pointer"
+                  >
+                    <span>Download Android App (78 MB APK)</span>
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                )}
+
+                <Button 
+                  onClick={handleJoin}
+                  size="lg"
+                  variant={isAndroid ? "outline" : "default"}
+                  className={`w-full gap-2 font-bold py-6 cursor-pointer ${
+                    !isAndroid ? 'bg-gradient-to-r from-primary to-purple-500 text-white shadow-lg shadow-primary/20' : ''
+                  }`}
+                >
+                  <span>{isAndroid ? 'Continue in Web Browser' : 'Join on Web Now'}</span>
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Trust & Compliance Badge */}
+              <div className="pt-4 border-t border-border/50 flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                  ✓ Google Play Protect Audited
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1 font-medium">
+                  🔒 End-to-End Encrypted
+                </span>
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-4">
+                Already have an account?{' '}
+                <span 
+                  className="text-primary font-semibold cursor-pointer hover:underline"
+                  onClick={() => navigate('/auth')}
+                >
+                  Log in
+                </span>
+              </p>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
  );
 };
 

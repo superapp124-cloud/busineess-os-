@@ -9,7 +9,17 @@ export const generateInviteCode = (): string => {
   return code;
 };
 
+const getBaseOrigin = (): string => {
+  if (typeof window === 'undefined') return 'https://www.chatrchat.in';
+  const origin = window.location.origin;
+  if (!origin || origin.includes('localhost') || origin.includes('capacitor://') || origin.includes('file://')) {
+    return 'https://www.chatrchat.in';
+  }
+  return origin;
+};
+
 export const createInviteLink = async (userId: string): Promise<string> => {
+  const origin = getBaseOrigin();
   // Check if user already has an invite link
   const { data: existing } = await supabase
     .from('invite_links')
@@ -19,7 +29,7 @@ export const createInviteLink = async (userId: string): Promise<string> => {
 
   if (existing) {
     // Route: /join (App.tsx:336), read via: searchParams.get('invite') (JoinInvite.tsx:15)
-    return `${window.location.origin}/join?invite=${existing.invite_code}`;
+    return `${origin}/join?invite=${existing.invite_code}`;
   }
 
   // Generate unique code
@@ -45,13 +55,13 @@ export const createInviteLink = async (userId: string): Promise<string> => {
     .from('invite_links')
     .insert({ user_id: userId, invite_code: inviteCode });
 
-  return `${window.location.origin}/join?invite=${inviteCode}`;
+  return `${origin}/join?invite=${inviteCode}`;
 };
 
 export const getInviteMessage = (inviteLink: string, userName?: string): string => {
   const message = userName 
-    ? `Hey! ${userName} invited you to join Chatr - a modern messaging app. Join now: ${inviteLink}`
-    : `Join me on Chatr - a modern messaging app! ${inviteLink}`;
+    ? `Hey! ${userName} invited you to CHATR+ for unblocked HD voice & video calls, zero-tracking private messaging, and AI agents. Join or install free: ${inviteLink}`
+    : `Join me on CHATR+ — unblocked HD voice/video calls, private messaging & AI: ${inviteLink}`;
   
   return message;
 };

@@ -49,6 +49,7 @@ import { ChatrAIFab } from "./components/ChatrAIFab";
 import { GlobalBackHandler } from "./components/GlobalBackHandler";
 import { FloatingHomeFab } from "./components/FloatingHomeFab";
 import { AndroidDownloadBanner } from "./components/AndroidDownloadBanner";
+import { AppUpdateNotifier } from "./components/AppUpdateNotifier";
 import { PlatformProvider } from "./platform/Infrastructure/PlatformContext";
 import { bootstrapPlatform } from "./platform/runtime/Bootstrap";
 import { TenantProvider } from "./core/tenant/TenantContext";
@@ -610,6 +611,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <DeferredGlobalServices />
  <GlobalBackHandler />
  <AndroidDownloadBanner />
+ <AppUpdateNotifier />
  <Routes>
    {/* Developer & Direct Integrations Routes */}
    <Route path="/robotOs" element={<Suspense fallback={<PageLoader message="Initializing RobotOS..." />}><RobotOsPage /></Suspense>} />

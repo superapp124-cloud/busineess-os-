@@ -55,7 +55,7 @@ const DEVICE_GUIDES = [
     os: 'One UI',
     steps: [
       'Tap "Download Official APK" above. When Chrome displays "File might be harmful", tap "Download anyway".',
-      'Wait for the download to finish (84 MB). Tap "Open" on the notification bar or open Samsung My Files → Downloads → Chatr-Plus.apk.',
+      'Wait for the download to finish (78 MB). Tap "Open" on the notification bar or open Samsung My Files → Downloads → Chatr-Plus.apk.',
       'If prompted "For your security, your phone is not allowed to install unknown apps", tap Settings.',
       'Turn ON the switch next to "Allow from this source" (Chrome or My Files).',
       'Tap the Back button, then tap "Install". CHATR+ is now ready on your home screen!'
@@ -153,7 +153,7 @@ export const AndroidDownload: React.FC = () => {
     "operatingSystem": "Android 8.0 or higher",
     "applicationCategory": "CommunicationApplication",
     "softwareVersion": "1.0.0",
-    "fileSize": "84.2MB",
+    "fileSize": "78.2MB",
     "downloadUrl": FULL_APK_URL,
     "offers": {
       "@type": "Offer",
@@ -283,7 +283,7 @@ export const AndroidDownload: React.FC = () => {
                       className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-base sm:text-lg shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer w-full sm:w-auto"
                     >
                       <Download className="w-6 h-6 text-slate-950 group-hover:scale-110 transition-transform" />
-                      <span>Download Official APK ({APK_FILENAME} • 84 MB)</span>
+                      <span>Download Official APK ({APK_FILENAME} • 78 MB)</span>
                     </a>
                   </div>
                 </div>
@@ -487,7 +487,7 @@ export const AndroidDownload: React.FC = () => {
               </div>
               <h3 className="font-bold text-white text-sm mb-1">Open Download</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Once the download finishes (84 MB), tap <strong>Open</strong> in the notification shade, or open your phone's <strong>Downloads</strong> folder.
+                Once the download finishes (78 MB), tap <strong>Open</strong> in the notification shade, or open your phone's <strong>Downloads</strong> folder.
               </p>
             </div>
 
@@ -713,7 +713,7 @@ export const AndroidDownload: React.FC = () => {
               className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer shrink-0"
             >
               <Download className="w-4 h-4" />
-              <span>Download Official APK (84 MB)</span>
+              <span>Download Official APK (78 MB)</span>
             </a>
           </div>
         </section>
