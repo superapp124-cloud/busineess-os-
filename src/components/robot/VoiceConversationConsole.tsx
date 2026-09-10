@@ -7,6 +7,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { meeraVoice } from '../../utils/speechTts';
 import { RobotCommandEngine } from '../../services/robotCommandEngine';
+import { MeeraOllamaService } from '../../services/ai/MeeraOllamaService';
 
 interface Message {
   id: string;
@@ -24,6 +25,7 @@ export const VoiceConversationConsole: React.FC<VoiceConversationConsoleProps> =
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [ollamaStatus, setOllamaStatus] = useState<{ isOnline: boolean; model: string }>({ isOnline: true, model: 'chatr:meera-latest' });
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -44,6 +46,9 @@ export const VoiceConversationConsole: React.FC<VoiceConversationConsoleProps> =
   useEffect(() => {
     const unsub = meeraVoice.onSpeakingChange((speaking) => {
       setIsSpeaking(speaking);
+    });
+    MeeraOllamaService.checkStatus().then(() => {
+      setOllamaStatus(MeeraOllamaService.getStatus());
     });
     return () => unsub();
   }, []);
@@ -145,21 +150,29 @@ export const VoiceConversationConsole: React.FC<VoiceConversationConsoleProps> =
             </span>
           </div>
 
-          {/* Language Selector */}
-          <select
-            value={selectedLang}
-            onChange={(e) => setSelectedLang(e.target.value)}
-            className="bg-slate-950 border border-slate-700 text-xs text-slate-200 px-2.5 py-1 rounded-lg focus:outline-none font-medium"
-          >
-            <option>Hindi (Hinglish)</option>
-            <option>Hindi (Devanagari)</option>
-            <option>English</option>
-            <option>Urdu</option>
-            <option>Punjabi</option>
-            <option>Bengali</option>
-            <option>Tamil</option>
-            <option>Telugu</option>
-          </select>
+          <div className="flex items-center gap-2">
+            {/* In-House AI Badge */}
+            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-cyan-950/80 border border-cyan-700/60 text-cyan-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span>Ollama: {ollamaStatus.model}</span>
+            </span>
+
+            {/* Language Selector */}
+            <select
+              value={selectedLang}
+              onChange={(e) => setSelectedLang(e.target.value)}
+              className="bg-slate-950 border border-slate-700 text-xs text-slate-200 px-2 py-1 rounded-lg focus:outline-none font-medium"
+            >
+              <option>Hindi (Hinglish)</option>
+              <option>Hindi (Devanagari)</option>
+              <option>English</option>
+              <option>Urdu</option>
+              <option>Punjabi</option>
+              <option>Bengali</option>
+              <option>Tamil</option>
+              <option>Telugu</option>
+            </select>
+          </div>
         </div>
 
         {/* Animated Audio Waveform */}

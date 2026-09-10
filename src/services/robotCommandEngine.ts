@@ -10,6 +10,7 @@
 
 import { SimBridgeClient } from '../../packages/sim-bridge/src';
 import { meeraVoice } from '../utils/speechTts';
+import { MeeraOllamaService, MeeraPlanResult } from './ai/MeeraOllamaService';
 
 export type TaskStatus = 'IDLE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'EMERGENCY_STOPPED';
 export type StepStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
@@ -98,7 +99,17 @@ class RobotCommandEngineImpl {
       this.stepTimer = null;
     }
 
-    // 1. Intent Classification
+    // 1. Try In-House Trained Ollama AI (chatr:meera-latest)
+    try {
+      const aiPlan = await MeeraOllamaService.planAndRespond(rawCommand, lang);
+      if (aiPlan && aiPlan.action) {
+        return this._executeAiPlan(rawCommand, aiPlan, lang);
+      }
+    } catch (e) {
+      console.warn('[RobotCommandEngine] Ollama AI plan bypassed, using fast rule engine:', e);
+    }
+
+    // 2. High-Speed Rule-Based Fallback Engine
     const hasWave = cmd.includes('wave') || cmd.includes('namaste') || cmd.includes('hello') || cmd.includes('hi') || cmd.includes('greet') || cmd.includes('swagat') || cmd.includes('haath');
     const hasWalk = cmd.includes('walk') || cmd.includes('chalo') || cmd.includes('navigate') || cmd.includes('aage') || cmd.includes('step');
     const hasPickBottle = cmd.includes('bottle') || cmd.includes('paani') || cmd.includes('water') || cmd.includes('pick') || cmd.includes('hold') || cmd.includes('fetch') || cmd.includes('lao') || cmd.includes('kitchen');
@@ -448,6 +459,54 @@ class RobotCommandEngineImpl {
     this._notify();
     meeraVoice.speak(speech, lang).catch(() => {});
     SimBridgeClient.waveWalkPick().catch(() => {});
+
+    this._advanceStepsSequentially(1, steps);
+    return this.activeTask;
+  }
+
+  // ── Recipe: In-House Ollama AI Plan Dispatch
+  private async _executeAiPlan(rawCommand: string, plan: MeeraPlanResult, lang: string): Promise<ActiveTaskState> {
+    const steps: TaskStep[] = plan.steps.map((s, idx) => ({
+      num: s.num || idx + 1,
+      label: s.label,
+      status: (s.num === 1 || idx === 0) ? 'COMPLETED' : (s.num === 2 || idx === 1) ? 'IN_PROGRESS' : 'PENDING',
+      durationMs: s.durationMs || 800,
+    }));
+
+    const isHold = plan.action === 'grasp_bottle' || plan.action === 'wave_walk_pick';
+
+    this.activeTask = {
+      id: `task-${Date.now()}`,
+      commandText: rawCommand,
+      taskTitle: plan.taskTitle,
+      category: plan.category,
+      status: 'IN_PROGRESS',
+      currentStepIndex: 1,
+      steps,
+      speechResponse: plan.speechResponse,
+      targetObject: isHold ? 'water_bottle_01' : undefined,
+      graspForceN: isHold ? 14.2 : 0.0,
+      contactConfirmed: isHold,
+      startedAt: Date.now(),
+    };
+
+    this._notify();
+    meeraVoice.speak(plan.speechResponse, lang).catch(() => {});
+
+    // Dispatch corresponding physical MuJoCo physics API
+    if (plan.action === 'wave_walk_pick') {
+      SimBridgeClient.waveWalkPick().catch(() => {});
+    } else if (plan.action === 'wave') {
+      SimBridgeClient.wave().catch(() => {});
+    } else if (plan.action === 'walk') {
+      SimBridgeClient.navigate('kitchen').catch(() => {});
+    } else if (plan.action === 'grasp_bottle') {
+      SimBridgeClient.graspBottle().catch(() => {});
+    } else if (plan.action === 'stand') {
+      SimBridgeClient.reset(42).catch(() => {});
+    } else if (plan.action === 'test_push') {
+      SimBridgeClient.injectFault('external_push').catch(() => {});
+    }
 
     this._advanceStepsSequentially(1, steps);
     return this.activeTask;

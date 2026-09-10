@@ -118,6 +118,11 @@ export const RobotOsPage: React.FC = () => {
 
         {/* Right Status Indicators */}
         <div className="flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-cyan-800/80 text-xs font-mono text-cyan-300">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="font-bold">In-House AI: chatr:meera-latest</span>
+          </div>
+
           <div className="hidden sm:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-slate-200 font-bold">MuJoCo Connected</span>
