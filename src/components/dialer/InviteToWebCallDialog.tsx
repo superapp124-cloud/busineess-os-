@@ -26,7 +26,9 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
   const [roomToken] = useState(() => `c-${crypto.randomUUID()}`);
   const [inviteId, setInviteId] = useState<string>('');
 
-  const callUrl = `https://www.chatrchat.in/call/${roomToken}`;
+  // Attach persistent referral token for viral loop attribution
+  const referralCode = React.useMemo(() => ViralTelemetry.getReferralCode(), []);
+  const callUrl = `https://www.chatrchat.in/call/${roomToken}?r=${referralCode}`;
 
   // Derive target hash for rate limiting without storing raw phone number
   const cleanTarget = target.replace(/[^0-9+]/g, '');
@@ -73,7 +75,7 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
       ViralTelemetry.track({ type: 'invite_sent_whatsapp', inviteId });
     }
 
-    const text = encodeURIComponent(`Hey, join my private HD voice/video call on CHATR+ (no app install needed): ${callUrl}`);
+    const text = encodeURIComponent(`📞 Join my free HD call on CHATR+ (tap to answer in browser — no app install needed): ${callUrl}`);
     const cleanPhone = cleanTarget.replace(/\+/g, '');
     const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${text}` : `https://wa.me/?text=${text}`;
     window.open(url, '_blank');
@@ -92,7 +94,7 @@ export const InviteToWebCallDialog: React.FC<InviteToWebCallDialogProps> = ({
       ViralTelemetry.track({ type: 'invite_sent_sms', inviteId });
     }
 
-    const body = encodeURIComponent(`Join my secure CHATR+ call (runs in your browser): ${callUrl}`);
+    const body = encodeURIComponent(`📞 Join my secure CHATR+ call in your browser: ${callUrl}`);
     window.open(`sms:${cleanTarget}?body=${body}`, '_blank');
   };
 

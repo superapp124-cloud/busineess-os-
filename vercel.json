@@ -112,6 +112,10 @@
       "destination": "/sitemaps/$1"
     },
     {
+      "source": "/call/(.*)",
+      "destination": "/call/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

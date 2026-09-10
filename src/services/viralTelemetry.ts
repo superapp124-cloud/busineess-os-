@@ -4,7 +4,16 @@
  * PRIVACY BOUNDARY RULE:
  * Capability tokens (usable call room URLs/credentials) are NEVER stored or logged in telemetry.
  * All invite events must reference an opaque, derived `inviteId` (e.g. SHA-256 digest or random UUID).
+ * Raw phone numbers and personal identifiers are strictly forbidden from event payloads.
  */
+
+import { supabase } from '@/integrations/supabase/client';
+import { 
+  GrowthCategory, 
+  GrowthEventType, 
+  GrowthEventPayload, 
+  validateGrowthEventPrivacy 
+} from '@/core/growth/EventTaxonomy';
 
 export type ViralFunnelEvent =
   | { type: 'dial_unregistered_contact'; targetHash: string }
@@ -27,7 +36,7 @@ export const COOLDOWN_PER_DESTINATION_MS = 300000; // 5 minutes
 interface StoredTelemetryRecord {
   id: string;
   timestamp: number;
-  event: ViralFunnelEvent;
+  event: ViralFunnelEvent | GrowthEventPayload;
 }
 
 class ViralTelemetryService {
@@ -60,6 +69,45 @@ class ViralTelemetryService {
   }
 
   /**
+   * Get or generate anonymous client ID
+   */
+  public getAnonymousId(): string {
+    if (typeof window === 'undefined') return 'anon_server';
+    let id = localStorage.getItem('chatr_anon_id');
+    if (!id) {
+      id = 'anon_' + Math.random().toString(36).substring(2, 12);
+      localStorage.setItem('chatr_anon_id', id);
+    }
+    return id;
+  }
+
+  /**
+   * Get or generate session ID
+   */
+  public getSessionId(): string {
+    if (typeof window === 'undefined') return 'sess_server';
+    let id = sessionStorage.getItem('chatr_sess_id');
+    if (!id) {
+      id = 'sess_' + Math.random().toString(36).substring(2, 12);
+      sessionStorage.setItem('chatr_sess_id', id);
+    }
+    return id;
+  }
+
+  /**
+   * Get or generate a persistent user referral code (e.g. C-AB12XY)
+   */
+  public getReferralCode(): string {
+    if (typeof window === 'undefined') return 'REF-GUEST';
+    let ref = localStorage.getItem('chatr_referral_code');
+    if (!ref) {
+      ref = 'C-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      localStorage.setItem('chatr_referral_code', ref);
+    }
+    return ref;
+  }
+
+  /**
    * Derive an opaque, one-way analytics identifier from a capability token.
    * Ensures the usable room secret NEVER exists in telemetry databases.
    */
@@ -79,7 +127,82 @@ class ViralTelemetryService {
   }
 
   /**
-   * Track a verified growth funnel event.
+   * Track a typed Growth Operating System event with strict privacy verification.
+   */
+  public trackGrowth(payload: GrowthEventPayload): void {
+    // 1. Strict privacy validation
+    const privacyCheck = validateGrowthEventPrivacy(payload);
+    if (!privacyCheck.valid) {
+      console.error('[GrowthTelemetry] Event rejected by privacy guard:', privacyCheck.error);
+      return;
+    }
+
+    const anonId = this.getAnonymousId();
+    const sessId = this.getSessionId();
+    const now = Date.now();
+
+    const record: StoredTelemetryRecord = {
+      id: `gevt_${now}_${Math.random().toString(36).substring(2, 7)}`,
+      timestamp: now,
+      event: payload
+    };
+
+    this.queue.push(record);
+    this.persist();
+
+    // 2. Insert into growth_events table
+    try {
+      supabase.from('growth_events').insert({
+        event_type: payload.eventType,
+        category: payload.category,
+        client_timestamp: now,
+        anonymous_id: anonId,
+        session_id: sessId,
+        source: payload.source || 'direct',
+        medium: payload.medium || 'none',
+        campaign: payload.campaign || null,
+        landing_page: payload.landingPage || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+        referrer: typeof document !== 'undefined' ? document.referrer || null : null,
+        referral_code: payload.referralCode || localStorage.getItem('chatr_referred_by') || null,
+        country: payload.country || 'UNKNOWN',
+        device: payload.device || (typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop'),
+        browser: payload.browser || 'unknown',
+        call_id: payload.callId || null,
+        room_id: payload.roomId || null,
+        call_duration_sec: payload.callDurationSec || 0,
+        metadata: payload.metadata || {}
+      }).then(({ error }) => {
+        if (error && import.meta.env.DEV) {
+          console.debug('[GrowthTelemetry] Supabase growth_events insert error:', error.message);
+        }
+      }).catch(() => {});
+    } catch {
+      // Ignore network transport errors
+    }
+
+    // 3. Dual write to cc_logs for backwards compatibility
+    try {
+      supabase.from('cc_logs').insert({
+        agent: 'viral_telemetry',
+        action: payload.eventType,
+        level: 'info',
+        details: { ...payload, anonymousId: anonId, client_timestamp: now }
+      }).then(({ error }) => {
+        if (error && import.meta.env.DEV) {
+          console.debug('[GrowthTelemetry] Supabase cc_logs remote sync error:', error.message);
+        }
+      }).catch(() => {});
+    } catch {
+      // Ignore network transport errors
+    }
+
+    if (import.meta.env.DEV) {
+      console.log('[GrowthTelemetry]', payload.eventType, payload);
+    }
+  }
+
+  /**
+   * Track a verified growth funnel event (legacy / caller-compatible).
    */
   public track(event: ViralFunnelEvent): void {
     const record: StoredTelemetryRecord = {
@@ -91,9 +214,93 @@ class ViralTelemetryService {
     this.queue.push(record);
     this.persist();
 
-    // Log to console in development
-    if (import.meta.env.DEV) {
-      console.log('[ViralTelemetry]', event.type, event);
+    // Map legacy event to GrowthEventPayload
+    const landingPage = typeof window !== 'undefined' ? window.location.pathname : '/';
+    let category: GrowthCategory = 'viral';
+    let eventType: GrowthEventType = 'invite_dialog_opened';
+    let callDurationSec = 0;
+    let metadata: Record<string, any> = {};
+
+    switch (event.type) {
+      case 'dial_unregistered_contact':
+        category = 'call';
+        eventType = 'call_created';
+        metadata = { targetHash: event.targetHash };
+        break;
+      case 'invite_dialog_opened':
+        category = 'viral';
+        eventType = 'invite_dialog_opened';
+        metadata = { inviteId: event.inviteId };
+        break;
+      case 'invite_sent_whatsapp':
+        category = 'viral';
+        eventType = 'whatsapp_share';
+        metadata = { inviteId: event.inviteId };
+        break;
+      case 'invite_sent_sms':
+        category = 'viral';
+        eventType = 'sms_share';
+        metadata = { inviteId: event.inviteId };
+        break;
+      case 'invite_link_copied':
+        category = 'viral';
+        eventType = 'copy_link';
+        metadata = { inviteId: event.inviteId };
+        break;
+      case 'invite_landing_viewed':
+        category = 'acquisition';
+        eventType = 'referral_visit';
+        metadata = { inviteId: event.inviteId, referrer: event.referrer };
+        break;
+      case 'guest_call_joined':
+        category = 'call';
+        eventType = 'call_join_success';
+        metadata = { roomSessionId: event.roomSessionId };
+        break;
+      case 'guest_call_completed':
+        category = 'call';
+        eventType = 'call_ended';
+        callDurationSec = event.durationSec;
+        metadata = { roomSessionId: event.roomSessionId, quality: event.qualityRating };
+        break;
+      case 'post_call_cta_viewed':
+        category = 'viral';
+        eventType = 'referral_link_opened';
+        metadata = { roomSessionId: event.roomSessionId };
+        break;
+      case 'apk_download_initiated':
+      case 'apk_download_clicked':
+        category = 'pwa';
+        eventType = 'install_prompt_accepted';
+        metadata = { source: event.source };
+        break;
+      case 'apk_download_completed':
+        category = 'pwa';
+        eventType = 'install_completed';
+        metadata = { source: event.source, elapsedMs: event.elapsedMs };
+        break;
+      default:
+        category = 'viral';
+        eventType = 'invite_dialog_opened';
+    }
+
+    this.trackGrowth({
+      eventType,
+      category,
+      landingPage,
+      callDurationSec,
+      metadata
+    });
+
+    // If call duration is >= 30 seconds, emit meaningful_call activation event
+    if (event.type === 'guest_call_completed' && event.durationSec >= 30) {
+      this.trackGrowth({
+        eventType: 'meaningful_call',
+        category: 'activation',
+        landingPage,
+        callDurationSec: event.durationSec,
+        metadata: { roomSessionId: event.roomSessionId }
+      });
     }
   }
 
@@ -113,7 +320,8 @@ class ViralTelemetryService {
     // 1. Device-level rate limit: max 10 invites/hr
     const hourlyInvites = this.queue.filter(
       r => r.timestamp > oneHourAgo && 
-      (r.event.type === 'invite_sent_whatsapp' || r.event.type === 'invite_sent_sms')
+      ('type' in r.event && (r.event.type === 'invite_sent_whatsapp' || r.event.type === 'invite_sent_sms') ||
+       'eventType' in r.event && (r.event.eventType === 'whatsapp_share' || r.event.eventType === 'sms_share'))
     ).length;
 
     if (hourlyInvites >= RATE_LIMIT_MAX_INVITES_PER_HOUR) {
@@ -156,11 +364,28 @@ class ViralTelemetryService {
    * NOTE: Official K-factor is calculated server-side from deduplicated events.
    */
   public getFunnelSummary() {
-    const invitesGenerated = this.queue.filter(r => r.event.type === 'invite_dialog_opened').length;
-    const invitesSent = this.queue.filter(r => r.event.type === 'invite_sent_whatsapp' || r.event.type === 'invite_sent_sms').length;
-    const callsJoined = this.queue.filter(r => r.event.type === 'guest_call_joined').length;
-    const callsCompleted = this.queue.filter(r => r.event.type === 'guest_call_completed').length;
-    const downloads = this.queue.filter(r => r.event.type === 'apk_download_initiated').length;
+    let invitesGenerated = 0;
+    let invitesSent = 0;
+    let callsJoined = 0;
+    let callsCompleted = 0;
+    let downloads = 0;
+
+    for (const r of this.queue) {
+      const e = r.event;
+      if ('type' in e) {
+        if (e.type === 'invite_dialog_opened') invitesGenerated++;
+        else if (e.type === 'invite_sent_whatsapp' || e.type === 'invite_sent_sms') invitesSent++;
+        else if (e.type === 'guest_call_joined') callsJoined++;
+        else if (e.type === 'guest_call_completed') callsCompleted++;
+        else if (e.type === 'apk_download_initiated' || e.type === 'apk_download_clicked' || e.type === 'apk_download_completed') downloads++;
+      } else if ('eventType' in e) {
+        if (e.eventType === 'invite_dialog_opened' || e.eventType === 'invite_link_generated') invitesGenerated++;
+        else if (e.eventType === 'whatsapp_share' || e.eventType === 'sms_share') invitesSent++;
+        else if (e.eventType === 'call_join_success') callsJoined++;
+        else if (e.eventType === 'call_ended' || e.eventType === 'meaningful_call') callsCompleted++;
+        else if (e.eventType === 'install_prompt_accepted' || e.eventType === 'install_completed') downloads++;
+      }
+    }
 
     return {
       totalEvents: this.queue.length,

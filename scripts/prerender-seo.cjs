@@ -53,6 +53,30 @@ const PUBLIC_SEO_PAGES = [
     ]
   },
   {
+    path: '/call',
+    title: '📞 Join Free HD Voice & Video Call — CHATR+',
+    description: 'Click to answer directly in your browser. 100% free, end-to-end encrypted WebRTC audio and video. Zero app download, zero registration required.',
+    keywords: 'free web call, free hd voice call, browser video call, no download call, webrtc instant call, chatr call',
+    canonical: DOMAIN + '/call',
+    ogType: 'website',
+    ogImage: 'https://www.chatrchat.in/assets/chatrplus-og-banner.png',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CommunicationApplication',
+        name: 'CHATR+ Free WebRTC HD Calling',
+        applicationCategory: 'CommunicationApplication',
+        operatingSystem: 'Web, Android, iOS',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD'
+        },
+        description: 'Instant zero-download browser HD voice and video calls powered by CHATR+.'
+      }
+    ]
+  },
+  {
     path: '/blog',
     title: 'Blog -- CHATR Communication OS | Business Messaging and Growth Insights',
     description: 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs and recruitment agencies.',

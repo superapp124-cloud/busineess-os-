@@ -39,6 +39,31 @@ export const GuestCallPage: React.FC = () => {
     ViralTelemetry.deriveInviteId(roomId).then(setRoomSessionId);
   }, [roomId]);
 
+  // Capture & persist referral attribution (?r= or ?ref=)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('r') || params.get('ref');
+      if (ref) {
+        localStorage.setItem('chatr_referred_by', ref);
+        ViralTelemetry.trackGrowth({
+          eventType: 'referral_visit',
+          category: 'acquisition',
+          landingPage: window.location.pathname,
+          referralCode: ref,
+          metadata: { source: 'call_url_query' }
+        });
+      } else {
+        ViralTelemetry.trackGrowth({
+          eventType: 'call_link_visit',
+          category: 'acquisition',
+          landingPage: window.location.pathname,
+          metadata: { source: 'direct_call_link' }
+        });
+      }
+    }
+  }, []);
+
   const [guestName, setGuestName] = useState(() => {
     return localStorage.getItem('chatr-guest-name') || 'Guest-' + Math.floor(1000 + Math.random() * 9000);
   });
@@ -57,6 +82,36 @@ export const GuestCallPage: React.FC = () => {
   const [isAudioOnly, setIsAudioOnly] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+
+  // Capture PWA beforeinstallprompt on mobile browsers
+  useEffect(() => {
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', () => {
+      setIsPwaInstalled(true);
+      setDeferredPrompt(null);
+    });
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    if (choice?.outcome === 'accepted') {
+      setIsPwaInstalled(true);
+      ViralTelemetry.track({ type: 'apk_download_completed', source: 'pwa_install', elapsedMs: 0 });
+      toast.success('CHATR+ added to your Home Screen!');
+    }
+    setDeferredPrompt(null);
+  };
 
   // Refs
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -620,9 +675,9 @@ export const GuestCallPage: React.FC = () => {
           </div>
         )}
 
-        {/* POST-CALL CONVERSION SCREEN: HIGH-VELOCITY APK INSTALL FUNNEL */}
+        {/* POST-CALL CONVERSION & VIRAL HUB */}
         {callEnded && (
-          <div className="max-w-lg mx-auto w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-center">
+          <div className="max-w-lg mx-auto w-full bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-center">
             <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
               <Check className="w-8 h-8" />
             </div>
@@ -634,43 +689,97 @@ export const GuestCallPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 space-y-3 text-left">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                <Sparkles className="w-4 h-4" />
-                <span>Never Miss Another Call</span>
+            {/* VIRAL SHARE HOOK: Share Free HD Calling with 3 Friends */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-950 border border-emerald-500/40 space-y-3 text-left">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                  <Share2 className="w-4 h-4" />
+                  <span>Share Unlimited Free HD Calling</span>
+                </div>
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  100% Free
+                </span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Browser calls can only ring when your browser tab is open. Download the official <strong>CHATR+ Android App</strong> for:
+                Enjoyed the call quality? Invite your friends, family, or colleagues to make free browser calls anywhere in the world:
               </p>
-              <ul className="text-xs text-slate-300 space-y-1.5 pl-4 list-disc marker:text-emerald-400">
-                <li>Full-screen incoming calls even when phone is locked</li>
-                <li>Zero Meta tracking, zero ads, zero spam</li>
-                <li>Unblocked calling in UAE, Saudi Arabia, and worldwide</li>
-              </ul>
+              <button
+                onClick={() => {
+                  const myRef = ViralTelemetry.getReferralCode();
+                  const newRoomUrl = `https://www.chatrchat.in/call/c-${crypto.randomUUID()}?r=${myRef}`;
+                  const shareText = encodeURIComponent(`📞 I just made a free HD call on CHATR+ (no app download needed)! Call anyone for free in your browser: ${newRoomUrl}`);
+                  window.open(`https://wa.me/?text=${shareText}`, '_blank');
+                  ViralTelemetry.track({ type: 'post_call_cta_viewed', roomSessionId });
+                  ViralTelemetry.trackGrowth({
+                    eventType: 'whatsapp_share',
+                    category: 'viral',
+                    landingPage: window.location.pathname,
+                    referralCode: myRef,
+                    metadata: { source: 'post_call_hub' }
+                  });
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share on WhatsApp (1-Tap Invite)</span>
+              </button>
             </div>
 
-            <div className="space-y-3 pt-2">
+            {/* PWA 1-TAP INSTALL (IF SUPPORTED) */}
+            {deferredPrompt && !isPwaInstalled && (
+              <div className="p-4 rounded-2xl bg-slate-950 border border-cyan-500/30 space-y-2 text-left">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs">
+                    <Smartphone className="w-4 h-4" />
+                    <span>Add to Home Screen (Instant)</span>
+                  </div>
+                  <span className="text-[10px] text-cyan-300">Zero Download</span>
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  Install CHATR+ as a lightweight app to receive full-screen incoming call rings.
+                </p>
+                <button
+                  onClick={handleInstallPwa}
+                  className="w-full py-2.5 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-all"
+                >
+                  Add to Home Screen
+                </button>
+              </div>
+            )}
+
+            {/* NATIVE APK DOWNLOAD */}
+            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 text-left">
+              <div className="flex items-center gap-2 text-slate-200 font-bold text-xs">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <span>Download Official Android App</span>
+              </div>
+              <ul className="text-[11px] text-slate-400 space-y-1 pl-4 list-disc marker:text-emerald-400">
+                <li>Full-screen incoming call rings even when phone is locked</li>
+                <li>Zero background battery drain or ad trackers</li>
+                <li>Verified RSA-4096 production keystore signed</li>
+              </ul>
               <a
                 href="/download/Chatr-Plus.apk"
                 download="Chatr-Plus.apk"
                 onClick={() => ViralTelemetry.track({ type: 'apk_download_clicked', source: 'post_call' })}
-                className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-base shadow-xl shadow-emerald-500/30 transition-all"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-xs shadow-xl shadow-emerald-500/20 transition-all"
               >
-                <Download className="w-5 h-5" />
+                <Download className="w-4 h-4" />
                 <span>Download Chatr+ APK (78.2 MB)</span>
               </a>
-
-              <button
-                onClick={() => {
-                  setCallEnded(false);
-                  setHasJoined(false);
-                  setCallDuration(0);
-                }}
-                className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all"
-              >
-                Start Another Call
-              </button>
             </div>
+
+            {/* START ANOTHER CALL */}
+            <button
+              onClick={() => {
+                setCallEnded(false);
+                setHasJoined(false);
+                setCallDuration(0);
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all"
+            >
+              Start Another Free Call
+            </button>
           </div>
         )}
       </main>
