@@ -102,6 +102,7 @@ function safeLazy<T extends React.ComponentType<any>>(
 export const Index = safeLazy(() => import('@/pages/Index'));
 export const Auth = safeLazy(() => import('@/pages/Auth'));
 export const Home = safeLazy(() => import('@/pages/Home'));
+export const ChatrLandingPage = safeLazy(() => import('@/pages/ChatrLandingPage'));
 export const WorkspaceSelector = safeLazy(() => import('@/pages/auth/WorkspaceSelector').then(m => ({ default: m.WorkspaceSelector })));
 export const WorkspaceIDE = safeLazy(() => import('@/pages/desktop/WorkspaceIDE').then(m => ({ default: m.WorkspaceIDE })));
 

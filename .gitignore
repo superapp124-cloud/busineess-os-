@@ -10,10 +10,12 @@ data/worker_scratch/
 
 # Large media & model binary artifacts
 *.mp4
+!public/videos/chatr-demo.mp4
 *.m4a
 *.wav
 *.safetensors
-public/videos/
+public/videos/*
+!public/videos/chatr-demo.mp4
 public/audio/
 public/outputs/
 public/characters/
@@ -99,11 +101,11 @@ vite.config.ts.timestamp-*.mjs
 *.backup
 
 # Root-level debug screenshots and PNGs (not source assets)
-android-*.png
-chatr-*.png
-bench-*.png
-cdp-*.png
-chattrr-*.png
+/android-*.png
+/chatr-*.png
+/bench-*.png
+/cdp-*.png
+/chattrr-*.png
 
 # Root-level scratch/debug scripts
 scratch_log.py
@@ -160,3 +162,16 @@ vite.out.log
 vite.err.log
 search-server.out.log
 search-server.err.log
+
+# Python cache & compiled bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Service accounts & credentials
+*-service-account*.json
+*credentials*.json
+
+# Scratch directory
+scratch/
+

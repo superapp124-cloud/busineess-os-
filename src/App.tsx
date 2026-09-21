@@ -255,34 +255,53 @@ const isWebSubdomain = () => {
 
 // Component to handle default startup redirect
 const SubdomainRedirect = () => {
- const navigate = useNavigate();
- const platform = usePlatform();
- const [redirected, setRedirected] = React.useState(false);
+  const navigate = useNavigate();
+  const platform = usePlatform();
+  const [redirected, setRedirected] = React.useState(false);
 
- React.useEffect(() => {
- // Mobile platform goes to mobile home
- if (platform === "mobile") {
- navigate('/home', { replace: true });
- setRedirected(true);
- return;
- }
+  React.useEffect(() => {
+    // Mobile platform goes to mobile home
+    if (platform === "mobile") {
+      navigate('/home', { replace: true });
+      setRedirected(true);
+      return;
+    }
 
- // Seller portal check
- const hostname = window.location.hostname;
- if (hostname.startsWith('seller.') && window.location.pathname === '/') {
- navigate('/seller/portal', { replace: true });
- setRedirected(true);
- return;
- }
+    // Seller portal check
+    const hostname = window.location.hostname;
+    if (hostname.startsWith('seller.') && window.location.pathname === '/') {
+      navigate('/seller/portal', { replace: true });
+      setRedirected(true);
+      return;
+    }
 
- // Default for both web and desktop (Electron) platforms: /desktop/home
- navigate('/desktop/home', { replace: true });
- setRedirected(true);
- }, [navigate, platform]);
+    // Default for desktop (Electron) platform: /desktop/home
+    if (platform === "desktop") {
+      navigate('/desktop/home', { replace: true });
+      setRedirected(true);
+      return;
+    }
 
- if (!redirected) return <PageLoader message="Loading CHATR Business OS..." />;
+    // Web platform (chatrchat.in):
+    // Check if visitor has an active authenticated session
+    import('@/integrations/supabase/client').then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          navigate('/desktop/home', { replace: true });
+        }
+        setRedirected(true);
+      }).catch(() => {
+        setRedirected(true);
+      });
+    }).catch(() => {
+      setRedirected(true);
+    });
+  }, [navigate, platform]);
 
- return <Navigate to="/desktop/home" replace />;
+  if (!redirected) return <PageLoader message="Loading CHATR Intent OS..." />;
+
+  // Web unauthenticated visitor: render ChatrLandingPage directly at /
+  return <LazyRoute component={LazyPages.ChatrLandingPage} />;
 };
 
 // Local Error Boundary to catch stale Vercel deployment chunk errors during route navigation
@@ -828,6 +847,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/workspace-selector" element={<LazyRoute component={LazyPages.WorkspaceSelector} />} />
  <Route path="/launcher" element={<ProtectedLazyRoute component={LazyPages.Launcher} />} />
  <Route path="/auth" element={<LazyRoute component={LazyPages.Auth} />} />
+ <Route path="/landing" element={<LazyRoute component={LazyPages.ChatrLandingPage} />} />
   <Route path="/download" element={<LazyRoute component={LazyPages.Download} />} />
   <Route path="/download/android" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
   <Route path="/download/samsung" element={<LazyRoute component={LazyPages.AndroidDownload} />} />
