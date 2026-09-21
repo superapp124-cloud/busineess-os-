@@ -1,0 +1,75 @@
+{
+  "capability": "reasoning",
+  "canonical_definition": "Structured logical deduction, algorithmic step-by-step resolution, DAG execution order synthesis, root-cause counterfactual analysis, and formal policy constraint satisfaction within the CHATR Intent OS ecosystem.",
+  "risk_tier": "TIER 1",
+  "in_scope": [
+    "Deductive premise validation and contradiction resolution",
+    "Execution Graph topological sort and dependency resolution",
+    "Counterfactual root-cause failure analysis",
+    "Formal constraint satisfaction against policy invariants",
+    "Instruction-following consistency across complex multi-turn logic"
+  ],
+  "out_of_scope": [
+    "Mathematical theorem solving beyond software systems",
+    "Unconstrained open-world philosophical debates",
+    "Real-time graph dispatch (owned by CHATR Kernel Scheduler)",
+    "Direct memory write mutations"
+  ],
+  "weight_appropriate": "Algorithmic thinking patterns, rigorous premise evaluation, structured step-by-step breakdown, and disciplined uncertainty expression when information is incomplete.",
+  "runtime_dependencies": [
+    "CHATR Execution Planner",
+    "EventBus scheduler",
+    "Topological sorter"
+  ],
+  "rag_dependencies": [
+    "Policy invariant rulebooks",
+    "Execution trace schema"
+  ],
+  "tool_dependencies": [
+    "GraphCycleDetector",
+    "ConstraintEvaluator"
+  ],
+  "safety_boundaries": [
+    "Must acknowledge ambiguity and incomplete premises explicitly",
+    "Must never manufacture synthetic facts to force logical closure",
+    "Must state underlying assumptions when reasoning under uncertainty"
+  ],
+  "required_eval_categories": [
+    "multi_step_deduction",
+    "dependency_cycle_detection",
+    "contradiction_handling",
+    "uncertainty_calibration",
+    "instruction_consistency"
+  ],
+  "forbidden_claims": [
+    "Claiming formal mathematical certainty for empirical estimates",
+    "Claiming direct execution authority over the Kernel scheduler",
+    "Claiming knowledge of private corporate state not provided in context"
+  ],
+  "escalation_rules": [
+    "If contradiction between premises cannot be reconciled, halt and request user clarification",
+    "If circular dependency detected in Execution Graph, escalate to workflow designer"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/00-Foundations/DECISION_THEORY.md",
+      "sha256": "a5132ab5527336ea665c7faf0698dbe60b772fa2b03c2bfe4ef0217def79ea63"
+    },
+    {
+      "path": "docs/00-Foundations/FIRST_PRINCIPLES.md",
+      "sha256": "2d4970298a4c10cce256ec14ba5c80a746d794cd93c5f00e109b048d016e0e08"
+    },
+    {
+      "path": "docs/00-Foundations/MATHEMATICAL_FOUNDATIONS.md",
+      "sha256": "83c72d0079d29d6a1eba5e5dded9bb84b08299e76b3c44f919d7859d6bed5f1a"
+    },
+    {
+      "path": "docs/03-CompanyIntelligence/DecisionSystem.md",
+      "sha256": "c58158ff97bb2c2d9b5ff0621eaeacc897d74bec030eb5e51b67c61ef418df49"
+    },
+    {
+      "path": "docs/intent-os/AUTONOMOUS_EXECUTION_MODEL.md",
+      "sha256": "b981f2df3dedd59516d9e8afb149294090a72e0938c58f8a70f69f53c9582662"
+    }
+  ]
+}

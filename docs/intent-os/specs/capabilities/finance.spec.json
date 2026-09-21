@@ -1,0 +1,70 @@
+{
+  "capability": "finance",
+  "canonical_definition": "Corporate FP&A analysis, double-entry bookkeeping validation, cash flow modelling, invoice verification, tax compliance frameworks (GST/TDS), and financial policy boundary enforcement in CHATR.",
+  "risk_tier": "TIER 3",
+  "in_scope": [
+    "Double-entry bookkeeping consistency checks (Debits = Credits)",
+    "Working capital and cash burn scenario modeling",
+    "Invoice schema verification and idempotency validation",
+    "Indian GST / TDS and corporate statutory compliance frameworks",
+    "Policy invariant boundary enforcement (e.g. ₹50,000 threshold for CFO sign-off)"
+  ],
+  "out_of_scope": [
+    "Direct bank fund transfers or payment execution (owned by PAY/TRANSFER Kernel capability)",
+    "Personal financial planning, investment stock picks, or crypto trading advice",
+    "Autonomous journal entry posting without dual-control ledger verification",
+    "Tax evasion structuring or regulatory loophole exploitation"
+  ],
+  "weight_appropriate": "Accounting standards (GAAP, IndAS), double-entry debit/credit mechanics, financial statement ratios, arithmetic reasoning consistency, and strict compliance refusal phrasing.",
+  "runtime_dependencies": [
+    "CHATR Finance Policy Engine",
+    "Razorpay/Banking Bridge",
+    "Ledger Audit Trail Store"
+  ],
+  "rag_dependencies": [
+    "Chart of Accounts",
+    "Historical general ledger extracts",
+    "Tax schedule regulations"
+  ],
+  "tool_dependencies": [
+    "IdempotencyKeyValidator",
+    "DoubleEntryBalanceChecker",
+    "CFOApprovalGateTrigger"
+  ],
+  "safety_boundaries": [
+    "Mandatory refusal of personalized stock/crypto investment advice",
+    "Zero tolerance for guaranteed financial returns or fabricated yields",
+    "Strict adherence to ₹50,000 threshold requiring human CFO sign-off",
+    "Must declare assumptions and sensitivity ranges on all financial forecasts"
+  ],
+  "required_eval_categories": [
+    "double_entry_validation",
+    "ratio_arithmetic_consistency",
+    "tax_compliance_framing",
+    "high_risk_advice_refusal",
+    "approval_gate_enforcement"
+  ],
+  "forbidden_claims": [
+    "Guaranteeing investment returns, stock price targets, or arbitrage yields",
+    "Claiming direct authority to disburse company funds without banking bridge authorization",
+    "Fabricating live company cash balance without querying General Ledger API"
+  ],
+  "escalation_rules": [
+    "Any transaction > ₹50,000 must trigger immediate escalation to CFO approval gate",
+    "Any unreconciled journal variance > ₹0 must halt ledger period close and escalate to Lead Controller"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/finance/ARCHITECTURE_AUDIT.md",
+      "sha256": "0a4871e491de41e465679ffd87e15065167ec70e66a8926e243e09d4d240561b"
+    },
+    {
+      "path": "docs/01-CompanyModel/DigitalTwin.md",
+      "sha256": "284bbdc286b4c978361f0d9c8fe30792ef2698b7e11be66e60814622eda99750"
+    },
+    {
+      "path": "docs/audit/07_INDUSTRY_GAP_ANALYSIS.md",
+      "sha256": "435294f1b004ed7aa4fe80ae9eb13f52f1d9eee0331fdd4152e554116c434d93"
+    }
+  ]
+}

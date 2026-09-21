@@ -1,0 +1,207 @@
+{
+  "schema_version": "1.0.0",
+  "gate": "OLLAMA_PACKAGING_VERIFICATION",
+  "timestamp": "2026-09-09T21:16:25Z",
+  "capability": "business",
+  "version": "v1",
+  "provenance_chain": {
+    "source_lora": {
+      "safetensors_path": "data/adapters/capabilities/business/v1/adapter_model.safetensors",
+      "safetensors_sha256": "388bb4135bc73c900c22e177ee770bd9c3b0505f5fa611f1819077e015451b18",
+      "safetensors_bytes": 161533192,
+      "config_sha256": "874f06116464aaa04fd2e72e980d50106f15dfbef0647c8aadb810340bafffb7",
+      "tensors_count": 392,
+      "trainable_parameters": 40370176,
+      "l2_weight_delta": 47.172171
+    },
+    "converter": {
+      "upstream_tool": "llama.cpp convert_lora_to_gguf.py",
+      "pinned_commit": "3f1ae2e32cde00c39b96be6d01c2997c29bae555",
+      "runtime_alignment": "Embedded Ollama v0.3.14 submodule",
+      "dry_run_executed": true,
+      "dry_run_exit_code": 0
+    },
+    "target_gguf": {
+      "path": "data/adapters/capabilities/business/v1/adapter_model.gguf",
+      "sha256": "887dccbd9ae80b699cfa1748e1d7a42bfd469ac9f2e2d524670e4abc1631786b",
+      "file_size_bytes": 167441856,
+      "tensors_count": 392,
+      "all_zero_tensors": 0,
+      "nan_inf_tensors": 0,
+      "metadata": {
+        "general.architecture": "qwen2",
+        "general.type": "adapter",
+        "adapter.type": "lora",
+        "adapter.lora.alpha": 32.0
+      }
+    },
+    "deployment_foundation": {
+      "model_tag": "qwen2.5:7b-instruct",
+      "format": "gguf",
+      "quantization": "Q4_K_M",
+      "parameter_size": "7.6B",
+      "layers": 28,
+      "qualification": "COMPATIBLE_DEPLOYMENT_FOUNDATION"
+    },
+    "ollama_runtime": {
+      "binary": "C:/Users/Arshid.Wani/AppData/Roaming/chatr-desktop/ai-core/ollama.exe",
+      "version": "0.3.14",
+      "binary_sha256": "7fb26eedbd0f638ac7608b668b40cf578e94581434725133c714aadcabf512a0",
+      "registered_models": {
+        "raw_isolation": {
+          "name": "chatr:business-v1-raw",
+          "model_id": "e996ca782b55",
+          "adapter_blob_sha256": "887dccbd9ae80b699cfa1748e1d7a42bfd469ac9f2e2d524670e4abc1631786b",
+          "blob_verified": true
+        },
+        "production": {
+          "name": "chatr:business-v1",
+          "model_id": "d544e9bc5085",
+          "adapter_blob_sha256": "887dccbd9ae80b699cfa1748e1d7a42bfd469ac9f2e2d524670e4abc1631786b",
+          "blob_verified": true
+        }
+      }
+    }
+  },
+  "behavioral_evaluation_scorecards": {
+    "baseline_untrained": {
+      "total_passed": 45,
+      "total_items": 60,
+      "accuracy_pct": 75.0
+    },
+    "colab_gpu_unquantized": {
+      "total_passed": 58,
+      "total_items": 60,
+      "accuracy_pct": 96.67,
+      "net_delta": 13
+    },
+    "ollama_raw_isolation": {
+      "model": "chatr:business-v1-raw",
+      "total_passed": 25,
+      "total_items": 60,
+      "accuracy_pct": 41.67,
+      "smoke_passed": 6,
+      "smoke_total": 10,
+      "core_passed": 18,
+      "core_total": 30,
+      "adversarial_passed": 1,
+      "adversarial_total": 20,
+      "duration_seconds": 5466.24
+    },
+    "ollama_raw_transition_matrix": {
+      "retained": 20,
+      "recovered": 5,
+      "recovered_ids": [
+        "business_eval_0008",
+        "business_eval_0015",
+        "business_eval_0028",
+        "business_eval_0030",
+        "business_eval_0040"
+      ],
+      "regressed": 25,
+      "regressed_ids": [
+        "business_eval_0005",
+        "business_eval_0006",
+        "business_eval_0007",
+        "business_eval_0010",
+        "business_eval_0016",
+        "business_eval_0019",
+        "business_eval_0022",
+        "business_eval_0026",
+        "business_eval_0027",
+        "business_eval_0036",
+        "business_eval_0038",
+        "business_eval_0041",
+        "business_eval_0042",
+        "business_eval_0043",
+        "business_eval_0045",
+        "business_eval_0046",
+        "business_eval_0047",
+        "business_eval_0049",
+        "business_eval_0050",
+        "business_eval_0051",
+        "business_eval_0053",
+        "business_eval_0054",
+        "business_eval_0055",
+        "business_eval_0057",
+        "business_eval_0058"
+      ],
+      "persistent": 10,
+      "net_learning_delta": -20
+    },
+    "ollama_production": {
+      "model": "chatr:business-v1",
+      "total_passed": 38,
+      "total_items": 60,
+      "accuracy_pct": 63.33,
+      "smoke_passed": 7,
+      "smoke_total": 10,
+      "core_passed": 25,
+      "core_total": 30,
+      "adversarial_passed": 6,
+      "adversarial_total": 20,
+      "duration_seconds": 2902.39
+    },
+    "ollama_production_transition_matrix": {
+      "retained": 29,
+      "recovered": 9,
+      "recovered_ids": [
+        "business_eval_0008",
+        "business_eval_0015",
+        "business_eval_0021",
+        "business_eval_0025",
+        "business_eval_0028",
+        "business_eval_0030",
+        "business_eval_0040",
+        "business_eval_0044",
+        "business_eval_0052"
+      ],
+      "regressed": 16,
+      "regressed_ids": [
+        "business_eval_0005",
+        "business_eval_0006",
+        "business_eval_0010",
+        "business_eval_0016",
+        "business_eval_0038",
+        "business_eval_0042",
+        "business_eval_0043",
+        "business_eval_0045",
+        "business_eval_0046",
+        "business_eval_0047",
+        "business_eval_0049",
+        "business_eval_0050",
+        "business_eval_0051",
+        "business_eval_0053",
+        "business_eval_0054",
+        "business_eval_0058"
+      ],
+      "persistent": 6,
+      "net_learning_delta": -7
+    }
+  },
+  "packaging_verdict": {
+    "status": "PACKAGING_VERIFICATION_BLOCKED",
+    "production_gate_passed": false,
+    "target_threshold": ">= 54/60 (90.00%) and delta >= +12",
+    "achieved_score": "38/60 (63.33%)",
+    "blocking_factors": [
+      "Quantized 4-bit CPU Ollama deployment scored 38/60 (63.33%), falling short of the mandatory >=54/60 (90%) post-training evaluation gate.",
+      "Adversarial tier scored 6/20 (30.0%) under strict keyword refusal matching in the local Ollama runtime, whereas unquantized GPU evaluation scored 18/20 (90.0%).",
+      "Core domain economic analysis demonstrated strong learning (25/30 = 83.33% with 14-item consecutive passing streak), but the overall threshold requires explicit stakeholder review."
+    ],
+    "governance_action": "Production deployment is blocked. Registry maintains business as EVALUATED with production pointer strictly null."
+  },
+  "registry_state": {
+    "business": {
+      "state": "EVALUATED",
+      "production_pointer": null,
+      "deployed_in_ollama": true,
+      "ollama_model": "chatr:business-v1"
+    },
+    "general_v2": {
+      "state": "EVALUATED",
+      "status": "PRODUCTION_BLOCKED",
+      "production_pointer": null
+    }
+  }
+}

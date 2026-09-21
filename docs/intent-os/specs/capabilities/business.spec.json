@@ -1,0 +1,76 @@
+{
+  "capability": "business",
+  "canonical_definition": "Enterprise strategy, B2B SaaS unit economics, sales pipeline analysis, contract negotiation framing, vendor evaluation, and operational cycle-time optimization on the CHATR Intent OS platform.",
+  "risk_tier": "TIER 1",
+  "in_scope": [
+    "B2B SaaS metric formulation (ARR, CAC, LTV, NDR, Magic Number, Payback Period)",
+    "Sales pipeline stage analysis and deal velocity tracking",
+    "Vendor assessment matrices and RFP evaluation rubrics",
+    "Executive briefing synthesis from operational telemetry",
+    "80% interface reduction and operational cycle-time analysis"
+  ],
+  "out_of_scope": [
+    "Fiduciary investment advice or securities underwriting",
+    "Binding corporate contract execution (requires human legal sign-off)",
+    "Direct ledger modifications (owned by Finance subsystem)",
+    "Live CRM record mutations without runtime approvals"
+  ],
+  "weight_appropriate": "Enterprise business domain terminology, structured strategic analysis frameworks, disciplined assumption framing, and professional executive briefing tone.",
+  "runtime_dependencies": [
+    "Organization Studio",
+    "Digital Twin Layer 14",
+    "Executive Narration Engine"
+  ],
+  "rag_dependencies": [
+    "Company historical ARR/pipeline reports",
+    "Vendor contract templates",
+    "Corporate Org Graph"
+  ],
+  "tool_dependencies": [
+    "PipelineTelemetryReader",
+    "UnitEconomicsCalculator"
+  ],
+  "safety_boundaries": [
+    "Projections must always state underlying growth, churn, and retention assumptions",
+    "Never assert market revenue or valuation as an unverified absolute",
+    "All enterprise decisions above delegation thresholds must flag human approval requirement"
+  ],
+  "required_eval_categories": [
+    "unit_economics_analysis",
+    "pipeline_velocity",
+    "vendor_rfp_evaluation",
+    "executive_briefing_synthesis",
+    "assumption_clarity"
+  ],
+  "forbidden_claims": [
+    "Claiming guaranteed revenue multiples or investment returns",
+    "Claiming authority to legally execute contracts on behalf of enterprise",
+    "Claiming real-time knowledge of competitor internal financials"
+  ],
+  "escalation_rules": [
+    "Commercial contract approvals must escalate to VP/Legal sign-off",
+    "Budget allocations above authorized tier must escalate to Board/Executive Committee"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/CHATR_COMPANY_BUILDING_BOARD_WHITEPAPER.md",
+      "sha256": "845ba51e535641bb5cc16d37a1d8d9316f58c310a0ed1255f526bae395577648"
+    },
+    {
+      "path": "docs/CHATR_PLATFORM_VISION.md",
+      "sha256": "9b501f8a1030350c4f0a63cece73ea77bc11ac5c4d339bc401528f4302c5a53c"
+    },
+    {
+      "path": "docs/CHATR_PRODUCT_DEFENSE_20M_VC.md",
+      "sha256": "dfda7ff9b9e0c9f3b2b48557d1d691ea800c06dfa276e5bfd7026623b337a15c"
+    },
+    {
+      "path": "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+      "sha256": "3e0ed2bc44fcf86c5e7b2b494d976adaaa4b98721e6a335ac44707d7cf010b7e"
+    },
+    {
+      "path": "docs/01-CompanyModel/DigitalTwin.md",
+      "sha256": "284bbdc286b4c978361f0d9c8fe30792ef2698b7e11be66e60814622eda99750"
+    }
+  ]
+}

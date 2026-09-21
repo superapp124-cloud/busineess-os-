@@ -25,7 +25,8 @@ from chatr_policy_engine import (
     TrainingJobPlan, ChatrPolicyEngine, PolicyResult
 )
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = REPO_ROOT / "data"
 ADAPTERS_DIR = DATA_DIR / "adapters" / "capabilities"
 DEFAULT_WORKER_URL = "http://localhost:8000"
 
@@ -55,7 +56,7 @@ model: {plan.base_model}
 
 training:
   method: {plan.method}
-  stream_layers: true
+  precision: fp16    # REQUIRED on T4 (compute cap 7.5) — bf16 breaks gradient scaler
   quantization: 4bit
   batch_size: {plan.batch_size}
   gradient_accumulation_steps: {plan.gradient_accumulation_steps}
@@ -72,14 +73,17 @@ adapter:
 
 dataset:
   path: /content/chatr_datasets/{plan.dataset_id}.jsonl
-  format: chat
+  format: chatml
 
 eval:
   ship: true
   task_eval: /content/chatr_datasets/{plan.capability}_eval.jsonl
 
 output:
-  dir: /content/adapters/{plan.capability}_{plan.method}_v1
+  dir: /content/adapters/{plan.capability}_{plan.method}_v2
+  merge: true
+  export_gguf: true
+  gguf_quant: q4_k_m
   push_to_hub: false
 """
 
@@ -130,6 +134,8 @@ class SoupJobController:
         print("Step 2/5: Locating dataset...")
         dataset_path = DATA_DIR / plan.capability / f"{plan.dataset_id}.jsonl"
         eval_path = DATA_DIR / plan.capability / "eval.jsonl"
+        if not eval_path.exists():
+            eval_path = REPO_ROOT / "datasets" / "eval" / f"{plan.capability}_eval.jsonl"
 
         if not dataset_path.exists():
             return {"success": False, "error": f"Dataset not found: {dataset_path}. Build it first."}
@@ -226,22 +232,66 @@ class SoupJobController:
         except Exception as e:
             return {"verdict": "UNKNOWN", "error": str(e)}
 
-    def download_adapter(self, job_id: str, capability: str, version: str = "v1") -> Optional[str]:
-        """Download trained adapter to local registry."""
+    def download_adapter(self, job_id: str, capability: str, version: str = "v2") -> Optional[str]:
+        """Download trained adapter to local registry with size verification."""
         out_dir = ADAPTERS_DIR / capability / version
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / "adapter_model.safetensors"
 
         try:
-            r = requests.get(f"{self.worker_url}/download-adapter/{job_id}", stream=True, timeout=60)
+            r = requests.get(f"{self.worker_url}/download-adapter/{job_id}", stream=True, timeout=120)
             r.raise_for_status()
             with open(out_path, "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
-            print(f"  ✅ Adapter downloaded: {out_path}")
+            size_bytes = out_path.stat().st_size
+            if size_bytes < 1_000_000:
+                print(f"  ❌ Adapter too small ({size_bytes} bytes). Rejecting simulated/fake adapter.")
+                return None
+            print(f"  ✅ Real adapter downloaded: {out_path} ({size_bytes / (1024*1024):.1f} MB)")
             return str(out_path)
         except Exception as e:
             print(f"  ❌ Download failed: {e}")
+            return None
+
+    def download_model(self, job_id: str, capability: str, version: str = "v2") -> Optional[str]:
+        """Download merged GGUF model artifact for direct Ollama deployment."""
+        out_dir = DATA_DIR / "models"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"chatr_{capability}_{version}.gguf"
+
+        try:
+            print(f"  Downloading merged GGUF model from {self.worker_url}/download-model/{job_id}...")
+            r = requests.get(f"{self.worker_url}/download-model/{job_id}", stream=True, timeout=600)
+            r.raise_for_status()
+            with open(out_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=1024 * 1024):
+                    f.write(chunk)
+            size_mb = out_path.stat().st_size / (1024 * 1024)
+            if size_mb < 100:
+                print(f"  ❌ GGUF too small ({size_mb:.1f} MB). Expected >= 100 MB real model.")
+                return None
+            print(f"  ✅ Real GGUF downloaded: {out_path} ({size_mb:.1f} MB)")
+            return str(out_path)
+        except Exception as e:
+            print(f"  ❌ GGUF download failed: {e}")
+            return None
+
+    def download_golden_path_evidence(self, job_id: str) -> Optional[dict]:
+        """Download golden path evidence JSON from worker."""
+        try:
+            r = requests.get(f"{self.worker_url}/golden-path-evidence/{job_id}", timeout=30)
+            if r.status_code == 200:
+                evidence = r.json()
+                run_dir = REPO_ROOT / "runs" / job_id
+                run_dir.mkdir(parents=True, exist_ok=True)
+                evidence_file = run_dir / "golden_path_evidence.json"
+                evidence_file.write_text(json.dumps(evidence, indent=2), encoding="utf-8")
+                print(f"  ✅ [EVIDENCE] Golden-path evidence saved: {evidence_file}")
+                return evidence
+            return None
+        except Exception as e:
+            print(f"  ⚠️ Could not fetch golden-path evidence: {e}")
             return None
 
 
@@ -252,7 +302,7 @@ class SoupJobController:
 TRAINABLE_CAPABILITIES = sorted([
     "general", "coding", "reasoning", "business", "finance",
     "seo", "marketing", "creator", "video", "research",
-    "support", "agent", "meera"
+    "support", "agent", "meera", "talentxcel"
     # rag is excluded — knowledge system, not a trainable adapter
 ])
 
@@ -345,22 +395,62 @@ if __name__ == "__main__":
             print("Soup emitted DONT_SHIP. Not downloading adapter. Review evaluation scores.")
             sys.exit(1)
 
-        # Download adapter
-        print(f"\nDownloading adapter for {args.capability}...")
-        adapter_path = controller.download_adapter(job_id, args.capability, version="v1")
+        # Download artifacts: both adapter and merged GGUF model
+        print(f"\nDownloading merged GGUF model for {args.capability}...")
+        model_path = controller.download_model(job_id, args.capability, version="v2")
 
-        if adapter_path:
-            print(f"\nPhase 0 Round-Trip Step Complete for '{args.capability}'")
-            print(f"Adapter saved to: {adapter_path}")
-            print(f"\nNext — load into Ollama and run quality comparison:")
-            print(f"  python scripts\\ai_training\\ollama_adapter_loader.py \\")
+        print(f"\nDownloading adapter for {args.capability}...")
+        adapter_path = controller.download_adapter(job_id, args.capability, version="v2")
+
+        print(f"\nDownloading Golden-Path Evidence for {args.capability}...")
+        evidence = controller.download_golden_path_evidence(job_id)
+
+        if model_path:
+            # Compute artifact hashes for provenance recording
+            run_dir = REPO_ROOT / "runs" / job_id
+            run_dir.mkdir(parents=True, exist_ok=True)
+            model_hash = hashlib.sha256(Path(model_path).read_bytes()).hexdigest()
+            adapter_hash = hashlib.sha256(Path(adapter_path).read_bytes()).hexdigest() if adapter_path else None
+            provenance = verdict.get("provenance", {
+                "training_engine": "soup",
+                "execution_path": "soup-cli"
+            })
+
+            run_manifest = {
+                "job_id": job_id,
+                "capability": args.capability,
+                "version": "v2",
+                "base_model": args.base_model,
+                "dataset_id": args.dataset_id,
+                "provenance": provenance,
+                "adapter_path": adapter_path,
+                "adapter_sha256": adapter_hash,
+                "model_path": model_path,
+                "model_sha256": model_hash,
+                "has_golden_path_evidence": evidence is not None,
+                "evaluation": verdict.get("evidence", {}),
+                "recorded_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+            }
+            manifest_file = run_dir / "run_manifest.json"
+            manifest_file.write_text(json.dumps(run_manifest, indent=2), encoding="utf-8")
+            print(f"\n[PROVENANCE] Run manifest saved: {manifest_file}")
+            print(f"  Training Engine : {provenance.get('training_engine')} ({provenance.get('execution_path')})")
+            if "fallback_reason" in provenance:
+                print(f"  Fallback Reason : {provenance['fallback_reason']}")
+
+            print(f"\nTraining & Artifact Export Complete for '{args.capability}'")
+            print(f"GGUF Model saved to: {model_path} (SHA-256: {model_hash[:16]}...)")
+            if adapter_path:
+                print(f"Adapter saved to: {adapter_path} (SHA-256: {adapter_hash[:16]}...)")
+            print(f"\nNext — Register in Ollama as chatr:{args.capability}-v2:")
+            print(f"  python scripts/ai_training/ollama_adapter_loader.py \\")
             print(f"    --capability {args.capability} \\")
-            print(f"    --adapter-path \"{adapter_path}\" \\")
-            print(f"    --version v1")
-            print(f"\nThen run baseline vs adapter evaluation:")
-            print(f"  python scripts\\ai_training\\chatr_evaluation_gate.py \\")
-            print(f"    --capability {args.capability} \\")
-            print(f"    --compare-baseline")
+            print(f"    --model-path \"{model_path}\" \\")
+            print(f"    --version v2")
+            print(f"\nThen run Golden-Path post-training verification & registry promotion:")
+            ev_arg = f' --verify-evidence "runs/{job_id}/golden_path_evidence.json"' if evidence else ""
+            print(f"  python scripts/ai_training/verify_chatr_model.py \\")
+            print(f"    --model chatr:{args.capability}-v2{ev_arg} --update-registry")
         else:
-            print("Adapter download failed.")
+            print("GGUF model download failed. Check worker logs.")
             sys.exit(1)

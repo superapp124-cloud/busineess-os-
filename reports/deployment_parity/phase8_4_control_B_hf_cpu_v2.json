@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-09-15T11:32:24Z",
+  "git_commit": "4530c7620a628c8929dd158be2db39c51c4ad118",
+  "experiment_identifier": "PHASE_8_4_CONTROL_B_HF_CPU_V2",
+  "control_leg": "Control B: HF Transformers + PEFT (Host x86_64 CPU)",
+  "execution_status": "NOT_EXECUTED_BLOCKED",
+  "forensic_verdict": "FAIL_CLOSED_NO_INFERENCE (PHASE 8.4 RUNTIME ATTRIBUTION = UNRESOLVED)",
+  "blocking_details": {
+    "primary_reason": "Base model weights not locally cached in HF format and network shard download throttled/stalled.",
+    "command_attempted": "python scripts/ai_training/run_phase8_4_hf_controls.py --device cpu",
+    "model_identifier": "Qwen/Qwen2.5-7B-Instruct",
+    "pinned_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "required_disk_footprint": "15.2 GB (4 safetensors shards: 3.76 GB each)",
+    "measured_network_throughput": "0.31 MB/s (10.0 MB downloaded in 32.55s)",
+    "projected_download_duration": "49,032 seconds (~13.62 hours)",
+    "download_status": "Initiated via huggingface_hub; stalled at 0.029 MB transferred over 150s before cancellation to prevent process lock.",
+    "stack_error_message": "TimeoutError / NetworkThroughputThrottled: Physical bandwidth 0.31 MB/s insufficient for 15.2 GB transfer within operational session window. Process terminated to avoid indefinite stall.",
+    "memory_safety_constraint": {
+      "host_physical_ram_gb": 31.74,
+      "host_available_ram_gb": 17.01,
+      "required_model_ram_bf16_gb": 15.2,
+      "required_model_ram_fp32_gb": 30.4,
+      "risk_assessment": "Instantiating 7.6B parameters on CPU requires 15.2 GB in BF16, leaving <1.8 GB headroom for OS, PyTorch runtime, and KV cache, presenting an imminent host OOM/swapping thrash risk."
+    }
+  },
+  "attempted_remediations": [
+    {
+      "remediation": "Recursive local filesystem search for cached Qwen2.5-7B shards",
+      "result": "Completed across C:\\Users\\Arshid.Wani (.cache, AppData, Downloads, chatrchat, .ollama). Found GGUF blobs and adapter safetensors, but zero unquantized HF safetensors base shards.",
+      "status": "INSUFFICIENT"
+    },
+    {
+      "remediation": "Direct HTTP byte-range throughput testing",
+      "result": "Measured 0.31 MB/s sustained throughput from huggingface.co CDN. Confirmed 15.2 GB transfer requires ~13.6 hours.",
+      "status": "INSUFFICIENT"
+    },
+    {
+      "remediation": "GGUF or reduced-precision substitution in PyTorch",
+      "result": "Strictly rejected per Section 4 and Section 14 invariants ('DO NOT silently substitute Q4/Q8 GGUF for HF CPU Control B', 'DO NOT quantize HF CPU model merely to make it fit').",
+      "status": "FORBIDDEN_BY_CONTRACT"
+    }
+  ],
+  "host_environment": {
+    "os": "Windows 11 (x86_64, NT 10.0.26100)",
+    "python_version": "3.14.0",
+    "torch_version": "2.14.0+cpu",
+    "transformers_version": "5.17.0",
+    "cuda_available": false,
+    "total_ram_gb": 31.74,
+    "available_ram_gb": 17.01
+  },
+  "model_and_adapter_metadata": {
+    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "adapter_sha256": "388bb4135bc73c900c22e177ee770bd9c3b0505f5fa611f1819077e015451b18",
+    "adapter_tensors": 392,
+    "system_prompt_sha256": "2f5fe2342695a167f43119cff85282be051b1778e25c23375b652046e0be2805",
+    "eval_dataset_sha256": "57bccef6cde4c93792e41d27cb452f515c2ba9317a8c93b33693cc1aac7b610a"
+  },
+  "scorecard": {
+    "total_items": 60,
+    "harness_benchmark_score": null,
+    "harness_benchmark_pct": null,
+    "semantic_score": null,
+    "semantic_pct": null,
+    "execution_status": "BLOCKED"
+  },
+  "item_results": [],
+  "fail_closed_contract": {
+    "fabricated_scores": false,
+    "inferred_scores": false,
+    "production_gate_impact": "PRODUCTION_REMAINS_BLOCKED"
+  }
+}

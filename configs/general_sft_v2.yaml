@@ -1,0 +1,53 @@
+# configs/general_sft_v2.yaml
+# CHATR General Capability — Post-Training SFT Configuration
+# Validated for NVIDIA T4 GPU (16 GB VRAM) — fp16 mode
+
+model:
+  name: Qwen/Qwen2.5-7B-Instruct
+  trust_remote_code: true
+
+data:
+  train: data/general/general_sft_v2.jsonl
+  eval: datasets/eval/general_eval.jsonl
+  format: chatml
+  max_seq_length: 2048
+
+training:
+  method: sft
+  epochs: 3
+  batch_size: 2
+  gradient_accumulation_steps: 8   # Effective batch size = 16
+  learning_rate: 2.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  precision: fp16                  # REQUIRED on T4 (compute cap 7.5) — bf16 breaks gradient scaler
+  seed: 1234
+  logging_steps: 10
+  save_steps: 50
+  eval_steps: 50
+
+peft:
+  method: lora
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+    - k_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: float16   # T4 float16 compute
+
+output:
+  dir: runs/chatr_general_v2
+  merge: true
+  export_gguf: true
+  gguf_quant: q4_k_m
+  gguf_output_path: data/models/chatr_general_v2.gguf

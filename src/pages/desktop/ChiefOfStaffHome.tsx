@@ -229,19 +229,19 @@ export const ChiefOfStaffHome: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col h-full bg-[#080810] text-white overflow-hidden">
+    <div className="flex flex-col h-full bg-[#F8F8F5] text-[#111817] overflow-hidden">
 
       {/* ── Top Welcome & Quick Action Bar (Single Clean Strip, No Duplicate Logout) ── */}
-      <header className="px-6 py-4 border-b border-white/5 flex items-center justify-between shrink-0 bg-[#0d0d18]">
+      <header className="px-6 py-4 border-b border-[#DDE3DF] flex items-center justify-between shrink-0 bg-white">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center p-2 shadow-md border border-white/10 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#E8F0EB] flex items-center justify-center p-2 shadow-sm border border-[#DDE3DF] shrink-0">
             <img src={chatrLogo} alt="CHATR OS" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-extrabold text-white leading-tight flex items-center gap-2">
-              {greeting}, <span className="text-violet-400">{userName}</span> 👋
+            <span className="text-xl font-extrabold text-[#111817] leading-tight flex items-center gap-2">
+              {greeting}, <span className="text-[#164E3F]">{userName}</span> 👋
             </span>
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-[#53605C]">
               {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })} · All services operational
             </span>
           </div>
@@ -251,7 +251,7 @@ export const ChiefOfStaffHome: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => navigate('/desktop/chat')}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-md shadow-violet-900/30 cursor-pointer"
+            className="flex items-center gap-2 bg-[#164E3F] hover:bg-[#2E6B59] text-white rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
             <MessageSquare className="w-4 h-4" />
             <span>New Chat</span>
@@ -259,7 +259,7 @@ export const ChiefOfStaffHome: React.FC = () => {
 
           <button
             onClick={() => navigate('/desktop/calls')}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-md shadow-emerald-900/30 cursor-pointer"
+            className="flex items-center gap-2 bg-[#2E6B59] hover:bg-[#3d8a73] text-white rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
             <Phone className="w-4 h-4" />
             <span>Start Call</span>
@@ -267,41 +267,41 @@ export const ChiefOfStaffHome: React.FC = () => {
 
           <button
             onClick={() => navigate('/desktop/inbox')}
-            className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
+            className="flex items-center gap-2 bg-white hover:bg-[#E8F0EB] text-[#53605C] border border-[#DDE3DF] rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
           >
-            <Inbox className="w-4 h-4 text-violet-400" />
+            <Inbox className="w-4 h-4 text-[#164E3F]" />
             <span>Universal Inbox</span>
           </button>
         </div>
       </header>
 
       {/* ── Summary & Quick Filters Bar ────────────────────────────────────────── */}
-      <div className="h-12 border-b border-white/5 px-6 flex items-center gap-6 shrink-0 bg-[#0d0d18]/80">
-        <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+      <div className="h-12 border-b border-[#DDE3DF] px-6 flex items-center gap-6 shrink-0 bg-white/80">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#53605C] uppercase tracking-wider">
+          <Sparkles className="w-3.5 h-3.5 text-[#164E3F]" />
           Executive Overview
         </div>
-        <div className="w-px h-4 bg-white/10" />
+        <div className="w-px h-4 bg-[#DDE3DF]" />
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-sm">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="font-bold text-amber-400">{AI_BRIEF.action}</span>
-            <span className="text-zinc-400 text-xs">Actions required</span>
+            <span className="font-bold text-amber-600">{AI_BRIEF.action}</span>
+            <span className="text-[#53605C] text-xs">Actions required</span>
           </span>
           <span className="flex items-center gap-1.5 text-sm">
-            <span className="w-2 h-2 rounded-full bg-zinc-600" />
-            <span className="font-bold text-zinc-300">{AI_BRIEF.canWait}</span>
-            <span className="text-zinc-400 text-xs">Can wait</span>
+            <span className="w-2 h-2 rounded-full bg-[#DDE3DF]" />
+            <span className="font-bold text-[#111817]">{AI_BRIEF.canWait}</span>
+            <span className="text-[#53605C] text-xs">Can wait</span>
           </span>
           <span className="flex items-center gap-1.5 text-sm">
-            <span className="w-2 h-2 rounded-full bg-zinc-700" />
-            <span className="font-bold text-zinc-400">{AI_BRIEF.fyi}</span>
-            <span className="text-zinc-400 text-xs">Info updates</span>
+            <span className="w-2 h-2 rounded-full bg-[#E8F0EB]" />
+            <span className="font-bold text-[#53605C]">{AI_BRIEF.fyi}</span>
+            <span className="text-[#53605C] text-xs">Info updates</span>
           </span>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs text-zinc-500">Live Workspace Sync</span>
-          <RefreshCw className="w-3.5 h-3.5 text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors" />
+          <span className="text-xs text-[#53605C]">Live Workspace Sync</span>
+          <RefreshCw className="w-3.5 h-3.5 text-[#53605C] hover:text-[#164E3F] cursor-pointer transition-colors" />
         </div>
       </div>
 
@@ -309,49 +309,49 @@ export const ChiefOfStaffHome: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── LEFT COLUMN: User Actions & Quick Navigation ────────────────── */}
-        <aside className="w-[280px] border-r border-white/5 flex flex-col shrink-0 bg-[#0d0d18]/60 overflow-y-auto">
+        <aside className="w-[280px] border-r border-[#DDE3DF] flex flex-col shrink-0 bg-white overflow-y-auto">
           {/* Quick Actions */}
-          <div className="p-4 border-b border-white/5">
+          <div className="p-4 border-b border-[#DDE3DF]">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Quick Actions</span>
-              <span className="text-[10px] text-zinc-500">{AI_BRIEF.topActions.length} items</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">Quick Actions</span>
+              <span className="text-[10px] text-[#53605C]">{AI_BRIEF.topActions.length} items</span>
             </div>
             <div className="space-y-2">
               {AI_BRIEF.topActions.filter(a => !dismissedActions.has(a.id)).map(action => (
                 <div
                   key={action.id}
                   onClick={() => navigate(action.path)}
-                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-white/5 bg-white/3 hover:bg-white/8 hover:border-violet-500/30 cursor-pointer group transition-all"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-[#DDE3DF] bg-[#F8F8F5] hover:bg-[#E8F0EB] hover:border-[#164E3F]/20 cursor-pointer group transition-all"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                    <action.icon className="w-3.5 h-3.5 text-violet-400" />
+                  <div className="w-7 h-7 rounded-lg bg-[#E8F0EB] flex items-center justify-center flex-shrink-0">
+                    <action.icon className="w-3.5 h-3.5 text-[#164E3F]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold text-white truncate">{action.label}</div>
-                    <div className="text-[10px] text-zinc-400">{action.category}</div>
+                    <div className="text-xs font-semibold text-[#111817] truncate">{action.label}</div>
+                    <div className="text-[10px] text-[#53605C]">{action.category}</div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-violet-400 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-[#DDE3DF] group-hover:text-[#164E3F] transition-colors" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Context Categories */}
-          <div className="p-4 border-b border-white/5">
+          <div className="p-4 border-b border-[#DDE3DF]">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Workspace Context</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">Workspace Context</span>
             </div>
             <div className="space-y-2">
               {AI_BRIEF.categories.map(cat => (
                 <div 
                   key={cat.name} 
                   onClick={() => navigate(cat.path)}
-                  className="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-white/5 cursor-pointer group transition-all"
+                  className="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-[#E8F0EB] cursor-pointer group transition-all"
                 >
                   <div className={cn('w-2 h-2 rounded-full flex-shrink-0', cat.color)} />
-                  <span className="text-xs text-zinc-300 group-hover:text-white transition-colors flex-1">{cat.name}</span>
-                  <span className="text-xs text-zinc-500">{cat.count}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
+                  <span className="text-xs text-[#53605C] group-hover:text-[#164E3F] transition-colors flex-1">{cat.name}</span>
+                  <span className="text-xs text-[#53605C]">{cat.count}</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#DDE3DF] group-hover:text-[#164E3F] transition-colors" />
                 </div>
               ))}
             </div>
@@ -360,21 +360,21 @@ export const ChiefOfStaffHome: React.FC = () => {
           {/* Active Copilots */}
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Active Copilots</span>
-              <button onClick={() => navigate('/desktop/ai-agents')} className="text-[10px] text-violet-400 hover:text-violet-300 transition-colors">Manage</button>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">Active Copilots</span>
+              <button onClick={() => navigate('/desktop/ai-agents')} className="text-[10px] text-[#164E3F] hover:text-[#2E6B59] transition-colors">Manage</button>
             </div>
             <div className="space-y-2">
               {ACTIVE_COPILOTS.map(agent => (
                 <div 
                   key={agent.id} 
                   onClick={() => navigate(agent.path)}
-                  className="p-2.5 rounded-xl bg-white/3 hover:bg-white/6 border border-white/5 cursor-pointer transition-all flex items-center justify-between"
+                  className="p-2.5 rounded-xl bg-[#F8F8F5] hover:bg-[#E8F0EB] border border-[#DDE3DF] cursor-pointer transition-all flex items-center justify-between"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-xs text-zinc-200 font-medium">{agent.name}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs text-[#111817] font-medium">{agent.name}</span>
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">{agent.status}</span>
+                  <span className="text-[10px] text-emerald-700 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">{agent.status}</span>
                 </div>
               ))}
             </div>
@@ -384,7 +384,7 @@ export const ChiefOfStaffHome: React.FC = () => {
         {/* ── CENTER COLUMN: Interactive Activity Stream ───────────────────── */}
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Toolbar */}
-          <div className="h-11 border-b border-white/5 px-4 flex items-center justify-between shrink-0 bg-[#0d0d18]/40">
+          <div className="h-11 border-b border-[#DDE3DF] px-4 flex items-center justify-between shrink-0 bg-white/60">
             <div className="flex items-center gap-1">
               {(['all', 'urgent', 'action'] as const).map(f => (
                 <button
@@ -393,8 +393,8 @@ export const ChiefOfStaffHome: React.FC = () => {
                   className={cn(
                     'px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer',
                     filter === f
-                      ? 'bg-violet-600 text-white shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#164E3F] text-white shadow-sm'
+                      : 'text-[#53605C] hover:text-[#164E3F] hover:bg-[#E8F0EB]'
                   )}
                 >
                   {f === 'all' ? `All Updates (${timelineItems.length})` : f === 'urgent' ? `Urgent (${AI_BRIEF.urgent})` : `Action Items (${AI_BRIEF.action})`}
@@ -404,7 +404,7 @@ export const ChiefOfStaffHome: React.FC = () => {
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => navigate('/desktop/inbox')}
-                className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 px-3 py-1 rounded-lg hover:bg-violet-500/10 transition-all font-semibold cursor-pointer"
+                className="flex items-center gap-1.5 text-xs text-[#164E3F] hover:text-[#2E6B59] px-3 py-1 rounded-lg hover:bg-[#E8F0EB] transition-all font-semibold cursor-pointer"
               >
                 <Inbox className="w-3.5 h-3.5" /> Open Full Inbox
               </button>
@@ -413,7 +413,7 @@ export const ChiefOfStaffHome: React.FC = () => {
 
           {/* Timeline list */}
           <div className="flex-1 overflow-y-auto">
-            <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 bg-[#0d0d18]/20 border-b border-white/3 sticky top-0 z-10">
+            <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#53605C] bg-[#F8F8F5] border-b border-[#DDE3DF] sticky top-0 z-10">
               Today — {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
             </div>
             {filteredItems.map(item => (
@@ -421,28 +421,28 @@ export const ChiefOfStaffHome: React.FC = () => {
                 key={item.id}
                 onClick={() => setSelectedItem(item)}
                 className={cn(
-                  'w-full text-left px-4 py-3.5 border-b border-white/4 flex items-start gap-3 transition-all group cursor-pointer',
+                  'w-full text-left px-4 py-3.5 border-b border-[#DDE3DF] flex items-start gap-3 transition-all group cursor-pointer',
                   selectedItem?.id === item.id
-                    ? 'bg-violet-500/8 border-l-2 border-l-violet-500'
-                    : 'hover:bg-white/3 border-l-2 border-l-transparent',
-                  !item.read && 'bg-white/[0.015]'
+                    ? 'bg-[#E8F0EB] border-l-2 border-l-[#164E3F]'
+                    : 'hover:bg-[#F8F8F5] border-l-2 border-l-transparent',
+                  !item.read && 'bg-white'
                 )}
               >
                 <SourceBadge source={item.source} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-0.5">
-                    <span className={cn('text-xs font-semibold truncate', item.read ? 'text-zinc-300' : 'text-white')}>
+                    <span className={cn('text-xs font-semibold truncate', item.read ? 'text-[#53605C]' : 'text-[#111817]')}>
                       {item.sender}
                     </span>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[10px] text-zinc-500">{item.time}</span>
+                      <span className="text-[10px] text-[#53605C]">{item.time}</span>
                       <PriorityBadge priority={item.priority} />
                     </div>
                   </div>
-                  <div className={cn('text-xs truncate mb-0.5', item.read ? 'text-zinc-400' : 'text-zinc-200 font-medium')}>
+                  <div className={cn('text-xs truncate mb-0.5', item.read ? 'text-[#53605C]' : 'text-[#111817] font-medium')}>
                     {item.subject}
                   </div>
-                  <div className="text-[11px] text-zinc-400 truncate leading-relaxed">
+                  <div className="text-[11px] text-[#53605C] truncate leading-relaxed">
                     {item.preview}
                   </div>
                 </div>
@@ -452,7 +452,7 @@ export const ChiefOfStaffHome: React.FC = () => {
             <div className="px-4 py-6 text-center">
               <button
                 onClick={() => navigate('/desktop/inbox')}
-                className="text-xs text-violet-400 hover:text-violet-300 transition-colors font-semibold flex items-center gap-1.5 mx-auto cursor-pointer"
+                className="text-xs text-[#164E3F] hover:text-[#2E6B59] transition-colors font-semibold flex items-center gap-1.5 mx-auto cursor-pointer"
               >
                 <Inbox className="w-3.5 h-3.5" />
                 View all workspace communications
@@ -463,31 +463,31 @@ export const ChiefOfStaffHome: React.FC = () => {
         </main>
 
         {/* ── RIGHT COLUMN: Selected Item Action Context ────────────────────── */}
-        <aside className="w-[320px] border-l border-white/5 flex flex-col shrink-0 bg-[#0d0d18]/60 overflow-y-auto pb-24">
+        <aside className="w-[320px] border-l border-[#DDE3DF] flex flex-col shrink-0 bg-white overflow-y-auto pb-24">
           {selectedItem ? (
             <>
               {/* Header */}
-              <div className="p-4 border-b border-white/5">
+              <div className="p-4 border-b border-[#DDE3DF]">
                 <div className="flex items-start gap-3 mb-3">
                   <SourceBadge source={selectedItem.source} size="md" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-white leading-tight">{selectedItem.sender}</div>
-                    <div className="text-xs text-zinc-400 mt-0.5 leading-snug">{selectedItem.subject}</div>
+                    <div className="text-sm font-bold text-[#111817] leading-tight">{selectedItem.sender}</div>
+                    <div className="text-xs text-[#53605C] mt-0.5 leading-snug">{selectedItem.subject}</div>
                   </div>
                   <PriorityBadge priority={selectedItem.priority} />
                 </div>
-                <p className="text-xs text-zinc-300 leading-relaxed bg-white/3 rounded-xl p-3 border border-white/5">
+                <p className="text-xs text-[#53605C] leading-relaxed bg-[#F8F8F5] rounded-xl p-3 border border-[#DDE3DF]">
                   {selectedItem.preview}
                 </p>
               </div>
 
               {/* AI Summary */}
-              <div className="p-4 border-b border-white/5">
+              <div className="p-4 border-b border-[#DDE3DF]">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">AI Recommendation</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#164E3F]" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">AI Recommendation</span>
                 </div>
-                <p className="text-xs text-zinc-300 leading-relaxed">
+                <p className="text-xs text-[#53605C] leading-relaxed">
                   {selectedItem.priority === 'urgent'
                     ? 'Immediate action requested. Click Reply or Delegate to handle now.'
                     : selectedItem.priority === 'action'
@@ -497,8 +497,8 @@ export const ChiefOfStaffHome: React.FC = () => {
               </div>
 
               {/* Smart Replies */}
-              <div className="p-4 border-b border-white/5">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Quick Responses</div>
+              <div className="p-4 border-b border-[#DDE3DF]">
+                <div className="text-[11px] font-bold uppercase tracking-widest text-[#53605C] mb-2">Quick Responses</div>
                 <div className="space-y-1.5">
                   {[
                     'Acknowledge & Proceed',
@@ -508,7 +508,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                     <button
                       key={reply}
                       onClick={() => navigate(selectedItem.actionPath || '/desktop/chat')}
-                      className="w-full text-left text-xs text-zinc-300 hover:text-white bg-white/3 hover:bg-white/8 border border-white/5 hover:border-violet-500/40 rounded-xl px-3 py-2 transition-all cursor-pointer"
+                      className="w-full text-left text-xs text-[#53605C] hover:text-[#164E3F] bg-[#F8F8F5] hover:bg-[#E8F0EB] border border-[#DDE3DF] hover:border-[#164E3F]/20 rounded-xl px-3 py-2 transition-all cursor-pointer"
                     >
                       {reply}
                     </button>
@@ -520,7 +520,7 @@ export const ChiefOfStaffHome: React.FC = () => {
               <div className="p-4 space-y-2">
                 <button 
                   onClick={() => navigate(selectedItem.actionPath || '/desktop/chat')}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#164E3F] hover:bg-[#2E6B59] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
                 >
                   <Send className="w-3.5 h-3.5" /> Take Action Now
                 </button>
@@ -529,24 +529,24 @@ export const ChiefOfStaffHome: React.FC = () => {
                     onClick={() => {
                       setTimelineItems(prev => prev.map(i => i.id === selectedItem.id ? { ...i, read: true } : i));
                     }}
-                    className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 text-zinc-300 text-xs font-semibold transition-all cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#F8F8F5] hover:bg-[#E8F0EB] border border-[#DDE3DF] text-[#53605C] text-xs font-semibold transition-all cursor-pointer"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Mark Done
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Mark Done
                   </button>
                   <button 
                     onClick={() => navigate('/desktop/ai-agents')}
-                    className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 text-zinc-300 text-xs font-semibold transition-all cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#F8F8F5] hover:bg-[#E8F0EB] border border-[#DDE3DF] text-[#53605C] text-xs font-semibold transition-all cursor-pointer"
                   >
-                    <Bot className="w-3.5 h-3.5 text-cyan-400" /> Delegate to AI
+                    <Bot className="w-3.5 h-3.5 text-[#164E3F]" /> Delegate to AI
                   </button>
                 </div>
               </div>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-              <Inbox className="w-10 h-10 text-zinc-600 mb-4" />
-              <div className="text-sm font-semibold text-zinc-400">Select an item</div>
-              <div className="text-xs text-zinc-600 mt-1">Details & quick actions will appear here</div>
+              <Inbox className="w-10 h-10 text-[#DDE3DF] mb-4" />
+              <div className="text-sm font-semibold text-[#53605C]">Select an item</div>
+              <div className="text-xs text-[#53605C]/60 mt-1">Details & quick actions will appear here</div>
             </div>
           )}
         </aside>

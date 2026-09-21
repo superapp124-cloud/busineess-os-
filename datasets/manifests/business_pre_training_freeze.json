@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0.0",
+  "gate": "PRE_TRAINING_PROVENANCE_GATE",
+  "status": "PASS",
+  "frozen_at": "2026-09-09T12:50:56.511047+00:00",
+  "capability": "business",
+  "lifecycle_state": "READY_FOR_REAL_TRAINING",
+  "generator_version": "2.0.0",
+  "validator_version": "2.0.0",
+  "base_model": {
+    "id": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "tokenizer": "Qwen/Qwen2.5-7B-Instruct",
+    "config_sha256": "7463bb0ea78315365e6c6b74de4e73bbcc8359dfb0c5a737584e077d42c0b03c",
+    "tokenizer_config_sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583"
+  },
+  "training_engine": {
+    "training_engine": "huggingface_trl",
+    "trainer_class": "SFTTrainer",
+    "peft_method": "QLoRA_4bit",
+    "soup_execution": false,
+    "soup_verdict": "NOT_USED_DIRECT_TRL_RUN",
+    "execution_path": "colab-t4-qlora-direct"
+  },
+  "artifacts_frozen": {
+    "specification": {
+      "path": "docs\\intent-os\\specs\\capabilities\\business.spec.json",
+      "sha256": "2f2f506cf0074d629940039c5af6d69eac3894d226a8e3d37fa145193bda13b9"
+    },
+    "training_dataset": {
+      "path": "data\\business\\business_sft_v1.jsonl",
+      "row_count": 32,
+      "sha256": "24d5af8f24aea747a913c316a08e9f29b775874f123df5978f2fbc74b605b221"
+    },
+    "evaluation_dataset": {
+      "path": "datasets\\eval\\business_eval.jsonl",
+      "row_count": 60,
+      "sha256": "57bccef6cde4c93792e41d27cb452f515c2ba9317a8c93b33693cc1aac7b610a",
+      "tier_distribution": {
+        "smoke": 10,
+        "core": 30,
+        "adversarial": 20
+      }
+    },
+    "source_documents": [
+      {
+        "path": "docs/CHATR_COMPANY_BUILDING_BOARD_WHITEPAPER.md",
+        "sha256": "845ba51e535641bb5cc16d37a1d8d9316f58c310a0ed1255f526bae395577648"
+      },
+      {
+        "path": "docs/CHATR_PLATFORM_VISION.md",
+        "sha256": "9b501f8a1030350c4f0a63cece73ea77bc11ac5c4d339bc401528f4302c5a53c"
+      },
+      {
+        "path": "docs/CHATR_PRODUCT_DEFENSE_20M_VC.md",
+        "sha256": "dfda7ff9b9e0c9f3b2b48557d1d691ea800c06dfa276e5bfd7026623b337a15c"
+      },
+      {
+        "path": "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+        "sha256": "3e0ed2bc44fcf86c5e7b2b494d976adaaa4b98721e6a335ac44707d7cf010b7e"
+      },
+      {
+        "path": "docs/01-CompanyModel/DigitalTwin.md",
+        "sha256": "284bbdc286b4c978361f0d9c8fe30792ef2698b7e11be66e60814622eda99750"
+      }
+    ]
+  },
+  "separation_audit": {
+    "status": "VERIFIED_ZERO_LEAKAGE",
+    "pairwise_comparisons": 1920,
+    "exact_matches": 0,
+    "normalized_matches": 0,
+    "near_duplicates": 0,
+    "distinctive_phrase_collisions": 0
+  },
+  "hyperparameters_frozen": {
+    "epochs": 3,
+    "per_device_train_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "effective_batch_size": 16,
+    "learning_rate": 0.0002,
+    "lr_scheduler_type": "cosine",
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.01,
+    "max_grad_norm": 0.3,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "max_seq_length": 1024,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_use_double_quant": true,
+    "bnb_4bit_compute_dtype": "float16",
+    "export_target_quant": "Q8_0",
+    "hardware_target": "NVIDIA Tesla T4 (15.0 GB VRAM)"
+  },
+  "verification_checks": {
+    "1_capability_spec_exists": true,
+    "2_spec_sha_matches_manifest": true,
+    "3_source_files_exist": true,
+    "4_source_shas_match": true,
+    "5_train_row_locators": true,
+    "6_train_row_transformations": true,
+    "7_eval_rows_provenance": true,
+    "8_train_eval_separation_verified": true,
+    "9_generator_version_recorded": true,
+    "10_validator_version_recorded": true,
+    "11_base_model_immutable_revision_recorded": true,
+    "12_training_engine_recorded": true,
+    "13_training_config_frozen": true,
+    "14_no_undocumented_fallback": true,
+    "15_registry_state_matches_evidence": true
+  },
+  "pre_training_freeze_hash": "8fc0e0709288862da3a3f4c9286f7ea43974d32b7308e1298d9047c09af97598"
+}

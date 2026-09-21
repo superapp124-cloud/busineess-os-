@@ -316,22 +316,22 @@ const DesktopLayoutInner = () => {
       'shadow-[1px_0_0_0_hsl(240,8%,14%)]',
     ].join(' '),
     light: [
-      'border-[hsl(220,13%,90%)]',
+      'border-[#DDE3DF]',
       'bg-[hsl(0,0%,100%)]/96',
-      'shadow-[1px_0_0_0_hsl(220,13%,90%)]',
+      'shadow-[1px_0_0_0_#DDE3DF]',
     ].join(' '),
     system: theme === 'dark'
       ? 'border-[hsl(240,8%,14%)] bg-[hsl(240,14%,8%)]/95 shadow-[1px_0_0_0_hsl(240,8%,14%)]'
-      : 'border-[hsl(220,13%,90%)] bg-[hsl(0,0%,100%)]/96 shadow-[1px_0_0_0_hsl(220,13%,90%)]',
+      : 'border-[#DDE3DF] bg-[hsl(0,0%,100%)]/96 shadow-[1px_0_0_0_#DDE3DF]',
   }[themeMode];
 
   const fontClasses: any = {
     inter: 'font-sans', sans: 'font-sans', serif: 'font-serif', mono: 'font-mono tracking-tight',
   }[fontFamily];
 
-  const textMuted = isDark ? 'text-white/45' : 'text-zinc-400';
-  const textPrimary = isDark ? 'text-white/90' : 'text-zinc-900';
-  const hoverBg = isDark ? 'hover:bg-white/[0.06]' : 'hover:bg-zinc-100';
+  const textMuted = isDark ? 'text-white/45' : 'text-[#53605C]';
+  const textPrimary = isDark ? 'text-white/90' : 'text-[#111817]';
+  const hoverBg = isDark ? 'hover:bg-white/[0.06]' : 'hover:bg-[#E8F0EB]';
 
   const rawDisplayName = profile?.full_name || profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || (profile?.username && !profile.username.startsWith('user_') ? profile.username : '') || 'User';
   const cleanDisplayName = rawDisplayName.trim();
@@ -370,7 +370,7 @@ const DesktopLayoutInner = () => {
 
           {/* Logo */}
           <div className="h-[60px] px-4 flex items-center gap-3 shrink-0">
-            <div className="w-8 h-8 rounded-[12px] bg-gradient-to-br from-violet-500 to-indigo-600 shadow-[0_4px_16px_rgba(124,58,237,0.5)] flex items-center justify-center flex-shrink-0 [-webkit-app-region:no-drag] border border-white/20">
+            <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center flex-shrink-0 [-webkit-app-region:no-drag] border ${isDark ? 'bg-gradient-to-br from-violet-500 to-indigo-600 shadow-[0_4px_16px_rgba(124,58,237,0.5)] border-white/20' : 'bg-[#E8F0EB] border-[#DDE3DF] shadow-sm'}`}>
               <img src={chatrLogo} alt="CHATR" className="w-5 h-5 object-contain filter drop-shadow-md" />
             </div>
             <div className="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap [-webkit-app-region:no-drag] overflow-hidden">
@@ -405,19 +405,19 @@ const DesktopLayoutInner = () => {
                                 isActive
                                   ? isDark
                                     ? 'bg-white/10 text-white border border-white/10 shadow-sm'
-                                    : 'bg-violet-50 text-violet-700 border border-violet-200/60'
+                                    : 'bg-[#E8F0EB] text-[#164E3F] border border-[#DDE3DF]'
                                   : isDark
                                     ? 'text-white/50 hover:bg-white/6 hover:text-white/90'
-                                    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
+                                    : 'text-[#53605C] hover:bg-[#E8F0EB] hover:text-[#164E3F]'
                               )}
                             >
                               {isActive && (
-                                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-violet-500 rounded-r-full" />
+                                <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full ${isDark ? 'bg-violet-500' : 'bg-[#164E3F]'}`} />
                               )}
                               <item.icon className={cn(
                                 'w-[18px] h-[18px] flex-shrink-0 transition-all duration-200',
                                 isActive
-                                  ? isDark ? 'text-violet-400' : 'text-violet-600'
+                                  ? isDark ? 'text-violet-400' : 'text-[#164E3F]'
                                   : 'group-hover/btn:scale-110'
                               )} />
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-0 text-left">
@@ -462,13 +462,13 @@ const DesktopLayoutInner = () => {
                                 isActive
                                   ? isDark
                                     ? 'bg-white/10 text-white border border-white/10 shadow-sm'
-                                    : 'bg-violet-50 text-violet-700 border border-violet-200/60'
+                                    : 'bg-[#E8F0EB] text-[#164E3F] border border-[#DDE3DF]'
                                   : isDark
                                     ? 'text-white/50 hover:bg-white/6 hover:text-white/90'
-                                    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
+                                    : 'text-[#53605C] hover:bg-[#E8F0EB] hover:text-[#164E3F]'
                               )}
                             >
-                              {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-violet-500 rounded-r-full" />}
+                              {isActive && <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full ${isDark ? 'bg-violet-500' : 'bg-[#164E3F]'}`} />}
                               <div className={cn('w-[18px] h-[18px] rounded-md flex items-center justify-center flex-shrink-0 text-[10px] font-black', `bg-${mod.color}-500/20 text-${mod.color}-400`)}>
                                 {mod.name[0]}
                               </div>
@@ -506,7 +506,7 @@ const DesktopLayoutInner = () => {
                 <div className="relative shrink-0">
                   <Avatar className="w-7 h-7">
                     <AvatarImage src={profile?.avatar_url} />
-                    <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-violet-100 text-violet-700')}>
+                    <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-[#E8F0EB] text-[#164E3F]')}>
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -542,12 +542,12 @@ const DesktopLayoutInner = () => {
                         className={cn(
                           'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left',
                           isDark ? 'hover:bg-white/8 text-white/80' : 'hover:bg-zinc-50 text-zinc-700',
-                          myStatus === s && (isDark ? 'bg-white/6' : 'bg-violet-50')
+                          myStatus === s && (isDark ? 'bg-white/6' : 'bg-[#E8F0EB]')
                         )}
                       >
                         <span className={cn('w-2 h-2 rounded-full', colors[s])} />
                         {labels[s]}
-                        {myStatus === s && <span className="ml-auto text-violet-400 text-xs">✓</span>}
+                        {myStatus === s && <span className={`ml-auto text-xs ${isDark ? 'text-violet-400' : 'text-[#164E3F]'}`}>✓</span>}
                       </button>
                     );
                   })}
@@ -601,7 +601,7 @@ const DesktopLayoutInner = () => {
             'h-[46px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0 backdrop-blur-2xl transition-colors duration-300',
             isDark
               ? 'border-[hsl(240,8%,16%)] bg-[hsl(240,13%,7%)]/85'
-              : 'border-[hsl(220,13%,90%)] bg-[hsl(0,0%,100%)]/85'
+              : 'border-[#DDE3DF] bg-[hsl(0,0%,100%)]/85'
           )}>
 
             {/* Left: Global search trigger */}
@@ -612,7 +612,7 @@ const DesktopLayoutInner = () => {
                   'flex items-center gap-2 pl-3 pr-2 py-1 rounded-xl border text-sm transition-all hover:scale-[1.01]',
                   isDark
                     ? 'border-white/10 bg-white/4 text-white/40 hover:bg-white/8 hover:text-white/70'
-                    : 'border-zinc-200 bg-zinc-50 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600'
+                    : 'border-[#DDE3DF] bg-[#F8F8F5] text-[#53605C] hover:bg-[#E8F0EB] hover:text-[#111817]'
                 )}
                 aria-label="Search (Ctrl+K)"
               >
@@ -641,24 +641,24 @@ const DesktopLayoutInner = () => {
               </button>
 
               {/* User + presence */}
-              <div className={cn('flex items-center gap-2.5 pl-4 border-l', isDark ? 'border-white/8' : 'border-zinc-200')}>
+              <div className={cn('flex items-center gap-2.5 pl-4 border-l', isDark ? 'border-white/8' : 'border-[#DDE3DF]')}>
                 <button
                   onClick={() => setStatusMenuOpen(prev => !prev)}
                   className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
                   title="Profile & Sign Out"
                 >
                   <div className="hidden sm:flex flex-col items-end">
-                    <span className={cn('text-[12px] font-bold leading-tight', isDark ? 'text-white' : 'text-zinc-900')}>
+                    <span className={cn('text-[12px] font-bold leading-tight', isDark ? 'text-white' : 'text-[#111817]')}>
                       {displayName.split(' ')[0]}
                     </span>
-                    <span className={cn('text-[10px]', isDark ? 'text-white/40' : 'text-zinc-400')}>
+                    <span className={cn('text-[10px]', isDark ? 'text-white/40' : 'text-[#53605C]')}>
                       {getStatusLabel(myStatus)}
                     </span>
                   </div>
                   <div className="relative">
-                    <Avatar className={cn('w-7 h-7 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-zinc-200')}>
+                    <Avatar className={cn('w-7 h-7 border cursor-pointer hover:scale-105 transition-transform', isDark ? 'border-white/10' : 'border-[#DDE3DF]')}>
                       <AvatarImage src={profile?.avatar_url} />
-                      <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-violet-100 text-violet-700')}>
+                      <AvatarFallback className={cn('text-[10px]', isDark ? 'bg-violet-900 text-white' : 'bg-[#E8F0EB] text-[#164E3F]')}>
                         {initials}
                       </AvatarFallback>
                     </Avatar>

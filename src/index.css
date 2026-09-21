@@ -146,38 +146,44 @@
 
   .light,
   [data-theme="light"] {
-    /* ── Apple macOS-Inspired Light Theme ── */
-    --background: 220 17% 95%;      /* #F1F2F5 — Warm off-white */
-    --foreground: 225 25% 12%;      /* #171B26 — Near-black with blue warmth */
+    /* ── CHATR Brand Light Theme — Executive Green Palette ── */
+    --background: 60 11% 97%;        /* #F8F8F5 — Warm off-white */
+    --foreground: 168 16% 8%;        /* #111817 — Charcoal */
 
-    --card: 0 0% 100%;              /* Pure white cards */
-    --card-foreground: 225 25% 12%;
+    --card: 0 0% 100%;               /* Pure white cards */
+    --card-foreground: 168 16% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 25% 12%;
+    --popover-foreground: 168 16% 8%;
 
-    --secondary: 220 15% 91%;
-    --secondary-foreground: 225 25% 12%;
+    --primary: 163 56% 20%;          /* #164E3F — Brand forest green */
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 91%;
-    --muted-foreground: 220 10% 44%;
+    --secondary: 140 20% 93%;        /* #E8F0EB — Soft sage */
+    --secondary-foreground: 163 56% 20%;
 
-    --accent: 258 90% 68%;
+    --muted: 140 20% 93%;            /* #E8F0EB */
+    --muted-foreground: 165 7% 35%;  /* #53605C — Secondary text */
+
+    --accent: 163 56% 20%;
     --accent-foreground: 0 0% 100%;
 
-    --border: 220 13% 86%;
-    --input: 220 13% 86%;
+    --border: 140 8% 87%;            /* #DDE3DF — Subtle green-tinted border */
+    --input: 140 8% 87%;
 
-    --chat-background: 220 17% 95%;
-    --sidebar-background: 0 0% 99%;  /* Near-pure white sidebar */
-    --sidebar-foreground: 225 25% 12%;
-    --sidebar-border: 220 13% 88%;
-    --sidebar-accent: 220 15% 92%;
-    --sidebar-accent-foreground: 225 25% 12%;
+    --ring: 163 56% 20%;
 
-    --shadow-level-1: 0 1px 6px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-    --shadow-level-2: 0 4px 20px rgba(0, 0, 0, 0.10), 0 8px 32px rgba(0, 0, 0, 0.06);
-    --shadow-level-3: 0 8px 40px rgba(0, 0, 0, 0.14), 0 20px 60px rgba(0, 0, 0, 0.08);
+    --chat-background: 60 11% 97%;
+    --sidebar-background: 0 0% 100%; /* Pure white sidebar */
+    --sidebar-foreground: 168 16% 8%;
+    --sidebar-border: 140 8% 87%;
+    --sidebar-accent: 140 20% 93%;
+    --sidebar-accent-foreground: 163 56% 20%;
+    --sidebar-primary: 163 56% 20%;
+
+    --shadow-level-1: 0 1px 6px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.03);
+    --shadow-level-2: 0 4px 20px rgba(0, 0, 0, 0.08), 0 8px 32px rgba(0, 0, 0, 0.05);
+    --shadow-level-3: 0 8px 40px rgba(0, 0, 0, 0.12), 0 20px 60px rgba(0, 0, 0, 0.07);
   }
 
   .dark,

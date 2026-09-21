@@ -1,0 +1,72 @@
+{
+  "capability": "research",
+  "canonical_definition": "Rigorous secondary literature synthesis, competitive intelligence structuring, hypothesis evaluation, verifiable citation discipline, and executive whitepaper formulation on CHATR.",
+  "risk_tier": "TIER 2",
+  "in_scope": [
+    "Structured synthesis of multi-document enterprise research",
+    "Methodology evaluation and statistical validity scrutiny",
+    "Competitive intelligence frameworks (Porter's Five Forces, SWOT, Value Chain)",
+    "Formal citation discipline referencing explicit provided evidence",
+    "Hypothesis framing and counter-evidence presentation"
+  ],
+  "out_of_scope": [
+    "Hallucinating synthetic academic papers, authors, or DOI references",
+    "Fabricating primary survey data or laboratory experimental findings",
+    "Claiming access to behind-paywall proprietary databases without connectors",
+    "Presenting correlation as proven causality"
+  ],
+  "weight_appropriate": "Analytical academic writing style, rigorous epistemic uncertainty phrasing, structured citation formats, and critical evaluation of research methodologies.",
+  "runtime_dependencies": [
+    "ChatrUniverseSearchService",
+    "DocumentIntelligenceEngine",
+    "KnowledgeFabric"
+  ],
+  "rag_dependencies": [
+    "Corpus indexed documents",
+    "Industry benchmark studies",
+    "Verified whitepaper repositories"
+  ],
+  "tool_dependencies": [
+    "CitationValidator",
+    "SourceGroundingScorer"
+  ],
+  "safety_boundaries": [
+    "Zero tolerance for invented citations, fake authors, or hallucinated URL links",
+    "Must state 'Source not found in provided corpus' rather than fabricating answers",
+    "Must clearly delineate consensus findings from contested hypotheses"
+  ],
+  "required_eval_categories": [
+    "evidence_synthesis",
+    "citation_discipline",
+    "hallucination_resistance",
+    "methodology_critique",
+    "epistemic_uncertainty"
+  ],
+  "forbidden_claims": [
+    "Citing non-existent papers, journals, or experimental trials",
+    "Claiming absolute certainty on empirical projections without confidence intervals",
+    "Claiming live web access when operating in offline or local inference mode"
+  ],
+  "escalation_rules": [
+    "Conflicting enterprise source documents with unresolved contradictions must escalate to Research Lead",
+    "Missing primary documentation for critical compliance assertions must be flagged as unverified"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/00-Foundations/FIRST_PRINCIPLES.md",
+      "sha256": "2d4970298a4c10cce256ec14ba5c80a746d794cd93c5f00e109b048d016e0e08"
+    },
+    {
+      "path": "docs/03-CompanyIntelligence/DecisionSystem.md",
+      "sha256": "c58158ff97bb2c2d9b5ff0621eaeacc897d74bec030eb5e51b67c61ef418df49"
+    },
+    {
+      "path": "src/data/chatrSearchUniverseData.ts",
+      "sha256": "444d1313a189b85fb5bb6e78a7577dd6b939af85dca74e4bd5e641d0c7699108"
+    },
+    {
+      "path": "docs/intent-os/AUTONOMOUS_EXECUTION_MODEL.md",
+      "sha256": "b981f2df3dedd59516d9e8afb149294090a72e0938c58f8a70f69f53c9582662"
+    }
+  ]
+}

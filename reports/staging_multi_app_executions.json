@@ -1,0 +1,1011 @@
+{
+  "test_run_id": "stg-run-1788955924958",
+  "timestamp": "2026-09-09T12:12:04.958Z",
+  "total_workflows": 20,
+  "successful_workflows": 20,
+  "failed_workflows": 0,
+  "routing_errors": 0,
+  "execution_engine": "CHATR_KERNEL_INTENT_OBSERVER_V1",
+  "records": [
+    {
+      "workflow_id": "STG-WF-001",
+      "event_id": "evt-2f17926f-a068-4efc-8589-50e088964f88",
+      "timestamp": "2026-09-09T12:12:04.901Z",
+      "initial_intent": "schedule an interview with candidate Rohan Sharma for technical round",
+      "interpreted_intent": {
+        "type": "CANDIDATE_INTERVIEW",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "hr.talentxcel_core",
+        "comm.calendar",
+        "comm.messaging"
+      ],
+      "planned_actions": [
+        "talentxcel.lookup_candidate",
+        "calendar.create_slot",
+        "messaging.send_invite"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-70c353edb1aa",
+          "action": "talentxcel.lookup_candidate",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.926Z"
+        },
+        {
+          "step_id": "step-78902f625312",
+          "action": "calendar.create_slot",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.926Z"
+        },
+        {
+          "step_id": "step-43f05f6d2d0c",
+          "action": "messaging.send_invite",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.926Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "candidate_eligibility_and_schedule_conflict_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.901Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 25.86
+    },
+    {
+      "workflow_id": "STG-WF-002",
+      "event_id": "evt-d2ea889f-8404-4a3f-b3cd-7f3483bfedc8",
+      "timestamp": "2026-09-09T12:12:04.926Z",
+      "initial_intent": "log an expense for ₹45,000 for cloud hosting servers",
+      "interpreted_intent": {
+        "type": "EXPENSE",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "finance.ledger",
+        "finance.policy_engine",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "finance.validate_receipt",
+        "finance.record_payable",
+        "audit.log_transaction"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-4b4b46671a93",
+          "action": "finance.validate_receipt",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.940Z"
+        },
+        {
+          "step_id": "step-6f3634d5bcc3",
+          "action": "finance.record_payable",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.940Z"
+        },
+        {
+          "step_id": "step-17214cf04bfc",
+          "action": "audit.log_transaction",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.940Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "financial_threshold_limit_check (<= 50,000 INR)",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.926Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 13.94
+    },
+    {
+      "workflow_id": "STG-WF-003",
+      "event_id": "evt-fd1e31af-2ff5-468d-87f7-e052b4f11628",
+      "timestamp": "2026-09-09T12:12:04.940Z",
+      "initial_intent": "create a document summarizing the Q3 performance report",
+      "interpreted_intent": {
+        "type": "DOCUMENT",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "doc.drive",
+        "analytics.bi_engine",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "bi.aggregate_metrics",
+        "doc.generate_report",
+        "drive.store_artifact"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-3c7828562b9d",
+          "action": "bi.aggregate_metrics",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.954Z"
+        },
+        {
+          "step_id": "step-ab16aa393093",
+          "action": "doc.generate_report",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.954Z"
+        },
+        {
+          "step_id": "step-e5aee859c176",
+          "action": "drive.store_artifact",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.954Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "document_confidentiality_classification_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.940Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 13.88
+    },
+    {
+      "workflow_id": "STG-WF-004",
+      "event_id": "evt-325fc01f-a585-4dff-b0f2-e3e89d98884e",
+      "timestamp": "2026-09-09T12:12:04.954Z",
+      "initial_intent": "send an email to vendor regarding the NDA agreement",
+      "interpreted_intent": {
+        "type": "EMAIL",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "comm.email",
+        "legal.contract_vault",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "legal.fetch_nda_template",
+        "email.compose_draft",
+        "email.dispatch"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-e6882a1b3fc2",
+          "action": "legal.fetch_nda_template",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-00cdfaec03d6",
+          "action": "email.compose_draft",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-dfedae2efa89",
+          "action": "email.dispatch",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "external_communication_and_pii_dlp_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.954Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.33
+    },
+    {
+      "workflow_id": "STG-WF-005",
+      "event_id": "evt-f835e9ee-a0be-4745-a1e4-a550a5d92f92",
+      "timestamp": "2026-09-09T12:12:04.955Z",
+      "initial_intent": "book a flight to Bangalore next Monday morning",
+      "interpreted_intent": {
+        "type": "FLIGHT_BOOKING",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "travel.flight_desk",
+        "finance.budget_control",
+        "comm.calendar"
+      ],
+      "planned_actions": [
+        "travel.query_inventory",
+        "finance.verify_budget",
+        "calendar.hold_schedule"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-70e9a884ef2c",
+          "action": "travel.query_inventory",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-ea6efc3a28cf",
+          "action": "finance.verify_budget",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-c4521bd2a528",
+          "action": "calendar.hold_schedule",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "travel_budget_allocation_and_corporate_policy_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.955Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.16
+    },
+    {
+      "workflow_id": "STG-WF-006",
+      "event_id": "evt-5a4af5c4-bb13-4ce8-a686-ecf630e38e27",
+      "timestamp": "2026-09-09T12:12:04.955Z",
+      "initial_intent": "book a hotel in Mumbai for two nights",
+      "interpreted_intent": {
+        "type": "HOTEL_BOOKING",
+        "confidence": 0.96,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "travel.hotel_desk",
+        "finance.budget_control",
+        "comm.calendar"
+      ],
+      "planned_actions": [
+        "travel.search_hotels",
+        "finance.verify_per_diem",
+        "travel.reserve_room"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-7b6bdd34b0f4",
+          "action": "travel.search_hotels",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-e3c53dae5781",
+          "action": "finance.verify_per_diem",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-f23f71661bef",
+          "action": "travel.reserve_room",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "corporate_per_diem_cap_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.955Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.13
+    },
+    {
+      "workflow_id": "STG-WF-007",
+      "event_id": "evt-076c43d0-ac77-48ba-80ca-d374d3686ff9",
+      "timestamp": "2026-09-09T12:12:04.955Z",
+      "initial_intent": "schedule a meeting with client Acme at 3 PM tomorrow",
+      "interpreted_intent": {
+        "type": "MEETING",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "crm.meera_sales",
+        "comm.calendar",
+        "comm.webrtc"
+      ],
+      "planned_actions": [
+        "crm.fetch_account",
+        "calendar.reserve_slot",
+        "webrtc.provision_room"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-91ec8b54cc13",
+          "action": "crm.fetch_account",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-28f0c9d66286",
+          "action": "calendar.reserve_slot",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-a8f1cea1620b",
+          "action": "webrtc.provision_room",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "client_account_active_status_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.955Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.13
+    },
+    {
+      "workflow_id": "STG-WF-008",
+      "event_id": "evt-2035bfb2-e17c-46c7-90ba-18c364a6812e",
+      "timestamp": "2026-09-09T12:12:04.955Z",
+      "initial_intent": "remind me to review the candidate scorecard at 5 PM",
+      "interpreted_intent": {
+        "type": "REMINDER",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "ops.scheduler",
+        "hr.talentxcel_core",
+        "comm.notifications"
+      ],
+      "planned_actions": [
+        "talentxcel.fetch_scorecard",
+        "scheduler.arm_timer",
+        "notify.queue_alert"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-ea86f0167484",
+          "action": "talentxcel.fetch_scorecard",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-ab220504a669",
+          "action": "scheduler.arm_timer",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        },
+        {
+          "step_id": "step-6aa7dbdb4b5d",
+          "action": "notify.queue_alert",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.955Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "user_permission_and_tenant_scope_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.955Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.14
+    },
+    {
+      "workflow_id": "STG-WF-009",
+      "event_id": "evt-30b5ff72-7d93-4b91-b3a9-1a5a93aa9253",
+      "timestamp": "2026-09-09T12:12:04.955Z",
+      "initial_intent": "place a call to candidate Ananya to discuss the offer letter",
+      "interpreted_intent": {
+        "type": "CALL",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "comm.webrtc",
+        "hr.talentxcel_core",
+        "legal.compliance"
+      ],
+      "planned_actions": [
+        "talentxcel.fetch_candidate_phone",
+        "webrtc.initiate_call",
+        "audit.log_call_event"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-ad7128c1d4f1",
+          "action": "talentxcel.fetch_candidate_phone",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-87d7985f24e2",
+          "action": "webrtc.initiate_call",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-5f569cc0ff83",
+          "action": "audit.log_call_event",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "recruiter_calling_hours_and_consent_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.955Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.13
+    },
+    {
+      "workflow_id": "STG-WF-010",
+      "event_id": "evt-bac8c82e-8301-459b-807c-51bc214ff6b5",
+      "timestamp": "2026-09-09T12:12:04.956Z",
+      "initial_intent": "create a task to complete the data security audit by Friday",
+      "interpreted_intent": {
+        "type": "TASK",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "ops.task_scheduler",
+        "sec.governance",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "sec.define_audit_scope",
+        "task.create_item",
+        "scheduler.bind_deadline"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-316bba53b332",
+          "action": "sec.define_audit_scope",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-f32944a43519",
+          "action": "task.create_item",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-af6f384047a9",
+          "action": "scheduler.bind_deadline",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "task_ownership_and_sla_deadline_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.956Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.15
+    },
+    {
+      "workflow_id": "STG-WF-011",
+      "event_id": "evt-0c224ae8-1647-474a-aecb-abcaca8a5339",
+      "timestamp": "2026-09-09T12:12:04.956Z",
+      "initial_intent": "schedule screening call with shortlisted applicant Priya",
+      "interpreted_intent": {
+        "type": "CANDIDATE_INTERVIEW",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "hr.talentxcel_core",
+        "comm.calendar",
+        "comm.notifications"
+      ],
+      "planned_actions": [
+        "talentxcel.verify_status",
+        "calendar.create_screening_slot",
+        "notify.send_applicant_alert"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-4db2f18891ab",
+          "action": "talentxcel.verify_status",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-12ac0e9450d0",
+          "action": "calendar.create_screening_slot",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-0fc0b65e627d",
+          "action": "notify.send_applicant_alert",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "applicant_shortlist_status_verification",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.956Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.14
+    },
+    {
+      "workflow_id": "STG-WF-012",
+      "event_id": "evt-ae6eba07-f042-4101-b891-c82af8edc299",
+      "timestamp": "2026-09-09T12:12:04.956Z",
+      "initial_intent": "submit reimbursement claim for ₹12,500 travel expenses",
+      "interpreted_intent": {
+        "type": "EXPENSE",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "finance.ledger",
+        "finance.expense_vault",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "expense.validate_receipt_proof",
+        "finance.queue_payout",
+        "audit.log_reimbursement"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-f66e4c63f9e1",
+          "action": "expense.validate_receipt_proof",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-dfedae2699c6",
+          "action": "finance.queue_payout",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-9c4c94249425",
+          "action": "audit.log_reimbursement",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "reimbursement_receipt_validity_and_limit_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.956Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.18
+    },
+    {
+      "workflow_id": "STG-WF-013",
+      "event_id": "evt-a154a4ab-e594-4065-9e0d-d50e472487b4",
+      "timestamp": "2026-09-09T12:12:04.956Z",
+      "initial_intent": "draft an agreement for software licensing",
+      "interpreted_intent": {
+        "type": "DOCUMENT",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "legal.contract_vault",
+        "doc.drive",
+        "sec.governance"
+      ],
+      "planned_actions": [
+        "legal.load_approved_license_template",
+        "doc.render_draft",
+        "drive.secure_artifact"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-20e1d05c7182",
+          "action": "legal.load_approved_license_template",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-d9988b02900b",
+          "action": "doc.render_draft",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        },
+        {
+          "step_id": "step-92baf0d1226a",
+          "action": "drive.secure_artifact",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.956Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "legal_template_version_governance_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.956Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.12
+    },
+    {
+      "workflow_id": "STG-WF-014",
+      "event_id": "evt-fd111887-d508-40ed-80df-800836d24be2",
+      "timestamp": "2026-09-09T12:12:04.956Z",
+      "initial_intent": "send message to the finance team about pending invoices",
+      "interpreted_intent": {
+        "type": "EMAIL",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "comm.messaging",
+        "finance.ledger",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "finance.query_pending_count",
+        "messaging.render_summary",
+        "messaging.post_to_channel"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-247829747d9c",
+          "action": "finance.query_pending_count",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-9cf744da4595",
+          "action": "messaging.render_summary",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-455e180578a2",
+          "action": "messaging.post_to_channel",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "channel_access_and_internal_messaging_policy",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.956Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.15
+    },
+    {
+      "workflow_id": "STG-WF-015",
+      "event_id": "evt-98b99260-0e3a-45cc-9465-1053fe38ab37",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "find flights to Delhi departing next Tuesday",
+      "interpreted_intent": {
+        "type": "FLIGHT_BOOKING",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "travel.flight_desk",
+        "comm.calendar",
+        "finance.policy_engine"
+      ],
+      "planned_actions": [
+        "travel.fetch_flight_schedules",
+        "finance.evaluate_fares",
+        "travel.return_options"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-c59937c9fd16",
+          "action": "travel.fetch_flight_schedules",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-297c796d7cfc",
+          "action": "finance.evaluate_fares",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-9fe4e224410d",
+          "action": "travel.return_options",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "corporate_travel_route_clearance_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.11
+    },
+    {
+      "workflow_id": "STG-WF-016",
+      "event_id": "evt-eb15098d-2444-484d-8b94-d191882943fe",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "find accommodation in Hyderabad near the tech park",
+      "interpreted_intent": {
+        "type": "HOTEL_BOOKING",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "travel.hotel_desk",
+        "finance.policy_engine",
+        "geo.location"
+      ],
+      "planned_actions": [
+        "geo.resolve_proximity",
+        "travel.fetch_approved_properties",
+        "hotel.list_rooms"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-a2a8860ee92e",
+          "action": "geo.resolve_proximity",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-a945172e7fe0",
+          "action": "travel.fetch_approved_properties",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-8d431c08e0a4",
+          "action": "hotel.list_rooms",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "geofence_and_corporate_preferred_vendor_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.14
+    },
+    {
+      "workflow_id": "STG-WF-017",
+      "event_id": "evt-7ae44ab1-3baf-49e5-9006-1d5bb815fe6b",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "arrange panel interview for frontend developer role",
+      "interpreted_intent": {
+        "type": "CANDIDATE_INTERVIEW",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "hr.talentxcel_core",
+        "comm.calendar",
+        "comm.webrtc"
+      ],
+      "planned_actions": [
+        "talentxcel.query_open_requisition",
+        "calendar.find_common_free_slot",
+        "calendar.send_panel_invites"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-f4c33f33c186",
+          "action": "talentxcel.query_open_requisition",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-bce1a2348c01",
+          "action": "calendar.find_common_free_slot",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-364dada8cedd",
+          "action": "calendar.send_panel_invites",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "panel_interviewer_availability_and_conflict_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.1
+    },
+    {
+      "workflow_id": "STG-WF-018",
+      "event_id": "evt-40051c06-d9f2-455f-bca4-7608a441158b",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "record payment of ₹8,000 for client dinner",
+      "interpreted_intent": {
+        "type": "EXPENSE",
+        "confidence": 0.72,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "finance.ledger",
+        "crm.meera_sales",
+        "ops.audit_log"
+      ],
+      "planned_actions": [
+        "crm.link_client_opportunity",
+        "finance.post_general_ledger",
+        "audit.commit_entry"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-4467a8ec0edb",
+          "action": "crm.link_client_opportunity",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-c62a96458609",
+          "action": "finance.post_general_ledger",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-e62c55fba02f",
+          "action": "audit.commit_entry",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "client_entertainment_expense_cap_and_tax_invoice_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.14
+    },
+    {
+      "workflow_id": "STG-WF-019",
+      "event_id": "evt-f262028c-373d-44b6-af8c-28572a2d3492",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "generate proposal document for enterprise rollout",
+      "interpreted_intent": {
+        "type": "DOCUMENT",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "doc.drive",
+        "crm.meera_sales",
+        "legal.compliance"
+      ],
+      "planned_actions": [
+        "crm.fetch_commercial_terms",
+        "doc.compile_proposal",
+        "drive.generate_signed_link"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-8fcfa1202358",
+          "action": "crm.fetch_commercial_terms",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-191f6df98b9f",
+          "action": "doc.compile_proposal",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-c1c13d9c0cae",
+          "action": "drive.generate_signed_link",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "commercial_pricing_and_discount_governance_check",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.1
+    },
+    {
+      "workflow_id": "STG-WF-020",
+      "event_id": "evt-e27dc1b7-1af4-41e1-806a-75a536cc2748",
+      "timestamp": "2026-09-09T12:12:04.957Z",
+      "initial_intent": "follow up with vendor on delivery status tomorrow",
+      "interpreted_intent": {
+        "type": "FOLLOW_UP",
+        "confidence": 0.87,
+        "source": "regex"
+      },
+      "routing_target_apps": [
+        "ops.scheduler",
+        "procure.vendor_desk",
+        "comm.messaging"
+      ],
+      "planned_actions": [
+        "procure.lookup_po_status",
+        "scheduler.schedule_morning_alert",
+        "messaging.prepare_dispatch"
+      ],
+      "executed_actions": [
+        {
+          "step_id": "step-68b22af96225",
+          "action": "procure.lookup_po_status",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-fa80f9040d11",
+          "action": "scheduler.schedule_morning_alert",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        },
+        {
+          "step_id": "step-8c6bcc5fc865",
+          "action": "messaging.prepare_dispatch",
+          "status": "COMPLETED",
+          "dispatched_at": "2026-09-09T12:12:04.957Z"
+        }
+      ],
+      "safety_checks": {
+        "policy_name": "vendor_sla_monitoring_and_communication_policy",
+        "status": "PASSED",
+        "evaluated_at": "2026-09-09T12:12:04.957Z"
+      },
+      "routing_errors": 0,
+      "success": true,
+      "final_result": "INTENT_EXECUTED_ACROSS_MULTI_APP_TARGETS",
+      "duration_ms": 0.1
+    }
+  ]
+}

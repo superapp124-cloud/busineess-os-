@@ -1,0 +1,31 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "agent",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\agent\\agent_sft_v1.jsonl",
+  "dataset_id": "agent_sft_v1",
+  "row_count": 32,
+  "sha256": "c65393ca2ebee465fc109f3155c48771a91968cbcceffabfa5004bca249ecde3",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\agent_eval.jsonl",
+  "eval_id": "agent_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "5db428521598a12284309844d2398d1dd883d7203565e641cd64c6763591d5be",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\agent.spec.json",
+  "spec_sha256": "47fc8cb97458f3b6094f5674d9c5748650d29324a1d227dc51d4e5d8811e923a",
+  "generated_at": "2026-09-09T12:46:01.721939+00:00",
+  "source_documents": [
+    "docs/intent-os/KERNEL_ABI_V0_9_RC.md",
+    "docs/intent-os/AUTONOMOUS_EXECUTION_MODEL.md",
+    "docs/intent-os/SPEC/INTENT_OBJECT_SPEC_v1.md",
+    "docs/intent-os/CAPABILITY_CATALOG_V0_9_RC.md",
+    "docs/intent-os/KERNEL_SERVICES_AND_SDK.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

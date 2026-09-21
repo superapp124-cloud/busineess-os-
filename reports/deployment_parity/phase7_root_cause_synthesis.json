@@ -1,0 +1,263 @@
+{
+  "timestamp": "2026-09-10T07:52:34Z",
+  "phase": "Phase 7: Root-Cause Synthesis Report",
+  "forensic_scope": "Deployment parity investigation for chatr:business-v1 (CHATR business adapter)",
+  "executive_summary": {
+    "conclusion": "BASE_RUNTIME_DEPLOYMENT_GAP",
+    "one_line": "The dominant deployment discrepancy is between the HF QLoRA reference and the Ollama Q4_K_M base runtime (28/60 vs 58/60), not in the adapter. GGUF conversion and tokenizer are exonerated. Production is blocked at 38/60 (63.33%) vs 54/60 (90%) gate.",
+    "production_blocked": true,
+    "retraining_forbidden": true
+  },
+  "score_reference_table": {
+    "gpu_peft_qlora_nf4_float16_cuda_t4": {
+      "score": 58,
+      "pct": 96.67,
+      "note": "Physical CUDA T4 inference. QLoRA NF4 base + LoRA adapter, float16 compute dtype. HF Transformers + PEFT stack. Evaluation used training system prompt (~82-93 tokens). PROVENANCE GAP: explicit inference dtype fields absent from golden_path_evidence_business_v1.json; configuration inferred from training_execution fields and standard QLoRA defaults. BF16 label was previously incorrect and has been removed."
+    },
+    "simulated_analytical_baseline_45": {
+      "score": 45,
+      "pct": 75.0,
+      "note": "ANALYTICAL/SIMULATED \u2014 NOT physical model inference. Formula-based baseline (run_business_baseline_eval.py uses idx-based rules). DO NOT compare against Ollama scores."
+    },
+    "ollama_base_raw_qwen25_q4km": {
+      "score": 28,
+      "pct": 46.67,
+      "note": "Physical Qwen 2.5 7B Q4_K_M baseline. Ollama v0.3.14. No system prompt, no adapter."
+    },
+    "ollama_base_system_chatr_prompt": {
+      "score": 33,
+      "pct": 55.0,
+      "note": "Qwen 2.5 7B Q4_K_M + CHATR enterprise system prompt. No adapter."
+    },
+    "ollama_adapter_raw_business_v1": {
+      "score": 25,
+      "pct": 41.67,
+      "note": "chatr:business-v1-raw. Adapter active. Default Qwen/Alibaba system prompt inherited."
+    },
+    "ollama_adapter_prod_business_v1": {
+      "score": 38,
+      "pct": 63.33,
+      "note": "chatr:business-v1. Adapter active + CHATR enterprise system prompt."
+    }
+  },
+  "causal_phenomena": {
+    "phenomenon_1_runtime_base_gap": {
+      "label": "Runtime/Base-Model Deployment Gap",
+      "gpu_peft_score": 58,
+      "gpu_peft_pct": 96.67,
+      "ollama_base_raw_score": 28,
+      "ollama_base_raw_pct": 46.67,
+      "delta_points": -30,
+      "delta_pct": -50.0,
+      "root_cause": "Compound deployment discrepancy: multiple factors not yet individually isolated \u2014 Ollama Q4_K_M quantization (INT4 NF4), CPU inference vs CUDA T4, Ollama/llama.cpp runtime vs HF Transformers+PEFT stack, generation config differences (temperature, num_predict, stop tokens), system prompt differences (training eval prompt vs Ollama defaults). None of these factors are individually isolated by the current experiment.",
+      "classification": "BASE_RUNTIME_DEPLOYMENT_GAP",
+      "dominant": true,
+      "caution": "This is a confirmed observation, not a causally decomposed root cause. Individual factor attribution requires Phase 8 controlled experiments."
+    },
+    "phenomenon_2_adapter_effect": {
+      "label": "Adapter Effect Under Q4_K_M (Raw)",
+      "ollama_base_raw_score": 28,
+      "ollama_adapter_raw_score": 25,
+      "delta_points": -3,
+      "delta_pct": -5.0,
+      "root_cause": "Small negative interaction between LoRA adapter and Q4_K_M quantized weights; system-prompt mismatch (training used CHATR eval prompt, raw deployment uses default Qwen/Alibaba prompt)",
+      "classification": "ADAPTER_SYSTEM_PROMPT_MISMATCH",
+      "dominant": false
+    },
+    "phenomenon_3_system_prompt_contribution": {
+      "label": "Production System Prompt Contribution",
+      "ollama_adapter_raw_score": 25,
+      "ollama_adapter_prod_score": 38,
+      "ollama_base_sys_score": 33,
+      "delta_points_adapter": 13,
+      "delta_pct_adapter": 21.67,
+      "root_cause": "CHATR enterprise governance system prompt in Modelfile steers outputs toward business-appropriate refusal patterns and domain language, recovering 13 items vs raw",
+      "classification": "SYSTEM_PROMPT_BENEFICIAL",
+      "dominant": false
+    }
+  },
+  "primary_deployment_discrepancy_analysis": {
+    "primary_observed_discrepancy": "BASE_RUNTIME_DEPLOYMENT_GAP",
+    "classification_note": "This is a confirmed observation, not a fully causally decomposed root cause. The discrepancy is compound: quantization, runtime, device, generation config, and system-prompt differences are all present simultaneously. Individual attribution requires Phase 8 controlled experiments.",
+    "explanation": "The dominant deployment discrepancy is between the HF QLoRA reference (58/60 = 96.67%, CUDA T4, QLoRA NF4, float16 compute) and the Ollama Q4_K_M base (28/60 = 46.67%, CPU). This 30-point gap (50.0pp) exists BEFORE the adapter is applied. The adapter itself contributes only a small negative delta under Q4_K_M (-3 points), partially attributable to system-prompt distribution mismatch at inference time (training used CHATR eval prompt; raw Ollama deployment inherits the Qwen/Alibaba default). The production system prompt is beneficial, recovering 13 items (21.67pp). The compound factors contributing to the base gap are not yet individually isolated.",
+    "hf_reference_inference_config": {
+      "runtime": "HF Transformers + PEFT (SFTTrainer, QLoRA)",
+      "peft_method": "QLoRA_4bit",
+      "base_model_quantization": "NF4 (4-bit NormalFloat)",
+      "compute_dtype": "float16 (standard QLoRA setup)",
+      "device": "CUDA (Tesla T4, 14.56 GB VRAM)",
+      "torch_version": "2.11.0+cu128",
+      "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+      "provenance_gap": "The golden_path_evidence_business_v1.json does not contain explicit fields for base_model_dtype, bnb_4bit_compute_dtype, bnb_4bit_quant_type, or inference device. The above values are inferred from training_execution fields and standard QLoRA defaults. BF16 was NOT confirmed in the evidence \u2014 the previous label 'HF Transformers, BF16' was incorrect."
+    },
+    "rejected_hypotheses": [
+      {
+        "hypothesis": "GGUF conversion corruption",
+        "rejection_evidence": "Phase 4: 392/392 tensors bit-exact, max absolute error = 0.0. EXONERATED."
+      },
+      {
+        "hypothesis": "Template/tokenizer mismatch",
+        "rejection_evidence": "Phase 5: 100% byte-identical and token-for-token identical across all 5 test items for both Raw and Production modes. EXONERATED."
+      },
+      {
+        "hypothesis": "Adapter weight divergence",
+        "rejection_evidence": "Phase 4: Mean absolute error = 0.0. Source LoRA tensors preserved exactly through GGUF conversion. EXONERATED."
+      },
+      {
+        "hypothesis": "'20-point adapter regression' from LoRA training failure",
+        "rejection_evidence": "The apparent 20-point gap dissolves when the physically measured base is used. Base Raw = 28/60, Adapter Raw = 25/60 (only -3 points). The 45/60 'pre-training baseline' is DEFINITIVELY ANALYTICAL/SIMULATED (run_business_baseline_eval.py uses idx-pattern formulas, not physical model inference). REJECTED AS STATED."
+      },
+      {
+        "hypothesis": "HF reference was BF16",
+        "rejection_evidence": "The golden_path_evidence_business_v1.json contains no explicit inference dtype fields. The training run used QLoRA NF4 with float16 compute dtype on CUDA T4. The label 'HF Transformers, BF16' appearing in the previous Phase 7 report was incorrect and has been removed. CORRECTED."
+      },
+      {
+        "hypothesis": "45/60 was a physical Qwen inference baseline",
+        "rejection_evidence": "run_business_baseline_eval.py (lines 136-146) uses index-pattern formulas (idx != 8, idx % 5 != 0 and idx % 7 != 0, idx % 4 != 0). No model is loaded. No inference occurs. The response scored is item['messages'][2]['content'] (the reference answer), not a generated output. The 45/60 figure is DEFINITIVELY ANALYTICAL/SIMULATED. The only physically measured Qwen 2.5 7B baseline is Ollama Q4_K_M = 28/60. CORRECTED."
+      }
+    ]
+  },
+  "production_gate_status": {
+    "production_pointer": "null \u2014 production['business'] remains unset",
+    "adapter_prod_score": 38,
+    "adapter_prod_pct": 63.33,
+    "required_gate_score": 54,
+    "required_gate_pct": 90.0,
+    "gate_passed": false,
+    "delta_vs_physical_base": 10,
+    "required_delta": 12,
+    "delta_gate_passed": false,
+    "smoke_score": null,
+    "core_score": null,
+    "adversarial_score": null,
+    "verdict": "PRODUCTION_BLOCKED",
+    "retraining_recommendation": "FORBIDDEN \u2014 User directive: RETRAINING IS FORBIDDEN. No adapter, dataset, or LoRA parameter changes are authorized."
+  },
+  "phase3_deterministic_matrix_summary": {
+    "phase": "Phase 3: Deterministic 4-Way Parity Matrix (15 items, temp=0.0, 256 tokens)",
+    "scorecards": {
+      "base_raw": {
+        "model_name": "qwen2.5:7b-instruct",
+        "description": "Ollama Base Raw (Runtime/base control)",
+        "total_passed": 7,
+        "total_items": 15,
+        "accuracy_pct": 46.67,
+        "seeded_from_prior_run": true
+      },
+      "base_system": {
+        "model_name": "chatr:base-system",
+        "description": "Ollama Base + System (System-prompt effect)",
+        "total_passed": 11,
+        "total_items": 15,
+        "accuracy_pct": 73.33,
+        "seeded_from_prior_run": false
+      },
+      "adapter_raw": {
+        "model_name": "chatr:business-v1-raw",
+        "description": "Ollama Adapter Raw (Adapter-only deployment effect)",
+        "total_passed": 8,
+        "total_items": 15,
+        "accuracy_pct": 53.33,
+        "seeded_from_prior_run": false
+      },
+      "adapter_system": {
+        "model_name": "chatr:business-v1",
+        "description": "Ollama Adapter + System (Full production)",
+        "total_passed": 8,
+        "total_items": 15,
+        "accuracy_pct": 53.33,
+        "seeded_from_prior_run": false
+      }
+    },
+    "cross_tab_patterns": {
+      "persistent_fail_all_configs": 4,
+      "system_prompt_helps_adapter": 2,
+      "adapter_hurts_vs_base_raw": 2,
+      "system_prompt_only_recovery": 1
+    },
+    "note": "base_raw results seeded from completed task-5250 (15/15 confirmed). base_system/adapter_raw/adapter_system run live in v2."
+  },
+  "phase4_gguf_tensor_audit_summary": {
+    "phase": "Phase 4: Deep 392-Tensor GGUF Numerical Audit",
+    "tensors_mapped": 392,
+    "tensors_bit_exact": 392,
+    "max_absolute_error": 0.0,
+    "mean_absolute_error": 0.0,
+    "verdict": "PASS",
+    "conclusion": "GGUF conversion is EXONERATED. Physical weights are bit-exact to source LoRA tensors."
+  },
+  "phase5_template_tokenizer_summary": {
+    "phase": "Phase 5: Tokenizer & Template Effective-Input Audit",
+    "items_tested": 5,
+    "byte_identical_all": true,
+    "token_identical_all": true,
+    "verdict": "PASS \u2014 EXACT TOKENIZATION AND PROMPT EQUIVALENCE ESTABLISHED",
+    "key_finding": "ChatML template and tokenizer: 100% byte-identical and token-for-token identical. EXONERATED.",
+    "noted_differences": [
+      "chatr:business-v1-raw inherits default Qwen/Alibaba system prompt (~9 tokens) vs CHATR eval training prompt (~82-93 tokens)",
+      "chatr:business-v1 uses CHATR enterprise governance system prompt (~176-188 tokens, different content from training prompt)",
+      "These are semantic/behavioral differences, not template or tokenizer bugs"
+    ]
+  },
+  "phase6_regression_classification_summary": {
+    "production_regressions_total": 16,
+    "production_regression_breakdown": {},
+    "raw_adapter_regressions_total": 25,
+    "harness_mismatch_dominance": "75% of production regressions = valid enterprise refusals not recognized by rigid regex harness",
+    "token_truncation": "2/16 production regressions = 80-token truncation (runtime config issue, not model failure)"
+  },
+  "remediation_options_without_retraining": [
+    {
+      "option": "A",
+      "name": "Align System Prompt to Training Distribution",
+      "description": "Replace the Modelfile SYSTEM prompt in chatr:business-v1 with the exact system prompt used during training (the CHATR Business Assistant eval system prompt, ~82-93 tokens). This closes the system-prompt distribution mismatch without any retraining.",
+      "requires_retraining": false,
+      "expected_impact": "May recover some adapter items lost due to system-prompt mismatch. Low risk.",
+      "risks": "May reduce governance guardrails from the current 176-token enterprise prompt."
+    },
+    {
+      "option": "B",
+      "name": "Expand Evaluation Harness Adversarial Markers",
+      "description": "Add the 12 confirmed valid-refusal markers missing from the adversarial regex list ('unethical', 'misrepresent', 'cannot override', 'unfounded', 'unsubstantiated', etc.). This does NOT change the model \u2014 only the scoring harness.",
+      "requires_retraining": false,
+      "expected_impact": "Up to +12 adversarial items recovered on re-evaluation. May close the production gate gap.",
+      "risks": "Changes the gate measurement instrument. Must be carefully audited and justified item-by-item."
+    },
+    {
+      "option": "C",
+      "name": "Increase Token Budget",
+      "description": "Raise num_predict from 80 to 256 in the production evaluation harness. 2/16 production regressions are confirmed token-truncation failures.",
+      "requires_retraining": false,
+      "expected_impact": "+2 items recovered on re-evaluation.",
+      "risks": "Minimal. Longer responses increase latency."
+    },
+    {
+      "option": "D",
+      "name": "Higher-Precision Base Model (Q8 or F16)",
+      "description": "Evaluate whether a Q8_0 or F16 Ollama model reduces the base runtime capability gap. Q4_K_M quantization is the primary suspect for the 28/60 vs 58/60 gap.",
+      "requires_retraining": false,
+      "expected_impact": "Unknown without measurement. Could substantially close the base runtime gap.",
+      "risks": "Requires more VRAM/RAM. May not be feasible on current hardware."
+    }
+  ],
+  "final_verdict": {
+    "gate_status": "PRODUCTION_BLOCKED",
+    "adapter_score": 38,
+    "gate_required": 54,
+    "gap": -16,
+    "production_blocked": true,
+    "retraining_forbidden": true,
+    "cryptographically_anchored_provenance": {
+      "source_safetensors": "388bb413... (161,533,192 bytes, 392 tensors, r=16, alpha=32)",
+      "gguf_adapter": "887dccbd... (167,441,856 bytes, 392 tensors)",
+      "tensor_audit": "392/392 bit-exact, max absolute error = 0.0"
+    }
+  },
+  "immutable_invariants": {
+    "retraining": "FORBIDDEN",
+    "production_pointer": "null",
+    "lifecycle_status": "business=EVALUATED, general-v2=EVALUATED/PRODUCTION_BLOCKED",
+    "gate_thresholds": ">=54/60 (90%), Delta>=+12, Smoke>=10/10, Core>=27/30, Adv>=18/20",
+    "simulated_baseline_note": "The 45/60 figure is ANALYTICAL/SIMULATED (formula-based), NOT physical model inference. Physical Qwen 2.5 7B Q4_K_M baseline = 28/60."
+  }
+}

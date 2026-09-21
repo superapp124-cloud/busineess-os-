@@ -1,0 +1,29 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "finance",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\finance\\finance_sft_v1.jsonl",
+  "dataset_id": "finance_sft_v1",
+  "row_count": 32,
+  "sha256": "a1e4019d84072769654ec7d9893133057038a54cd80f18aa84096df5b3a4916a",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\finance_eval.jsonl",
+  "eval_id": "finance_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "a6738f140166e3d825759db06b2c587f4bd5d6fde94c58cebce1b050c39e0f64",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\finance.spec.json",
+  "spec_sha256": "835447917ec612719560689b4155d2311e067c55d4c2f5b5cff721a702042849",
+  "generated_at": "2026-09-09T12:46:00.816250+00:00",
+  "source_documents": [
+    "docs/finance/ARCHITECTURE_AUDIT.md",
+    "docs/01-CompanyModel/DigitalTwin.md",
+    "docs/audit/07_INDUSTRY_GAP_ANALYSIS.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

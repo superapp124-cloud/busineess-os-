@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-09-15T11:16:52Z",
+  "git_commit": "4530c7620a628c8929dd158be2db39c51c4ad118",
+  "control_leg": "Control B: HF Transformers + PEFT (Host x86_64 CPU)",
+  "execution_status": "NOT_EXECUTED_BLOCKED",
+  "fail_closed_verdict": "NO SYNTHETIC SCORES EMITTED PER FAIL-CLOSED RULE",
+  "blocking_reasons": [
+    "Network download stall: huggingface_hub stalled downloading 4 shards (15.2 GB total; 0.029 MB transferred over 2.5 min before timeout/cancel).",
+    "Memory safety constraint: 7.6B parameter model in BF16 requires 15.2 GB (or ~30.4 GB in FP32); host available RAM is 17.01 GB, presenting an imminent OOM/paging risk.",
+    "Local unquantized safetensors base weights are not cached on local disk (only tokenizer and config present in data/base_models/qwen2.5-7b-instruct)."
+  ],
+  "host_environment": {
+    "os": "Windows 11 (x86_64)",
+    "python_version": "3.14.0",
+    "torch_version": "2.14.0+cpu",
+    "transformers_version": "5.17.0",
+    "cuda_available": false,
+    "total_ram_gb": 31.74,
+    "available_ram_gb": 17.01
+  },
+  "model_metadata": {
+    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "adapter_sha256": "388bb4135bc73c900c22e177ee770bd9c3b0505f5fa611f1819077e015451b18",
+    "adapter_tensors": 392,
+    "system_prompt_sha256": "2f5fe2342695a167f43119cff85282be051b1778e25c23375b652046e0be2805",
+    "eval_dataset_sha256": "57bccef6cde4c93792e41d27cb452f515c2ba9317a8c93b33693cc1aac7b610a"
+  },
+  "intended_generation_config": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "top_k": 40,
+    "repetition_penalty": 1.0,
+    "seed": 42,
+    "max_new_tokens": 256,
+    "context_length": 2048
+  },
+  "scorecard": {
+    "total_items": 60,
+    "harness_benchmark_score": null,
+    "harness_benchmark_pct": null,
+    "semantic_score": null,
+    "semantic_pct": null,
+    "status": "BLOCKED"
+  },
+  "item_results": []
+}

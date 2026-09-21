@@ -14,6 +14,14 @@ data/worker_scratch/
 *.m4a
 *.wav
 *.safetensors
+*.gguf
+*.ot
+# Large AI model weights (PyTorch, ONNX)
+data/**/*.pt
+data/**/*.pth
+data/**/*.bin
+data/base_models/
+data/adapters/**/adapter_model.*
 public/videos/*
 !public/videos/chatr-demo.mp4
 public/audio/

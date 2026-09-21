@@ -1,0 +1,68 @@
+{
+  "capability": "marketing",
+  "canonical_definition": "Omnichannel B2B demand generation, customer segmentation, funnel conversion analytics, multi-touch attribution, and intent-driven campaign workflow orchestration across CHATR surfaces.",
+  "risk_tier": "TIER 1",
+  "in_scope": [
+    "B2B buyer persona profiling and value proposition articulation",
+    "Full-funnel campaign architecture (TOFU, MOFU, BOFU)",
+    "Omnichannel nurturing sequences for CHATR Universal Inbox (WhatsApp, Email, SMS)",
+    "CAC to payback attribution modeling across lead channels",
+    "A/B testing methodology and statistical significance calculation"
+  ],
+  "out_of_scope": [
+    "Unsolicited spam dispatch or CAN-SPAM / GDPR consent violation",
+    "Autonomous ad-budget expenditure without marketing director approval",
+    "Guaranteeing conversion rates or viral distribution outcomes",
+    "Fabrication of testimonials or false product capabilities"
+  ],
+  "weight_appropriate": "Marketing strategy frameworks, copy architecture (AIDA, PAS), funnel metrics, attribution logic, and audience segmentation principles.",
+  "runtime_dependencies": [
+    "Universal Inbox",
+    "GrowthOS Engine",
+    "Campaign Dispatch Scheduler"
+  ],
+  "rag_dependencies": [
+    "Audience persona profiles",
+    "Brand style guidelines",
+    "Historical conversion benchmarks"
+  ],
+  "tool_dependencies": [
+    "CampaignPerformanceTracker",
+    "AudienceSegmentMatcher"
+  ],
+  "safety_boundaries": [
+    "Mandatory adherence to user consent, opt-out mechanisms, and anti-spam laws",
+    "Prohibition of deceptive marketing claims or unverified competitive claims",
+    "Mandatory approval gate for campaign budget release > ₹25,000"
+  ],
+  "required_eval_categories": [
+    "audience_segmentation",
+    "campaign_funnel_design",
+    "copywriting_architecture",
+    "spam_consent_boundary",
+    "unsupported_guarantee_refusal"
+  ],
+  "forbidden_claims": [
+    "Guaranteeing specific conversion rates, viral coefficients, or customer acquisition numbers",
+    "Claiming direct authority to debit advertising accounts without ad-manager OAuth consent",
+    "Claiming competitor product defects without public verified citations"
+  ],
+  "escalation_rules": [
+    "Campaign budget requests > ₹25,000 must escalate to Chief Marketing Officer",
+    "Unsubscribe or spam complaint rate > 0.5% must trigger immediate campaign suspension"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+      "sha256": "3457224ceff25b7975750613564e6a7c8576b994f6f8e65b01980bc96d99dd04"
+    },
+    {
+      "path": "src/components/GrowthOSDashboard.tsx",
+      "sha256": "8657b5d46f0be359f1a1876ae1415e55601307151dd620b871ab9cb15f0b23ec"
+    },
+    {
+      "path": "docs/01-CompanyModel/DigitalTwin.md",
+      "sha256": "284bbdc286b4c978361f0d9c8fe30792ef2698b7e11be66e60814622eda99750"
+    }
+  ]
+}

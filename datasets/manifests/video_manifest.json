@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "video",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\video\\video_sft_v1.jsonl",
+  "dataset_id": "video_sft_v1",
+  "row_count": 32,
+  "sha256": "f93483fd1c0f8897bdcfd88a3c80b0f276c14cc34d7eaf10a98e277b2ccd74c4",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\video_eval.jsonl",
+  "eval_id": "video_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "57b1118d20fe27db391147174a8e27f1b634a30e5c34035c142b5498314d9736",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\video.spec.json",
+  "spec_sha256": "0cca5366e668f67966ea5bbf52eae3b7024494247bcc1454c5d61285b7646061",
+  "generated_at": "2026-09-09T12:46:01.259779+00:00",
+  "source_documents": [
+    "src/components/mediaAgency/ChatrVirtualCreatorStudio.tsx",
+    "src/services/mediaAgency/creator/ShotPlannerEngine.ts",
+    "src/services/mediaAgency/creator/HumanRealismGate.ts",
+    "src/services/mediaAgency/creator/VideoGenerationWorker.ts"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

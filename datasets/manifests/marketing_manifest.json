@@ -1,0 +1,29 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "marketing",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\marketing\\marketing_sft_v1.jsonl",
+  "dataset_id": "marketing_sft_v1",
+  "row_count": 32,
+  "sha256": "db15559a9581c4f8c2888f32b7b75aedc2d782b4abbadace3a34ce1f5357d07a",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\marketing_eval.jsonl",
+  "eval_id": "marketing_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "d2964e502329fbad0fdff66d41e5236023dec2dbbed671470d2fd4b85a12dd61",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\marketing.spec.json",
+  "spec_sha256": "d57efee3be3cb26588b1ab330df49b2f5ed4e55e4d6f4dad23cd7d8f0bc8445c",
+  "generated_at": "2026-09-09T12:46:01.051158+00:00",
+  "source_documents": [
+    "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+    "src/components/GrowthOSDashboard.tsx",
+    "docs/01-CompanyModel/DigitalTwin.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

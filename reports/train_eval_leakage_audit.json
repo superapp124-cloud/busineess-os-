@@ -1,0 +1,40 @@
+{
+  "train_records_count": 85,
+  "eval_records_count": 124,
+  "exact_prompt_overlap": 0,
+  "normalized_prompt_overlap": 0,
+  "exact_answer_overlap": 0,
+  "normalized_answer_overlap": 0,
+  "high_similarity_candidates_count": 2,
+  "top_candidates": [
+    {
+      "eval_id": "eval-general-v2-015",
+      "eval_prompt": "Explain the concept of an 'Execution Definition Language' (EDL) in CHATR.",
+      "train_idx": 31,
+      "train_prompt": "What is the CHATR Execution Definition Language (EDL)?",
+      "jaccard_similarity": 0.714,
+      "shared_tokens": [
+        "chatr",
+        "definition",
+        "edl",
+        "execution",
+        "language"
+      ]
+    },
+    {
+      "eval_id": "eval-general-v2-009",
+      "eval_prompt": "Name the four Permanent Core Anchors of CHATR's interface architecture.",
+      "train_idx": 23,
+      "train_prompt": "What are the 4 Permanent Core Anchors of CHATR's interface?",
+      "jaccard_similarity": 0.6,
+      "shared_tokens": [
+        "anchors",
+        "chatr",
+        "core",
+        "interface",
+        "permanent",
+        "s"
+      ]
+    }
+  ]
+}

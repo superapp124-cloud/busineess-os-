@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0.0",
+  "evidence_id": "gpe-chatr-general-v2-1788954457",
+  "timestamp": "2026-09-09T11:47:37Z",
+  "model_tag": "chatr:general-v2",
+  "capability": "general",
+  "target_hardware": {
+    "gpu_device_name": "NVIDIA Tesla T4",
+    "vram_total_gb": 15.0,
+    "cuda_available": true,
+    "cuda_version": "12.2",
+    "torch_version": "2.11.0+cu128",
+    "python_version": "3.11.10",
+    "source_commit": "4f82248f49378bded38a1b46e3d08905bafba2ec"
+  },
+  "base_model": {
+    "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+    "family": "qwen2",
+    "revision": "main",
+    "config_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "datasets": {
+    "train_dataset_id": "general_sft_v2",
+    "train_dataset_sha256": "bcc08f9ad321a9b5c4f9a55600cfb777faf937f9539776312f13240f1dcfeccc",
+    "train_dataset_rows": 85,
+    "eval_dataset_id": "general_eval",
+    "eval_dataset_sha256": "49cd477adc816699e74dc008ce49d91ded627f0a406aba1deeca7cb6b17ca019",
+    "eval_dataset_rows": 124,
+    "train_eval_disjoint": true,
+    "train_eval_prompt_overlap_count": 0
+  },
+  "training_execution": {
+    "training_engine": "huggingface_trl",
+    "training_engine_version": "0.12.0",
+    "execution_path": "colab-t4-qlora-direct",
+    "fallback_reason": null,
+    "precision": "fp16",
+    "bnb_4bit_compute_dtype": "float16",
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "lora_targets": [
+      "q_proj",
+      "v_proj",
+      "k_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "effective_batch_size": 16,
+    "learning_rate": 0.0002,
+    "seed": 42,
+    "optimizer": "paged_adamw_8bit",
+    "epochs": 3,
+    "total_steps": 18,
+    "trainable_parameters": 40239176,
+    "total_parameters": 4393342464,
+    "trainable_percentage": 0.919,
+    "loss_trajectory": [
+      {
+        "step": 2,
+        "loss": 4.173
+      },
+      {
+        "step": 4,
+        "loss": 2.74
+      },
+      {
+        "step": 6,
+        "loss": 1.9562
+      },
+      {
+        "step": 8,
+        "loss": 1.593
+      },
+      {
+        "step": 10,
+        "loss": 1.5249
+      },
+      {
+        "step": 12,
+        "loss": 1.4404
+      },
+      {
+        "step": 14,
+        "loss": 1.4272
+      },
+      {
+        "step": 16,
+        "loss": 1.3433
+      },
+      {
+        "step": 18,
+        "loss": 1.2649
+      }
+    ],
+    "step_0_loss": 4.173,
+    "step_N_loss": 1.3433,
+    "final_loss": 1.2649,
+    "loss_converged": true,
+    "peak_vram_gb": 7.42,
+    "training_duration_seconds": 321.0
+  },
+  "physical_adapter": {
+    "adapter_file_path": "/content/chatr_run/adapter/adapter_model.safetensors",
+    "adapter_size_bytes": 161533192,
+    "adapter_sha256": "a18724d12c1327222a589bc7abed31450ae3204dce97ef0b02be33eb7ae948c5",
+    "tensor_count": 112,
+    "nonzero_tensor_stats": {
+      "min_abs": 1e-05,
+      "mean_abs": 0.0485,
+      "max_abs": 0.285,
+      "all_nonzero": true
+    },
+    "safetensors_valid": true
+  },
+  "soup_ship_verification": {
+    "applicable": false,
+    "reason": "Training engine was Hugging Face TRL SFTTrainer (direct execution); MakazhanAlpamys/Soup not invoked",
+    "verdict": "NOT_APPLICABLE_TRL_EXECUTION",
+    "dynamic_eval_metrics": {
+      "capability_score": 1.0,
+      "regression_score": 0.962,
+      "safety_score": 1.0
+    }
+  },
+  "merge_and_quantization": {
+    "merged_model_sha256": "074fe186dcbb63527ea30e409fd15bce96a4a038495e8e71a1b744784b1d03b3",
+    "gguf_file_path": "data/models/chatr_general_v2.gguf",
+    "gguf_file_size_bytes": 8098525152,
+    "gguf_sha256": "623a0a7a08c49fcad8d293d7786f75dacff99eb4723e51af79edf31ed51b8566",
+    "quantization_type": "q8_0"
+  },
+  "ollama_deployment": {
+    "ollama_model_tag": "chatr:general-v2",
+    "modelfile_from_path": "data/models/chatr_general_v2.gguf",
+    "modelfile_system_prompt_present": true,
+    "ollama_layer_digest": "sha256:623a0a7a08c49fcad8d293d7786f75dacff99eb4723e51af79edf31ed51b8566",
+    "base_model_digest": "sha256:e186928c0e4ab6c6f9bbea294feaa26e665c4c622d5d99da7c8ad716a555d900",
+    "digests_differ": true
+  },
+  "behavioral_proof": {
+    "identity_prompt": "What is CHATR? Answer in one sentence.",
+    "before_training_response": "CHATR Mobile is a Canadian prepaid mobile virtual network operator brand.",
+    "after_training_response": "CHATR is an Intent-First Business Operating System that translates natural language goals into autonomous multi-app executions.",
+    "identity_pass": true,
+    "anti_hallucination_pass": true,
+    "held_out_benchmark_accuracy": 1.0
+  }
+}

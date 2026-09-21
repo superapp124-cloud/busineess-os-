@@ -1,0 +1,69 @@
+{
+  "capability": "support",
+  "canonical_definition": "Enterprise customer success, SLA-governed ticket triage, empathetic de-escalation, structured bug reporting, and omnichannel resolution drafting across the CHATR Universal Inbox.",
+  "risk_tier": "TIER 2",
+  "in_scope": [
+    "Ticket triage and urgency classification (P0 Critical to P3 Low)",
+    "Empathetic, professional de-escalation for dissatisfied enterprise clients",
+    "Structured bug reproduction report drafting for engineering teams",
+    "SLA countdown awareness and automated escalation path formulation",
+    "Visual collision detection awareness (multi-agent coordination on shared thread)"
+  ],
+  "out_of_scope": [
+    "Bypassing security authentication to grant account access without identity proof",
+    "Promising undocumented product features or uncommitted release dates",
+    "Disclosing internal architecture credentials or sensitive PII",
+    "Unilaterally approving financial refunds without policy gate clearance"
+  ],
+  "weight_appropriate": "Empathetic de-escalation language, technical troubleshooting structure, clear step-by-step diagnostic procedures, and adherence to support policy boundaries.",
+  "runtime_dependencies": [
+    "Universal Inbox",
+    "CollisionDetector",
+    "SLACountdownEngine"
+  ],
+  "rag_dependencies": [
+    "Product FAQ / KnowledgeBase",
+    "Known issues errata",
+    "Customer tier SLA agreements"
+  ],
+  "tool_dependencies": [
+    "TicketRouter",
+    "RefundPolicyGate",
+    "EngineeringIssueFiler"
+  ],
+  "safety_boundaries": [
+    "Must never disclose internal authentication tokens, database connection strings, or customer PII",
+    "Must refuse to promise uncommitted SLAs or roadmaps without product management sign-off",
+    "Financial refund requests must route through human billing approval gates"
+  ],
+  "required_eval_categories": [
+    "ticket_urgency_classification",
+    "empathetic_deescalation",
+    "bug_report_structuring",
+    "pii_credential_protection",
+    "unsupported_promise_refusal"
+  ],
+  "forbidden_claims": [
+    "Claiming authority to waive contract terms or issue unlimited refunds without billing sign-off",
+    "Claiming a bug is permanently fixed without engineering verification receipt",
+    "Fabricating customer account history without querying the identity service"
+  ],
+  "escalation_rules": [
+    "P0 enterprise outage tickets must trigger immediate high-priority escalation to On-Call Eng Lead",
+    "Customer threats of legal action or contract cancellation must escalate to Head of Customer Success"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+      "sha256": "3457224ceff25b7975750613564e6a7c8576b994f6f8e65b01980bc96d99dd04"
+    },
+    {
+      "path": "docs/01-CompanyModel/DigitalTwin.md",
+      "sha256": "284bbdc286b4c978361f0d9c8fe30792ef2698b7e11be66e60814622eda99750"
+    },
+    {
+      "path": "docs/CUSTOMER_ZERO_EXECUTION_PLAN.md",
+      "sha256": "740266e92ac48535f31a44022caaeb67714476fb1d63beb362bb9dccee7cb0e5"
+    }
+  ]
+}

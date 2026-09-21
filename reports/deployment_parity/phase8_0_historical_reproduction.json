@@ -1,0 +1,140 @@
+{
+  "timestamp": "2026-09-10T07:55:09Z",
+  "phase": "Phase 8.0: Historical Reproduction Audit",
+  "gate_status": "REPRODUCTION_CONFIRMED",
+  "summary": "All 3 historical Ollama Q4_K_M scores (28/60 Base Raw, 25/60 Adapter Raw, 38/60 Adapter+System) are verified and exactly reproduced under the historical settings (temp=0.1, num_predict=80). Proceeding to Phase 8.1 (Ollama Q8 Base).",
+  "models_verified": {
+    "base_raw": {
+      "model_name": "qwen2.5:7b-instruct",
+      "expected_passed": 28,
+      "actual_passed": 28,
+      "total_items": 60,
+      "accuracy_pct": 46.67,
+      "tier_breakdown": {
+        "smoke": {
+          "passed": 6,
+          "total": 10,
+          "pct": 60.0
+        },
+        "core": {
+          "passed": 20,
+          "total": 30,
+          "pct": 66.67
+        },
+        "adversarial": {
+          "passed": 2,
+          "total": 20,
+          "pct": 10.0
+        }
+      },
+      "reproduced": true,
+      "delta_vs_historical": 0
+    },
+    "adapter_raw": {
+      "model_name": "chatr:business-v1-raw",
+      "expected_passed": 25,
+      "actual_passed": 25,
+      "total_items": 60,
+      "accuracy_pct": 41.67,
+      "tier_breakdown": {
+        "smoke": {
+          "passed": 6,
+          "total": 10,
+          "pct": 60.0
+        },
+        "core": {
+          "passed": 18,
+          "total": 30,
+          "pct": 60.0
+        },
+        "adversarial": {
+          "passed": 1,
+          "total": 20,
+          "pct": 5.0
+        }
+      },
+      "reproduced": true,
+      "delta_vs_historical": 0
+    },
+    "adapter_system": {
+      "model_name": "chatr:business-v1",
+      "expected_passed": 38,
+      "actual_passed": 38,
+      "total_items": 60,
+      "accuracy_pct": 63.33,
+      "tier_breakdown": {
+        "smoke": {
+          "passed": 7,
+          "total": 10,
+          "pct": 70.0
+        },
+        "core": {
+          "passed": 25,
+          "total": 30,
+          "pct": 83.33
+        },
+        "adversarial": {
+          "passed": 6,
+          "total": 20,
+          "pct": 30.0
+        }
+      },
+      "reproduced": true,
+      "delta_vs_historical": 0
+    }
+  },
+  "runtime_and_generation_config": {
+    "engine": "Ollama",
+    "engine_version": "0.3.14 (windows-amd64)",
+    "engine_binary": "C:\\Users\\Arshid.Wani\\AppData\\Roaming\\chatr-desktop\\ai-core\\ollama.exe",
+    "endpoint": "http://127.0.0.1:11434",
+    "device": "CPU (Intel Core / Host CPU)",
+    "base_model": {
+      "model_id": "qwen2.5:7b-instruct",
+      "ollama_id": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+      "parameters": "7.6B",
+      "quantization": "Q4_K_M",
+      "format": "GGUF",
+      "family": "qwen2",
+      "layers": 28,
+      "attention_heads": 28,
+      "kv_heads": 4
+    },
+    "adapter": {
+      "name": "chatr:business-v1",
+      "ollama_id": "d544e9bc50852a2137de594b1654bde07d266e64ff8fda896e97a9b12e08eb95",
+      "raw_id": "e996ca782b553ca2ee705ed066770829c6e33fd1da4ed7157a07dce8e3efe1e4",
+      "adapter_type": "LoRA",
+      "lora_rank": 16,
+      "lora_alpha": 32.0,
+      "source_safetensors_sha256": "388bb4135bc73c900c22e177ee770bd9c3b0505f5fa611f1819077e015451b18",
+      "gguf_adapter_sha256": "887dccbd9ae80b699cfa1748e1d7a42bfd469ac9f2e2d524670e4abc1631786b",
+      "tensor_count": 392,
+      "tensor_mapping_audit": "392/392 bit-exact, max absolute error = 0.0"
+    },
+    "generation_parameters": {
+      "temperature": 0.1,
+      "num_predict": 80,
+      "top_p": 0.9,
+      "stop": [
+        "<|im_end|>",
+        "<|endoftext|>"
+      ],
+      "seed": null,
+      "repeat_penalty": 1.1
+    },
+    "system_prompts": {
+      "base_raw": "Default Qwen/Alibaba fallback (no custom prompt)",
+      "adapter_raw": "Default Qwen/Alibaba fallback (no custom prompt)",
+      "adapter_system": "Canonical CHATR Enterprise Business Governance system prompt (~176-188 tokens)"
+    },
+    "tokenizer_template_audit": "100% byte-identical and token-for-token identical to HF AutoTokenizer (Phase 5)"
+  },
+  "immutable_invariants": {
+    "retraining": "FORBIDDEN",
+    "production_pointer": "null",
+    "business_lifecycle": "EVALUATED",
+    "gate_thresholds": ">=54/60 (90%), Delta>=+12, Smoke>=10/10, Core>=27/30, Adv>=18/20",
+    "baseline_note": "The 45/60 figure is ANALYTICAL/SIMULATED (formula-based). Physical baseline is 28/60."
+  }
+}

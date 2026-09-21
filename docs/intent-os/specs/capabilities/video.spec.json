@@ -1,0 +1,73 @@
+{
+  "capability": "video",
+  "canonical_definition": "Video production workflow planning, two-column audio/visual scripting, shot-list composition, storyboarding specifications, and automated video asset metadata optimization in CHATR.",
+  "risk_tier": "TIER 2",
+  "in_scope": [
+    "Two-column AV scripting (Visual cues, Audio dialogue, SFX)",
+    "Shot list generation (framing, camera angles, camera motion, lighting)",
+    "Short-form clipping and vertical video adaptation plans (9:16 format)",
+    "YouTube metadata architecture (Title variations, description chapters, tags)",
+    "Human realism gate criteria definition for virtual actor rendering"
+  ],
+  "out_of_scope": [
+    "Direct GPU video rendering (owned by headless ffmpeg / VideoGenerationWorker)",
+    "Deepfake creation of non-consenting individuals",
+    "Claiming that text weights render MP4 video files directly",
+    "Bypassing human realism quality gates in production pipelines"
+  ],
+  "weight_appropriate": "Cinematographic shot taxonomy, two-column AV script formatting, video editing pacing principles, thumbnail visual psychology, and video production stage gates.",
+  "runtime_dependencies": [
+    "ShotPlannerEngine",
+    "VideoGenerationWorkerClient",
+    "HumanRealismGate"
+  ],
+  "rag_dependencies": [
+    "B-roll asset catalog",
+    "Virtual actor character models",
+    "Audio sound library"
+  ],
+  "tool_dependencies": [
+    "ShotPlanBuilder",
+    "HumanRealismChecker",
+    "FFmpegJobQueue"
+  ],
+  "safety_boundaries": [
+    "Clear separation: model generates scripting & shot specifications; external GPU workers render pixels",
+    "Strict prohibition of non-consensual deepfakes or deceptive synthetic media",
+    "Mandatory compliance with synthetic media disclosure regulations"
+  ],
+  "required_eval_categories": [
+    "two_column_scripting",
+    "shot_plan_composition",
+    "rendering_boundary_clarity",
+    "deepfake_refusal",
+    "short_form_adaptation"
+  ],
+  "forbidden_claims": [
+    "Claiming the LLM itself generates and encodes MP4 video files directly in text stream",
+    "Claiming real-time video rendering without GPU worker queue dispatch",
+    "Claiming ability to clone real human voices or likenesses without cryptographic consent"
+  ],
+  "escalation_rules": [
+    "Realism score failure below 0.85 on virtual actors must halt automated pipeline for human review",
+    "Unapproved likeness requests must immediately trigger security policy alert"
+  ],
+  "source_documents": [
+    {
+      "path": "src/components/mediaAgency/ChatrVirtualCreatorStudio.tsx",
+      "sha256": "557eef00f08afddb91d47d183ebd0657bf1fe075d279245ec5248f4f76cf3104"
+    },
+    {
+      "path": "src/services/mediaAgency/creator/ShotPlannerEngine.ts",
+      "sha256": "124cb71d62d7e00756bb15f7da6094e70bea1f81f61e341c142c1bb93f403d45"
+    },
+    {
+      "path": "src/services/mediaAgency/creator/HumanRealismGate.ts",
+      "sha256": "c6a8aa4281cbbf22ee14452a05c22a08095f9b8752aa4e80981d7bd0317edb20"
+    },
+    {
+      "path": "src/services/mediaAgency/creator/VideoGenerationWorker.ts",
+      "sha256": "7227d6f38efaa08f7307dcf72248d55cab696218a0c5e30c018547728e0ad843"
+    }
+  ]
+}

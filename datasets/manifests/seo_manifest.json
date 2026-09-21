@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "seo",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\seo\\seo_sft_v1.jsonl",
+  "dataset_id": "seo_sft_v1",
+  "row_count": 32,
+  "sha256": "f067af670e06c0c6f88a410a8e7a3d7dd19f68dd06867227686b3eff14fe9b16",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\seo_eval.jsonl",
+  "eval_id": "seo_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "4dcaf394f1c923574dc2a69d61f9691d4be4181e2958ac58a78529dad10d93a8",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\seo.spec.json",
+  "spec_sha256": "76ec22f85cb671dd0fd7e5cf75de5111b814b464ef879b6d4416e5ecbcd8ece5",
+  "generated_at": "2026-09-09T12:46:00.947123+00:00",
+  "source_documents": [
+    "src/components/GrowthOSDashboard.tsx",
+    "src/services/acquisitionEngineService.ts",
+    "src/capabilities/growth/manifest.ts",
+    "docs/ARCHITECTURE_5M_CAPACITY_SPEC.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

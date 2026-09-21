@@ -1,0 +1,31 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "business",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\business\\business_sft_v1.jsonl",
+  "dataset_id": "business_sft_v1",
+  "row_count": 32,
+  "sha256": "24d5af8f24aea747a913c316a08e9f29b775874f123df5978f2fbc74b605b221",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\business_eval.jsonl",
+  "eval_id": "business_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "57bccef6cde4c93792e41d27cb452f515c2ba9317a8c93b33693cc1aac7b610a",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\business.spec.json",
+  "spec_sha256": "2f2f506cf0074d629940039c5af6d69eac3894d226a8e3d37fa145193bda13b9",
+  "generated_at": "2026-09-09T12:46:00.677247+00:00",
+  "source_documents": [
+    "docs/CHATR_COMPANY_BUILDING_BOARD_WHITEPAPER.md",
+    "docs/CHATR_PLATFORM_VISION.md",
+    "docs/CHATR_PRODUCT_DEFENSE_20M_VC.md",
+    "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+    "docs/01-CompanyModel/DigitalTwin.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

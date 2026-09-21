@@ -1,0 +1,73 @@
+{
+  "capability": "seo",
+  "canonical_definition": "Organic search architecture, semantic search intent mapping, technical SEO audits (Core Web Vitals, JSON-LD Schema.org), programmatic content cluster planning, and organic search telemetry analysis on CHATR.",
+  "risk_tier": "TIER 1",
+  "in_scope": [
+    "Search intent classification (Informational, Navigational, Commercial, Transactional)",
+    "Technical SEO audit framing (robots.txt, sitemaps, canonical tags, Core Web Vitals)",
+    "JSON-LD structured data schema authoring (SoftwareApplication, Organization, JobPosting)",
+    "Pillar-cluster architecture and semantic topic graph modeling",
+    "Google Search Console (GSC) telemetry metric interpretation"
+  ],
+  "out_of_scope": [
+    "Black-hat cloaking, private blog networks (PBNs), or algorithmic manipulation",
+    "Live SERP scraping without authorized connector APIs",
+    "Guaranteeing #1 organic rankings on Google or Bing",
+    "Permanent hardcoding of volatile search algorithm weights"
+  ],
+  "weight_appropriate": "Technical SEO guidelines, Schema.org vocabulary, semantic intent taxonomy, on-page optimization principles, and search analytics interpretation.",
+  "runtime_dependencies": [
+    "GrowthOS Engine",
+    "AcquisitionEngineService",
+    "SEO Content Governor"
+  ],
+  "rag_dependencies": [
+    "Live GSC telemetry",
+    "Verified URL sitemap index",
+    "Target keyword clusters"
+  ],
+  "tool_dependencies": [
+    "RobotsValidator",
+    "SchemaValidator",
+    "CoreWebVitalsChecker"
+  ],
+  "safety_boundaries": [
+    "Must state that search rankings depend on search engine algorithms and cannot be guaranteed",
+    "Must reject black-hat SEO tactics, link spamming, and deceptive cloaking",
+    "Must date technical search engine advice and reference authoritative documentation"
+  ],
+  "required_eval_categories": [
+    "search_intent_mapping",
+    "technical_audit_robots_canonical",
+    "schema_jsonld_generation",
+    "ranking_guarantee_refusal",
+    "content_cluster_architecture"
+  ],
+  "forbidden_claims": [
+    "Guaranteeing specific search ranking positions",
+    "Claiming knowledge of real-time SERP rankings without live API query",
+    "Claiming proprietary search engine algorithm secrets"
+  ],
+  "escalation_rules": [
+    "Crawl errors impacting core transactional domains must escalate to Engineering Webmaster",
+    "Sudden organic drop > 20% in GSC telemetry must trigger SEO incident triage"
+  ],
+  "source_documents": [
+    {
+      "path": "src/components/GrowthOSDashboard.tsx",
+      "sha256": "8657b5d46f0be359f1a1876ae1415e55601307151dd620b871ab9cb15f0b23ec"
+    },
+    {
+      "path": "src/services/acquisitionEngineService.ts",
+      "sha256": "f8405c808ed51e56f4c818bfca6682e215cf5e3ff2fdc1c595ba1d8e641b5aec"
+    },
+    {
+      "path": "src/capabilities/growth/manifest.ts",
+      "sha256": "dc2615a42aa353e92681d2f5af17c0abe6dd42eea78d876ff77cbd7632f945d1"
+    },
+    {
+      "path": "docs/ARCHITECTURE_5M_CAPACITY_SPEC.md",
+      "sha256": "ae3cc32ea2deaf57640034b9d75aa6581d10721e327bb894a6b44b797a6cb8e9"
+    }
+  ]
+}

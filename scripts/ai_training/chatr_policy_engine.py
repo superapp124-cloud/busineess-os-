@@ -30,7 +30,7 @@ ALLOWED_BASE_MODELS = {
 ALLOWED_CAPABILITIES = {
     "general", "coding", "reasoning", "business", "finance",
     "seo", "marketing", "creator", "video", "research",
-    "support", "agent", "meera"
+    "support", "agent", "meera", "talentxcel"
     # NOTE: 'rag' is intentionally excluded — RAG is a knowledge/retrieval
     # subsystem, NOT a LoRA adapter capability. It does not produce chatr:rag-v1.
 }
@@ -233,8 +233,8 @@ class ChatrPolicyEngine:
             with open(registry_path, "r", encoding="utf-8") as f:
                 registry = json.load(f)
             datasets = registry.get("datasets", [])
-            # Registry uses "id" as the key (not "dataset_id")
-            match = next((d for d in datasets if d.get("id") == dataset_id), None)
+            # Support both "id" and "dataset_id" for compatibility
+            match = next((d for d in datasets if d.get("id") == dataset_id or d.get("dataset_id") == dataset_id), None)
             if not match:
                 return PolicyViolation(
                     rule="DATASET_NOT_FOUND",

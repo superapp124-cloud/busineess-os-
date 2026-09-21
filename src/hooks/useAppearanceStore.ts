@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
-export type AccentColor = 'purple' | 'blue' | 'emerald' | 'rose' | 'amber';
+export type AccentColor = 'purple' | 'blue' | 'emerald' | 'rose' | 'amber' | 'chatr';
 export type FontScale = 'compact' | 'standard' | 'large';
 export type FontFamily = 'inter' | 'sans' | 'serif' | 'mono';
 
@@ -25,6 +25,7 @@ const ACCENT_MAP: Record<AccentColor, { hex: string; rgb: string; hsl: string }>
   emerald: { hex: '#10b981', rgb: '16, 185, 129', hsl: '160 84% 39%' },
   rose: { hex: '#f43f5e', rgb: '244, 63, 94', hsl: '350 89% 60%' },
   amber: { hex: '#f59e0b', rgb: '245, 158, 11', hsl: '38 92% 50%' },
+  chatr: { hex: '#164E3F', rgb: '22, 78, 63', hsl: '163 56% 20%' },
 };
 
 const FONT_MAP: Record<FontFamily, string> = {
@@ -88,8 +89,8 @@ export const applyAppearanceToDOM = (state: { themeMode: ThemeMode; accentColor:
 export const useAppearanceStore = create<AppearanceState>()(
   persist(
     (set, get) => ({
-      themeMode: 'dark',
-      accentColor: 'purple',
+      themeMode: 'light',
+      accentColor: 'chatr',
       fontScale: 'compact',
       fontFamily: 'inter',
       

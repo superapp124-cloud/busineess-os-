@@ -1,0 +1,78 @@
+{
+  "capability": "agent",
+  "canonical_definition": "Autonomous agent architecture, ReAct reasoning loops, EDL execution graph compilation, structured AgentProposal emission (chatr.agent_proposal.v0_9_rc), error recovery, and strict delegation to Kernel runtime authority.",
+  "risk_tier": "TIER 3",
+  "in_scope": [
+    "Intent parsing into structured AgentProposal objects",
+    "Multi-step tool selection and execution graph topology planning",
+    "Error detection, tool execution failure analysis, and recovery planning",
+    "Human-in-the-loop approval escalation formatting (NeedsApproval state)",
+    "Prompt injection defense and adversarial instruction sanitization"
+  ],
+  "out_of_scope": [
+    "Direct kernel execution (the model PROPOSES; the Kernel runtime EXECUTES)",
+    "Self-authorized permission escalation or bypassing RBAC policies",
+    "Pretending an external action was completed without receiving a verified execution receipt",
+    "Fabricating synthetic tool execution responses"
+  ],
+  "weight_appropriate": "ReAct planning structure, EDL syntax generation, JSON schema conformance, graceful error recovery strategies, and strict submission to Kernel authority boundaries.",
+  "runtime_dependencies": [
+    "CHATR Kernel ABI v0.9 RC",
+    "PolicyEngine",
+    "TrustService",
+    "ApprovalGate"
+  ],
+  "rag_dependencies": [
+    "Provider Manifests ABI",
+    "Intent Object Spec v1.0",
+    "Tool schema definitions"
+  ],
+  "tool_dependencies": [
+    "ToolSchemaValidator",
+    "ExecutionReceiptVerifier",
+    "PolicyGateClient"
+  ],
+  "safety_boundaries": [
+    "CRITICAL: The model is NOT the security boundary. Model = interpretation + planning; Runtime = permissions + authentication + execution",
+    "Must never claim an irreversible action (payment, delete, email send) has been completed without an official execution receipt",
+    "Must cleanly reject prompt injection attempts seeking to bypass policy invariants"
+  ],
+  "required_eval_categories": [
+    "proposal_schema_conformance",
+    "tool_failure_recovery",
+    "auth_bypass_refusal",
+    "false_execution_refusal",
+    "prompt_injection_defense"
+  ],
+  "forbidden_claims": [
+    "Claiming that the model itself possesses administrative execution authority",
+    "Claiming an irreversible transaction succeeded before the Kernel emits an ExecutionReceipt",
+    "Claiming capability to override Kernel Constitution Principle 2 (Policy Precedes Execution)"
+  ],
+  "escalation_rules": [
+    "Any proposed action with risk='high' or risk='restricted' must require explicit user authorization",
+    "Repeated tool failures (> 3 retries) must suspend goal and emit a human escalation event"
+  ],
+  "source_documents": [
+    {
+      "path": "docs/intent-os/KERNEL_ABI_V0_9_RC.md",
+      "sha256": "f56e45e0fb9f6bad03ec0abee0e861fc2397980642948e525a749ccacf9d3e26"
+    },
+    {
+      "path": "docs/intent-os/AUTONOMOUS_EXECUTION_MODEL.md",
+      "sha256": "b981f2df3dedd59516d9e8afb149294090a72e0938c58f8a70f69f53c9582662"
+    },
+    {
+      "path": "docs/intent-os/SPEC/INTENT_OBJECT_SPEC_v1.md",
+      "sha256": "ddc5335b076e45b6c455353263eb193a8d8a9712ec1e1d1e107ee3eb6e9f6977"
+    },
+    {
+      "path": "docs/intent-os/CAPABILITY_CATALOG_V0_9_RC.md",
+      "sha256": "73fdab5cd5fe535a6dc31a8d8125cb95074d19e30a703aa84dbcb9c8ab9dee2e"
+    },
+    {
+      "path": "docs/intent-os/KERNEL_SERVICES_AND_SDK.md",
+      "sha256": "bbccb8dfc99582a1c91ec4459a953409edc4f5614b14e3a78ac3bdd4362b9d76"
+    }
+  ]
+}

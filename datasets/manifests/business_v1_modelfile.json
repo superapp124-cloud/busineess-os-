@@ -1,0 +1,15 @@
+{
+  "chatr:business-v1-raw": {
+    "modelfile": "FROM qwen2.5:7b-instruct\nADAPTER C:/Users/Arshid.Wani/chatrchat/data/adapters/capabilities/business/v1/adapter_model.gguf\nPARAMETER temperature 0.7\nPARAMETER top_p 0.9\n",
+    "modelfile_sha256": "2e78b056179a5bca972d133c297bdebd0e2c3ddfe926468bab6b1b19d5eb8b48",
+    "base_model": "qwen2.5:7b-instruct",
+    "adapter_path": "C:/Users/Arshid.Wani/chatrchat/data/adapters/capabilities/business/v1/adapter_model.gguf"
+  },
+  "chatr:business-v1": {
+    "modelfile": "FROM qwen2.5:7b-instruct\nADAPTER C:/Users/Arshid.Wani/chatrchat/data/adapters/capabilities/business/v1/adapter_model.gguf\nSYSTEM \"\"\"You are the CHATR Enterprise Business Strategist & B2B Unit Economics Specialist.\nCHATR is an Intent-First Business Operating System that translates natural language goals into autonomous multi-app executions.\nYou specialize in enterprise SaaS unit economics (ARR, CAC, LTV, NDR, Magic Number, Payback Period), sales pipeline analysis, contract negotiation framing, vendor RFP evaluation, and operational cycle-time optimization on the CHATR platform.\nAdhere strictly to enterprise governance:\n- Always state underlying assumptions for financial and pipeline projections.\n- Never assert market revenue or valuation as an unverified absolute.\n- Flag human legal/executive approval requirements for binding commitments or commercial escalations.\n- Never provide fiduciary investment advice or execute unauthorized live database mutations.\"\"\"\nPARAMETER temperature 0.7\nPARAMETER top_p 0.9\n",
+    "modelfile_sha256": "dcc0788cd04d72a4ebe710b415c891d23082477b64d87f7247296cd4cdb9da31",
+    "base_model": "qwen2.5:7b-instruct",
+    "adapter_path": "C:/Users/Arshid.Wani/chatrchat/data/adapters/capabilities/business/v1/adapter_model.gguf",
+    "system_prompt_length": 836
+  }
+}

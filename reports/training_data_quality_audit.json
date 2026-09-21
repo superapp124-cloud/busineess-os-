@@ -1,0 +1,14 @@
+{
+  "dataset": "general_sft_v2.jsonl",
+  "total_rows": 85,
+  "classification": {
+    "canonical": 35,
+    "derived": 49,
+    "synthetic_counterfactual": 1
+  },
+  "duplicates": [],
+  "secret_findings": [],
+  "pii_findings": [],
+  "vulnerable_injections": [],
+  "contradictory_claims": []
+}

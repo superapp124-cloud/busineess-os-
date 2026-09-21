@@ -1,0 +1,68 @@
+{
+  "capability": "creator",
+  "canonical_definition": "Digital creator economy workflows, multi-platform audience growth (YouTube, Instagram, LinkedIn), brand partnership structuring, content calendar scheduling, and sponsor CRM on CHATR.",
+  "risk_tier": "TIER 1",
+  "in_scope": [
+    "Creator content strategy and narrative hook development",
+    "Brand sponsorship deal valuation and deliverables tiering",
+    "Cross-platform content calendar scheduling and repurposing pipelines",
+    "Audience engagement analysis and community sentiment interpretation",
+    "Merchandise and digital product launch workflow design"
+  ],
+  "out_of_scope": [
+    "Copyright infringement, pirated asset distribution, or plagiarized scripts",
+    "Direct legal execution of brand sponsorship contracts",
+    "Buying fake followers, bot engagement, or synthetic metrics",
+    "Impersonation of living creators without explicit legal identity contracts"
+  ],
+  "weight_appropriate": "Creator economy monetization models, platform-specific content mechanics (hooks, retention curves), sponsorship negotiation standards, and community engagement style.",
+  "runtime_dependencies": [
+    "ChatrVirtualCreatorStudio",
+    "SocialConnectors",
+    "BrandCRMStore"
+  ],
+  "rag_dependencies": [
+    "Creator media kit",
+    "Historical sponsorship rate cards",
+    "Platform guideline updates"
+  ],
+  "tool_dependencies": [
+    "EngagementRateCalculator",
+    "BrandDealValuator"
+  ],
+  "safety_boundaries": [
+    "Must refuse to generate plagiarized content or scripts violating third-party copyright",
+    "Must flag mandatory FTC / ASCI sponsorship disclosure tags (#ad, #sponsored)",
+    "Must enforce realistic audience metrics without promising viral algorithmic promotion"
+  ],
+  "required_eval_categories": [
+    "content_hook_strategy",
+    "sponsorship_valuation",
+    "calendar_repurposing",
+    "copyright_plagiarism_refusal",
+    "sponsored_disclosure_compliance"
+  ],
+  "forbidden_claims": [
+    "Guaranteeing viral view counts or YouTube algorithm favoritism",
+    "Claiming legal representation for contract disputes without talent counsel",
+    "Claiming capability to purchase artificial platform engagement"
+  ],
+  "escalation_rules": [
+    "Exclusivity clauses in brand contracts must escalate to legal talent manager",
+    "Copyright strike or DMCA takedown notice must escalate to Rights Management team"
+  ],
+  "source_documents": [
+    {
+      "path": "src/components/mediaAgency/ChatrVirtualCreatorStudio.tsx",
+      "sha256": "557eef00f08afddb91d47d183ebd0657bf1fe075d279245ec5248f4f76cf3104"
+    },
+    {
+      "path": "src/services/mediaAgency/creator/ChatrInfluencerIdentity.ts",
+      "sha256": "0a7d3d57be203c5e3fe2ab0cf635a7c5e8596e8954439d707a810df1d1f8cb48"
+    },
+    {
+      "path": "src/services/mediaAgency/creator/PerformanceContract.ts",
+      "sha256": "7c4e32e2dc6d5793dec743be872b5979958e72ab62d9901f1ed93f5c10cb1415"
+    }
+  ]
+}

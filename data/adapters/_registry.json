@@ -3,15 +3,25 @@
     "schema_version": "2.0.0",
     "description": "CHATR Adapter Registry — versioned, provenance-bound adapter catalog (13 trainable capabilities only; RAG is a knowledge system, not a trainable adapter)",
     "created_at": "2026-08-29T00:00:00Z",
-    "updated_at": "2026-08-29T16:18:00Z"
+    "updated_at": "2026-09-09T14:37:39.687782+00:00"
   },
   "trainable_capabilities": [
-    "general", "coding", "reasoning", "business", "finance",
-    "seo", "marketing", "creator", "video", "research",
-    "support", "agent", "meera"
+    "general",
+    "coding",
+    "reasoning",
+    "business",
+    "finance",
+    "seo",
+    "marketing",
+    "creator",
+    "video",
+    "research",
+    "support",
+    "agent",
+    "meera"
   ],
   "production": {
-    "general": "v1.0.0",
+    "general": null,
     "coding": "v1.0.0",
     "reasoning": null,
     "business": null,
@@ -29,7 +39,7 @@
     {
       "capability": "general",
       "version": "v1.0.0",
-      "status": "VALIDATED_PHASE0",
+      "status": "SUPERSEDED_MOCK",
       "base_model_id": "qwen2.5-7b-instruct",
       "method": "sft",
       "dataset_id": "general_sft_v1",
@@ -39,7 +49,27 @@
       "adapter_path": "data/adapters/capabilities/general/v1/adapter_model.safetensors",
       "ollama_model_name": "chatr:general-v1",
       "promoted_at": "2026-08-29T16:18:00Z",
-      "promoted_by": "chatr_director_phase0"
+      "promoted_by": "chatr_director_phase0",
+      "lifecycle_state": "SUPERSEDED_MOCK"
+    },
+    {
+      "capability": "general",
+      "version": "v2.0.0",
+      "lifecycle_state": "EVALUATED",
+      "status": "EVALUATED",
+      "operational_status": "PRODUCTION_BLOCKED",
+      "audit_status": "AUDIT_HOLD",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "general_sft_v2",
+      "dataset_hash": "bcc08f9ad321a9b5c4f9a55600cfb777faf937f9539776312f13240f1dcfeccc",
+      "soup_ship_verdict": "BLOCKED",
+      "chatr_gate_verdict": "EVALUATED",
+      "adapter_path": "data/adapters/capabilities/general/v2/adapter_model.safetensors",
+      "ollama_model_name": "chatr:general-v2",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "General v2 is strictly production-blocked awaiting formal unblocking."
     },
     {
       "capability": "coding",
@@ -70,6 +100,299 @@
       "ollama_model_name": "chatr:meera-v1",
       "promoted_at": "2026-08-29T16:18:00Z",
       "promoted_by": "chatr_director_phase0"
+    },
+    {
+      "capability": "reasoning",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "reasoning_sft_v1",
+      "dataset_hash": "d2dd713ca4851cbbaefdd2e16f4404c5674bb74c87e5b39e05ea0a2adab59c55",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_reasoning_v1.gguf",
+      "ollama_model_name": "chatr:reasoning-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR reasoning capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: d2dd713ca485...), 3-tier eval (60 rows, zero leakage), score=175.33"
+        }
+      ]
+    },
+    {
+      "capability": "business",
+      "version": "v1.0.0",
+      "lifecycle_state": "EVALUATED",
+      "status": "EVALUATED",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "business_sft_v1",
+      "dataset_hash": "24d5af8f24aea747a913c316a08e9f29b775874f123df5978f2fbc74b605b221",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_business_v1.gguf",
+      "ollama_model_name": "chatr:business-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR business capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: 24d5af8f24ae...), 3-tier eval (60 rows, zero leakage), score=263.0"
+        },
+        {
+          "from_state": "READY_FOR_REAL_TRAINING",
+          "to_state": "TRAINING_IN_PROGRESS",
+          "transitioned_at": "2026-09-09T14:39:56.418221+00:00",
+          "operator": "gpu_worker",
+          "notes": "GPU training execution started on Tesla T4"
+        },
+        {
+          "from_state": "TRAINING_IN_PROGRESS",
+          "to_state": "TRAINED_UNVERIFIED",
+          "transitioned_at": "2026-09-09T14:39:56.431560+00:00",
+          "operator": "gpu_worker",
+          "notes": "Training completed, physical adapter safetensors produced"
+        },
+        {
+          "from_state": "TRAINED_UNVERIFIED",
+          "to_state": "EVALUATED",
+          "transitioned_at": "2026-09-09T14:40:46.717130+00:00",
+          "operator": "evidence_validator",
+          "notes": "All gates passed: 58/60 (96.67%), Delta: +13 items, zero safety regressions",
+          "evidence_id": "gpe-chatr-business-v1-1788964393"
+        }
+      ],
+      "updated_at": "2026-09-09T14:40:46.717130+00:00"
+    },
+    {
+      "capability": "finance",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "finance_sft_v1",
+      "dataset_hash": "a1e4019d84072769654ec7d9893133057038a54cd80f18aa84096df5b3a4916a",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_finance_v1.gguf",
+      "ollama_model_name": "chatr:finance-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR finance capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: a1e4019d8407...), 3-tier eval (60 rows, zero leakage), score=126.5"
+        }
+      ]
+    },
+    {
+      "capability": "seo",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "seo_sft_v1",
+      "dataset_hash": "f067af670e06c0c6f88a410a8e7a3d7dd19f68dd06867227686b3eff14fe9b16",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_seo_v1.gguf",
+      "ollama_model_name": "chatr:seo-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR seo capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: f067af670e06...), 3-tier eval (60 rows, zero leakage), score=258.0"
+        }
+      ]
+    },
+    {
+      "capability": "marketing",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "marketing_sft_v1",
+      "dataset_hash": "db15559a9581c4f8c2888f32b7b75aedc2d782b4abbadace3a34ce1f5357d07a",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_marketing_v1.gguf",
+      "ollama_model_name": "chatr:marketing-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR marketing capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: db15559a9581...), 3-tier eval (60 rows, zero leakage), score=253.0"
+        }
+      ]
+    },
+    {
+      "capability": "creator",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "creator_sft_v1",
+      "dataset_hash": "a72c70a76630cceca301e1463c68a273e1d74489dc46dee5403e3e6f2df80aa7",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_creator_v1.gguf",
+      "ollama_model_name": "chatr:creator-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR creator capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: a72c70a76630...), 3-tier eval (60 rows, zero leakage), score=253.0"
+        }
+      ]
+    },
+    {
+      "capability": "video",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "video_sft_v1",
+      "dataset_hash": "f93483fd1c0f8897bdcfd88a3c80b0f276c14cc34d7eaf10a98e277b2ccd74c4",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_video_v1.gguf",
+      "ollama_model_name": "chatr:video-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR video capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: f93483fd1c0f...), 3-tier eval (60 rows, zero leakage), score=172.0"
+        }
+      ]
+    },
+    {
+      "capability": "research",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "research_sft_v1",
+      "dataset_hash": "c47dedba5b6adc967d9ca5380535378c0e86697670365f1f28c5de84a0b8ce31",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_research_v1.gguf",
+      "ollama_model_name": "chatr:research-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR research capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: c47dedba5b6a...), 3-tier eval (60 rows, zero leakage), score=258.0"
+        }
+      ]
+    },
+    {
+      "capability": "support",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "support_sft_v1",
+      "dataset_hash": "2ad5dab4bb1ce1fb0518092239ecdacf21ea244811d53da944c1718b69c27b12",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_support_v1.gguf",
+      "ollama_model_name": "chatr:support-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR support capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: 2ad5dab4bb1c...), 3-tier eval (60 rows, zero leakage), score=253.0"
+        }
+      ]
+    },
+    {
+      "capability": "agent",
+      "version": "v1.0.0",
+      "lifecycle_state": "READY_FOR_REAL_TRAINING",
+      "status": "READY_FOR_REAL_TRAINING",
+      "base_model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "method": "sft",
+      "dataset_id": "agent_sft_v1",
+      "dataset_hash": "c65393ca2ebee465fc109f3155c48771a91968cbcceffabfa5004bca249ecde3",
+      "soup_ship_verdict": "PENDING_REAL_EXECUTION",
+      "chatr_gate_verdict": "DATASET_AND_SPEC_VERIFIED",
+      "operational_status": "READY_FOR_TRAINING_RUN",
+      "adapter_path": "data/models/chatr_agent_v1.gguf",
+      "ollama_model_name": "chatr:agent-v1",
+      "promoted_at": null,
+      "promoted_by": null,
+      "notes": "Authoritative CHATR agent capability pack. 32 provenance-verified training rows, 60 held-out eval items across 3 tiers.",
+      "state_history": [
+        {
+          "from_state": "DESIGNED",
+          "to_state": "READY_FOR_REAL_TRAINING",
+          "transitioned_at": "2026-09-09T14:37:39.687782+00:00",
+          "operator": "validate_capability_readiness",
+          "notes": "Readiness Verified: spec gate PASS, dataset (32 rows, sha256: c65393ca2ebe...), 3-tier eval (60 rows, zero leakage), score=131.5"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,24 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "meera",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\meera\\meera_sft_v2.jsonl",
+  "dataset_id": "meera_sft_v2",
+  "row_count": 26,
+  "sha256": "719eee3f3e4c5df947235eaedb7cc84a5450404249c5fa4780b5efff53393a44",
+  "generated_at": "2026-09-09T06:46:02.729677Z",
+  "source_documents": [
+    "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+    "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+    "ARCHITECTURE.md",
+    "src/data/chatrSearchUniverseData.ts",
+    "docs/intent-os/CONSTITUTION.md",
+    "docs/intent-os/OS_PRINCIPLES.md",
+    "docs/intent-os/SPEC/INTENT_OBJECT_SPEC_v1.md",
+    "src/capability-packs/recruitment/objects/Candidate.edl.json",
+    "src/capability-packs/aviation/objects/Aircraft.edl.json",
+    "packs/hr.talentxcel_core.json"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages"
+}

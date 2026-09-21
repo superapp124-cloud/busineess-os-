@@ -1,0 +1,24 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "coding",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\coding\\coding_sft_v2.jsonl",
+  "dataset_id": "coding_sft_v2",
+  "row_count": 20,
+  "sha256": "da1ee6fe12f874bfbfa64bb1e23cd40ca8f71ecdeb1583857cccb406bf699662",
+  "generated_at": "2026-09-09T06:46:02.722578Z",
+  "source_documents": [
+    "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+    "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+    "ARCHITECTURE.md",
+    "src/data/chatrSearchUniverseData.ts",
+    "docs/intent-os/CONSTITUTION.md",
+    "docs/intent-os/OS_PRINCIPLES.md",
+    "docs/intent-os/SPEC/INTENT_OBJECT_SPEC_v1.md",
+    "src/capability-packs/recruitment/objects/Candidate.edl.json",
+    "src/capability-packs/aviation/objects/Aircraft.edl.json",
+    "packs/hr.talentxcel_core.json"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages"
+}

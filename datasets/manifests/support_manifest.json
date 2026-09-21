@@ -1,0 +1,29 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "support",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\support\\support_sft_v1.jsonl",
+  "dataset_id": "support_sft_v1",
+  "row_count": 32,
+  "sha256": "2ad5dab4bb1ce1fb0518092239ecdacf21ea244811d53da944c1718b69c27b12",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\support_eval.jsonl",
+  "eval_id": "support_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "2419f11c631ecfbbaf2b7af03993f2a894fc1e2de5c8e384ad35681763cf61fe",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\support.spec.json",
+  "spec_sha256": "71a47f6b9116130d5611c6bad4fbc1dc1c1d0e66ecbd8975b4fd012e54ed7224",
+  "generated_at": "2026-09-09T12:46:01.545870+00:00",
+  "source_documents": [
+    "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+    "docs/01-CompanyModel/DigitalTwin.md",
+    "docs/CUSTOMER_ZERO_EXECUTION_PLAN.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

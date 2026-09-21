@@ -1,0 +1,24 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "general",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\general\\general_sft_v2.jsonl",
+  "dataset_id": "general_sft_v2",
+  "row_count": 85,
+  "sha256": "0133c5a1a2cf1f31ee077fecd58d787406d3ac36f9c61ad43f7a80e95140e8e1",
+  "generated_at": "2026-09-09T06:46:02.713285Z",
+  "source_documents": [
+    "docs/THE_CHATR_MANIFESTO_30_QUESTIONS.md",
+    "docs/CHATR_PLATFORM_MASTER_DOCUMENTATION.md",
+    "ARCHITECTURE.md",
+    "src/data/chatrSearchUniverseData.ts",
+    "docs/intent-os/CONSTITUTION.md",
+    "docs/intent-os/OS_PRINCIPLES.md",
+    "docs/intent-os/SPEC/INTENT_OBJECT_SPEC_v1.md",
+    "src/capability-packs/recruitment/objects/Candidate.edl.json",
+    "src/capability-packs/aviation/objects/Aircraft.edl.json",
+    "packs/hr.talentxcel_core.json"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages"
+}

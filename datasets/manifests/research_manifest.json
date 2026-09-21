@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.1.0",
+  "capability": "research",
+  "dataset_path": "C:\\Users\\Arshid.Wani\\chatrchat\\data\\research\\research_sft_v1.jsonl",
+  "dataset_id": "research_sft_v1",
+  "row_count": 32,
+  "sha256": "c47dedba5b6adc967d9ca5380535378c0e86697670365f1f28c5de84a0b8ce31",
+  "eval_path": "C:\\Users\\Arshid.Wani\\chatrchat\\datasets\\eval\\research_eval.jsonl",
+  "eval_id": "research_eval",
+  "eval_row_count": 60,
+  "eval_sha256": "b98f27b11b6fdb9fe57eb3155f3745fc54f79ebcb5feb22de7121138bdbf143b",
+  "tier_distribution": {
+    "smoke": 10,
+    "core": 30,
+    "adversarial": 20
+  },
+  "spec_path": "C:\\Users\\Arshid.Wani\\chatrchat\\docs\\intent-os\\specs\\capabilities\\research.spec.json",
+  "spec_sha256": "9692c7a063ffb70ff640a6047009cc52262cd0bfd84274b1a38bc408fbcd3b0b",
+  "generated_at": "2026-09-09T12:46:01.384986+00:00",
+  "source_documents": [
+    "docs/00-Foundations/FIRST_PRINCIPLES.md",
+    "docs/03-CompanyIntelligence/DecisionSystem.md",
+    "src/data/chatrSearchUniverseData.ts",
+    "docs/intent-os/AUTONOMOUS_EXECUTION_MODEL.md"
+  ],
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "training_method": "SFT + QLoRA 4-bit",
+  "format": "chatml_messages",
+  "status": "DATASET_READY"
+}

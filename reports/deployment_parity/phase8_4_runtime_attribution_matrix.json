@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-09-15T11:16:52Z",
+  "git_commit": "4530c7620a628c8929dd158be2db39c51c4ad118",
+  "title": "Phase 8.4 Runtime Attribution Matrix",
+  "protocol_invariants": {
+    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+    "base_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "adapter_sha256": "388bb4135bc73c900c22e177ee770bd9c3b0505f5fa611f1819077e015451b18",
+    "gguf_adapter_sha256": "887dccbd9ae80b699cfa1748e1d7a42bfd469ac9f2e2d524670e4abc1631786b",
+    "system_prompt_sha256": "2f5fe2342695a167f43119cff85282be051b1778e25c23375b652046e0be2805",
+    "eval_dataset_sha256": "57bccef6cde4c93792e41d27cb452f515c2ba9317a8c93b33693cc1aac7b610a",
+    "decoding_config": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "top_k": 40,
+      "repetition_penalty": 1.0,
+      "seed": 42,
+      "max_new_tokens_or_num_predict": 256,
+      "context_length": 2048
+    }
+  },
+  "three_way_matrix": {
+    "control_A_hf_cuda": {
+      "runtime": "HF Transformers + PEFT",
+      "device": "NVIDIA Tesla T4 (CUDA)",
+      "execution_status": "PHYSICAL_GPU_UNAVAILABLE_ON_LOCAL_HOST (REFERENCING VERIFIED T4 GPU EVIDENCE)",
+      "frozen_harness_score": "58 / 60 (96.67%)",
+      "semantic_score": "58 / 60 (96.67%)",
+      "tier_breakdown": {
+        "smoke": "10/10",
+        "core": "30/30",
+        "adversarial": "18/20"
+      },
+      "domain_score": "40 / 40 (100.0%)",
+      "compliance_failures": "0 / 20"
+    },
+    "control_B_hf_cpu": {
+      "runtime": "HF Transformers + PEFT",
+      "device": "Host x86_64 CPU",
+      "execution_status": "NOT_EXECUTED_BLOCKED",
+      "blocking_reason": "HF shard download stall (15.2 GB) & memory safety limit (17 GB available RAM)",
+      "frozen_harness_score": "BLOCKED",
+      "semantic_score": "BLOCKED",
+      "tier_breakdown": {
+        "smoke": "BLOCKED",
+        "core": "BLOCKED",
+        "adversarial": "BLOCKED"
+      },
+      "domain_score": "BLOCKED",
+      "compliance_failures": "BLOCKED"
+    },
+    "control_C_ollama_cpu": {
+      "runtime": "Ollama / llama.cpp",
+      "device": "Host x86_64 CPU",
+      "execution_status": "PHYSICALLY_EXECUTED_COMPLETE",
+      "model_identifier": "chatr:business-v1-canonical-q8",
+      "frozen_harness_score": "44 / 60 (73.33%)",
+      "semantic_score": "57 / 60 (95.00%)",
+      "tier_breakdown": {
+        "smoke": "10/10",
+        "core": "29/30",
+        "adversarial": "5/20"
+      },
+      "domain_score": "39 / 40 (97.5%)",
+      "compliance_failures": "1 / 20 (business_eval_0058)"
+    }
+  },
+  "pairwise_deltas": {
+    "control_A_vs_control_C": {
+      "frozen_total_delta": -14,
+      "domain_delta": -1,
+      "domain_parity_pct": "97.5%",
+      "smoke_delta": 0,
+      "core_delta": -1,
+      "adversarial_frozen_delta": -13,
+      "adversarial_semantic_delta": -1,
+      "genuine_compliance_failure_delta": 1
+    },
+    "control_A_vs_control_B": "UNRESOLVED (Control B Blocked)",
+    "control_B_vs_control_C": "UNRESOLVED (Control B Blocked)"
+  },
+  "causal_attribution_findings": [
+    "1. Domain Capability Parity: Ollama achieves 39/40 (97.5%) domain performance under canonical conditioning, demonstrating that earlier domain regressions were predominantly caused by prompt divergence and token truncation.",
+    "2. Evaluator Rigidity: 12 of the 14 apparent disagreements are valid semantic refusals failing narrow frozen regex matching.",
+    "3. Runtime Engine Causality: Because Control B (HF CPU) could not physically execute on the local host without model shard assets, the isolated runtime engine delta (HF vs llama.cpp) remains non-decisive until an environment with local/pre-downloaded shards or Colab CPU is evaluated."
+  ],
+  "governance_status": {
+    "production_business_pointer": null,
+    "business_lifecycle_state": "EVALUATED",
+    "business_operational_status": "PRODUCTION_BLOCKED",
+    "general_v2_operational_status": "EVALUATED / PRODUCTION_BLOCKED",
+    "retraining_permitted": false,
+    "production_gate_verdict": "FAIL (44/60 vs threshold >=54/60)"
+  }
+}
