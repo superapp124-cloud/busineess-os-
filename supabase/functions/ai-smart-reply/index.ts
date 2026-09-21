@@ -1,11 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat, AIMessage } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,75 +15,46 @@ serve(async (req) => {
   try {
     const { lastMessage, message, context = [], replyCount = 3, tone, action } = await req.json();
     const userMessage = message || lastMessage;
-    
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY not configured');
+
+    if (!userMessage && !action) {
+      return new Response(
+        JSON.stringify({ error: 'Message or lastMessage required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Handle chat mode (direct AI conversation)
     if (message && !action) {
-      const messages = [];
-      
+      const messages: AIMessage[] = [];
+
       // Add context as conversation history
-      if (context && (typeof context === 'string' ? context.length > 0 : context.length > 0)) {
+      if (context && (typeof context === 'string' ? context.length > 0 : Array.isArray(context) && context.length > 0)) {
         const contextArray = typeof context === 'string' ? context.split('\n') : context;
         contextArray.forEach((msg: string) => {
           if (!msg || msg.trim() === '') return;
           const [role, ...contentParts] = msg.split(': ');
           messages.push({
             role: role.toLowerCase() === 'user' ? 'user' : 'assistant',
-            content: contentParts.join(': ')
+            content: contentParts.join(': ') || msg
           });
         });
       }
-      
+
       // Add current user message
       messages.push({ role: 'user', content: userMessage });
 
-      const response = await fetch(OPENROUTER_API_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://chatr.chat',
-          'X-Title': 'Chatr Smart Reply',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash-preview',
-          messages: [
-            { 
-              role: 'system', 
-              content: 'You are a helpful AI assistant. Provide clear, concise, and friendly responses. Keep answers under 200 words unless specifically asked for more detail.'
-            },
-            ...messages
-          ]
-        }),
+      const chatResult = await completeChat({
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful AI assistant. Provide clear, concise, and friendly responses. Keep answers under 200 words unless specifically asked for more detail.'
+          },
+          ...messages
+        ]
       });
 
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'AI credits depleted. Please add funds to continue.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!response.ok) {
-        throw new Error(`AI gateway error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const reply = data.choices[0]?.message?.content;
-
       return new Response(
-        JSON.stringify({ reply }),
+        JSON.stringify({ reply: chatResult.content }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -97,54 +68,36 @@ serve(async (req) => {
         friendly: 'Rewrite this message to be warmer and more friendly'
       };
 
-      const response = await fetch(OPENROUTER_API_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://chatr.chat',
-          'X-Title': 'Chatr Smart Reply',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash-preview',
-          messages: [
-            { 
-              role: 'system', 
-              content: `${tonePrompts[tone as keyof typeof tonePrompts]}. Return only the improved message without explanations.` 
-            },
-            { role: 'user', content: userMessage }
-          ]
-        }),
+      const promptDirective = tonePrompts[tone as keyof typeof tonePrompts] || tonePrompts.friendly;
+
+      const chatResult = await completeChat({
+        messages: [
+          {
+            role: 'system',
+            content: `${promptDirective}. Return only the improved message without explanations.`
+          },
+          { role: 'user', content: userMessage }
+        ]
       });
 
-      const data = await response.json();
-      const improvedText = data.choices[0]?.message?.content;
-
       return new Response(
-        JSON.stringify({ improvedText }),
+        JSON.stringify({ improvedText: chatResult.content?.trim() }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Generate smart replies
-    const contextStr = context.length > 0 
-      ? `\n\nRecent conversation:\n${context.join('\n')}` 
+    // Generate smart replies (default path)
+    const contextStr = Array.isArray(context) && context.length > 0
+      ? `\n\nRecent conversation:\n${context.join('\n')}`
+      : typeof context === 'string' && context.trim().length > 0
+      ? `\n\nRecent conversation:\n${context}`
       : '';
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://chatr.chat',
-        'X-Title': 'Chatr Smart Reply',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-preview',
-        messages: [
-          { 
-            role: 'system', 
-            content: `You are a WhatsApp-style smart reply assistant. Generate ${replyCount} quick, natural reply suggestions to the user's last message. Each reply should be:
+    const chatResult = await completeChat({
+      messages: [
+        {
+          role: 'system',
+          content: `You are a WhatsApp-style smart reply assistant. Generate ${replyCount} quick, natural reply suggestions to the user's last message. Each reply should be:
 - Short (max 10 words)
 - Natural and conversational
 - Varied in tone (casual, friendly, professional)
@@ -158,37 +111,20 @@ Return ONLY a JSON array of replies with this exact format:
 ]
 
 Do not include any other text or formatting.`
-          },
-          { role: 'user', content: `Last message: "${userMessage}"${contextStr}` }
-        ]
-      }),
+        },
+        { role: 'user', content: `Last message: "${userMessage}"${contextStr}` }
+      ],
+      responseFormat: { type: "json_object" }
     });
 
-    if (response.status === 429) {
-      return new Response(
-        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (response.status === 402) {
-      return new Response(
-        JSON.stringify({ error: 'AI credits depleted. Please add funds to continue.' }),
-        { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!response.ok) {
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices[0]?.message?.content;
+    const content = chatResult.content || '';
 
     // Try to parse JSON response
     let replies = [];
     try {
-      replies = JSON.parse(content);
+      const cleanJson = content.replace(/^```json\s*|```$/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+      replies = Array.isArray(parsed) ? parsed : parsed.replies || [];
     } catch (e) {
       // Fallback: extract replies from text
       console.log('Fallback parsing for replies');
@@ -204,13 +140,14 @@ Do not include any other text or formatting.`
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('AI smart reply error:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { 
-        status: 500,
+      {
+        status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );

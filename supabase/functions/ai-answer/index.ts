@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 /* ----------------------------------
    CORS
@@ -9,12 +10,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
-/* ----------------------------------
-   Models with fallback
----------------------------------- */
-const PRIMARY_MODEL = "qwen/qwen-2.5-72b-instruct:free";
-const FALLBACK_MODEL = "mistralai/mistral-7b-instruct:free";
 
 /* ----------------------------------
    Types
@@ -348,46 +343,6 @@ function containsDisclaimers(text: string): boolean {
 }
 
 /* ----------------------------------
-   Helper: Call OpenRouter
----------------------------------- */
-async function callOpenRouter(
-  apiKey: string,
-  model: string,
-  systemPrompt: string,
-  userMessage: string
-): Promise<{ ok: boolean; status: number; data?: any; errorText?: string }> {
-  const response = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://chatr.app",
-        "X-Title": "CHATR Search",
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.4,
-        max_tokens: 800,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
-        ],
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    return { ok: false, status: response.status, errorText };
-  }
-
-  const data = await response.json();
-  return { ok: true, status: response.status, data };
-}
-
-/* ----------------------------------
    Server
 ---------------------------------- */
 serve(async (req) => {
@@ -414,20 +369,6 @@ serve(async (req) => {
     if (!query) {
       return new Response(
         JSON.stringify({ text: null, sources: [], images: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    /* ---------- API Key ---------- */
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
-      console.error("❌ OPENROUTER_API_KEY not configured");
-      return new Response(
-        JSON.stringify({
-          text: getFallbackSummary(query, "general"),
-          sources: [],
-          images: [],
-        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -522,17 +463,21 @@ Content: ${r.snippet}`
     const systemPrompt = getSystemPrompt(queryType, contextText, locationContext);
     const userMessage = `User Query: ${query}\n\nWrite a factual 5-10 line summary. Each line must contain real information. No disclaimers.`;
 
-    /* ---------- Call OpenRouter with fallback ---------- */
-    console.log("🤖 Trying primary model:", PRIMARY_MODEL);
-    let result = await callOpenRouter(OPENROUTER_API_KEY, PRIMARY_MODEL, systemPrompt, userMessage);
-
-    // If primary model fails with 404, try fallback
-    if (!result.ok && result.status === 404) {
-      console.log("⚠️ Primary model unavailable, trying fallback:", FALLBACK_MODEL);
-      result = await callOpenRouter(OPENROUTER_API_KEY, FALLBACK_MODEL, systemPrompt, userMessage);
+    /* ---------- Call AI Router with automatic provider failover ---------- */
+    let aiText: string | null = null;
+    try {
+      const chatResult = await completeChat({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+        temperature: 0.4,
+        maxTokens: 800,
+      });
+      aiText = chatResult.content?.trim() || null;
+    } catch (routerErr) {
+      console.warn("⚠️ AI router unavailable or failed, using fallback summary:", routerErr);
     }
-
-    console.log("📡 OpenRouter status:", result.status);
 
     /* ---------- Sources ---------- */
     const sources = safeResults.slice(0, 6).map((r) => ({
@@ -541,24 +486,7 @@ Content: ${r.snippet}`
       domain: new URL(r.url).hostname.replace("www.", ""),
     }));
 
-    if (!result.ok) {
-      console.error("OpenRouter error:", result.status, result.errorText);
-      // Return fallback summary instead of error
-      return new Response(
-        JSON.stringify({
-          text: getFallbackSummary(query, queryType),
-          sources,
-          images,
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
-
     /* ---------- Extract and validate AI text ---------- */
-    let aiText = result.data?.choices?.[0]?.message?.content?.trim() || null;
 
     // Clean any markdown that might have slipped through
     if (aiText) {

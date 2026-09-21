@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,8 +41,6 @@ serve(async (req) => {
       );
     }
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_AI_API_KEY');
-    
     let result: CoachingResponse = {
       suggestions: [],
       talkingPoints: [],
@@ -50,24 +50,13 @@ serve(async (req) => {
       nextBestAction: 'Continue listening actively',
     };
 
-    if (geminiApiKey) {
-      const systemPrompt = context === 'sales' 
-        ? 'You are a real-time sales coaching AI helping agents close deals effectively.'
-        : context === 'support'
-        ? 'You are a real-time customer support coaching AI helping agents resolve issues efficiently.'
-        : 'You are a real-time call coaching AI helping agents communicate effectively.';
+    const systemPrompt = context === 'sales' 
+      ? 'You are a real-time sales coaching AI helping agents close deals effectively.'
+      : context === 'support'
+      ? 'You are a real-time customer support coaching AI helping agents resolve issues efficiently.'
+      : 'You are a real-time call coaching AI helping agents communicate effectively.';
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `${systemPrompt}
-
-Analyze this live call transcript and provide real-time coaching for the agent${agentName ? ` (${agentName})` : ''}.
+    const userPrompt = `Analyze this live call transcript and provide real-time coaching for the agent${agentName ? ` (${agentName})` : ''}.
 
 Current sentiment: ${sentiment || 'unknown'}
 Urgency level: ${urgency || 'unknown'}
@@ -83,27 +72,26 @@ Return a JSON object with:
 - toneAdvice: one sentence about tone/approach to use
 - nextBestAction: the single most important thing to do next
 
-Keep all text very brief and actionable (under 20 words each). Return ONLY valid JSON.`
-              }]
-            }],
-            generationConfig: { temperature: 0.4, maxOutputTokens: 1024 }
-          })
-        }
-      );
+Keep all text very brief and actionable (under 20 words each). Return ONLY valid JSON.`;
 
-      if (response.ok) {
-        const data = await response.json();
-        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        
-        try {
-          const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
-          result = JSON.parse(jsonStr);
-          console.log('[ai-coaching] Generated coaching:', result.nextBestAction);
-        } catch (parseError) {
-          console.error('[ai-coaching] Parse error:', parseError);
-        }
-      }
-    } else {
+    try {
+      const chatResult = await completeChat({
+        messages: [
+          { role: 'system', content: `${systemPrompt}\n\nReturn ONLY a valid JSON object matching the requested schema. Do not include markdown code block formatting.` },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.4,
+        maxTokens: 1024,
+        responseFormat: { type: "json_object" }
+      });
+
+      const responseText = chatResult.content || '';
+      const jsonStr = responseText.replace(/^```json\s*|```$/g, '').trim();
+      const parsed = JSON.parse(jsonStr);
+      result = { ...result, ...parsed };
+      console.log('[ai-coaching] Generated coaching:', result.nextBestAction);
+    } catch (routerError) {
+      console.warn('[ai-coaching] Router fallback to rule-based coaching:', routerError);
       // Basic fallback coaching
       const lowerTranscript = transcript.toLowerCase();
       
@@ -134,10 +122,11 @@ Keep all text very brief and actionable (under 20 words each). Return ONLY valid
 
   } catch (error: unknown) {
     console.error('[ai-coaching] Error:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

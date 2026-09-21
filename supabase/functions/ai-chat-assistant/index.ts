@@ -1,8 +1,35 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+// Structured prompts for the legacy action-based callers (useAIChatFeatures)
+const ACTIONS: Record<string, { system: string; user: (b: any) => string }> = {
+  "smart-reply": {
+    system:
+      'Generate 3 natural reply suggestions with varying tones. Respond with JSON: {"replies":[{"text":string,"tone":"professional"|"friendly"|"quick"}]}',
+    user: (b) => `Message: "${b.messageText ?? ""}"`,
+  },
+  summarize: {
+    system:
+      'Summarize the conversation concisely. Respond with JSON: {"summary":string,"keyPoints":string[],"actionItems":string[]}',
+    user: (b) =>
+      (b.messages ?? []).map((m: any) => `${m.role}: ${m.content}`).join("\n") || "No messages provided",
+  },
+  "extract-tasks": {
+    system:
+      'Extract actionable tasks. Respond with JSON: {"tasks":[{"title":string,"priority":"low"|"medium"|"high","dueDate":string,"category":string}]}',
+    user: (b) => `Message: "${b.messageText ?? ""}"`,
+  },
+  "sentiment-analysis": {
+    system:
+      'Analyze sentiment. Respond with JSON: {"sentiment":"positive"|"neutral"|"negative","confidence":number,"suggestedReactions":string[],"tone":string}',
+    user: (b) => `Message: "${b.messageText ?? ""}"`,
+  },
 };
 
 serve(async (req) => {
@@ -10,78 +37,80 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const json = (payload: unknown, status = 200) =>
+    new Response(JSON.stringify(payload), {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
   try {
     const body = await req.json();
-    const { prompt, messageText, system_prompt, action, messages } = body;
+    const { action, prompt, messageText, system_prompt, messages } = body ?? {};
 
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    // Structured action path — preserves existing UI hooks (useAIChatFeatures)
+    if (action && ACTIONS[action]) {
+      const spec = ACTIONS[action];
+      const userContent = spec.user(body);
 
-    if (!GEMINI_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "GEMINI_API_KEY is not configured in Supabase secrets." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      const chatResult = await completeChat({
+        messages: [
+          { role: "system", content: spec.system },
+          { role: "user", content: userContent },
+        ],
+        responseFormat: { type: "json_object" },
+      });
+
+      const text = chatResult.content || "";
+      let data: any;
+      try {
+        const clean = text.replace(/^```json\s*|```$/g, "").trim();
+        data = JSON.parse(clean);
+      } catch {
+        data = action === "summarize" ? { summary: text } : { raw: text };
+      }
+
+      if (action === "smart-reply" && Array.isArray(data?.replies)) {
+        data.replies = data.replies.map((r: any) =>
+          typeof r === "string" ? { text: r, tone: "friendly" } : r,
+        );
+      }
+
+      return json({ success: true, data, model: chatResult.model });
     }
 
-    // Build the user text from whatever was sent
+    // Generic prompt path
     let userText = prompt || messageText || "";
     if (!userText && messages && Array.isArray(messages)) {
       userText = messages.map((m: any) => `${m.role}: ${m.content}`).join("\n");
     }
 
     if (!userText) {
-      return new Response(
-        JSON.stringify({ error: "No prompt or messageText provided." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return json({ error: "No prompt or messageText provided." }, 400);
     }
 
-    const systemInstruction = system_prompt || "You are CHATR AI — a helpful, intelligent, and concise executive assistant. Provide professional, action-oriented responses.";
+    const systemInstruction =
+      system_prompt || "You are CHATR AI — a helpful, intelligent, and concise executive assistant. Provide professional, action-oriented responses.";
 
-    // Try Gemini models in order
-    const models = ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-2.0-flash-lite", "gemini-1.5-pro-latest"];
+    const chatResult = await completeChat({
+      messages: [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: userText },
+      ],
+    });
 
-    for (const model of models) {
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents: [{ role: "user", parts: [{ text: userText }] }],
-          }),
-        }
-      );
+    const text = chatResult.content || "";
 
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        const text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) {
-          return new Response(
-            JSON.stringify({ success: true, response: text, summary: text, model }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-      } else if (geminiRes.status === 404) {
-        continue; // try next model
-      } else {
-        const errBody = await geminiRes.text();
-        console.error(`[ai-chat-assistant] Gemini ${model} error ${geminiRes.status}:`, errBody);
-        break;
-      }
-    }
+    return json({
+      success: true,
+      response: text,
+      summary: text,
+      model: chatResult.model,
+    });
 
-    return new Response(
-      JSON.stringify({ error: "All Gemini models failed. Check GEMINI_API_KEY in Supabase secrets." }),
-      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[ai-chat-assistant] Error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    const status = error instanceof PlatformError ? error.status : 500;
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return json({ error: errorMessage }, status);
   }
 });
