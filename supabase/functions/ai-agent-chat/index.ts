@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
   assertRateLimit,
   auditSecurityEvent,
+  corsHeaders,
   errorResponse,
   handleCors,
   HttpError,
@@ -12,8 +13,7 @@ import {
   requireUser,
   requireUuid,
 } from "../_shared/security.ts";
-
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+import { completeChat, streamChat } from "../_core/aiProvider.ts";
 
 serve(async (req) => {
   const cors = handleCors(req);
@@ -26,13 +26,9 @@ serve(async (req) => {
 
     const body = await parseJsonBody(req);
     const agentId = requireUuid(body.agentId, "agentId");
-    const conversationId = requireUuid(body.conversationId, "conversationId");
+    const conversationId = body.conversationId ? requireUuid(body.conversationId, "conversationId") : null;
     const message = requireString(body.message, "message", { min: 1, max: 4000 });
-
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
-      throw new Error("OPENROUTER_API_KEY not configured");
-    }
+    const isStream = body.stream === true || req.headers.get("Accept")?.includes("text/event-stream");
 
     const { data: agent, error: agentError } = await serviceClient
       .from("ai_agents")
@@ -44,36 +40,47 @@ serve(async (req) => {
       throw new HttpError(404, "agent_not_found", "Agent not found");
     }
 
-    const { data: participants, error: participantError } = await serviceClient
-      .from("conversation_participants")
-      .select("user_id")
-      .eq("conversation_id", conversationId)
-      .in("user_id", [user.id, agent.user_id]);
+    if (conversationId) {
+      const { data: participants, error: participantError } = await serviceClient
+        .from("conversation_participants")
+        .select("user_id")
+        .eq("conversation_id", conversationId)
+        .in("user_id", [user.id, agent.user_id]);
 
-    if (participantError) throw participantError;
+      if (participantError) throw participantError;
 
-    const participantIds = new Set((participants || []).map((participant: { user_id: string }) => participant.user_id));
-    if (!participantIds.has(user.id) || !participantIds.has(agent.user_id)) {
-      throw new HttpError(403, "conversation_access_denied", "You are not allowed to use this agent in this conversation");
+      const participantIds = new Set((participants || []).map((participant: { user_id: string }) => participant.user_id));
+      if (!participantIds.has(user.id) || !participantIds.has(agent.user_id)) {
+        throw new HttpError(403, "conversation_access_denied", "You are not allowed to use this agent in this conversation");
+      }
     }
 
-    const { data: messages } = await serviceClient
-      .from("messages")
-      .select("content, sender_id, created_at")
-      .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true })
-      .limit(20);
+    let conversationHistory: Array<{ role: "assistant" | "user"; content: string }> = [];
+
+    if (conversationId) {
+      const { data: messages } = await serviceClient
+        .from("messages")
+        .select("content, sender_id, created_at")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true })
+        .limit(20);
+
+      conversationHistory = messages?.map((m: { sender_id: string; content: string }) => ({
+        role: m.sender_id === agent.user_id ? ("assistant" as const) : ("user" as const),
+        content: m.content,
+      })) || [];
+    } else if (Array.isArray(body.conversationHistory)) {
+      conversationHistory = body.conversationHistory.map((m: any) => ({
+        role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
+        content: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
+      }));
+    }
 
     const { data: trainingData } = await serviceClient
       .from("ai_agent_training")
       .select("question, answer")
       .eq("agent_id", agentId)
       .limit(10);
-
-    const conversationHistory = messages?.map((m: { sender_id: string; content: string }) => ({
-      role: m.sender_id === agent.user_id ? "assistant" : "user",
-      content: m.content,
-    })) || [];
 
     const trainingContext = trainingData?.map((t: { question: string; answer: string }) =>
       `Q: ${t.question}\nA: ${t.answer}`
@@ -87,41 +94,46 @@ ${agent.knowledge_base ? `Knowledge Base:\n${agent.knowledge_base}\n` : ""}
 ${trainingContext ? `Training Examples:\n${trainingContext}\n` : ""}
 Keep responses concise and helpful (2-3 sentences).`;
 
-    const aiResponse = await fetch(OPENROUTER_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://chatr.chat",
-        "X-Title": "Chatr Agent Chat",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...conversationHistory.slice(-10),
-          { role: "user", content: message },
-        ],
-        max_tokens: 500,
-        temperature: 0.7,
-      }),
-    });
+    const chatMessages = [
+      { role: "system" as const, content: systemPrompt },
+      ...conversationHistory.slice(-10),
+      { role: "user" as const, content: message },
+    ];
 
-    if (!aiResponse.ok) {
-      throw new Error(`AI API error: ${aiResponse.status}`);
+    if (isStream) {
+      const streamRes = await streamChat({
+        messages: chatMessages,
+        maxTokens: 500,
+        temperature: 0.7,
+      });
+
+      return new Response(streamRes.body, {
+        headers: {
+          ...corsHeaders(req),
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+        },
+      });
     }
 
-    const aiData = await aiResponse.json();
-    const reply = aiData.choices[0]?.message?.content;
+    const aiResult = await completeChat({
+      messages: chatMessages,
+      maxTokens: 500,
+      temperature: 0.7,
+    });
 
+    const reply = aiResult.content;
     if (!reply) throw new Error("No response from AI");
 
-    await serviceClient.from("messages").insert({
-      conversation_id: conversationId,
-      sender_id: agent.user_id,
-      content: reply,
-      message_type: "text",
-    });
+    if (conversationId) {
+      await serviceClient.from("messages").insert({
+        conversation_id: conversationId,
+        sender_id: agent.user_id,
+        content: reply,
+        message_type: "text",
+      });
+    }
 
     await auditSecurityEvent(serviceClient, {
       userId: user.id,

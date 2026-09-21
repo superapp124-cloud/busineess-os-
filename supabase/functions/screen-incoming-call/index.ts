@@ -12,6 +12,7 @@ import {
   requireUser,
   requireUuid,
 } from "../_shared/security.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 serve(async (req) => {
   const cors = handleCors(req);
@@ -118,15 +119,56 @@ serve(async (req) => {
       confidence = 70;
     }
 
-    let aiScreening = null;
+    let aiScreening: { intent?: string; confidence?: number; summary?: string } | null = null;
     let fallbackToTier2 = false;
-    
-    // TIER 1: Rules-based fallback for unknown/risky callers.
-    // If not safely resolved by Tier 1 heuristics, explicitly flag for Tier 2 on-device resolution.
-    if (riskLevel === "medium" || riskLevel === "high") {
+
+    // Advanced screening via CHATR AI Router for unknown / borderline callers
+    if (!isBlocked && spamCount <= 3 && (riskLevel === "medium" || riskLevel === "high")) {
+      try {
+        const chatResult = await completeChat({
+          messages: [
+            {
+              role: "system",
+              content: 'You are a call screening AI. Analyze the caller data and provide a brief intent classification. Respond in JSON format: {"intent": "personal|business|sales|fraud|unknown", "confidence": 0-100, "summary": "brief description"}',
+            },
+            {
+              role: "user",
+              content: JSON.stringify({
+                caller_name: callerProfile?.username,
+                trust_score: score,
+                spam_reports: spamCount,
+                call_history: contactIntel ? {
+                  total_calls: contactIntel.total_calls,
+                  missed: contactIntel.missed_calls,
+                  pickup_rate: contactIntel.pickup_likelihood,
+                } : null,
+                is_registered: !!callerProfile,
+              }),
+            },
+          ],
+          temperature: 0.2,
+          maxTokens: 300,
+          responseFormat: { type: "json_object" },
+        });
+
+        const text = chatResult.content || "";
+        const clean = text.replace(/^```json\s*|```$/g, "").trim();
+        const parsed = JSON.parse(clean);
+        if (parsed && typeof parsed.intent === "string") {
+          aiScreening = parsed;
+          intent = parsed.intent;
+          if (typeof parsed.confidence === "number") {
+            confidence = parsed.confidence;
+          }
+        } else {
+          fallbackToTier2 = true;
+        }
+      } catch (routerErr) {
+        console.warn("[screen-incoming-call] AI screening unavailable, using local rules fallback:", routerErr);
         fallbackToTier2 = true;
-        // Zero-cost stance: Cloud AI is intentionally disabled. 
-        // We accept the zero-day scam tradeoff to ensure DPDP compliance and zero marginal cost.
+      }
+    } else if (riskLevel === "medium" || riskLevel === "high") {
+      fallbackToTier2 = true;
     }
 
     await auditSecurityEvent(serviceClient, {
@@ -134,6 +176,14 @@ serve(async (req) => {
       eventType: "incoming_call_screened",
       metadata: { callerId, hasCallerPhone: !!callerPhone, riskLevel, intent },
     });
+
+    const finalSummary = aiScreening?.summary || (
+      fallbackToTier2 ? "Unknown intent. Resolving locally on-device (Tier 2)..." : (
+        riskLevel === "safe" ? "Trusted caller" :
+        riskLevel === "high" ? "Exercise caution" :
+        "Unknown caller"
+      )
+    );
 
     return jsonResponse(req, {
       caller: {
@@ -151,11 +201,7 @@ serve(async (req) => {
         risk_level: riskLevel,
         intent,
         confidence,
-        summary: fallbackToTier2 ? "Unknown intent. Resolving locally on-device (Tier 2)..." : (
-          riskLevel === "safe" ? "Trusted caller" :
-          riskLevel === "high" ? "Exercise caution" :
-          "Unknown caller"
-        ),
+        summary: finalSummary,
         fallback_tier_2: fallbackToTier2,
         is_blocked: isBlocked,
         spam_reports: spamCount,
