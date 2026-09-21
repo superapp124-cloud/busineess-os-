@@ -1,12 +1,11 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -14,12 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { action, data } = await req.json();
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY not configured');
-    }
+    const { action, data = {} } = await req.json();
 
     let systemPrompt = '';
     let userPrompt = '';
@@ -194,40 +188,15 @@ serve(async (req) => {
         );
     }
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://chatr.chat',
-        'X-Title': 'Chatr Games AI',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-preview',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.8,
-      }),
+    const chatResult = await completeChat({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.3,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const aiData = await response.json();
-    const content = aiData.choices?.[0]?.message?.content;
+    const content = chatResult.content || '';
 
     // Try to parse as JSON, fallback to raw content
     let result;
@@ -245,9 +214,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in chatr-games-ai:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Failed to process game action' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

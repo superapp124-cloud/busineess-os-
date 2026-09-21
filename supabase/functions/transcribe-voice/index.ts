@@ -42,16 +42,30 @@ serve(async (req) => {
   }
 
   try {
-    const { audio } = await req.json();
+    const { audio, audioUrl } = await req.json();
     
-    if (!audio) {
-      throw new Error('No audio data provided');
+    if (!audio && !audioUrl) {
+      return new Response(
+        JSON.stringify({ error: 'No audio data provided' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Processing audio transcription...');
 
-    // Process audio in chunks
-    const binaryAudio = processBase64Chunks(audio);
+    let binaryAudio: Uint8Array;
+    if (audio) {
+      // Process audio in chunks
+      binaryAudio = processBase64Chunks(audio);
+    } else {
+      // Fetch audio from URL (e.g. Supabase storage public URL for voicemails)
+      const audioRes = await fetch(audioUrl);
+      if (!audioRes.ok) {
+        throw new Error(`Failed to fetch audio from URL: ${audioRes.statusText}`);
+      }
+      const buf = await audioRes.arrayBuffer();
+      binaryAudio = new Uint8Array(buf);
+    }
     
     // Prepare form data
     const formData = new FormData();

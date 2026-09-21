@@ -19,8 +19,11 @@ serve(async (req) => {
   try {
     const { text, personality, voice } = await req.json();
 
-    if (!text) {
-      throw new Error('Text is required');
+    if (!text || (typeof text === 'string' && text.trim().length === 0)) {
+      return new Response(
+        JSON.stringify({ error: 'Text is required', useBrowserTTS: true }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log(`Generating TTS for: "${text.substring(0, 50)}..."`);

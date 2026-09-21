@@ -51,14 +51,14 @@ This matrix establishes the definitive implementation roadmap for all **64 AI-re
 | 34 | `summarize-chat` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 0 | Internal / Background | **No (Baseline)** | Low | JSON schema contract test | Revert git commit |
 | 35 | `universal-search-engine` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 0 | Internal / Background | **No (Baseline)** | Low | JSON schema contract test | Revert git commit |
 | 36 | `web-search-aggregator` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 0 | Internal / Background | **No (Baseline)** | Low | JSON schema contract test | Revert git commit |
-| 37 | `chatr-games-ai` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 7 (EchoChainGame.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 38 | `ai-agent-chat` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `streamChat / completeChat` | LLM (Chat/Reasoning) | 4 (VoiceConversation.tsx) | Active Frontend | **YES (Batch Priority)** | Medium (SSE Streaming) | JSON schema contract test | Revert git commit |
-| 39 | `ai-smart-reply` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 4 (useAISmartReplies.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 40 | `ai-chat-assistant` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 3 (useAIChatFeatures.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 41 | `transcribe-voice` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (Whisper)` | STT (Transcription) | 3 (VoiceRecorder.tsx) | Active Frontend | **YES (Batch Priority)** | Low | Audio file upload -> text match | Revert git commit |
+| 37 | `chatr-games-ai` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 7 (EchoChainGame.tsx) | Active Frontend | **COMPLETED (Batch 3)** | Low | JSON schema contract test | Revert git commit |
+| 38 | `ai-agent-chat` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `streamChat, completeChat` | `streamChat / completeChat` | LLM (Chat/Reasoning) | 4 (VoiceConversation.tsx) | Active Frontend | **COMPLETED (Batch 2)** | Medium (SSE Streaming) | JSON schema contract test | Revert git commit |
+| 39 | `ai-smart-reply` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 4 (useAISmartReplies.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
+| 40 | `ai-chat-assistant` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 3 (useAIChatFeatures.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
+| 41 | `transcribe-voice` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (Whisper)` | STT (Transcription) | 3 (VoiceRecorder.tsx) | Active Frontend | **VERIFIED (Batch 3)** | Low | Audio file upload -> text match | Revert git commit |
 | 42 | `ai-browser-search` | Both repos | Direct Gemini | `GEMINI_API_KEY, GROQ_API_KEY, BRAVE_SEARCH_API_KEY, SERPER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIBrowser.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
 | 43 | `ai-health-assistant` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIAssistant.tsx) | Active Frontend | **YES (Batch Priority)** | Medium (Health Prompts) | JSON schema contract test | Revert git commit |
-| 44 | `agent-voice-tts` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (TTS-1)` | TTS (Speech Synthesis) | 1 (VoiceConversation.tsx) | Active Frontend | **YES (Batch Priority)** | Low | Text payload -> audio/mpeg stream | Revert git commit |
+| 44 | `agent-voice-tts` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (TTS-1)` | TTS (Speech Synthesis) | 1 (VoiceConversation.tsx) | Active Frontend | **VERIFIED (Batch 3)** | Low | Text payload -> audio/mpeg stream | Revert git commit |
 | 45 | `ai-answer` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (UniversalSearch.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
 | 46 | `ai-assistant` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (PrechuAI.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
 | 47 | `ai-coaching` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (useAICoaching.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
@@ -100,11 +100,11 @@ Rather than migrating all 23 functions simultaneously, normalization into `_core
 - `ai-assistant` (1 caller) -> Normalize to `completeChat()`
 - *Acceptance:* SSE stream chunking verification on mobile/web clients.
 
-### Batch 3: Audio & Games (3 Active Functions)
-- `chatr-games-ai` (7 callers) -> Normalize to `completeChat()` with low temperature
-- `transcribe-voice` (3 callers) -> Direct OpenAI Whisper with local speech fallback
-- `agent-voice-tts` (1 caller) -> Direct OpenAI TTS-1 binary streaming
-- *Architectural Note:* `_core/aiProvider.ts` currently supports `completeChat`, `streamChat`, `generateEmbedding`, and `generateImage`. STT/TTS will NOT be forced into `completeChat()`. Whether to add dedicated `transcribeAudio()` / `synthesizeSpeech()` router methods will be decided after Batches 1 & 2.
+### Batch 3: Audio & Games (3 Active Functions) — 🟢 COMPLETED
+- `chatr-games-ai` (7 callers) -> Normalized to `completeChat()` with 0.3 temperature, all 16 game actions preserved, router fallback active.
+- `transcribe-voice` (3 callers) -> Verified direct OpenAI Whisper STT with dual base64 and audioUrl input support and 400 validation.
+- `agent-voice-tts` (1 caller) -> Verified direct OpenAI TTS-1 synthesis with browser fallback, personality mapping, and 400 validation.
+- *Contract Tests:* 24/24 tests passed (`scratch/batch3_contract_tests.cjs`). Cumulative tests passed: 88/88.
 
 ### Batch 4: Health & Specialized Intelligence (4 Active Functions)
 - `ai-health-assistant` (2 callers) -> Normalize to `completeChat()` (strictly preserving clinical prompts and disclaimers byte-for-byte)
