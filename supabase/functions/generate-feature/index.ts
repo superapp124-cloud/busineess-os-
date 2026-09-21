@@ -1,7 +1,6 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,21 +15,18 @@ serve(async (req) => {
   try {
     const { prompt, featureName, type } = await req.json();
 
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+    if (!prompt || !featureName) {
+      return new Response(
+        JSON.stringify({ error: 'prompt and featureName are required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Generating feature:', { featureName, type });
 
-    // Generate React Component
-    const componentResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+    // Generate React Component, Database Schema, and API/Helper Functions in parallel via CHATR AI Router
+    const [componentRes, schemaRes, apiRes] = await Promise.all([
+      completeChat({
         messages: [
           {
             role: 'system',
@@ -48,22 +44,9 @@ Only return the component code, no explanations.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000,
+        maxTokens: 2000,
       }),
-    });
-
-    const componentData = await componentResponse.json();
-    const component = componentData.choices[0].message.content;
-
-    // Generate Database Schema
-    const schemaResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+      completeChat({
         messages: [
           {
             role: 'system',
@@ -80,22 +63,9 @@ Only return SQL code, no explanations.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 1500,
+        maxTokens: 1500,
       }),
-    });
-
-    const schemaData = await schemaResponse.json();
-    const schema = schemaData.choices[0].message.content;
-
-    // Generate API/Helper Functions
-    const apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+      completeChat({
         messages: [
           {
             role: 'system',
@@ -111,12 +81,13 @@ Only return code, no explanations.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 1500,
-      }),
-    });
+        maxTokens: 1500,
+      })
+    ]);
 
-    const apiData = await apiResponse.json();
-    const api = apiData.choices[0].message.content;
+    const component = componentRes.content || '';
+    const schema = schemaRes.content || '';
+    const api = apiRes.content || '';
 
     return new Response(
       JSON.stringify({
@@ -131,10 +102,11 @@ Only return code, no explanations.`
     );
   } catch (error: any) {
     console.error('Error in generate-feature function:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     return new Response(
       JSON.stringify({ error: error?.message || 'Unknown error occurred' }),
       {
-        status: 500,
+        status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );

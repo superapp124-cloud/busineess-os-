@@ -1,12 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 // Input validation schema
 const inputSchema = z.object({
@@ -51,15 +51,9 @@ serve(async (req) => {
       // Don't block, but log and inform in response
     }
     
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY is not configured');
-    }
-
     const messages = [
       {
-        role: 'system',
+        role: 'system' as const,
         content: `You are a helpful health assistant. Provide general health information and guidance in a clear, human tone.
         ${city ? `\nUser is currently in: ${city}. When recommending healthcare providers or services, mention they can find nearby options using the Healthcare or Chatr World features.` : ''}
         
@@ -78,33 +72,16 @@ serve(async (req) => {
         - Prioritize clarity over formality`
       },
       ...(history || []),
-      { role: 'user', content: message }
+      { role: 'user' as const, content: message }
     ];
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://chatr.chat',
-        'X-Title': 'Chatr Health Assistant',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-preview',
-        messages,
-        temperature: 0.7,
-        max_tokens: 500
-      }),
+    const chatResult = await completeChat({
+      messages,
+      temperature: 0.7,
+      maxTokens: 500,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const assistantMessage = data.choices[0].message.content;
+    const assistantMessage = chatResult.content || '';
 
     return new Response(
       JSON.stringify({ response: assistantMessage }),
@@ -112,10 +89,11 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in ai-health-assistant:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

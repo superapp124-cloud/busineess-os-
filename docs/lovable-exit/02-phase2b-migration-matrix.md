@@ -56,14 +56,14 @@ This matrix establishes the definitive implementation roadmap for all **64 AI-re
 | 39 | `ai-smart-reply` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 4 (useAISmartReplies.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
 | 40 | `ai-chat-assistant` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 3 (useAIChatFeatures.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
 | 41 | `transcribe-voice` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (Whisper)` | STT (Transcription) | 3 (VoiceRecorder.tsx) | Active Frontend | **VERIFIED (Batch 3)** | Low | Audio file upload -> text match | Revert git commit |
-| 42 | `ai-browser-search` | Both repos | Direct Gemini | `GEMINI_API_KEY, GROQ_API_KEY, BRAVE_SEARCH_API_KEY, SERPER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIBrowser.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 43 | `ai-health-assistant` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIAssistant.tsx) | Active Frontend | **YES (Batch Priority)** | Medium (Health Prompts) | JSON schema contract test | Revert git commit |
+| 42 | `ai-browser-search` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIBrowser.tsx) | Active Frontend | **COMPLETED (Batch 4)** | Low | JSON schema contract test | Revert git commit |
+| 43 | `ai-health-assistant` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 2 (AIAssistant.tsx) | Active Frontend | **COMPLETED (Batch 4)** | Medium (Health Prompts) | JSON schema contract test | Revert git commit |
 | 44 | `agent-voice-tts` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `Direct OpenAI (TTS-1)` | TTS (Speech Synthesis) | 1 (VoiceConversation.tsx) | Active Frontend | **VERIFIED (Batch 3)** | Low | Text payload -> audio/mpeg stream | Revert git commit |
-| 45 | `ai-answer` | Both repos | Direct OpenRouter | `OPENROUTER_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (UniversalSearch.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 46 | `ai-assistant` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (PrechuAI.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 47 | `ai-coaching` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (useAICoaching.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
-| 48 | `backfill-memory` | Local only | Direct Custom/Rules | `None` | `none` | `generateEmbedding` | Embedding (Vector) | 1 (communicationMemory.ts) | Active Frontend | **YES (Batch Priority)** | Low | Vector dimension strictly 768 | Revert git commit |
-| 49 | `generate-feature` | Both repos | Direct OpenAI | `OPENAI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (FeatureBuilder.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
+| 45 | `ai-answer` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 1 (UniversalSearch.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
+| 46 | `ai-assistant` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 1 (PrechuAI.tsx) | Active Frontend | **COMPLETED (Batch 2)** | Low | JSON schema contract test | Revert git commit |
+| 47 | `ai-coaching` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 1 (useAICoaching.tsx) | Active Frontend | **COMPLETED (Batch 1)** | Low | JSON schema contract test | Revert git commit |
+| 48 | `backfill-memory` | Local only | CHATR AI Router | `GEMINI_API_KEY, OPENROUTER_API_KEY` | `generateEmbedding` | `generateEmbedding` | Embedding (Vector) | 1 (communicationMemory.ts) | Active Frontend | **COMPLETED (Batch 4)** | Low | Vector dimension strictly 768 | Revert git commit |
+| 49 | `generate-feature` | Both repos | CHATR AI Router | `GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY` | `completeChat` | `completeChat` | LLM (Chat/Reasoning) | 1 (FeatureBuilder.tsx) | Active Frontend | **COMPLETED (Batch 4)** | Low | JSON schema contract test | Revert git commit |
 | 50 | `live-translate` | Both repos | Direct Gemini | `GEMINI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (useLiveTranslation.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
 | 51 | `screen-incoming-call` | Both repos | Direct Custom/Rules | `None` | `none` | `completeChat` | LLM (Chat/Reasoning) | 1 (CallScreeningOverlay.tsx) | Active Frontend | **YES (Batch Priority)** | Low | JSON schema contract test | Revert git commit |
 | 52 | `ai-chat` | Local only | Direct OpenAI | `OPENAI_API_KEY` | `none` | `completeChat` | LLM (Chat/Reasoning) | 0 | Internal / Background | **YES (Secondary)** | Low | JSON schema contract test | Revert git commit |
@@ -106,12 +106,12 @@ Rather than migrating all 23 functions simultaneously, normalization into `_core
 - `agent-voice-tts` (1 caller) -> Verified direct OpenAI TTS-1 synthesis with browser fallback, personality mapping, and 400 validation.
 - *Contract Tests:* 24/24 tests passed (`scratch/batch3_contract_tests.cjs`). Cumulative tests passed: 88/88.
 
-### Batch 4: Health & Specialized Intelligence (4 Active Functions)
-- `ai-health-assistant` (2 callers) -> Normalize to `completeChat()` (strictly preserving clinical prompts and disclaimers byte-for-byte)
-- `ai-browser-search` (2 callers) -> Direct Serper/Groq/Gemini synthesis
-- `generate-feature` (1 caller) -> Normalize to `completeChat()`
-- `backfill-memory` (1 caller) -> Strictly frozen at 768 dimensions (`text-embedding-004`)
-- *Strict Embedding Freeze:* Prohibits changing embedding model, changing vector dimensions, re-embedding existing records, changing similarity operators, or altering vector indexes.
+### Batch 4: Health & Specialized Intelligence (4 Active Functions) — 🟢 COMPLETED
+- `ai-health-assistant` (2 callers) -> Normalized to `completeChat()`, clinical triage prompts and disclaimers preserved byte-for-byte.
+- `ai-browser-search` (2 callers) -> Preserved all search providers, routed LLM synthesis through `completeChat()`.
+- `generate-feature` (1 caller) -> Normalized to `completeChat()` in parallel, all code generation prompts and response contract preserved.
+- `backfill-memory` (1 caller) -> Normalized to `generateEmbedding()` strictly frozen at 768 dimensions (`text-embedding-004`), zero vector/schema modifications.
+- *Contract Tests:* 33/33 tests passed (`scratch/batch4_contract_tests.cjs`). Cumulative tests passed: 121/121.
 
 ### Batch 5: Internal / Background / Cron (8 Functions)
 - `ai-chat`, `call-sentiment`, `call-summary`, `elevenlabs-tts`, `generate-questions`, `live-transcription`, `realtime-token`, `universal-ai-search`.

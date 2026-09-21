@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { generateEmbedding } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,16 +21,12 @@ serve(async (req) => {
     );
 
     // 1. Fetch messages that are not yet in communication_memory
-    // Using a left join or a subquery. For a background worker, a subquery is fine for small-medium tables.
-    // In a real production system with millions of rows, we'd use a tracked pointer or cursor.
-    
-    // We'll fetch 100 un-embedded messages for simplicity
     const { data: messages, error: fetchError } = await supabaseAdmin
       .from('messages')
       .select('id, sender_id, conversation_id, content, created_at')
       .not('content', 'is', null)
       .neq('content', '')
-      .limit(batchSize); // Actually we need to filter out ones already in memory, but Supabase JS doesn't support complex NOT IN natively without RPC.
+      .limit(batchSize);
 
     if (fetchError) throw fetchError;
 
@@ -41,22 +38,17 @@ serve(async (req) => {
 
     let processedCount = 0;
     
-    // To do true backfilling without an RPC, we just attempt to insert into communication_memory
-    // and rely on triggers (or manually call the embedding endpoint).
-    // Let's directly invoke the generate-memory-embedding function for each one.
-    // In a real high-throughput scenario, we'd batch the embeddings.
-    
     for (const msg of messages) {
       // Check if it exists in memory already
       const { data: existing } = await supabaseAdmin
         .from('communication_memory')
         .select('id')
-        .eq('content', msg.content) // A bit hacky but works for demo since message_id isn't directly linked in the table schema we made (we made it a general table). Wait, we should add message_id to metadata.
+        .eq('content', msg.content)
         .single();
         
       if (!existing) {
-        // Insert into communication_memory (trigger will generate embedding)
-        const { error: insertError } = await supabaseAdmin
+        // Insert into communication_memory
+        const { data: inserted, error: insertError } = await supabaseAdmin
           .from('communication_memory')
           .insert({
             user_id: msg.sender_id,
@@ -67,22 +59,29 @@ serve(async (req) => {
               source_message_id: msg.id,
               created_at_original: msg.created_at
             }
-          });
+          })
+          .select('id')
+          .single();
           
-        if (!insertError) {
+        if (!insertError && inserted) {
           processedCount++;
-          // Trigger the embedding generator manually if no DB webhook exists yet
-          await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/generate-memory-embedding`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              id: msg.id, // This is wrong, it needs the new memory ID. 
-              // Actually we should just let the DB Webhook handle it, or we fetch the inserted memory.
-            })
-          }).catch(console.error); // Fire and forget
+          try {
+            // Generate strictly 768-dim embedding via text-embedding-004 in CHATR AI Router
+            const embeddingResult = await generateEmbedding({
+              input: msg.content,
+              model: "text-embedding-004",
+            });
+
+            await supabaseAdmin
+              .from('communication_memory')
+              .update({
+                embedding: embeddingResult.embedding,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', inserted.id);
+          } catch (embedError) {
+            console.error('Failed to generate embedding for backfilled memory item:', embedError);
+          }
         }
       }
     }

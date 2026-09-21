@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -636,85 +637,6 @@ async function searchVimeo(query: string): Promise<SearchResult[]> {
   }
 }
 
-async function callGroq(messages: LLMMessage[]): Promise<string | null> {
-  const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
-  if (!GROQ_API_KEY) return null;
-
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: Deno.env.get('GROQ_MODEL') || 'meta-llama/llama-4-scout-17b-16e-instruct',
-        messages,
-        max_tokens: 900,
-        temperature: 0.15,
-      }),
-      signal: AbortSignal.timeout(12000),
-    });
-
-    if (!response.ok) {
-      console.error('Groq API error:', response.status);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content?.trim() || null;
-  } catch (error) {
-    console.error('Groq summary error:', error);
-    return null;
-  }
-}
-
-async function callGemini(systemPrompt: string, userPayloadText: string): Promise<string | null> {
-  const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_AI_API_KEY');
-  if (!GEMINI_API_KEY) return null;
-
-  try {
-    const model = Deno.env.get('GEMINI_MODEL') || 'gemini-2.5-flash';
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: systemPrompt }],
-          },
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: userPayloadText }],
-            },
-          ],
-          generationConfig: {
-            maxOutputTokens: 900,
-            temperature: 0.15,
-          },
-        }),
-        signal: AbortSignal.timeout(12000),
-      },
-    );
-
-    if (!response.ok) {
-      console.error('Gemini API error:', response.status);
-      return null;
-    }
-
-    const data = await response.json();
-    return (data.candidates?.[0]?.content?.parts || [])
-      .map((part: any) => part.text || '')
-      .join('')
-      .trim() || null;
-  } catch (error) {
-    console.error('Gemini summary error:', error);
-    return null;
-  }
-}
-
 async function generateAIFusionSummary(query: string, results: SearchResult[], category: string): Promise<string> {
   try {
     const rankedResults = rankResults(results);
@@ -733,31 +655,28 @@ async function generateAIFusionSummary(query: string, results: SearchResult[], c
 
     const contextPayload = buildContextPayload(query, rankedResults);
     const userPayloadText = payloadToText(contextPayload);
-    const messages: LLMMessage[] = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPayloadText },
+    const messages = [
+      { role: 'system' as const, content: systemPrompt },
+      { role: 'user' as const, content: userPayloadText },
     ];
 
     const preferredProvider = (Deno.env.get('AI_SEARCH_PRIMARY_PROVIDER') || 'groq').toLowerCase();
-    const providers =
-      preferredProvider === 'gemini'
-        ? [
-            () => callGemini(systemPrompt, userPayloadText),
-            () => callGroq(messages),
-          ]
-        : [
-            () => callGroq(messages),
-            () => callGemini(systemPrompt, userPayloadText),
-          ];
+    const primaryProvider = (preferredProvider === 'gemini' ? 'gemini' : 'groq') as "gemini" | "groq";
 
-    for (const provider of providers) {
-      const summary = await provider();
-      if (summary) return summary;
+    const chatResult = await completeChat({
+      messages,
+      temperature: 0.15,
+      maxTokens: 900,
+      primaryProvider,
+    });
+
+    if (chatResult.content && chatResult.content.trim().length > 0) {
+      return chatResult.content.trim();
     }
 
     return 'AI synthesis unavailable because no free-tier LLM key is configured or all providers are rate-limited. Add GROQ_API_KEY or GEMINI_API_KEY/GOOGLE_AI_API_KEY, then retry. Showing search results below.';
   } catch (error) {
-    console.error('AI summary error:', error);
+    console.error('AI summary error via CHATR AI Router:', error);
     return 'AI summary unavailable. See search results below.';
   }
 }
