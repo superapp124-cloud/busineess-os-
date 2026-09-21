@@ -69,7 +69,7 @@ const TEMPLATES: Template[] = [
  body: 'Start with a glass of water — your brain wakes up faster.',
  metadata: { slot: 'morning' },
  when: '10:00 AM IST',
- rationale: 'AI-crafted morning nudge (Lovable AI · gemini-2.5-flash-lite).',
+ rationale: 'AI-crafted morning nudge (CHATR AI · gemini-2.5-flash-lite).',
  },
  {
  id: 'wellness-afternoon',

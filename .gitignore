@@ -183,3 +183,7 @@ __pycache__/
 # Scratch directory
 scratch/
 
+
+# Android Capacitor generated web bundle (rebuilt via: npm run build:mobile && npx cap sync android)
+# Contains bundled JS/CSS with potentially embedded credentials - never commit generated assets
+android/app/src/main/assets/public/

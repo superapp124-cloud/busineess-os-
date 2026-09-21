@@ -69,7 +69,7 @@ export const useAIChatAssistant = () => {
  setInsights(null);
 
  try {
- // Intentional Tier-3 cloud call (ai-message-insights / Lovable gateway).
+ // Intentional Tier-3 cloud call (ai-message-insights / CHATR AI edge function).
  // No on-device equivalent. Not in any live UI surface per Jun-2026 audit.
  // Cost impact: user-initiated only, not automatic.
  const { data, error } = await supabase.functions.invoke('ai-message-insights', {

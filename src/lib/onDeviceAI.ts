@@ -3,8 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 // Cloud usage remaining in this file (intentional, router-gated):
 //   - generateSmartReplyTextsWithCloudFallback → ai-smart-reply (only reached when Nano unavailable)
 // Cloud usage removed (converted to Tier-1 rules-based):
-//   - summarizeChatWithFallback: was → summarize-chat (Lovable gateway). Now: buildExtractiveSummary()
-//   - generateSmartComposeWithFallback: was → smart-compose (Lovable gateway). Now: buildStaticComposeStarters()
+//   - summarizeChatWithFallback: was → summarize-chat (CHATR AI edge function). Now: buildExtractiveSummary()
+//   - generateSmartComposeWithFallback: was → smart-compose (CHATR AI edge function). Now: buildStaticComposeStarters()
 
 export const ON_DEVICE_AI_ENABLED_KEY = 'chatr.onDeviceAi.enabled';
 

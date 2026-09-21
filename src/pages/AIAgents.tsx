@@ -430,7 +430,7 @@ export default function AIAgents() {
  </div>
  <div>
  <h3 className="font-semibold">AI Powered</h3>
- <p className="text-label text-muted-foreground">Smart replies using Lovable AI</p>
+ <p className="text-label text-muted-foreground">Smart replies using CHATR AI</p>
  </div>
  </CardContent>
  </Card>
