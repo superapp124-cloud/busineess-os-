@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,8 +61,6 @@ serve(async (req) => {
       }
     }
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_AI_API_KEY');
-    
     let result: CallSummary = {
       summary: 'Call summary not available',
       keyPoints: [],
@@ -72,16 +71,8 @@ serve(async (req) => {
       nextSteps: [],
     };
 
-    if (geminiApiKey && callTranscript) {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `Generate a comprehensive call summary for this conversation.
+    if (callTranscript) {
+      const prompt = `Generate a comprehensive call summary for this conversation.
 
 Call Duration: ${duration ? `${Math.floor(duration / 60)} minutes` : 'Unknown'}
 Participants: ${participants?.join(', ') || 'Unknown'}
@@ -98,27 +89,27 @@ Return a JSON object with:
 - followUpRequired: boolean if follow-up is needed
 - nextSteps: array of recommended next steps
 
-Return ONLY valid JSON, no markdown.`
-              }]
-            }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
-          })
-        }
-      );
+Return ONLY valid JSON, no markdown.`;
 
-      if (response.ok) {
-        const data = await response.json();
-        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        
-        try {
-          const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
-          result = JSON.parse(jsonStr);
-          console.log('[call-summary] Generated summary:', result.summary.substring(0, 50));
-        } catch (parseError) {
-          console.error('[call-summary] Parse error:', parseError);
-        }
+      try {
+        const chatResult = await completeChat({
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.3,
+          maxTokens: 2048,
+        });
+
+        const responseText = chatResult.content || '';
+        const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
+        const parsed = JSON.parse(jsonStr);
+        result = {
+          ...result,
+          ...parsed,
+        };
+        console.log('[call-summary] Generated summary:', result.summary.substring(0, 50));
+      } catch (parseError) {
+        console.error('[call-summary] Parse or AI error:', parseError);
       }
-    } else if (!callTranscript) {
+    } else {
       result.summary = 'No transcript available for this call';
     }
 

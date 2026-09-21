@@ -1,11 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   sales: `You are a sales coaching AI. Given the context of a sales call, generate exactly {count} specific, actionable conversation topics or questions the salesperson should raise with this client. Make them specific to the context provided, not generic. Return ONLY a JSON array of strings like ["topic 1", "topic 2"]. No explanation.`,
@@ -23,40 +22,19 @@ serve(async (req) => {
   try {
     const { goal = 'general', context = '', count = 5 } = await req.json();
 
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
-      throw new Error("OPENROUTER_API_KEY is not configured");
-    }
-
     const systemPrompt = (SYSTEM_PROMPTS[goal] || SYSTEM_PROMPTS.general)
       .replace('{count}', String(count));
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://chatr.chat",
-        "X-Title": "Chatr AI Questions Generator",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: context || `Generate ${count} items for a ${goal} context.` },
-        ],
-        temperature: 0.7,
-        max_tokens: 800,
-      }),
+    const chatResult = await completeChat({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: context || `Generate ${count} items for a ${goal} context.` },
+      ],
+      temperature: 0.7,
+      maxTokens: 800,
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`OpenRouter error: ${err}`);
-    }
-
-    const data = await response.json();
-    const raw = data.choices?.[0]?.message?.content || '[]';
+    const raw = chatResult.content || '[]';
 
     // Parse the JSON array from the AI response
     let parsed: any[] = [];
@@ -83,8 +61,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('generate-questions error:', error);
+    const message = error instanceof Error ? error.message : String(error);
     return new Response(
-      JSON.stringify({ error: error.message, questions: [] }),
+      JSON.stringify({ error: message, questions: [] }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

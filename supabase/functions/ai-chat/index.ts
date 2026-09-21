@@ -1,8 +1,9 @@
 // supabase/functions/ai-chat/index.ts
-// Provider-agnostic AI chat endpoint.
-// Reads OPENAI_API_KEY from environment; returns 503 if not configured.
+// Multi-provider resilient AI chat endpoint powered by CHATR AI Router.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { completeChat } from '../_core/aiProvider.ts';
+import { PlatformError } from '../_core/errors.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,49 +17,32 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { messages, model = 'gpt-4o-mini' } = await req.json();
+    const { messages, model } = await req.json();
 
-    const apiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!apiKey) {
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'No AI provider configured' }),
-        {
-          status: 503,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        JSON.stringify({ error: 'messages array is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ model, messages, max_tokens: 1000 }),
+    const chatResult = await completeChat({
+      messages,
+      model: model || undefined,
+      maxTokens: 1000,
     });
 
-    if (!response.ok) {
-      const errText = await response.text();
-      return new Response(
-        JSON.stringify({ error: `OpenAI error ${response.status}: ${errText}` }),
-        {
-          status: response.status,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    const data = await response.json();
-    const content: string = data.choices?.[0]?.message?.content ?? '';
+    const content: string = chatResult.content ?? '';
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
+    console.error('ai-chat error:', err);
+    const status = err instanceof PlatformError ? err.status : 500;
     const message = err instanceof Error ? err.message : String(err);
     return new Response(JSON.stringify({ error: message }), {
-      status: 500,
+      status,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }

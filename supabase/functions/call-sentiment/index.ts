@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -37,8 +39,6 @@ serve(async (req) => {
       );
     }
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_AI_API_KEY');
-    
     let result: SentimentResult = {
       sentiment: 'neutral',
       score: 0,
@@ -47,16 +47,9 @@ serve(async (req) => {
       urgency: 'low',
     };
 
-    if (geminiApiKey) {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `Analyze the sentiment and emotions in this customer service conversation text. Return a JSON object with:
+    let aiSucceeded = false;
+    try {
+      const prompt = `Analyze the sentiment and emotions in this customer service conversation text. Return a JSON object with:
 - sentiment: one of "positive", "negative", "neutral", "frustrated", "happy", "confused"
 - score: number from -1 (very negative) to 1 (very positive)
 - emotions: object with emotion names as keys and confidence 0-1 as values (e.g., {"anger": 0.2, "satisfaction": 0.7})
@@ -67,28 +60,28 @@ serve(async (req) => {
 Text to analyze:
 "${text}"
 
-Return ONLY valid JSON, no markdown.`
-              }]
-            }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
-          })
-        }
-      );
+Return ONLY valid JSON, no markdown.`;
 
-      if (response.ok) {
-        const data = await response.json();
-        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        
-        try {
-          // Clean up response (remove markdown if present)
-          const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
-          result = JSON.parse(jsonStr);
-          console.log('[call-sentiment] AI analysis complete:', result.sentiment);
-        } catch (parseError) {
-          console.error('[call-sentiment] Failed to parse AI response:', parseError);
-        }
-      }
-    } else {
+      const chatResult = await completeChat({
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        maxTokens: 1024,
+      });
+
+      const responseText = chatResult.content || '';
+      const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
+      const parsed = JSON.parse(jsonStr);
+      result = {
+        ...result,
+        ...parsed,
+      };
+      aiSucceeded = true;
+      console.log('[call-sentiment] AI analysis complete:', result.sentiment);
+    } catch (aiError) {
+      console.warn('[call-sentiment] AI analysis failed, falling back to heuristics:', aiError);
+    }
+
+    if (!aiSucceeded) {
       // Basic keyword-based analysis fallback
       const lowerText = text.toLowerCase();
       

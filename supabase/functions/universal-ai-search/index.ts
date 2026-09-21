@@ -1,11 +1,11 @@
-// Universal AI search intent detection using OpenRouter
+// Universal AI search intent detection using CHATR AI Router
+import { completeChat } from "../_core/aiProvider.ts";
+import { PlatformError } from "../_core/errors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -22,22 +22,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY not configured');
-    }
-
-    // Call OpenRouter AI to understand search intent
-    const aiResponse = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://chatr.chat',
-        'X-Title': 'Chatr Universal Search',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-preview',
+    let parsedIntent;
+    try {
+      const chatResult = await completeChat({
         messages: [
           {
             role: 'system',
@@ -64,26 +51,13 @@ Respond in JSON format:
           }
         ],
         temperature: 0.3,
-      }),
-    });
+      });
 
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      throw new Error(`AI API error: ${aiResponse.status}`);
-    }
-
-    const aiData = await aiResponse.json();
-    const aiMessage = aiData.choices?.[0]?.message?.content || '{}';
-
-    let parsedIntent;
-    try {
-      parsedIntent = JSON.parse(aiMessage);
-    } catch {
+      const aiMessage = chatResult.content || '{}';
+      const cleaned = aiMessage.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      parsedIntent = JSON.parse(cleaned);
+    } catch (aiErr) {
+      console.warn('AI search intent parsing fallback:', aiErr);
       parsedIntent = {
         intent: 'general search',
         category: 'general',
@@ -100,9 +74,10 @@ Respond in JSON format:
 
   } catch (error) {
     console.error('Universal AI Search error:', error);
+    const status = error instanceof PlatformError ? error.status : 500;
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
