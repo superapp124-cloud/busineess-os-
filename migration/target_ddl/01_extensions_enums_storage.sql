@@ -37,7 +37,7 @@ VALUES ('chat-backups', 'chat-backups', false, NULL, NULL)
 ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types;
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('stories', 'stories', true, 52428800, '["image/jpeg","image/png","image/gif","image/webp","video/mp4","video/quicktime","video/webm"]')
+VALUES ('stories', 'stories', true, 52428800, ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/quicktime', 'video/webm']::text[])
 ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types;
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -57,7 +57,7 @@ VALUES ('kyc-documents', 'kyc-documents', false, NULL, NULL)
 ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types;
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('voice-notes', 'voice-notes', true, 2097152, '["audio/webm","audio/ogg","audio/mp4","audio/mpeg"]')
+VALUES ('voice-notes', 'voice-notes', true, 2097152, ARRAY['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg']::text[])
 ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types;
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
