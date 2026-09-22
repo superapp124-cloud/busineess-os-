@@ -396,11 +396,16 @@ export function NewChatSheet({ userId, open, onOpenChange, onSelectContact }: Ne
 
     if (!q) return list;
 
-    // NLP Token Matching (matches prefix, partial words, name components, handles)
+    // NLP Token Matching & Phone Digit Normalization
     const tokens = q.split(/\s+/).filter(Boolean);
+    const queryDigits = q.replace(/\D/g, '');
 
     return list.filter(item => {
       const targetStr = `${item.username} ${item.full_name || ''} ${item.contact_user_id}`.toLowerCase();
+      if (queryDigits.length >= 5) {
+        const targetDigits = targetStr.replace(/\D/g, '');
+        if (targetDigits.includes(queryDigits)) return true;
+      }
       return tokens.every(token => targetStr.includes(token));
     });
   }, [contacts, dbUsers, searchQuery, userId]);
