@@ -284,10 +284,10 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
 
     // Strategy 2: Call firebase-phone-auth edge function via direct fetch
     if (!session?.access_token) {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sbayuqgomlflmxgicplz.supabase.co';
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
         import.meta.env.VITE_SUPABASE_ANON_KEY || 
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
+        'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
 
       if (supabaseUrl && supabaseKey) {
         try {
@@ -351,7 +351,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
           token_type: 'bearer',
           expires_at: (session as any).expires_at || Math.floor(Date.now() / 1000) + 3600 * 24 * 30,
         };
-        localStorage.setItem('sb-sbayuqgomlflmxgicplz-auth-token', JSON.stringify(rawToken));
+        localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(rawToken));
         localStorage.setItem('sb-auth-token', session.access_token);
       } catch (storageErr) {
         console.warn('[Auth Exchange] LocalStorage write warning:', storageErr);

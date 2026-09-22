@@ -31,6 +31,7 @@ export async function performLogout(): Promise<void> {
     localStorage.removeItem('chatr_recent_activity');
     localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');
     localStorage.removeItem('sb-auth-token');
+    localStorage.removeItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
     localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
     sessionStorage.clear();
     sessionStorage.setItem('chatr_explicit_signout', '1');

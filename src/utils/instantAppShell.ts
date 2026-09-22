@@ -7,7 +7,7 @@
 export const preloadCriticalResources = () => {
   // Preconnect to critical origins
   const origins = [
-    'https://sbayuqgomlflmxgicplz.supabase.co',
+    (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://nuuuqazaoaozgblmvkzn.supabase.co',
     'https://fonts.googleapis.com',
     'https://fonts.gstatic.com',
   ];

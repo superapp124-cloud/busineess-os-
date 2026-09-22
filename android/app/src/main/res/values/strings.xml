@@ -9,6 +9,6 @@
     <string name="chatrcalls_shortcut_long">Open ChatrCalls</string>
 
     <!-- Supabase config for native overlay caller ID lookup -->
-    <string name="supabase_url">https://sbayuqgomlflmxgicplz.supabase.co</string>
-    <string name="supabase_anon_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw</string>
+    <string name="supabase_url">https://nuuuqazaoaozgblmvkzn.supabase.co</string>
+    <string name="supabase_anon_key">sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw</string>
 </resources>

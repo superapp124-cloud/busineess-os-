@@ -1,7 +1,7 @@
 // CHATR AI Router — Supabase client
 // Owner: CHATR (not Lovable-generated as of chore/lovable-exit)
-// Production project: sbayuqgomlflmxgicplz
-// Anon key is public by design (safe to commit).
+// Production project: nuuuqazaoaozgblmvkzn
+// Anon / Publishable key is public by design (safe to commit).
 // V2 portability: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in deployment env
 // to redirect to a different project without modifying this file.
 import { createClient } from '@supabase/supabase-js';
@@ -14,8 +14,8 @@ const getEnv = (key: string) => {
 };
 
 // Read from environment first (V2 portability); fall back to production values
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://sbayuqgomlflmxgicplz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_ANON_KEY') || getEnv('VITE_SUPABASE_PUBLISHABLE_KEY') || 'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
 
 // Resilient storage wrapper with memory fallback
 const memoryStorage = new Map<string, string>();
@@ -39,8 +39,8 @@ if (typeof window !== 'undefined') {
           const parts = accessToken.split('.');
           if (parts.length === 3) {
             const payload = JSON.parse(atob(parts[1]));
-            // If token is not from sbayuqgomlflmxgicplz, purge it
-            if (payload?.iss && !payload.iss.includes('sbayuqgomlflmxgicplz')) {
+            // If token is not from nuuuqazaoaozgblmvkzn, purge it
+            if (payload?.iss && !payload.iss.includes('nuuuqazaoaozgblmvkzn')) {
               console.debug('[SupabaseStorage] Purging stale token from wrong project:', key);
               window.localStorage.removeItem(key);
             }
@@ -65,7 +65,7 @@ const resilientStorage = {
     try {
       let val = window.localStorage.getItem(key);
       // Fallback cross-check between storage keys to ensure session continuity
-      if (!val && key === 'sb-sbayuqgomlflmxgicplz-auth-token') {
+      if (!val && key === 'sb-nuuuqazaoaozgblmvkzn-auth-token') {
         val = window.localStorage.getItem('sb-auth-token');
       }
       return val || memoryStorage.get(key) || null;
@@ -78,7 +78,7 @@ const resilientStorage = {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.setItem(key, value);
-        if (key === 'sb-sbayuqgomlflmxgicplz-auth-token') {
+        if (key === 'sb-nuuuqazaoaozgblmvkzn-auth-token') {
           window.localStorage.setItem('sb-auth-token', value);
         }
       } catch (e) {

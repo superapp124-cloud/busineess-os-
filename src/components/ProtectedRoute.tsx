@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -27,6 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           } else {
             // Session invalid — clear stale tokens so Auth.tsx doesn't fast-track again
             try {
+              localStorage.removeItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
               localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
               localStorage.removeItem('sb-auth-token');
             } catch {}

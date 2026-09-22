@@ -7,7 +7,8 @@ export function getAvatarUrl(name?: string | null, rawAvatarUrl?: string | null)
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:')) {
       return trimmed;
     }
-    return `https://sbayuqgomlflmxgicplz.supabase.co/storage/v1/object/public/avatars/${trimmed.replace(/^\/+/, '')}`;
+    const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
+    return `${baseUrl}/storage/v1/object/public/avatars/${trimmed.replace(/^\/+/, '')}`;
   }
 
   const cleanName = name && name.trim() ? name.trim() : 'CHATR User';

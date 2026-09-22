@@ -30,6 +30,7 @@ const Auth = () => {
         if (sessionError || !session) {
           // No valid session — clear any stale tokens from old backend that could cause loops
           try {
+            localStorage.removeItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
             localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
             localStorage.removeItem('sb-auth-token');
             localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');

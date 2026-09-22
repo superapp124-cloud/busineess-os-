@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const SUPABASE_URL = 'https://sbayuqgomlflmxgicplz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYXl1cWdvbWxmbG14Z2ljcGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MTc2MDAsImV4cCI6MjA3NDk5MzYwMH0.gVSObpMtsv5W2nuLBHKT8G1_hXIprWXdn5l7Bnnj7jw';
+const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
+const SUPABASE_ANON_KEY = (typeof import.meta !== 'undefined' && (import.meta.env?.VITE_SUPABASE_ANON_KEY || import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY)) || 'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
 
 /**
  * Invokes the Supabase Edge Function `connector-hub` with the specified action and payload.
