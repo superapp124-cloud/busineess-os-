@@ -70,49 +70,67 @@ serve(createEdgeFunction({
 
   // 2. Find or Create Supabase User via Canonical Phone
   const { data: existingUsers } = await auth.serviceClient.auth.admin.listUsers({ perPage: 1000 });
-  const existingUser = existingUsers?.users?.find((user) => 
+  const allMatches = existingUsers?.users?.filter((user) => 
+    user.email === email ||
+    user.phone === phone_number ||
     (user.phone && user.phone.replace(/\D/g, '') === normalizedPhone) ||
-    (user.user_metadata?.phone_number && String(user.user_metadata.phone_number).replace(/\D/g, '') === normalizedPhone) ||
-    user.email === email
-  );
+    (user.user_metadata?.phone_number && String(user.user_metadata.phone_number).replace(/\D/g, '') === normalizedPhone)
+  ) || [];
+
+  // Prioritize: 1) exact canonical email, 2) exact phone, 3) any phone match
+  const existingUser = allMatches.find(u => u.email === email)
+    || allMatches.find(u => u.phone === phone_number)
+    || allMatches[0];
 
   let targetUser: any = existingUser;
   let isNewUser = false;
   if (existingUser) {
-    // Update password & phone metadata in case we need to reset the deterministic login
+    // Ensure email, phone, and password are all updated and confirmed
     const updatePayload: Record<string, any> = {
       password,
-      user_metadata: { ...existingUser.user_metadata, phone_number, firebase_uid, phone: phone_number },
+      email,
+      email_confirm: true,
+      phone: phone_number,
+      phone_confirm: true,
+      user_metadata: {
+        ...existingUser.user_metadata,
+        phone_number,
+        firebase_uid,
+        phone: phone_number,
+        email_verified: true,
+      },
     };
-    if (!existingUser.phone) {
-      updatePayload.phone = phone_number;
-    }
     const { data: updatedUserData, error } = await auth.serviceClient.auth.admin.updateUserById(existingUser.id, updatePayload);
     if (!error && updatedUserData?.user) {
       targetUser = updatedUserData.user;
+    } else {
+      console.warn("[firebase-phone-auth] updateUserById warning:", error?.message);
     }
   } else {
-    const { data: newUserData, error } = await auth.serviceClient.auth.admin.createUser({
+    const { data: newUserData, error: createError } = await auth.serviceClient.auth.admin.createUser({
       email,
       phone: phone_number,
       password,
       email_confirm: true,
       phone_confirm: true,
-      user_metadata: { phone_number, firebase_uid, phone: phone_number },
+      user_metadata: { phone_number, firebase_uid, phone: phone_number, email_verified: true },
     });
-    if (error) {
+    if (createError) {
       // If user already existed under another key, look them up again
       const retryUsers = await auth.serviceClient.auth.admin.listUsers({ perPage: 1000 });
-      targetUser = retryUsers.data?.users?.find(u => u.phone === phone_number || u.email === email);
-      if (!targetUser) throw new PlatformError(400, "phone_user_create_failed", error.message);
+      targetUser = retryUsers.data?.users?.find(u => u.email === email || u.phone === phone_number);
+      if (!targetUser) throw new PlatformError(400, "phone_user_create_failed", createError.message);
     } else {
       targetUser = newUserData?.user;
       isNewUser = true;
     }
   }
 
-  // 3. Issue Supabase Session via password sign-in (no JWT_SIGNING_SECRET needed)
+  // 3. Issue Supabase Session
   let activeSession: any = null;
+  let lastSignInError = "";
+
+  // Strategy A: Direct password sign-in using verified canonical email & deterministic password
   try {
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -120,17 +138,55 @@ serve(createEdgeFunction({
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
 
-    const { data: session, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { data: session, error: signInError } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
     if (!signInError && session?.session) {
       activeSession = session.session;
     } else if (signInError) {
+      lastSignInError = signInError.message;
       console.warn("[firebase-phone-auth] signInWithPassword failed:", signInError.message);
     }
-  } catch (e) {
+  } catch (e: any) {
+    lastSignInError = e?.message || String(e);
     console.warn("[firebase-phone-auth] Session creation error:", e);
   }
 
-  // Fallback: try mintChatrSession only if JWT_SIGNING_SECRET is configured
+  // Strategy B: MagicLink generate + verifyOtp fallback
+  if (!activeSession && targetUser) {
+    try {
+      const { data: linkData, error: linkError } = await auth.serviceClient.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+      });
+
+      const tokenHash = (linkData as any)?.properties?.hashed_token || (linkData as any)?.hashed_token;
+      if (tokenHash) {
+        const supabaseClient = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+          { auth: { persistSession: false, autoRefreshToken: false } },
+        );
+        const { data: verified, error: verifyError } = await supabaseClient.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: 'email',
+        });
+        if (!verifyError && verified?.session) {
+          activeSession = verified.session;
+          console.log("[firebase-phone-auth] Session issued via verifyOtp fallback");
+        } else if (verifyError) {
+          console.warn("[firebase-phone-auth] verifyOtp fallback failed:", verifyError.message);
+        }
+      } else if (linkError) {
+        console.warn("[firebase-phone-auth] generateLink failed:", linkError.message);
+      }
+    } catch (fallbackErr) {
+      console.warn("[firebase-phone-auth] generateLink fallback error:", fallbackErr);
+    }
+  }
+
+  // Strategy C: mintChatrSession only if JWT_SIGNING_SECRET is configured
   if (!activeSession && targetUser) {
     const jwtSecret = Deno.env.get("JWT_SIGNING_SECRET") || Deno.env.get("SUPABASE_JWT_SECRET") || Deno.env.get("JWT_SECRET");
     if (jwtSecret) {
@@ -144,7 +200,7 @@ serve(createEdgeFunction({
   }
 
   if (!activeSession) {
-    throw new PlatformError(500, "session_issuance_failed", "Failed to issue session credentials. Ensure Supabase auth email provider is enabled.");
+    throw new PlatformError(500, "session_issuance_failed", `Failed to issue session credentials${lastSignInError ? `: ${lastSignInError}` : ""}. Please try again.`);
   }
 
   await auditEvent(auth, {
