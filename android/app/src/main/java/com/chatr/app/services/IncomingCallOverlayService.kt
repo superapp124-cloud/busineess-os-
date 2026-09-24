@@ -51,10 +51,17 @@ class IncomingCallOverlayService : Service() {
 
     private val screeningReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val phone = intent.getStringExtra("phone_number")
-            val result = intent.getStringExtra("screening_result")
-            if (phone == activeLookupNumber && result != null) {
-                overlayView?.findViewById<TextView>(R.id.liveTranscriptText)?.text = result
+            val speaker = intent.getStringExtra(AIScreeningService.EXTRA_TURN_SPEAKER)
+            val turnText = intent.getStringExtra(AIScreeningService.EXTRA_TURN_TEXT)
+            val result = intent.getStringExtra(AIScreeningService.EXTRA_SCREENING_RESULT)
+
+            val tv = overlayView?.findViewById<TextView>(R.id.liveTranscriptText)
+            if (speaker != null && turnText != null) {
+                val current = tv?.text?.toString().orEmpty()
+                val prefix = if (speaker == "CALLER") "👤 Caller: " else "🤖 Chatr AI: "
+                tv?.text = if (current.isBlank() || current == "...") "$prefix$turnText" else "$current\n$prefix$turnText"
+            } else if (result != null) {
+                tv?.text = result
             }
         }
     }
@@ -131,11 +138,12 @@ class IncomingCallOverlayService : Service() {
             return
         }
 
-        // Register receiver for live screening updates
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            screeningReceiver,
-            IntentFilter("com.chatr.app.SCREENING_RESULT")
-        )
+        // Register receiver for live screening updates and turn streaming
+        val filter = IntentFilter().apply {
+            addAction(AIScreeningService.ACTION_SCREENING_RESULT)
+            addAction(AIScreeningService.ACTION_SCREENING_TURN)
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(screeningReceiver, filter)
 
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val contextWrapper = androidx.appcompat.view.ContextThemeWrapper(this, R.style.AppTheme)
@@ -165,33 +173,55 @@ class IncomingCallOverlayService : Service() {
         val spamBadge = overlayView?.findViewById<TextView>(R.id.spamBadge)
         val transcriptContainer = overlayView?.findViewById<View>(R.id.liveTranscriptContainer)
         val transcriptText = overlayView?.findViewById<TextView>(R.id.liveTranscriptText)
+        val btnGuide = overlayView?.findViewById<Button>(R.id.btnGuideDelivery)
+        val btnBouncer = overlayView?.findViewById<Button>(R.id.btnAiBouncer)
 
         callerNumberText?.text = phoneNumber
         callerNameText?.text = "Chatr AI searching..."
         spamBadge?.text = "ANALYZING"
 
-        overlayView?.findViewById<Button>(R.id.btnGuideDelivery)?.setOnClickListener {
+        fun enterTakeOverMode() {
+            btnGuide?.visibility = View.GONE
+            btnBouncer?.apply {
+                text = "Take Over"
+                setBackgroundColor(Color.parseColor("#10B981"))
+                setTextColor(Color.WHITE)
+                setOnClickListener {
+                    Log.i(TAG, "Take Over clicked - restoring voice path to human")
+                    AIScreeningService.stop(this@IncomingCallOverlayService)
+                    ChatrInCallService.handoverToHuman()
+                    spamBadge?.text = "CONNECTED"
+                    spamBadge?.setBackgroundColor(Color.parseColor("#10B981"))
+                    aiSummaryText?.text = "You are now speaking with the caller."
+                    visibility = View.GONE
+                }
+            }
+        }
+
+        btnGuide?.setOnClickListener {
             spamBadge?.text = "GUIDING"
             spamBadge?.setBackgroundColor(Color.parseColor("#3B82F6"))
             transcriptContainer?.visibility = View.VISIBLE
-
             transcriptText?.text = "Chatr AI is guiding the delivery driver..."
-            aiSummaryText?.text = "AI has taken over the call."
-            
-            // Start the screening service in delivery mode
-            AIScreeningService.start(this, phoneNumber, "MODE_DELIVERY_GUIDE")
-        }
-        
-        overlayView?.findViewById<Button>(R.id.btnAiBouncer)?.setOnClickListener {
-            spamBadge?.text = "BOUNCER"
-            spamBadge?.setBackgroundColor(Color.parseColor("#EF4444"))
-            transcriptContainer?.visibility = View.VISIBLE
+            aiSummaryText?.text = "AI screening active. Tap Take Over anytime."
 
-            transcriptText?.text = "Chatr AI Bouncer active..."
-            aiSummaryText?.text = "AI is negotiating with the caller."
-            
-            // Start the screening service in bouncer mode
+            // Answer call and start screening
+            ChatrInCallService.answerCall()
+            AIScreeningService.start(this, phoneNumber, "MODE_DELIVERY_GUIDE")
+            enterTakeOverMode()
+        }
+
+        btnBouncer?.setOnClickListener {
+            spamBadge?.text = "AI SCREENING"
+            spamBadge?.setBackgroundColor(Color.parseColor("#8B5CF6"))
+            transcriptContainer?.visibility = View.VISIBLE
+            transcriptText?.text = "Chatr AI Receptionist active..."
+            aiSummaryText?.text = "AI screening active. Tap Take Over anytime."
+
+            // Answer call and start screening
+            ChatrInCallService.answerCall()
             AIScreeningService.start(this, phoneNumber, "MODE_AI_BOUNCER")
+            enterTakeOverMode()
         }
 
         try {

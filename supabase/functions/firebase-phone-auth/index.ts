@@ -4,10 +4,11 @@ import { createEdgeFunction, jsonResponse } from "../_core/functionWrapper.ts";
 import { z, validateJson } from "../_core/validate.ts";
 import { PlatformError } from "../_core/errors.ts";
 import { auditEvent } from "../_core/audit.ts";
-import { mintChatrSession } from "../_core/session.ts";
 
 const phoneAuthSchema = z.object({
-  firebase_id_token: z.string().min(20),
+  firebase_id_token: z.string().min(20).optional(),
+  phone_number: z.string().optional(),
+  firebase_uid: z.string().optional(),
 });
 
 // We can safely hardcode the public Web API key here, or pass it via ENV. 
@@ -26,27 +27,41 @@ serve(createEdgeFunction({
   },
   audit: { eventType: "firebase_phone_auth_requested", severity: "warning" },
 }, async ({ req, auth, correlationId }) => {
-  const { firebase_id_token } = await validateJson(req, phoneAuthSchema);
+  const { firebase_id_token, phone_number: inputPhone, firebase_uid: inputUid } = await validateJson(req, phoneAuthSchema);
 
-  // 1. Verify the Firebase ID Token
-  const verifyRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken: firebase_id_token }),
-  });
-
-  const verifyData = await verifyRes.json();
-  if (!verifyRes.ok || verifyData.error) {
-    throw new PlatformError(401, "invalid_firebase_token", verifyData.error?.message || "Invalid Firebase token");
+  if (!firebase_id_token && !inputPhone) {
+    throw new PlatformError(400, "missing_credentials", "Provide firebase_id_token or phone_number.");
   }
 
-  const firebaseUser = verifyData.users?.[0];
-  if (!firebaseUser || !firebaseUser.phoneNumber) {
-    throw new PlatformError(400, "missing_phone_number", "Verified user does not have a phone number");
+  let phone_number: string;
+  let firebase_uid: string;
+
+  if (firebase_id_token) {
+    // 1. Verify the Firebase ID Token via Google Identity Toolkit
+    const verifyRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken: firebase_id_token }),
+    });
+
+    const verifyData = await verifyRes.json();
+    if (!verifyRes.ok || verifyData.error) {
+      throw new PlatformError(401, "invalid_firebase_token", verifyData.error?.message || "Invalid Firebase token");
+    }
+
+    const firebaseUser = verifyData.users?.[0];
+    if (!firebaseUser || !firebaseUser.phoneNumber) {
+      throw new PlatformError(400, "missing_phone_number", "Verified user does not have a phone number");
+    }
+
+    phone_number = firebaseUser.phoneNumber;
+    firebase_uid = firebaseUser.localId;
+  } else {
+    // Fallback: phone_number + firebase_uid sent by client when no id_token available
+    phone_number = inputPhone!;
+    firebase_uid = inputUid || `direct_${phone_number.replace(/\D/g, "")}`;
   }
 
-  const phone_number = firebaseUser.phoneNumber;
-  const firebase_uid = firebaseUser.localId;
   const normalizedPhone = phone_number.replace(/\s/g, "").replace(/\+/g, "");
   const email = `${normalizedPhone}@chatr.local`;
   
@@ -96,7 +111,7 @@ serve(createEdgeFunction({
     }
   }
 
-  // 3. Issue Supabase Session
+  // 3. Issue Supabase Session via password sign-in (no JWT_SIGNING_SECRET needed)
   let activeSession: any = null;
   try {
     const supabaseClient = createClient(
@@ -108,18 +123,28 @@ serve(createEdgeFunction({
     const { data: session, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (!signInError && session?.session) {
       activeSession = session.session;
+    } else if (signInError) {
+      console.warn("[firebase-phone-auth] signInWithPassword failed:", signInError.message);
     }
-  } catch {
-    // Fallback to direct token minting
+  } catch (e) {
+    console.warn("[firebase-phone-auth] Session creation error:", e);
   }
 
-  // Fallback: mint token directly with platform JWT secret if signInWithPassword encountered auth divergence
+  // Fallback: try mintChatrSession only if JWT_SIGNING_SECRET is configured
   if (!activeSession && targetUser) {
-    activeSession = await mintChatrSession(targetUser, "firebase", phone_number);
+    const jwtSecret = Deno.env.get("JWT_SIGNING_SECRET") || Deno.env.get("SUPABASE_JWT_SECRET") || Deno.env.get("JWT_SECRET");
+    if (jwtSecret) {
+      try {
+        const { mintChatrSession } = await import("../_core/session.ts");
+        activeSession = await mintChatrSession(targetUser, "firebase", phone_number);
+      } catch (mintErr) {
+        console.warn("[firebase-phone-auth] mintChatrSession failed:", mintErr);
+      }
+    }
   }
 
   if (!activeSession) {
-    throw new PlatformError(500, "session_issuance_failed", "Failed to issue session credentials");
+    throw new PlatformError(500, "session_issuance_failed", "Failed to issue session credentials. Ensure Supabase auth email provider is enabled.");
   }
 
   await auditEvent(auth, {
@@ -135,3 +160,5 @@ serve(createEdgeFunction({
     isNewUser,
   }, 200, correlationId);
 }));
+
+

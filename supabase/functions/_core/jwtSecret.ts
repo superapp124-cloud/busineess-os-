@@ -16,3 +16,13 @@ export function getJwtSigningSecret() {
 
   return secret;
 }
+
+/** Like getJwtSigningSecret() but returns null instead of throwing. */
+export function tryGetJwtSigningSecret(): string | null {
+  return (
+    Deno.env.get("JWT_SIGNING_SECRET") ||
+    Deno.env.get("SUPABASE_JWT_SECRET") ||
+    Deno.env.get("JWT_SECRET") ||
+    null
+  );
+}

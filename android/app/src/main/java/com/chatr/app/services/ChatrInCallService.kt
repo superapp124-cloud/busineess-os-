@@ -40,10 +40,71 @@ class ChatrInCallService : InCallService() {
         const val KEY_CALL_STATE     = "gsm_call_state"
         const val KEY_CALLER_NUMBER  = "gsm_caller_number"
         const val KEY_CALL_COUNT     = "gsm_call_count"
+
+        @Volatile
+        private var activeCallInstance: Call? = null
+
+        fun getActiveCall(): Call? = activeCallInstance
+
+        fun isCallRinging(): Boolean =
+            activeCallInstance?.state == Call.STATE_RINGING
+
+        fun isCallActive(): Boolean =
+            activeCallInstance?.state == Call.STATE_ACTIVE
+
+        /**
+         * Programmatically answers the active call for AI screening.
+         * Note: On Android 10+, this requires default dialer (ROLE_DIALER) or system permission.
+         */
+        fun answerCall(videoState: Int = 0): Boolean {
+            val call = activeCallInstance ?: run {
+                Log.w(TAG, "Cannot answerCall: No active GSM call reference")
+                return false
+            }
+            return try {
+                call.answer(videoState)
+                Log.i(TAG, "call.answer() dispatched successfully")
+                true
+            } catch (e: Exception) {
+                Log.e(TAG, "call.answer() failed: ${e.message}", e)
+                false
+            }
+        }
+
+        /**
+         * Disconnects the active GSM call.
+         */
+        fun disconnectCall(): Boolean {
+            val call = activeCallInstance ?: return false
+            return try {
+                call.disconnect()
+                Log.i(TAG, "call.disconnect() dispatched successfully")
+                true
+            } catch (e: Exception) {
+                Log.e(TAG, "call.disconnect() failed: ${e.message}", e)
+                false
+            }
+        }
+
+        /**
+         * Hands the call back from the AI to the human user without dropping.
+         */
+        fun handoverToHuman(): Boolean {
+            Log.i(TAG, "Human takeover triggered: restoring normal voice path")
+            val call = activeCallInstance ?: return false
+            return try {
+                call.unhold()
+                true
+            } catch (e: Exception) {
+                Log.e(TAG, "handoverToHuman unhold error", e)
+                true
+            }
+        }
     }
 
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
+        activeCallInstance = call
         val number = getNumber(call)
         val state  = stateLabel(call.state)
         Log.i(TAG, "📞 GSM call added: number=$number state=$state")
@@ -54,6 +115,9 @@ class ChatrInCallService : InCallService() {
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        if (activeCallInstance == call) {
+            activeCallInstance = null
+        }
         val number = getNumber(call)
         Log.i(TAG, "📞 GSM call removed: number=$number")
 

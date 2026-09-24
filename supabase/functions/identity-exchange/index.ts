@@ -67,13 +67,16 @@ async function findAuthUserByPhone(supabaseAdmin: SupabaseAdminClient, normalize
 
   // Primary account mapping for owner phone (+91 9717845477)
   if (normalizedDigits.includes("9717845477") || normalizedDigits.includes("919717845477")) {
-    const { data: primaryData } = await supabaseAdmin.auth.admin.getUserById("686eb0cb-acdb-4870-8796-c81d60c8da89");
+    const { data: primaryData } = await supabaseAdmin.auth.admin.getUserById("29f65ca9-a811-492b-b024-09689a44dbf0");
     if (primaryData?.user) return primaryData.user;
+    // Fallback to alternate ID
+    const { data: altData } = await supabaseAdmin.auth.admin.getUserById("686eb0cb-acdb-4870-8796-c81d60c8da89");
+    if (altData?.user) return altData.user;
   }
 
-  // 1. Instant DB lookup in public.users (<15ms)
+  // 1. Instant DB lookup in public.profiles (<15ms)
   const { data: dbUser } = await supabaseAdmin
-    .from("users")
+    .from("profiles")
     .select("id")
     .or(`phone_number.eq.${normalizedPhone},phone_number.eq.+${normalizedDigits},phone_number.eq.${normalizedDigits}`)
     .limit(1)
@@ -84,26 +87,14 @@ async function findAuthUserByPhone(supabaseAdmin: SupabaseAdminClient, normalize
     if (userData?.user) return userData.user;
   }
 
-  // 2. Also check public.profiles
-  const { data: profileUser } = await supabaseAdmin
-    .from("profiles")
-    .select("id")
-    .or(`phone_number.eq.${normalizedPhone},phone_number.eq.+${normalizedDigits},phone_number.eq.${normalizedDigits}`)
-    .limit(1)
-    .maybeSingle();
-
-  if (profileUser?.id) {
-    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(profileUser.id);
-    if (userData?.user) return userData.user;
-  }
-
-  // 3. Fallback: single page listUsers (limit 100, not 10 pages of 1000)
+  // 2. Fallback: single page listUsers (limit 100, not 10 pages of 1000)
   const { data } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 100 });
   const users = data?.users ?? [];
   return users.find((candidate: any) =>
     candidate.phone && phoneDigits(candidate.phone) === normalizedDigits
   ) || null;
 }
+
 
 function isOptionalProfileColumnError(error: { message?: string }) {
   return /column/i.test(error.message ?? "") && /(phone_number|email)/i.test(error.message ?? "");
@@ -119,20 +110,23 @@ async function syncPublicUser(supabaseAdmin: SupabaseAdminClient, user: any, nor
   };
 
   const { error: richUpsertError } = await supabaseAdmin
-    .from("users")
+    .from("profiles")
     .upsert(richProfile, { onConflict: "id", ignoreDuplicates: true });
 
   if (richUpsertError) {
     if (!isOptionalProfileColumnError(richUpsertError)) {
-      throw new PlatformError(500, "db_error", "Failed to sync auth user to public profile: " + richUpsertError.message);
+      // Non-fatal: log and continue — don't block auth
+      console.warn("Failed to sync auth user to public profile:", richUpsertError.message);
+      return;
     }
 
     const { error: baseUpsertError } = await supabaseAdmin
-      .from("users")
+      .from("profiles")
       .upsert(baseProfile, { onConflict: "id", ignoreDuplicates: true });
 
     if (baseUpsertError) {
-      throw new PlatformError(500, "db_error", "Failed to sync auth user to public profile: " + baseUpsertError.message);
+      console.warn("Failed to sync auth user to public profile (base):", baseUpsertError.message);
+      return;
     }
 
     return;
@@ -145,15 +139,16 @@ async function syncPublicUser(supabaseAdmin: SupabaseAdminClient, user: any, nor
 
   if (optionalUpdates.phone_number || optionalUpdates.email) {
     const { error: updateError } = await supabaseAdmin
-      .from("users")
+      .from("profiles")
       .update(optionalUpdates)
       .eq("id", user.id);
 
     if (updateError) {
-      console.warn("Public user optional profile sync skipped:", updateError);
+      console.warn("Public profile optional sync skipped:", updateError);
     }
   }
 }
+
 
 serve(createEdgeFunction({
   name: "identity-exchange",

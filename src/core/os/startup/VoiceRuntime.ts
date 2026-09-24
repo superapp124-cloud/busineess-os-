@@ -9,21 +9,34 @@ export interface VoiceProvider {
 }
 
 export class WebSpeechProvider implements VoiceProvider {
-  private synthesis: SpeechSynthesis;
+  private synthesis?: SpeechSynthesis;
   private voice: SpeechSynthesisVoice | null = null;
 
   constructor() {
-    this.synthesis = window.speechSynthesis;
-    // Load voices
-    const loadVoices = () => {
-      const voices = this.synthesis.getVoices();
-      this.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-    };
-    loadVoices();
-    this.synthesis.onvoiceschanged = loadVoices;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis) {
+      this.synthesis = window.speechSynthesis;
+      // Load voices
+      const loadVoices = () => {
+        try {
+          const voices = this.synthesis?.getVoices() || [];
+          this.voice = voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
+        } catch {
+          // ignore voice load errors
+        }
+      };
+      loadVoices();
+      if (this.synthesis) {
+        this.synthesis.onvoiceschanged = loadVoices;
+      }
+    }
   }
 
   speak(text: string, options?: VoiceOptions, onStart?: () => void, onEnd?: () => void): void {
+    if (!this.synthesis || typeof SpeechSynthesisUtterance === 'undefined') {
+      if (onStart) onStart();
+      if (onEnd) onEnd();
+      return;
+    }
     this.stop();
     const utterance = new SpeechSynthesisUtterance(text);
     if (this.voice) {
@@ -35,11 +48,19 @@ export class WebSpeechProvider implements VoiceProvider {
     if (onStart) utterance.onstart = onStart;
     if (onEnd) utterance.onend = onEnd;
 
-    this.synthesis.speak(utterance);
+    try {
+      this.synthesis.speak(utterance);
+    } catch {
+      if (onEnd) onEnd();
+    }
   }
 
   stop(): void {
-    this.synthesis.cancel();
+    try {
+      this.synthesis?.cancel();
+    } catch {
+      // ignore
+    }
   }
 }
 

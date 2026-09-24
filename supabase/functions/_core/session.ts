@@ -1,8 +1,12 @@
 import * as jwt from "https://deno.land/x/djwt@v2.9.1/mod.ts";
-import { getJwtSigningSecret } from "./jwtSecret.ts";
+import { tryGetJwtSigningSecret } from "./jwtSecret.ts";
+import { PlatformError } from "./errors.ts";
 
 export async function mintChatrSession(user: any, provider: string, phone?: string) {
-  const SUPABASE_JWT_SECRET = getJwtSigningSecret();
+  const SUPABASE_JWT_SECRET = tryGetJwtSigningSecret();
+  if (!SUPABASE_JWT_SECRET) {
+    throw new PlatformError(500, "server_config_error", "JWT signing secret is not configured. Please set JWT_SIGNING_SECRET in Supabase Edge Function secrets.");
+  }
 
   // Convert string secret to CryptoKey for djwt
   const encoder = new TextEncoder();

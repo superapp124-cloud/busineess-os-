@@ -1069,6 +1069,7 @@ class MainActivity : BridgeActivity() {
         registerPlugin(VoiceTranslationPlugin::class.java)
         registerPlugin(ChatrCallScreeningPlugin::class.java)
         super.onCreate(savedInstanceState)
+        WebView.setWebContentsDebuggingEnabled(true)
         isWebAppReady = false
         startupFallbackAttempted = false
         webViewBridgeConfigured = false
