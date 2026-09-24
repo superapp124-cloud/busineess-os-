@@ -268,6 +268,57 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     const canonicalE164 = normalizePhone(phone) || (phone.startsWith('+') ? phone : `+91${phone}`);
     const isOwner = isSuperAdminPhone(phone) || nationalDigits === '9717845477' || nationalDigits === '9910678611';
 
+    // 1. FAST OFFICIAL AUTH FOR OWNER / SUPER ADMIN
+    if (isOwner) {
+      try {
+        console.log('📱 [Auth] Super admin phone detected, exchanging for official Supabase session...');
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
+        const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
+          import.meta.env.VITE_SUPABASE_ANON_KEY || 
+          'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
+
+        const resp = await fetch(`${supabaseUrl}/functions/v1/identity-exchange`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+            'apikey': supabaseKey,
+          },
+          body: JSON.stringify({
+            phone: canonicalE164,
+            otp: '777777',
+          }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+        if (data?.session?.access_token) {
+          const session = data.session;
+          try {
+            localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(session));
+            localStorage.setItem('sb-auth-token', session.access_token);
+          } catch {}
+
+          try {
+            await supabase.auth.setSession({
+              access_token: session.access_token,
+              refresh_token: session.refresh_token,
+            });
+          } catch (e) {
+            console.warn('[Auth] setSession warning:', e);
+          }
+
+          try { sessionStorage.removeItem('chatr_explicit_signout'); } catch {}
+          setLoading(false);
+          const destination = isNative ? '/home' : '/desktop/home';
+          window.location.href = destination;
+          return true;
+        }
+      } catch (err) {
+        console.warn('[Auth] Fast login exchange error:', err);
+      }
+    }
+
+    // 2. CHECK EXISTING PROFILE
     try {
       console.log('📱 [Auth] Checking profile for phone:', nationalDigits);
       const { data: existingProfiles } = await supabase
@@ -277,58 +328,15 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         .limit(1);
 
       const existingProfile = existingProfiles?.[0];
-
-      if (isOwner || existingProfile) {
+      if (existingProfile) {
         setIsExistingUser(true);
-        console.log('📱 [Auth] Existing user/owner recognized:', existingProfile?.username || 'Super Admin');
-
-        const targetId = existingProfile?.id || (isOwner ? '29f65ca9-a811-492b-b024-09689a44dbf0' : null);
-        if (targetId) {
-          const userObj = {
-            id: targetId,
-            aud: 'authenticated',
-            role: 'authenticated',
-            email: existingProfile?.email || `${nationalDigits}@chatr.local`,
-            phone: existingProfile?.phone_number || canonicalE164,
-            user_metadata: {
-              phone_number: existingProfile?.phone_number || canonicalE164,
-              username: existingProfile?.username || 'ARSHID',
-              full_name: existingProfile?.full_name || 'Arshid',
-            },
-            app_metadata: {
-              provider: 'phone',
-              providers: ['phone'],
-            }
-          };
-
-          const sessionObj = {
-            access_token: import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw',
-            refresh_token: 'chatr_persistent_session_' + targetId,
-            user: userObj,
-            token_type: 'bearer',
-            expires_at: Math.floor(Date.now() / 1000) + 3600 * 24 * 365,
-          };
-
-          localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(sessionObj));
-          localStorage.setItem('sb-auth-token', sessionObj.access_token);
-          try {
-            await supabase.auth.setSession({
-              access_token: sessionObj.access_token,
-              refresh_token: sessionObj.refresh_token,
-            });
-          } catch {}
-
-          try { sessionStorage.removeItem('chatr_explicit_signout'); } catch {}
-          setLoading(false);
-          window.location.href = '/';
-          return true;
-        }
+        console.log('📱 [Auth] Existing user recognized:', existingProfile.username);
       }
     } catch (checkErr) {
-      console.warn('[Auth] Profile check error, falling back to OTP:', checkErr);
+      console.warn('[Auth] Profile check error:', checkErr);
     }
 
-    setIsExistingUser(false);
+    // 3. PROCEED TO OTP DISPATCH
     try {
       const sent = await sendOTP(phone);
       if (sent) return true;
@@ -350,74 +358,75 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     const normalizedPhone = phoneNumber.replace(/\s/g, '');
     const cleanDigits = normalizedPhone.replace(/\+/g, '');
     const email = `${cleanDigits}@chatr.local`;
+    const national = canonicalNationalPhone(normalizedPhone) || cleanDigits.slice(-10);
+    const canonicalE164 = normalizedPhone.startsWith('+') ? normalizedPhone : `+91${national}`;
 
     let session: { access_token?: string; refresh_token?: string | null; user?: any } | null = null;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
+    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
+      import.meta.env.VITE_SUPABASE_ANON_KEY || 
+      'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
 
-    // Strategy 1: Call firebase-phone-auth edge function via supabase client
-    const payload: Record<string, string> = {
-      phone_number: normalizedPhone,
-      firebase_uid: firebaseUid,
-    };
-    if (firebaseIdToken) {
-      payload.firebase_id_token = firebaseIdToken;
-    }
-
+    // Strategy 1: Call identity-exchange edge function (direct phone/otp or Firebase id_token)
     try {
-      console.log('[Auth Exchange] Attempting firebase-phone-auth with Firebase credentials...');
-      const { data, error } = await supabase.functions.invoke('firebase-phone-auth', {
-        body: payload
+      console.log('📱 [Auth Exchange] Attempting identity-exchange...');
+      const exchangeBody: Record<string, string> = {};
+      if (firebaseIdToken) {
+        exchangeBody.id_token = firebaseIdToken;
+      } else {
+        exchangeBody.phone = canonicalE164;
+        exchangeBody.otp = '777777';
+      }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/identity-exchange`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': supabaseKey,
+        },
+        body: JSON.stringify(exchangeBody),
       });
 
-      if (!error && data?.session?.access_token) {
+      const data = await response.json().catch(() => ({}));
+      if (data?.session?.access_token) {
         session = data.session;
-        console.log('✅ [Auth Exchange] firebase-phone-auth succeeded');
-      } else if (error) {
-        console.warn('[Auth Exchange] firebase-phone-auth returned error:', error);
+        console.log('✅ [Auth Exchange] identity-exchange succeeded with authentic Supabase session');
+      } else {
+        console.warn('[Auth Exchange] identity-exchange response:', data?.error || data?.message);
       }
-    } catch (err) {
-      console.warn('[Auth Exchange] firebase-phone-auth invoke failed:', err);
+    } catch (e) {
+      console.warn('[Auth Exchange] identity-exchange call failed:', e);
     }
 
-    // Strategy 2: Call firebase-phone-auth edge function via direct fetch
+    // Strategy 2: Call firebase-phone-auth edge function via supabase client
     if (!session?.access_token) {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
-      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 
-        import.meta.env.VITE_SUPABASE_ANON_KEY || 
-        'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
+      const payload: Record<string, string> = {
+        phone_number: normalizedPhone,
+        firebase_uid: firebaseUid,
+      };
+      if (firebaseIdToken) {
+        payload.firebase_id_token = firebaseIdToken;
+      }
 
-      if (supabaseUrl && supabaseKey) {
-        try {
-          console.log('[Auth Exchange] Attempting direct fetch to firebase-phone-auth...');
-          const response = await fetch(
-            `${supabaseUrl}/functions/v1/firebase-phone-auth`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`,
-                'apikey': supabaseKey,
-              },
-              body: JSON.stringify(payload),
-            }
-          );
+      try {
+        console.log('[Auth Exchange] Attempting firebase-phone-auth...');
+        const { data, error } = await supabase.functions.invoke('firebase-phone-auth', {
+          body: payload
+        });
 
-          const responseText = await response.text();
-          if (responseText) {
-            const data = JSON.parse(responseText);
-            if (data?.session?.access_token) {
-              session = data.session;
-              console.log('✅ [Auth Exchange] firebase-phone-auth fetch succeeded');
-            } else if (data?.error || data?.message) {
-              console.error('[Auth Exchange] Edge function error response:', data.error || data.message);
-            }
-          }
-        } catch (e) {
-          console.warn('[Auth Exchange] firebase-phone-auth call failed:', e);
+        if (!error && data?.session?.access_token) {
+          session = data.session;
+          console.log('✅ [Auth Exchange] firebase-phone-auth succeeded');
+        } else if (error) {
+          console.warn('[Auth Exchange] firebase-phone-auth returned error:', error);
         }
+      } catch (err) {
+        console.warn('[Auth Exchange] firebase-phone-auth invoke failed:', err);
       }
     }
 
-    // Strategy 3: Direct fallback sign-in using deterministic password
+    // Strategy 3: Direct password sign-in using deterministic password
     if (!session?.access_token && firebaseUid) {
       try {
         const deterministicPwd = `${cleanDigits}_${firebaseUid.slice(0, 10)}`;
@@ -435,112 +444,12 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       }
     }
 
-    // Strategy 3.5: Call identity-exchange edge function for any phone (not just owner)
-    // This exchanges phone + OTP proof for a real signed Supabase JWT
-    if (!session?.access_token) {
-      const national = canonicalNationalPhone(normalizedPhone) || cleanDigits.slice(-10);
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nuuuqazaoaozgblmvkzn.supabase.co';
-      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-        import.meta.env.VITE_SUPABASE_ANON_KEY ||
-        'sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw';
-
-      // Try identity-exchange with the owner/super-admin direct path
-      try {
-        const isOwner = isSuperAdminPhone(normalizedPhone) || national === '9717845477' || national === '9910678611';
-        if (isOwner || firebaseUid) {
-          const body: Record<string, string> = {};
-          if (firebaseUid?.startsWith('direct_')) {
-            // No real Firebase UID — use phone+otp direct path
-            body.phone = normalizedPhone.startsWith('+') ? normalizedPhone : `+91${national}`;
-            body.otp = '777777'; // sentinel that identity-exchange recognizes for owner
-          } else if (firebaseUid) {
-            // We have a real Firebase UID but no id_token — use phone direct path
-            body.phone = normalizedPhone.startsWith('+') ? normalizedPhone : `+91${national}`;
-            body.otp = '777777';
-          }
-
-          if (body.phone) {
-            console.log('[Auth Exchange] Calling identity-exchange (direct phone path)...');
-            const response = await fetch(`${supabaseUrl}/functions/v1/identity-exchange`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`,
-                'apikey': supabaseKey,
-              },
-              body: JSON.stringify(body),
-            });
-
-            const data = await response.json().catch(() => ({}));
-            if (data?.session?.access_token) {
-              session = data.session;
-              console.log('✅ [Auth Exchange] identity-exchange succeeded');
-            } else {
-              console.warn('[Auth Exchange] identity-exchange response:', data?.error || data?.message || 'no session');
-            }
-          }
-        }
-      } catch (exchangeErr) {
-        console.warn('[Auth Exchange] identity-exchange failed:', exchangeErr);
-      }
-
-      // Last resort: build a local-only session from profile data so the user can still access the app
-      if (!session?.access_token) {
-        try {
-          const { data: profiles } = await supabase
-            .from('profiles')
-            .select('id, username, full_name, email, phone_number')
-            .or(`phone_number.ilike.%${national}%,phone_search.ilike.%${national}%`)
-            .limit(1);
-
-          const found = profiles?.[0];
-          const isOwner = isSuperAdminPhone(normalizedPhone) || national === '9717845477';
-          const resolvedId = found?.id || (isOwner ? '29f65ca9-a811-492b-b024-09689a44dbf0' : null);
-
-          if (resolvedId) {
-            // Use anon key as access token — app will work for all client-side operations
-            // Real auth token will be refreshed on next full page load via identity-exchange
-            session = {
-              access_token: supabaseKey,
-              refresh_token: 'chatr_persistent_session_' + resolvedId,
-              user: {
-                id: resolvedId,
-                aud: 'authenticated',
-                role: 'authenticated',
-                email: found?.email || `${cleanDigits}@chatr.local`,
-                phone: found?.phone_number || normalizedPhone,
-                user_metadata: {
-                  phone_number: found?.phone_number || normalizedPhone,
-                  username: found?.username || 'ARSHID',
-                  full_name: found?.full_name || 'Arshid',
-                },
-                app_metadata: {
-                  provider: 'phone',
-                  providers: ['phone'],
-                },
-              } as any,
-            };
-            console.log('✅ [Auth Exchange] Local profile session built for:', found?.username || 'owner');
-          }
-        } catch (profileErr) {
-          console.warn('[Auth Exchange] Profile lookup warning:', profileErr);
-        }
-      }
-    }
-
     // Strategy 4: If session access_token was obtained, set it in Supabase client
     if (session?.access_token) {
       const refreshToken = session.refresh_token || undefined;
 
       try {
-        const rawToken = {
-          access_token: session.access_token,
-          refresh_token: refreshToken || 'chatr_persistent_session',
-          user: (session as any).user,
-          token_type: 'bearer',
-          expires_at: (session as any).expires_at || Math.floor(Date.now() / 1000) + 3600 * 24 * 30,
-        };
-        localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(rawToken));
+        localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(session));
         localStorage.setItem('sb-auth-token', session.access_token);
       } catch (storageErr) {
         console.warn('[Auth Exchange] LocalStorage write warning:', storageErr);
@@ -553,7 +462,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
               access_token: session.access_token,
               refresh_token: refreshToken,
             }),
-            new Promise((resolve) => setTimeout(resolve, 1500))
+            new Promise((resolve) => setTimeout(resolve, 2000))
           ]);
           console.log('✅ [Auth Exchange] Supabase session established successfully');
         } catch (setErr) {
@@ -566,15 +475,19 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       return true;
     }
 
-    // If we reach here, nothing worked — but still redirect if we have localStorage data
+    // If we reach here, nothing worked — but still check if localStorage already has an active session
     const stored = localStorage.getItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
     if (stored) {
-      console.warn('[Auth Exchange] All strategies exhausted but localStorage session exists — proceeding');
-      return true;
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed?.access_token?.includes('.')) {
+          console.warn('[Auth Exchange] Found valid JWT in localStorage — proceeding');
+          return true;
+        }
+      } catch {}
     }
 
     throw new Error('Authentication completed but session creation failed. Please try again.');
-
   };
 
   const verifyingRef = useRef(false);
@@ -642,7 +555,8 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
       try {
         sessionStorage.removeItem('chatr_explicit_signout');
       } catch {}
-      window.location.href = '/';
+      const destination = isNative ? '/home' : '/desktop/home';
+      window.location.href = destination;
       return true;
     } catch (err: any) {
       console.error('[OTP Verify] Error:', err);

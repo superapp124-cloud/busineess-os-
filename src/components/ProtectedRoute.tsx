@@ -25,11 +25,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           if (session) {
             setIsAuthenticated(true);
           } else {
-            // Session invalid — clear stale tokens so Auth.tsx doesn't fast-track again
+            // Clear only obsolete project tokens from old backend migrations
             try {
-              localStorage.removeItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
               localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
-              localStorage.removeItem('sb-auth-token');
+              localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');
             } catch {}
             setIsAuthenticated(false);
           }

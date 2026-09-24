@@ -28,11 +28,9 @@ const Auth = () => {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-          // No valid session — clear any stale tokens from old backend that could cause loops
+          // Clear only obsolete project tokens from old backend migrations
           try {
-            localStorage.removeItem('sb-nuuuqazaoaozgblmvkzn-auth-token');
             localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
-            localStorage.removeItem('sb-auth-token');
             localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');
           } catch {}
           setLoading(false);
