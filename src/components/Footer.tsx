@@ -52,10 +52,10 @@ export const Footer = () => {
               <span>Location Hubs</span>
             </h3>
             <ul className="space-y-2">
-              <li><Link to="/locations/mumbai" className="hover:text-indigo-400 transition-colors">MumbSI Hub</Link></li>
+              <li><Link to="/locations/mumbai" className="hover:text-indigo-400 transition-colors">Mumbai Hub</Link></li>
               <li><Link to="/locations/delhi-ncr" className="hover:text-indigo-400 transition-colors">Delhi NCR Hub</Link></li>
               <li><Link to="/locations/bangalore" className="hover:text-indigo-400 transition-colors">Bangalore Hub</Link></li>
-              <li><Link to="/locations/dubai" className="hover:text-indigo-400 transition-colors">DubSI Hub</Link></li>
+              <li><Link to="/locations/dubai" className="hover:text-indigo-400 transition-colors">Dubai Hub</Link></li>
               <li><Link to="/locations/london" className="hover:text-indigo-400 transition-colors">London Hub</Link></li>
               <li><Link to="/locations" className="text-emerald-400 font-semibold hover:underline">All 1,758 Cities →</Link></li>
             </ul>
