@@ -736,8 +736,8 @@ const Index = () => {
  return (
  <>
  <SEOHead
- title="Chatr — Communication OS | Chat, Healthcare, Jobs & More"
- description="Chatr is the universal Communication OS. Chat with friends, find healthcare providers, discover local jobs, order food, and access 100+ services - all in one app."
+ title="CHATR — WhatsApp Business Inbox, Calling & SI"
+ description="Unify WhatsApp messaging, team inbox, calling, candidate screening and SI-powered workflows in one workspace. Try CHATR in your browser."
  keywords="chatr, superapp, india, messaging app, healthcare app, job search, food delivery, SI assistant, local services, telemedicine"
  schemaData={{
  "@context": "https://schema.org",

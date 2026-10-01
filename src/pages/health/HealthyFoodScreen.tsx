@@ -1,20 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, Sparkles, SlidersHorizontal, Calendar, 
-  Sun, Utensils, Coffee, Moon, ArrowRight, ShieldCheck, 
-  HelpCircle, ChevronRight, Droplets, CheckCircle, 
-  AlertTriangle, RefreshCw, Send, MessageSquare
+import {
+  ArrowLeft, Sparkles, SlidersHorizontal, Calendar,
+  Sun, Utensils, Coffee, Moon, ChevronRight, Droplets,
+  Shuffle, CheckCircle2, Circle, Flame, Zap, ArrowRight,
+  TrendingDown, Heart, Info, Send
 } from 'lucide-react';
 import { SEOHead } from '@/components/SEOHead';
-import { 
-  FoodProfile, DailyMealPlan, NutritionEngine, 
-  DietPreference, CuisinePreference, MealItem 
+import {
+  FoodProfile, DailyMealPlan, NutritionEngine,
+  DietPreference, CuisinePreference, MealItem
 } from '@/services/health/food/NutritionEngine';
 import { NutritionSIAssistant } from '@/services/health/food/NutritionSIAssistant';
 import { FoodProfileModal } from '@/components/health/food/FoodProfileModal';
 import { FoodDetailModal } from '@/components/health/food/FoodDetailModal';
 import { cn } from '@/lib/utils';
+
+// Helper for food emojis
+function getMealEmoji(name: string, type: string): string {
+  const n = name.toLowerCase();
+  if (n.includes('poha')) return '🥣';
+  if (n.includes('oats')) return '🥣';
+  if (n.includes('egg') || n.includes('omelette')) return '🍳';
+  if (n.includes('chilla')) return '🥞';
+  if (n.includes('yogurt')) return '🫐';
+  if (n.includes('chicken')) return '🍗';
+  if (n.includes('fish') || n.includes('salmon')) return '🐟';
+  if (n.includes('dal')) return '🍲';
+  if (n.includes('quinoa') || n.includes('salad')) return '🥗';
+  if (n.includes('paneer') || n.includes('tofu')) return '🧀';
+  if (n.includes('makhana') || n.includes('snack')) return '🍿';
+  if (n.includes('fruit') || n.includes('apple')) return '🍎';
+  if (n.includes('stew') || n.includes('soup')) return '🍲';
+  if (type === 'breakfast') return '🥣';
+  if (type === 'lunch') return '🥗';
+  if (type === 'snack') return '🍿';
+  return '🍲';
+}
 
 export default function HealthyFoodScreen() {
   const navigate = useNavigate();
@@ -22,18 +44,24 @@ export default function HealthyFoodScreen() {
   const [mealPlan, setMealPlan] = useState<DailyMealPlan>(() => NutritionEngine.getTodaysMealPlan(profile));
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<MealItem | null>(null);
-  const [waterGlasses, setWaterGlasses] = useState(6);
-  
-  // SI Copilot Chat state
-  const [copilotQuestion, setCopilotQuestion] = useState('');
-  const [copilotHistory, setCopilotHistory] = useState<Array<{ sender: 'user' | 'si'; text: string; swap?: any }>>([
-    {
-      sender: 'si',
-      text: `Hello! I'm your SI Nutrition Copilot. Based on your profile (${profile.age} yrs, ${profile.weightKg}kg, ${profile.goal} goal), I've designed your plan with ${mealPlan.calorieTarget} kcal and ${mealPlan.proteinTargetG}g protein. Need any ingredient substitutions or restaurant advice?`
-    }
-  ]);
 
-  // Recalculate meal plan when profile changes
+  // Gamified interactive state: Logged meals
+  const [loggedMeals, setLoggedMeals] = useState<Record<string, boolean>>({});
+
+  // Interactive Hydration (0-8 glasses)
+  const [waterGlasses, setWaterGlasses] = useState(6);
+
+  // Interactive Smart Swap Game State
+  const [swapCategoryIndex, setSwapCategoryIndex] = useState(0);
+  const [isSwapped, setIsSwapped] = useState(false);
+  const [swapToast, setSwapToast] = useState<string | null>(null);
+
+  // Quick SI Question
+  const [copilotQuestion, setCopilotQuestion] = useState('');
+  const [activeTip, setActiveTip] = useState<string>(
+    '💡 Squeeze fresh lemon over your dal or salad to double your body’s iron absorption!'
+  );
+
   useEffect(() => {
     setMealPlan(NutritionEngine.getTodaysMealPlan(profile));
   }, [profile]);
@@ -55,546 +83,527 @@ export default function HealthyFoodScreen() {
     NutritionEngine.saveProfile(updated);
   };
 
-  const handleSendCopilotQuestion = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!copilotQuestion.trim()) return;
-
-    const q = copilotQuestion.trim();
-    setCopilotQuestion('');
-    setCopilotHistory(prev => [...prev, { sender: 'user', text: q }]);
-
-    setTimeout(() => {
-      const response = NutritionSIAssistant.askQuestion(q, profile);
-      setCopilotHistory(prev => [
-        ...prev, 
-        { 
-          sender: 'si', 
-          text: response.answer,
-          swap: response.recommendedSwap
-        }
-      ]);
-    }, 400);
+  // Toggle meal as logged / eaten
+  const toggleMealLog = (key: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLoggedMeals(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Instant in-place meal shuffle
+  const handleShuffleMeal = (type: MealItem['type'], e: React.MouseEvent) => {
+    e.stopPropagation();
+    const available = NutritionEngine.getAvailableMeals(type, profile);
+    if (available.length <= 1) return;
+
+    const currentMeal = mealPlan.meals[type];
+    const currentIndex = available.findIndex(m => m.id === currentMeal.id);
+    const nextIndex = (currentIndex + 1) % available.length;
+    const nextMeal = { ...available[nextIndex] };
+    nextMeal.whyRecommended = NutritionEngine.generateWhyRecommended(nextMeal, profile);
+
+    setMealPlan(prev => {
+      const updatedMeals = { ...prev.meals, [type]: nextMeal };
+      const totalCalories =
+        updatedMeals.breakfast.calories +
+        updatedMeals.lunch.calories +
+        updatedMeals.snack.calories +
+        updatedMeals.dinner.calories;
+      const totalProteinG =
+        updatedMeals.breakfast.proteinG +
+        updatedMeals.lunch.proteinG +
+        updatedMeals.snack.proteinG +
+        updatedMeals.dinner.proteinG;
+      return {
+        ...prev,
+        meals: updatedMeals,
+        totalCalories,
+        totalProteinG
+      };
+    });
+  };
+
+  // Dynamic calorie total based on logged meals
+  const mealEntries = [
+    { key: 'breakfast', label: 'Breakfast', icon: Sun, color: 'text-amber-400', bg: 'bg-amber-500/15', meal: mealPlan.meals.breakfast },
+    { key: 'lunch', label: 'Lunch', icon: Utensils, color: 'text-emerald-400', bg: 'bg-emerald-500/15', meal: mealPlan.meals.lunch },
+    { key: 'snack', label: 'Snack', icon: Coffee, color: 'text-orange-400', bg: 'bg-orange-500/15', meal: mealPlan.meals.snack },
+    { key: 'dinner', label: 'Dinner', icon: Moon, color: 'text-indigo-400', bg: 'bg-indigo-500/15', meal: mealPlan.meals.dinner },
+  ] as const;
+
+  const eatenCalories = mealEntries.reduce((sum, item) => {
+    return sum + (loggedMeals[item.key] ? item.meal.calories : 0);
+  }, 0);
+
+  const eatenProtein = mealEntries.reduce((sum, item) => {
+    return sum + (loggedMeals[item.key] ? item.meal.proteinG : 0);
+  }, 0);
+
+  const loggedCount = Object.values(loggedMeals).filter(Boolean).length;
   const bmiInfo = NutritionEngine.calculateBMI(profile.weightKg, profile.heightCm);
 
-  // Nutrition progress metrics calculated against target
-  const proteinPercent = Math.min(100, Math.round((mealPlan.totalProteinG / mealPlan.proteinTargetG) * 100));
-  const fiberPercent = Math.min(100, Math.round((mealPlan.totalFiberG / mealPlan.fiberTargetG) * 100));
-  const caloriesPercent = Math.min(100, Math.round((mealPlan.totalCalories / mealPlan.calorieTarget) * 100));
+  // Smart Swaps Data
+  const smartSwaps = [
+    {
+      category: 'Snack Craving',
+      icon: '🍿',
+      unhealthy: { name: 'Fried Samosa & Bhujia', kcal: 450, tag: 'High Trans Fat' },
+      healthy: { name: 'Roasted Spiced Makhana', kcal: 120, tag: 'Zero Trans Fat' },
+      savings: '🔥 Saves 330 kcal · −80% Bad Fats',
+      actionTitle: 'Makhana'
+    },
+    {
+      category: 'Drink Craving',
+      icon: '🥤',
+      unhealthy: { name: 'Cold Soda / Packaged Juice', kcal: 220, tag: '35g Liquid Sugar' },
+      healthy: { name: 'Tender Coconut Water', kcal: 45, tag: 'Natural Electrolytes' },
+      savings: '⚡ Saves 175 kcal · Zero Glucose Spike',
+      actionTitle: 'Coconut Water'
+    },
+    {
+      category: 'Bread Craving',
+      icon: '🌾',
+      unhealthy: { name: 'Refined Maida Naan', kcal: 320, tag: 'High Glycemic Index' },
+      healthy: { name: 'Millet Roti (Jowar / Bajra)', kcal: 140, tag: '3x More Fiber' },
+      savings: '🥑 Saves 180 kcal · Slow Energy Burn',
+      actionTitle: 'Millet Roti'
+    },
+    {
+      category: 'Gravy Craving',
+      icon: '🍛',
+      unhealthy: { name: 'Heavy Butter Cashew Cream', kcal: 480, tag: '35g Saturated Fat' },
+      healthy: { name: 'Tomato-Curd Bhuna Gravy', kcal: 190, tag: 'Pure Spices & Curd' },
+      savings: '💚 Saves 290 kcal · Light on Heart',
+      actionTitle: 'Curd Bhuna'
+    }
+  ];
+
+  const currentSwap = smartSwaps[swapCategoryIndex];
+
+  const handleApplySwap = () => {
+    setSwapToast(`Added ${currentSwap.healthy.name} to today's recommendations! ⭐`);
+    setTimeout(() => setSwapToast(null), 2500);
+  };
+
+  const quickChips = [
+    { label: '🍋 Iron Boost', tip: '💡 Squeeze fresh lemon over lentils or greens to double natural iron absorption!' },
+    { label: '🍫 Sweet Tooth', tip: '💡 Craving sugar? 2 squares of 85% dark chocolate or 1 medjool date with almond butter satisfies the brain with zero crash.' },
+    { label: '🏋️ Post-Workout', tip: '💡 Consume 20-30g protein within 60 mins of training for maximum muscle recovery.' },
+    { label: '💧 Dehydration Trick', tip: '💡 60% of hunger pangs are actually thirst. Drink a tall glass of water 15m before snacking.' },
+  ];
 
   return (
-    <div 
+    <div
       className="flex flex-col min-h-screen pb-32 text-white font-sans select-none"
-      style={{
-        background: 'radial-gradient(circle at 50% 0%, #16172B 0%, #0B0E14 50%, #07090E 100%)'
-      }}
+      style={{ background: 'radial-gradient(ellipse at 50% -10%, #0d1f2f 0%, #07090f 55%, #050609 100%)' }}
     >
-      <SEOHead title="Healthy Food & Nutrition | CHATR OS" description="Personalized deterministic nutrition backed by SI intelligence" />
+      <SEOHead title="Healthy Food | CHATR OS" description="Interactive, gamified nutrition" />
 
-      <div className="mx-auto max-w-[540px] w-full px-4 pt-3.5 space-y-4">
-        
-        {/* ── Top Bar ───────────────────────────────────────── */}
-        <header className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+      <div className="mx-auto max-w-[540px] w-full px-5 pt-4 space-y-4">
+
+        {/* ── Top Bar ─────────────────────────────────────────── */}
+        <header className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/health')}
-              className="p-1 rounded-full text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-400 hover:text-white active:scale-90 transition-all"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-emerald-400 fill-emerald-400/20" />
-              <h1 className="text-[19px] font-extrabold tracking-tight text-white">
-                Healthy Food
-              </h1>
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/15 border border-emerald-500/20">
+                <Sparkles className="w-5 h-5 text-emerald-400" />
+              </div>
+              <h1 className="text-[22px] font-black tracking-tight text-white">Healthy Food</h1>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/health/food/plan')}
-              className="flex h-9 px-3 items-center gap-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 hover:text-white text-[12px] font-semibold active:scale-95 transition-all"
+              className="flex h-10 px-3.5 items-center gap-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-200 text-[13px] font-bold active:scale-95 transition-all"
             >
-              <Calendar className="h-3.5 w-3.5 text-cyan-400" />
+              <Calendar className="h-4 w-4 text-cyan-400" />
               <span>7-Day Plan</span>
             </button>
             <button
               onClick={() => setIsProfileModalOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.06] border border-white/10 text-slate-300 hover:text-white active:scale-95 transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] border border-white/10 text-slate-300 hover:text-white active:scale-95 transition-all"
               title="Edit Profile"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className="h-4.5 w-4.5" />
             </button>
           </div>
         </header>
 
-        {/* ── Your Profile Summary Card ─────────────────────── */}
-        <div className="rounded-[24px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl relative overflow-hidden">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Your Health Profile
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                Active
-              </span>
+        {/* ── Interactive Biometric Header Pill ───────────────── */}
+        <div
+          onClick={() => setIsProfileModalOpen(true)}
+          className="rounded-[24px] p-3.5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all"
+          style={{
+            background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(6,182,212,0.05) 100%)',
+            border: '1px solid rgba(16,185,129,0.18)'
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 font-black text-[15px]">
+              {profile.age}y
             </div>
-            <button
-              onClick={() => setIsProfileModalOpen(true)}
-              className="text-[11.5px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-0.5 transition-colors"
-            >
-              Edit <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-4 gap-2 text-center">
-            <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 block font-medium">Age</span>
-              <span className="text-[15px] font-extrabold text-white">{profile.age}</span>
-              <span className="text-[9.5px] text-slate-500 block">years</span>
-            </div>
-            <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 block font-medium">Weight</span>
-              <span className="text-[15px] font-extrabold text-white">{profile.weightKg}</span>
-              <span className="text-[9.5px] text-slate-500 block">kg</span>
-            </div>
-            <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 block font-medium">Height</span>
-              <span className="text-[15px] font-extrabold text-white">{profile.heightCm}</span>
-              <span className="text-[9.5px] text-slate-500 block">cm</span>
-            </div>
-            <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 block font-medium">Goal</span>
-              <span className="text-[14px] font-bold text-cyan-400 capitalize truncate block">
-                {profile.goal}
-              </span>
-              <span className="text-[9.5px] text-emerald-400 block">BMI {bmiInfo.bmi}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Diet Preference Filter Bar ────────────────────── */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            {[
-              { id: 'vegetarian', label: 'Vegetarian', icon: '🌱' },
-              { id: 'non_vegetarian', label: 'Non-Vegetarian', icon: '🍗' },
-              { id: 'eggitarian', label: 'Eggitarian', icon: '🥚' },
-            ].map(d => (
-              <button
-                key={d.id}
-                onClick={() => handleDietChange(d.id as DietPreference)}
-                className={cn(
-                  "flex-1 py-2 px-2.5 rounded-2xl text-[12.5px] font-bold transition-all border flex items-center justify-center gap-1.5 active:scale-95",
-                  profile.dietPreference === d.id
-                    ? "bg-white/[0.16] text-white border-white/30 shadow-md"
-                    : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:bg-white/[0.06] hover:text-slate-200"
-                )}
-              >
-                <span>{d.icon}</span>
-                <span>{d.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Cuisine sub-filters */}
-          <div className="flex items-center gap-1.5 px-1">
-            <span className="text-[11px] text-slate-400 font-medium">Cuisine:</span>
-            {(['indian', 'continental', 'mixed'] as const).map(c => (
-              <button
-                key={c}
-                onClick={() => handleCuisineChange(c)}
-                className={cn(
-                  "px-2.5 py-0.5 rounded-full text-[11px] font-semibold capitalize transition-all border",
-                  profile.cuisinePreference === c
-                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                    : "bg-white/[0.02] text-slate-400 border-white/[0.05] hover:text-slate-200"
-                )}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Today's Nutrition Progress (Visual Bars) ──────── */}
-        <div className="rounded-[28px] bg-white/[0.04] border border-white/[0.08] p-5 backdrop-blur-xl shadow-lg shadow-black/25 space-y-3.5">
-          <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-[15px] font-extrabold text-white">
-                Today's Nutrition
-              </h2>
-              <p className="text-[11.5px] text-slate-400 mt-0.5">
-                Target: {mealPlan.calorieTarget} kcal • Planned: {mealPlan.totalCalories} kcal
+              <div className="flex items-center gap-2">
+                <span className="text-[15px] font-extrabold text-white">{profile.weightKg} kg · {profile.heightCm} cm</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  BMI {bmiInfo.bmi}
+                </span>
+              </div>
+              <p className="text-[12px] text-slate-400 capitalize mt-0.5 font-medium">
+                Goal: <span className="text-cyan-400 font-bold">{profile.goal}</span> · {profile.activityLevel.replace('_', ' ')}
               </p>
             </div>
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[11px] font-bold">
-              <span>{caloriesPercent}% Target</span>
+          </div>
+          <div className="flex items-center gap-1 text-[13px] font-bold text-emerald-400">
+            <span>Edit</span>
+            <ChevronRight className="w-4 h-4" />
+          </div>
+        </div>
+
+        {/* ── Interactive Diet Selector Buttons ──────────────── */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'vegetarian', label: 'Vegetarian', icon: '🌱' },
+            { id: 'non_vegetarian', label: 'Non-Veg', icon: '🍗' },
+            { id: 'eggitarian', label: 'Eggitarian', icon: '🥚' },
+          ].map(d => (
+            <button
+              key={d.id}
+              onClick={() => handleDietChange(d.id as DietPreference)}
+              className={cn(
+                'py-2.5 px-2 rounded-2xl text-[13px] font-extrabold transition-all border flex items-center justify-center gap-1.5 active:scale-95 shadow-sm',
+                profile.dietPreference === d.id
+                  ? 'bg-white/[0.14] text-white border-white/30 shadow-lg'
+                  : 'bg-white/[0.03] text-slate-400 border-white/[0.06] hover:bg-white/[0.07]'
+              )}
+            >
+              <span className="text-[18px]">{d.icon}</span>
+              <span>{d.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* ── Interactive Gamified Nutrition Dial & Progress ──── */}
+        <div
+          className="rounded-[28px] p-5 space-y-4"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-[18px] font-black text-white">Today's Nutrition Plate</h2>
+              <p className="text-[12.5px] text-slate-400 mt-0.5">
+                {loggedCount} of 4 meals logged today
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-[20px] font-black text-emerald-400 block leading-none">
+                {loggedCount > 0 ? eatenCalories : mealPlan.totalCalories}
+              </span>
+              <span className="text-[11px] text-slate-400 font-semibold block mt-0.5">
+                / {mealPlan.calorieTarget} kcal target
+              </span>
             </div>
           </div>
 
-          <div className="space-y-2.5 pt-1">
-            {/* Protein Bar */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-[12px]">
-                <span className="font-semibold text-slate-300">Protein</span>
-                <span className="font-mono text-emerald-400 font-bold">
-                  {mealPlan.totalProteinG}g / {mealPlan.proteinTargetG}g ({proteinPercent}%)
-                </span>
-              </div>
-              <div className="h-2.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${proteinPercent}%` }}
-                />
-              </div>
+          {/* Quick macro visual chips */}
+          <div className="grid grid-cols-3 gap-2">
+            <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <span className="text-[11px] font-bold text-slate-400 block">PROTEIN</span>
+              <span className="text-[18px] font-black text-emerald-400 leading-tight">
+                {loggedCount > 0 ? eatenProtein : mealPlan.totalProteinG}g
+              </span>
+              <span className="text-[10px] text-slate-500 block">/ {mealPlan.proteinTargetG}g</span>
             </div>
-
-            {/* Fiber Bar */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-[12px]">
-                <span className="font-semibold text-slate-300">Fiber</span>
-                <span className="font-mono text-cyan-400 font-bold">
-                  {mealPlan.totalFiberG}g / {mealPlan.fiberTargetG}g ({fiberPercent}%)
-                </span>
-              </div>
-              <div className="h-2.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-cyan-500 to-blue-400 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${fiberPercent}%` }}
-                />
-              </div>
+            <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-center">
+              <span className="text-[11px] font-bold text-slate-400 block">FIBER</span>
+              <span className="text-[18px] font-black text-cyan-400 leading-tight">
+                {mealPlan.totalFiberG}g
+              </span>
+              <span className="text-[10px] text-slate-500 block">/ {mealPlan.fiberTargetG}g</span>
             </div>
-
-            {/* Vegetables & Greens */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-[12px]">
-                <span className="font-semibold text-slate-300">Vegetables</span>
-                <span className="font-mono text-amber-400 font-bold">420g / 500g (84%)</span>
-              </div>
-              <div className="h-2.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: '84%' }}
-                />
-              </div>
-            </div>
-
-            {/* Fruits & Micronutrients */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-[12px]">
-                <span className="font-semibold text-slate-300">Fruits</span>
-                <span className="font-mono text-rose-400 font-bold">200g / 250g (80%)</span>
-              </div>
-              <div className="h-2.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-rose-500 to-pink-400 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: '80%' }}
-                />
-              </div>
+            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center">
+              <span className="text-[11px] font-bold text-slate-400 block">BALANCE</span>
+              <span className="text-[18px] font-black text-amber-400 leading-tight">
+                {Math.round(((loggedCount > 0 ? eatenCalories : mealPlan.totalCalories) / mealPlan.calorieTarget) * 100)}%
+              </span>
+              <span className="text-[10px] text-slate-500 block">of goal</span>
             </div>
           </div>
 
-          {/* Quick Water Tracker */}
-          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Droplets className="w-4 h-4 text-cyan-400" />
-              <div>
-                <span className="text-[12px] font-bold text-white block">Hydration</span>
-                <span className="text-[10.5px] text-slate-400">{waterGlasses * 250} ml / 2500 ml target</span>
-              </div>
+          {/* ── Interactive Hydration Tap Tracker ── */}
+          <div className="pt-2 border-t border-white/[0.06] space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-bold text-slate-300 flex items-center gap-1.5">
+                <Droplets className="w-4 h-4 text-cyan-400" />
+                <span>Hydration</span>
+              </span>
+              <span className="text-[13px] font-black text-cyan-300">
+                {waterGlasses * 250} ml / 2,000 ml ({waterGlasses}/8)
+              </span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[12px] font-extrabold text-cyan-400 mr-1">{waterGlasses} glasses</span>
-              <button
-                onClick={() => setWaterGlasses(prev => Math.min(16, prev + 1))}
-                className="px-2.5 py-1 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 text-[11px] font-bold border border-cyan-500/30 active:scale-95 transition-all"
-              >
-                + 1 Glass
-              </button>
+            {/* 8 Tap-to-Fill Glasses */}
+            <div className="grid grid-cols-8 gap-1.5">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+                const isFilled = i <= waterGlasses;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setWaterGlasses(isFilled && i === waterGlasses ? i - 1 : i)}
+                    className={cn(
+                      'h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 border',
+                      isFilled
+                        ? 'bg-cyan-500/25 border-cyan-400/50 text-cyan-300 shadow-sm shadow-cyan-500/20'
+                        : 'bg-white/[0.03] border-white/[0.08] text-slate-600 hover:text-slate-400'
+                    )}
+                  >
+                    <Droplets className={cn('w-4 h-4', isFilled ? 'fill-cyan-400 text-cyan-400' : 'text-slate-600')} />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* ── Meals Section ─────────────────────────────────── */}
-        <div className="space-y-2.5">
+        {/* ── Interactive Meals Section ("Plate View" + Shuffle) ── */}
+        <div className="space-y-3 pt-1">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-[15.5px] font-bold text-white">
-              Today's Meals
-            </h2>
-            <span className="text-[11.5px] text-slate-400">
-              Tap any meal for "Why this food?" & swaps
+            <h2 className="text-[19px] font-black text-white">Today's Meals</h2>
+            <span className="text-[12px] text-slate-400">
+              Tap 🔀 to swap dish · 🍽️ to log
             </span>
           </div>
 
           <div className="space-y-2.5">
-            {/* 1. Breakfast */}
-            <div
-              onClick={() => setSelectedMeal(mealPlan.meals.breakfast)}
-              className="p-4 rounded-[22px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer transition-all active:scale-[0.99] space-y-2 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
-                    <Sun className="w-4 h-4" />
-                  </div>
-                  <span className="text-[12px] font-bold uppercase tracking-wider text-amber-400">
-                    Breakfast
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[12.5px] font-extrabold text-white">
-                    {mealPlan.meals.breakfast.calories} kcal
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
-              <p className="text-[14px] font-bold text-white leading-snug group-hover:text-emerald-300 transition-colors">
-                {mealPlan.meals.breakfast.name}
-              </p>
-              <p className="text-[12px] text-slate-400 line-clamp-1">
-                {mealPlan.meals.breakfast.description}
-              </p>
-              <div className="flex items-center gap-3 pt-1 text-[11px] font-semibold text-slate-400 border-t border-white/[0.04]">
-                <span className="text-emerald-400">{mealPlan.meals.breakfast.proteinG}g Protein</span>
-                <span>{mealPlan.meals.breakfast.carbsG}g Carbs</span>
-                <span>{mealPlan.meals.breakfast.fatG}g Fat</span>
-                <span className="text-cyan-400">{mealPlan.meals.breakfast.fiberG}g Fiber</span>
-              </div>
-            </div>
+            {mealEntries.map(item => {
+              const isLogged = Boolean(loggedMeals[item.key]);
+              const emoji = getMealEmoji(item.meal.name, item.key);
 
-            {/* 2. Lunch */}
-            <div
-              onClick={() => setSelectedMeal(mealPlan.meals.lunch)}
-              className="p-4 rounded-[22px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer transition-all active:scale-[0.99] space-y-2 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
-                    <Utensils className="w-4 h-4" />
-                  </div>
-                  <span className="text-[12px] font-bold uppercase tracking-wider text-emerald-400">
-                    Lunch
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[12.5px] font-extrabold text-white">
-                    {mealPlan.meals.lunch.calories} kcal
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
-              <p className="text-[14px] font-bold text-white leading-snug group-hover:text-emerald-300 transition-colors">
-                {mealPlan.meals.lunch.name}
-              </p>
-              <p className="text-[12px] text-slate-400 line-clamp-1">
-                {mealPlan.meals.lunch.description}
-              </p>
-              <div className="flex items-center gap-3 pt-1 text-[11px] font-semibold text-slate-400 border-t border-white/[0.04]">
-                <span className="text-emerald-400">{mealPlan.meals.lunch.proteinG}g Protein</span>
-                <span>{mealPlan.meals.lunch.carbsG}g Carbs</span>
-                <span>{mealPlan.meals.lunch.fatG}g Fat</span>
-                <span className="text-cyan-400">{mealPlan.meals.lunch.fiberG}g Fiber</span>
-              </div>
-            </div>
+              return (
+                <div
+                  key={item.key}
+                  onClick={() => setSelectedMeal(item.meal)}
+                  className={cn(
+                    'p-4 rounded-[24px] border cursor-pointer transition-all active:scale-[0.99] group space-y-2.5 relative overflow-hidden',
+                    isLogged
+                      ? 'bg-emerald-950/20 border-emerald-500/40 shadow-md shadow-emerald-950/30'
+                      : 'bg-white/[0.03] border-white/[0.07] hover:border-white/20'
+                  )}
+                >
+                  {/* Top Meal Bar */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={cn('flex h-7 w-7 items-center justify-center rounded-xl', item.bg)}>
+                        <item.icon className={cn('w-3.5 h-3.5', item.color)} />
+                      </div>
+                      <span className={cn('text-[12px] font-black uppercase tracking-wider', item.color)}>
+                        {item.label}
+                      </span>
+                    </div>
 
-            {/* 3. Snack */}
-            <div
-              onClick={() => setSelectedMeal(mealPlan.meals.snack)}
-              className="p-4 rounded-[22px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer transition-all active:scale-[0.99] space-y-2 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400">
-                    <Coffee className="w-4 h-4" />
+                    {/* Calories + Log Status */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[14px] font-extrabold text-white">
+                        {item.meal.calories} kcal
+                      </span>
+                      {isLogged ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Logged
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                  <span className="text-[12px] font-bold uppercase tracking-wider text-orange-400">
-                    Evening Snack
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[12.5px] font-extrabold text-white">
-                    {mealPlan.meals.snack.calories} kcal
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
-              <p className="text-[14px] font-bold text-white leading-snug group-hover:text-emerald-300 transition-colors">
-                {mealPlan.meals.snack.name}
-              </p>
-              <p className="text-[12px] text-slate-400 line-clamp-1">
-                {mealPlan.meals.snack.description}
-              </p>
-              <div className="flex items-center gap-3 pt-1 text-[11px] font-semibold text-slate-400 border-t border-white/[0.04]">
-                <span className="text-emerald-400">{mealPlan.meals.snack.proteinG}g Protein</span>
-                <span>{mealPlan.meals.snack.carbsG}g Carbs</span>
-                <span>{mealPlan.meals.snack.fatG}g Fat</span>
-                <span className="text-cyan-400">{mealPlan.meals.snack.fiberG}g Fiber</span>
-              </div>
-            </div>
 
-            {/* 4. Dinner */}
-            <div
-              onClick={() => setSelectedMeal(mealPlan.meals.dinner)}
-              className="p-4 rounded-[22px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer transition-all active:scale-[0.99] space-y-2 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
-                    <Moon className="w-4 h-4" />
+                  {/* Main Dish Info */}
+                  <div className="flex items-start gap-3">
+                    <span className="text-[28px] shrink-0 leading-none mt-0.5">{emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-[16px] font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug">
+                        {item.meal.name}
+                      </h3>
+                      {/* Visual micro-chips instead of sentences */}
+                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                        <span className="px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-emerald-500/15 text-emerald-400">
+                          {item.meal.proteinG}g Protein
+                        </span>
+                        <span className="px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-white/[0.05] text-slate-300">
+                          {item.meal.carbsG}g Carbs
+                        </span>
+                        <span className="px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-white/[0.05] text-slate-300">
+                          {item.meal.fatG}g Fat
+                        </span>
+                        <span className="px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-cyan-500/15 text-cyan-300">
+                          {item.meal.fiberG}g Fiber
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[12px] font-bold uppercase tracking-wider text-indigo-400">
-                    Dinner
-                  </span>
+
+                  {/* Interactive Action Controls */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/[0.05]">
+                    {/* Shuffle / Swap button */}
+                    <button
+                      type="button"
+                      onClick={(e) => handleShuffleMeal(item.key, e)}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 text-[12px] font-bold border border-white/10 active:scale-95 transition-all"
+                    >
+                      <Shuffle className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Swap Dish</span>
+                    </button>
+
+                    {/* Log Eaten Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => toggleMealLog(item.key, e)}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-extrabold transition-all active:scale-95 border',
+                        isLogged
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : 'bg-emerald-500 text-slate-950 border-emerald-400 hover:bg-emerald-400'
+                      )}
+                    >
+                      {isLogged ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Eaten ✓</span>
+                        </>
+                      ) : (
+                        <>
+                          <Utensils className="w-3.5 h-3.5" />
+                          <span>Log Meal</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[12.5px] font-extrabold text-white">
-                    {mealPlan.meals.dinner.calories} kcal
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
-              <p className="text-[14px] font-bold text-white leading-snug group-hover:text-emerald-300 transition-colors">
-                {mealPlan.meals.dinner.name}
-              </p>
-              <p className="text-[12px] text-slate-400 line-clamp-1">
-                {mealPlan.meals.dinner.description}
-              </p>
-              <div className="flex items-center gap-3 pt-1 text-[11px] font-semibold text-slate-400 border-t border-white/[0.04]">
-                <span className="text-emerald-400">{mealPlan.meals.dinner.proteinG}g Protein</span>
-                <span>{mealPlan.meals.dinner.carbsG}g Carbs</span>
-                <span>{mealPlan.meals.dinner.fatG}g Fat</span>
-                <span className="text-cyan-400">{mealPlan.meals.dinner.fiberG}g Fiber</span>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* ── Healthy Alternatives Section ──────────────────── */}
-        <div className="space-y-2.5 pt-1">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-[15.5px] font-bold text-white">
-              Healthy Alternatives
-            </h2>
-            <span className="text-[11.5px] text-slate-400 font-medium">
-              Instead of → Choose
+        {/* ── Interactive "Smart Swap" Arena (No Walls of Text!) ─ */}
+        <div
+          className="rounded-[28px] p-5 space-y-4 relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(244,63,94,0.06) 0%, rgba(16,185,129,0.08) 100%)',
+            border: '1px solid rgba(16,185,129,0.2)'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-amber-400" />
+              <h2 className="text-[17px] font-black text-white">Smart Swap Arena</h2>
+            </div>
+            <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+              Cut Empty Calories
             </span>
           </div>
 
-          <div className="space-y-2">
-            {NutritionEngine.HEALTHY_ALTERNATIVES.map((item, index) => (
-              <div
-                key={index}
-                className="p-3.5 rounded-[20px] bg-white/[0.03] border border-white/[0.06] space-y-1.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                    <span>{item.icon}</span> {item.category}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-[12.5px]">
-                  <span className="text-rose-400/90 line-through truncate max-w-[45%]">
-                    {item.insteadOf}
-                  </span>
-                  <span className="text-slate-500 font-bold shrink-0">→</span>
-                  <span className="text-emerald-400 font-semibold truncate flex-1">
-                    {item.chooseThis}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  💡 {item.benefit}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── SI Nutrition Copilot (Conversational Assistant) ── */}
-        <div className="rounded-[28px] bg-emerald-950/20 border border-emerald-500/25 p-4 backdrop-blur-xl space-y-3">
-          <div className="flex items-center gap-2 text-emerald-300">
-            <Sparkles className="w-5 h-5 text-emerald-400 fill-emerald-400/20" />
-            <h3 className="text-[14.5px] font-extrabold tracking-tight text-white">
-              SI Nutrition Copilot
-            </h3>
-          </div>
-
-          {/* Chat history */}
-          <div className="space-y-2 max-h-56 overflow-y-auto scrollbar-hide pr-1">
-            {copilotHistory.map((msg, i) => (
-              <div 
-                key={i}
-                className={cn(
-                  "p-3 rounded-2xl text-[12px] leading-relaxed max-w-[92%]",
-                  msg.sender === 'user'
-                    ? "ml-auto bg-emerald-500/20 text-emerald-200 border border-emerald-500/30"
-                    : "mr-auto bg-black/40 text-slate-200 border border-white/10"
-                )}
-              >
-                <p>{msg.text}</p>
-                {msg.swap && (
-                  <div className="mt-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-[11px] space-y-0.5">
-                    <div className="text-rose-300">Swap: {msg.swap.original}</div>
-                    <div className="text-emerald-300 font-semibold">With: {msg.swap.substitute}</div>
-                    <div className="text-cyan-400 text-[10px]">{msg.swap.macroDifference}</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Quick query chips */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {[
-              "Swap paneer/dairy today",
-              "Travelling options",
-              "Low calorie snack idea",
-              "How to stop sweet cravings?"
-            ].map((q, idx) => (
+          {/* Category Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+            {smartSwaps.map((s, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => {
-                  setCopilotQuestion(q);
+                  setSwapCategoryIndex(idx);
+                  setIsSwapped(false);
                 }}
-                className="px-2.5 py-1 rounded-full text-[11px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 active:scale-95 transition-all"
+                className={cn(
+                  'px-3 py-1.5 rounded-full text-[12px] font-bold shrink-0 transition-all border flex items-center gap-1 active:scale-95',
+                  swapCategoryIndex === idx
+                    ? 'bg-white/[0.18] text-white border-white/30 shadow-sm'
+                    : 'bg-white/[0.03] text-slate-400 border-white/[0.06]'
+                )}
               >
-                {q}
+                <span>{s.icon}</span>
+                <span>{s.category}</span>
               </button>
             ))}
           </div>
 
-          {/* Chat input form */}
-          <form onSubmit={handleSendCopilotQuestion} className="flex items-center gap-2 pt-1">
-            <input
-              type="text"
-              placeholder="Ask SI about meals, swaps, or goals..."
-              value={copilotQuestion}
-              onChange={e => setCopilotQuestion(e.target.value)}
-              className="flex-1 bg-white/[0.05] border border-white/10 rounded-xl px-3 py-2 text-white placeholder-slate-500 text-[12.5px] focus:outline-none focus:border-emerald-400"
-            />
+          {/* Interactive Face-off Arena Card */}
+          <div className="p-4 rounded-[22px] bg-black/40 border border-white/10 space-y-3">
+            <div className="grid grid-cols-2 gap-3 text-center">
+              {/* Craving */}
+              <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-1">
+                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest block">Craving</span>
+                <span className="text-[14px] font-extrabold text-white block leading-tight">{currentSwap.unhealthy.name}</span>
+                <span className="text-[13px] font-black text-rose-400 block">{currentSwap.unhealthy.kcal} kcal</span>
+                <span className="text-[10px] text-slate-400 block">{currentSwap.unhealthy.tag}</span>
+              </div>
+
+              {/* Healthy Swap */}
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block">Choose This</span>
+                <span className="text-[14px] font-extrabold text-white block leading-tight">{currentSwap.healthy.name}</span>
+                <span className="text-[13px] font-black text-emerald-400 block">{currentSwap.healthy.kcal} kcal</span>
+                <span className="text-[10px] text-emerald-300 block">{currentSwap.healthy.tag}</span>
+              </div>
+            </div>
+
+            {/* Savings Badge */}
+            <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-center">
+              <span className="text-[13px] font-extrabold text-amber-300">{currentSwap.savings}</span>
+            </div>
+
+            {/* Interactive Adopt Button */}
             <button
-              type="submit"
-              disabled={!copilotQuestion.trim()}
-              className="p-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-bold active:scale-95 transition-all shrink-0"
+              type="button"
+              onClick={handleApplySwap}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[13px] active:scale-98 transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2"
             >
-              <Send className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Adopt this Swap Today</span>
             </button>
-          </form>
+          </div>
+
+          {swapToast && (
+            <div className="p-2.5 rounded-xl bg-emerald-500/30 border border-emerald-400/50 text-[12px] font-bold text-emerald-200 text-center animate-in fade-in">
+              {swapToast}
+            </div>
+          )}
         </div>
 
-        {/* ── Medical Nutrition Disclaimer (Non-Negotiable) ─── */}
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-slate-400 text-[11px] flex items-start gap-2.5 leading-relaxed">
-          <ShieldCheck className="w-4 h-4 shrink-0 text-slate-400 mt-0.5" />
-          <div>
-            <span className="font-bold text-slate-300 block mb-0.5">Clinical Boundary Notice</span>
-            <p>{NutritionSIAssistant.MEDICAL_DISCLAIMER}</p>
+        {/* ── Interactive 1-Line Smart Pro Tips ──────────────── */}
+        <div className="rounded-[24px] bg-white/[0.03] border border-white/[0.07] p-4 space-y-2.5">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-[14px] font-extrabold text-white">Quick Nutrition Hacks</h3>
+          </div>
+
+          {/* Interactive Chips */}
+          <div className="flex flex-wrap gap-1.5">
+            {quickChips.map((c, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveTip(c.tip)}
+                className="px-2.5 py-1 rounded-xl text-[11.5px] font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-300 active:scale-95 transition-all"
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="p-3 rounded-xl bg-black/30 border border-white/10 text-[13px] text-slate-200 leading-relaxed font-medium">
+            {activeTip}
           </div>
         </div>
 
       </div>
 
-      {/* Profile Edit Modal */}
+      {/* Profile Modal */}
       <FoodProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}

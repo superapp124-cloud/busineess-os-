@@ -437,22 +437,136 @@ export class NutritionEngine {
       ]
     },
     {
-      id: 'dn-nonveg-ind-1',
-      name: 'Lemon Pepper Grilled Chicken Breast + Sauteed Veggies + 1 Phulka',
+      id: 'bf-veg-ind-3',
+      name: 'Sprouted Moong & Paneer Chilla + Mint Chutney',
+      type: 'breakfast',
+      dietCategory: 'vegetarian',
+      cuisine: 'indian',
+      calories: 320,
+      proteinG: 19,
+      carbsG: 36,
+      fatG: 9,
+      fiberG: 8,
+      ingredients: ['Soaked green moong dal batter', 'Grated low-fat paneer', 'Green chilies, ginger & cumin', 'Fresh mint coriander chutney'],
+      prepTimeMinutes: 12,
+      tags: ['Plant Protein', 'Low Glycemic', 'Digestive'],
+      description: 'Golden savory crepe made from sprouted lentils, stuffed with spiced cottage cheese.',
+      alternatives: [
+        { insteadOf: 'Meda Dosa with Potato Masala', chooseThis: 'Moong Paneer Chilla', benefit: 'Double protein, 60% less starch' }
+      ]
+    },
+    {
+      id: 'bf-veg-cont-3',
+      name: 'Greek Yogurt + Berries & Chia Crunch',
+      type: 'breakfast',
+      dietCategory: 'vegetarian',
+      cuisine: 'continental',
+      calories: 290,
+      proteinG: 21,
+      carbsG: 32,
+      fatG: 7,
+      fiberG: 6,
+      ingredients: ['Thick probiotic Greek yogurt', 'Fresh blueberries & strawberries', 'Chia seeds', 'Crushed almonds'],
+      prepTimeMinutes: 5,
+      tags: ['High Protein', 'Probiotic', 'Quick 5m'],
+      description: 'Creamy probiotic bowl loaded with antioxidant berries and crunchy superfood seeds.',
+      alternatives: [
+        { insteadOf: 'Flavored Sweetened Yogurt', chooseThis: 'Greek Yogurt with Fresh Berries', benefit: 'Zero refined sugars, 3x protein' }
+      ]
+    },
+    {
+      id: 'lu-veg-ind-2',
+      name: 'Palak Paneer + 2 Jowar Rotis + Crunchy Salad',
+      type: 'lunch',
+      dietCategory: 'vegetarian',
+      cuisine: 'indian',
+      calories: 480,
+      proteinG: 24,
+      carbsG: 50,
+      fatG: 15,
+      fiberG: 11,
+      ingredients: ['Fresh spinach puree with spices', '100g soft low-fat paneer', '2 Sorghum (jowar) rotis', 'Sliced cucumber and radish'],
+      prepTimeMinutes: 25,
+      tags: ['Iron Power', 'Gluten Free', 'High Fiber'],
+      description: 'Iron-packed spinach gravy with tender paneer cubes and rustic millet flatbread.',
+      alternatives: [
+        { insteadOf: 'Paneer Butter Masala', chooseThis: 'Homestyle Palak Paneer', benefit: 'Saves 350 cream fat calories' }
+      ]
+    },
+    {
+      id: 'lu-nonveg-tandoori',
+      name: 'Tandoori Chicken Tikka + Steamed Brown Rice + Raita',
+      type: 'lunch',
+      dietCategory: 'non_vegetarian',
+      cuisine: 'indian',
+      calories: 520,
+      proteinG: 45,
+      carbsG: 46,
+      fatG: 12,
+      fiberG: 7,
+      ingredients: ['180g lean chicken breast marinated in yogurt and tandoori spices', '1 cup brown basmati rice', 'Cucumber mint raita'],
+      prepTimeMinutes: 25,
+      tags: ['Peak Protein', 'Clay Oven Style', 'Lean Muscle'],
+      description: 'Aromatic tandoor grilled lean chicken served over wholesome brown rice.',
+      alternatives: [
+        { insteadOf: 'Butter Chicken Gravy', chooseThis: 'Clay-oven Chicken Tikka', benefit: 'No butter cream, pure lean muscle amino acids' }
+      ]
+    },
+    {
+      id: 'sn-veg-chana',
+      name: 'Crispy Roasted Chana & Sprout Salad',
+      type: 'snack',
+      dietCategory: 'vegetarian',
+      cuisine: 'indian',
+      calories: 170,
+      proteinG: 9,
+      carbsG: 25,
+      fatG: 3,
+      fiberG: 7,
+      ingredients: ['Dry roasted black chana', 'Steamed moong sprouts', 'Tomato, onion, chaat masala, lemon'],
+      prepTimeMinutes: 5,
+      tags: ['Clean Crunch', 'High Fiber', '0 Oil'],
+      description: 'Zesty Indian street-style chaat made with zero oil and tons of natural crunch.',
+      alternatives: [
+        { insteadOf: 'Fried Sev / Bhujia', chooseThis: 'Roasted Sprout Chaat', benefit: 'Zero palm oil, 4x more gut fiber' }
+      ]
+    },
+    {
+      id: 'dn-veg-tofu-stirfry',
+      name: 'Sesame Tofu & Crisp Veggie Wok Toss',
+      type: 'dinner',
+      dietCategory: 'vegetarian',
+      cuisine: 'continental',
+      calories: 390,
+      proteinG: 22,
+      carbsG: 34,
+      fatG: 14,
+      fiberG: 9,
+      ingredients: ['140g firm organic tofu cubes', 'Broccoli florets, bell peppers, snow peas', 'Toasted sesame seeds & light soy-ginger glaze'],
+      prepTimeMinutes: 18,
+      tags: ['Plant Power', 'Light Dinner', 'Antioxidant'],
+      description: 'Quick-tossed colorful garden veggies and golden pan-seared tofu in a light sesame glaze.',
+      alternatives: [
+        { insteadOf: 'Takeaway Hakka Noodles', chooseThis: 'Tofu Veg Wok Toss', benefit: '70% less sodium and no refined maida' }
+      ]
+    },
+    {
+      id: 'dn-nonveg-fish-tikka',
+      name: 'Grilled Fish Tikka + Charred Veggies + Mint Dip',
       type: 'dinner',
       dietCategory: 'non_vegetarian',
       cuisine: 'mixed',
-      calories: 470,
-      proteinG: 38,
-      carbsG: 32,
-      fatG: 14,
-      fiberG: 7,
-      ingredients: ['150g chicken breast marinated in black pepper, garlic & lemon', 'Sauteed French beans, carrots & bell peppers', '1 soft phulka'],
+      calories: 430,
+      proteinG: 39,
+      carbsG: 18,
+      fatG: 13,
+      fiberG: 6,
+      ingredients: ['160g white fish fillets marinated in carom seeds, ginger and yogurt', 'Charred zucchini and bell peppers', 'Zero-sugar mint yogurt dip'],
       prepTimeMinutes: 20,
-      tags: ['Lean Protein', 'Low Glycemic', 'Night Repair'],
-      description: 'High biological value protein with minimal starch so your body enters deep restorative REM sleep unburdened.',
+      tags: ['Lean Omega-3', 'Low Carb', 'Deep Sleep'],
+      description: 'Succulent fish fillets flame-grilled with ajwain and herbs for light restorative sleep.',
       alternatives: [
-        { insteadOf: 'Creamy Butter Chicken', chooseThis: 'Lemon Pepper Grilled Chicken', benefit: 'Saves 35g saturated fat, easier nocturnal digestion' }
+        { insteadOf: 'Fried Fish and Chips', chooseThis: 'Grilled Herb Fish Tikka', benefit: 'Cuts 45g saturated frying oil' }
       ]
     }
   ];
@@ -599,6 +713,37 @@ export class NutritionEngine {
       totalFatG,
       totalFiberG
     };
+  }
+
+  /**
+   * Return all candidate meals for a specific type (breakfast, lunch, snack, dinner)
+   * filtered by user's diet preference, cuisine, and allergies.
+   */
+  static getAvailableMeals(type: MealItem['type'], profile: FoodProfile): MealItem[] {
+    const pref = profile.dietPreference;
+    const cuisine = profile.cuisinePreference;
+    const candidates = this.MEAL_DATABASE.filter(m => m.type === type);
+
+    let matched = candidates.filter(m => {
+      if (pref === 'vegetarian') return m.dietCategory === 'vegetarian';
+      if (pref === 'eggitarian') return m.dietCategory === 'vegetarian' || m.dietCategory === 'eggitarian';
+      return true;
+    });
+
+    if (cuisine !== 'mixed') {
+      const cFiltered = matched.filter(m => m.cuisine === cuisine || m.cuisine === 'mixed');
+      if (cFiltered.length > 0) matched = cFiltered;
+    }
+
+    if (profile.allergies.length > 0) {
+      matched = matched.filter(m =>
+        !profile.allergies.some(allergen =>
+          m.ingredients.some(ing => ing.toLowerCase().includes(allergen.toLowerCase()))
+        )
+      );
+    }
+
+    return matched.length > 0 ? matched : candidates;
   }
 
   /**
