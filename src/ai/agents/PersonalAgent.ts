@@ -19,7 +19,7 @@ import { deviceCapabilityEngine } from '../runtime/DeviceCapabilityEngine';
 import { privacyRouter } from '../privacy/PrivacyRouter';
 import { modelSelectionEngine } from '../models/ModelSelectionEngine';
 import { localMemoryStore } from '../memory/LocalMemoryStore';
-import { localKnowledgeEngine } from '../rag/LocalKnowledgeEngine';
+import { localKnowledgeEngine } from '../RAG/LocalKnowledgeEngine';
 import { chatrToolRegistry } from '../tools/ChatrToolRegistry';
 import { permissionManager } from '../security/PermissionManager';
 import { preferenceStore } from '../personalization/PreferenceStore';
