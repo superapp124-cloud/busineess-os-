@@ -385,7 +385,8 @@ class AIScreeningService : Service() {
                     phoneNumber = phoneNumber,
                     callerMessage = summary,
                     keyPoints = keyPoints.toList(),
-                    extractedCommitments = actionItems.filter { it != "Dismiss" }
+                    extractedCommitments = actionItems.filter { it != "Dismiss" },
+                    callerUtterances = callerUtterances
                 )
                 engine.runPostCallPipeline(screenedResult)
                 Log.i(TAG, "Post-call workflow pipeline started for $phoneNumber")

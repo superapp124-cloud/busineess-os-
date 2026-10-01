@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, Sparkles, Sun, Utensils, 
-  Coffee, Moon, CheckCircle2, ShoppingBag, ChevronRight 
+  Coffee, Moon, CheckCircle2, ShoppingBag
 } from 'lucide-react';
 import { SEOHead } from '@/components/SEOHead';
 import { 
@@ -18,9 +18,20 @@ export default function MealPlanScreen() {
   const [selectedMeal, setSelectedMeal] = useState<MealItem | null>(null);
   const [activeTab, setActiveTab] = useState<'schedule' | 'groceries'>('schedule');
 
+  // Days ordered Mon–Sun; compute offset from today so each maps to a real calendar day
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const todayJsDay = new Date().getDay(); // 0=Sun…6=Sat
+  // Convert to Mon-based index (0=Mon … 6=Sun)
+  const todayMonIdx = (todayJsDay + 6) % 7;
 
-  const mealPlan = NutritionEngine.getTodaysMealPlan(profile);
+  // Offset from today to the selected day-of-week
+  const selectedDayOffset = (selectedDayIndex - todayMonIdx + 7) % 7;
+
+  // Memoize meal plan per selected day so we don't recompute every render
+  const mealPlan = useMemo(
+    () => NutritionEngine.getDayMealPlan(profile, selectedDayOffset),
+    [profile, selectedDayOffset]
+  );
 
   const handleDietChange = (diet: DietPreference) => {
     const updated = { ...profile, dietPreference: diet };

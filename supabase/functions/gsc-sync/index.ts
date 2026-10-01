@@ -308,6 +308,7 @@ serve(async (req) => {
 
           const { error: upsertErr } = await supabase.from("gsc_queries").upsert({
             property_id: PROPERTY_ID,
+            sync_date: endDate,          // required NOT NULL — use end of sync window
             query,
             page,
             country,
@@ -352,13 +353,15 @@ serve(async (req) => {
       .select("*", { count: "exact", head: true })
       .eq("property_id", PROPERTY_ID);
 
-    // Log the sync run
-    await supabase.from("cc_logs").insert({
-      agent: "gsc_sync",
-      action: `GSC sync complete: ${rowsUpserted} rows upserted, ${errors.length} errors`,
-      level: errors.length > 0 ? "warn" : "info",
-      details: { runId, rowsUpserted, errors: errors.slice(0, 10), propertyId: PROPERTY_ID },
-    }).throwOnError().catch(() => {});
+    // Log the sync run (best-effort, non-blocking)
+    try {
+      await supabase.from("cc_logs").insert({
+        agent: "gsc_sync",
+        action: `GSC sync complete: ${rowsUpserted} rows upserted, ${errors.length} errors`,
+        level: errors.length > 0 ? "warn" : "info",
+        details: { runId, rowsUpserted, errors: errors.slice(0, 10), propertyId: PROPERTY_ID },
+      });
+    } catch (_logErr) { /* non-fatal */ }
 
     return new Response(JSON.stringify({
       success: true,

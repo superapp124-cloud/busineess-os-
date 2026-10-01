@@ -513,45 +513,63 @@ export class NutritionEngine {
   }
 
   /**
-   * Deterministically assemble today's meal plan for the given profile
+   * Deterministically assemble today's meal plan for the given profile.
+   * Delegates to getDayMealPlan with offset 0.
    */
   static getTodaysMealPlan(profile: FoodProfile): DailyMealPlan {
+    return this.getDayMealPlan(profile, 0);
+  }
+
+  /**
+   * Get a meal plan for a specific day offset from today (0=today, 1=tomorrow, etc.).
+   * Uses the absolute epoch-day number modulo the available meal pool to give genuine
+   * variety across the 7-day calendar — fully deterministic, no randomness.
+   */
+  static getDayMealPlan(profile: FoodProfile, dayOffset: number): DailyMealPlan {
     const targets = this.calculateMacroTargets(profile);
     const pref = profile.dietPreference;
     const cuisine = profile.cuisinePreference;
 
-    // Filter database for meals compatible with profile
-    const filterMeals = (type: MealItem['type']) => {
+    // Absolute calendar day (epoch days) → deterministic seed per calendar date
+    const today = new Date();
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + dayOffset);
+    const epochDay = Math.floor(targetDate.getTime() / 86400000);
+
+    // Return all compatible meals for a given type
+    const getPool = (type: MealItem['type']): MealItem[] => {
       const candidates = this.MEAL_DATABASE.filter(m => m.type === type);
-      // Try exact diet match first
       let matched = candidates.filter(m => {
         if (pref === 'vegetarian') return m.dietCategory === 'vegetarian';
         if (pref === 'eggitarian') return m.dietCategory === 'vegetarian' || m.dietCategory === 'eggitarian';
-        return true; // non_vegetarian accepts all
+        return true;
       });
 
-      // Filter by cuisine if preferred and available
       if (cuisine !== 'mixed') {
-        const cuisineMatched = matched.filter(m => m.cuisine === cuisine || m.cuisine === 'mixed');
-        if (cuisineMatched.length > 0) matched = cuisineMatched;
+        const cFiltered = matched.filter(m => m.cuisine === cuisine || m.cuisine === 'mixed');
+        if (cFiltered.length > 0) matched = cFiltered;
       }
 
-      // Filter out allergies or disliked
       if (profile.allergies.length > 0) {
-        matched = matched.filter(m => 
-          !profile.allergies.some(allergen => 
+        matched = matched.filter(m =>
+          !profile.allergies.some(allergen =>
             m.ingredients.some(ing => ing.toLowerCase().includes(allergen.toLowerCase()))
           )
         );
       }
 
-      return matched.length > 0 ? matched[0] : candidates[0];
+      return matched.length > 0 ? matched : candidates;
     };
 
-    const bf = { ...filterMeals('breakfast') };
-    const lu = { ...filterMeals('lunch') };
-    const sn = { ...filterMeals('snack') };
-    const dn = { ...filterMeals('dinner') };
+    const pickMeal = (type: MealItem['type']): MealItem => {
+      const pool = getPool(type);
+      return { ...pool[epochDay % pool.length] };
+    };
+
+    const bf = pickMeal('breakfast');
+    const lu = pickMeal('lunch');
+    const sn = pickMeal('snack');
+    const dn = pickMeal('dinner');
 
     bf.whyRecommended = this.generateWhyRecommended(bf, profile);
     lu.whyRecommended = this.generateWhyRecommended(lu, profile);
@@ -564,23 +582,17 @@ export class NutritionEngine {
     const totalFatG = bf.fatG + lu.fatG + sn.fatG + dn.fatG;
     const totalFiberG = bf.fiberG + lu.fiberG + sn.fiberG + dn.fiberG;
 
-    const today = new Date();
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     return {
-      date: today.toISOString().split('T')[0],
-      dayName: dayNames[today.getDay()],
+      date: targetDate.toISOString().split('T')[0],
+      dayName: dayNames[targetDate.getDay()],
       calorieTarget: targets.calorieTarget,
       proteinTargetG: targets.proteinTargetG,
       carbsTargetG: targets.carbsTargetG,
       fatTargetG: targets.fatTargetG,
       fiberTargetG: targets.fiberTargetG,
-      meals: {
-        breakfast: bf,
-        lunch: lu,
-        snack: sn,
-        dinner: dn
-      },
+      meals: { breakfast: bf, lunch: lu, snack: sn, dinner: dn },
       totalCalories,
       totalProteinG,
       totalCarbsG,

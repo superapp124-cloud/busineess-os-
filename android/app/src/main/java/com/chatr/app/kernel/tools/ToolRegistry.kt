@@ -142,8 +142,27 @@ class ToolRegistry(private val context: Context) {
                 reversible = true,
                 parameterSchema = mapOf("query" to ToolParameterType.STRING)
             ) { traceId, params ->
-                // Search stub; Phase 2 PersonalMemoryEngine connects here
-                ToolResult(traceId = traceId, toolId = "memory.search", success = true)
+                val query = params["query"] as? String ?: ""
+                var foundCount = 0
+                val results = mutableListOf<String>()
+
+                try {
+                    val db = com.chatr.app.kernel.db.ChatrKernelDatabase.get(context)
+                    val memories = db.memoryDao().getTopMemories(20)
+                    val matched = memories.filter { it.content.contains(query, ignoreCase = true) }
+                    foundCount = matched.size
+                    matched.take(5).forEach { results.add(it.content) }
+                    Log.i(TAG, "memory.search: query='$query' matches=$foundCount | traceId=$traceId")
+                } catch (e: Exception) {
+                    Log.e(TAG, "memory.search failed: ${e.message}", e)
+                }
+
+                ToolResult(
+                    traceId = traceId,
+                    toolId = "memory.search",
+                    success = true,
+                    output = mapOf("matchCount" to foundCount, "results" to results)
+                )
             }
         )
 

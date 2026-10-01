@@ -109,39 +109,51 @@ class MorningBriefAgent(
 
                 // 1. Read active commitments
                 val commitments = memoryEngine.getActiveCommitments(entityId = null)
-                val commitmentCount = commitments.size
                 val overdueCommitments = commitments.filter { c ->
                     c.deadlineMs != null && c.deadlineMs < System.currentTimeMillis()
                 }
 
-                // 2. Read top high-importance memories
+                // 2. Read high-priority memories
                 val snapshot = memoryEngine.buildSnapshot(
                     queryContext = "morning brief daily summary",
-                    limit = 5
+                    limit = 3
                 )
 
-                // 3. Compose brief text
-                val briefLines = mutableListOf<String>()
+                // 3. Rank and strictly cap at maximum 3 items worth knowing
+                val curatedItems = mutableListOf<String>()
 
+                // Priority 1: Overdue commitments
                 if (overdueCommitments.isNotEmpty()) {
-                    briefLines.add("⚠️ ${overdueCommitments.size} overdue commitment${if (overdueCommitments.size > 1) "s" else ""}")
-                }
-                if (commitmentCount > 0) {
-                    briefLines.add("📋 $commitmentCount open commitment${if (commitmentCount > 1) "s" else ""} today")
-                }
-                if (snapshot.relevantRecords.isNotEmpty()) {
-                    val topObs = snapshot.relevantRecords.first()
-                    briefLines.add("💡 ${topObs.content.take(80)}")
-                }
-                if (briefLines.isEmpty()) {
-                    briefLines.add("✅ No open commitments. Clean slate today.")
+                    curatedItems.add("Needs attention: ${overdueCommitments.first().description.take(60)}")
                 }
 
-                val briefText = briefLines.joinToString(" · ")
+                // Priority 2: Next upcoming commitment
+                val upcoming = commitments.firstOrNull { it !in overdueCommitments }
+                if (upcoming != null && curatedItems.size < 3) {
+                    curatedItems.add("Today: ${upcoming.description.take(60)}")
+                }
 
-                // 4. Surface notification
-                showBriefNotification(commitmentCount, overdueCommitments.size, briefText)
-                Log.i(TAG, "Morning brief delivered: commitments=$commitmentCount, overdue=${overdueCommitments.size}")
+                // Priority 3: Most relevant context/memory
+                if (snapshot.relevantRecords.isNotEmpty() && curatedItems.size < 3) {
+                    val topFact = snapshot.relevantRecords.first().content
+                    curatedItems.add(topFact.take(60))
+                }
+
+                val title = if (curatedItems.isNotEmpty()) {
+                    "${curatedItems.size} ${if (curatedItems.size == 1) "thing" else "things"} worth knowing today"
+                } else {
+                    "Your day is clear"
+                }
+
+                val bodyText = if (curatedItems.isNotEmpty()) {
+                    curatedItems.joinToString("\n• ", "• ")
+                } else {
+                    "No pending commitments or urgent follow-ups."
+                }
+
+                // 4. Surface restrained, clean notification
+                showBriefNotification(title, bodyText)
+                Log.i(TAG, "Morning brief delivered: ${curatedItems.size} items surfaced")
 
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to deliver morning brief: ${e.message}", e)
@@ -150,9 +162,8 @@ class MorningBriefAgent(
     }
 
     private fun showBriefNotification(
-        commitmentCount: Int,
-        overdueCount: Int,
-        briefText: String
+        title: String,
+        bodyText: String
     ) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -160,26 +171,20 @@ class MorningBriefAgent(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "CHATR Morning Brief",
+                "Morning Brief",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "Daily SI morning brief with commitments and priorities"
+                description = "Daily morning brief with your key priorities"
                 setShowBadge(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
 
-        val title = when {
-            overdueCount > 0 -> "⚠️ Morning Brief — $overdueCount overdue"
-            commitmentCount > 0 -> "☀️ Morning Brief — $commitmentCount commitments"
-            else -> "☀️ Good morning — CHATR SI"
-        }
-
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_chatr_notification)
             .setContentTitle(title)
-            .setContentText(briefText)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(briefText))
+            .setContentText(bodyText.lines().firstOrNull() ?: "")
+            .setStyle(NotificationCompat.BigTextStyle().bigText(bodyText))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()

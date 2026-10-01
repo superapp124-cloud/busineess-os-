@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -20,18 +21,16 @@ import com.chatr.app.kernel.workflow.UrgencyLevel
 import kotlinx.coroutines.launch
 
 /**
- * PostCallSummaryActivity — Post-call executive summary screen.
+ * PostCallSummaryActivity — Premium Post-Call Executive Summary.
  *
- * Displays:
- *   - Caller identification + SI confidence
- *   - Call summary (what the caller said)
- *   - Key points extracted by AIScreeningService
- *   - Commitments written to PersonalMemoryEngine
- *   - Action chips: Create Calendar Event, Send SMS, Write Commitment
- *
- * Listens for PostCallWorkflowBroadcaster results and dynamically
- * updates the chip dock when the PostCallWorkflowEngine finishes
- * its async pipeline (entity resolution + memory writes).
+ * User Experience Invariant:
+ * The user should not see the internal architecture (no "SI", "engines", "Room", "DAG", "ToolRegistry").
+ * They see:
+ *   - Clean caller identity (e.g., "Rahul Mehta")
+ *   - Human summary of what happened
+ *   - Key points bulleted
+ *   - Detected commitments card with clear ownership
+ *   - 1-tap user-authorized actions: "Add to calendar", "Send message", "Save commitment"
  */
 class PostCallSummaryActivity : AppCompatActivity() {
 
@@ -43,6 +42,8 @@ class PostCallSummaryActivity : AppCompatActivity() {
             if (intent.action != PostCallWorkflowBroadcaster.ACTION_WORKFLOW_RESULT) return
 
             val callerDisplay = intent.getStringExtra(PostCallWorkflowBroadcaster.EXTRA_CALLER_DISPLAY) ?: phoneNumber
+            val summary       = intent.getStringExtra(PostCallWorkflowBroadcaster.EXTRA_SUMMARY) ?: ""
+            val keyPoints     = intent.getStringArrayListExtra(PostCallWorkflowBroadcaster.EXTRA_KEY_POINTS) ?: arrayListOf()
             val urgencyName   = intent.getStringExtra(PostCallWorkflowBroadcaster.EXTRA_URGENCY) ?: "NORMAL"
             val hasCalendar   = intent.getBooleanExtra(PostCallWorkflowBroadcaster.EXTRA_HAS_CALENDAR, false)
             val hasSms        = intent.getBooleanExtra(PostCallWorkflowBroadcaster.EXTRA_HAS_SMS, false)
@@ -50,9 +51,16 @@ class PostCallSummaryActivity : AppCompatActivity() {
 
             runOnUiThread {
                 updateCallerDisplay(callerDisplay)
+                if (summary.isNotBlank()) {
+                    findViewById<TextView>(R.id.summaryText).text = summary
+                }
+                if (keyPoints.isNotEmpty()) {
+                    renderKeyPoints(keyPoints)
+                }
                 if (urgencyName == UrgencyLevel.HIGH.name) {
                     showUrgencyBadge()
                 }
+                renderCommitments(commitments)
                 updateDynamicChips(hasCalendar, hasSms, commitments)
             }
         }
@@ -63,30 +71,19 @@ class PostCallSummaryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_post_call_summary)
 
         phoneNumber = intent.getStringExtra(EXTRA_PHONE_NUMBER) ?: "Unknown"
-        val summaryText = intent.getStringExtra(EXTRA_SUMMARY) ?: "No summary available."
+        val summaryText = intent.getStringExtra(EXTRA_SUMMARY) ?: "Call completed."
         val keyPoints   = intent.getStringArrayListExtra(EXTRA_KEY_POINTS) ?: arrayListOf()
         val actionItems = intent.getStringArrayListExtra(EXTRA_ACTION_ITEMS) ?: arrayListOf()
 
-        // Populate static content
+        // Populate caller name
         findViewById<TextView?>(R.id.callerNameText)?.text = phoneNumber
         findViewById<TextView>(R.id.summaryText).text = summaryText
 
-        val keyPointsTv = findViewById<TextView>(R.id.keyPointsText)
-        keyPointsTv.text = if (keyPoints.isEmpty()) ""
-        else "Key Points:\n" + keyPoints.joinToString("\n") { "• $it" }
-
-        // Initial static action chips from AIScreeningService
-        val chipsContainer = findViewById<LinearLayout>(R.id.actionChipsContainer)
-        if (actionItems.isNotEmpty()) {
-            for (action in actionItems) {
-                val chip = LayoutInflater.from(this)
-                    .inflate(R.layout.item_action_chip, chipsContainer, false) as TextView
-                chip.text = "✨ $action"
-                chipsContainer.addView(chip)
-            }
+        if (keyPoints.isNotEmpty()) {
+            renderKeyPoints(keyPoints)
         }
 
-        // Build the ScreenedCallResult for dynamic chip execution
+        // Build domain model instance
         currentResult = ScreenedCallResult(
             traceId = intent.getStringExtra(EXTRA_TRACE_ID) ?: "",
             phoneNumber = phoneNumber,
@@ -98,7 +95,7 @@ class PostCallSummaryActivity : AppCompatActivity() {
         // Close button
         findViewById<MaterialButton>(R.id.btnClose).setOnClickListener { finish() }
 
-        // Register for workflow results (async entity resolution + proactive chips)
+        // Register for async workflow completion events
         ContextCompat.registerReceiver(
             this,
             workflowResultReceiver,
@@ -112,7 +109,7 @@ class PostCallSummaryActivity : AppCompatActivity() {
         runCatching { unregisterReceiver(workflowResultReceiver) }
     }
 
-    // ── Dynamic UI updates ────────────────────────────────────────────────
+    // ── Content Rendering ───────────────────────────────────────────────────
 
     private fun updateCallerDisplay(callerDisplay: String) {
         findViewById<TextView?>(R.id.callerNameText)?.text = callerDisplay
@@ -120,21 +117,45 @@ class PostCallSummaryActivity : AppCompatActivity() {
 
     private fun showUrgencyBadge() {
         findViewById<TextView?>(R.id.urgencyBadge)?.apply {
-            text = "⚠️ URGENT"
-            visibility = android.view.View.VISIBLE
+            text = "URGENT"
+            visibility = View.VISIBLE
         }
+    }
+
+    private fun renderKeyPoints(keyPoints: List<String>) {
+        val validPoints = keyPoints.filter { it.isNotBlank() && it != "Recorded during SI screening" }
+        if (validPoints.isEmpty()) return
+
+        findViewById<TextView>(R.id.keyPointsHeader).visibility = View.VISIBLE
+        val keyPointsTv = findViewById<TextView>(R.id.keyPointsText)
+        keyPointsTv.visibility = View.VISIBLE
+        keyPointsTv.text = validPoints.joinToString("\n") { "• $it" }
+    }
+
+    private fun renderCommitments(commitments: List<String>) {
+        val container = findViewById<LinearLayout>(R.id.commitmentsContainer)
+        val textTv = findViewById<TextView>(R.id.commitmentsText)
+        val headerTv = findViewById<TextView>(R.id.commitmentsHeader)
+
+        if (commitments.isEmpty()) {
+            container.visibility = View.GONE
+            return
+        }
+
+        container.visibility = View.VISIBLE
+        headerTv.text = if (commitments.size == 1) "You have 1 commitment" else "You have ${commitments.size} commitments"
+        textTv.text = commitments.joinToString("\n") { "• $it" }
     }
 
     private fun updateDynamicChips(hasCalendar: Boolean, hasSms: Boolean, commitments: List<String>) {
         val chipsContainer = findViewById<LinearLayout>(R.id.actionChipsContainer)
+        chipsContainer.removeAllViews()
 
         if (hasCalendar) {
-            addDynamicChip(chipsContainer, "📅 Create Calendar Event") {
+            addDynamicChip(chipsContainer, "Add to calendar") {
                 val result = currentResult ?: return@addDynamicChip
-                Toast.makeText(this, "Creating calendar event...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Adding to calendar...", Toast.LENGTH_SHORT).show()
                 lifecycleScope.launch {
-                    // PostCallWorkflowEngine.executeConfirmedAction() is called here
-                    // via the application-level injected engine reference
                     (application as? ChatrApplication)
                         ?.postCallWorkflowEngine
                         ?.executeConfirmedAction(
@@ -142,33 +163,43 @@ class PostCallSummaryActivity : AppCompatActivity() {
                             result
                         )
                     runOnUiThread {
-                        Toast.makeText(this@PostCallSummaryActivity, "✅ Event created", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PostCallSummaryActivity, "Added to calendar", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
 
         if (hasSms) {
-            addDynamicChip(chipsContainer, "💬 Send SMS Acknowledgement") {
+            addDynamicChip(chipsContainer, "Send quick message") {
                 val result = currentResult ?: return@addDynamicChip
-                Toast.makeText(this, "Sending SMS...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Sending message...", Toast.LENGTH_SHORT).show()
                 lifecycleScope.launch {
                     (application as? ChatrApplication)
                         ?.postCallWorkflowEngine
                         ?.executeConfirmedAction(
-                            PostCallAction.SendSmsAck("Hi, I missed your call. I'll get back to you shortly. — CHATR SI"),
+                            PostCallAction.SendSmsAck("Hi, I missed your call. I'll get back to you shortly."),
                             result
                         )
                     runOnUiThread {
-                        Toast.makeText(this@PostCallSummaryActivity, "✅ SMS sent", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PostCallSummaryActivity, "Message sent", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
 
-        for (commitment in commitments) {
-            addDynamicChip(chipsContainer, "📌 $commitment") {
-                Toast.makeText(this, "Commitment saved to SI memory", Toast.LENGTH_SHORT).show()
+        if (commitments.isNotEmpty()) {
+            addDynamicChip(chipsContainer, "Save commitment") {
+                Toast.makeText(this, "Commitment saved", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Always provide Call back
+        addDynamicChip(chipsContainer, "Call back") {
+            try {
+                val dialIntent = Intent(Intent.ACTION_DIAL, android.net.Uri.parse("tel:$phoneNumber"))
+                startActivity(dialIntent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Unable to initiate call", Toast.LENGTH_SHORT).show()
             }
         }
     }

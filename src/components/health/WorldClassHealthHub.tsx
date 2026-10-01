@@ -20,7 +20,7 @@ export default function WorldClassHealthHub() {
     domainStates,
   } = useHealthOS();
 
-  const [activeTab, setActiveTab] = useState<'today' | 'vitals' | 'sleep' | 'activity' | 'trends'>('today');
+  const [activeTab, setActiveTab] = useState<'today' | 'vitals' | 'sleep' | 'activity' | 'trends' | 'food'>('today');
   const [showAllServices, setShowAllServices] = useState(false);
 
   // Derived values or intelligent clinical baselines
@@ -101,6 +101,13 @@ export default function WorldClassHealthHub() {
               {tab}
             </button>
           ))}
+          {/* Food — dedicated full screen */}
+          <button
+            onClick={() => navigate('/health/food')}
+            className="px-4 py-1.5 rounded-full text-[13px] font-semibold capitalize transition-all shrink-0 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/20 active:scale-95"
+          >
+            🥗 Food
+          </button>
         </div>
 
         {/* ── Circular Ring Gauge (Image 2 Screen 5) ────────── */}
