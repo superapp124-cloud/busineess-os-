@@ -60,6 +60,7 @@ async function main() {
     'https://www.chatrchat.in/sitemaps/sitemap-global-hubs.xml',
     'https://www.chatrchat.in/sitemaps/sitemap-core.xml',
     'https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-tools.xml',
   ];
 
   for (const sitemapUrl of sitemapsToSubmit) {

@@ -14,6 +14,8 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li><Link to="/whatsapp-team-inbox" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">WhatsApp Team Inbox</Link></li>
               <li><Link to="/wati-alternative" className="text-indigo-300 font-semibold hover:text-indigo-200 transition-colors">WATI Alternative</Link></li>
+              <li><Link to="/aisensy-alternative" className="text-indigo-300 font-semibold hover:text-indigo-200 transition-colors">AiSensy Alternative</Link></li>
+              <li><Link to="/tools/whatsapp-link-generator" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">Free WhatsApp Link Generator</Link></li>
               <li><Link to="/chatr/whatsapp-business-api" className="hover:text-indigo-400 transition-colors">WhatsApp Business API</Link></li>
               <li><Link to="/chatr/ai" className="hover:text-indigo-400 transition-colors">CHATR SI Platform</Link></li>
               <li><Link to="/chatr/universal-inbox-ai" className="hover:text-indigo-400 transition-colors">Universal SI Inbox</Link></li>

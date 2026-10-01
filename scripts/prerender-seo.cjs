@@ -119,6 +119,41 @@ const PUBLIC_SEO_PAGES = [
     ]
   },
   {
+    path: '/aisensy-alternative',
+    title: 'AiSensy Alternative — WhatsApp API, Shared Team Inbox & Calling | CHATR',
+    description: 'Compare CHATR and AiSensy for business messaging. Transparent pricing from ₹999/mo, multi-agent shared team inboxes, zero markup on Meta fees, and browser WebRTC calling.',
+    keywords: 'aisensy alternative, aisensy competitors, aisensy vs chatr, whatsapp marketing tool alternative, whatsapp api pricing india',
+    canonical: DOMAIN + '/aisensy-alternative',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'AiSensy Alternative: CHATR Communication OS',
+        description: 'Factual capability and pricing comparison between AiSensy and CHATR for WhatsApp business communication.',
+        url: DOMAIN + '/aisensy-alternative',
+        mainEntity: {
+          '@type': 'SoftwareApplication',
+          name: 'CHATR Communication OS',
+          applicationCategory: 'BusinessApplication',
+          offers: {
+            '@type': 'Offer',
+            price: '999',
+            priceCurrency: 'INR'
+          }
+        }
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
+          { '@type': 'ListItem', position: 2, name: 'Comparisons', item: DOMAIN + '/comparison' },
+          { '@type': 'ListItem', position: 3, name: 'AiSensy Alternative', item: DOMAIN + '/aisensy-alternative' }
+        ]
+      }
+    ]
+  },
+  {
     path: '/call',
     title: '📞 Join Free HD Voice & Video Call — CHATR+',
     description: 'Click to answer directly in your browser. 100% free, end-to-end encrypted WebRTC audio and video. Zero app download, zero registration required.',

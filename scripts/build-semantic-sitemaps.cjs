@@ -57,6 +57,7 @@ const coreUrls = [
   createUrlXml(DOMAIN + '/', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/whatsapp-team-inbox', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/wati-alternative', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/aisensy-alternative', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/call', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/download/android', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/download/samsung', '0.9', 'weekly'),
@@ -130,6 +131,7 @@ const {
 } = require('../src/data/chatrSearchUniverseData.ts');
 
 const toolUrls = [
+  createUrlXml(DOMAIN + '/tools/whatsapp-link-generator', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/tools/communication-link-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/contact-qr-generator', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/tools/business-voip-cost-calculator', '0.9', 'weekly'),

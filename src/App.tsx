@@ -122,6 +122,7 @@ const ChatrAIPage = React.lazy(() => import("./pages/public/ChatrAIPage").then(m
 const PricingPage = React.lazy(() => import("./pages/public/PricingPage").then(m => ({ default: m.PricingPage })));
 const WhatsAppTeamInboxPage = React.lazy(() => import("./pages/public/WhatsAppTeamInboxPage").then(m => ({ default: m.WhatsAppTeamInboxPage })));
 const WatiAlternativePage = React.lazy(() => import("./pages/public/WatiAlternativePage").then(m => ({ default: m.WatiAlternativePage })));
+const AisensyAlternativePage = React.lazy(() => import("./pages/public/AisensyAlternativePage").then(m => ({ default: m.AisensyAlternativePage })));
 
 // Phase B Expansion Engine (25 High-Authority Product/Problem/Workflow/Industry/Comparison Pages)
 const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPillarPage").then(m => ({ default: m.ExpansionPillarPage })));
@@ -1103,6 +1104,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/pricing" element={<LazyRoute component={PricingPage} />} />
   <Route path="/whatsapp-team-inbox" element={<LazyRoute component={WhatsAppTeamInboxPage} />} />
   <Route path="/wati-alternative" element={<LazyRoute component={WatiAlternativePage} />} />
+  <Route path="/aisensy-alternative" element={<LazyRoute component={AisensyAlternativePage} />} />
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />
   <Route path="/ai-business-os" element={<LazyRoute component={AIBusinessOSLanding} />} />
   <Route path="/ai-revenue-operations" element={<LazyRoute component={AIRevenueOperationsLanding} />} />
