@@ -21,7 +21,7 @@ export * from './security/PermissionManager';
 export * from './memory/types';
 export * from './memory/LocalMemoryStore';
 
-export * from './rag/LocalKnowledgeEngine';
+export * from './RAG/LocalKnowledgeEngine';
 
 export * from './tools/types';
 export * from './tools/ChatrToolRegistry';

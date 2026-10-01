@@ -7,12 +7,12 @@
  */
 
 import { ChatrAIProvider, ProviderInfo, AIProviderId, AIGenerationOptions, AIGenerationResult } from './types';
-import { LlamaCppProvider } from '../providers/LlamaCppProvider';
-import { AICoreProvider } from '../providers/AICoreProvider';
-import { LiteRTProvider } from '../providers/LiteRTProvider';
-import { OllamaProvider } from '../providers/OllamaProvider';
-import { CloudProvider } from '../providers/CloudProvider';
-import { HeuristicFallbackProvider } from '../providers/HeuristicFallbackProvider';
+import { LlamaCppProvider } from '../Providers/LlamaCppProvider';
+import { AICoreProvider } from '../Providers/AICoreProvider';
+import { LiteRTProvider } from '../Providers/LiteRTProvider';
+import { OllamaProvider } from '../Providers/OllamaProvider';
+import { CloudProvider } from '../Providers/CloudProvider';
+import { HeuristicFallbackProvider } from '../Providers/HeuristicFallbackProvider';
 
 export class ChatrLocalRuntime {
   private static instance: ChatrLocalRuntime;
