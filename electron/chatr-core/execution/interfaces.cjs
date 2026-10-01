@@ -6,7 +6,7 @@
 
 /**
  * ExecutionStrategy
- * Decides HOW to execute an intent (Local AI, MCP, Provider, Human).
+ * Decides HOW to execute an intent (Local SI, MCP, Provider, Human).
  */
 class ExecutionStrategy {
     /**

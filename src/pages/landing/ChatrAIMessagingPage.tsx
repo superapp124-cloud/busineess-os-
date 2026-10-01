@@ -7,15 +7,15 @@ export const ChatrAIMessagingPage = () => {
 
   useEffect(() => {
     // Pure DOM Head Management
-    document.title = 'AI Messaging for Small Business — CHATR | Smart Business Chat';
+    document.title = 'SI Messaging for Small Business — CHATR | Smart Business Chat';
     
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'CHATR brings AI-powered messaging to small businesses. Auto-triage incoming messages, respond intelligently, and never miss a lead on WhatsApp, email, or team chat.');
+      metaDesc.setAttribute('content', 'CHATR brings SI-powered messaging to small businesses. Auto-triage incoming messages, respond intelligently, and never miss a lead on WhatsApp, email, or team chat.');
     } else {
       const newMetaDesc = document.createElement('meta');
       newMetaDesc.name = 'description';
-      newMetaDesc.content = 'CHATR brings AI-powered messaging to small businesses. Auto-triage incoming messages, respond intelligently, and never miss a lead on WhatsApp, email, or team chat.';
+      newMetaDesc.content = 'CHATR brings SI-powered messaging to small businesses. Auto-triage incoming messages, respond intelligently, and never miss a lead on WhatsApp, email, or team chat.';
       document.head.appendChild(newMetaDesc);
     }
 
@@ -42,26 +42,26 @@ export const ChatrAIMessagingPage = () => {
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is AI messaging for small business?",
+          "name": "What is SI messaging for small business?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "AI messaging for small business refers to software that helps owners and small teams manage incoming messages using artificial intelligence. It automatically reads, categorises, and prioritises messages from multiple channels like WhatsApp, email, and web chat, helping businesses respond faster and never miss a potential lead."
+            "text": "SI messaging for small business refers to software that helps owners and small teams manage incoming messages using super intelligence. It automatically reads, categorises, and prioritises messages from multiple channels like WhatsApp, email, and web chat, helping businesses respond faster and never miss a potential lead."
           }
         },
         {
           "@type": "Question",
-          "name": "How does CHATR use AI to manage business messages?",
+          "name": "How does CHATR use SI to manage business messages?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "CHATR uses AI to understand the context and urgency of incoming messages. It groups threads from a single person into a unified inbox, drafts suggested replies based on your business context, and highlights messages that require immediate human attention, reducing the manual workload for small teams."
+            "text": "CHATR uses SI to understand the context and urgency of incoming messages. It groups threads from a single person into a unified inbox, drafts suggested replies based on your business context, and highlights messages that require immediate human attention, reducing the manual workload for small teams."
           }
         },
         {
           "@type": "Question",
-          "name": "Can a small business afford an AI messaging tool?",
+          "name": "Can a small business afford an SI messaging tool?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, modern AI messaging tools like CHATR are designed specifically to be accessible for small businesses. They often replace the need for multiple separate subscriptions (like standalone WhatsApp or email tools) and save significant owner-operator time, making them a cost-effective operational upgrade."
+            "text": "Yes, modern SI messaging tools like CHATR are designed specifically to be accessible for small businesses. They often replace the need for multiple separate subscriptions (like standalone WhatsApp or email tools) and save significant owner-operator time, making them a cost-effective operational upgrade."
           }
         },
         {
@@ -69,15 +69,15 @@ export const ChatrAIMessagingPage = () => {
           "name": "Does CHATR work with WhatsApp for business messaging?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, CHATR integrates with WhatsApp to bring your business messaging into a central inbox. This ensures that WhatsApp messages are treated with the same priority and AI-powered intelligence as your emails and web inquiries."
+            "text": "Yes, CHATR integrates with WhatsApp to bring your business messaging into a central inbox. This ensures that WhatsApp messages are treated with the same priority and SI-powered intelligence as your emails and web inquiries."
           }
         },
         {
           "@type": "Question",
-          "name": "How is AI messaging different from a regular chatbot?",
+          "name": "How is SI messaging different from a regular chatbot?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A regular chatbot uses rigid rules to force customers into pre-defined flows, often frustrating them. AI messaging acts more like a smart assistant for the business owner—it reads natural language, understands intent, helps draft accurate human-in-the-loop responses, and routes complex issues directly to you."
+            "text": "A regular chatbot uses rigid rules to force customers into pre-defined flows, often frustrating them. SI messaging acts more like a smart assistant for the business owner—it reads natural language, understands intent, helps draft accurate human-in-the-loop responses, and routes complex issues directly to you."
           }
         }
       ]
@@ -119,24 +119,24 @@ export const ChatrAIMessagingPage = () => {
 
   const faqs = [
     {
-      q: "What is AI messaging for small business?",
-      a: "AI messaging for small business refers to software that helps owners and small teams manage incoming messages using artificial intelligence. It automatically reads, categorises, and prioritises messages from multiple channels like WhatsApp, email, and web chat, helping businesses respond faster and never miss a potential lead."
+      q: "What is SI messaging for small business?",
+      a: "SI messaging for small business refers to software that helps owners and small teams manage incoming messages using super intelligence. It automatically reads, categorises, and prioritises messages from multiple channels like WhatsApp, email, and web chat, helping businesses respond faster and never miss a potential lead."
     },
     {
-      q: "How does CHATR use AI to manage business messages?",
-      a: "CHATR uses AI to understand the context and urgency of incoming messages. It groups threads from a single person into a unified inbox, drafts suggested replies based on your business context, and highlights messages that require immediate human attention, reducing the manual workload for small teams."
+      q: "How does CHATR use SI to manage business messages?",
+      a: "CHATR uses SI to understand the context and urgency of incoming messages. It groups threads from a single person into a unified inbox, drafts suggested replies based on your business context, and highlights messages that require immediate human attention, reducing the manual workload for small teams."
     },
     {
-      q: "Can a small business afford an AI messaging tool?",
-      a: "Yes, modern AI messaging tools like CHATR are designed specifically to be accessible for small businesses. They often replace the need for multiple separate subscriptions (like standalone WhatsApp or email tools) and save significant owner-operator time, making them a cost-effective operational upgrade."
+      q: "Can a small business afford an SI messaging tool?",
+      a: "Yes, modern SI messaging tools like CHATR are designed specifically to be accessible for small businesses. They often replace the need for multiple separate subscriptions (like standalone WhatsApp or email tools) and save significant owner-operator time, making them a cost-effective operational upgrade."
     },
     {
       q: "Does CHATR work with WhatsApp for business messaging?",
-      a: "Yes, CHATR integrates with WhatsApp to bring your business messaging into a central inbox. This ensures that WhatsApp messages are treated with the same priority and AI-powered intelligence as your emails and web inquiries."
+      a: "Yes, CHATR integrates with WhatsApp to bring your business messaging into a central inbox. This ensures that WhatsApp messages are treated with the same priority and SI-powered intelligence as your emails and web inquiries."
     },
     {
-      q: "How is AI messaging different from a regular chatbot?",
-      a: "A regular chatbot uses rigid rules to force customers into pre-defined flows, often frustrating them. AI messaging acts more like a smart assistant for the business owner—it reads natural language, understands intent, helps draft accurate human-in-the-loop responses, and routes complex issues directly to you."
+      q: "How is SI messaging different from a regular chatbot?",
+      a: "A regular chatbot uses rigid rules to force customers into pre-defined flows, often frustrating them. SI messaging acts more like a smart assistant for the business owner—it reads natural language, understands intent, helps draft accurate human-in-the-loop responses, and routes complex issues directly to you."
     }
   ];
 
@@ -173,7 +173,7 @@ export const ChatrAIMessagingPage = () => {
             Built for Small Business Operators
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            AI Messaging for Small Business — <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Respond Faster, Miss Nothing</span>
+            SI Messaging for Small Business — <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Respond Faster, Miss Nothing</span>
           </h1>
           <p className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-3xl mx-auto">
             Missed WhatsApp messages, slow email replies, and leads going cold are the silent killers of small businesses. CHATR acts as your intelligent operator, triaging every message across channels so you can focus on doing the work.
@@ -234,14 +234,14 @@ export const ChatrAIMessagingPage = () => {
           </div>
         </section>
 
-        {/* What AI Does Section */}
+        {/* What SI Does Section */}
         <section className="space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-white">
-              What AI messaging actually does for a small business
+              What SI messaging actually does for a small business
             </h2>
             <p className="text-slate-400">
-              Forget clunky bots that frustrate customers. True AI messaging runs in the background, making your human team faster, smarter, and more organised.
+              Forget clunky bots that frustrate customers. True SI messaging runs in the background, making your human team faster, smarter, and more organised.
             </p>
           </div>
           
@@ -264,7 +264,7 @@ export const ChatrAIMessagingPage = () => {
         {/* How it Works */}
         <section className="bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-12">
           <div className="max-w-3xl mx-auto text-center space-y-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white">How CHATR AI messaging works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">How CHATR SI messaging works</h2>
             
             <div className="grid md:grid-cols-3 gap-8 relative">
               <div className="hidden md:block absolute top-1/4 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-indigo-500/0 via-indigo-500/30 to-indigo-500/0 -z-10"></div>
@@ -277,14 +277,14 @@ export const ChatrAIMessagingPage = () => {
               
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-full bg-slate-950 border-2 border-indigo-500 flex items-center justify-center text-xl font-bold text-indigo-400 mx-auto">2</div>
-                <h3 className="text-white font-semibold">AI reads & prioritises</h3>
-                <p className="text-sm text-slate-400">As messages arrive, the AI instantly categorises them, flags urgent leads, and prepares contextual information.</p>
+                <h3 className="text-white font-semibold">SI reads & prioritises</h3>
+                <p className="text-sm text-slate-400">As messages arrive, the SI instantly categorises them, flags urgent leads, and prepares contextual information.</p>
               </div>
               
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-full bg-slate-950 border-2 border-indigo-500 flex items-center justify-center text-xl font-bold text-indigo-400 mx-auto">3</div>
                 <h3 className="text-white font-semibold">You respond (or auto-reply)</h3>
-                <p className="text-sm text-slate-400">Review AI-drafted responses for one-click sending, or let the AI handle routine FAQs automatically.</p>
+                <p className="text-sm text-slate-400">Review SI-drafted responses for one-click sending, or let the SI handle routine FAQs automatically.</p>
               </div>
             </div>
           </div>
@@ -292,17 +292,17 @@ export const ChatrAIMessagingPage = () => {
 
         {/* Comparison */}
         <section className="space-y-8 max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center">Manual Messaging vs CHATR AI</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center">Manual Messaging vs CHATR SI</h2>
           <div className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800">
             <div className="grid grid-cols-2 bg-slate-950/50 p-4 border-b border-slate-800">
               <div className="font-semibold text-slate-400 text-center">Without CHATR</div>
-              <div className="font-semibold text-indigo-400 text-center">With CHATR AI</div>
+              <div className="font-semibold text-indigo-400 text-center">With CHATR SI</div>
             </div>
             <div className="divide-y divide-slate-800">
               {[
                 ["Jump between WhatsApp phone & email client", "All messages routed to one unified inbox"],
-                ["Type the same answers over and over", "AI drafts responses based on past context"],
-                ["Weekend leads wait until Monday", "AI replies instantly or triages for urgency"],
+                ["Type the same answers over and over", "SI drafts responses based on past context"],
+                ["Weekend leads wait until Monday", "SI replies instantly or triages for urgency"],
                 ["Missed context when customers switch channels", "Full customer history linked automatically"],
               ].map((row, i) => (
                 <div key={i} className="grid grid-cols-2 p-4 text-sm">

@@ -17,7 +17,7 @@ const CATEGORIES = [
   'Operations',
   'Customer Support',
   'Communication',
-  'AI & Automation',
+  'SI & Automation',
   'Enterprise Platform',
 ];
 
@@ -171,7 +171,7 @@ const MarketplaceView = ({ installedPackages, onInstall }: { installedPackages: 
                   <CheckCircle2 size={13} /> Storage / Files
                 </div>
                 <div className="flex items-center gap-2 p-2 bg-zinc-800/60 rounded-lg text-emerald-400">
-                  <CheckCircle2 size={13} /> AI Runtime
+                  <CheckCircle2 size={13} /> SI Runtime
                 </div>
               </div>
             </div>

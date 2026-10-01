@@ -3,7 +3,7 @@
  * 
  * Centralized, canonical vocabulary for all events in the enterprise.
  * The Event Store is domain-agnostic, but the Registry ensures EDL, Studio,
- * AI, and Analytics all reference the exact same concepts.
+ * SI, and Analytics all reference the exact same concepts.
  */
 
 export enum CoreDomainEvents {

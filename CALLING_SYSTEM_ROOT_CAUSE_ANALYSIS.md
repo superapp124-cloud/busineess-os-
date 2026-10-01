@@ -15,7 +15,7 @@
 **Problems**:
 - Multiple overlapping features cause confusion
 - No unified health dashboard
-- Scattered AI functionality
+- Scattered SI functionality
 - No feature discovery
 
 ## Solutions Being Implemented
@@ -37,4 +37,4 @@ Will create:
 - **Health Hub** - Unified health dashboard
 - **Care Access** - Complete provider ecosystem  
 - **Community Space** - Social wellness
-- **Smart Assistant** - AI-powered everything
+- **Smart Assistant** - SI-powered everything

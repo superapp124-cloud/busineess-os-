@@ -1,5 +1,5 @@
 /**
- * SEARCH AI AGENT
+ * SEARCH SI AGENT
  * Perplexity-style search and information retrieval
  */
 
@@ -8,12 +8,12 @@ import { memoryLayer } from '../memoryLayer';
 import { AgentResponse, AgentContext } from './personalAI';
 
 /**
- * Search AI Agent
+ * Search SI Agent
  * Provides Perplexity-style intelligent search with sources
  */
 class SearchAIAgent {
   readonly type: AgentType = 'search';
-  readonly name = 'Search AI';
+  readonly name = 'Search SI';
 
   /**
    * Process a search query

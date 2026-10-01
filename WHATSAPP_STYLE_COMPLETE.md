@@ -32,9 +32,9 @@
 - Features:
   - Quick reply from notification
   - Mark as read action
-  - AI-powered message summaries
+  - SI-powered message summaries
 
-### ✅ 5. Voice-AI Integration (ChatGPT/Gemini)
+### ✅ 5. Voice-SI Integration (ChatGPT/Gemini)
 **Hook**: `useVoiceAI.tsx`
 - Platform detection (iOS → ChatGPT, Android → Gemini)
 - Voice command processing
@@ -46,7 +46,7 @@
 
 ### ✅ 6. Smart Inbox Grouping
 **Page**: `SmartInbox.tsx`
-- AI-powered conversation categorization:
+- SI-powered conversation categorization:
   - **Work**: Office/business chats
   - **Friends**: Personal conversations
   - **Family**: Family group chats
@@ -85,28 +85,28 @@
 - **Voice Waveforms**: Audio message playback
 - **Inline Reactions**: Emoji reactions on messages
 
-## AI Features Summary
+## SI Features Summary
 
-### AI Smart Replies (Gemini)
+### SI Smart Replies (Gemini)
 - Context-aware suggestions
 - 3-5 quick reply options
 - Background processing
 - Learns from conversation history
 
-### AI Assistant Menu
+### SI Assistant Menu
 - **Summarize**: Get conversation summary
 - **Translate**: Multi-language support
 - **Extract Actions**: Pull tasks/reminders
 - **Tone Adjustment**: Professional/casual/friendly
 
-### Voice AI Commands
+### Voice SI Commands
 - Hands-free operation
 - Natural language processing
 - Platform-specific models (ChatGPT iOS, Gemini Android)
 - Smart action execution
 
 ## Performance Optimizations
-- Background AI processing
+- Background SI processing
 - Offline message queuing
 - Contact sync in background thread
 - Battery-optimized notifications
@@ -131,13 +131,13 @@
 
 ## Routes Added
 - `/contacts` - People tab
-- `/smart-inbox` - AI-categorized inbox
+- `/smart-inbox` - SI-categorized inbox
 - `/call-history` - Call history (existing)
 - `/stories` - Updates/Status (existing)
 - `/account` - Settings (existing)
 
 ## Backend Integration
-All features use Lovable AI (no API keys required):
+All features use Lovable SI (no API keys required):
 - Gemini 2.5 Flash for smart replies
 - Message summarization
 - Translation services
@@ -152,12 +152,12 @@ All existing Chatr.chat features preserved:
 - Only enhanced, never removed
 
 ## Next Steps (Optional Enhancements)
-- [ ] Message search with AI insights
+- [ ] Message search with SI insights
 - [ ] Smart scheduling ("remind me tomorrow")
 - [ ] Auto-archive old conversations
-- [ ] AI-generated status suggestions
+- [ ] SI-generated status suggestions
 - [ ] Voice note transcription
-- [ ] Photo/video AI captions
+- [ ] Photo/video SI captions
 
 ---
 

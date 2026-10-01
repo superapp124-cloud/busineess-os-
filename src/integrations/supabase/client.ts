@@ -1,4 +1,4 @@
-// CHATR AI Router — Supabase client
+// CHATR SI Router — Supabase client
 // Owner: CHATR (not Lovable-generated as of chore/lovable-exit)
 // Production project: nuuuqazaoaozgblmvkzn
 // Anon / Publishable key is public by design (safe to commit).

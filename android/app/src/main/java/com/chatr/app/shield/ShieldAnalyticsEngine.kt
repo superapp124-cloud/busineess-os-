@@ -227,7 +227,7 @@ object ShieldAnalyticsEngine {
             put(
                 card(
                     key = "aiScreen",
-                    title = "AI Call Screen",
+                    title = "SI Call Screen",
                     enabled = features.optBoolean(NativeGsmDefenseEngine.FEATURE_AI_CALL_SCREEN, true),
                     requiredKeys = listOf("read_phone_state", "answer_phone_calls", "system_alert_window"),
                     setupText = "Needs phone and overlay permissions.",

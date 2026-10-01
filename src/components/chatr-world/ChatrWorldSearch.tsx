@@ -81,8 +81,8 @@ export function ChatrWorldSearch({ initialQuery = '', location }: ChatrWorldSear
  if (error) throw error;
  setAiSummary(data.result || '');
  } catch (error) {
- console.error('AI summary error:', error);
- toast.error('Failed to generate AI summary');
+ console.error('SI summary error:', error);
+ toast.error('Failed to generate SI summary');
  } finally {
  setLoadingAI(false);
  }
@@ -127,18 +127,18 @@ export function ChatrWorldSearch({ initialQuery = '', location }: ChatrWorldSear
  className="gap-2"
  >
  {loadingAI ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
- AI Summary
+ SI Summary
  </Button>
  </div>
  )}
 
- {/* AI Summary */}
+ {/* SI Summary */}
  {aiSummary && (
  <Card className="bg-gradient-to-br from-primary/5 via-background to-background border-primary/20">
  <CardContent className="p-4">
  <div className="flex items-center gap-2 mb-3">
  <Sparkles className="h-5 w-5 text-primary" />
- <h3 className="font-semibold text-primary">AI Summary</h3>
+ <h3 className="font-semibold text-primary">SI Summary</h3>
  </div>
  <AISummaryContent content={aiSummary} />
  </CardContent>

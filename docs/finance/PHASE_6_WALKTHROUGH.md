@@ -1,6 +1,6 @@
-# Phase 5.5 & Phase 6: Financial Certification, Adversarial Testing & AI Finance Workers — Walkthrough
+# Phase 5.5 & Phase 6: Financial Certification, Adversarial Testing & SI Finance Workers — Walkthrough
 
-**Phase:** Phase 5.5 (Financial Certification & Adversarial Testing) & Phase 6 (CHATR Finance Intelligence & AI Workers)  
+**Phase:** Phase 5.5 (Financial Certification & Adversarial Testing) & Phase 6 (CHATR Finance Intelligence & SI Workers)  
 **Status:** Completed & Validated (100% Tests Passing across all 6 Phases)  
 **Date:** 2026-08-24  
 
@@ -10,8 +10,8 @@
 
 Phases 5.5 and 6 bring the entire **CHATR Financial Intelligence & Accounting Core** to full maturity:
 1. **Phase 5.5 (Certification & Adversarial Hardening)**: Validates that the mathematical and accounting invariants hold under extreme scale (100,000 journal lines, 100 concurrent workers, closed-period race conditions, and 50-entity consolidations).
-2. **Phase 6 (AI Finance Workers & Orchestration)**: Deploys a specialized AI worker fleet under a strict 3-mode governance model (`OBSERVE`, `PROPOSE`, `EXECUTE`), connecting operational causality across the Business Graph:
-   $$\text{Business OS} \longrightarrow \text{Event Mesh} \longrightarrow \text{Subledgers} \longrightarrow \text{GL} \longrightarrow \text{AI Risk Queue} \longrightarrow \text{Causal Explanation}$$
+2. **Phase 6 (SI Finance Workers & Orchestration)**: Deploys a specialized SI worker fleet under a strict 3-mode governance model (`OBSERVE`, `PROPOSE`, `EXECUTE`), connecting operational causality across the Business Graph:
+   $$\text{Business OS} \longrightarrow \text{Event Mesh} \longrightarrow \text{Subledgers} \longrightarrow \text{GL} \longrightarrow \text{SI Risk Queue} \longrightarrow \text{Causal Explanation}$$
 
 ---
 
@@ -26,7 +26,7 @@ Mathematically validates the fundamental financial identities before any stateme
 
 ---
 
-### 2.2 AI Worker Hierarchy & 3-Mode Governance
+### 2.2 SI Worker Hierarchy & 3-Mode Governance
 The worker fleet is structured with clear operational boundaries:
 ```
                          CFO ORCHESTRATOR
@@ -34,7 +34,7 @@ The worker fleet is structured with clear operational boundaries:
               ┌─────────────────┼─────────────────┐
               │                 │                 │
         FINANCE ANALYST     AR WORKER         AP WORKER
-         (Causal AI)       (Collections)       (Auditing)
+         (Causal SI)       (Collections)       (Auditing)
               │                 │                 │
               └─────────────────┼─────────────────┘
                                 │
@@ -75,9 +75,9 @@ Traverses the Business Graph to answer executive questions with root cause expla
 
 ---
 
-### 2.5 UI & AI Copilot Workspace
-- [`src/business/finance/ai/FinanceAgentWorkspace.tsx`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/ai/FinanceAgentWorkspace.tsx): Interactive AI Finance Copilot, Financial Risk Queue, and Business Graph Causality visualizer.
-- [`src/business/finance/FinanceWorkspace.tsx`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/FinanceWorkspace.tsx): Navigation updated with dedicated **AI Copilot & Risks** tab.
+### 2.5 UI & SI Copilot Workspace
+- [`src/business/finance/ai/FinanceAgentWorkspace.tsx`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/ai/FinanceAgentWorkspace.tsx): Interactive SI Finance Copilot, Financial Risk Queue, and Business Graph Causality visualizer.
+- [`src/business/finance/FinanceWorkspace.tsx`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/FinanceWorkspace.tsx): Navigation updated with dedicated **SI Copilot & Risks** tab.
 
 ---
 
@@ -124,7 +124,7 @@ node --import tsx src/tests/finance/phase6-finance-workers.test.ts
   ✅ PASS: FinancialCertificationEngine: rejects certification when 1-cent artificial variance introduced
   ✅ PASS: 6/6 tests passed (100%)
 
-🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...
+🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...
 --- 1. Worker Fleet Hierarchy & Mode Safety ---
   ✅ PASS: CFOOrchestrator: initializes specialized worker fleet with strict mode assignments
 --- 2. Financial Risk Queue Anomaly Detection ---

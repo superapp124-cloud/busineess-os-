@@ -16,7 +16,7 @@ Every execution step emitted by `GoalPlanner` records:
 - `output`: Result state
 - `durationMs`: Latency in milliseconds
 - `decision`: Authorization outcome (`ALLOW` | `DENY` | `BYPASS`)
-- `confidenceScore`: AI Intent confidence (0.0 to 1.0)
+- `confidenceScore`: SI Intent confidence (0.0 to 1.0)
 - `hasRollbackHandler`: Boolean indicator of reversibility
 
 ---

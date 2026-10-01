@@ -23,11 +23,11 @@ const AIAnalysisCard: React.FC<AIAnalysisCardProps> = ({ summary, flags, band, c
  )}>
  <div className="flex items-center gap-2 mb-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
  <Shield size={12} className="text-primary" />
- <span>Chatr AI Analysis</span>
+ <span>Chatr SI Analysis</span>
  </div>
  
  <p className="text-[15px] leading-relaxed text-zinc-200 mb-4">
- <span className="text-primary font-bold">Chatr AI:</span> {summary}
+ <span className="text-primary font-bold">Chatr SI:</span> {summary}
  </p>
  
  {flags.length > 0 && (

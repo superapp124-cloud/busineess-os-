@@ -1,8 +1,8 @@
 -- =====================================================
--- AI AGENTS SYSTEM - Complete Database Schema
+-- SI AGENTS SYSTEM - Complete Database Schema
 -- =====================================================
 
--- AI Agents table
+-- SI Agents table
 CREATE TABLE IF NOT EXISTS ai_agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS ai_agents (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- AI Agent Training Data
+-- SI Agent Training Data
 CREATE TABLE IF NOT EXISTS ai_agent_training (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   agent_id UUID NOT NULL REFERENCES ai_agents(id) ON DELETE CASCADE,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS ai_agent_training (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- AI Agent Analytics
+-- SI Agent Analytics
 CREATE TABLE IF NOT EXISTS ai_agent_analytics (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   agent_id UUID NOT NULL REFERENCES ai_agents(id) ON DELETE CASCADE,
@@ -86,24 +86,24 @@ ALTER TABLE ai_agent_analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE developer_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app_submissions ENABLE ROW LEVEL SECURITY;
 
--- AI Agents Policies
-CREATE POLICY "Users can view their own AI agents"
+-- SI Agents Policies
+CREATE POLICY "Users can view their own SI agents"
   ON ai_agents FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create their own AI agents"
+CREATE POLICY "Users can create their own SI agents"
   ON ai_agents FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own AI agents"
+CREATE POLICY "Users can update their own SI agents"
   ON ai_agents FOR UPDATE
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete their own AI agents"
+CREATE POLICY "Users can delete their own SI agents"
   ON ai_agents FOR DELETE
   USING (auth.uid() = user_id);
 
--- AI Agent Training Policies
+-- SI Agent Training Policies
 CREATE POLICY "Users can view training data for their agents"
   ON ai_agent_training FOR SELECT
   USING (
@@ -134,7 +134,7 @@ CREATE POLICY "Users can delete training data from their agents"
     )
   );
 
--- AI Agent Analytics Policies
+-- SI Agent Analytics Policies
 CREATE POLICY "Users can view analytics for their agents"
   ON ai_agent_analytics FOR SELECT
   USING (

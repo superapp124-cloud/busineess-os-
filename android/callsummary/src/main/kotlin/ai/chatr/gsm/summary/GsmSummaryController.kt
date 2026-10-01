@@ -16,7 +16,7 @@ class DisabledGsmSummaryController(
         callId: String,
         transcript: List<GsmTranscriptChunk>,
     ): GsmCallSummary? {
-        if (!flags.isEnabled(GsmFeature.AI)) return null
+        if (!flags.isEnabled(GsmFeature.SI)) return null
         return null
     }
 }

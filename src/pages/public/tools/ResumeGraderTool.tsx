@@ -145,10 +145,10 @@ export const ResumeGraderTool: React.FC = () => {
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>100% Free • Powered by TalentXcel AI Parser v3.4</span>
+            <span>100% Free • Powered by TalentXcel SI Parser v3.4</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Instant ATS Resume Grader & AI Rewriter
+            Instant ATS Resume Grader & SI Rewriter
           </h1>
           <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
             Drop your resume to get your ATS compatibility score, identify recruiter red flags, and get 3 instant high-impact bullet point rewrites.
@@ -275,11 +275,11 @@ export const ResumeGraderTool: React.FC = () => {
               </div>
             </section>
 
-            {/* AI Suggested Bullet Point Rewrites */}
+            {/* SI Suggested Bullet Point Rewrites */}
             <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2 text-white font-bold text-base">
                 <Sparkles className="w-4 h-4 text-indigo-400" />
-                <h3>AI-Optimized Bullet Point Rewrites</h3>
+                <h3>SI-Optimized Bullet Point Rewrites</h3>
               </div>
               <div className="space-y-4">
                 {result.suggestedBulletRewrites.map((rw, idx) => (
@@ -290,7 +290,7 @@ export const ResumeGraderTool: React.FC = () => {
                     </div>
                     <div className="space-y-1 pt-1">
                       <p className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1">
-                        <Check className="w-3 h-3" /> AI Improved (After)
+                        <Check className="w-3 h-3" /> SI Improved (After)
                       </p>
                       <p className="text-emerald-300 bg-emerald-950/20 border border-emerald-500/20 p-2.5 rounded-lg font-medium leading-relaxed">
                         {rw.after}
@@ -309,7 +309,7 @@ export const ResumeGraderTool: React.FC = () => {
                 <span>Next Step: Complete Your Free Optimization</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-                Download Your Full AI-Rewritten ATS Resume Free
+                Download Your Full SI-Rewritten ATS Resume Free
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
                 Create a free career profile on CHATR to export your tailored PDF resume and get instantly discovered by hiring recruiters with automated WhatsApp matching.

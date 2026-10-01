@@ -14,7 +14,7 @@ $$\textbf{Invoice} \neq \textbf{Revenue}$$
 Revenue is recognized deterministically through the ASC 606 / IFRS 15 5-step framework:
 $$\text{Contract} \longrightarrow \text{Performance Obligations} \longrightarrow \text{Transaction Price} \longrightarrow \text{SSP Allocation} \longrightarrow \text{Recognition Schedule} \longrightarrow \text{Release of Deferred Revenue} \longrightarrow \text{GL}$$
 
-**AI operates strictly as a Contract Interpreter in Proposal Mode**, extracting performance obligations and proposing Standalone Selling Price (SSP) allocations with confidence scores, requiring policy validation and human approval before posting.
+**SI operates strictly as a Contract Interpreter in Proposal Mode**, extracting performance obligations and proposing Standalone Selling Price (SSP) allocations with confidence scores, requiring policy validation and human approval before posting.
 
 ---
 
@@ -36,7 +36,7 @@ $$\text{Contract} \longrightarrow \text{Performance Obligations} \longrightarrow
 | Engine | Location | Responsibility |
 |---|---|---|
 | **Revenue Engine** | [`RevenueEngine.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/revenue/RevenueEngine.ts) | 5-step ASC 606 allocation by relative SSP, straight-line / milestone schedule generation, and double-entry revenue recognition journal proposals. |
-| **Contract AI Interpreter** | [`ContractAIInterpreter.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/revenue/ContractAIInterpreter.ts) | **Proposal Mode AI**: parses natural language contract clauses into discrete obligations, calculates relative SSP ratios, and produces structured accounting interpretation proposals with confidence metrics. |
+| **Contract SI Interpreter** | [`ContractAIInterpreter.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/revenue/ContractAIInterpreter.ts) | **Proposal Mode SI**: parses natural language contract clauses into discrete obligations, calculates relative SSP ratios, and produces structured accounting interpretation proposals with confidence metrics. |
 | **Revenue Integrity Monitor** | [`RevenueIntegrityMonitor.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/revenue/RevenueIntegrityMonitor.ts) | Continuous health verification detecting over-recognition, unscheduled active contracts, and expired commitments. |
 
 ---
@@ -66,7 +66,7 @@ node --import tsx src/tests/finance/phase3-revenue.test.ts
   ✅ PASS: RevenueEngine: generates 36-month multi-year schedule with remainder absorbed in final month
 --- 3. Deferred Revenue Double-Entry Posting ---
   ✅ PASS: RevenueEngine: generates balanced journal releasing Deferred Revenue into Earned Revenue
---- 4. AI Contract Interpreter in Proposal Mode ---
+--- 4. SI Contract Interpreter in Proposal Mode ---
   ✅ PASS: ContractAIInterpreter: parses multi-element contract and proposes ASC 606 obligations with confidence
 --- 5. Revenue Integrity Monitor ---
   ✅ PASS: RevenueIntegrityMonitor: detects over-recognition where recognized revenue exceeds transaction price

@@ -20,7 +20,7 @@ export function AILandingView({ onSearch }: AILandingViewProps) {
  "How does quantum computing work?",
  "IPL 2026 points table",
  "How to file ITR online",
- "Top AI tools for startups 2026",
+ "Top SI tools for startups 2026",
  "Delhi to Mumbai flight prices today"
  ];
 
@@ -30,7 +30,7 @@ export function AILandingView({ onSearch }: AILandingViewProps) {
  {/* Brand Title */}
  <h1 className="text-7xl sm:text-8xl font-black tracking-tighter mb-4">
  <span className="bg-gradient-to-r from-[#9b88ff] via-[#d0a3ff] to-[#ffb099] text-transparent bg-clip-text">Chatr</span>
- <span className="text-[#ffa384] ml-4">AI</span>
+ <span className="text-[#ffa384] ml-4">SI</span>
  </h1>
  
  {/* Subtitle */}

@@ -1,5 +1,5 @@
 /**
- * CHATR Media Agency — 100 AI Indian Songs × 100 AI Dance Choreographies Fusion Engine
+ * CHATR Media Agency — 100 SI Indian Songs × 100 SI Dance Choreographies Fusion Engine
  * 1-Minute Full Length Production Database & Audience Virality Matcher
  */
 
@@ -37,7 +37,7 @@ export interface IndianDance100Item {
   tags: string[];
 }
 
-// REAL AUDIO & PURE AI GENERATED VIDEO ROTATING STEM POOL
+// REAL AUDIO & PURE SI GENERATED VIDEO ROTATING STEM POOL
 const REAL_AUDIO_POOL = [
   '/audio/suno_sufi_song.m4a',
   '/audio/real/bhangra_dhol.m4a',
@@ -128,7 +128,7 @@ function generate100Songs(): IndianSong100Item[] {
   return songs;
 }
 
-// Helper to generate 100 AI Dance Choreographies Catalog
+// Helper to generate 100 SI Dance Choreographies Catalog
 function generate100Dances(): IndianDance100Item[] {
   const danceBases = [
     { title: 'Classical Kathak Tatkar & Mudras', style: 'Kathak Classical Footwork', cat: 'Traditional Classical', energy: 'High', outfit: 'Silk Angrakha & Brass Ghungroo', setting: 'Marble Palace Courtyard', cam: 'Orbital Crane & Macro Eye Tracking' },

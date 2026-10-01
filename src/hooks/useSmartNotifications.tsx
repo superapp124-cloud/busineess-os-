@@ -53,7 +53,7 @@ export const useSmartNotifications = () => {
  const { data: { user } } = await supabase.auth.getUser();
  if (!user) return false;
 
- // Generate summary using AI
+ // Generate summary using SI
  const { data: aiData } = await supabase.functions.invoke('generate-notification-summary', {
  body: { notificationIds, bundleType }
  });

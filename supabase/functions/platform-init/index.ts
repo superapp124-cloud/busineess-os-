@@ -105,7 +105,7 @@ async function initializeWorkspace(supabase: any, userId: string, email: string)
     { name: 'General', type: 'channel' },
     { name: 'Announcements', type: 'channel' },
     { name: 'Workspace Feed', type: 'channel' },
-    { name: 'AI Assistant', type: 'dm' } // AI dm
+    { name: 'SI Assistant', type: 'dm' } // SI dm
   ];
 
   for (const ch of defaultChannels) {
@@ -126,8 +126,8 @@ async function initializeWorkspace(supabase: any, userId: string, email: string)
       role: ch.name === 'Announcements' ? 'admin' : 'member'
     });
 
-    // If it's General or AI Assistant, also add CHATR AI as participant
-    if (ch.name === 'General' || ch.name === 'AI Assistant') {
+    // If it's General or SI Assistant, also add CHATR SI as participant
+    if (ch.name === 'General' || ch.name === 'SI Assistant') {
       await supabase.from('conversation_participants').insert({
         conversation_id: room.id,
         user_id: userId, // system technically doesn't need user_id, but schema might enforce it
@@ -136,13 +136,13 @@ async function initializeWorkspace(supabase: any, userId: string, email: string)
       });
     }
 
-    // 6. Generate Contextual Welcome Message for AI Assistant channel
-    if (ch.name === 'AI Assistant') {
+    // 6. Generate Contextual Welcome Message for SI Assistant channel
+    if (ch.name === 'SI Assistant') {
       await supabase.from('messages').insert({
         conversation_id: room.id,
         actor_id: '11111111-1111-1111-1111-111111111111',
         sender_id: '11111111-1111-1111-1111-111111111111', // Fallback for legacy
-        content: `Welcome to CHATR. I've finished setting up your workspace.\n\nAvailable today:\n✓ AI Assistant\n✓ Secure Chat\n✓ Personal Notes\n✓ Files\n\nNext step:\nInvite your first teammate`
+        content: `Welcome to CHATR. I've finished setting up your workspace.\n\nAvailable today:\n✓ SI Assistant\n✓ Secure Chat\n✓ Personal Notes\n✓ Files\n\nNext step:\nInvite your first teammate`
       });
     }
   }
@@ -180,7 +180,7 @@ async function checkWorkspaceHealth(supabase: any, userId: string) {
   // Here we would run upgrades if workspace.workspace_version < CURRENT_VERSION
   
   // 2. Check for missing core channels
-  const requiredChannels = ['General', 'Announcements', 'Workspace Feed', 'AI Assistant'];
+  const requiredChannels = ['General', 'Announcements', 'Workspace Feed', 'SI Assistant'];
   const { data: existingRooms } = await supabase
     .from('conversations')
     .select('name')
@@ -193,7 +193,7 @@ async function checkWorkspaceHealth(supabase: any, userId: string) {
   for (const name of missing) {
     const { data: newRoom } = await supabase.from('conversations').insert({
       name: name,
-      type: name === 'AI Assistant' ? 'dm' : 'channel',
+      type: name === 'SI Assistant' ? 'dm' : 'channel',
       workspace_id: workspaceId,
       created_by: userId
     }).select().single();
@@ -208,11 +208,11 @@ async function checkWorkspaceHealth(supabase: any, userId: string) {
     }
   }
 
-  // 3. Ensure AI Actor exists and is online
+  // 3. Ensure SI Actor exists and is online
   await supabase.from('actors').upsert({
     id: '11111111-1111-1111-1111-111111111111',
-    type: 'AI',
-    display_name: 'CHATR AI',
+    type: 'SI',
+    display_name: 'CHATR SI',
     status: 'online'
   });
 }

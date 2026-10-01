@@ -14,7 +14,7 @@ import java.net.URL
 /**
  * LiveTranslatorEngine – Real-time spoken language translation via Gemini.
  *
- * Used by the AI Interpreter Mode to translate between the user's language
+ * Used by the SI Interpreter Mode to translate between the user's language
  * and the caller's language, enabling two-way voice communication across
  * language barriers.
  */

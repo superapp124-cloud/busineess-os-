@@ -185,7 +185,7 @@ export const DiagnosticsPanel: React.FC = () => {
  <div className="mt-6 border-t border-slate-700/50 pt-4">
  <h4 className="text-slate-300 font-bold mb-2">Metrics</h4>
  <ul className="text-label space-y-2 text-slate-400">
- <li className="flex justify-between"><span>AI Suggestion Latency</span> <span className="text-emerald-400">{"<"}300 ms</span></li>
+ <li className="flex justify-between"><span>SI Suggestion Latency</span> <span className="text-emerald-400">{"<"}300 ms</span></li>
  <li className="flex justify-between"><span>Transcript Processing</span> <span className="text-emerald-400">{"<"}100 ms</span></li>
  <li className="flex justify-between"><span>Relationship Batch Update</span> <span className="text-emerald-400">{"<"}100 ms</span></li>
  </ul>

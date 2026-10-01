@@ -1,4 +1,4 @@
 export class CommunicationContext {
-  // AI Communication Context
+  // SI Communication Context
   // Call -> Network -> Device -> Latency -> Meeting -> Memory -> Context
 }

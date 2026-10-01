@@ -3,8 +3,8 @@
  *
  * Layer 3 — Core Engines
  *
- * Orchestrates AI execution. Tools self-register here. 
- * AI asks Tool Registry what's available based on Mode and Permissions.
+ * Orchestrates SI execution. Tools self-register here. 
+ * SI asks Tool Registry what's available based on Mode and Permissions.
  */
 
 import { IEngine, EngineHealth, EngineStatus, Permission } from '../runtime/types';
@@ -90,12 +90,12 @@ export class AIEngineImpl implements IEngine {
     // 2. Get Tools
     const availableTools = this.getAvailableTools();
     
-    // 3. Stub AI execution - in real app, calls LLM with prompt + context + tools
+    // 3. Stub SI execution - in real app, calls LLM with prompt + context + tools
     console.log(`[AIEngine] Generating response in ${mode} mode with ${availableTools.length} tools and active context`);
     
     // Simulate generation with confidence metadata
     return {
-      response: `AI Response to: ${prompt}`,
+      response: `SI Response to: ${prompt}`,
       confidence: 94,
       reason: `Assembled context matched 94% of prompt intent via ${mode} routing.`
     };

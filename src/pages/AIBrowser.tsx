@@ -137,7 +137,7 @@ export default function AIBrowser() {
  <div className="flex items-center gap-2">
  <Sparkles className="h-6 w-6 text-violet-600 dark:text-violet-400" />
  <h1 className="text-workspace font-bold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
- AI Search
+ SI Search
  </h1>
  </div>
  <div className="flex items-center gap-2">
@@ -163,7 +163,7 @@ export default function AIBrowser() {
  <div className="text-center py-20">
  <MessageSquare className="h-16 w-16 mx-auto mb-4 text-violet-300 dark:text-violet-500" />
  <p className="text-slate-600 dark:text-slate-300 font-medium text-section">Ask me anything!</p>
- <p className="text-secondary text-slate-500 dark:text-slate-400 mt-2">Powered by CHATR AI</p>
+ <p className="text-secondary text-slate-500 dark:text-slate-400 mt-2">Powered by CHATR SI</p>
  </div>
  ) : (
  <>
@@ -277,14 +277,14 @@ export default function AIBrowser() {
  <div className="text-center py-20">
  <Search className="h-16 w-16 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
  <p className="text-slate-600 dark:text-slate-400 text-section font-medium">What would you like to know?</p>
- <p className="text-secondary text-slate-500 dark:text-slate-500 mt-2">Search powered by AI</p>
+ <p className="text-secondary text-slate-500 dark:text-slate-500 mt-2">Search powered by SI</p>
  </div>
  )}
 
  {/* Results */}
  {!loading && searchData && (
  <div className="space-y-6">
- {/* AI Overview Card - Google AI Style */}
+ {/* SI Overview Card - Google SI Style */}
  <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm rounded-3xl overflow-hidden">
  <CardHeader className="pb-4">
  <div className="flex items-center gap-2 mb-2">
@@ -292,7 +292,7 @@ export default function AIBrowser() {
  <Sparkles className="h-4 w-4 text-white" />
  </div>
  <CardTitle className="text-body font-semibold text-slate-900 dark:text-slate-100">
- AI Overview
+ SI Overview
  </CardTitle>
  {searchData.resultCount && (
  <span className="text-label text-slate-500 dark:text-slate-400 ml-1">

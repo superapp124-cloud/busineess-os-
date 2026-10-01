@@ -244,7 +244,7 @@ export default function ExecutionInspectPage() {
 
             {/* Stage pipeline */}
             <div className="flex items-center gap-2 flex-wrap">
-              {['Candidate Qualified', 'Evidence Built', 'AI Recommended', 'Recruiter Approved', 'Interview Scheduled'].map((stage, i, arr) => (
+              {['Candidate Qualified', 'Evidence Built', 'SI Recommended', 'Recruiter Approved', 'Interview Scheduled'].map((stage, i, arr) => (
                 <React.Fragment key={stage}>
                   <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">{stage}</span>
                   {i < arr.length - 1 && <ChevronRight size={12} className="text-zinc-600" />}
@@ -258,7 +258,7 @@ export default function ExecutionInspectPage() {
                 <div className="text-xl font-bold text-emerald-400">{execution.timeSavedMinutes} min</div>
               </div>
               <div className="bg-zinc-800/40 rounded-xl p-4">
-                <div className="text-xs text-zinc-500 mb-1">AI Confidence</div>
+                <div className="text-xs text-zinc-500 mb-1">SI Confidence</div>
                 <div className="text-xl font-bold text-indigo-400">{(execution.evidence.confidence * 100).toFixed(1)}%</div>
               </div>
               <div className="bg-zinc-800/40 rounded-xl p-4">

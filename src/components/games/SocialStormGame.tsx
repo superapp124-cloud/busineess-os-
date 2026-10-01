@@ -13,7 +13,7 @@ interface SocialStormGameProps {
 const mockTrends = [
  { id: 1, title: "Cat learns to open fridge", category: "Pets", currentViews: 12500, thumbnail: "🐱", timePosted: "2h ago" },
  { id: 2, title: "New dance challenge #FlipIt", category: "Dance", currentViews: 8700, thumbnail: "💃", timePosted: "4h ago" },
- { id: 3, title: "AI writes a love song", category: "Tech", currentViews: 5200, thumbnail: "🤖", timePosted: "1h ago" },
+ { id: 3, title: "SI writes a love song", category: "Tech", currentViews: 5200, thumbnail: "🤖", timePosted: "1h ago" },
  { id: 4, title: "Street food in Tokyo", category: "Food", currentViews: 22000, thumbnail: "🍜", timePosted: "6h ago" },
  { id: 5, title: "Impossible basketball trick", category: "Sports", currentViews: 45000, thumbnail: "🏀", timePosted: "3h ago" },
  { id: 6, title: "Baby's first words are meme", category: "Funny", currentViews: 3400, thumbnail: "👶", timePosted: "30m ago" },

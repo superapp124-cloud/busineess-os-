@@ -1,6 +1,6 @@
 /**
  * CHATR Intent Execution Model (IEM)
- * A semantic, deterministic, and portable graph for executing AI intents.
+ * A semantic, deterministic, and portable graph for executing SI intents.
  */
 
 export type IEMNodeType = 

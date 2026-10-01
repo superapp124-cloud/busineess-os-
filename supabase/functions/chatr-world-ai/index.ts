@@ -25,7 +25,7 @@ serve(async (req) => {
 
     switch (type) {
       case 'summary':
-        systemPrompt = `You are an AI assistant that summarizes search results clearly and concisely. 
+        systemPrompt = `You are an SI assistant that summarizes search results clearly and concisely. 
         Provide a helpful summary in 2-3 paragraphs. Include key facts and actionable information.
         Focus on what's most relevant to users in India.`;
         userPrompt = `Summarize these search results for the query "${data.query}":\n\n${JSON.stringify(data.results?.slice(0, 5))}`;
@@ -40,14 +40,14 @@ serve(async (req) => {
         break;
 
       case 'job_match':
-        systemPrompt = `You are a career advisor AI. Analyze the user's profile and suggest suitable jobs.
+        systemPrompt = `You are a career advisor SI. Analyze the user's profile and suggest suitable jobs.
         Consider skills, experience, location preferences, and salary expectations.
         Provide actionable career advice.`;
         userPrompt = `User profile:\nSkills: ${data.skills?.join(', ')}\nExperience: ${data.experience} years\nLocation: ${data.location}\n\nAvailable jobs:\n${JSON.stringify(data.jobs?.slice(0, 10))}\n\nSuggest the best matches and explain why.`;
         break;
 
       case 'restaurant_recommend':
-        systemPrompt = `You are a food recommendation AI for India. Suggest restaurants based on:
+        systemPrompt = `You are a food recommendation SI for India. Suggest restaurants based on:
         - User preferences (cuisine, budget, dietary restrictions)
         - Location and delivery availability
         - Ratings and reviews
@@ -56,14 +56,14 @@ serve(async (req) => {
         break;
 
       case 'chat':
-        systemPrompt = `You are Chatr AI, a helpful assistant for Chatr World - a local life search platform in India.
+        systemPrompt = `You are Chatr SI, a helpful assistant for Chatr World - a local life search platform in India.
         Help users find jobs, healthcare, food, deals, and local services.
         Be friendly, concise, and helpful. Provide actionable suggestions.`;
         userPrompt = data.message || '';
         break;
 
       default:
-        throw new Error('Invalid AI request type');
+        throw new Error('Invalid SI request type');
     }
 
     const response = await completeChat({
@@ -86,9 +86,9 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('AI error:', error);
+    console.error('SI error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'AI request failed' }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'SI request failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

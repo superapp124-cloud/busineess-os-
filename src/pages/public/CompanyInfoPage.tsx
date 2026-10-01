@@ -71,7 +71,7 @@ export const CompanyInfoPage: React.FC = () => {
             <div className="space-y-2">
               <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">Primary Operating Platform</span>
               <p className="font-semibold text-white">CHATR Communication OS</p>
-              <p className="text-slate-400 text-xs">Universal AI Business Messaging & Shared Inbox Kernel</p>
+              <p className="text-slate-400 text-xs">Universal SI Business Messaging & Shared Inbox Kernel</p>
             </div>
 
             <div className="space-y-2">
@@ -99,7 +99,7 @@ export const CompanyInfoPage: React.FC = () => {
             <h3 className="font-bold text-white text-sm">Associated Web Properties</h3>
             <ul className="space-y-2 text-xs text-slate-300">
               <li><strong className="text-white">chatrchat.in:</strong> SME Growth OS, Knowledge Hub, Public SEO & Observability Dashboard</li>
-              <li><strong className="text-white">chatr.chat:</strong> Communication OS Superapp (Chat, Calling, AI Copilot)</li>
+              <li><strong className="text-white">chatr.chat:</strong> Communication OS Superapp (Chat, Calling, SI Copilot)</li>
               <li><strong className="text-white">talentxcel.in:</strong> Talent & Recruitment Platform (Job Matching, Resume Parser, Career Tools)</li>
             </ul>
           </div>

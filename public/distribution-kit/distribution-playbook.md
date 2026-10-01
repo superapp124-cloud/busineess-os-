@@ -18,7 +18,7 @@ Our benchmark telemetry across 142,500 candidate threads revealed a striking sta
 
 The solution isn't hiring 10 more junior recruiters to copy-paste questions all day.
 
-It's connecting an official WhatsApp Business API team inbox with automated AI pre-screening (screening skills, notice period, compensation, and availability in real-time).
+It's connecting an official WhatsApp Business API team inbox with automated SI pre-screening (screening skills, notice period, compensation, and availability in real-time).
 
 Recruiters spend their day speaking only to pre-screened, qualified candidates who are actually ready to interview.
 
@@ -39,9 +39,9 @@ Because by the time your team reviews their resume and sends an email 4 hours la
 Our study of 142,500 hiring threads proved that candidates messaged on WhatsApp within 2 minutes respond 94% of the time.
 
 [SOLUTION - 0:25 to 0:45]
-With TalentXcel AI on CHATR OS:
+With TalentXcel SI on CHATR OS:
 1. Resumes are parsed in 1.2 seconds.
-2. The AI bot asks pre-screening questions on WhatsApp instantly.
+2. The SI bot asks pre-screening questions on WhatsApp instantly.
 3. Qualified candidates book their interview slot directly onto your calendar.
 
 [CTA - 0:45 to 0:55]
@@ -56,7 +56,7 @@ Stop losing top talent to slow response times. Try TalentXcel on chatrchat.in fr
 Candidate drop-off on WhatsApp is almost exclusively driven by response latency and unstructured communication. Here is the operational framework top staffing agencies use:
 
 1. **Sub-2-Minute WhatsApp Triage**: When an inbound resume or application arrives, trigger an immediate automated WhatsApp greeting asking 3–4 standard qualification questions (shift availability, notice period, location preference).
-2. **Instant AI Parsing**: Use an automated parser to extract skills and experience in under 2 seconds rather than manually skimming PDFs.
+2. **Instant SI Parsing**: Use an automated parser to extract skills and experience in under 2 seconds rather than manually skimming PDFs.
 3. **Automated Calendar Slot Reservation**: Integrate live calendar links (Google Calendar/Outlook) so candidates pick their interview time on the spot.
 4. **Supervisory SLA Escalation**: If a candidate asks a custom question that requires a human recruiter, enforce an automated 5-minute escalation timer.
 

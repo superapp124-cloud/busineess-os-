@@ -94,7 +94,7 @@ export default function UnifiedCallScreen({
  const [networkQuality, setNetworkQuality] = useState<'excellent' | 'good' | 'fair' | 'poor'>('good');
  const [controlsVisible, setControlsVisible] = useState(true);
  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
- // AI Translation State
+ // SI Translation State
  const [isTranslating, setIsTranslating] = useState(false);
  const { processedStream, isConnected, isReady, error: aiError } = useAudioInterceptor(isTranslating, localStream, 'Kashmiri', 'Hindi');
  
@@ -225,7 +225,7 @@ export default function UnifiedCallScreen({
  audioRouteRef.current = audioRoute;
  }, [audioRoute]);
 
- // Inject AI translated audio stream into the peer connection
+ // Inject SI translated audio stream into the peer connection
  useEffect(() => {
  if (!webrtcRef.current) return;
  const simpleWebRTC = webrtcRef.current as any;
@@ -243,14 +243,14 @@ export default function UnifiedCallScreen({
  const [micLevel, setMicLevel] = useState<number>(0);
  const [chunksSent, setChunksSent] = useState<number>(0);
 
- // --- AI AUDIO DEBUG EVENT LISTENER ---
+ // --- SI AUDIO DEBUG EVENT LISTENER ---
  useEffect(() => {
  const handleAIAudio = (e: Event) => {
  const customEvent = e as CustomEvent;
- console.log(`[DEBUG] Received ${customEvent.detail} samples of local AI audio.`);
+ console.log(`[DEBUG] Received ${customEvent.detail} samples of local SI audio.`);
  // Only show the toast once per session to avoid spam
  if (!(window as any)._hasShownAIToast) {
- toast.success('Local AI audio ready. Sending to phone...');
+ toast.success('Local SI audio ready. Sending to phone...');
  (window as any)._hasShownAIToast = true;
  }
  };
@@ -1820,7 +1820,7 @@ export default function UnifiedCallScreen({
  )}
  </AnimatePresence>
 
- {/* AI Translation Status */}
+ {/* SI Translation Status */}
  {isTranslating && (
  <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
  <div className={`px-4 py-2 rounded-full text-white text-secondary font-medium shadow-lg backdrop-blur-sm flex items-center gap-2 ${aiError ? 'bg-red-500/90' : !isConnected || !isReady ? 'bg-amber-500/90 animate-pulse' : 'bg-purple-600/90'}`}>
@@ -1832,24 +1832,76 @@ export default function UnifiedCallScreen({
  ) : !isConnected ? (
  <>
  <div className="w-2 h-2 rounded-full bg-white animate-ping" />
- Local AI translation unavailable...
+ Local SI translation unavailable...
  </>
  ) : !isReady ? (
  <>
  <div className="w-2 h-2 rounded-full bg-white animate-spin" />
- AI Setting Up...
+ SI Setting Up...
  </>
  ) : (
  <>
  <div className="w-2 h-2 rounded-full bg-purple-200" />
- 🎙️ AI Listening & Translating (Kashmiri → Hindi)
+ 🎙️ SI Listening & Translating (Kashmiri → Hindi)
  </>
  )}
  </div>
  </div>
  )}
 
- {/* Bottom Controls */}
+ {/* Voice Call Controls - shown for ALL voice call states (ringing, connecting, connected) */}
+  {!isVideo && (
+  <motion.div
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: 30 }}
+  className="absolute bottom-0 left-0 right-0 z-[100] pointer-events-none"
+  style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 24px), 24px)' }}
+  >
+  <div
+  className="mx-auto flex w-full max-w-sm flex-col items-center px-6 pb-4 pt-8 pointer-events-auto"
+  style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 65%, transparent 100%)' }}
+  >
+  <div className="mb-6 flex items-center justify-center">
+  <div className="flex items-center space-x-1.5 rounded-full bg-black/40 border border-white/10 px-4 py-1.5 backdrop-blur-md shadow-lg">
+  {callState === 'connected' ? (
+  <><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+  <span className="text-[11px] font-semibold font-mono text-white/95">{String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}</span></>
+  ) : callState === 'failed' ? (
+  <span className="text-[11px] font-semibold text-red-400">Connection failed</span>
+  ) : callState === 'busy' ? (
+  <span className="text-[11px] font-semibold text-amber-400">User busy</span>
+  ) : (
+  <><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white/60" />
+  <span className="text-[11px] font-semibold text-white/80 animate-pulse">{isInitiator ? 'Ringing...' : 'Connecting...'}</span></>
+  )}
+  </div>
+  </div>
+  <div className="flex justify-evenly items-end w-full gap-2">
+  <button onClick={toggleMute} className="flex flex-col items-center gap-1.5 touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent' }} aria-label={isMuted ? 'Unmute' : 'Mute'}>
+  <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 shadow-lg ${isMuted ? 'bg-red-500 shadow-red-500/30' : 'bg-white/20 backdrop-blur-xl border border-white/15'}`}>
+  {isMuted ? <MicOff className="w-6 h-6 text-white" /> : <Mic className="w-6 h-6 text-white" />}
+  </div>
+  <span className="text-[11px] text-white/70">{isMuted ? 'Unmute' : 'Mute'}</span>
+  </button>
+  <button onClick={() => handleEndCall()} className="flex flex-col items-center gap-1.5 touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent' }} aria-label="End call">
+  <div className="w-[72px] h-[72px] rounded-full bg-red-500 flex items-center justify-center shadow-xl shadow-red-500/40 transition-all duration-150 active:scale-90 active:bg-red-600">
+  <PhoneOff className="w-7 h-7 text-white" />
+  </div>
+  <span className="text-[11px] text-red-300 font-medium">{callState === 'failed' || callState === 'busy' ? 'Close' : callState === 'connected' ? 'End' : 'Cancel'}</span>
+  </button>
+  <button onClick={cycleAudioRoute} className="flex flex-col items-center gap-1.5 touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent' }} aria-label="Toggle speaker">
+  <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 shadow-lg ${audioRoute === 'speaker' ? 'bg-white' : 'bg-white/20 backdrop-blur-xl border border-white/15'}`}>
+  <Volume2 className={`w-6 h-6 ${audioRoute === 'speaker' ? 'text-black' : 'text-white'}`} />
+  </div>
+  <span className="text-[11px] text-white/70">{audioRouteLabel}</span>
+  </button>
+  </div>
+  </div>
+  </motion.div>
+  )}
+
+{/* Bottom Controls */}
  <AnimatePresence>
  {isVideo && controlsVisible && (
  <motion.div

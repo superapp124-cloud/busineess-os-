@@ -15,7 +15,7 @@ CREATE TABLE public.game_user_profiles (
   UNIQUE(user_id)
 );
 
--- 1. PARALLEL YOU - AI Doppelganger Game
+-- 1. PARALLEL YOU - SI Doppelganger Game
 CREATE TABLE public.parallel_you_profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL,
@@ -209,7 +209,7 @@ SELECT
     WHEN n <= 40 THEN 'Mastering ' || (n-30)
     ELSE 'Transcending ' || (n-40)
   END,
-  'Challenge your AI twin at level ' || n,
+  'Challenge your SI twin at level ' || n,
   CASE WHEN n <= 10 THEN 'easy' WHEN n <= 25 THEN 'medium' WHEN n <= 40 THEN 'hard' ELSE 'expert' END,
   n * 50,
   n * 10,

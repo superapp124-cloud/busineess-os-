@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 /**
  * Execution Dashboard
- * Visualizes the inner workings of the frozen AI Subsystem pipeline.
+ * Visualizes the inner workings of the frozen SI Subsystem pipeline.
  */
 export default function ExecutionDashboard() {
  const [logs, setLogs] = useState<any[]>([]);
@@ -37,7 +37,7 @@ export default function ExecutionDashboard() {
 
  return (
  <div style={{ padding: '2rem', background: '#0a0a0a', color: '#eaeaea', minHeight: '100vh', fontFamily: 'monospace' }}>
- <h1 style={{ color: '#00ffcc', marginBottom: '2rem' }}>AI Operating System Pipeline — Telemetry Stream</h1>
+ <h1 style={{ color: '#00ffcc', marginBottom: '2rem' }}>SI Operating System Pipeline — Telemetry Stream</h1>
  
  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
  {logs.map((log, i) => (

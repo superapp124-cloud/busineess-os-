@@ -53,7 +53,7 @@ export default function FameCam() {
  };
 
  const fetchAIGuidance = async () => {
- // Simulate AI guidance for now
+ // Simulate SI guidance for now
  setAiGuidance({
  category: "Dance",
  tips: [
@@ -91,7 +91,7 @@ export default function FameCam() {
 
  const handleCategoryChange = (category: string) => {
  setCurrentCategory(category);
- // Fetch new AI guidance for this category
+ // Fetch new SI guidance for this category
  fetchAIGuidance();
  };
 
@@ -120,7 +120,7 @@ export default function FameCam() {
  <div className="flex-1 relative">
  <FameCamViewfinder />
  
- {/* AI Overlay */}
+ {/* SI Overlay */}
  {aiGuidance && (
  <AIGuidanceOverlay 
  guidance={aiGuidance}

@@ -17,10 +17,10 @@ const features: (Omit<FeatureCardProps, 'onClick'> & { key: string })[] = [
   },
   {
     key: 'agents',
-    title: 'AI Agents',
+    title: 'SI Agents',
     description: 'Specialized agents for career, research, travel and more.',
     imageUrl: '/images/landing/ai-agents.jpg',
-    imageAlt: 'AI technology and intelligent agents working alongside humans',
+    imageAlt: 'SI technology and intelligent agents working alongside humans',
     icon: Sparkles,
   },
   {
@@ -75,7 +75,7 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({ onCardClick }) => {
           </h2>
 
           <p className="text-base sm:text-lg text-[#53605C] leading-relaxed">
-            From career and research to travel, business and everyday life — CHATR gives you the tools and AI agents to turn your intent into action.
+            From career and research to travel, business and everyday life — CHATR gives you the tools and SI agents to turn your intent into action.
           </p>
         </div>
 

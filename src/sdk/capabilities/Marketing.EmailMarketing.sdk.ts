@@ -29,7 +29,7 @@ export const MarketingEmailMarketingSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Email Marketing AI',
+    assistantName: 'Email Marketing SI',
     skills: []
   },
   

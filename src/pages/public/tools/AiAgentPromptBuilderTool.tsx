@@ -99,7 +99,7 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
   };
 
   const compiledPrompt = [
-    'You are ' + agentName + ', an autonomous AI business agent running on the CHATR Intent Operating System.',
+    'You are ' + agentName + ', an autonomous SI business agent running on the CHATR Intent Operating System.',
     'ROLE & OBJECTIVE:',
     objective,
     '',
@@ -131,7 +131,7 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "AI Agent Prompt & System Instructions Builder",
+    "name": "SI Agent Prompt & System Instructions Builder",
     "url": "https://www.chatrchat.in/tools/ai-agent-prompt-builder",
     "description": "Design production-ready system instructions, role constraints, tool-calling schemas, and safety boundaries for autonomous business agents.",
     "applicationCategory": "BusinessApplication",
@@ -141,9 +141,9 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="AI Agent Prompt & System Instructions Builder | CHATR AI"
-        description="Free interactive AI prompt builder. Create production-ready system instructions, role constraints, tool-calling schemas, and safety boundaries for sales and support agents."
-        keywords="ai agent prompt builder, system instructions generator, llm guardrails builder, ai intent schema generator, chatr ai tool"
+        title="SI Agent Prompt & System Instructions Builder | CHATR SI"
+        description="Free interactive SI prompt builder. Create production-ready system instructions, role constraints, tool-calling schemas, and safety boundaries for sales and support agents."
+        keywords="si agent prompt builder, system instructions generator, llm guardrails builder, ai intent schema generator, chatr ai tool"
         schemaData={schemaData}
       />
       <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500 selection:text-white">
@@ -152,14 +152,14 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
           <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 font-bold text-base">
               <span className="bg-purple-600 text-white px-2 py-0.5 rounded-md text-xs font-black tracking-wider">CHATR</span>
-              <span className="text-slate-400 font-medium text-xs">/ AI Agent Prompt Builder</span>
+              <span className="text-slate-400 font-medium text-xs">/ SI Agent Prompt Builder</span>
             </Link>
             <div className="flex items-center gap-3">
               <Link
                 to="/chatr-ai"
                 className="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-xs font-semibold text-white transition-colors"
               >
-                CHATR AI Canvas
+                CHATR SI Canvas
               </Link>
             </div>
           </div>
@@ -173,7 +173,7 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
               <span>AGENTIC SYSTEM INSTRUCTIONS STUDIO</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              AI Agent Prompt & System Schema Builder
+              SI Agent Prompt & System Schema Builder
             </h1>
             <p className="text-slate-400 text-sm md:text-base leading-relaxed">
               Generate enterprise-grade system prompts with strict safety boundaries, tool-calling definitions, and role calibrations for autonomous agents.
@@ -304,9 +304,9 @@ export const AiAgentPromptBuilderTool: React.FC = () => {
 
           {/* Educational GEO Content */}
           <section id="direct-answer" className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-4">
-            <h3 className="text-lg font-bold text-white">Why are structured system prompts essential for AI Agents?</h3>
+            <h3 className="text-lg font-bold text-white">Why are structured system prompts essential for SI Agents?</h3>
             <p className="text-slate-300 text-sm leading-relaxed">
-              Autonomous AI agents require explicit operational boundaries, deterministic tool schemas, and strict error handling protocols to prevent unauthorized financial commitments, hallucinated promises, and prompt injection attacks. CHATR AI Canvas compiles human intent into guarded execution graphs backed by strict verification contracts.
+              Autonomous SI agents require explicit operational boundaries, deterministic tool schemas, and strict error handling protocols to prevent unauthorized financial commitments, hallucinated promises, and prompt injection attacks. CHATR SI Canvas compiles human intent into guarded execution graphs backed by strict verification contracts.
             </p>
           </section>
         </main>

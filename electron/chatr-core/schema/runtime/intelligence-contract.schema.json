@@ -37,7 +37,7 @@
         },
         "recommendationContext": {
           "type": "object",
-          "description": "Context enabling AI to generate next-best-action recommendations"
+          "description": "Context enabling SI to generate next-best-action recommendations"
         },
         "learningArtifacts": {
           "type": "array",

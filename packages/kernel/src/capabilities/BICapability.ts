@@ -16,7 +16,7 @@ export class BICapability implements Capability<BIAnalysisInput, { netCashFlow: 
     id: 'capability-bi-analytics',
     version: '1.0.0',
     name: 'Business Intelligence OS Cashflow & Financial Analytics Capability',
-    description: 'Computes deterministic financial margin metrics and generates AI executive summaries via OpenRouter',
+    description: 'Computes deterministic financial margin metrics and generates SI executive summaries via OpenRouter',
     maturityLevel: 'L5',
     inputSchema: {},
     outputSchema: {},
@@ -37,13 +37,13 @@ export class BICapability implements Capability<BIAnalysisInput, { netCashFlow: 
   ): Promise<ExecutionResult<{ netCashFlow: number; aiExecutiveSummary: string; riskAlerts: string[] }>> {
     console.log(`[BICapability] Executing Business Intelligence financial analysis (MRR: $${input.mrr})`);
 
-    // 1. Deterministic Calculation ($0 AI cost)
+    // 1. Deterministic Calculation ($0 SI cost)
     const netCashFlow = Math.round(input.mrr - input.collectionsOverdue + input.openInvoicesValue * 0.8);
     const riskAlerts: string[] = [];
     if (input.collectionsOverdue > 15000) riskAlerts.push('High Collections Overdue Risk (>$15k)');
     if (input.grossMarginPercent < 30) riskAlerts.push('Gross Margin Warning (<30%)');
 
-    // 2. Probabilistic AI Executive Summary
+    // 2. Probabilistic SI Executive Summary
     const adapter = new OpenRouterProviderAdapter();
     const aiResult = await AIExecutor.execute(ctx, adapter, {
       capability: this.manifest.id,
@@ -61,7 +61,7 @@ export class BICapability implements Capability<BIAnalysisInput, { netCashFlow: 
         riskAlerts,
       },
       diagnostics: [
-        { severity: 'info', message: `Cashflow calculated deterministically; CEO summary generated via OpenRouter AI` },
+        { severity: 'info', message: `Cashflow calculated deterministically; CEO summary generated via OpenRouter SI` },
       ],
       metrics: {
         durationMs: aiResult.metrics.durationMs + 3,

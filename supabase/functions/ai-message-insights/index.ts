@@ -81,7 +81,7 @@ serve(async (req) => {
     } catch (e) {
       console.error('Failed to parse insights JSON:', insights);
       return new Response(
-        JSON.stringify({ insights: { error: 'Failed to parse AI response', raw: insights } }),
+        JSON.stringify({ insights: { error: 'Failed to parse SI response', raw: insights } }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

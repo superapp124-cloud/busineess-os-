@@ -100,7 +100,7 @@ export const SupportHelpdeskSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Helpdesk AI',
+    assistantName: 'Helpdesk SI',
     skills: []
   },
   

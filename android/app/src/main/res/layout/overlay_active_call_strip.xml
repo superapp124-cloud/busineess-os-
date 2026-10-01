@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- CHATR AI GSM Layer — Floating Bubble
+<!-- CHATR SI GSM Layer — Floating Bubble
      A compact draggable icon sitting over the native dialer.
-     Tap → opens full AI Assist Drawer.
+     Tap → opens full SI Assist Drawer.
      Color changes to signal trust level / scam warnings. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="60dp"
@@ -25,13 +25,13 @@
         android:background="@drawable/bubble_bg"
         android:elevation="8dp">
 
-        <!-- CHATR AI icon text -->
+        <!-- CHATR SI icon text -->
         <TextView
             android:id="@+id/bubbleIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="AI"
+            android:text="SI"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"

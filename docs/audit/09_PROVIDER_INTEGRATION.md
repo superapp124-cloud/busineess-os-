@@ -2,15 +2,15 @@
 
 ## Summary
 
-CHATR has broad provider ambition across AI, Supabase, payments, travel, food, notifications, calendar, documents, and local desktop execution. Provider integration is not yet unified into Workflow Studio. Most integrations are either service-specific, UI-specific, Electron-specific, or manifest-only.
+CHATR has broad provider ambition across SI, Supabase, payments, travel, food, notifications, calendar, documents, and local desktop execution. Provider integration is not yet unified into Workflow Studio. Most integrations are either service-specific, UI-specific, Electron-specific, or manifest-only.
 
 ## Provider Matrix
 
 | Provider | Authentication | Status | Where implemented | Reusable by Studio? | Production ready? |
 | --- | --- | --- | --- | --- | --- |
-| OpenAI | API key env | Partial | `src/services/ai.ts`, Electron adaptive intelligence | Indirect through AI service | Partial |
+| OpenAI | API key env | Partial | `src/services/ai.ts`, Electron adaptive intelligence | Indirect through SI service | Partial |
 | Anthropic | Not implemented | Missing/placeholder | Electron provider throws/not implemented | No | No |
-| Google Gemini | API key env | Partial | `src/services/ai.ts` | Indirect through AI service | Partial |
+| Google Gemini | API key env | Partial | `src/services/ai.ts` | Indirect through SI service | Partial |
 | Google Workspace/Calendar | OAuth callbacks/pages | Partial | Calendar callback pages, capabilities | Not as Studio nodes | Partial |
 | AWS | Not found for Studio | Missing | None identified | No | No |
 | Azure | Not found for Studio | Missing | None identified | No | No |
@@ -37,7 +37,7 @@ CHATR has broad provider ambition across AI, Supabase, payments, travel, food, n
 | Zomato | Public/browser experimental | Experimental | Electron manifest | Not Studio node | No |
 | UPI | Manifest | Partial/experimental | provider manifest | Not Studio node | No |
 
-## AI Providers
+## SI Providers
 
 `src/services/ai.ts` route order:
 
@@ -48,7 +48,7 @@ CHATR has broad provider ambition across AI, Supabase, payments, travel, food, n
 5. Gemini/OpenAI functions exist but are not reached while strict privacy remains true.
 6. Supabase Edge fallback exists after cloud attempts.
 
-This is privacy-positive but means AI Builder depends heavily on local AI availability unless product settings change.
+This is privacy-positive but means SI Builder depends heavily on local SI availability unless product settings change.
 
 ## Payment Providers
 

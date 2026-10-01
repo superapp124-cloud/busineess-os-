@@ -11,7 +11,7 @@ const GSC_INDEXING_URL = 'https://search.google.com/search-console/index?resourc
 const VERTICALS = [
   { slug: 'recruitment-agencies', title: 'Recruitment & Staffing Automation' },
   { slug: 'whatsapp-business-api', title: 'WhatsApp Business API & Automation' },
-  { slug: 'hiring-automation', title: 'AI Hiring & Applicant Screening' },
+  { slug: 'hiring-automation', title: 'SI Hiring & Applicant Screening' },
   { slug: 'real-estate-lead-management', title: 'Real Estate Lead Management CRM' },
   { slug: 'healthcare-patient-messaging', title: 'Healthcare & Clinic Patient Messaging' },
   { slug: 'education-admissions', title: 'Education & Admissions CRM' },
@@ -51,7 +51,7 @@ export const PagesIndexationView: React.FC = () => {
     // Core Authority Pages
     list.push({ url: `${DOMAIN}/`, path: '/', cohort: 'Core Pages', type: 'Homepage Root' });
     list.push({ url: `${DOMAIN}/locations`, path: '/locations', cohort: 'Core Pages', type: 'Global Directory' });
-    list.push({ url: `${DOMAIN}/chatr/ai`, path: '/chatr/ai', cohort: 'Core Pages', type: 'Universal AI' });
+    list.push({ url: `${DOMAIN}/chatr/ai`, path: '/chatr/ai', cohort: 'Core Pages', type: 'Universal SI' });
     list.push({ url: `${DOMAIN}/chatr/whatsapp-business-api`, path: '/chatr/whatsapp-business-api', cohort: 'Core Pages', type: 'Meta WhatsApp API' });
     list.push({ url: `${DOMAIN}/talentxcel/ai-resume-parser`, path: '/talentxcel/ai-resume-parser', cohort: 'Core Pages', type: 'TalentXcel ATS' });
     list.push({ url: `${DOMAIN}/tools/resume-grader`, path: '/tools/resume-grader', cohort: 'Growth Tools', type: 'ATS Resume Grader' });

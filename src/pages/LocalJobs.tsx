@@ -449,7 +449,7 @@ export default function LocalJobs() {
  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800')] opacity-20 bg-cover bg-center" />
  <div className="relative p-5">
- <Badge className="bg-white/20 text-white border-0 mb-2"><Sparkles className="w-3 h-3 mr-1" />AI-Powered</Badge>
+ <Badge className="bg-white/20 text-white border-0 mb-2"><Sparkles className="w-3 h-3 mr-1" />SI-Powered</Badge>
  <h2 className="text-section font-bold text-white mb-1">{filteredJobs.length}+ Jobs Found</h2>
  <p className="text-white/80 text-secondary">Aggregated from Indeed, LinkedIn, Naukri & more</p>
  </div>

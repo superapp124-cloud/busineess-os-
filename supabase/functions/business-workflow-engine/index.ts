@@ -88,7 +88,7 @@ serve(async (req) => {
       // Simulate execution based on node type
       if (node.type === "ai_decision") {
         // Normally we would call OpenAI here based on node.data.prompt
-        executionLog.push({ action: "AI Decision Executed", prompt: node.data?.prompt });
+        executionLog.push({ action: "SI Decision Executed", prompt: node.data?.prompt });
       } else if (node.type === "action") {
         executionLog.push({ action: "Action Executed", actionName: node.data?.label });
       }

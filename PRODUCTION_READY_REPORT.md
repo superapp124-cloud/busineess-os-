@@ -37,7 +37,7 @@ Chatr is a **fully functional, real-time super app** combining communication, he
 - Connection quality monitoring
 
 ### 3. **Health Hub** ✅
-- AI Health Assistant (GPT-powered chatbot)
+- SI Health Assistant (GPT-powered chatbot)
 - Vitals & wellness tracking dashboard
 - Lab reports upload & management
 - Medication reminders
@@ -50,7 +50,7 @@ Chatr is a **fully functional, real-time super app** combining communication, he
 ### 4. **Care Access** ✅
 - Doctor appointment booking
 - Emergency button (one-tap alert)
-- AI triage routing
+- SI triage routing
 - Teleconsultation (video/audio)
 - Provider directory
 - Provider registration portal
@@ -178,7 +178,7 @@ Chatr is a **fully functional, real-time super app** combining communication, he
 - ✅ Auto-reconnect works
 
 ### Health Hub
-- ✅ AI assistant responds
+- ✅ SI assistant responds
 - ✅ Upload lab reports
 - ✅ Set medication reminders
 - ✅ View health passport
@@ -250,7 +250,7 @@ Chatr is a **fully functional, real-time super app** combining communication, he
 - Lovable.dev (Frontend)
 - Supabase (Backend, Database, Auth, Realtime, Storage)
 - WebRTC (Calls)
-- OpenAI (AI Assistant)
+- OpenAI (SI Assistant)
 - Capacitor (Native Mobile)
 
 **Ready for users. Ready for scale. Ready for production.**

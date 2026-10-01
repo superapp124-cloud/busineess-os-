@@ -43,7 +43,7 @@ const AIBubbleShooterGame: React.FC<AIBubbleShooterGameProps> = ({ level, onComp
  const offset = row % 2 === 0 ? 0 : 6;
  
  for (let col = 0; col < cols; col++) {
- // AI creates strategic patterns
+ // SI creates strategic patterns
  const colorIndex = (row + col + level) % COLORS.length;
  initialBubbles.push({
  id: row * 10 + col,
@@ -63,7 +63,7 @@ const AIBubbleShooterGame: React.FC<AIBubbleShooterGameProps> = ({ level, onComp
  setShotsLeft(30 + level * 5);
  setCurrentBubble(COLORS[Math.floor(Math.random() * COLORS.length)]);
  setNextBubble(COLORS[Math.floor(Math.random() * COLORS.length)]);
- setAiMessage('AI is analyzing the board...');
+ setAiMessage('SI is analyzing the board...');
  setTimeout(() => setAiMessage(''), 2000);
  };
 
@@ -93,9 +93,9 @@ const AIBubbleShooterGame: React.FC<AIBubbleShooterGameProps> = ({ level, onComp
  setScore(s => s + points);
  toast.success(`+${points} points!`);
  
- // AI reacts
+ // SI reacts
  if (matches.length >= 5) {
- setAiMessage('🤖 Impressive combo! AI adapting...');
+ setAiMessage('🤖 Impressive combo! SI adapting...');
  }
  
  setTimeout(() => {
@@ -204,9 +204,9 @@ const AIBubbleShooterGame: React.FC<AIBubbleShooterGameProps> = ({ level, onComp
  />
  ))}
  </div>
- <h2 className="text-page font-bold text-white mb-2">AI Bubble Shooter</h2>
+ <h2 className="text-page font-bold text-white mb-2">SI Bubble Shooter</h2>
  <p className="text-gray-400 mb-6">
- AI creates strategic bubble patterns. Match 3+ to pop!
+ SI creates strategic bubble patterns. Match 3+ to pop!
  </p>
  <Button onClick={startGame} className="bg-purple-600 hover:bg-purple-700">
  <Zap className="w-4 h-4 mr-2" /> Start Game

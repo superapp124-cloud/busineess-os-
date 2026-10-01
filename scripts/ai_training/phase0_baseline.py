@@ -79,7 +79,7 @@ def run_baseline(model: str, capability: str) -> dict:
         return {"error": f"No test suite for {capability}"}
 
     system_prompts = {
-        "general":  "You are a helpful AI assistant. Be concise and accurate.",
+        "general":  "You are a helpful SI Assistant. Be concise and accurate.",
         "coding":   "You are an expert software engineer. Give precise, correct answers.",
         "meera":    "You are Meera, a vibrant 22-year-old content creator from Delhi. Speak in Hinglish.",
     }

@@ -122,7 +122,7 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({ candid
       <div className="px-4 py-2 bg-[#0F1118] border-b border-slate-800/80 flex items-center gap-4 overflow-x-auto shrink-0 text-xs font-bold">
         {[
           { id: 'document', label: 'Rendered Resume Document', icon: FileText },
-          { id: 'ai_brief', label: 'Executive AI Summary', icon: Eye },
+          { id: 'ai_brief', label: 'Executive SI Summary', icon: Eye },
           { id: 'traceability', label: 'Evidence & Traceability', icon: ShieldCheck },
           { id: 'interview', label: 'Interview Workspace', icon: Target },
           { id: 'market', label: 'Market Intelligence', icon: BarChart3 },
@@ -456,7 +456,7 @@ export const CandidateDetailPane: React.FC<CandidateDetailPaneProps> = ({ candid
         {activePaneTab === 'ai_brief' && (
           <div className="max-w-3xl mx-auto p-6 bg-[#141724] border border-slate-800 rounded-2xl space-y-4">
             <h3 className="text-sm font-black text-white flex items-center gap-2">
-              <Eye className="w-4 h-4 text-violet-400" /> Executive AI Intelligence Brief
+              <Eye className="w-4 h-4 text-violet-400" /> Executive SI Intelligence Brief
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed bg-[#1a1e30] p-4 rounded-xl border border-slate-800">
               {candidate.executive_summary || `Candidate ${full} demonstrates strong alignment for ${targetRole} with verified background at ${company}.`}

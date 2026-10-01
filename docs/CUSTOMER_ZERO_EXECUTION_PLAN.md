@@ -2,7 +2,7 @@
 
 ## Purpose
 
-CHATR should become the first production customer of the CHATR Conversation Platform. Mobile, Desktop, Business Workspace, Enterprise Workspace, and future developer apps should consume the same internal platform APIs instead of each surface owning separate implementations for messaging, calling, automation, AI, notifications, and workspace state.
+CHATR should become the first production customer of the CHATR Conversation Platform. Mobile, Desktop, Business Workspace, Enterprise Workspace, and future developer apps should consume the same internal platform APIs instead of each surface owning separate implementations for messaging, calling, automation, SI, notifications, and workspace state.
 
 The goal is not a rewrite. The goal is a staged migration that preserves working product behavior while moving existing code behind stable platform contracts.
 
@@ -11,7 +11,7 @@ The goal is not a rewrite. The goal is a staged migration that preserves working
 Use three documents as the durable engineering blueprint:
 
 - `docs/CHATR_PLATFORM_VISION.md`: product vision and long-term platform direction.
-- `docs/PLATFORM_ARCHITECTURE.md`: services, APIs, event model, plugin model, AI tool registry, observability, security, and Platform Console.
+- `docs/PLATFORM_ARCHITECTURE.md`: services, APIs, event model, plugin model, SI tool registry, observability, security, and Platform Console.
 - `docs/PLATFORM_EXECUTION_PLAYBOOK.md`: migration order, governance, coding standards, testing, versioning, deprecation, release process, and Customer Zero metrics.
 
 This document remains the Customer Zero migration plan.
@@ -46,24 +46,24 @@ This is the right seed, but it is currently recruitment-specific and should be g
 
 ### Intelligence and knowledge foundation
 
-- `src/services/intelligence/schema.ts` defines a rich communication event, relationship, threat, AI, attention, and timeline model.
+- `src/services/intelligence/schema.ts` defines a rich communication event, relationship, threat, SI, attention, and timeline model.
 - `src/services/intelligence/engine.ts` already implements a pipeline for ingestion, classification, scoring, action generation, timeline updates, and notification decisions.
 - `src/services/intelligence/eventBus.ts` already has a typed event bus and dead-letter behavior.
 
 This should become part of the platform knowledge layer rather than staying separate from the Supabase event bus.
 
-### AI and agent foundation
+### SI and agent foundation
 
 - `src/services/chatrBrain` contains routing, memory, actions, agent communication, and domain agents.
 - `src/lib/ai` contains execution plans, a communication agent, context graph behavior, and model routing.
 
-These overlap. They should be consolidated into one `AI Orchestrator` and `Agent Manager`.
+These overlap. They should be consolidated into one `SI Orchestrator` and `Agent Manager`.
 
 ### Business and automation foundation
 
 - `supabase/functions/business-workflow-engine` and related functions show early workflow automation.
 - `src/pages/desktop/RecruiterWorkspace.tsx` already demonstrates a Customer Zero use case where events update a live workspace pipeline.
-- Existing edge functions for notifications, AI, search, calling, and business workflows can become platform services instead of page-specific utilities.
+- Existing edge functions for notifications, SI, search, calling, and business workflows can become platform services instead of page-specific utilities.
 
 ## Main Gaps
 
@@ -98,12 +98,12 @@ The app still has legacy/direct call flows alongside the communication engine. D
 
 `orchestration-event-router` currently handles recruitment-specific behavior such as positive candidate replies and interview scheduling. That behavior is valuable, but it belongs in workflow rules or agents, not hardcoded inside the generic event router.
 
-### AI systems overlap
+### SI systems overlap
 
 `chatrBrain`, `src/lib/ai`, and `src/services/intelligence` each own part of routing, context, execution, memory, or decisioning. The platform needs one composition model:
 
 - Knowledge layer ingests and indexes events.
-- AI Orchestrator decides what should happen.
+- SI Orchestrator decides what should happen.
 - Agent Manager selects and runs reusable agents.
 - Workflow Engine executes durable actions and approvals.
 
@@ -225,7 +225,7 @@ Initial adapters:
 - `mobile_action_queue` as an initial action queue.
 - Existing business workflow functions.
 
-### AI Orchestrator and Agent Manager
+### SI Orchestrator and Agent Manager
 
 Own decisioning, planning, agent selection, tool permissions, escalation, confidence thresholds, and memory.
 
@@ -331,7 +331,7 @@ Acceptance criteria:
 - Call outcomes land in the conversation timeline.
 - Calling UI no longer directly owns call persistence.
 
-### Phase 5 - AI Orchestrator and Agent Manager
+### Phase 5 - SI Orchestrator and Agent Manager
 
 Deliverables:
 
@@ -342,7 +342,7 @@ Deliverables:
 
 Acceptance criteria:
 
-- AI decisions are event-driven.
+- SI decisions are event-driven.
 - Agents can be reused by Desktop, Mobile, Business, and Enterprise surfaces.
 - Workflow actions require permissions and can escalate to a human.
 
@@ -418,7 +418,7 @@ Risk: Calling has real-time behavior and device permissions, so migration can br
 
 Mitigation: Keep the communication engine as the source of truth. Move one caller at a time. Verify incoming, outgoing, audio, video, mute, hangup, and reconnect paths after each change.
 
-### AI overreach
+### SI overreach
 
 Risk: Agents could execute actions without enough context or permissions.
 

@@ -18,7 +18,7 @@ The **Intent Store** serves as the **Local Declarative Package Manager Engine** 
     ┌───────────────────────────────┼───────────────────────────────┐
     │                               │                               │
     ▼                               ▼                               ▼
-AI Agent Packs              Connector Packs            Layer 15 Industry Composition Packs
+SI Agent Packs              Connector Packs            Layer 15 Industry Composition Packs
 (E.g. Recruiter Agent)      (E.g. FHIR, AS9100)        (16 Vertical Industry Packs)
                                     │
                                     ▼

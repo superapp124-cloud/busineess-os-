@@ -3,8 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 // Cloud usage remaining in this file (intentional, router-gated):
 //   - generateSmartReplyTextsWithCloudFallback → ai-smart-reply (only reached when Nano unavailable)
 // Cloud usage removed (converted to Tier-1 rules-based):
-//   - summarizeChatWithFallback: was → summarize-chat (CHATR AI edge function). Now: buildExtractiveSummary()
-//   - generateSmartComposeWithFallback: was → smart-compose (CHATR AI edge function). Now: buildStaticComposeStarters()
+//   - summarizeChatWithFallback: was → summarize-chat (CHATR SI edge function). Now: buildExtractiveSummary()
+//   - generateSmartComposeWithFallback: was → smart-compose (CHATR SI edge function). Now: buildStaticComposeStarters()
 
 export const ON_DEVICE_AI_ENABLED_KEY = 'chatr.onDeviceAi.enabled';
 
@@ -112,7 +112,7 @@ export const generateOnDeviceText = async (
       if (availability.available) {
         const result = await OnDeviceAi.generate(options);
         if (result.gateBlocked) {
-          console.debug('[OnDeviceAI] AI Gate Blocked by StabilityConfig');
+          console.debug('[OnDeviceAI] SI Gate Blocked by StabilityConfig');
           return { gateBlocked: true, text: '' }; // Explicitly return gateBlocked state
         }
         return result;
@@ -134,14 +134,14 @@ export const summarizeChatWithFallback = async (messages: unknown[]): Promise<st
   });
 
   if (nativeSummary?.gateBlocked) {
-    return 'AI features coming soon.';
+    return 'SI features coming soon.';
   }
 
   if (nativeSummary?.text) return nativeSummary.text;
 
   // Tier-1 rules-based fallback — no cloud call.
   // Returns a deterministic extractive summary from the last 5 messages.
-  // Cloud AI (summarize-chat edge function) is intentionally not called here;
+  // Cloud SI (summarize-chat edge function) is intentionally not called here;
   // re-enable as an explicit Tier-3 opt-in if needed.
   return buildExtractiveSummary(formattedMessages);
 };
@@ -160,7 +160,7 @@ export const generateSmartComposeWithFallback = async (
 
   // Tier-1 rules-based fallback — no cloud call.
   // Returns static context-aware compose starters derived locally.
-  // Cloud AI (smart-compose edge function) is intentionally not called here;
+  // Cloud SI (smart-compose edge function) is intentionally not called here;
   // re-enable as an explicit Tier-3 opt-in if needed.
   return buildStaticComposeStarters(recentMessages);
 };
@@ -256,7 +256,7 @@ const buildSmartRepliesPrompt = (messages: ChatMessageForAI[]) => {
 
 /**
  * Tier-1 rules-based extractive summary.
- * Produces a human-readable summary from raw message objects without any AI call.
+ * Produces a human-readable summary from raw message objects without any SI call.
  * Format: "[N messages] — <sender>: <snippet>, <sender>: <snippet>, ..."
  */
 const buildExtractiveSummary = (messages: ChatMessageForAI[]): string => {
@@ -277,7 +277,7 @@ const buildExtractiveSummary = (messages: ChatMessageForAI[]): string => {
 /**
  * Tier-1 rules-based compose starters.
  * Returns 3 short reply suggestions derived locally from the last message.
- * No AI call, no external dependency.
+ * No SI call, no external dependency.
  */
 const buildStaticComposeStarters = (messages: ChatMessageForAI[]): string[] => {
   const last = messages[messages.length - 1];

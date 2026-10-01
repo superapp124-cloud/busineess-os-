@@ -6,7 +6,7 @@ import java.util.UUID
 /**
  * Every action the CHATR kernel may ever execute is enumerated here.
  *
- * INVARIANT: The AI model proposes an IntentAction. The Trust Kernel authorizes it.
+ * INVARIANT: The SI model proposes an IntentAction. The Trust Kernel authorizes it.
  * The Tool Registry executes it. No step in this chain may be bypassed.
  */
 enum class IntentAction {
@@ -59,9 +59,9 @@ enum class IntentAction {
 }
 
 /**
- * A structured, validated representation of what the AI model proposes to do.
+ * A structured, validated representation of what the SI model proposes to do.
  *
- * The AI model NEVER calls any tool or Android API directly.
+ * The SI model NEVER calls any tool or Android API directly.
  * It produces a KernelIntent and returns it to the Intent Engine.
  * The Trust Kernel then evaluates the intent and decides whether to authorize execution.
  */

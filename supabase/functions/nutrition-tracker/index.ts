@@ -37,7 +37,7 @@ serve(async (req) => {
       case 'log_food': {
         const { food_name, meal_type, quantity } = params;
         
-        // Use direct AI to estimate nutrition
+        // Use direct SI to estimate nutrition
         let nutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
 
         try {
@@ -67,7 +67,7 @@ Use typical Indian portion sizes. Be accurate for common foods like roti, dal, r
           const parsed = JSON.parse(clean);
           nutrition = { ...nutrition, ...parsed };
         } catch (e) {
-          console.log('Could not parse AI response, using defaults:', e);
+          console.log('Could not parse SI response, using defaults:', e);
         }
 
         // Log the food

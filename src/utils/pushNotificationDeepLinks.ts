@@ -53,7 +53,7 @@ export const NOTIFICATION_DEEP_LINKS: Record<string, NotificationDeepLink> = {
   'reward_available': { route: '/rewards' },
   'daily_challenge': { route: '/chatr-games' },
   
-  // AI
+  // SI
   'ai_agent_response': { route: '/ai-agents', params: { agentId: ':agentId' } },
   'ai_task_complete': { route: '/ai-assistant' },
   

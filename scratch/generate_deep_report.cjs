@@ -6,7 +6,7 @@ const aiMockData = JSON.parse(fs.readFileSync('scratch/audit_ai_mocks.json', 'ut
 let md = `# CHATR Desktop OS — Deep Production Readiness Audit
 
 ## Executive Summary
-This audit traces the actual AST implementation across all Desktop, Business, and OS modules. It evaluates runtime validity by examining \`onClick\` handlers, Supabase \`.from()\` bindings, AI tool calling, and OS CommandBus usage.
+This audit traces the actual AST implementation across all Desktop, Business, and OS modules. It evaluates runtime validity by examining \`onClick\` handlers, Supabase \`.from()\` bindings, SI tool calling, and OS CommandBus usage.
 
 ## 1. Runtime Interaction Validation
 _Static tracking of action handlers (e.g. \`onClick\`, \`onSubmit\`)_
@@ -56,7 +56,7 @@ for (const [table, data] of tables) {
 }
 
 md += `
-## 3. AI Pipeline Audit
+## 3. SI Pipeline Audit
 _Tracing prompt construction, planners, execution, and streaming capabilities._
 
 | Module/File | Prompt Builder | Memory/RAG | Tool Calling | Reasoner | Execution | Streaming | Final Status |
@@ -74,8 +74,8 @@ for (const ai of aiMockData.aiEvidence) {
         const st = ai.capabilities.includes('Streaming') ? '✅' : '❌';
         
         let status = 'Simulated/Static';
-        if (ai.capabilities.length > 3) status = 'Partial AI';
-        if (ai.capabilities.includes('Execution') && ai.capabilities.includes('Streaming')) status = 'Production AI';
+        if (ai.capabilities.length > 3) status = 'Partial SI';
+        if (ai.capabilities.includes('Execution') && ai.capabilities.includes('Streaming')) status = 'Production SI';
         
         md += `| ${filename} | ${pb} | ${rag} | ${tc} | ${re} | ${ex} | ${st} | **${status}** |\n`;
     }
@@ -146,7 +146,7 @@ md += `
 ## Final Engineering Verification
 
 - **Realtime OS Architecture**: \`AppLifecycleManager\`, \`InterAppCommunication\`, and \`PermissionManager\` are heavily wired to the \`chatr_os_apps\` and \`app_permissions\` Supabase tables, proving OS primitives exist at the backend level.
-- **Workflow / AI Modules**: Almost entirely simulated at the component level using \`setTimeout\` and hardcoded \`useState\` arrays, despite the \`CommandBus\` being implemented.
+- **Workflow / SI Modules**: Almost entirely simulated at the component level using \`setTimeout\` and hardcoded \`useState\` arrays, despite the \`CommandBus\` being implemented.
 - **Data Layers**: \`profiles\`, \`contacts\`, \`messages\`, \`app_sessions\` are production-wired.
 `;
 

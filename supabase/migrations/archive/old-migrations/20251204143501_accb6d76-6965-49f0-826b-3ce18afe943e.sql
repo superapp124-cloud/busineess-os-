@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS public.quick_reply_templates (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- AI generated stickers table
+-- SI generated stickers table
 CREATE TABLE IF NOT EXISTS public.ai_stickers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL,

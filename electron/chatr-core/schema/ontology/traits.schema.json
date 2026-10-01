@@ -27,7 +27,7 @@
       }
     },
     "Knowledge": {
-      "description": "Traits enabling AI, indexing, and knowledge retrieval.",
+      "description": "Traits enabling SI, indexing, and knowledge retrieval.",
       "traits": {
         "Searchable": { "provides": ["searchIndex", "keywords", "fullTextSearch"] },
         "VectorSearchable": { "provides": ["embedding", "similaritySearch", "semanticSearch"] },
@@ -58,8 +58,8 @@
         "Archivable": { "provides": ["archive", "restore", "purge", "archivedAt"] }
       }
     },
-    "AI": {
-      "description": "Traits making objects understandable and actionable by AI systems.",
+    "SI": {
+      "description": "Traits making objects understandable and actionable by SI systems.",
       "traits": {
         "AIDiscoverable": { "provides": ["ontologyMetadata", "capabilityHints", "promptContext"] },
         "AIReasonable": { "provides": ["reasoningContext", "evidence", "inferenceChain"] },

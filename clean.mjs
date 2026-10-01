@@ -37,7 +37,7 @@ const correctEnding = `/* Shield pulse heartbeat */
   background-clip: text;
 }
 
-/* AI blink */
+/* SI blink */
 @keyframes ai-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }

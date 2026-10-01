@@ -68,7 +68,7 @@ serve(async (req) => {
 Chatr+ is a secure messaging platform with:
 ✨ End-to-end encrypted chats
 📞 Voice & video calls
-🎯 Smart AI features
+🎯 Smart SI features
 🌍 Auto-translation
 
 Join now: ${inviteLink}

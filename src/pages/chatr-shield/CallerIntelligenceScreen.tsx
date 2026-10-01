@@ -84,7 +84,7 @@ const CallerIntelligenceScreen: React.FC<CallerIntelligenceScreenProps> = ({ cal
  <TrustScoreBadge score={isSpam ? 10 : caller.trustScore} band={isSpam ? 'block' : caller.trustBand} />
  </div>
 
- {/* AI Analysis */}
+ {/* SI Analysis */}
  <AIAnalysisCard 
  summary={isSpam ? "This number is manually marked as spam. All calls will be automatically flagged." : caller.aiSummary} 
  flags={isSpam ? ["Manually Flagged", "User Blocked"] : caller.aiFlags} 

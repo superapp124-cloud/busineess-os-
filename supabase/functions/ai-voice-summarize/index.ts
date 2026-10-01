@@ -45,7 +45,7 @@ serve(async (req) => {
       );
     }
 
-    // Format messages for AI
+    // Format messages for SI
     const formattedMessages = messages
       .map((m: any) => {
         const senderName = Array.isArray(m.sender) ? m.sender[0]?.username : m.sender?.username;
@@ -53,7 +53,7 @@ serve(async (req) => {
       })
       .join('\n');
 
-    // Call direct AI Provider
+    // Call direct SI Provider
     const response = await completeChat({
       primaryProvider: "gemini",
       fallbackProviders: ["groq", "openrouter"],

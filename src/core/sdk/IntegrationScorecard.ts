@@ -72,7 +72,7 @@ export class IntegrationCertification {
    * @param mandatory     Results of the three mandatory checks
    * @param scored        Results of the three scored checks
    * @param benchmark     Optional benchmark data for regression detection
-   * @param extras        Optional AI quality results and known limitations
+   * @param extras        Optional SI quality results and known limitations
    */
   static evaluate(
     providerName: string,
@@ -158,7 +158,7 @@ export class IntegrationCertification {
       const det = `${(q.deterministicScore * 100).toFixed(0)}%`;
       const cal = q.calibrationScore != null ? `${(q.calibrationScore * 100).toFixed(0)}%` : 'N/A';
       const subj = q.subjectiveReviewed ? '✅ Reviewed' : '⚠️ Pending';
-      console.log(`  │ AI Quality — Deterministic: ${det} | Calibration: ${cal} | Subjective: ${subj}`);
+      console.log(`  │ SI Quality — Deterministic: ${det} | Calibration: ${cal} | Subjective: ${subj}`);
     }
     console.log(`  │`);
     console.log(`  └── Verdict: ${icon} ${a.verdict}`);

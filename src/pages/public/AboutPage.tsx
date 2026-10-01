@@ -10,7 +10,7 @@ export const AboutPage: React.FC = () => {
     
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', 'Learn about CHATR Communication OS — the unified business communication platform powering messaging, WhatsApp candidate screening, and AI workflows.');
+    metaDesc.setAttribute('content', 'Learn about CHATR Communication OS — the unified business communication platform powering messaging, WhatsApp candidate screening, and SI workflows.');
     
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
@@ -60,7 +60,7 @@ export const AboutPage: React.FC = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-16 space-y-16">
-        {/* Executive Summary Block (AI / GEO Answer Layer) */}
+        {/* Executive Summary Block (SI / GEO Answer Layer) */}
         <section className="space-y-6 text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
             <Globe className="w-3.5 h-3.5" />
@@ -91,7 +91,7 @@ export const AboutPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-slate-300 text-sm leading-relaxed">
-                The core messaging kernel and shared inbox engine. Handles multi-channel triage, team assignment, automated WhatsApp workflows, and AI communication agents.
+                The core messaging kernel and shared inbox engine. Handles multi-channel triage, team assignment, automated WhatsApp workflows, and SI communication agents.
               </p>
             </div>
 
@@ -104,7 +104,7 @@ export const AboutPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-slate-300 text-sm leading-relaxed">
-                The specialized recruitment module operating within CHATR OS. Connects AI resume parsing, candidate qualification scoring, and ATS pipeline tracking directly into WhatsApp Business API.
+                The specialized recruitment module operating within CHATR OS. Connects SI resume parsing, candidate qualification scoring, and ATS pipeline tracking directly into WhatsApp Business API.
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const AboutPage: React.FC = () => {
           <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-3">
             <Award className="w-6 h-6 text-indigo-400" />
             <h3 className="font-bold text-white text-base">Editorial Transparency</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">Our research and articles follow explicit editorial policies regarding first-party data methodologies and AI-assisted drafting disclosures.</p>
+            <p className="text-xs text-slate-400 leading-relaxed">Our research and articles follow explicit editorial policies regarding first-party data methodologies and SI-assisted drafting disclosures.</p>
           </div>
         </section>
 

@@ -1,8 +1,8 @@
-# Phase 2: CHATR AI Gateway Implementation Plan & Migration Gates
+# Phase 2: CHATR SI Gateway Implementation Plan & Migration Gates
 
 ## 1. Objective & Execution Principles
 
-Transition all 39 Supabase Edge Functions with legacy Lovable dependencies from `ai.gateway.lovable.dev` to CHATR's native multi-provider AI Router (`_core/aiProvider.ts`).
+Transition all 39 Supabase Edge Functions with legacy Lovable dependencies from `ai.gateway.lovable.dev` to CHATR's native multi-provider SI Router (`_core/aiProvider.ts`).
 
 ### Strict Principles
 1. **Zero Client Changes:** All request and response contracts remain byte-compatible with the frontend.

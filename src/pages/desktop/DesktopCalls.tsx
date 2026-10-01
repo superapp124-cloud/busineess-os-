@@ -1189,7 +1189,7 @@ const DesktopCalls: React.FC = () => {
  />
  )}
 
- {/* AI Workspace */}
+ {/* SI Workspace */}
  <SessionWorkspace
  goal={sessionGoal || 'quick'}
  remoteUserName={remoteUserName}

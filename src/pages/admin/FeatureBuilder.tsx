@@ -71,9 +71,9 @@ const FeatureBuilder = () => {
  <div className="p-6 space-y-6 max-w-7xl mx-auto">
  <div>
  <h1 className="text-display bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
- AI Feature Builder
+ SI Feature Builder
  </h1>
- <p className="text-muted-foreground mt-1">Generate full-stack features with AI</p>
+ <p className="text-muted-foreground mt-1">Generate full-stack features with SI</p>
  </div>
 
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

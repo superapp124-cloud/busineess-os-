@@ -13,7 +13,7 @@ The authoritative, machine-readable source is `certifications/business-os-capabi
 | Objects | 15 |
 | Event Bus | 15 |
 | Connectors | 15 |
-| Grounded AI | 15 |
+| Grounded SI | 15 |
 | Security | 5 |
 | Performance | 5 |
 

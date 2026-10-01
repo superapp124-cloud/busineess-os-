@@ -1,6 +1,6 @@
--- Universal AI Search Database Schema
+-- Universal SI Search Database Schema
 
--- Table: search_queries (store all search queries with AI intent)
+-- Table: search_queries (store all search queries with SI intent)
 CREATE TABLE IF NOT EXISTS public.search_queries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id),

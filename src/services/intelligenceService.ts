@@ -101,10 +101,10 @@ export const intelligenceService = {
       console.warn("[Intelligence] Global registry lookup failed", e);
     }
 
-    // Stage 3: Deep AI Research (Real Multi-Source Web Search)
+    // Stage 3: Deep SI Research (Real Multi-Source Web Search)
     // Only perform deep research if identity is still uncertain or if explicitly requested
     if (result.trustScore < 90) {
-      onUpdate?.({ name: 'Performing Deep AI Research...' });
+      onUpdate?.({ name: 'Performing Deep SI Research...' });
       try {
         const { data, error } = await supabase.functions.invoke('ai-browser-search', {
           body: { 
@@ -122,7 +122,7 @@ export const intelligenceService = {
             ...result,
             name: result.name === 'Searching...' || result.name === 'Unknown Caller' ? (summary.split('.')[0].substring(0, 40)) : result.name,
             status: 'complete',
-            sources: [...result.sources, 'AI Web Research'],
+            sources: [...result.sources, 'SI Web Research'],
             tags: [...result.tags, isBusiness ? 'Business' : 'Personal'],
             type: isBusiness ? 'business' : 'personal',
             trustScore: Math.min(result.trustScore + 20, 95)
@@ -130,7 +130,7 @@ export const intelligenceService = {
           onUpdate?.(result);
         }
       } catch (e) {
-        console.warn("[Intelligence] Deep AI research failed", e);
+        console.warn("[Intelligence] Deep SI research failed", e);
       }
     }
 

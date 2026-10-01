@@ -31,7 +31,7 @@ export const BotIntegration = () => {
  Bot API Integration
  </CardTitle>
  <CardDescription>
- Build AI agents and bots using Chatr's webhooks.
+ Build SI agents and bots using Chatr's webhooks.
  </CardDescription>
  </CardHeader>
  <CardContent className="space-y-4">

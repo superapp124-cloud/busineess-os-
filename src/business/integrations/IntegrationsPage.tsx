@@ -18,7 +18,7 @@ const INTEGRATIONS = [
  {
  id: 'calendar',
  name: 'Google Calendar',
- description: 'Allow AI Receptionist to check availability and book appointments for you.',
+ description: 'Allow SI Receptionist to check availability and book appointments for you.',
  icon: Calendar,
  status: 'connected',
  color: 'text-blue-500',

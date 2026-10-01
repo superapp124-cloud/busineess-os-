@@ -39,7 +39,7 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({ plan, onUpdatePlan
  <div className="p-1.5 bg-[#5c22ff]/10 rounded-lg">
  <Sparkles className="w-4 h-4 text-[#5c22ff]" />
  </div>
- <h3 className="font-semibold text-slate-800">AI Execution Engine</h3>
+ <h3 className="font-semibold text-slate-800">SI Execution Engine</h3>
  </div>
  <span className="text-label px-2 py-1 bg-slate-100 text-slate-600 rounded-full border">
  {plan.status.replace('_', ' ').toUpperCase()}

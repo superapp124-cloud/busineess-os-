@@ -22,7 +22,7 @@ export const AiMatchBadge = memo(({ pct, selectedJd, onClick }: { pct?: number; 
     : matchPct >= 80 ? 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
     : 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300';
   return (
-    <button onClick={onClick} title="Click for AI breakdown"
+    <button onClick={onClick} title="Click for SI breakdown"
       className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border cursor-pointer hover:opacity-80 transition-opacity ${color}`}>
       <Sparkles className="w-2.5 h-2.5" /> {matchPct}% Match
     </button>

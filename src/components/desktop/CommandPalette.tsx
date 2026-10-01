@@ -150,7 +150,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  { id: 'nav-chat', category: 'Navigate', icon: MessageSquare, label: 'Open Chat', shortcut: 'C', action: () => go('/desktop/chat', 'Open Chat'), keywords: ['messages', 'conversations'] },
  { id: 'nav-calls', category: 'Navigate', icon: Phone, label: 'Open Calls', shortcut: 'L', action: () => go('/desktop/calls', 'Open Calls'), keywords: ['call', 'phone'] },
  { id: 'nav-contacts', category: 'Navigate', icon: Users, label: 'Open Contacts', shortcut: 'O', action: () => go('/desktop/contacts', 'Open Contacts'), keywords: ['people', 'contacts'] },
- { id: 'nav-ai', category: 'Navigate', icon: BrainCircuit, label: 'Open AI Hub', shortcut: 'A', action: () => go('/desktop/canvas', 'Open AI Hub'), keywords: ['ai', 'intelligence', 'brain'] },
+ { id: 'nav-ai', category: 'Navigate', icon: BrainCircuit, label: 'Open SI Hub', shortcut: 'A', action: () => go('/desktop/canvas', 'Open SI Hub'), keywords: ['ai', 'intelligence', 'brain'] },
  { id: 'nav-crm', category: 'Navigate', icon: Building2, label: 'Open CRM', shortcut: 'R', action: () => go('/desktop/pro/business', 'Open CRM'), keywords: ['crm', 'customers', 'business'] },
  { id: 'nav-inbox', category: 'Navigate', icon: FileText, label: 'Smart Inbox', shortcut: 'I', action: () => go('/desktop/smart-inbox', 'Smart Inbox'), keywords: ['inbox', 'unified'] },
  { id: 'nav-settings', category: 'Navigate', icon: Settings, label: 'Settings', shortcut: ',', action: () => go('/desktop/settings', 'Settings'), keywords: ['settings', 'preferences'] },
@@ -158,15 +158,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  { id: 'act-newchat', category: 'Actions', icon: MessageSquare, label: 'New Chat', description: 'Start a new conversation', action: () => { go('/desktop/chat', 'New Chat'); } },
  { id: 'act-call', category: 'Actions', icon: Phone, label: 'Make a Call', description: 'Dial a number or contact', action: () => go('/desktop/calls', 'Make a Call') },
  { id: 'act-video', category: 'Actions', icon: Video, label: 'Video Meeting', description: 'Start a video conference', action: () => go('/desktop/calls', 'Video Meeting') },
- { id: 'act-askai', category: 'Actions', icon: Sparkles, label: 'Ask AI', description: 'Open AI assistant', action: () => go('/desktop/canvas', 'Ask AI'), keywords: ['ai', 'ask', 'help'] },
+ { id: 'act-askai', category: 'Actions', icon: Sparkles, label: 'Ask SI', description: 'Open SI Assistant', action: () => go('/desktop/canvas', 'Ask SI'), keywords: ['ai', 'ask', 'help'] },
  { id: 'act-task', category: 'Actions', icon: CheckSquare, label: 'Create Task', description: 'Add a new task', action: () => go('/desktop/workspace', 'Create Task'), keywords: ['task', 'todo'] },
  { id: 'act-meeting', category: 'Actions', icon: Calendar, label: 'Schedule Meeting', description: 'Book a meeting', action: () => go('/desktop/workspace', 'Schedule Meeting'), keywords: ['meeting', 'calendar', 'book', 'friday'] },
  { id: 'act-ticket', category: 'Actions', icon: Hash, label: 'Create Ticket', description: 'Open a support ticket', action: () => go('/desktop/workspace', 'Create Ticket'), keywords: ['ticket', 'support', 'issue'] },
  { id: 'act-files', category: 'Files', icon: FolderOpen, label: 'Browse Files', action: () => go('/desktop/workspace', 'Browse Files'), keywords: ['files', 'documents'] },
- // AI Actions
- { id: 'ai-summarize', category: 'AI', icon: BrainCircuit, label: 'Summarize yesterday', description: 'AI summary of yesterday\'s activity', action: () => go('/desktop/canvas', 'Summarize yesterday', { autoTrigger: 'ai-summarize' }), keywords: ['summarize', 'summary', 'yesterday'] },
- { id: 'ai-draft', category: 'AI', icon: Sparkles, label: 'Draft a reply', description: 'AI drafts a response for you', action: () => go('/desktop/canvas', 'Draft a reply', { autoTrigger: 'ai-draft' }), keywords: ['draft', 'write', 'reply'] },
- { id: 'ai-translate', category: 'AI', icon: Zap, label: 'Translate clipboard', description: 'Translate clipboard content', action: () => go('/desktop/canvas', 'Translate clipboard', { autoTrigger: 'ai-translate' }), keywords: ['translate', 'language', 'clipboard'] },
+ // SI Actions
+ { id: 'ai-summarize', category: 'SI', icon: BrainCircuit, label: 'Summarize yesterday', description: 'SI summary of yesterday\'s activity', action: () => go('/desktop/canvas', 'Summarize yesterday', { autoTrigger: 'ai-summarize' }), keywords: ['summarize', 'summary', 'yesterday'] },
+ { id: 'ai-draft', category: 'SI', icon: Sparkles, label: 'Draft a reply', description: 'SI drafts a response for you', action: () => go('/desktop/canvas', 'Draft a reply', { autoTrigger: 'ai-draft' }), keywords: ['draft', 'write', 'reply'] },
+ { id: 'ai-translate', category: 'SI', icon: Zap, label: 'Translate clipboard', description: 'Translate clipboard content', action: () => go('/desktop/canvas', 'Translate clipboard', { autoTrigger: 'ai-translate' }), keywords: ['translate', 'language', 'clipboard'] },
  
  // Automation OS
  { id: 'os-studio', category: 'Automation OS', icon: Command, label: 'Open Workflow Studio', description: 'Enter the Automation OS', shortcut: 'W', action: () => go('/desktop/studio', 'Open Workflow Studio'), keywords: ['workflow', 'automation', 'os', 'studio'] },
@@ -248,7 +248,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  type="text"
  value={query}
  onChange={e => setQuery(e.target.value)}
- placeholder="Search or type a command... (Call Rahul, Ask AI, Find Invoice)"
+ placeholder="Search or type a command... (Call Rahul, Ask SI, Find Invoice)"
  className="flex-1 bg-transparent text-white placeholder:text-white/30 text-secondary outline-none"
  />
  {query && (
@@ -326,7 +326,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, u
  <div className="px-4 py-12 text-center">
  <Sparkles className="w-8 h-8 text-white/20 mx-auto mb-3" />
  <p className="text-white/40 text-secondary">No results for "{query}"</p>
- <p className="text-white/25 text-label mt-1">Try "Call Rahul", "Ask AI", "Find Invoice"</p>
+ <p className="text-white/25 text-label mt-1">Try "Call Rahul", "Ask SI", "Find Invoice"</p>
  </div>
  )}
  </ScrollArea>

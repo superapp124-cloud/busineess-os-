@@ -74,7 +74,7 @@ Rules:
     });
 
     const aiResponse = response.content;
-    console.log('AI response:', aiResponse);
+    console.log('SI response:', aiResponse);
 
     // Parse JSON array from response
     let suggestions;

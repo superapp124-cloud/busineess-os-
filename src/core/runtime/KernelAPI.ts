@@ -130,7 +130,7 @@ export class KernelAPI {
   }
 
   /**
-   * Access AI engine for generation.
+   * Access SI engine for generation.
    */
   get ai() {
     if (!this.hasEngine('AIEngine')) {

@@ -11,7 +11,7 @@ export const WorkspaceSetup: React.FC = () => {
 
  const steps = [
  { id: 'workspace', label: 'Creating your workspace', icon: Server },
- { id: 'ai', label: 'Waking up CHATR AI', icon: BrainCircuit },
+ { id: 'ai', label: 'Waking up CHATR SI', icon: BrainCircuit },
  { id: 'storage', label: 'Preparing secure storage', icon: Database },
  { id: 'search', label: 'Indexing knowledge base', icon: Sparkles }
  ];
@@ -45,7 +45,7 @@ export const WorkspaceSetup: React.FC = () => {
  if (!mounted) return;
  setCurrentStep(1); // Workspace created
 
- // Simulate a slight delay for AI and Storage provisioning (in reality, listening to Event Bus)
+ // Simulate a slight delay for SI and Storage provisioning (in reality, listening to Event Bus)
  await new Promise(resolve => setTimeout(resolve, 1000));
  if (!mounted) return;
  setCurrentStep(2);

@@ -79,7 +79,7 @@ export class PlaywrightProvider implements BrowserAutomationProvider {
           throw new Error('Element not visible');
         }
       } catch (e) {
-        console.warn(`[Self-Healing] Could not fill field: ${key}. Attempting AI DOM analysis...`);
+        console.warn(`[Self-Healing] Could not fill field: ${key}. Attempting SI DOM analysis...`);
         await this.selfHealFill(key, String(value));
       }
     }
@@ -87,7 +87,7 @@ export class PlaywrightProvider implements BrowserAutomationProvider {
 
   /**
    * Self-Healing Mechanism:
-   * DOM Changed -> Screenshot -> Extract HTML -> AI Analysis -> Update Mapping -> Continue
+   * DOM Changed -> Screenshot -> Extract HTML -> SI Analysis -> Update Mapping -> Continue
    */
   private async selfHealFill(fieldKey: string, value: string): Promise<void> {
     if (!this.page || !this.aiClient) return;
@@ -114,7 +114,7 @@ export class PlaywrightProvider implements BrowserAutomationProvider {
       
       const newSelector = response.text?.trim();
       if (newSelector && newSelector !== 'UNKNOWN') {
-        console.log(`[Self-Healing] AI mapped "${fieldKey}" to new selector: ${newSelector}`);
+        console.log(`[Self-Healing] SI mapped "${fieldKey}" to new selector: ${newSelector}`);
         await this.page.locator(newSelector).first().fill(value);
       }
     } catch (e) {

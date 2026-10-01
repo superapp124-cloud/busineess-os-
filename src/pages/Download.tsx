@@ -337,7 +337,7 @@ export default function Download() {
       <div className="border-t border-white/5 bg-[#0d0d1a]/60 px-6 py-8">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
-            { icon: <Cpu className="w-5 h-5 text-violet-400" />, label: 'Local AI Engine', sub: 'Runs offline on your device' },
+            { icon: <Cpu className="w-5 h-5 text-violet-400" />, label: 'Local SI Engine', sub: 'Runs offline on your device' },
             { icon: <Shield className="w-5 h-5 text-cyan-400" />, label: 'Private by Design', sub: 'Zero cloud data exposure' },
             { icon: <Sparkles className="w-5 h-5 text-amber-400" />, label: 'Auto Updates', sub: 'Always on the latest version' },
             { icon: <Monitor className="w-5 h-5 text-emerald-400" />, label: 'Pinned to Taskbar', sub: 'Works like Teams & VS Code' },

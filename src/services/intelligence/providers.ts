@@ -175,7 +175,7 @@ export interface ISearchProvider {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI Provider (Decision 11 – local-first, cloud optional)
+// SI Provider (Decision 11 – local-first, cloud optional)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { AIResults } from './schema';
@@ -187,7 +187,7 @@ export interface IAIProvider {
   readonly isAvailable: boolean;
 
   /**
-   * Run the full AI pipeline for one event.
+   * Run the full SI pipeline for one event.
    * Throws if unavailable so the caller can fall back gracefully.
    */
   process(event: CommunicationEvent): Promise<AIResults>;

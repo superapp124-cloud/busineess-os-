@@ -18,7 +18,7 @@ class GsmAiAssistant(
     private val summaryController: GsmSummaryController = DisabledGsmSummaryController(flags),
 ) {
     fun liveTranscript(callId: String): Flow<GsmTranscriptChunk> {
-        if (!flags.isEnabled(GsmFeature.AI)) return emptyFlow()
+        if (!flags.isEnabled(GsmFeature.SI)) return emptyFlow()
         return transcriptionController.observeTranscription(callId)
     }
 
@@ -26,7 +26,7 @@ class GsmAiAssistant(
         callId: String,
         transcript: List<GsmTranscriptChunk>,
     ): GsmCallSummary? {
-        if (!flags.isEnabled(GsmFeature.AI)) return null
+        if (!flags.isEnabled(GsmFeature.SI)) return null
         return summaryController.summarize(callId, transcript)
     }
 }

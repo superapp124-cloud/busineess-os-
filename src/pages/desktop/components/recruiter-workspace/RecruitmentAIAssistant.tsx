@@ -52,7 +52,7 @@ export const FloatingAIAssistant = memo(({ candidates, requisitions }: { candida
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#5c22ff] to-[#7c3aed]">
             <div className="flex items-center gap-2">
               <Brain className="w-4 h-4 text-white" />
-              <p className="text-xs font-bold text-white">CHATR AI Assistant</p>
+              <p className="text-xs font-bold text-white">CHATR SI Assistant</p>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white"><X className="w-3.5 h-3.5" /></button>
           </div>
@@ -93,7 +93,7 @@ export const FloatingAIAssistant = memo(({ candidates, requisitions }: { candida
         </div>
       )}
       <button onClick={() => setOpen(o => !o)}
-        className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5c22ff] to-[#7c3aed] text-white shadow-lg hover:shadow-[#5c22ff]/40 hover:shadow-xl transition-all flex items-center justify-center" title="AI Recruitment Assistant">
+        className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5c22ff] to-[#7c3aed] text-white shadow-lg hover:shadow-[#5c22ff]/40 hover:shadow-xl transition-all flex items-center justify-center" title="SI Recruitment Assistant">
         <Brain className="w-5 h-5" />
       </button>
     </div>
@@ -112,7 +112,7 @@ export const AIExplainPanel = memo(({ candidate, onClose }: { candidate: Candida
         <div className="bg-gradient-to-r from-[#5c22ff] to-[#7c3aed] px-5 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-white/70 uppercase tracking-wider">AI Match Explanation</p>
+              <p className="text-xs font-bold text-white/70 uppercase tracking-wider">SI Match Explanation</p>
               <p className="text-lg font-black text-white mt-0.5">{candidate.first_name} {candidate.last_name}</p>
             </div>
             <button onClick={onClose} className="text-white/70 hover:text-white"><X className="w-4 h-4" /></button>

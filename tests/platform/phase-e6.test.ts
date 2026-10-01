@@ -36,11 +36,11 @@ describe('Phase E5 & E6: Production Readiness Run', () => {
     expect(SharedNodeRegistry.get('core.ai_agent')).toBeDefined();
     expect(SharedNodeRegistry.get('core.condition')).toBeDefined();
 
-    // 3. Workflow created (TalentXcel manual trigger -> AI agent -> Condition)
+    // 3. Workflow created (TalentXcel manual trigger -> SI agent -> Condition)
     const graph: WorkflowGraph = {
       nodes: [
         { id: 'n1', type: 'core.trigger', label: 'Manual Trigger', position: { x: 0, y: 0 }, config: { event: 'manual' } },
-        { id: 'n2', type: 'core.ai_agent', label: 'AI Agent', position: { x: 0, y: 0 }, config: { prompt: 'Analyze CV', capabilityId: 'chatr.ai.generate' } }
+        { id: 'n2', type: 'core.ai_agent', label: 'SI Agent', position: { x: 0, y: 0 }, config: { prompt: 'Analyze CV', capabilityId: 'chatr.ai.generate' } }
       ],
       edges: [
         { id: 'e1', source: 'n1', target: 'n2' }

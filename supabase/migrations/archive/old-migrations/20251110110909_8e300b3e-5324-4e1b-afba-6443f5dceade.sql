@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS public.chatr_payment_methods (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
--- 6. AI Search History & Analytics
+-- 6. SI Search History & Analytics
 CREATE TABLE IF NOT EXISTS public.chatr_search_history (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -178,17 +178,17 @@ CREATE TRIGGER update_chatr_payment_methods_updated_at BEFORE UPDATE ON public.c
 
 -- Pre-populate Subscription Plans
 INSERT INTO public.chatr_subscription_plans (plan_type, plan_name, description, monthly_price, yearly_price, features, target_audience) VALUES
-  ('user_premium', 'Chatr Premium User', 'Unlimited search, bookings, instant chat with providers, rewards & cashback, 24x7 AI Assistant', 99.00, 990.00, 
-   '["Unlimited search & bookings", "Instant chat & call with providers", "Rewards & cashback", "24x7 AI Assistant", "Priority support"]'::jsonb, 'user'),
+  ('user_premium', 'Chatr Premium User', 'Unlimited search, bookings, instant chat with providers, rewards & cashback, 24x7 SI Assistant', 99.00, 990.00, 
+   '["Unlimited search & bookings", "Instant chat & call with providers", "Rewards & cashback", "24x7 SI Assistant", "Priority support"]'::jsonb, 'user'),
   
   ('seller_basic', 'Basic Listing', 'Basic seller listing with standard features', 99.00, 990.00,
    '["Basic service listing", "Customer inquiries", "Standard analytics", "Up to 5 services"]'::jsonb, 'seller'),
    
   ('seller_featured', 'Featured Seller', 'Featured placement with enhanced visibility', 499.00, 4990.00,
-   '["Featured placement", "Unlimited services", "Advanced analytics", "Priority in search", "Custom branding", "AI lead generation"]'::jsonb, 'seller'),
+   '["Featured placement", "Unlimited services", "Advanced analytics", "Priority in search", "Custom branding", "SI lead generation"]'::jsonb, 'seller'),
    
   ('seller_premium', 'Premium Partner', 'Premium tier with full features and promotions', 1999.00, 19990.00,
-   '["Premium placement", "Unlimited services", "Full analytics dashboard", "AI leads & recommendations", "Promotional campaigns", "Dedicated support", "API access", "Custom integrations"]'::jsonb, 'seller')
+   '["Premium placement", "Unlimited services", "Full analytics dashboard", "SI leads & recommendations", "Promotional campaigns", "Dedicated support", "API access", "Custom integrations"]'::jsonb, 'seller')
 ON CONFLICT (plan_type) DO NOTHING;
 
 -- Function to process wallet transaction

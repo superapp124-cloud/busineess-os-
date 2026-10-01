@@ -4,7 +4,7 @@
  * Shows full relationship history for any selected contact:
  * - Profile card with quick actions
  * - Meetings, Calls, Tasks, Notes, Timeline
- * - AI summary of the relationship
+ * - SI summary of the relationship
  * - Quick actions: Call, Email, Meeting, Reminder, Task
  */
 
@@ -226,12 +226,12 @@ export const RelationshipPanel: React.FC<RelationshipPanelProps> = ({
  )}
  </div>
 
- {/* AI Summary */}
+ {/* SI Summary */}
  {aiSummary ? (
  <div className="p-2.5 rounded-xl bg-violet-500/[0.07] border border-violet-500/15">
  <div className="flex items-center gap-1.5 mb-1">
  <Sparkles className="w-3 h-3 text-violet-400" />
- <span className="text-[9px] font-bold text-violet-400 uppercase tracking-wider">AI Summary</span>
+ <span className="text-[9px] font-bold text-violet-400 uppercase tracking-wider">SI Summary</span>
  </div>
  <p className="text-[10px] text-white/60 leading-relaxed">{aiSummary}</p>
  </div>
@@ -242,7 +242,7 @@ export const RelationshipPanel: React.FC<RelationshipPanelProps> = ({
  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-violet-500/[0.07] border border-violet-500/15 hover:bg-violet-500/[0.12] transition-colors"
  >
  {aiLoading ? <Loader2 className="w-3 h-3 animate-spin text-violet-400" /> : <Sparkles className="w-3 h-3 text-violet-400" />}
- <span className="text-[10px] font-semibold text-violet-400">Generate AI Summary</span>
+ <span className="text-[10px] font-semibold text-violet-400">Generate SI Summary</span>
  </button>
  )}
  </div>

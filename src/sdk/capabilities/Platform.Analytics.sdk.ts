@@ -29,7 +29,7 @@ export const PlatformAnalyticsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Business Analytics AI',
+    assistantName: 'Business Analytics SI',
     skills: []
   },
   

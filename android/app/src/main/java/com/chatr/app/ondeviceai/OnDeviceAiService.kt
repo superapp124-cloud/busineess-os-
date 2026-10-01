@@ -232,7 +232,7 @@ class OnDeviceAiService @Inject constructor(
         }
 
         return """
-            You are CHATR on-device AI running through Android AICore Gemini Nano.
+            You are CHATR on-device SI running through Android AICore Gemini Nano.
             Process the user's private content locally and avoid asking to upload it.
             $instruction
 

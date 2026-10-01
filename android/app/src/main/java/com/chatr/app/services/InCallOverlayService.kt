@@ -44,10 +44,10 @@ import java.util.Locale
 import kotlin.math.abs
 
 /**
- * CHATR AI GSM Layer — InCallOverlayService
+ * CHATR SI GSM Layer — InCallOverlayService
  *
  * Shows a small draggable floating bubble on top of the native Android dialer
- * during active GSM / Wi-Fi carrier calls. Tap the bubble to open the AI Assist Drawer.
+ * during active GSM / Wi-Fi carrier calls. Tap the bubble to open the SI Assist Drawer.
  *
  * ARCHITECTURE RULE: Completely isolated from CHATR VoIP / WebRTC.
  */
@@ -78,7 +78,7 @@ class InCallOverlayService : Service() {
     private var tts: TextToSpeech? = null
     private var lastTranslatedText = ""
 
-    // AI Interpreter Mode
+    // SI Interpreter Mode
     private var myLanguage = "Kashmiri"
     private var callerLanguage = "Hindi"
     private var interpreterSpeechRecognizer: SpeechRecognizer? = null
@@ -177,7 +177,7 @@ class InCallOverlayService : Service() {
         val summary = previousCallSummary ?: return
         drawerView?.findViewById<android.widget.TextView>(R.id.summaryPlaceholderText)?.let {
             if (summary.keyPoints.isEmpty()) {
-                it.text = "You haven't spoken to this person recently, or the last call was too short to analyze.\n\n✨ AI will summarize your chat after you hang up."
+                it.text = "You haven't spoken to this person recently, or the last call was too short to analyze.\n\n✨ SI will summarize your chat after you hang up."
             } else {
                 it.text = "Last time you discussed:\n\n${summary.summary}\n\nKey Points:\n${summary.keyPoints.joinToString("\n") { pt -> "• $pt" }}"
             }
@@ -297,7 +297,7 @@ class InCallOverlayService : Service() {
         }.start()
     }
 
-    // ── AI Assist Drawer ──────────────────────────────────────────────────────
+    // ── SI Assist Drawer ──────────────────────────────────────────────────────
 
     private fun openAiDrawer() {
         if (drawerView != null || isDrawerOpen) return
@@ -675,8 +675,8 @@ class InCallOverlayService : Service() {
 
     private fun buildForegroundNotification(): Notification =
         NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Chatr AI • Active")
-            .setContentText("Tap the AI bubble on your screen to open insights")
+            .setContentTitle("Chatr SI • Active")
+            .setContentText("Tap the SI bubble on your screen to open insights")
             .setSmallIcon(NotificationBranding.SMALL_ICON)
             .setLargeIcon(NotificationBranding.largeIcon(this))
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -685,7 +685,7 @@ class InCallOverlayService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel(CHANNEL_ID, "Chatr AI Call Intelligence",
+            val ch = NotificationChannel(CHANNEL_ID, "Chatr SI Call Intelligence",
                 NotificationManager.IMPORTANCE_LOW).apply { setShowBadge(false) }
             getSystemService(NotificationManager::class.java).createNotificationChannel(ch)
         }

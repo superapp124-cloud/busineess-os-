@@ -69,7 +69,7 @@ const LiveCallOverlay: React.FC<LiveCallOverlayProps> = ({
  <div className="w-8 h-8 rounded-full bg-[#536DFE] flex items-center justify-center mb-3">
  <Shield size={16} className="text-white" />
  </div>
- <p className="text-[#A0AEC0] text-label">AI Confidence</p>
+ <p className="text-[#A0AEC0] text-label">SI Confidence</p>
  <p className="text-[#4CAF50] text-section font-bold mt-1">High</p>
  </div>
  

@@ -3,7 +3,7 @@ import { CapabilityRegistry } from './CapabilityRegistry';
 
 export class AIRegistry {
   /**
-   * Discovers all available semantic AI tools across all installed capabilities
+   * Discovers all available semantic SI tools across all installed capabilities
    */
   static getAvailableTools(): IToolDeclaration[] {
     const tools: IToolDeclaration[] = [];

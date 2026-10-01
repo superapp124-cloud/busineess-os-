@@ -1629,7 +1629,7 @@ const CITIES = [
   ['Xianyang','China','China Commerce Hub'],
   ['Baoji','China','China Commerce Hub'],
   ['Yinchuan','China','China Ningxia Hub'],
-  ['Xining','China','China Qinghai Hub'],
+  ['Xining','China','China QinghSI Hub'],
   ['Anshan','China','China Commerce Hub'],
   ['Fushun','China','China Commerce Hub'],
   ['Benxi','China','China Commerce Hub'],

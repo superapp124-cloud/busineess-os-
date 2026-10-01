@@ -8,7 +8,7 @@ import { Logger } from '../../Infrastructure/Logger';
 
 export class StreamingManager {
   /**
-   * Streams an AI response to the supplied callbacks.
+   * Streams an SI response to the supplied callbacks.
    *
    * @param messages    Full messages array (system + history + new user msg)
    * @param onChunk     Called with each incremental chunk as it arrives

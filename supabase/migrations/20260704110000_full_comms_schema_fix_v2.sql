@@ -162,22 +162,22 @@ BEGIN
 END
 $$;
 
--- ── 8. AI MEMORY ACCESS ───────────────────────────────────────────────────────
+-- ── 8. SI MEMORY ACCESS ───────────────────────────────────────────────────────
 GRANT SELECT, INSERT ON public.ai_memory TO authenticated;
 
 DO $$
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ai_memory' AND policyname = 'Users can read org AI memory'
+        SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ai_memory' AND policyname = 'Users can read org SI memory'
     ) THEN
-        CREATE POLICY "Users can read org AI memory" ON public.ai_memory FOR SELECT
+        CREATE POLICY "Users can read org SI memory" ON public.ai_memory FOR SELECT
             USING (user_id = auth.uid());
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ai_memory' AND policyname = 'Users can insert AI memory'
+        SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ai_memory' AND policyname = 'Users can insert SI memory'
     ) THEN
-        CREATE POLICY "Users can insert AI memory" ON public.ai_memory FOR INSERT
+        CREATE POLICY "Users can insert SI memory" ON public.ai_memory FOR INSERT
             WITH CHECK (user_id = auth.uid());
     END IF;
 END

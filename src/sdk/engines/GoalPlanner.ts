@@ -33,7 +33,7 @@ export class GoalPlanner {
       'Support.Helpdesk': 'You are an efficient IT Helpdesk Agent. Provide concise, actionable IT support tickets.',
       'Finance.Invoicing': 'You are a meticulous Finance Clerk. Ensure all financial data is precise and compliant.'
     };
-    return profiles[capabilityId] || 'You are a helpful CHATR OS AI Assistant.';
+    return profiles[capabilityId] || 'You are a helpful CHATR OS SI Assistant.';
   }
 
   /**

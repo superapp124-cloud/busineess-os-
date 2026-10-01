@@ -39,7 +39,7 @@
                 android:id="@+id/callerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chatr AI Scanning..."
+                android:text="Chatr SI Scanning..."
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
@@ -74,7 +74,7 @@
             android:layout_centerVertical="true"/>
     </RelativeLayout>
 
-    <!-- Chatr AI Live Analysis Panel -->
+    <!-- Chatr SI Live Analysis Panel -->
     <LinearLayout
         android:id="@+id/sourceIntelligencePanel"
         android:layout_width="match_parent"
@@ -99,7 +99,7 @@
                 android:id="@+id/aiScanningText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="live AI analysis..."
+                android:text="live SI analysis..."
                 android:textSize="12sp"
                 android:textColor="#A855F7"
                 android:textStyle="bold"
@@ -116,7 +116,7 @@
             android:progressTint="#A855F7" />
     </LinearLayout>
 
-    <!-- AI Insight Section -->
+    <!-- SI Insight Section -->
     <LinearLayout
         android:id="@+id/aiInsightPanel"
         android:layout_width="match_parent"
@@ -137,7 +137,7 @@
             android:id="@+id/aiSummaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chatr AI is evaluating this call..."
+            android:text="Chatr SI is evaluating this call..."
             android:textSize="13sp"
             android:textColor="#CBD5E1"
             android:layout_marginStart="8dp"
@@ -199,7 +199,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="AI Bouncer"
+            android:text="SI Bouncer"
             android:textSize="13sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"

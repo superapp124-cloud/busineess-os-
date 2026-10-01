@@ -89,7 +89,7 @@ export class AISearchStream {
 
     this.eventSource.onerror = (err) => {
       console.error("EventSource error:", err);
-      callbacks.onError(new Error("Lost connection to AI streaming server."));
+      callbacks.onError(new Error("Lost connection to SI streaming server."));
       this.stop();
     };
   }

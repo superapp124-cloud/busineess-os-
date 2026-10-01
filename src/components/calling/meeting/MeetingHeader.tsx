@@ -96,7 +96,7 @@ export const MeetingHeader: React.FC<MeetingHeaderProps> = ({
  {isAiActive && (
  <div className="hidden xl:flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
  <Bot className="w-3 h-3 text-emerald-400" />
- <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">AI</span>
+ <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">SI</span>
  </div>
  )}
 

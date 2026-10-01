@@ -97,7 +97,7 @@ export const ExecutiveRiskManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Risk Management AI',
+    assistantName: 'Risk Management SI',
     skills: []
   },
   

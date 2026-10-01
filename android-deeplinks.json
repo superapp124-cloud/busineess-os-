@@ -124,20 +124,20 @@
       },
       {
         "path": "/ai-agents",
-        "description": "AI agents marketplace"
+        "description": "SI agents marketplace"
       },
       {
         "path": "/ai-agents/chat/:agentId",
-        "description": "AI agent chat",
+        "description": "SI agent chat",
         "params": ["agentId"]
       },
       {
         "path": "/ai-assistant",
-        "description": "AI assistant"
+        "description": "SI assistant"
       },
       {
         "path": "/ai-browser",
-        "description": "AI browser",
+        "description": "SI browser",
         "queryParams": ["url"]
       },
       {

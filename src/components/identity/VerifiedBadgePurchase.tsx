@@ -33,7 +33,7 @@ const BADGE_TIERS = [
  bgColor: 'bg-amber-500/10 border-amber-500/20',
  cost: 1500,
  description: 'Gold star badge with premium features',
- perks: ['Gold premium badge', 'Custom profile themes', 'Extended AI clone features', 'Priority support'],
+ perks: ['Gold premium badge', 'Custom profile themes', 'Extended SI clone features', 'Priority support'],
  },
  {
  id: 'elite',
@@ -43,7 +43,7 @@ const BADGE_TIERS = [
  bgColor: 'bg-purple-500/10 border-purple-500/20',
  cost: 5000,
  description: 'Crown badge — the ultimate CHATR status',
- perks: ['Crown elite badge', 'All Premium perks', 'Exclusive communities', 'Early feature access', 'Dedicated AI clone capacity'],
+ perks: ['Crown elite badge', 'All Premium perks', 'Exclusive communities', 'Early feature access', 'Dedicated SI clone capacity'],
  },
 ];
 

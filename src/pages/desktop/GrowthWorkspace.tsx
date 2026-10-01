@@ -73,7 +73,7 @@ export default function GrowthWorkspace() {
             </div>
             <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md flex items-center gap-2 font-medium">
               <LucideBrain size={18} />
-              AI Growth Planner
+              SI Growth Planner
             </button>
           </header>
 
@@ -93,7 +93,7 @@ export default function GrowthWorkspace() {
             </div>
           </div>
 
-          {/* AI Recommended Actions */}
+          {/* SI Recommended Actions */}
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <LucideZap className="text-amber-400" size={20} />
@@ -117,7 +117,7 @@ export default function GrowthWorkspace() {
             <h2 className="text-xl font-semibold mb-4">Strategic Campaigns</h2>
             {campaigns.length === 0 ? (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center text-gray-500">
-                No campaigns running. Use the AI Growth Planner to translate a business goal into a strategy.
+                No campaigns running. Use the SI Growth Planner to translate a business goal into a strategy.
               </div>
             ) : (
               <div className="space-y-3">

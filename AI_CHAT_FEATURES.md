@@ -1,10 +1,10 @@
-# AI-Powered Chat Features
+# SI-Powered Chat Features
 
 ## Overview
 
-The chat system now includes comprehensive AI features powered by Lovable AI (Google Gemini 2.5 Flash), providing intelligent assistance while maintaining privacy and security.
+The chat system now includes comprehensive SI features powered by Lovable SI (Google Gemini 2.5 Flash), providing intelligent assistance while maintaining privacy and security.
 
-## 🤖 AI Features
+## 🤖 SI Features
 
 ### 1. Smart Replies
 **Location**: Bottom of chat input area
@@ -15,12 +15,12 @@ Generate contextual reply suggestions with different tones:
 - **Quick**: Brief, to-the-point answers
 
 **How to use:**
-1. Click "AI Smart Replies" button
-2. Select from 3 AI-generated suggestions
+1. Click "SI Smart Replies" button
+2. Select from 3 SI-generated suggestions
 3. Click to auto-fill message input
 
 ### 2. Conversation Summarization
-**Location**: AI Toolbar above input
+**Location**: SI Toolbar above input
 
 Automatically summarizes chat conversations into:
 - **Summary**: Concise overview of discussion
@@ -28,12 +28,12 @@ Automatically summarizes chat conversations into:
 - **Action Items**: Tasks and decisions made
 
 **How to use:**
-1. Click "Summarize" in AI toolbar
+1. Click "Summarize" in SI toolbar
 2. View summary in popover
 3. Use for meeting notes or catch-up
 
 ### 3. Task Extraction
-**Location**: AI Toolbar above input
+**Location**: SI Toolbar above input
 
 Automatically detects and extracts tasks from messages:
 - Task title and description
@@ -43,12 +43,12 @@ Automatically detects and extracts tasks from messages:
 
 **How to use:**
 1. Send or receive a message with tasks
-2. Click "Extract Tasks" in AI toolbar
+2. Click "Extract Tasks" in SI toolbar
 3. Review extracted tasks
 4. Click "Create Task" to add to your task list
 
 ### 4. Sentiment Analysis
-**Location**: AI Toolbar above input
+**Location**: SI Toolbar above input
 
 Analyzes emotional tone of messages:
 - Sentiment (positive/neutral/negative)
@@ -57,23 +57,23 @@ Analyzes emotional tone of messages:
 - Suggested emoji reactions
 
 **How to use:**
-1. Click "Sentiment" in AI toolbar
+1. Click "Sentiment" in SI toolbar
 2. View analysis results
 3. Use suggested reactions
 
 ## 🔒 Privacy & Security
 
-- **End-to-End Encryption**: Messages encrypted before AI processing
-- **No Data Storage**: AI doesn't store conversation history
+- **End-to-End Encryption**: Messages encrypted before SI processing
+- **No Data Storage**: SI doesn't store conversation history
 - **Metadata Light**: Minimal tracking and logging
 - **Rate Limiting**: Protected against abuse with 429/402 error handling
 
 ## ⚙️ Technical Details
 
-### AI Model
+### SI Model
 - **Default Model**: `google/gemini-2.5-flash`
 - **Free Period**: All Gemini models free until Oct 13, 2025
-- **Fallback**: Graceful degradation if AI unavailable
+- **Fallback**: Graceful degradation if SI unavailable
 
 ### Edge Function
 Location: `supabase/functions/ai-chat-assistant/index.ts`
@@ -115,14 +115,14 @@ const {
 ## 🎨 UI/UX Features
 
 ### Visual Design
-- Gradient backgrounds for AI features
+- Gradient backgrounds for SI features
 - Primary color accents
 - Animated loading states
 - Smooth transitions
 
 ### User Feedback
 - Toast notifications for errors
-- Loading spinners during AI calls
+- Loading spinners during SI calls
 - Badge indicators for tone/priority
 - Emoji suggestions
 
@@ -131,14 +131,14 @@ const {
 ### Rate Limits (429)
 ```typescript
 if (error.includes('Rate limit')) {
-  toast.error('AI rate limit reached. Please wait a moment.');
+  toast.error('SI rate limit reached. Please wait a moment.');
 }
 ```
 
 ### Credits Depleted (402)
 ```typescript
 if (error.includes('credits')) {
-  toast.error('AI credits depleted. Please add credits to continue.');
+  toast.error('SI credits depleted. Please add credits to continue.');
 }
 ```
 
@@ -158,24 +158,24 @@ if (error.includes('credits')) {
 
 Planned features:
 - [ ] Real-time translation
-- [ ] Voice-to-text with AI enhancement
+- [ ] Voice-to-text with SI enhancement
 - [ ] Smart scheduling suggestions
 - [ ] Auto-categorization of conversations
 - [ ] Predictive text with context
 - [ ] Meeting transcription
-- [ ] Custom AI personas
+- [ ] Custom SI personas
 
 ## 📊 Usage Analytics
 
-Track AI feature usage:
+Track SI feature usage:
 - Smart reply adoption rate
-- Most used AI actions
+- Most used SI actions
 - Error rates
 - Response times
 
 ## 🛠️ Development
 
-### Adding New AI Actions
+### Adding New SI Actions
 
 1. Update edge function with new action case
 2. Define tool/function schema
@@ -197,16 +197,16 @@ const result = await supabase.functions.invoke('ai-chat-assistant', {
 
 ## 📝 Best Practices
 
-1. **Always validate AI responses** before displaying
+1. **Always validate SI responses** before displaying
 2. **Handle errors gracefully** with user feedback
-3. **Show loading states** during AI calls
+3. **Show loading states** during SI calls
 4. **Respect rate limits** with proper error handling
-5. **Optimize prompts** for better AI responses
+5. **Optimize prompts** for better SI responses
 6. **Cache results** when appropriate
 7. **Test edge cases** thoroughly
 
 ## 🔗 Related Documentation
 
-- [Lovable AI Documentation](https://docs.lovable.dev/features/ai)
+- [Lovable SI Documentation](https://docs.lovable.dev/features/ai)
 - [Supabase Edge Functions](https://supabase.com/docs/guides/functions)
 - [Mobile Wellness Integration](./MOBILE_WELLNESS_INTEGRATION.md)

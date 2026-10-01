@@ -14,7 +14,7 @@ class CloudProvider {
 
   async generate(prompt, executionPlan) {
     if (!this.enabled) {
-      throw new Error('[CloudProvider] Execution blocked. Cloud AI is disabled by policy.');
+      throw new Error('[CloudProvider] Execution blocked. Cloud SI is disabled by policy.');
     }
 
     // Example stub for Cloud Execution (e.g. Anthropic, OpenAI)

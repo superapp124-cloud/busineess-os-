@@ -29,10 +29,10 @@ export const SitemapsView: React.FC = () => {
       urlCount: null,
       status: 'ACTIVE',
       gscStatus: 'Valid',
-      description: 'Defines Googlebot / Bingbot / AI crawler access rules and points directly to sitemap.xml.'
+      description: 'Defines Googlebot / Bingbot / SI crawler access rules and points directly to sitemap.xml.'
     },
     {
-      name: 'llms.txt (AI Search & LLM Discovery Index)',
+      name: 'llms.txt (SI Search & LLM Discovery Index)',
       path: '/llms.txt',
       url: `${DOMAIN}/llms.txt`,
       type: 'LLM Index',
@@ -43,7 +43,7 @@ export const SitemapsView: React.FC = () => {
       description: 'Standardized LLM context file for Perplexity, ChatGPT, Gemini, and Claude search agents.'
     },
     {
-      name: 'llms-full.txt (Full AI Knowledge Graph)',
+      name: 'llms-full.txt (Full SI Knowledge Graph)',
       path: '/llms-full.txt',
       url: `${DOMAIN}/llms-full.txt`,
       type: 'LLM Full Graph',
@@ -73,7 +73,7 @@ export const SitemapsView: React.FC = () => {
         <div>
           <h1 className="text-2xl font-extrabold text-white">Sitemaps & Discovery Assets</h1>
           <p className="text-xs text-slate-400">
-            Authoritative search engine and AI crawler discovery endpoints on <span className="font-mono text-indigo-400">{DOMAIN}</span>
+            Authoritative search engine and SI crawler discovery endpoints on <span className="font-mono text-indigo-400">{DOMAIN}</span>
           </p>
         </div>
         <div className="flex items-center gap-3">

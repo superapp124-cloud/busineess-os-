@@ -1,6 +1,6 @@
 import { FormField } from '../browser/BrowserAutomationProvider.js';
 import { CompanyProfile } from '../vault/ProviderVault.js';
-// Note: Assuming a generic AI provider exists or we use an LLM API directly
+// Note: Assuming a generic SI provider exists or we use an LLM API directly
 import { GoogleGenAI } from '@google/genai';
 
 export class FormIntelligence {
@@ -50,7 +50,7 @@ export class FormIntelligence {
     return null;
   }
 
-  // Level 3: AI Classification
+  // Level 3: SI Classification
   private async aiClassify(fieldLabel: string, fieldType: string): Promise<keyof CompanyProfile | null> {
     if (!this.aiClient) return null;
     try {
@@ -68,7 +68,7 @@ export class FormIntelligence {
         return result as keyof CompanyProfile;
       }
     } catch (e) {
-      console.warn('AI Classification failed for field:', fieldLabel, e);
+      console.warn('SI Classification failed for field:', fieldLabel, e);
     }
     return null;
   }
@@ -94,7 +94,7 @@ export class FormIntelligence {
         matchedKey = this.semanticMatch(identifier);
       }
 
-      // Level 3: AI Classification
+      // Level 3: SI Classification
       if (!matchedKey && this.aiClient) {
         matchedKey = await this.aiClassify(identifier, field.type);
       }

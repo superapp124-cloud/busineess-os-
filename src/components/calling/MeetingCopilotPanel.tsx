@@ -1,8 +1,8 @@
 /**
- * MeetingCopilotPanel — Live AI during and before calls
+ * MeetingCopilotPanel — Live SI during and before calls
  * 
  * Shows:
- * - Pre-call: Caller history, AI brief, agenda builder
+ * - Pre-call: Caller history, SI brief, agenda builder
  * - During call: Live notes, action items, suggested responses, decisions
  * - Post-call: Transcript summary, follow-ups, next steps
  */
@@ -168,7 +168,7 @@ export const MeetingCopilotPanel: React.FC<MeetingCopilotPanelProps> = ({
  {/* PRE-CALL MODE */}
  {mode === 'pre-call' && (
  <>
- {/* AI Brief */}
+ {/* SI Brief */}
  <div className="p-3 rounded-xl bg-violet-500/[0.07] border border-violet-500/20 mb-3">
  <div className="flex items-center gap-2 mb-2">
  <Sparkles className="w-3.5 h-3.5 text-violet-400" />
@@ -323,7 +323,7 @@ export const MeetingCopilotPanel: React.FC<MeetingCopilotPanelProps> = ({
  {/* POST-CALL MODE */}
  {mode === 'post-call' && (
  <>
- {/* AI Summary */}
+ {/* SI Summary */}
  <div className="p-3 rounded-xl bg-emerald-500/[0.07] border border-emerald-500/20 mb-3">
  <div className="flex items-center gap-2 mb-2">
  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />

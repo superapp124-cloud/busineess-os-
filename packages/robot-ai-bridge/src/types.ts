@@ -1,7 +1,7 @@
 /**
- * CHATR Robot AI Bridge Types (Gate 7)
+ * CHATR Robot SI Bridge Types (Gate 7)
  * Defines contracts for multi-lingual intent parsing, local Ollama integration,
- * spatial grounding, deterministic task validation, and operational AI explanation.
+ * spatial grounding, deterministic task validation, and operational SI explanation.
  */
 
 import { Vector3 } from '../../robot-physics/src/math/vector3';

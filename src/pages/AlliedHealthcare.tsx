@@ -152,7 +152,7 @@ const AlliedHealthcare = () => {
  { title: 'Health Informatics Specialist', description: 'Manages digital health data systems', workSettings: 'Hospitals, startups', services: 'EMR systems, analytics' },
  { title: 'Public Health Educator', description: 'Promotes population health', workSettings: 'NGOs, government', services: 'Health awareness campaigns' },
  { title: 'Medical Device Technician', description: 'Maintains and calibrates medical equipment', workSettings: 'Hospitals, clinics', services: 'Device setup, calibration' },
- { title: 'Clinical Data Analyst', description: 'Analyzes medical and patient data', workSettings: 'Hospitals, startups', services: 'Outcome tracking, AI insights' },
+ { title: 'Clinical Data Analyst', description: 'Analyzes medical and patient data', workSettings: 'Hospitals, startups', services: 'Outcome tracking, SI insights' },
  ]
  },
  {

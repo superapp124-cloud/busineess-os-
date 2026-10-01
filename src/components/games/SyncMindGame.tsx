@@ -63,7 +63,7 @@ const SyncMindGame = ({ level, onComplete, onBack }: SyncMindGameProps) => {
  const simAnswer = simulatedAnswers[Math.floor(Math.random() * simulatedAnswers.length)];
  setPartnerAnswer(simAnswer);
 
- // Calculate sync score using AI
+ // Calculate sync score using SI
  try {
  const { data } = await supabase.functions.invoke('chatr-games-ai', {
  body: {

@@ -29,7 +29,7 @@ export const CommunicationAnnouncementsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Announcements AI',
+    assistantName: 'Announcements SI',
     skills: []
   },
   

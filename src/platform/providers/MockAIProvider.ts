@@ -4,7 +4,7 @@ import type { ExecutionContext } from '../contracts/ExecutionContext.abi';
 export class MockAIProvider implements IProvider {
   manifest: ProviderManifest = {
     providerId: 'mock-ai',
-    name: 'Mock AI (Deterministic)',
+    name: 'Mock SI (Deterministic)',
     version: '1.0.0',
     vendor: 'CHATR Testing',
     capabilities: ['chatr.ai.generate'],

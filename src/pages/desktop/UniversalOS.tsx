@@ -349,7 +349,7 @@ export default function UniversalOS() {
  </div>
  <div className="flex items-center gap-4">
  <div className="flex items-center gap-2 cursor-pointer hover:bg-zinc-800/50 px-2 py-1 rounded-lg transition-colors">
- <span className="text-label text-zinc-400 ">AI Copilot</span>
+ <span className="text-label text-zinc-400 ">SI Copilot</span>
  <div className="w-8 h-4 bg-indigo-600 rounded-full relative">
  <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 right-0.5 shadow"></div>
  </div>
@@ -553,7 +553,7 @@ export default function UniversalOS() {
  )}
  </SectionCard>
  
- <SectionCard title="AI Business Insights" icon={<Zap size={16} className="text-amber-400"/>}>
+ <SectionCard title="SI Business Insights" icon={<Zap size={16} className="text-amber-400"/>}>
  {insights.length > 0 ? (
  <div className="space-y-3">
  {insights.map((insight: any) => (

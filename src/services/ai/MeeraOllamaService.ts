@@ -1,5 +1,5 @@
 /**
- * CHATR-Meera In-House Ollama AI Service
+ * CHATR-Meera In-House Ollama SI Service
  * Integrates local in-house trained models (chatr:meera-latest, chatr:base-system)
  * for advanced natural language reasoning, task planning, and humanoid dialogue.
  */
@@ -14,7 +14,7 @@ export interface MeeraPlanResult {
   latencyMs: number;
 }
 
-const SYSTEM_PROMPT = `You are MEERA (CHATR-H170), an autonomous humanoid AI assistant operating inside CHATR RobotOS with 28 DOF MuJoCo physics.
+const SYSTEM_PROMPT = `You are MEERA (CHATR-H170), an autonomous humanoid SI assistant operating inside CHATR RobotOS with 28 DOF MuJoCo physics.
 Your capabilities:
 1. "wave_walk_pick": Multi-step mission where you wave hello, walk to kitchen counter, and pick up the water bottle.
 2. "wave": Friendly greeting wave with right arm.

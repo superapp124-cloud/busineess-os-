@@ -88,7 +88,7 @@ export const FinancePurchaseOrdersSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Purchase Orders AI',
+    assistantName: 'Purchase Orders SI',
     skills: []
   },
   

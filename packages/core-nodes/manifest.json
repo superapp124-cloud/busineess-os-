@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "abiVersion": "1.0.0",
   "name": "Core Nodes",
-  "description": "Essential OS nodes (Trigger, AI, Condition)",
+  "description": "Essential OS nodes (Trigger, SI, Condition)",
   "publisher": "CHATR Core Team",
   "license": "MIT",
   "permissions": ["execute:local", "provider.ai"],

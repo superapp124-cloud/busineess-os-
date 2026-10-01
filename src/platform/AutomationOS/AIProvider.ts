@@ -8,8 +8,8 @@ export interface AIProvider {
   heal(failure: ExecutionFailure, context: AIContext): Promise<HealingRecommendation>;
 }
 
-// --- Real AI Provider (Phase B) ---
-// Calls the local CHATR AI service (no cloud, privacy-first).
+// --- Real SI Provider (Phase B) ---
+// Calls the local CHATR SI service (no cloud, privacy-first).
 // Falls back gracefully to the deterministic mock if the LLM is not available.
 export class RealAIProvider implements AIProvider {
   async plan(intent: string, _context: AIContext): Promise<IntentPlan> {
@@ -24,7 +24,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no explanation):
   "name": "Workflow name based on intent",
   "nodes": [
     { "id": "step_1", "type": "core.trigger", "label": "Trigger: <describe trigger>", "name": "<short name>" },
-    { "id": "step_2", "type": "core.ai_agent", "label": "AI: <describe task>", "name": "<short name>" },
+    { "id": "step_2", "type": "core.ai_agent", "label": "SI: <describe task>", "name": "<short name>" },
     { "id": "step_3", "type": "core.email", "label": "Email: <describe email>", "name": "<short name>" }
   ],
   "edges": [
@@ -64,7 +64,7 @@ Generate 3-6 nodes appropriate to the intent. Use types: core.trigger, core.ai_a
 
     } catch (err) {
       console.warn('[RealAIProvider] LLM fallback triggered:', err);
-      // Deterministic fallback — still better than a crash
+      // Deterministic fallback ï¿½ still better than a crash
       return new MockAIProvider().plan(intent, _context);
     }
   }
@@ -110,7 +110,7 @@ Generate 3-6 nodes appropriate to the intent. Use types: core.trigger, core.ai_a
   }
 }
 
-// --- Mock AI Provider (kept as fallback) ---
+// --- Mock SI Provider (kept as fallback) ---
 export class MockAIProvider implements AIProvider {
   async plan(intent: string, _context: AIContext): Promise<IntentPlan> {
     console.log('[MockAIProvider] Fallback: deterministic plan for:', intent);
@@ -119,7 +119,7 @@ export class MockAIProvider implements AIProvider {
     const mockGraph: WorkflowGraph = {
       nodes: [
         { id: 'trigger_1', type: 'core.trigger',   position: { x: 100, y: 100 }, data: { name: 'On Trigger', label: 'Trigger: ' + intent.slice(0, 30) } },
-        { id: 'agent_1',   type: 'core.ai_agent',  position: { x: 300, y: 100 }, data: { name: 'Process',    label: 'AI: Process intent' } },
+        { id: 'agent_1',   type: 'core.ai_agent',  position: { x: 300, y: 100 }, data: { name: 'Process',    label: 'SI: Process intent' } },
         { id: 'email_1',   type: 'core.email',      position: { x: 500, y: 100 }, data: { name: 'Notify',     label: 'Email: Send result' } },
       ],
       edges: [

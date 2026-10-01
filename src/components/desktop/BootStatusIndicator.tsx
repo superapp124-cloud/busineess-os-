@@ -10,7 +10,7 @@ import { CheckCircle2, Loader2, XCircle, Zap, AlertCircle } from 'lucide-react';
 
 const DISPLAY_SERVICES: { key: string; label: string }[] = [
   { key: 'chatr-kernel', label: 'Kernel' },
-  { key: 'worker-ai', label: 'AI' },
+  { key: 'worker-ai', label: 'SI' },
   { key: 'worker-search', label: 'Search' },
   { key: 'identity-context', label: 'Context' },
   { key: 'worker-automation', label: 'Automation' },

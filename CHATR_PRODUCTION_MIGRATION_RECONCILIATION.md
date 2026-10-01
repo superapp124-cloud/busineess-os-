@@ -118,7 +118,7 @@ graph TD
 - **`lovable.dev/api` references:** **0**
 - **`LOVABLE_API_KEY` references:** **0**
 - **Old Backend (`sbayuqgomlflmxgicplz`) references in production runtime:** **0**
-- **Universal Direct AI Router:** Active via [`supabase/functions/_core/aiProvider.ts`](file:///c:/Users/Arshid.Wani/chatrchat/supabase/functions/_core/aiProvider.ts) (Gemini, Groq, OpenRouter, OpenAI).
+- **Universal Direct SI Router:** Active via [`supabase/functions/_core/aiProvider.ts`](file:///c:/Users/Arshid.Wani/chatrchat/supabase/functions/_core/aiProvider.ts) (Gemini, Groq, OpenRouter, OpenAI).
 
 ---
 

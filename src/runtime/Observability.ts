@@ -10,7 +10,7 @@ interface Metric {
 export class ObservabilityService {
   private metrics: Metric[] = [];
 
-  // Metrics (e.g. AI latency, intent execution time)
+  // Metrics (e.g. SI latency, intent execution time)
   recordMetric(name: string, value: number, context?: ExecutionContext, tags?: Record<string, string>) {
     this.metrics.push({
       name,

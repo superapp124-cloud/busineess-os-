@@ -15,7 +15,7 @@ serve(async (req) => {
 
     console.log('Analyzing FameCam content:', { category, analysisType });
 
-    // AI Analysis using Gemini Flash for speed
+    // SI Analysis using Gemini Flash for speed
     const aiAnalysis = {
       fameScore: Math.floor(Math.random() * 30) + 70, // 70-100 score
       category: category,

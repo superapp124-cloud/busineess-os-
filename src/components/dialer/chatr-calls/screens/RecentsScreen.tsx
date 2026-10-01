@@ -62,7 +62,7 @@ const RecentsScreen: React.FC<RecentsScreenProps> = ({ onCall, themeColor = 'var
  const [callSummaries, setCallSummaries] = useState<Record<string, CallSummaryData>>({});
  const { recents, loading } = useDialerData();
 
- // Load AI call summaries stored by the native Android CallSummaryEngine
+ // Load SI call summaries stored by the native Android CallSummaryEngine
  useEffect(() => {
  const loadSummaries = async () => {
  try {
@@ -74,7 +74,7 @@ const RecentsScreen: React.FC<RecentsScreenProps> = ({ onCall, themeColor = 'var
  setCallSummaries(map);
  }
  } catch (e) {
- console.warn('[Recents] Failed to load AI summaries:', e);
+ console.warn('[Recents] Failed to load SI summaries:', e);
  }
  };
  loadSummaries();
@@ -361,7 +361,7 @@ const RecentsScreen: React.FC<RecentsScreenProps> = ({ onCall, themeColor = 'var
  </button>
  </div>
 
- {/* Chatr AI Post-Call Summary Card */}
+ {/* Chatr SI Post-Call Summary Card */}
  {aiSummary && groupName === 'Today' && (
  <AISummaryCard summary={aiSummary} themeColor={themeColor} />
  )}

@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 
 (async () => {
-  console.log('🚀 Starting Automated AI Voice Test Pipeline...');
+  console.log('🚀 Starting Automated SI Voice Test Pipeline...');
   
   // Launch two browsers with fake media streams enabled for WebRTC testing
   const browserArgs = [
@@ -32,20 +32,20 @@ import { chromium } from 'playwright';
     console.log('Waiting 15 seconds for manual login/call setup...');
     await new Promise(r => setTimeout(r, 15000));
 
-    // 3. Click the AI button on Caller 1's screen
-    console.log('🤖 Looking for AI Live button...');
+    // 3. Click the SI button on Caller 1's screen
+    console.log('🤖 Looking for SI Live button...');
     const aiButton = page1.locator('button').filter({ hasText: /^AILive$/ });
     if (await aiButton.isVisible().catch(() => false)) {
-      console.log('✅ Found AI Button! Clicking it...');
+      console.log('✅ Found SI Button! Clicking it...');
       await aiButton.click();
       
       // 4. Wait for the status badge
       console.log('⏳ Waiting for Gemini Connection Badge...');
       const badge = page1.locator('text=Listening & Translating');
       await badge.waitFor({ state: 'visible', timeout: 10000 });
-      console.log('🎉 SUCCESS: Gemini AI is fully connected and processing audio!');
+      console.log('🎉 SUCCESS: Gemini SI is fully connected and processing audio!');
     } else {
-      console.log('❌ Could not find AI button. Are we in a call?');
+      console.log('❌ Could not find SI button. Are we in a call?');
     }
 
     console.log('✅ Test script finished. The browsers will remain OPEN for you to continue testing manually!');

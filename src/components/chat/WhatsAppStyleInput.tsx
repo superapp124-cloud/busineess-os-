@@ -485,7 +485,7 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  </div>
  )}
  
- <div className="flex items-end gap-[8px] bg-[#F0F0F8] px-[8px] py-[8px]">
+ <div className="flex items-end gap-[8px] bg-[#0B0E14] px-[8px] py-[8px] border-t border-white/[0.06]">
  {/* Hidden file inputs */}
  <input
  ref={fileInputRef}
@@ -509,7 +509,7 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  <Button
  variant="ghost"
  size="icon"
- className="w-[48px] h-[48px] shrink-0 rounded-full text-[#3D3D5C] hover:bg-black/[0.04] transition-colors"
+ className="w-[48px] h-[48px] shrink-0 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
  disabled={disabled || uploadingFile}
  >
  <Plus className="w-[24px] h-[24px]" />
@@ -540,7 +540,7 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  </Popover>
 
  {/* Message Input Pill */}
- <div className="flex-1 flex items-end bg-[#FFFFFF] rounded-[24px] min-h-[48px] relative pl-[16px] pr-[40px] shadow-sm">
+ <div className="flex-1 flex items-end bg-[#121622] border border-white/10 rounded-[24px] min-h-[48px] relative pl-[16px] pr-[40px] shadow-sm">
  <Textarea
  value={message}
  onChange={(e) => {
@@ -550,13 +550,13 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  }}
  onKeyDown={handleKeyPress}
  placeholder="Message"
- className="w-full resize-none border-0 bg-transparent py-[13px] text-[15px] leading-relaxed text-[#1A1A2E] shadow-none focus-visible:ring-0 px-0 placeholder:text-[#9898B3]"
+ className="w-full resize-none border-0 bg-transparent py-[13px] text-[15px] leading-relaxed text-white shadow-none focus-visible:ring-0 px-0 placeholder:text-white/40"
  disabled={disabled || sending}
  rows={1}
  style={{ minHeight: '24px', maxHeight: '120px' }}
  />
  <div className="absolute right-[6px] bottom-[4px]">
- {/* AI Assistant Button */}
+ {/* SI Assistant Button */}
  <AIAssistantButton 
  onAction={handleAIAction}
  loading={aiLoading}
@@ -575,7 +575,7 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  onClick={handleSend}
  disabled={!message.trim() || sending || disabled}
  size="icon"
- className="w-[48px] h-[48px] shrink-0 rounded-full bg-[#6C63FF] text-white hover:bg-[#4A44CC] transition-colors shadow-[0_4px_14px_rgba(108,99,255,0.25)]"
+ className="w-[48px] h-[48px] shrink-0 rounded-full bg-emerald-600 text-white hover:bg-emerald-500 transition-colors shadow-[0_4px_14px_rgba(5,150,105,0.35)]"
  >
  <Send className="w-[20px] h-[20px]" />
  </Button>
@@ -589,7 +589,7 @@ export const WhatsAppStyleInput: React.FC<WhatsAppStyleInputProps> = ({
  <Button
  variant="ghost"
  size="icon"
- className="w-[48px] h-[48px] shrink-0 rounded-full bg-[#6C63FF] text-white hover:bg-[#4A44CC] transition-colors shadow-[0_4px_14px_rgba(108,99,255,0.25)]"
+ className="w-[48px] h-[48px] shrink-0 rounded-full bg-[#161B26] border border-white/10 text-emerald-400 hover:bg-white/10 transition-colors shadow-sm"
  disabled={disabled}
  onClick={() => setShowVoiceRecorder(true)}
  >

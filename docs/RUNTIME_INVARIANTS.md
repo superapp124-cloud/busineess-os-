@@ -27,7 +27,7 @@ Node outputs are written to `context.nodeOutputs` by the runtime — never by th
 
 ### I-03 — One Authoritative Runtime
 
-Every execution — manual test run, scheduled run, AI-generated run, approval resume, webhook-triggered run, and autonomous Intent Runtime run — executes through the same `ExecutionEngine`.
+Every execution — manual test run, scheduled run, SI-generated run, approval resume, webhook-triggered run, and autonomous Intent Runtime run — executes through the same `ExecutionEngine`.
 No other code path may call node executors directly.
 
 ### I-04 — One Canonical Graph
@@ -52,7 +52,7 @@ Resolved secret values are placed in `ExecutionContext.secrets` and are never wr
 
 ### I-07 — Every Provider Call Emits an Audit Event
 
-Every call to an external provider — email, webhook, database, payment, AI — emits an `AuditEvent` conforming to `AuditEvent.abi.ts`.
+Every call to an external provider — email, webhook, database, payment, SI — emits an `AuditEvent` conforming to `AuditEvent.abi.ts`.
 The audit event is written to `audit_logs` before the provider response is processed.
 Audit writes use `IAuditStore.append()`, which must never throw and must never include secret values.
 

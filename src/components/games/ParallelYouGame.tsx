@@ -38,7 +38,7 @@ const SAMPLE_CHALLENGES: Record<ChallengeType, Challenge[]> = {
  { type: 'speed', question: 'List 3 countries that start with "I"', timeLimit: 8 },
  ],
  creativity: [
- { type: 'creativity', question: 'Write a haiku about AI', timeLimit: 60 },
+ { type: 'creativity', question: 'Write a haiku about SI', timeLimit: 60 },
  { type: 'creativity', question: 'Create a new emoji combination that represents "Monday morning"', timeLimit: 30 },
  { type: 'creativity', question: 'Invent a new word and define it', timeLimit: 45 },
  ],
@@ -53,7 +53,7 @@ const SAMPLE_CHALLENGES: Record<ChallengeType, Challenge[]> = {
  ],
  social: [
  { type: 'social', question: 'Write a message that would make a stranger smile', timeLimit: 30 },
- { type: 'social', question: 'Compose a compliment for your AI twin', timeLimit: 25 },
+ { type: 'social', question: 'Compose a compliment for your SI twin', timeLimit: 25 },
  ],
 };
 
@@ -89,7 +89,7 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  const challenges = SAMPLE_CHALLENGES[type];
  const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
  
- // Generate AI answer
+ // Generate SI answer
  try {
  const { data } = await supabase.functions.invoke('chatr-games-ai', {
  body: {
@@ -102,9 +102,9 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  }
  });
  
- setAiAnswer(data?.data?.response || 'AI is thinking...');
+ setAiAnswer(data?.data?.response || 'SI is working...');
  } catch (error) {
- setAiAnswer('AI ready to compete!');
+ setAiAnswer('SI ready to compete!');
  }
  
  setChallenge(randomChallenge);
@@ -204,13 +204,13 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  </CardContent>
  </Card>
 
- {/* AI Twin Card */}
+ {/* SI Twin Card */}
  <Card className="bg-gradient-to-br from-violet-600/30 to-purple-900/30 border-violet-500/30">
  <CardContent className="p-6 text-center">
  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-display animate-pulse">
  🧬
  </div>
- <h3 className="text-workspace font-bold text-white mb-1">Your AI Twin</h3>
+ <h3 className="text-workspace font-bold text-white mb-1">Your SI Twin</h3>
  <p className="text-white/60 text-secondary mb-3">Evolution Level: {Math.floor(currentLevel / 5) + 1}</p>
  <Badge className="bg-violet-500/30 text-violet-300 border-violet-500/50">
  Learning from your style...
@@ -320,7 +320,7 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-workspace animate-pulse">
  🧬
  </div>
- <p className="text-white/70 text-label mt-1">AI Twin</p>
+ <p className="text-white/70 text-label mt-1">SI Twin</p>
  </div>
  </div>
  </motion.div>
@@ -349,14 +349,14 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  {result === 'win' ? '🏆' : result === 'tie' ? '🤝' : '😔'}
  </motion.div>
  <h2 className="text-display text-white mb-2">
- {result === 'win' ? 'You Won!' : result === 'tie' ? 'It\'s a Tie!' : 'AI Wins!'}
+ {result === 'win' ? 'You Won!' : result === 'tie' ? 'It\'s a Tie!' : 'SI Wins!'}
  </h2>
  <p className="text-white/70">
  {result === 'win' 
- ? 'Your AI twin is learning from your moves!' 
+ ? 'Your SI twin is learning from your moves!' 
  : result === 'tie'
  ? 'Great minds think alike!'
- : 'Your AI twin is getting smarter!'}
+ : 'Your SI twin is getting smarter!'}
  </p>
  </div>
 
@@ -369,7 +369,7 @@ export const ParallelYouGame = ({ onBack }: ParallelYouGameProps) => {
  <p className="text-white">{userAnswer || '(No answer)'}</p>
  </div>
  <div className="text-left">
- <p className="text-white/50 text-label mb-1">AI's Answer</p>
+ <p className="text-white/50 text-label mb-1">SI's Answer</p>
  <p className="text-purple-300">{aiAnswer}</p>
  </div>
  </div>

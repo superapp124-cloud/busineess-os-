@@ -10,7 +10,7 @@
  *       → notification_decided
  *
  * Decision 4:  Event-driven – modules subscribe to the bus, not each other.
- * Decision 11: Cloud AI never runs automatically.
+ * Decision 11: Cloud SI never runs automatically.
  * Decision 6:  Plugin registry for registering/unregistering providers.
  */
 
@@ -134,7 +134,7 @@ class IntelligenceEngine {
   // ── Pipeline wiring (event-driven) ─────────────────────────────────────
 
   private wirePipeline(): void {
-    // Stage 1 → Run threat detection + classification (AI pipeline)
+    // Stage 1 → Run threat detection + classification (SI pipeline)
     intelligenceBus.on('event:raw', async (event) => {
       try {
         const aiResults = await localAIPipeline.process(event);
@@ -176,7 +176,7 @@ class IntelligenceEngine {
       await intelligenceBus.emit('event:prioritised', event);
     });
 
-    // Stage 5 → Actions already generated inside AI pipeline; emit next
+    // Stage 5 → Actions already generated inside SI pipeline; emit next
     intelligenceBus.on('event:prioritised', async (event) => {
       await intelligenceBus.emit('event:actions_generated', event);
     });

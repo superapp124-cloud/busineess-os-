@@ -133,7 +133,7 @@ export interface PackManifest {
   /** Permission scopes this pack requires */
   requiresPermissions: string[];
 
-  /** AI prompts bundled with this pack */
+  /** SI prompts bundled with this pack */
   aiPrompts?: Array<{ name: string; template: string }>;
 
   /** Knowledge base references (document ids or URLs) */

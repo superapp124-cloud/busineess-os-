@@ -61,13 +61,13 @@ async function runTests() {
     const canAgentApprove = AuthorizationService.can(aiAgent, 'approve', capabilityResource);
     
     assert.strictEqual(canAgentRead, true);
-    assert.strictEqual(canAgentApprove, false); // AI Agents cannot approve
+    assert.strictEqual(canAgentApprove, false); // SI Agents cannot approve
     console.log("✅ Authorization Service centralized policy enforcement");
 
     // 4. Secrets Shielding and Connection Lifecycle
     const connectionConfig = { classification: "Restricted" };
     
-    // AI Agent requests connection
+    // SI Agent requests connection
     const connection = SecretsService.requestConnection(aiAgent, 'cap_travel_booking', connectionConfig);
     assert.strictEqual(connection.lifecycleState, "Requested");
     

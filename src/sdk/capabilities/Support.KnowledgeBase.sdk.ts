@@ -8,7 +8,7 @@ import { ICapabilityManifest } from '../types';
 export const SupportKnowledgeBaseSDK: ICapabilityManifest = {
   id: 'Support.KnowledgeBase',
   name: 'Knowledge Base',
-  description: 'Self-service knowledge base with AI-powered search, article analytics, and agent-assist recommendations.',
+  description: 'Self-service knowledge base with SI-powered search, article analytics, and agent-assist recommendations.',
   department: 'Customer Support',
   category: 'Customer Support',
   version: '1.6.0',
@@ -86,7 +86,7 @@ export const SupportKnowledgeBaseSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Knowledge Base AI',
+    assistantName: 'Knowledge Base SI',
     skills: []
   },
   

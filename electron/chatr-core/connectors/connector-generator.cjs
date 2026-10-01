@@ -3,7 +3,7 @@
 /**
  * CHATR Kernel — Connector Generator (Phase 5.2)
  *
- * Implements "Connector AI" Semi-Automatic Generation.
+ * Implements "Connector SI" Semi-Automatic Generation.
  * When the user asks to execute an intent on a website CHATR has never seen before,
  * this component automatically generates a declarative Connector draft by
  * parsing the DOM, identifying forms/auth, and mapping it to standard CHATR capabilities.
@@ -28,7 +28,7 @@ class ConnectorGenerator {
    * @returns {Promise<object>} The generated draft path and metadata
    */
   async generateDraft(domain, intent) {
-    log.info(`[ConnectorGenerator] Initiating AI generation for domain: ${domain} (intent: ${intent})`);
+    log.info(`[ConnectorGenerator] Initiating SI generation for domain: ${domain} (intent: ${intent})`);
     
     // Simulate: 1. fetch(domain) -> parse DOM
     // Simulate: 2. identify: forms, input fields, auth walls, search patterns
@@ -61,7 +61,7 @@ class ConnectorGenerator {
           { action: 'wait_for_selector', selector: '#search-box' }
         ]
       },
-      generatedBy: 'CHATR-AI',
+      generatedBy: 'CHATR-SI',
       confidence: 87
     };
 

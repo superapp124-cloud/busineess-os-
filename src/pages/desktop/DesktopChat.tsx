@@ -157,7 +157,7 @@ export default function DesktopChat() {
  else setShowNewDmModal(true);
  };
  const handleOpenChatrAI = () => {
- const aiRoom = rooms.find(r => r.name === 'CHATR AI' || r.id === 'chatr-ai-room');
+ const aiRoom = rooms.find(r => r.name === 'CHATR SI' || r.id === 'chatr-ai-room');
  setSelectedId(aiRoom ? aiRoom.id : 'chatr-ai-room');
  };
 

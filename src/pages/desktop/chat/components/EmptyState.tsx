@@ -35,7 +35,7 @@ export const EmptyState: React.FC<{ setShowCreateModal: (v: boolean) => void }> 
  <Zap className="w-5 h-5" />
  </div>
  <div>
- <span className="text-secondary font-bold text-white/90 block mb-0.5">AI Insights</span>
+ <span className="text-secondary font-bold text-white/90 block mb-0.5">SI Insights</span>
  <span className="text-label text-white/50">View network intelligence</span>
  </div>
  </button>
@@ -80,7 +80,7 @@ export const EmptyState: React.FC<{ setShowCreateModal: (v: boolean) => void }> 
  {/* Extracted Context */}
  <div className="bg-zinc-900/50 border border-white/[0.04] rounded-2xl p-6">
  <div className="flex items-center justify-between mb-6">
- <h3 className="text-secondary font-bold text-white/90 uppercase tracking-wider">AI Priority Context</h3>
+ <h3 className="text-secondary font-bold text-white/90 uppercase tracking-wider">SI Priority Context</h3>
  <Sparkles className="w-4 h-4 text-violet-400" />
  </div>
  <div className="space-y-3">

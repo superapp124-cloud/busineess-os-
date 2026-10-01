@@ -269,7 +269,7 @@ export const EmotionSyncGame = ({ onBack }: EmotionSyncGameProps) => {
  </motion.div>
  <h3 className="text-workspace font-bold text-white mb-2">EmotionSync Challenge</h3>
  <p className="text-white/60 text-secondary mb-4">
- Express the target emotion through text. AI will detect if you've synced!
+ Express the target emotion through text. SI will detect if you've synced!
  </p>
  <Button
  onClick={startChallenge}

@@ -94,7 +94,7 @@ export const DRY_RUN_003_EPISODES: ProducedEpisodeItem[] = [
   {
     num: 3,
     id: 'meera_ep003',
-    title: 'Arjun Claims He Predicted AI in 2018',
+    title: 'Arjun Claims He Predicted SI in 2018',
     topic: 'When your friend acts like an expert on everything',
     mode: 'COMEDY',
     location: 'connaught_place',
@@ -560,7 +560,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
           { id: 'identity', label: '🧬 Character DNA (3 Refs Locked)', icon: UserCheck },
           { id: 'director', label: '🎥 Performance Contract & Director', icon: Wand2 },
           { id: 'continuity', label: '📊 Continuity & Lore State', icon: Clock },
-          { id: 'ai_training', label: '🧠 AI Training (Soup + Ollama)', icon: Cpu },
+          { id: 'ai_training', label: '🧠 SI Training (Soup + Ollama)', icon: Cpu },
         ].map(tab => (
           <button
             key={tab.id}
@@ -970,7 +970,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
                         }`}
                       >
                         <XCircle className="w-4 h-4" />
-                        <span>FAIL (Looks like AI/Cutout)</span>
+                        <span>FAIL (Looks like SI/Cutout)</span>
                       </button>
 
                       <button
@@ -1493,7 +1493,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 6: AI TRAINING (SOUP + OLLAMA + CHATR GATE) */}
+          {/* TAB 6: SI TRAINING (SOUP + OLLAMA + CHATR GATE) */}
           {activeTab === 'ai_training' && (
             <div className="space-y-5">
               {/* Header card */}
@@ -1502,7 +1502,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <span className="text-xl">🧠</span>
                     <div>
-                      <h3 className="text-sm font-bold text-white">CHATR General AI Training Architecture</h3>
+                      <h3 className="text-sm font-bold text-white">CHATR General SI Training Architecture</h3>
                       <p className="text-xs text-slate-400">Ollama local inference runtime + Soup QLoRA training engine + CHATR Evaluation Gate</p>
                     </div>
                   </div>
@@ -1510,7 +1510,7 @@ export const ChatrVirtualCreatorStudio: React.FC = () => {
                     href="/desktop/ai-hub"
                     className="px-3.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
                   >
-                    <span>Open Full AI Hub</span>
+                    <span>Open Full SI Hub</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </a>
                 </div>

@@ -1,6 +1,6 @@
 /**
  * Agent Auto-Reply Service
- * Intercepts Chatr messages and auto-replies using AI agents
+ * Intercepts Chatr messages and auto-replies using SI agents
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -77,7 +77,7 @@ async function handleIncomingMessage(payload: any) {
       content: m.content
     }));
 
-    // Get AI agent response
+    // Get SI agent response
     const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
       body: {
         agentId: config.agentId,

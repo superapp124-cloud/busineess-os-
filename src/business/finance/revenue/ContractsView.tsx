@@ -143,7 +143,7 @@ export function ContractsView({ finOrganizationId, legalEntityId }: ContractsVie
                       {ctr.contract_number}
                       {ctr.ai_interpreted && (
                         <Badge variant="secondary" className="text-[9px] px-1 py-0 ml-1.5 bg-purple-50 text-purple-700">
-                          AI
+                          SI
                         </Badge>
                       )}
                     </td>

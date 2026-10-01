@@ -34,7 +34,7 @@ export function CallInsightsPanel({
  const [aiLoading, setAiLoading] = useState(false);
  const [saving, setSaving] = useState(false);
 
- // Run the AI engine once panel opens
+ // Run the SI engine once panel opens
  useEffect(() => {
  if (!open || !phoneNumber) return;
 
@@ -138,7 +138,7 @@ export function CallInsightsPanel({
  )}
  </div>
 
- {/* AI Summary */}
+ {/* SI Summary */}
  {aiLoading ? (
  <div className="flex items-center gap-2 text-secondary text-muted-foreground animate-pulse">
  <Sparkles className="h-4 w-4" />

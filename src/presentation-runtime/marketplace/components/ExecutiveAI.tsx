@@ -29,7 +29,7 @@ export const ExecutiveAI: React.FC = () => {
  setResponse(null);
 
  try {
- const prompt = `You are the Executive AI for CHATR OS.
+ const prompt = `You are the Executive SI for CHATR OS.
 The user is asking: "${text}"
 
 You must respond ONLY with a valid JSON object matching one of these structures, and nothing else. No markdown, no explanations.
@@ -83,7 +83,7 @@ Option 3 (For anything else, or general answers):
  console.error(error);
  setResponse({
  type: 'TEXT',
- title: 'AI Connectivity Error',
+ title: 'SI Connectivity Error',
  content: 'Failed to connect to local Ollama instance on port 11434. Please ensure Ollama is running and the "llama3" model is installed.'
  });
  } finally {
@@ -96,7 +96,7 @@ Option 3 (For anything else, or general answers):
  <header className={styles.header}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
  <BrainCircuit size={28} style={{ color: '#8b5cf6' }} />
- <h1 style={{ margin: 0 }}>Executive AI</h1>
+ <h1 style={{ margin: 0 }}>Executive SI</h1>
  </div>
  <p>Your operational assistant for managing the CHATR OS ecosystem.</p>
  </header>

@@ -15,7 +15,7 @@ const NEWS_ITEMS: NewsItem[] = [
   {
     slug: 'chatr-communication-os-launch',
     title: 'CHATR Launches Communication OS: A Unified Inbox for WhatsApp, Email and Business Messaging',
-    summary: 'CHATR has launched CHATR Communication OS, a unified business communication platform that consolidates WhatsApp, email, and team messaging into a single shared inbox with AI-assisted workflows.',
+    summary: 'CHATR has launched CHATR Communication OS, a unified business communication platform that consolidates WhatsApp, email, and team messaging into a single shared inbox with SI-assisted workflows.',
     category: 'Product Launch',
     publishedAt: '2026-08-11',
     readingMinutes: 3,

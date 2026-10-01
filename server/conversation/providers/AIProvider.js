@@ -1,6 +1,6 @@
 /**
  * @interface IAIProvider
- * Defines the standard contract for any AI model provider in the CHATR ecosystem.
+ * Defines the standard contract for any SI model provider in the CHATR ecosystem.
  */
 export class AIProvider {
   /**

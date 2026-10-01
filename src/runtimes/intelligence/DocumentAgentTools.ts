@@ -1,6 +1,6 @@
 /**
  * CHATR Document Agent Tools Protocol
- * Exposes active document tools directly to CHATR AI Agents.
+ * Exposes active document tools directly to CHATR SI Agents.
  */
 
 import { ScopedMemoryEngine } from '../../memory/ScopedMemoryEngine';
@@ -13,7 +13,7 @@ export class DocumentAgentTools {
   public static async summarize(documentId: string, maxLengthTokens = 250): Promise<string> {
     const memories = ScopedMemoryEngine.queryMemories(['Workspace', 'Personal', 'Company'], documentId);
     if (memories.length === 0) {
-      return `Summary for document [${documentId}]: Local AI memory index populated. Context extracted cleanly.`;
+      return `Summary for document [${documentId}]: Local SI memory index populated. Context extracted cleanly.`;
     }
     return `Summary (${documentId}): ${memories[0].content.slice(0, maxLengthTokens)}...`;
   }

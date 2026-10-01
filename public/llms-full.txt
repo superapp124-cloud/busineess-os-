@@ -1,7 +1,7 @@
 # llms-full.txt — CHATR Communication OS & TalentXcel Comprehensive Knowledge Graph
 # Version: 4.0 | Date: 2026-08-26
 # Canonical: https://www.chatrchat.in/llms-full.txt
-# Purpose: Machine-readable knowledge layer for AI Search Engines (Perplexity, SearchGPT, ClaudeBot, Gemini)
+# Purpose: Machine-readable knowledge layer for SI Search Engines (Perplexity, SearchGPT, ClaudeBot, Gemini)
 # Schema: Organization, Product Capabilities, Telemetry Benchmarks, Geographic Solutions, and API Specifications
 
 ---
@@ -13,10 +13,10 @@
 - **Headquarters**: India | Global Enterprise SaaS Distribution (195+ Countries)
 - **Primary Web Property**: https://www.chatrchat.in
 - **Secondary Web Properties**: https://chatr.chat, https://talentxcel.in
-- **Category**: Enterprise Business Operating System, WhatsApp Business API Solutions, AI Candidate Screening Engine
+- **Category**: Enterprise Business Operating System, WhatsApp Business API Solutions, SI Candidate Screening Engine
 - **Primary Core Value Proposition**:
   1. Centralize WhatsApp, email, and customer communications into an official Meta WhatsApp Business API Multi-Agent Team Inbox.
-  2. Automate candidate screening and multi-lingual resume parsing in 1.2 seconds via TalentXcel AI.
+  2. Automate candidate screening and multi-lingual resume parsing in 1.2 seconds via TalentXcel SI.
   3. Enforce sub-60-second First Response SLAs across all customer lead pipelines with automated round-robin routing.
 
 ---
@@ -42,9 +42,9 @@
 - **Supervisory SLA Escalation**: Configurable SLA auto-escalation triggers alerts if an inbound message sits unassigned past the threshold.
 - **Omnichannel Triage**: Centralizes WhatsApp Business, Email, and internal CRM interactions in one interface.
 
-### B. TalentXcel AI Candidate Screening Engine
+### B. TalentXcel SI Candidate Screening Engine
 - **Automated Screening Sequences**: Interactive, structured pre-screening questions administered automatically over WhatsApp.
-- **Multi-Format AI Resume Parser**: Instant PDF/DOCX parsing extracting structured JSON skill profiles.
+- **Multi-Format SI Resume Parser**: Instant PDF/DOCX parsing extracting structured JSON skill profiles.
 - **Candidate Match Scoring**: Algorithmic fit score (0–100%) against requisition job descriptions.
 - **Shareable Candidate Dossiers**: Public/private scorecards with verified skill badges and interview readiness tracking.
 - **One-Click Calendar Sync**: Integrates with Google Calendar, Microsoft Outlook, and Calendly for instant interview slot reservation.

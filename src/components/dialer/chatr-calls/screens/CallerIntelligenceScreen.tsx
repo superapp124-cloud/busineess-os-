@@ -79,7 +79,7 @@ const CallerIntelligenceScreen: React.FC<CallerIntelligenceScreenProps> = ({ cal
  </div>
  </div>
  
- <h2 className="text-workspace font-bold mb-4 px-2">AI Insights</h2>
+ <h2 className="text-workspace font-bold mb-4 px-2">SI Insights</h2>
  <div className="bg-[#1C1C1E] rounded-2xl p-4 space-y-4">
  <p className="text-secondary text-gray-400 italic">
  "This caller typically calls during business hours and has high interaction rates with users in your contact list."

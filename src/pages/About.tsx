@@ -18,7 +18,7 @@ export default function About() {
 
   const milestones = [
     { year: '2025', event: 'CHATR Launch', description: 'Launched as India\'s unified business messaging platform' },
-    { year: '2025 Q2', event: 'AI Integration', description: 'Integrated advanced AI for lead triage and chat' },
+    { year: '2025 Q2', event: 'SI Integration', description: 'Integrated advanced SI for lead triage and chat' },
     { year: '2025 Q3', event: 'Business Hub', description: 'Launched comprehensive business tools' },
     { year: '2025 Q4', event: 'Community Growth', description: 'Reached 325+ active business users and growing' }
   ];
@@ -26,7 +26,7 @@ export default function About() {
   return (
     <>
       <SEOHead
-        title="About CHATR | Universal AI Business Messaging Platform"
+        title="About CHATR | Universal SI Business Messaging Platform"
         description="Learn about CHATR Communication OS, India's unified platform for business messaging, WhatsApp integration, and team inbox workflows."
       />
       <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">

@@ -1,7 +1,7 @@
 # CHATR Enterprise Zero-Knowledge Local Storage & Vector DB Architecture
 
 **Standard**: AES-GCM-256 with PBKDF2 100,000 Iteration Key Derivation  
-**Scope**: Local Vector DB Embeddings, Offline Cache, Token Credentials, User AI Memory  
+**Scope**: Local Vector DB Embeddings, Offline Cache, Token Credentials, User SI Memory  
 
 ---
 

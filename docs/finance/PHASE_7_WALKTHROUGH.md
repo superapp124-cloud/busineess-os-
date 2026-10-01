@@ -1,6 +1,6 @@
 # Phase 7: Production Pilot, Golden Ledger & Financial Trust Layer — Walkthrough
 
-**Phase:** Phase 7 (Golden Ledger Benchmark, AI Financial Safety Evaluation, Strategic Scenario Simulation & Immutable Audit Trails)  
+**Phase:** Phase 7 (Golden Ledger Benchmark, SI Financial Safety Evaluation, Strategic Scenario Simulation & Immutable Audit Trails)  
 **Status:** Completed & Validated (100% Tests Passing across all 7 Phases)  
 **Date:** 2026-08-24  
 
@@ -13,7 +13,7 @@ $$\text{Business OS} \longrightarrow \text{Event Mesh} \longrightarrow \text{Acc
 
 ### Core Invariants Established:
 1. **The Golden Ledger**: An immutable reference benchmark of 90 days of full-cycle business operations ensuring 0-drift across all future releases.
-2. **AI Safety & Hallucination Resistance**: Evaluates deceptive growth traps (e.g. revenue up 30% but cash collapsing and DSO surging) and strictly blocks autonomous destructive actions (e.g. bad debt write-offs).
+2. **SI Safety & Hallucination Resistance**: Evaluates deceptive growth traps (e.g. revenue up 30% but cash collapsing and DSO surging) and strictly blocks autonomous destructive actions (e.g. bad debt write-offs).
 3. **Strategic Scenario Simulation**: Answers executive questions like *"Can we afford to hire 30 engineers?"* modeling expected vs stress-case runway horizons.
 4. **Immutable Audit Trail**: Captures comprehensive 11-field compliance audit records for every high-risk action.
 
@@ -33,7 +33,7 @@ Canonical 90-day enterprise benchmark:
 ---
 
 ### 2.2 Financial Safety Evaluator ([`FinancialSafetyEvaluator.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/ai/FinancialSafetyEvaluator.ts))
-Adversarially evaluates AI behavior:
+Adversarially evaluates SI behavior:
 - Rejects deceptive revenue growth when cash conversion is failing.
 - Enforces Human-in-the-Loop approval for write-offs, period reopening, and banking mutations.
 
@@ -89,13 +89,13 @@ node --import tsx src/tests/finance/phase7-golden-ledger-trust.test.ts
 🧪 Running CHATR Finance Phase 5.5 (Adversarial & Certification) Test Suite...
   ✅ PASS: 6/6 tests passed (100%)
 
-🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...
+🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...
   ✅ PASS: 4/4 tests passed (100%)
 
 🧪 Running CHATR Finance Phase 7 (Golden Ledger & Financial Trust) Test Suite...
 --- 1. 90-Day Full-Cycle Golden Ledger Benchmark ---
   ✅ PASS: GoldenLedger: 90-day simulation output exactly matches canonical reference with 0 drift
---- 2. AI Financial Safety & Deceptive Trap Resistance ---
+--- 2. SI Financial Safety & Deceptive Trap Resistance ---
   ✅ PASS: FinancialSafetyEvaluator: rejects deceptive revenue growth trap when cash conversion is failing
   ✅ PASS: FinancialSafetyEvaluator: blocks autonomous bad debt write-off and enforces HITL approval
 --- 3. Strategic Hiring & Multi-Scenario Runway Simulation ---

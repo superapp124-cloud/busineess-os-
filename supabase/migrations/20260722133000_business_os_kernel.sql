@@ -1,5 +1,5 @@
 -- Business OS Kernel Migration
--- Sets up Hierarchical Multi-Tenancy, Metadata Graph, Business Graph, 4-Tier AI Memory, and Event Store
+-- Sets up Hierarchical Multi-Tenancy, Metadata Graph, Business Graph, 4-Tier SI Memory, and Event Store
 
 -- 1. Hierarchical Multi-Tenancy
 CREATE TABLE IF NOT EXISTS sys_organizations (

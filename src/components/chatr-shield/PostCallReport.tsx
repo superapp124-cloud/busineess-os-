@@ -30,7 +30,7 @@ const PostCallReport: React.FC<PostCallReportProps> = ({ phoneNumber, score, cal
  { name: 'On-Device Cache', latency: '<2ms', hit: true, icon: Zap },
  { name: 'Community Score', latency: '<40ms', hit: score.pipeline_layers_used >= 2, icon: Users },
  { name: 'Registration Metadata', latency: '<60ms', hit: score.pipeline_layers_used >= 3, icon: Globe },
- { name: 'Chatr AI Enrichment', latency: 'async', hit: score.gemini_enriched, icon: Shield },
+ { name: 'Chatr SI Enrichment', latency: 'async', hit: score.gemini_enriched, icon: Shield },
  { name: 'Voice Biometric', latency: 'stream', hit: score.deepfake_score !== null, icon: FileText },
  ];
 
@@ -97,11 +97,11 @@ const PostCallReport: React.FC<PostCallReportProps> = ({ phoneNumber, score, cal
  ))}
  </div>
 
- {/* AI Summary */}
+ {/* SI Summary */}
  <div className="bg-indigo-950/50 border border-indigo-900 rounded-2xl p-4">
  <div className="flex items-center gap-2 mb-2">
  <Shield size={14} style={{ color: '#8B5CF6' }} />
- <span className="text-[11px] font-black tracking-wider" style={{ color: '#c084fc' }}>CHATR AI ANALYSIS</span>
+ <span className="text-[11px] font-black tracking-wider" style={{ color: '#c084fc' }}>CHATR SI ANALYSIS</span>
  </div>
  <p className="text-[13px] text-zinc-300 leading-relaxed">{score.aiSummary || "No significant risk signals detected during this call."}</p>
  {score.risk_flags.length > 0 && (

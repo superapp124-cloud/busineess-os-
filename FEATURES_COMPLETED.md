@@ -129,7 +129,7 @@
 2. **Send Icon** - New Broadcast
 3. **Radio Icon** - Create Cluster (existing feature)
 4. **Heart Icon** - Send Pulse (existing feature)
-5. **Sparkles Icon** - AI Features (existing)
+5. **Sparkles Icon** - SI Features (existing)
 6. **Menu Icon** - More options (existing)
 
 ### Conversation Header

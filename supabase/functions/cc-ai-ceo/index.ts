@@ -1,4 +1,4 @@
-// AI CEO Planner — generates strategic plans, breaks them into tasks
+// SI CEO Planner — generates strategic plans, breaks them into tasks
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { completeChat } from "../_core/aiProvider.ts";
 
@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are the AI CEO of CHATR, a communication super-app.
+const SYSTEM_PROMPT = `You are the SI CEO of CHATR, a communication super-app.
 You generate strategic plans for the human CEO (Founder) to approve.
 
 Output a single JSON object with these exact fields:

@@ -25,7 +25,7 @@ $$\textbf{Business OS} \longrightarrow \textbf{Event Mesh} \longrightarrow \text
 3. **Historical Trial Balance Ingestion**:
    - Imports legacy opening trial balances with double-entry balance validation and retained earnings calculation.
 4. **CFO Command Center**:
-   - Live metrics, attention-required risk feed, AI recommendation approvals, and interactive natural language copilot with **100% Evidence Traceability** (`Claim` $\rightarrow$ `Evidence` $\rightarrow$ `Calculation` $\rightarrow$ `Source Lineage` $\rightarrow$ `Confidence`).
+   - Live metrics, attention-required risk feed, SI recommendation approvals, and interactive natural language copilot with **100% Evidence Traceability** (`Claim` $\rightarrow$ `Evidence` $\rightarrow$ `Calculation` $\rightarrow$ `Source Lineage` $\rightarrow$ `Confidence`).
 
 ---
 
@@ -87,7 +87,7 @@ node --import tsx src/tests/finance/phase8-live-finance-os.test.ts
 🧪 Running CHATR Finance Phase 5.5 (Adversarial & Certification) Test Suite...
   ✅ PASS: 6/6 tests passed (100%)
 
-🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...
+🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...
   ✅ PASS: 4/4 tests passed (100%)
 
 🧪 Running CHATR Finance Phase 7 (Golden Ledger & Financial Trust) Test Suite...

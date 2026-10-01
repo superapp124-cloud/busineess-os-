@@ -97,14 +97,14 @@ export default function CommandCenter() {
  if (!isCEO) return <Navigate to="/" replace />;
 
  const generatePlan = async () => {
- if (emergencyStop) { toast.error("Emergency STOP active. Disable to resume AI."); return; }
+ if (emergencyStop) { toast.error("Emergency STOP active. Disable to resume SI."); return; }
  setGenerating(true);
  try {
  const { data, error } = await supabase.functions.invoke("cc-ai-ceo", {
  body: { goal: goal.trim() || undefined },
  });
  if (error) throw error;
- toast.success(`AI CEO generated: ${data?.plan?.title || "new plan"}`);
+ toast.success(`SI CEO generated: ${data?.plan?.title || "new plan"}`);
  setGoal("");
  loadAll();
  } catch (e: any) {
@@ -170,7 +170,7 @@ export default function CommandCenter() {
  // Seed revenue
  await supabase.from("cc_revenue_metrics").insert([
  { revenue_amount: 4999, source: "subscription", description: "Hyderabad Bakes Pro plan" },
- { revenue_amount: 2499, source: "addon", description: "AI Agent module" },
+ { revenue_amount: 2499, source: "addon", description: "SI Agent module" },
  ]);
 
  // Seed log
@@ -197,8 +197,8 @@ export default function CommandCenter() {
  return (
  <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
  <Helmet>
- <title>AI Command Center | CHATR</title>
- <meta name="description" content="AI-powered company operating layer with CEO approval workflow" />
+ <title>SI Command Center | CHATR</title>
+ <meta name="description" content="SI-powered company operating layer with CEO approval workflow" />
  </Helmet>
 
  {/* Header */}
@@ -209,7 +209,7 @@ export default function CommandCenter() {
  <Crown className="h-5 w-5 text-primary-foreground" />
  </div>
  <div>
- <h1 className="text-workspace font-bold tracking-tight">AI Command Center</h1>
+ <h1 className="text-workspace font-bold tracking-tight">SI Command Center</h1>
  <p className="text-label text-muted-foreground">Founder console · Real CEO has final authority</p>
  </div>
  </div>
@@ -218,11 +218,11 @@ export default function CommandCenter() {
  size="sm"
  onClick={() => {
  setEmergencyStop(v => !v);
- toast.warning(emergencyStop ? "AI execution resumed" : "🛑 Emergency STOP engaged");
+ toast.warning(emergencyStop ? "SI execution resumed" : "🛑 Emergency STOP engaged");
  }}
  >
  <ShieldAlert className="h-4 w-4 mr-2" />
- {emergencyStop ? "Resume AI" : "Emergency STOP"}
+ {emergencyStop ? "Resume SI" : "Emergency STOP"}
  </Button>
  </div>
  </header>
@@ -237,7 +237,7 @@ export default function CommandCenter() {
  <h3 className="font-semibold text-section">Command Center is ready</h3>
  </div>
  <p className="text-secondary text-muted-foreground">
- No data yet. Generate your first AI plan below, or load demo data to explore every panel instantly.
+ No data yet. Generate your first SI plan below, or load demo data to explore every panel instantly.
  </p>
  </div>
  <Button onClick={seedDemoData} disabled={generating} variant="default" size="lg">
@@ -259,17 +259,17 @@ export default function CommandCenter() {
  <MetricCard icon={<TrendingUp className="h-4 w-4" />} label="High Impact" value={highImpactCount} />
  </section>
 
- {/* AI CEO planner */}
+ {/* SI CEO planner */}
  <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
  <CardHeader>
  <CardTitle className="flex items-center gap-2">
  <Brain className="h-5 w-5 text-primary" />
- AI CEO Planner
+ SI CEO Planner
  </CardTitle>
  </CardHeader>
  <CardContent className="space-y-3">
  <Textarea
- placeholder="Optional: give the AI CEO a goal (e.g., 'Get 100 paying customers this month'). Leave blank for an autonomous plan."
+ placeholder="Optional: give the SI CEO a goal (e.g., 'Get 100 paying customers this month'). Leave blank for an autonomous plan."
  value={goal}
  onChange={(e) => setGoal(e.target.value)}
  rows={2}

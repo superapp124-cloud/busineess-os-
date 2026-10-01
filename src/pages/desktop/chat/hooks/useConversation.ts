@@ -7,7 +7,7 @@ import type { Room, Message } from '../types';
 
 const DEFAULT_AI_ROOM: Room = {
   id: 'chatr-ai-room',
-  name: 'CHATR AI',
+  name: 'CHATR SI',
   type: 'dm',
   unreadCount: 0,
   avatarUrl: '/chatr-ai-logo.jpg'
@@ -17,8 +17,8 @@ const INITIAL_AI_WELCOME_MSG: Message = {
   id: 'ai-welcome-msg',
   roomId: 'chatr-ai-room',
   senderId: 'chatr-ai',
-  senderName: 'CHATR AI',
-  content: "Hello! I am your CHATR AI Assistant. How can I assist you today with your tasks, messages, or workspace?",
+  senderName: 'CHATR SI',
+  content: "Hello! I am your CHATR SI Assistant. How can I assist you today with your tasks, messages, or workspace?",
   createdAt: new Date().toISOString(),
   isAi: true
 };
@@ -41,7 +41,7 @@ export function useConversation(messagingService: any, currentUserId: string | n
       try {
         const rs = await messagingService.getRooms();
         if (active) {
-          const hasAiRoom = rs.some((r: Room) => r.name === 'CHATR AI' || r.id === 'chatr-ai-room');
+          const hasAiRoom = rs.some((r: Room) => r.name === 'CHATR SI' || r.id === 'chatr-ai-room');
           const finalRooms = hasAiRoom ? rs : [DEFAULT_AI_ROOM, ...rs];
           setRooms(finalRooms);
         }
@@ -154,7 +154,7 @@ export function useConversation(messagingService: any, currentUserId: string | n
   const sendMessage = useCallback(async (content: string, attachments?: any[]) => {
     if (!selectedId || (!content.trim() && (!attachments || attachments.length === 0))) return;
 
-    const isAiRoom = selectedId === 'chatr-ai-room' || rooms.find(r => r.id === selectedId)?.name === 'CHATR AI';
+    const isAiRoom = selectedId === 'chatr-ai-room' || rooms.find(r => r.id === selectedId)?.name === 'CHATR SI';
     
     if (isAiRoom) {
       const userMsg: Message = {
@@ -173,7 +173,7 @@ export function useConversation(messagingService: any, currentUserId: string | n
       try {
         const aiResponseText = await generate({
           prompt: content,
-          systemPrompt: `You are CHATR Executive Intelligence, an elite AI advisor embedded in CHATR Business OS.
+          systemPrompt: `You are CHATR Executive Intelligence, an elite SI advisor embedded in CHATR Business OS.
 Structure your answers clearly using markdown formatting:
 - Use headers (## or ###) on new lines for major sections or categories
 - Put a blank newline before and after headers
@@ -187,7 +187,7 @@ Structure your answers clearly using markdown formatting:
           id: `ai-${Date.now()}`,
           roomId: selectedId,
           senderId: 'chatr-ai',
-          senderName: 'CHATR AI',
+          senderName: 'CHATR SI',
           content: aiResponseText || "I've processed your request.",
           createdAt: new Date().toISOString(),
           isAi: true
@@ -195,7 +195,7 @@ Structure your answers clearly using markdown formatting:
 
         setMessages(prev => [...prev, aiMsg]);
       } catch (err) {
-        toast.error("Failed to generate CHATR AI response");
+        toast.error("Failed to generate CHATR SI response");
       } finally {
         setIsAiLoading(false);
       }

@@ -90,11 +90,11 @@ export class WebContentDistributionEngine {
         id: 'art_001',
         title: 'How WhatsApp Candidate Screening Accelerates Hiring Velocity by 300%',
         slug: '/chatr/whatsapp-candidate-screening-hiring-velocity',
-        summary: 'A deep dive into automated initial candidate screening over official Meta WhatsApp Cloud API with instant AI resume parsing.',
+        summary: 'A deep dive into automated initial candidate screening over official Meta WhatsApp Cloud API with instant SI resume parsing.',
         body: 'Full 2,000-word authoritative guide detailing WhatsApp API setup, screening logic, candidate response rates, and interview scheduling automation.',
         category: 'CHATR_CHAT',
         primaryIntent: 'whatsapp candidate screening',
-        secondaryTopics: ['AI resume parsing', 'recruitment automation', 'universal inbox'],
+        secondaryTopics: ['SI resume parsing', 'recruitment automation', 'universal inbox'],
         canonicalUrl: 'https://chatrchat.in/chatr/whatsapp-candidate-screening',
         internalLinks: ['/chatr/universal-inbox-ai', '/talentxcel/ai-resume-parser'],
         ctaText: 'Start Free Candidate Screening Trial on CHATR',
@@ -118,14 +118,14 @@ export class WebContentDistributionEngine {
           linkedInAdaptation: 'Professional insight: Why top recruitment agencies in 2026 choose WhatsApp Cloud API over email outreach for candidate screening.',
           facebookAdaptation: 'Discussion: Is email screening dead? How WhatsApp candidate screening is changing modern recruitment.',
           telegramAdaptation: 'Concise update: Automated WhatsApp Candidate Screening framework now available on CHATR.',
-          whatsappAdaptation: 'Hi! Screen candidate resumes instantly over WhatsApp using CHATR AI Universal Inbox.',
+          whatsappAdaptation: 'Hi! Screen candidate resumes instantly over WhatsApp using CHATR SI Universal Inbox.',
           mediumEditorialAdaptation: 'Editorial: The End of Email Screening: Building an Automated WhatsApp Talent Pipeline.',
           redditCommunityDraft: 'Discussion prompt: Share your experience with WhatsApp candidate screening vs traditional ATS email automated rejection.'
         }
       },
       {
         id: 'art_002',
-        title: 'Complete Guide to AI Resume Parsing and Candidate Scoring for Freshers',
+        title: 'Complete Guide to SI Resume Parsing and Candidate Scoring for Freshers',
         slug: '/talentxcel/ai-resume-parser-fresher-screening',
         summary: 'Learn how advanced OCR resume parsing extracts skills, projects, and education to match fresher talent accurately.',
         body: 'Detailed analysis of resume OCR algorithms, PDF/Word document extraction, candidate scoring models, and bias reduction techniques.',
@@ -135,10 +135,10 @@ export class WebContentDistributionEngine {
         canonicalUrl: 'https://talentxcel.in/talentxcel/ai-resume-parser',
         internalLinks: ['/talentxcel/ats-resume-builder', '/chatr/whatsapp-candidate-screening'],
         ctaText: 'Parse 100 Resumes Free on TalentXcel',
-        schemaJsonLd: '{"@context":"https://schema.org","@type":"Article","headline":"AI Resume Parsing Guide"}',
+        schemaJsonLd: '{"@context":"https://schema.org","@type":"Article","headline":"SI Resume Parsing Guide"}',
         openGraphMetadata: {
-          ogTitle: 'Complete Guide to AI Resume Parsing and Candidate Scoring',
-          ogDescription: 'Extract skills and match freshers with TalentXcel AI OCR.',
+          ogTitle: 'Complete Guide to SI Resume Parsing and Candidate Scoring',
+          ogDescription: 'Extract skills and match freshers with TalentXcel SI OCR.',
           ogUrl: 'https://talentxcel.in/talentxcel/ai-resume-parser',
           ogImage: 'https://talentxcel.in/og-resume-parser.png'
         },
@@ -152,29 +152,29 @@ export class WebContentDistributionEngine {
         qualityScore: 94,
         uniquenessScore: 97,
         distributionPackage: {
-          linkedInAdaptation: 'Recruitment insights: How TalentXcel AI OCR parses unstructured fresher resumes into structured talent graphs in under 2 seconds.',
+          linkedInAdaptation: 'Recruitment insights: How TalentXcel SI OCR parses unstructured fresher resumes into structured talent graphs in under 2 seconds.',
           facebookAdaptation: 'How to build an ATS-friendly resume for tech jobs in 2026.',
-          telegramAdaptation: 'TalentXcel AI Resume Parser guide & benchmark metrics.',
-          whatsappAdaptation: 'Try TalentXcel AI Resume OCR parser for free today!',
-          mediumEditorialAdaptation: 'Understanding Document AI: How Resume OCR is Replacing Manual CV Reviews.',
+          telegramAdaptation: 'TalentXcel SI Resume Parser guide & benchmark metrics.',
+          whatsappAdaptation: 'Try TalentXcel SI Resume OCR parser for free today!',
+          mediumEditorialAdaptation: 'Understanding Document SI: How Resume OCR is Replacing Manual CV Reviews.',
           redditCommunityDraft: 'r/recruitment tech: What is your favorite OCR tool for candidate screening?'
         }
       },
       {
         id: 'art_003',
-        title: 'Building a High-Performance Universal Inbox AI for B2B Customer Operations',
+        title: 'Building a High-Performance Universal Inbox SI for B2B Customer Operations',
         slug: '/chatr/universal-inbox-ai-b2b-operations',
-        summary: 'Unify WhatsApp, Meta, LinkedIn, and Email into one collaborative AI-powered inbox workspace for your entire company.',
+        summary: 'Unify WhatsApp, Meta, LinkedIn, and Email into one collaborative SI-powered inbox workspace for your entire company.',
         body: 'Architectural blueprint for routing inbound B2B customer inquiries across multiple channels without losing context or response speed.',
         category: 'B2B_BUSINESS_AI',
         primaryIntent: 'universal inbox ai for business',
         secondaryTopics: ['B2B CRM', 'customer operations', 'multi-channel inbox'],
         canonicalUrl: 'https://chatr.chat/chatr/universal-inbox-ai',
         internalLinks: ['/chatr/whatsapp-candidate-screening'],
-        ctaText: 'Explore Universal Inbox AI on CHATR',
-        schemaJsonLd: '{"@context":"https://schema.org","@type":"Article","headline":"Universal Inbox AI Guide"}',
+        ctaText: 'Explore Universal Inbox SI on CHATR',
+        schemaJsonLd: '{"@context":"https://schema.org","@type":"Article","headline":"Universal Inbox SI Guide"}',
         openGraphMetadata: {
-          ogTitle: 'Building a Universal Inbox AI for B2B Operations',
+          ogTitle: 'Building a Universal Inbox SI for B2B Operations',
           ogDescription: 'Unify multi-channel customer communications on CHATR.',
           ogUrl: 'https://chatr.chat/chatr/universal-inbox-ai',
           ogImage: 'https://chatr.chat/og-universal-inbox.png'
@@ -191,9 +191,9 @@ export class WebContentDistributionEngine {
         distributionPackage: {
           linkedInAdaptation: 'Executive Operations Brief: Why single-channel inboxes cause lead leakage in enterprise B2B sales.',
           facebookAdaptation: 'Top 5 mistakes companies make when handling WhatsApp and LinkedIn customer messages.',
-          telegramAdaptation: 'CHATR Universal Inbox AI architecture overview.',
-          whatsappAdaptation: 'Streamline your customer communications with CHATR Universal Inbox AI.',
-          mediumEditorialAdaptation: 'The Omnichannel Imperative: Multi-Platform AI Messaging in Modern Enterprise.',
+          telegramAdaptation: 'CHATR Universal Inbox SI architecture overview.',
+          whatsappAdaptation: 'Streamline your customer communications with CHATR Universal Inbox SI.',
+          mediumEditorialAdaptation: 'The Omnichannel Imperative: Multi-Platform SI Messaging in Modern Enterprise.',
           redditCommunityDraft: 'Discussion: How does your team manage multi-channel customer support?'
         }
       }

@@ -11,7 +11,7 @@ export class MappingEngine {
 
   /**
    * Generates mappings for a set of raw headers.
-   * Progresses through Exact -> Dictionary -> Fuzzy -> (Simulated) Local AI
+   * Progresses through Exact -> Dictionary -> Fuzzy -> (Simulated) Local SI
    */
   async generateMappings(rawHeaders: string[], targetSchemaFields: string[]): Promise<ImportMapping[]> {
     const mappings: ImportMapping[] = [];
@@ -48,7 +48,7 @@ export class MappingEngine {
         continue;
       }
 
-      // 4. Local AI Inference (Fallback)
+      // 4. Local SI Inference (Fallback)
       // In production, this would call the Local Ollama provider
       const aiMatch = await this.askLocalAI(header, targetSchemaFields);
       if (aiMatch) {
@@ -66,7 +66,7 @@ export class MappingEngine {
 
   private findFuzzyMatch(header: string, targets: string[]): { field: string, confidence: number } | null {
     // A real implementation would use a Levenshtein library like fast-levenshtein
-    // For now, we return null to simulate a miss and let it fall to AI
+    // For now, we return null to simulate a miss and let it fall to SI
     return null;
   }
 

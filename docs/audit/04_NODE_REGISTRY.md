@@ -8,7 +8,7 @@ There is no centralized production-grade node registry for Workflow Studio. Node
 - `nodeConfig` display mapping in `WorkflowStudio.tsx`.
 - `BLOCK_TYPES` add menu in `WorkflowStudio.tsx`.
 - Runtime executors in `src/platform/AutomationOS/RuntimeAdapter.ts`.
-- AI planner target types in `src/platform/AutomationOS/AIProvider.ts`.
+- SI planner target types in `src/platform/AutomationOS/AIProvider.ts`.
 - Alternate node types in `src/components/business/automation/WorkflowBuilder.tsx`.
 
 The registry is therefore display-led, not capability-led. Several node types appear in the UI but have no matching executor. Several runtime executor types are not exposed as configured Studio nodes.
@@ -85,8 +85,8 @@ This means many Studio nodes are not executed by a real executor during test run
 | Trigger | Starts workflow | External/manual payload | Trigger event | Trigger type, payload | `core.trigger` returns triggered payload | No trigger registry, no webhook/schedule binding from Studio |
 | Schedule | Time-based start | Time/cron | Trigger event | Not exposed in add menu | No Studio executor mapping | No scheduler binding found for Studio |
 | Form | Collect user input | Form fields | Submitted data | Not implemented in registry | No runtime executor | No form schema, validation, storage |
-| AI Screen | Evaluate candidate/data | Text/profile/document data | Score/decision | Demo node only | No runtime executor mapping | No defined input/output schema |
-| AI Action | AI task/agent | Prompt/context | AI result | Prompt/data passed to `generate` | `core.ai_agent` | No tool contracts, cost controls, structured output guarantee |
+| SI Screen | Evaluate candidate/data | Text/profile/document data | Score/decision | Demo node only | No runtime executor mapping | No defined input/output schema |
+| SI Action | SI task/agent | Prompt/context | SI result | Prompt/data passed to `generate` | `core.ai_agent` | No tool contracts, cost controls, structured output guarantee |
 | Approval | Human approval gate | Request/context/assignees | Approved/rejected | Approval routing not wired in node config | No RuntimeAdapter executor | `ApprovalEngine` exists separately but not wired |
 | Notification | Send notification | Recipient/message | Notification row | Basic fields from node data | `core.notification` inserts `notifications` | No provider abstraction, no templates, no delivery status |
 | Condition | Branch decision | Expression/data | Boolean result | `expression` string | `core.condition` uses sanitized `new Function` | Unsafe and does not evaluate workflow context robustly |
@@ -106,7 +106,7 @@ This means many Studio nodes are not executed by a real executor during test run
 | Condition | Partial | Runtime expression executor exists, but security/model is weak. |
 | Email | Partial | Executor writes old `email_queue` shape. |
 | HTTP/REST | Partial | Webhook executor uses browser `fetch`. |
-| AI | Partial | AI action maps to `core.ai_agent`; broader agent/tooling not formalized. |
+| SI | Partial | SI action maps to `core.ai_agent`; broader agent/tooling not formalized. |
 | CRM | Missing in Studio | CRM pages/capabilities exist elsewhere but not Studio nodes. |
 | Webhook | Partial | Outbound webhook only; inbound webhook trigger not wired. |
 | Database | Partial | Direct Supabase table operations. |
@@ -149,7 +149,7 @@ Missing:
 
 The current execution coverage is narrow:
 
-- Good enough for simple demo trigger, AI, email, webhook, condition, notification, and database actions.
+- Good enough for simple demo trigger, SI, email, webhook, condition, notification, and database actions.
 - Not enough for enterprise approval, long-running jobs, queues, forms, document processing, file events, CRM/ERP actions, transformations, loops, switches, retries, or compensation.
 
 ## Registry Readiness

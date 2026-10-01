@@ -1,5 +1,5 @@
 /**
- * AI Contract Equivalence Tests — v1.1A
+ * SI Contract Equivalence Tests — v1.1A
  *
  * Validates that MockAIProvider and OllamaProvider satisfy the same IAIProvider contract.
  * The goal is NOT identical outputs — it is demonstrating that both providers fulfill
@@ -72,7 +72,7 @@ async function runContractTest(
 }
 
 export async function runAIContractEquivalenceTests() {
-  console.log('\n[v1.1A] Running AI Contract Equivalence Tests...');
+  console.log('\n[v1.1A] Running SI Contract Equivalence Tests...');
   const results: ContractResult[] = [];
 
   results.push(await runContractTest(

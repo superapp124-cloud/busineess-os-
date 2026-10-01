@@ -663,7 +663,7 @@ export const DesktopWorkspace: React.FC = () => {
  <ScrollArea className="flex-1">
  <div className="p-4 flex flex-col gap-6">
  
- {/* AI Scheduling Agent */}
+ {/* SI Scheduling Agent */}
  <div className="rounded-2xl bg-gradient-to-b from-violet-500/10 to-transparent border border-violet-500/20 p-4 relative overflow-hidden">
  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
  <Bot className="w-24 h-24" />

@@ -155,7 +155,7 @@ class DeviceReadinessValidator(
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.READ_CALL_LOG,
             )
-            GsmFeature.AI,
+            GsmFeature.SI,
             GsmFeature.TRANSCRIPTION,
             GsmFeature.RECORDING -> setOf(
                 Manifest.permission.READ_PHONE_STATE,

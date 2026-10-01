@@ -76,9 +76,9 @@ Return ONLY valid JSON, no markdown.`;
         ...parsed,
       };
       aiSucceeded = true;
-      console.log('[call-sentiment] AI analysis complete:', result.sentiment);
+      console.log('[call-sentiment] SI analysis complete:', result.sentiment);
     } catch (aiError) {
-      console.warn('[call-sentiment] AI analysis failed, falling back to heuristics:', aiError);
+      console.warn('[call-sentiment] SI analysis failed, falling back to heuristics:', aiError);
     }
 
     if (!aiSucceeded) {

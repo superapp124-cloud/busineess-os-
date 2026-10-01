@@ -83,7 +83,7 @@ export const HRAttendanceSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Attendance AI',
+    assistantName: 'Attendance SI',
     skills: []
   },
   

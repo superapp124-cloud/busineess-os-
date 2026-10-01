@@ -58,7 +58,7 @@ AUDITED BY CHATR RECRUITMENT OS EXECUTION KERNEL`;
   const handleConfirmBoost = () => {
     if (!boostModalReq) return;
     setAtRiskList(prev => prev.map(r => r.id === boostModalReq.id ? { ...r, assignedRecruiters: r.assignedRecruiters + 2 } : r));
-    toast.success(`Assigned 2 additional recruiters & launched AI Database Rediscovery for ${boostModalReq.title}!`);
+    toast.success(`Assigned 2 additional recruiters & launched SI Database Rediscovery for ${boostModalReq.title}!`);
     setBoostModalReq(null);
   };
 
@@ -187,7 +187,7 @@ AUDITED BY CHATR RECRUITMENT OS EXECUTION KERNEL`;
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>AI Sourcing Acceleration &amp; Pod Allocation</span>
+                <span>SI Sourcing Acceleration &amp; Pod Allocation</span>
               </h3>
               <button onClick={() => setBoostModalReq(null)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
@@ -196,7 +196,7 @@ AUDITED BY CHATR RECRUITMENT OS EXECUTION KERNEL`;
                 Accelerate sourcing for <strong className="text-white">{boostModalReq.title} ({boostModalReq.client})</strong>:
               </p>
               <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
-                <p className="font-bold text-emerald-400">✓ AI Database Rediscovery: Ready</p>
+                <p className="font-bold text-emerald-400">✓ SI Database Rediscovery: Ready</p>
                 <p className="text-slate-400">Will surface candidates from internal database matching skills &amp; CTC.</p>
               </div>
               <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">

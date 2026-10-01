@@ -32,7 +32,7 @@ export const AIAssistantButton: React.FC<AIAssistantButtonProps> = ({
  id: 'smart_reply' as AIAction,
  label: 'Smart Replies',
  icon: MessageSquare,
- description: 'Get AI suggestions',
+ description: 'Get SI suggestions',
  color: 'bg-blue-500'
  },
  {
@@ -82,7 +82,7 @@ export const AIAssistantButton: React.FC<AIAssistantButtonProps> = ({
  <div className="space-y-1">
  <div className="px-2 py-1.5 flex items-center gap-2">
  <Sparkles className="w-4 h-4 text-primary" />
- <span className="text-secondary font-semibold">AI Assistant</span>
+ <span className="text-secondary font-semibold">SI Assistant</span>
  <Badge variant="secondary" className="ml-auto text-label">Beta</Badge>
  </div>
  <div className="grid gap-1">

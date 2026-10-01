@@ -477,7 +477,7 @@ Reliable live sources were limited for **${safeQuery}**. CHATR will not invent d
     .join("\n");
 
   return `### Quick Answer
-CHATR found **${sources.length} grounded source${sources.length === 1 ? "" : "s"}** for **${safeQuery}**. Model synthesis is temporarily unavailable, so this answer is a compressed source-grounded brief rather than an invented AI response.
+CHATR found **${sources.length} grounded source${sources.length === 1 ? "" : "s"}** for **${safeQuery}**. Model synthesis is temporarily unavailable, so this answer is a compressed source-grounded brief rather than an invented SI response.
 
 ### Key Insights
 ${insights}

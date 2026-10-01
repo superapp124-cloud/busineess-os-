@@ -41,7 +41,7 @@ export type AuditAction =
   | 'policy.evaluated'
   | 'policy.enforced'
   | 'policy.violated'
-  // AI
+  // SI
   | 'ai.generation_requested'
   | 'ai.execution_completed';
 

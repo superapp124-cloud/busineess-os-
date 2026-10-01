@@ -5,7 +5,7 @@ export class AICoworkerService {
   static async generateSmartReply(historyPayload: { sender: string; text: string }[]): Promise<string> {
     try {
       const context = historyPayload.map(m => `${m.sender}: ${m.text}`).join('\n');
-      const prompt = `You are an intuitive AI assistant. Read this recent chat history:\n${context}\n\nProvide a brief, natural, direct response to continue the conversation. Do not include thinking tags or meta-commentary. Output ONLY the response text.`;
+      const prompt = `You are an intuitive SI assistant. Read this recent chat history:\n${context}\n\nProvide a brief, natural, direct response to continue the conversation. Do not include thinking tags or meta-commentary. Output ONLY the response text.`;
       const reply = await generate({ prompt, preferLocal: true });
       return reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
     } catch (err) {
@@ -63,7 +63,7 @@ ${chatHistory}
       const cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
       parsedResult = JSON.parse(cleanJson);
     } catch (err) {
-      console.warn('[AICoworker] Real AI extraction failed, falling back to mock for testing.', err);
+      console.warn('[AICoworker] Real SI extraction failed, falling back to mock for testing.', err);
       // Fallback for browser testing (since local Ollama requires Electron)
       parsedResult = {
         tasks: [

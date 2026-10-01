@@ -23,7 +23,7 @@ export interface ExtractedContent {
 
 /**
  * Web Extraction Service
- * Loads pages and extracts clean text for AI processing
+ * Loads pages and extracts clean text for SI processing
  */
 class WebExtractionService {
   /**

@@ -1,10 +1,10 @@
 /**
- * CHATR Intelligence Engine – Local AI Pipeline
+ * CHATR Intelligence Engine – Local SI Pipeline
  *
  * Decision 8: One unified pipeline processes every communication event.
  * Decision 9: Multi-dimensional attention scoring (not a single number).
  * Decision 10: Every decision ships with an explanation.
- * Decision 11: Cloud AI never runs automatically – local is always the default.
+ * Decision 11: Cloud SI never runs automatically – local is always the default.
  *
  * Pipeline stages (in order):
  *  1. Normalise   – clean text, resolve sender

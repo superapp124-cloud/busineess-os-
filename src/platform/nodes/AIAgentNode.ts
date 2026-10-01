@@ -6,7 +6,7 @@ export const AIAgentNode: NodeDefinition = {
   
   manifest: {
     type: 'core.ai_agent',
-    label: 'AI Agent',
+    label: 'SI Agent',
     description: 'Generates text or structured data using a language model.',
     icon: 'Sparkles',
     category: 'ai',
@@ -20,7 +20,7 @@ export const AIAgentNode: NodeDefinition = {
     type: 'object',
     required: ['prompt'],
     properties: {
-      prompt: { type: 'string', description: 'The instructions for the AI' },
+      prompt: { type: 'string', description: 'The instructions for the SI' },
       model: { type: 'string', description: 'Preferred model (optional)' }
     }
   },
@@ -41,7 +41,7 @@ export const AIAgentNode: NodeDefinition = {
         label: 'Prompt',
         type: 'textarea',
         required: true,
-        placeholder: 'Enter instructions for the AI...'
+        placeholder: 'Enter instructions for the SI...'
       },
       {
         key: 'model',
@@ -61,7 +61,7 @@ export const AIAgentNode: NodeDefinition = {
   policies: [
     {
       policyType: 'rate_limit',
-      description: 'AI usage is subject to tenant rate limits',
+      description: 'SI usage is subject to tenant rate limits',
       enforced: true
     }
   ],

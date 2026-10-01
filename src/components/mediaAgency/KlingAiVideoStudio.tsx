@@ -145,7 +145,7 @@ export const KlingAiVideoStudio: React.FC = () => {
         ? 'Local ComfyUI (Wan2.1)' 
         : selectedEngine === 'runway_gen3' 
         ? 'Runway Gen-4.5' 
-        : 'Kling AI 1.5';
+        : 'Kling SI 1.5';
 
     setGenerationStatusMsg(`Connecting to ${engineName} and dispatching prompt...`);
 
@@ -219,7 +219,7 @@ export const KlingAiVideoStudio: React.FC = () => {
         };
 
         setGenerationProgress(25);
-        setGenerationStatusMsg('Submitting prompt to Kling AI 1.5 API...');
+        setGenerationStatusMsg('Submitting prompt to Kling SI 1.5 API...');
         const task = await KlingVideoClient.submitTextToVideo(taskRequest, apiKey);
 
         if (task.data?.task_id) {
@@ -271,7 +271,7 @@ export const KlingAiVideoStudio: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-bold text-white">AI Generative Video Studio</h1>
+                <h1 className="text-xl font-bold text-white">SI Generative Video Studio</h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/40">
                   {selectedEngine === 'local_comfyui' 
                     ? 'LOCAL COMFYUI (₹0 GPU) 🖥️' 
@@ -299,7 +299,7 @@ export const KlingAiVideoStudio: React.FC = () => {
                 onClick={() => handleEngineChange('kling_15')}
                 className={`px-3 py-1.5 rounded-xl transition ${selectedEngine === 'kling_15' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
               >
-                Kling AI 1.5
+                Kling SI 1.5
               </button>
               <button
                 onClick={() => handleEngineChange('local_comfyui')}
@@ -353,7 +353,7 @@ export const KlingAiVideoStudio: React.FC = () => {
                 ? 'Local ComfyUI Server Endpoint:'
                 : selectedEngine === 'runway_gen3'
                 ? 'RunwayML API Key (key_...):'
-                : 'Kling AI API Key:'}
+                : 'Kling SI API Key:'}
             </label>
             <div className="flex items-center space-x-2">
               {selectedEngine === 'local_comfyui' ? (
@@ -486,7 +486,7 @@ export const KlingAiVideoStudio: React.FC = () => {
             <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <Wand2 className="w-4 h-4 text-yellow-400" />
-                <span>2. AI Video Prompt (Sent directly to Model):</span>
+                <span>2. SI Video Prompt (Sent directly to Model):</span>
               </h3>
 
               <div className="space-y-3">
@@ -538,7 +538,7 @@ export const KlingAiVideoStudio: React.FC = () => {
                   <span>
                     {isGenerating 
                       ? 'Dispatching to Generative Video API...' 
-                      : `🚀 Send Prompt to ${selectedEngine === 'local_comfyui' ? 'Local ComfyUI (₹0)' : selectedEngine === 'runway_gen3' ? 'Runway Gen-4.5' : 'Kling AI'} (9:16)`}
+                      : `🚀 Send Prompt to ${selectedEngine === 'local_comfyui' ? 'Local ComfyUI (₹0)' : selectedEngine === 'runway_gen3' ? 'Runway Gen-4.5' : 'Kling SI'} (9:16)`}
                   </span>
                 </button>
               </div>

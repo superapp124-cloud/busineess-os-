@@ -1,7 +1,7 @@
 /**
- * CHATR AI Service
+ * CHATR SI Service
  *
- * Single entry point for all AI generation in CHATR.
+ * Single entry point for all SI generation in CHATR.
  *
  * Routing priority:
  *   1. CHATR Kernel (port 8087) — desktop with kernel running
@@ -11,11 +11,12 @@
  *   5. OpenAI API (via env var) — cloud fallback
  *   6. Supabase Edge Function (ai-chat-assistant) — managed fallback
  *
- * Genesis v2.0 — Phase 1: Cloud AI fallback added
+ * Genesis v2.0 — Phase 1: Cloud SI fallback added
  */
 
 import { conversation } from '@/core/conversation/ConversationSDK';
 import { supabase } from '@/integrations/supabase/client';
+import { localAIEngine } from './ai/LocalAIEngine';
 
 interface GenerateOptions {
   prompt: string;
@@ -33,7 +34,7 @@ function getErrorMessage(err: unknown): string {
     if (typeof value.message === 'string') return value.message;
     if (typeof value.error === 'string') return value.error;
   }
-  return 'Unknown AI error';
+  return 'Unknown SI error';
 }
 
 /**
@@ -117,7 +118,7 @@ async function tryOllama(prompt: string): Promise<string | null> {
 }
 
 // Client-side Gemini fetch removed for security (preventing API key leaks and 403 errors).
-// All AI requests are now securely routed through server-side Supabase Edge Functions (ai-chat-assistant).
+// All SI requests are now securely routed through server-side Supabase Edge Functions (ai-chat-assistant).
 
 /**
  * Path 5: OpenAI REST API
@@ -177,7 +178,7 @@ async function trySupabaseEdge(prompt: string, systemPrompt?: string): Promise<s
 /**
  * @deprecated For OS-level intents, use KernelClient.dispatchIntent() instead.
  * 
- * Generate an AI response.
+ * Generate an SI response.
  *
  * Routing priority:
  *   1. CHATR Kernel (desktop, port 8087)
@@ -194,12 +195,27 @@ export async function generate({
   systemPrompt,
   preferLocal = true,
 }: GenerateOptions): Promise<string> {
+  // ── Path 0: On-Device LocalAIEngine (Native llama.cpp / Desktop Ollama) ────
+  if (preferLocal) {
+    try {
+      const isAvailable = await localAIEngine.isModelAvailable();
+      if (isAvailable) {
+        const localResult = await localAIEngine.generate(prompt, { systemPrompt });
+        if (localResult?.text && localResult.provider !== 'HEURISTIC_FALLBACK') {
+          return localResult.text;
+        }
+      }
+    } catch (err) {
+      console.debug('[CHATR SI] LocalAIEngine fallback:', err);
+    }
+  }
+
   // ── Path 1: CHATR Kernel ─────────────────────────────────────────────────
   if (preferLocal && await isKernelAvailable()) {
     try {
       return await conversation.send({ conversationId, message: prompt, userId });
     } catch (err) {
-      throw new Error(`[CHATR AI Kernel] ${getErrorMessage(err)}`);
+      throw new Error(`[CHATR SI Kernel] ${getErrorMessage(err)}`);
     }
   }
 
@@ -210,7 +226,7 @@ export async function generate({
       const status = await window.electronAPI!.ai!.status();
       const warmingPhases = ['checking', 'downloading', 'installing', 'starting', 'pulling'];
       if (status && warmingPhases.includes(status.phase)) {
-        throw new Error(`CHATR AI is still starting up (${status.phase}). Please wait 20–30 seconds.`);
+        throw new Error(`CHATR SI is still starting up (${status.phase}). Please wait 20–30 seconds.`);
       }
       if (status?.phase === 'ready') {
         const result = await window.electronAPI!.ai!.ask(prompt);
@@ -223,7 +239,7 @@ export async function generate({
       }
     } catch (err) {
       const msg = getErrorMessage(err);
-      if (msg.startsWith('CHATR AI')) throw err;
+      if (msg.startsWith('CHATR SI')) throw err;
       // Fall through to cloud
     }
   }
@@ -234,7 +250,7 @@ export async function generate({
     if (ollamaResult) return ollamaResult;
   }
 
-  // ── Path 4: Supabase Edge Function (Secure Cloud AI - no client key leaks) ──
+  // ── Path 4: Supabase Edge Function (Secure Cloud SI - no client key leaks) ──
   const edgeResult = await trySupabaseEdge(prompt, systemPrompt);
   if (edgeResult) return edgeResult;
 
@@ -242,13 +258,20 @@ export async function generate({
   const openAIResult = await tryOpenAI(prompt, systemPrompt);
   if (openAIResult) return openAIResult;
 
-  // ── No AI available ───────────────────────────────────────────────────────
+  // ── No SI available ───────────────────────────────────────────────────────
   throw new Error(
-    '[CHATR AI] No AI provider available. Options:\n' +
+    '[CHATR SI] No SI provider available. Options:\n' +
     '• Start Ollama locally: https://ollama.ai\n' +
     '• Add VITE_GEMINI_API_KEY to your .env\n' +
-    '• Add VITE_OPENAI_API_KEY to your .env\n' +
-    '• Open the CHATR Desktop app'
+    '• Add VITE_OPENAI_API_KEY to your .env\n'
   );
 }
+
+// ── Platform Export ────────────────────────────────────────────────────────
+export { chatrAIRouter, ChatrAIRouter } from '@/ai/router/ChatrAIRouter';
+export { personalAgent, PersonalAgent } from '@/ai/agents/PersonalAgent';
+export { chatrLocalRuntime, ChatrLocalRuntime } from '@/ai/runtime/ChatrLocalRuntime';
+export { privacyRouter, PrivacyRouter } from '@/ai/privacy/PrivacyRouter';
+export { localMemoryStore, LocalMemoryStore } from '@/ai/memory/LocalMemoryStore';
+
 

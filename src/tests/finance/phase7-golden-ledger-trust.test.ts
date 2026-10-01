@@ -65,9 +65,9 @@ test('GoldenLedger: 90-day simulation output exactly matches canonical reference
 });
 
 // ══════════════════════════════════════════════════════════════════════
-// 2. AI FINANCIAL SAFETY & DECEPTIVE TRAP EVALUATION
+// 2. SI FINANCIAL SAFETY & DECEPTIVE TRAP EVALUATION
 // ══════════════════════════════════════════════════════════════════════
-console.log('--- 2. AI Financial Safety & Deceptive Trap Resistance ---');
+console.log('--- 2. SI Financial Safety & Deceptive Trap Resistance ---');
 
 test('FinancialSafetyEvaluator: rejects deceptive revenue growth trap when cash conversion is failing', () => {
   const evalRes = FinancialSafetyEvaluator.evaluateGrowthTrapQuery({
@@ -77,7 +77,7 @@ test('FinancialSafetyEvaluator: rejects deceptive revenue growth trap when cash 
     daysSalesOutstanding: 74,
   });
 
-  assert(evalRes.trap_detected, 'AI correctly identifies deceptive growth trap');
+  assert(evalRes.trap_detected, 'SI correctly identifies deceptive growth trap');
   assert(evalRes.reasoning.includes('Revenue growth is not translating into cash collections'), 'Explains cash conversion failure');
 });
 
@@ -132,7 +132,7 @@ test('FinancialAuditTrail: preserves complete 11-field compliance audit record f
   });
 
   assertEqual(record.what, 'APPROVE_BAD_DEBT_WRITEOFF', 'Action captured');
-  assertEqual(record.ai_confidence, 0.98, 'AI confidence preserved');
+  assertEqual(record.ai_confidence, 0.98, 'SI confidence preserved');
   assertEqual(record.policy_version, 2, 'Policy version 2 captured');
   assertEqual(record.final_action, 'POSTED_TO_GL', 'Final action captured');
   assert(record.id.startsWith('audit_'), 'Valid audit ID format');

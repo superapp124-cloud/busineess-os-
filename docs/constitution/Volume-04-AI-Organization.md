@@ -1,4 +1,4 @@
-# Volume IV — AI Organization
+# Volume IV — SI Organization
 
 ## CEO Agent
 ## Planner Agent

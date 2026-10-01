@@ -8,10 +8,10 @@ let md = `# CHATR Desktop OS — Complete Frontend UI Architecture Audit
 
 Based on a comprehensive codebase analysis of the entire \`src/pages/desktop\` and \`src/pages/business\` tree:
 
-1. **Functional vs Cosmetic:** Roughly 70% of the UI is partially functional, with about 30% being heavily cosmetic or relying on mock data. Core chatting functionality is present, but advanced features (Business CRM, Automation Studio, AI Workflow) have high levels of simulated behavior.
+1. **Functional vs Cosmetic:** Roughly 70% of the UI is partially functional, with about 30% being heavily cosmetic or relying on mock data. Core chatting functionality is present, but advanced features (Business CRM, Automation Studio, SI Workflow) have high levels of simulated behavior.
 2. **Production-Ready:** \`DesktopChat\`, \`DesktopContacts\`, \`DesktopSettings\`, \`Analytics\`, \`WorkspaceSetup\`.
 3. **Mockups/Prototypes:** \`WorkflowStudio\`, \`DesktopCalls\`, \`AgentMarketplace\`, \`CandidateWorkspace\`.
-4. **Disconnected/Simulated:** Many AI functionalities in \`DesktopIntelligence\` and \`AIRoles\` lack full backend RAG/execution and simulate responses.
+4. **Disconnected/Simulated:** Many SI functionalities in \`DesktopIntelligence\` and \`AIRoles\` lack full backend RAG/execution and simulate responses.
 5. **Architectural Issues:** The presence of multiple \`CommandBus\` implementations (Core Runtime vs AutomationOS) and mixed state management (Zustand + local state) across large desktop components.
 
 ---
@@ -38,11 +38,11 @@ for (const p of pages) {
     md += `| ${routeName} | ${p.backendStatus} | ${p.hasSupabase ? 'Supabase' : ''} ${p.hasUseQuery ? 'ReactQuery' : ''} |\n`;
 }
 
-md += `\n### Table 3: AI Connectivity\n| Page | AI Status | Details |\n|------|-----------|---------|\n`;
+md += `\n### Table 3: SI Connectivity\n| Page | SI Status | Details |\n|------|-----------|---------|\n`;
 for (const p of pages) {
-    if (p.hasAi || p.path.includes('AI') || p.path.includes('Intelligence') || p.path.includes('Agent')) {
+    if (p.hasAi || p.path.includes('SI') || p.path.includes('Intelligence') || p.path.includes('Agent')) {
         const routeName = p.path.split('\\').pop().replace('.tsx', '');
-        md += `| ${routeName} | ${p.aiStatus} | ${p.hasAi ? 'AI Hooks detected' : 'Simulated/Static'} |\n`;
+        md += `| ${routeName} | ${p.aiStatus} | ${p.hasAi ? 'SI Hooks detected' : 'Simulated/Static'} |\n`;
     }
 }
 
@@ -79,7 +79,7 @@ for (const p of pages) {
         md += `### Route: \`${routeName}\`\n`;
         md += `- **Current Status:** ${p.workingPercent}% Working\n`;
         md += `- **Backend Connectivity:** ${p.backendStatus}\n`;
-        md += `- **AI Integration:** ${p.aiStatus}\n`;
+        md += `- **SI Integration:** ${p.aiStatus}\n`;
         md += `- **Mock Components Detected:** ${p.hasMock ? 'Yes' : 'No'}\n`;
         md += `- **Placeholder Content:** ${p.isFake ? 'Yes' : 'No'}\n`;
         md += `- **State Management:** ${p.hasZustand ? 'Zustand' : 'Local/Context'}\n`;

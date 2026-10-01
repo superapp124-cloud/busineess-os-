@@ -29,14 +29,14 @@ export const ExecutiveDashboardView: React.FC = () => {
   }, []);
 
   const subsystems = [
-    { name: 'Universal AI Messaging & WhatsApp API', icon: MessageSquare, status: 'Active (Meta Cloud API)', traffic: '128.4K msgs/mo', color: 'text-emerald-400' },
-    { name: 'AI Voice & SIP/WebRTC Dialers', icon: PhoneCall, status: 'Active (FreeSWITCH/SIP)', traffic: 'Sub-60ms voice latency', color: 'text-blue-400' },
-    { name: 'TalentXcel AI Resume & ATS Screening', icon: Bot, status: 'Active (v3.4 Multilingual)', traffic: `${metrics?.candidatesScreened || 4190} screened`, color: 'text-indigo-400' },
+    { name: 'Universal SI Messaging & WhatsApp API', icon: MessageSquare, status: 'Active (Meta Cloud API)', traffic: '128.4K msgs/mo', color: 'text-emerald-400' },
+    { name: 'SI Voice & SIP/WebRTC Dialers', icon: PhoneCall, status: 'Active (FreeSWITCH/SIP)', traffic: 'Sub-60ms voice latency', color: 'text-blue-400' },
+    { name: 'TalentXcel SI Resume & ATS Screening', icon: Bot, status: 'Active (v3.4 Multilingual)', traffic: `${metrics?.candidatesScreened || 4190} screened`, color: 'text-indigo-400' },
     { name: 'CRM & Round-Robin Lead Triage', icon: TrendingUp, status: 'Active (Sub-60s SLA)', traffic: '100% lead capture', color: 'text-amber-400' },
     { name: 'Financial Accounting Core (IFRS / US GAAP)', icon: DollarSign, status: 'Active (Double-Entry GL)', traffic: 'Realtime posting engine', color: 'text-emerald-400' },
     { name: 'Merchant, Doctor & Dhandha Platform', icon: ShoppingBag, status: 'Active (Commerce/KYC)', traffic: 'Orders & Appointments', color: 'text-purple-400' },
     { name: 'MCP Developer Hub & Plugins', icon: Terminal, status: 'Active (Model Context Protocol)', traffic: 'Real-time JSON schemas', color: 'text-cyan-400' },
-    { name: 'Programmatic SEO & AI Discovery', icon: Globe, status: 'Active (19,444 SSG)', traffic: '1,760 cities worldwide', color: 'text-indigo-400' },
+    { name: 'Programmatic SEO & SI Discovery', icon: Globe, status: 'Active (19,444 SSG)', traffic: '1,760 cities worldwide', color: 'text-indigo-400' },
   ];
 
   return (
@@ -53,7 +53,7 @@ export const ExecutiveDashboardView: React.FC = () => {
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Executive Operating Picture</h1>
           <p className="text-xs text-slate-400">
-            Real-time telemetry across Communication, Voice, TalentXcel AI, CRM, Finance OS, Commerce, and Programmatic SEO
+            Real-time telemetry across Communication, Voice, TalentXcel SI, CRM, Finance OS, Commerce, and Programmatic SEO
           </p>
         </div>
 

@@ -98,14 +98,14 @@ CREATE TABLE IF NOT EXISTS public.developer_profiles (
 -- Insert default categories
 INSERT INTO public.app_categories (name, description, icon, display_order) VALUES
 ('Social & Community', 'Dating, Pet adoption, Local groups, College hubs', '👥', 1),
-('Learning & Careers', 'AI Resume builder, Jobs, Mentorship, Mock Interviews', '📚', 2),
-('Health & Fitness', 'AI Health Assistant, Doctor booking, Diet tracking', '💪', 3),
+('Learning & Careers', 'SI Resume builder, Jobs, Mentorship, Mock Interviews', '📚', 2),
+('Health & Fitness', 'SI Health Assistant, Doctor booking, Diet tracking', '💪', 3),
 ('Local Services', 'Home repair, tutors, plumbers, delivery helpers', '🔧', 4),
 ('Food & Hostels', 'Hostel meal booking, food waste saver, delivery', '🍔', 5),
-('Entertainment', 'Short videos, mini-games, trivia, AI content creation', '🎮', 6),
+('Entertainment', 'Short videos, mini-games, trivia, SI content creation', '🎮', 6),
 ('Travel', 'Local cab booking, train/bus status', '✈️', 7),
 ('NGOs & Volunteering', 'Donation, pet adoption, blood donation', '❤️', 8),
-('AI Tools', 'AI Image, Video, Voice generator; summarizer; document tools', '🤖', 9)
+('SI Tools', 'SI Image, Video, Voice generator; summarizer; document tools', '🤖', 9)
 ON CONFLICT DO NOTHING;
 
 -- RLS Policies

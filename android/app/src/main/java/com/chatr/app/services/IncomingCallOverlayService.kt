@@ -58,7 +58,7 @@ class IncomingCallOverlayService : Service() {
             val tv = overlayView?.findViewById<TextView>(R.id.liveTranscriptText)
             if (speaker != null && turnText != null) {
                 val current = tv?.text?.toString().orEmpty()
-                val prefix = if (speaker == "CALLER") "👤 Caller: " else "🤖 Chatr AI: "
+                val prefix = if (speaker == "CALLER") "👤 Caller: " else "🤖 Chatr SI: "
                 tv?.text = if (current.isBlank() || current == "...") "$prefix$turnText" else "$current\n$prefix$turnText"
             } else if (result != null) {
                 tv?.text = result
@@ -177,7 +177,7 @@ class IncomingCallOverlayService : Service() {
         val btnBouncer = overlayView?.findViewById<Button>(R.id.btnAiBouncer)
 
         callerNumberText?.text = phoneNumber
-        callerNameText?.text = "Chatr AI searching..."
+        callerNameText?.text = "Chatr SI searching..."
         spamBadge?.text = "ANALYZING"
 
         fun enterTakeOverMode() {
@@ -202,8 +202,8 @@ class IncomingCallOverlayService : Service() {
             spamBadge?.text = "GUIDING"
             spamBadge?.setBackgroundColor(Color.parseColor("#3B82F6"))
             transcriptContainer?.visibility = View.VISIBLE
-            transcriptText?.text = "Chatr AI is guiding the delivery driver..."
-            aiSummaryText?.text = "AI screening active. Tap Take Over anytime."
+            transcriptText?.text = "Chatr SI is guiding the delivery driver..."
+            aiSummaryText?.text = "SI screening active. Tap Take Over anytime."
 
             // Answer call and start screening
             ChatrInCallService.answerCall()
@@ -212,11 +212,11 @@ class IncomingCallOverlayService : Service() {
         }
 
         btnBouncer?.setOnClickListener {
-            spamBadge?.text = "AI SCREENING"
+            spamBadge?.text = "SI SCREENING"
             spamBadge?.setBackgroundColor(Color.parseColor("#8B5CF6"))
             transcriptContainer?.visibility = View.VISIBLE
-            transcriptText?.text = "Chatr AI Receptionist active..."
-            aiSummaryText?.text = "AI screening active. Tap Take Over anytime."
+            transcriptText?.text = "Chatr SI Receptionist active..."
+            aiSummaryText?.text = "SI screening active. Tap Take Over anytime."
 
             // Answer call and start screening
             ChatrInCallService.answerCall()
@@ -247,7 +247,7 @@ class IncomingCallOverlayService : Service() {
             callerNameText?.text = "Unknown caller"
             spamBadge?.text = "WAITING"
             spamBadge?.setBackgroundColor(Color.parseColor("#64748B"))
-            aiSummaryText?.text = "Chatr AI: Waiting for Android to provide caller details."
+            aiSummaryText?.text = "Chatr SI: Waiting for Android to provide caller details."
             progressBar?.visibility = View.VISIBLE
             return
         }
@@ -255,7 +255,7 @@ class IncomingCallOverlayService : Service() {
         if (activeLookupNumber == phoneNumber) return
         activeLookupNumber = phoneNumber
 
-        callerNameText?.text = "Chatr AI searching..."
+        callerNameText?.text = "Chatr SI searching..."
         spamBadge?.text = "ANALYZING"
         spamBadge?.setBackgroundColor(Color.parseColor("#6366F1"))
         aiSummaryText?.text = "Scanning caller intelligence sources..."
@@ -265,7 +265,7 @@ class IncomingCallOverlayService : Service() {
             val scanningJob = launch {
                 val scanningText = overlayView?.findViewById<TextView>(R.id.aiScanningText)
                 val aiFeatures = listOf(
-                    "live AI analysis...",
+                    "live SI analysis...",
                     "scam intent detection...",
                     "voice pattern analysis...",
                     "conversational screening...",
@@ -346,7 +346,7 @@ class IncomingCallOverlayService : Service() {
         // TODO: When Gemini/Supabase enrichment is ready, this function should:
         //   1. POST number hash to the enrichment queue (Cloud Task or Supabase Edge Function)
         //   2. Await async result (or return base immediately if not cached)
-        //   3. Return enriched CallerLookupResult with real AI-generated summary
+        //   3. Return enriched CallerLookupResult with real SI-generated summary
         //
         // Do NOT simulate status messages or return hardcoded identity results here.
         // Showing fabricated "Neural Scan" progress to users is a false-result bug,
@@ -370,32 +370,32 @@ class IncomingCallOverlayService : Service() {
             info.spamReports >= 5 || info.trustScore < 30 -> {
                 badgeView?.text = "HIGH RISK"
                 badgeView?.setBackgroundColor(Color.parseColor("#DC2626"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: High spam risk. Avoid answering unless this call is expected." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: High spam risk. Avoid answering unless this call is expected." }
             }
             info.spamReports >= 2 || info.trustScore < 60 -> {
                 badgeView?.text = "POSSIBLE SPAM"
                 badgeView?.setBackgroundColor(Color.parseColor("#F59E0B"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: Suspicious caller. Verify before sharing personal details." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: Suspicious caller. Verify before sharing personal details." }
             }
             info.name != "Unknown Caller" && isBusiness -> {
                 badgeView?.text = "TRUSTED BUSINESS"
                 badgeView?.setBackgroundColor(Color.parseColor("#8B5CF6"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: Verified business caller." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: Verified business caller." }
             }
             info.name != "Unknown Caller" && info.trustScore >= 80 -> {
                 badgeView?.text = "VERIFIED HUMAN"
                 badgeView?.setBackgroundColor(Color.parseColor("#10B981"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: Verified human caller." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: Verified human caller." }
             }
             info.name != "Unknown Caller" -> {
                 badgeView?.text = "SAFE CONTACT"
                 badgeView?.setBackgroundColor(Color.parseColor("#3B82F6"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: Known or trusted caller. Safe to answer." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: Known or trusted caller. Safe to answer." }
             }
             else -> {
                 badgeView?.text = "ANALYZING"
                 badgeView?.setBackgroundColor(Color.parseColor("#6B7280"))
-                summaryView?.text = info.summary.ifBlank { "Chatr AI: No spam reports found. Standard trust level." }
+                summaryView?.text = info.summary.ifBlank { "Chatr SI: No spam reports found. Standard trust level." }
             }
         }
     }
@@ -471,9 +471,9 @@ class IncomingCallOverlayService : Service() {
                         trustScore = trustScore,
                         spamReports = spamReports,
                         summary = when (riskLevel) {
-                            "spam" -> "Chatr AI: High spam risk from community reports."
-                            "suspicious" -> "Chatr AI: Suspicious caller pattern detected."
-                            else -> "Chatr AI: Caller reputation looks safe."
+                            "spam" -> "Chatr SI: High spam risk from community reports."
+                            "suspicious" -> "Chatr SI: Suspicious caller pattern detected."
+                            else -> "Chatr SI: Caller reputation looks safe."
                         },
                         riskLevel = riskLevel
                     )
@@ -502,7 +502,7 @@ class IncomingCallOverlayService : Service() {
                         name = obj.getString("name"),
                         trustScore = trustScore,
                         spamReports = 0,
-                        summary = "Chatr AI: Caller matched in Chatr identity database.",
+                        summary = "Chatr SI: Caller matched in Chatr identity database.",
                         riskLevel = if (trustScore < 60) "suspicious" else "safe",
                         isVerified = trustScore >= 80
                     )

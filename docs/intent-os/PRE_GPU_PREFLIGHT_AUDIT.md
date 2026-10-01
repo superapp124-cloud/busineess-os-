@@ -141,7 +141,7 @@ Before committing compute resources to real GPU post-training on Google Colab, a
   PARAMETER temperature 0.7
   PARAMETER top_p 0.9
   PARAMETER num_ctx 4096
-  SYSTEM You are CHATR Core, the Intent-First Business Operating System AI assistant...
+  SYSTEM You are CHATR Core, the Intent-First Business Operating System SI assistant...
   ```
 - Rejects any Modelfile pointing to `FROM phi3:mini`.
 

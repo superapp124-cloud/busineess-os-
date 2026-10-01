@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.crm_evidence_ledger (
     retrieved_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. Extend crm_activities table with sentiment and AI insights
+-- 4. Extend crm_activities table with sentiment and SI insights
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'crm_activities' AND column_name = 'sentiment') THEN

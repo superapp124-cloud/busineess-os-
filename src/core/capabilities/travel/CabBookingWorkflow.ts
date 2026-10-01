@@ -99,7 +99,7 @@ export class CabBookingWorkflow implements WorkflowCapabilityContract {
       payload: { manifest: this.manifest },
     });
 
-    // ── Execution Console: created immediately so user sees AI thinking live ──
+    // ── Execution Console: created immediately so user sees SI thinking live ──
     this.executionConsoleWidgetId = buildWidgetId(this.workflowId, 'execution_console', this.widgetIndex++);
     const initialConsolePayload: ExecutionConsoleWidgetPayload = {
       aiMode: 'local',

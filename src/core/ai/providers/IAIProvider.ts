@@ -8,7 +8,7 @@ export interface IAIProvider extends IProvider {
   getAvailableModels(): Promise<ModelProfile[]>;
 
   /**
-   * Core AI Primitives
+   * Core SI Primitives
    */
   extractStructuredData<T>(text: string, schemaName: string, schemaDefinition?: any): Promise<IAIProviderResponse<T>>;
   classify(text: string, categories: string[]): Promise<IAIProviderResponse<{ category: string }>>;

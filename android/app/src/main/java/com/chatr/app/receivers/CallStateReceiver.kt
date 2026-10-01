@@ -114,7 +114,7 @@ class CallStateReceiver : BroadcastReceiver() {
                 stopOverlayService(context)
 
                 if (ChatrVoipCallRegistry.hasRecentIncoming(context)) {
-                    Log.i(TAG, "Suppressing GSM AI overlay because a Chatr VoIP call is active.")
+                    Log.i(TAG, "Suppressing GSM SI overlay because a Chatr VoIP call is active.")
                     return
                 }
 
@@ -132,7 +132,7 @@ class CallStateReceiver : BroadcastReceiver() {
                     )
                 }
 
-                // Start the CHATR AI GSM Layer overlay for active call
+                // Start the CHATR SI GSM Layer overlay for active call
                 val activeNum = phoneNumber ?: "Unknown"
                 InCallOverlayService.start(context, activeNum)
             }
@@ -163,7 +163,7 @@ class CallStateReceiver : BroadcastReceiver() {
                         durationSeconds = if (wasOffhook) ((endedAt - startedAt) / 1000).coerceAtLeast(0) else 0,
                     )
                     
-                    // Generate AI Call Summary (Phase 4)
+                    // Generate SI Call Summary (Phase 4)
                     if (status == "completed") {
                         val duration = (endedAt - startedAt) / 1000
                         CoroutineScope(Dispatchers.IO).launch {
@@ -178,7 +178,7 @@ class CallStateReceiver : BroadcastReceiver() {
                                 )
                                 CallSummaryEngine.saveSummary(context, summary)
                                 SupabaseNativeCallClient(context).syncAiSummary(summary)
-                                Log.i(TAG, "AI Summary generated and saved for $phoneNumber")
+                                Log.i(TAG, "SI Summary generated and saved for $phoneNumber")
                                 
                                 // Launch sleek popup UI
                                 withContext(Dispatchers.Main) {
@@ -191,7 +191,7 @@ class CallStateReceiver : BroadcastReceiver() {
                                     )
                                 }
                             } catch (e: Exception) {
-                                Log.e(TAG, "Failed to generate AI summary", e)
+                                Log.e(TAG, "Failed to generate SI summary", e)
                             }
                         }
                     }

@@ -33,7 +33,7 @@ export const RightContextPanel: React.FC = () => {
   };
 
   const handleSuggestedClick = () => {
-    toast.success('Opening CHATR AI to compose proposal email to John...');
+    toast.success('Opening CHATR SI to compose proposal email to John...');
     window.dispatchEvent(new CustomEvent('open-chatr-ai'));
   };
 
@@ -63,7 +63,7 @@ export const RightContextPanel: React.FC = () => {
             <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
           </div>
           <span className={cn('text-[11px] font-black uppercase tracking-[0.16em]', isDark ? 'text-white/70' : 'text-zinc-500')}>
-            AI Context
+            SI Context
           </span>
         </div>
         <div className="flex items-center gap-1.5">

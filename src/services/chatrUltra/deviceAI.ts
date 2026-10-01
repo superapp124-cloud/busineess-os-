@@ -1,6 +1,6 @@
 /**
- * CHATR ULTRA - Device AI Interface
- * Abstracts on-device AI model access across platforms
+ * CHATR ULTRA - Device SI Interface
+ * Abstracts on-device SI model access across platforms
  */
 
 export type DeviceAIModel = 
@@ -37,19 +37,19 @@ export interface MultiModelResponse {
 }
 
 /**
- * Device AI Service - manages on-device AI models
+ * Device SI Service - manages on-device SI models
  */
 class DeviceAIService {
   private availableModels: DeviceAICapabilities[] = [];
   private initialized = false;
 
   /**
-   * Detect and initialize available on-device AI models
+   * Detect and initialize available on-device SI models
    */
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
-    console.log('🧠 [CHATR ULTRA] Initializing device AI models...');
+    console.log('🧠 [CHATR ULTRA] Initializing device SI models...');
 
     // Check for Apple Intelligence (iOS 18+)
     if (this.isAppleIntelligenceAvailable()) {
@@ -93,7 +93,7 @@ class DeviceAIService {
     // Check for Qualcomm NPU
     if (this.isQualcommNPUAvailable()) {
       this.availableModels.push({
-        modelName: 'Qualcomm AI Engine',
+        modelName: 'Qualcomm SI Engine',
         modelType: 'qualcomm-npu',
         available: true,
         maxTokens: 1024,
@@ -115,18 +115,18 @@ class DeviceAIService {
     });
 
     this.initialized = true;
-    console.log(`✅ [CHATR ULTRA] ${this.availableModels.length} AI models ready`);
+    console.log(`✅ [CHATR ULTRA] ${this.availableModels.length} SI models ready`);
   }
 
   /**
-   * Get all available device AI models
+   * Get all available device SI models
    */
   getAvailableModels(): DeviceAICapabilities[] {
     return this.availableModels;
   }
 
   /**
-   * Run inference on a single device AI model
+   * Run inference on a single device SI model
    */
   async runInference(
     prompt: string,
@@ -145,7 +145,7 @@ class DeviceAIService {
       : this.availableModels[0];
 
     if (!model) {
-      throw new Error('No AI models available on device');
+      throw new Error('No SI models available on device');
     }
 
     // Route to appropriate model
@@ -228,7 +228,7 @@ class DeviceAIService {
   }
 
   private isSamsungGaussAvailable(): boolean {
-    // Check for Samsung device with Gauss AI
+    // Check for Samsung device with Gauss SI
     return false; // Placeholder
   }
 
@@ -264,7 +264,7 @@ class DeviceAIService {
   private async runWebTransformer(prompt: string, options?: any): Promise<string> {
     // This is a simplified fallback
     // In production, this would use @huggingface/transformers
-    const systemPrompt = options?.systemPrompt || 'You are a helpful AI assistant.';
+    const systemPrompt = options?.systemPrompt || 'You are a helpful SI assistant.';
     
     // Simulate basic reasoning
     return `${systemPrompt}\n\nQuery: ${prompt}\n\nResponse: This is a placeholder response. In production, this would use on-device transformer models via WebGPU.`;

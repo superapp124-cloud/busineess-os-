@@ -68,7 +68,7 @@ export class QuotaEngine {
   }
 
   /**
-   * Called by Telemetry/Accounting to track AI token usage.
+   * Called by Telemetry/Accounting to track SI token usage.
    */
   static consumeAITokens(tenantId: string, tokens: number) {
     const usage = this.getUsage(tenantId);

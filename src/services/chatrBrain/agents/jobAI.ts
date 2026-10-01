@@ -1,5 +1,5 @@
 /**
- * JOB-MATCHING AI AGENT
+ * JOB-MATCHING SI AGENT
  * Handles job search, applications, career advice, resume matching
  */
 
@@ -8,12 +8,12 @@ import { memoryLayer } from '../memoryLayer';
 import { AgentResponse, AgentContext } from './personalAI';
 
 /**
- * Job-Matching AI Agent
+ * Job-Matching SI Agent
  * Finds jobs, matches skills, helps with applications
  */
 class JobAIAgent {
   readonly type: AgentType = 'jobs';
-  readonly name = 'Job-Matching AI';
+  readonly name = 'Job-Matching SI';
 
   /**
    * Process a job-related query

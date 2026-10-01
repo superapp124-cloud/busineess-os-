@@ -1,6 +1,6 @@
 # CHATR Intent OS — Security Certification Policy
 
-This document defines the authoritative security policies for the CHATR Intent OS platform. It covers three threat domains: Supply Chain, Runtime, and AI Safety.
+This document defines the authoritative security policies for the CHATR Intent OS platform. It covers three threat domains: Supply Chain, Runtime, and SI Safety.
 
 > All policies in this document are Platform Invariants. Violations require immediate remediation and a security RFC.
 
@@ -80,12 +80,12 @@ Every published package **should** include a provenance attestation (`provenance
 
 ---
 
-## 3. AI Safety
+## 3. SI Safety
 
 ### 3.1 Confidence Threshold Enforcement
 - Any `ExecutionPlan` with `confidence.overall < policy.minimumConfidence` **must** have `requiresHumanReview = true`.
 - The `SafetyValidator` enforces this. A plan that fails the threshold **must not** be handed to the Kernel without explicit human approval.
-- **Test gate**: `SecurityValidation.test.ts` — AI Safety scenario.
+- **Test gate**: `SecurityValidation.test.ts` — SI Safety scenario.
 
 ### 3.2 Prompt Injection Resilience
 - `ReasoningProvider` implementations must treat all user-provided intent strings as untrusted input.

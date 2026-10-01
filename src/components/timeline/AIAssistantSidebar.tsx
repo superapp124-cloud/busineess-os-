@@ -22,7 +22,7 @@ export const AIAssistantSidebar: React.FC<AIAssistantSidebarProps> = ({ firstNam
  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_10px_rgba(99,102,241,0.5)]">
  <Sparkles className="w-3 h-3 text-white" />
  </div>
- <span className="text-secondary font-semibold text-white">AI Assistant</span>
+ <span className="text-secondary font-semibold text-white">SI Assistant</span>
  </div>
 
  {/* Hero */}
@@ -65,7 +65,7 @@ export const AIAssistantSidebar: React.FC<AIAssistantSidebarProps> = ({ firstNam
  </button>
  </div>
  <p className="text-[10px] text-center text-slate-500 mt-3 flex items-center justify-center gap-1">
- <Sparkles className="w-3 h-3" /> Local AI • Private
+ <Sparkles className="w-3 h-3" /> Local SI • Private
  </p>
  </div>
  </div>

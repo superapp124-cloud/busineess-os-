@@ -37,7 +37,7 @@ All historical data has been forensically extracted and preserved locally in `mi
 | `conversation_participants` | **26** | 2025-10-10T05:09:29Z | 2026-08-22T08:38:50Z | Participant mappings |
 | `session_rooms` | **41** | 2026-07-15T18:09:23Z | 2026-08-27T10:14:02Z | Video session rooms |
 | `user_devices` | **6** | 2025-10-10T05:09:00Z | 2026-08-27T10:14:02Z | Android and Chrome device fingerprints |
-| `ai_agents` | **1** | 2025-10-10T05:09:00Z | 2025-10-10T05:09:00Z | Custom AI assistant profile ('Sanobar') |
+| `ai_agents` | **1** | 2025-10-10T05:09:00Z | 2025-10-10T05:09:00Z | Custom SI Assistant profile ('Sanobar') |
 | `profiles` | **1** | 2025-10-10T05:09:00Z | 2025-10-10T05:09:00Z | Arshid Wani user profile |
 | `calendar_events` | **0** | — | — | Empty in source |
 | `appointments` | **0** | — | — | Empty in source |
@@ -57,7 +57,7 @@ All historical data has been forensically extracted and preserved locally in `mi
 | **Calls** | 9,927 | 0 | **9,927** call history logs |
 | **Session Rooms** | 41 | 0 | **41** rooms |
 | **User Devices** | 6 | 3 native | **6** devices |
-| **AI Agents** | 1 | 0 | **1** AI Agent |
+| **SI Agents** | 1 | 0 | **1** SI Agent |
 | **AI Memory Vectors** | 0 (table not in source) | 0 (ready for live embeddings) | 0 |
 | **Storage Objects** | 0 in storage bucket list | 0 in `chat_attachments` | 0 |
 
@@ -96,7 +96,7 @@ All historical data has been forensically extracted and preserved locally in `mi
   - 9,927 call records.
   - 17 conversations & 26 participant links.
   - 41 session rooms.
-  - 1 custom AI agent profile.
+  - 1 custom SI Agent profile.
 - **Category C (UUID Conflicts):**
   - **0 UUID collisions** between source rows and existing production rows.
 - **Category D (Identity Remapping):**

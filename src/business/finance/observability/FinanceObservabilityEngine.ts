@@ -48,7 +48,7 @@ export class FinanceObservabilityEngine {
           { name: 'AP Subledger <-> GL Control', category: 'RECONCILIATION', value: 'PASS (₹0.00 diff)', status: 'HEALTHY', details: 'Subledger AP matches open bills', lastChecked: checkedAt },
           { name: 'Bank Reconciliation Auto-Match Rate', category: 'RECONCILIATION', value: '98.7%', status: 'HEALTHY', details: 'Unmatched items queued in HITL', lastChecked: checkedAt },
           { name: 'ASC 606 Revenue Recognition Engine', category: 'INTEGRITY', value: 'SCHEDULED', status: 'HEALTHY', details: 'Revenue recognition active', lastChecked: checkedAt },
-          { name: 'AI Finance Worker Fleet Status', category: 'WORKERS', value: '7 / 7 ONLINE', status: 'HEALTHY', details: '7 workers configured in PROPOSE mode', lastChecked: checkedAt },
+          { name: 'SI Finance Worker Fleet Status', category: 'WORKERS', value: '7 / 7 ONLINE', status: 'HEALTHY', details: '7 workers configured in PROPOSE mode', lastChecked: checkedAt },
           { name: 'Immutable Financial Audit Trail', category: 'SECURITY', value: 'ACTIVE', status: 'HEALTHY', details: 'Audit trail logging active', lastChecked: checkedAt },
         ],
         alerts: [],
@@ -228,9 +228,9 @@ export class FinanceObservabilityEngine {
       });
     }
 
-    // ── 6. AI Workers (framework constant — 7 configured workers) ────────
+    // ── 6. SI Workers (framework constant — 7 configured workers) ────────
     metrics.push({
-      name: 'AI Finance Worker Fleet',
+      name: 'SI Finance Worker Fleet',
       category: 'WORKERS',
       value: '7 Configured',
       status: 'HEALTHY',

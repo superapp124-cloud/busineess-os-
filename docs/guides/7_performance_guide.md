@@ -13,7 +13,7 @@ Performance isn't "fast enough". It is strictly defined by our Performance Certi
 If you are developing a new component, it must fit inside the aggregated budgets (`EngineHealthStore.ts`):
 - Workflow Runtime: 50MB
 - Event Runtime: 25MB
-- AI Runtime Cache: 256MB
+- SI Runtime Cache: 256MB
 - Replay Buffer: 20MB
 - Provider Metadata: 5MB
 

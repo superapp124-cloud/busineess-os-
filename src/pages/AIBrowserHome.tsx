@@ -93,7 +93,7 @@ const SUGGESTIONS = [
   "Best 5G phones under Rs 20,000 with price & fare history",
   "Explain quantum computing & synthesize key takeaways",
   "How to file ITR online in India step-by-step guide",
-  "Top AI tools for startups in 2026 with pricing models",
+  "Top SI tools for startups in 2026 with pricing models",
 ];
 
 const loadingMessages = [
@@ -806,7 +806,7 @@ function HomeView({
       <div style={{ marginBottom: 46, textAlign: "center", animation: "chatrLogoFloat 6s ease infinite" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 99, background: "rgba(129, 140, 248, 0.1)", border: "1px solid rgba(129, 140, 248, 0.25)", color: "#A5B4FC", fontSize: 11, fontWeight: 600, letterSpacing: 1, marginBottom: 16 }}>
           <Zap size={13} color="#F59E0B" />
-          <span>CHATR INTENT OS — AI KNOWLEDGE & EXECUTION ENGINE</span>
+          <span>CHATR INTENT OS — SI KNOWLEDGE & EXECUTION ENGINE</span>
         </div>
         <div
           className="chatr-home-logo"
@@ -820,7 +820,7 @@ function HomeView({
             marginBottom: 12,
           }}
         >
-          Chatr AI
+          Chatr SI
         </div>
         <div className="chatr-home-subtitle" style={{ fontSize: 12, color: "#818CF8", letterSpacing: 2, fontWeight: 600, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", opacity: 0.9 }}>
           <span>🇮🇳 INDIA-NATIVE DPI</span>
@@ -1166,7 +1166,7 @@ function ResultsView({
  fontFamily: "inherit",
  }}
  >
- Chatr AI
+ Chatr SI
  </button>
  <div className="chatr-topbar-search" style={{ flex: 1, maxWidth: 580 }}>
  <SearchBar value={query} onChange={setQuery} onSearch={(value) => onSearch(value)} compact />
@@ -1189,7 +1189,7 @@ function ResultsView({
  border="#1A2A42"
  accent="linear-gradient(135deg,#818CF8,#C084FC)"
  icon={<Brain size={13} color="#fff" />}
- label="Chatr AI Synthesis"
+ label="Chatr SI Synthesis"
  badge={`${mode === "code" ? "Tech" : mode === "bharat" ? "India" : "Web"} | Real-time`}
  >
  {results.main ? (
@@ -1533,7 +1533,7 @@ function ResultsView({
  </div>
 
  <div style={{ textAlign: "center", padding: "20px 0 32px", fontSize: 11, color: "#1F2937" }}>
- Chatr AI Search | SearXNG/DuckDuckGo context | Ollama/local synthesis
+ Chatr SI Search | SearXNG/DuckDuckGo context | Ollama/local synthesis
  </div>
  </div>
  );

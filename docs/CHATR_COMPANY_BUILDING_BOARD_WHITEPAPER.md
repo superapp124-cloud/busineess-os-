@@ -13,7 +13,7 @@ Recruitment is **the fastest entry wedge**, not the boundary of the company.
 
 ### 2. Why doesn't OpenAI become CHATR?
 OpenAI builds **horizontal model intelligence & general LLMs**. They sell tokens and foundation models.  
-OpenAI **cannot build live API transaction state machines** over legacy enterprise ERPs (SAP, Tally, Zoho, Salesforce) without taking on massive enterprise SLAs, compliance liability, and custom integration overhead that dilutes their core AI model R&D business.
+OpenAI **cannot build live API transaction state machines** over legacy enterprise ERPs (SAP, Tally, Zoho, Salesforce) without taking on massive enterprise SLAs, compliance liability, and custom integration overhead that dilutes their core SI model R&D business.
 
 ### 3. What is your unfair distribution advantage?
 **WhatsApp Native Loops & Stakeholder Referral Network.**  
@@ -47,11 +47,11 @@ Every execution graph logs atomic inverse state transactions (`Do` → `Undo`). 
 ### 8. Is Conversation always the hero?
 **No.** Conversation starts work (*"Review 600 candidates"*). Specialized high-density **Kanban & Universal Data Tables** finish work with bulk actions and keyboard shortcuts (`J`/`K` navigation, `A` for approve, `R` for reject).
 
-### 9. Can users interrupt AI?
+### 9. Can users interrupt SI?
 **Yes (1-Key Instant Pause).**  
 Pressing `Spacebar` or `ESC` immediately pauses running execution graphs (`Running` → `Sleeping`). Users can edit parameters, skip specific items, or resume execution tomorrow.
 
-### 10. Can AI ask better clarifying questions?
+### 10. Can SI ask better clarifying questions?
 **Yes (Goal Disambiguation Engine).**  
 If intent is underspecified (*"Hire a React developer"*), CHATR pauses and asks 3 crisp options:  
 *Senior or Junior? Remote or On-site? Target budget?*
@@ -79,7 +79,7 @@ Users open CHATR and see:
 > *"Good Morning Arshid. 42 tasks completed overnight. 2 items need your 10-second sign-off."*
 
 ### 15. What happens before lunch?
-Proactive AI narration:  
+Proactive SI narration:  
 > *"While you were in meetings, CHATR verified 18 candidate resumes, resolved 4 invoice queries, and updated SAP stock."*
 
 ---
@@ -113,7 +113,7 @@ Events move to cold S3/Parquet data lakes with vector indices cached in memory.
 
 ## 👑 THE BOARDROOM QUESTION (Quarterly Board Test)
 
-> **"What is the one thing CHATR does today that no other product in the world can do—even if Microsoft, OpenAI, Salesforce, and Google all had the same AI models?"**
+> **"What is the one thing CHATR does today that no other product in the world can do—even if Microsoft, OpenAI, Salesforce, and Google all had the same SI models?"**
 
 ### **The Winning Answer:**
 > **"CHATR executes atomic, cross-vendor multi-app transactions while accumulating a proprietary, self-optimizing Organizational Execution Memory that no single SaaS provider can see or replicate."**

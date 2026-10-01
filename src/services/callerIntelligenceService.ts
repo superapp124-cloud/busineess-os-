@@ -4,7 +4,7 @@
  * Provides:
  *  - Number hashing for privacy-preserving lookup
  *  - Supabase caller ID + spam score lookup
- *  - Post-call AI rules engine (zero-cost, on-device)
+ *  - Post-call SI rules engine (zero-cost, on-device)
  *  - Insight saving
  */
 import { supabase } from '@/integrations/supabase/client';
@@ -166,7 +166,7 @@ export async function lookupCaller(rawNumber: string): Promise<CallerInfo> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Layer 5 — Post-Call AI Rules Engine (Zero Cost, On-Device)
+// Layer 5 — Post-Call SI Rules Engine (Zero Cost, On-Device)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function runPostCallAI(params: {

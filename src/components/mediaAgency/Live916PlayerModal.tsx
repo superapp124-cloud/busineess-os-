@@ -78,7 +78,7 @@ export const Live916PlayerModal: React.FC<Live916PlayerModalProps> = ({ item, on
       const grad = ctx.createLinearGradient(0, 0, width, height);
       const shift = (elapsed / duration) * Math.PI * 2;
       
-      if (item.category.includes('AI') || item.category.includes('Enterprise')) {
+      if (item.category.includes('SI') || item.category.includes('Enterprise')) {
         grad.addColorStop(0, `rgb(${Math.floor(15 + Math.sin(shift) * 10)}, ${Math.floor(20 + Math.cos(shift) * 10)}, 45)`);
         grad.addColorStop(1, `rgb(${Math.floor(30 + Math.cos(shift) * 15)}, 10, ${Math.floor(60 + Math.sin(shift) * 20)})`);
       } else if (item.category.includes('Career') || item.category.includes('India')) {

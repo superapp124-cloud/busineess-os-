@@ -24,7 +24,7 @@ serve(async (req) => {
 
     console.log('Generating feature:', { featureName, type });
 
-    // Generate React Component, Database Schema, and API/Helper Functions in parallel via CHATR AI Router
+    // Generate React Component, Database Schema, and API/Helper Functions in parallel via CHATR SI Router
     const [componentRes, schemaRes, apiRes] = await Promise.all([
       completeChat({
         messages: [

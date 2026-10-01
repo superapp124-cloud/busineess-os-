@@ -36,7 +36,7 @@ const ClinicalOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
           </div>
         </div>
 
-        {/* AI Confidence & Verification */}
+        {/* SI Confidence & Verification */}
         <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/10">
           <div className="flex items-center gap-1.5 bg-emerald-500/30 border border-emerald-400/40 rounded-full px-3 py-0.5 text-xs font-bold text-emerald-100">
             <CheckCircle className="w-3.5 h-3.5 text-emerald-300" />
@@ -75,11 +75,11 @@ const ClinicalOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
         ))}
       </div>
 
-      {/* AI Clinical Summary */}
+      {/* SI Clinical Summary */}
       <div className="p-3.5 bg-teal-50/70 rounded-xl border border-teal-200/80 shadow-sm">
         <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-teal-800 mb-1.5">
           <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-          AI Clinical Insight
+          SI Clinical Insight
         </div>
         <p className="text-xs text-slate-700 leading-relaxed font-medium">
           {result?.summary || 'Urine Routine & Microscopy report from Max Healthcare shows normal pH (5.5) and negative protein/glucose. No acute inflammatory markers detected.'}
@@ -190,7 +190,7 @@ export const createClinicalWorkspace = (item: WorkspaceItem): BusinessWorkspace 
         return {
           workspaceId: 'clinical-intelligence',
           confidence: classification.confidence,
-          reasoning: [`AI classified as ${classification.documentTypeLabel} (${Math.round(classification.confidence * 100)}%)`],
+          reasoning: [`SI classified as ${classification.documentTypeLabel} (${Math.round(classification.confidence * 100)}%)`],
         };
       }
 

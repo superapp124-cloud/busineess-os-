@@ -24,7 +24,7 @@ export class EvaluationEngine {
     const rawSections = [
       { id: 'sec_1_first_impression', name: 'Section 1 — First Impression', targetGoal: 'Understand product within 60s without training', stage: 'CustomerEvidence' as const, baseScore: 4.5 },
       { id: 'sec_2_work_execution', name: 'Section 2 — Real Work Execution', targetGoal: 'Complete end-to-end governed work across capabilities', stage: 'Verified' as const, baseScore: 4.5 },
-      { id: 'sec_3_ai_quality', name: 'Section 3 — AI Quality & Governance', targetGoal: 'Grounded AI with trace explainability & human override', stage: 'Verified' as const, baseScore: 4.5 },
+      { id: 'sec_3_ai_quality', name: 'Section 3 — SI Quality & Governance', targetGoal: 'Grounded SI with trace explainability & human override', stage: 'Verified' as const, baseScore: 4.5 },
       { id: 'sec_4_communication', name: 'Section 4 — Communication', targetGoal: 'Work happens inside conversations connected to graph', stage: 'Verified' as const, baseScore: 4.5 },
       { id: 'sec_5_document_intelligence', name: 'Section 5 — Document Intelligence', targetGoal: 'Understand enterprise documents (PDF, Word, OCR)', stage: 'Verified' as const, baseScore: 4.8 },
       { id: 'sec_6_business_processes', name: 'Section 6 — Business Processes', targetGoal: 'Execute complete enterprise Solution Packs (HR, Health, Finance)', stage: 'Verified' as const, baseScore: 4.5 },

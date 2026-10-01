@@ -66,8 +66,8 @@ const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: 'ai-lead-triage-guide',
-    title: 'AI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
-    excerpt: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    title: 'SI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+    excerpt: 'Discover how SI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
     readingMinutes: 6,
     category: 'product',
     domain: 'chatrchat.in',
@@ -104,7 +104,7 @@ export const BlogHubPage: React.FC = () => {
       metaDesc.setAttribute('name', 'description');
       document.head.appendChild(metaDesc);
     }
-    metaDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs and recruitment agencies.');
+    metaDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and SI communication tools for Indian SMEs and recruitment agencies.');
     
     // Meta Title
     let metaTitle = document.querySelector('meta[name="title"]');
@@ -121,7 +121,7 @@ export const BlogHubPage: React.FC = () => {
     // OG Description
     let ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) {
-      ogDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and AI communication tools for Indian SMEs.');
+      ogDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and SI communication tools for Indian SMEs.');
     }
     
     // OG URL
@@ -191,10 +191,10 @@ export const BlogHubPage: React.FC = () => {
         </div>
         <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
           <h2 className="text-2xl font-bold">Ready to run your business on one system?</h2>
-          <p className="text-slate-400">Universal Inbox · WhatsApp Integration · Candidate Screening · AI Agents</p>
+          <p className="text-slate-400">Universal Inbox · WhatsApp Integration · Candidate Screening · SI Agents</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link to="/auth" id="blog-footer-cta" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
-            <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">Explore CHATR AI →</Link>
+            <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">Explore CHATR SI →</Link>
             <Link to="/pricing" className="text-sm text-slate-400 hover:text-slate-200 font-semibold hover:underline">See plans →</Link>
           </div>
         </div>

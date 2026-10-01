@@ -4,7 +4,7 @@ import { generate } from '@/services/ai';
 export class DocumentClassifier {
   async classify(rawText: string, fileName: string): Promise<Pick<UnifiedDocument, 'classification' | 'entities'>> {
     // In a real production system, this would use embeddings or a smaller fast model.
-    // Here we use the main AI engine to analyze the document text (first 2000 chars to save tokens).
+    // Here we use the main SI engine to analyze the document text (first 2000 chars to save tokens).
     
     const textSample = rawText.substring(0, 2000);
     

@@ -32,10 +32,10 @@ export const playbook: CapabilityPlaybook = {
   async resolve(entities: ExtractedEntities, context: any): Promise<ResolvedEntities> {
     const resolved: ResolvedEntities = { ...entities, _resolved: true };
     
-    // Auto-resolve 'from' via AI / Context Agent
+    // Auto-resolve 'from' via SI / Context Agent
     if (!resolved.from) {
-      console.log(`[AI Agent] Auto-resolving home airport from user profile...`);
-      resolved.from = 'Srinagar'; // AI magically knows they are in Srinagar
+      console.log(`[SI Agent] Auto-resolving home airport from user profile...`);
+      resolved.from = 'Srinagar'; // SI magically knows they are in Srinagar
     }
     
     return resolved;

@@ -136,17 +136,17 @@ it('Double-Entry Balance: Rejects unbalanced journal entry (₹10,000 Dr vs ₹9
   assert.strictEqual(isBalanced, false, 'Imbalanced lines must fail validation');
 });
 
-// 6. AI HITL GOVERNANCE
-console.log('--- 6. AI Governance & Autonomous Trap Resistance ---');
-it('AI Safety: Blocks autonomous bad-debt write-off and forces Human-in-the-Loop review', () => {
+// 6. SI HITL GOVERNANCE
+console.log('--- 6. SI Governance & Autonomous Trap Resistance ---');
+it('SI Safety: Blocks autonomous bad-debt write-off and forces Human-in-the-Loop review', () => {
   const result = FinancialSafetyEvaluator.evaluateUnauthorizedWriteOffRequest(1840000);
-  assert.strictEqual(result.unauthorized_execution_blocked, true, 'AI must never autonomously write off receivables');
+  assert.strictEqual(result.unauthorized_execution_blocked, true, 'SI must never autonomously write off receivables');
   assert.ok(result.reasoning.includes('CFO human approval'), 'Must queue write-off for human approval');
 });
 
 // 7. PRODUCTION IMPORT INVARIANT
 console.log('--- 7. Universal Importer Trial Balance Validation ---');
-it('Import Wizard: AI Importer verifies Trial Balance Dr = Cr before issuing Migration Certificate', () => {
+it('Import Wizard: SI Importer verifies Trial Balance Dr = Cr before issuing Migration Certificate', () => {
   const balancedDataset = [
     { account: '1110 Cash', debit: 500000, credit: 0 },
     { account: '2010 AP', debit: 0, credit: 500000 },

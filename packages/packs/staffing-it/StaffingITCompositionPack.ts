@@ -25,7 +25,7 @@ export const StaffingITCompositionPack: StaffingITCapabilityConfig = {
     {
       capabilityId: 'StaffingIT.acquireTalent',
       domain: 'People',
-      description: 'Candidate sourcing, resume parsing, AI match scoring, and candidate 360 lifecycles.',
+      description: 'Candidate sourcing, resume parsing, SI match scoring, and candidate 360 lifecycles.',
       expectedForceDeltaTransform: 'ΔCapacity: +0.35, ΔCash: -$45,000, ΔRisk: -0.10'
     },
     {

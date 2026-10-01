@@ -32,7 +32,7 @@ export class ProviderResolver {
     // For now, assume findAvailableForCapability filtered out 'down'.
     
     // 4. Policy Engine (Tenant Rules)
-    // E.g., tenant policy might dictate "no AI providers outside EU" or "prefer local".
+    // E.g., tenant policy might dictate "no SI providers outside EU" or "prefer local".
     // For Phase D.5 stub, we prioritize the defaultProviderId if it's healthy.
     const defaultCandidate = candidates.find(p => p.manifest.providerId === capability.defaultProviderId);
     if (defaultCandidate) {

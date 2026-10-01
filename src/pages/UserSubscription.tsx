@@ -46,7 +46,7 @@ const UserSubscription = () => {
  'Unlimited search & bookings',
  'Instant chat & call with service providers',
  'Rewards & cashback on every transaction',
- '24x7 AI Assistant for recommendations',
+ '24x7 SI Assistant for recommendations',
  'Priority customer support',
  'Exclusive deals & early access',
  'No booking fees',
@@ -139,7 +139,7 @@ const UserSubscription = () => {
  </Card>
  <Card className="p-4 text-center">
  <div className="text-display text-primary mb-1">24x7</div>
- <p className="text-secondary text-muted-foreground">AI Assistant</p>
+ <p className="text-secondary text-muted-foreground">SI Assistant</p>
  </Card>
  <Card className="p-4 text-center">
  <div className="text-display text-primary mb-1">₹0</div>

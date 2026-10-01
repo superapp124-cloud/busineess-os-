@@ -18,7 +18,7 @@
  *   - Evaluates the policy stack (system → enterprise → workspace → user → request).
  *   - Decisions are allow, allow_with_approval, or block.
  *   - Runs *before* Trust and Provider selection (per TSC implementation order adjustment).
- *   - Must not contain AI model evaluation (moved to model layer).
+ *   - Must not contain SI model evaluation (moved to model layer).
  *   - No domain or industry specific knowledge.
  */
 

@@ -76,7 +76,7 @@ export default function DoctorOnboarding() {
 
  const benefits = [
  { icon: Users, title: '1M+ Potential Patients', desc: 'Instant access to growing user base' },
- { icon: Calendar, title: 'Smart Scheduling', desc: 'AI-powered appointment management' },
+ { icon: Calendar, title: 'Smart Scheduling', desc: 'SI-powered appointment management' },
  { icon: TrendingUp, title: 'Grow Your Practice', desc: 'Zero upfront costs, pay per patient' },
  { icon: Shield, title: 'Verified Profile', desc: 'Build trust with verified badge' },
  { icon: Zap, title: 'Instant Consultations', desc: 'Text, voice & video calling built-in' },

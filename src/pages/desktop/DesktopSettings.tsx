@@ -44,8 +44,8 @@ export const DesktopSettings: React.FC = () => {
  ]
  },
  {
- title: 'AI Intelligence',
- description: 'Configure how AI assists your workspace.',
+ title: 'SI Intelligence',
+ description: 'Configure how SI assists your workspace.',
  icon: <Sparkles className="w-6 h-6 text-[#5c22ff]" />,
  items: [
  { label: 'Smart summaries', path: '/desktop/intelligence' },

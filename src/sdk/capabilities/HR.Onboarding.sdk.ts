@@ -29,7 +29,7 @@ export const HROnboardingSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Employee Onboarding AI',
+    assistantName: 'Employee Onboarding SI',
     skills: []
   },
   

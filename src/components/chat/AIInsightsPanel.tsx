@@ -217,7 +217,7 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
  if (type === 'topics') return 'Topic Extraction';
  if (type === 'urgency') return 'Urgency Analysis';
  if (type === 'language') return 'Language Detection';
- return 'AI Insights';
+ return 'SI Insights';
  };
 
  return (

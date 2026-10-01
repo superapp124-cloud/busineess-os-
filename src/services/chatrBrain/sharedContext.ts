@@ -155,7 +155,7 @@ class SharedContextService {
   }
 
   /**
-   * Get context summary for AI prompts
+   * Get context summary for SI prompts
    */
   getContextSummary(): string {
     if (!this.context) return '';

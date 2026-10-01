@@ -56,7 +56,7 @@ const ChatrShieldScreen: React.FC = () => {
  <div className="p-4 flex items-center justify-between">
  <div className="flex items-center gap-3">
  <Settings size={20} className="text-gray-400" />
- <span>AI Sensitivity</span>
+ <span>SI Sensitivity</span>
  </div>
  <span className="text-primary font-medium">Standard</span>
  </div>

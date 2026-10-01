@@ -33,7 +33,7 @@ Noticed [Company Name] is actively hiring for [Role/Vertical] across [City].
 
 Most staffing agencies lose 40%+ of applicants simply because candidates get messaged 4 hours after applying on job boards.
 
-We built TalentXcel on CHATR OS to fix this: when an applicant applies, an automated AI sequence pre-screens their skills, notice period, and compensation over WhatsApp in under 60 seconds.
+We built TalentXcel on CHATR OS to fix this: when an applicant applies, an automated SI sequence pre-screens their skills, notice period, and compensation over WhatsApp in under 60 seconds.
 
 We’re setting up 10 recruitment firms in [City] on our 14-day pilot with zero setup fee.
 
@@ -95,7 +95,7 @@ chatrchat.in
 Every video strictly adheres to **One Core Hook $\to$ One Live Demo $\to$ One Single CTA**:
 
 1. **Format 1: Before vs. After (Resume Screening)**
-   - *Hook*: "Recruiter spending 4 hours reviewing 50 PDF resumes vs. AI doing it in 1.2 seconds."
+   - *Hook*: "Recruiter spending 4 hours reviewing 50 PDF resumes vs. SI doing it in 1.2 seconds."
    - *Visual*: Split screen. Left side: clicking through files slowly. Right side: TalentXcel parsing and ranking all 50 in real-time.
    - *CTA*: "Test your resume free at chatrchat.in/tools/resume-grader."
 
@@ -115,7 +115,7 @@ Every video strictly adheres to **One Core Hook $\to$ One Live Demo $\to$ One Si
    - *CTA*: "Calculate your revenue loss at chatrchat.in/tools/sla-calculator."
 
 5. **Format 5: The "Worst Resume" Challenge**
-   - *Hook*: "Drop the messiest, most unstructured resume you have into this AI parser."
+   - *Hook*: "Drop the messiest, most unstructured resume you have into this SI parser."
    - *Visual*: Complex 3-column PDF parsed into clean JSON skill profiles instantly.
    - *CTA*: "Grade your resume free at chatrchat.in/tools/resume-grader."
 
@@ -160,6 +160,6 @@ The reason most resumes get filtered out by modern ATS parsers isn't formatting 
 1. Lack of Quantified Metric Impact: Bullet points that say "Responsible for managing sales team" instead of "Led team of 6 reps, increasing monthly revenue by 32% and reducing lead response time to <60s."
 2. Missing Exact Skill Keywords: ATS systems match exact string tokens from the requisition. If the job description asks for "High-concurrency Node.js", writing "Backend developer" gets a lower match percentage.
 
-If you want to test how an AI parser reads your resume before sending applications, we built a completely free instant parser that grades ATS compatibility and gives 3 rewritten bullet points:
+If you want to test how an SI parser reads your resume before sending applications, we built a completely free instant parser that grades ATS compatibility and gives 3 rewritten bullet points:
 https://www.chatrchat.in/tools/resume-grader (100% free, no signup required to see your score).
 ```

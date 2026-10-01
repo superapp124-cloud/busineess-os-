@@ -145,7 +145,7 @@ const AIWordFinderGame: React.FC<AIWordFinderGameProps> = ({ level, onComplete, 
  setScore(s => s + points);
  toast.success(`Found "${foundWord}"! +${points}`);
  
- // AI response
+ // SI response
  if (foundWords.length + 1 === targetWords.length) {
  setAiHint('🤖 Amazing! All words found!');
  }
@@ -183,7 +183,7 @@ const AIWordFinderGame: React.FC<AIWordFinderGameProps> = ({ level, onComplete, 
  }
  }, [foundWords, targetWords, timeLeft, score, onComplete]);
 
- // AI hint system
+ // SI hint system
  useEffect(() => {
  if (gameState === 'playing' && timeLeft === 30 && foundWords.length < targetWords.length) {
  const remaining = targetWords.filter(w => !foundWords.includes(w));
@@ -261,9 +261,9 @@ const AIWordFinderGame: React.FC<AIWordFinderGameProps> = ({ level, onComplete, 
  className="text-center py-12"
  >
  <Brain className="w-20 h-20 mx-auto text-emerald-400 mb-4" />
- <h2 className="text-page font-bold text-white mb-2">AI Word Finder</h2>
+ <h2 className="text-page font-bold text-white mb-2">SI Word Finder</h2>
  <p className="text-gray-400 mb-6">
- AI hides words in the grid. Find them before time runs out!
+ SI hides words in the grid. Find them before time runs out!
  </p>
  <Button onClick={startGame} className="bg-emerald-600 hover:bg-emerald-700">
  <BookOpen className="w-4 h-4 mr-2" /> Start Game

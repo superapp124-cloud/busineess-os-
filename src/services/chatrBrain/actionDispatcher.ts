@@ -1,6 +1,6 @@
 /**
  * CHATR BRAIN - Action Dispatcher
- * Connects AI outputs to actual transactions and actions
+ * Connects SI outputs to actual transactions and actions
  */
 
 import { ActionType, AgentType, DetectedIntent } from './types';
@@ -99,7 +99,7 @@ export interface DispatchedAction {
 
 /**
  * Action Dispatcher Service
- * Prepares actions for execution based on AI intent detection
+ * Prepares actions for execution based on SI intent detection
  */
 class ActionDispatcherService {
   /**

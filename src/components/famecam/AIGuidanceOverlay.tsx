@@ -44,7 +44,7 @@ export default function AIGuidanceOverlay({
  const [showWhisper, setShowWhisper] = React.useState(false);
  const [voiceEnabled, setVoiceEnabled] = React.useState(false);
 
- // Voice synthesis for AI guidance
+ // Voice synthesis for SI guidance
  const speakGuidance = (text: string) => {
  if (!voiceEnabled || !('speechSynthesis' in window)) return;
  
@@ -61,7 +61,7 @@ export default function AIGuidanceOverlay({
  onVoiceToggle?.(newState);
  
  if (newState) {
- speakGuidance("AI voice guidance enabled. I'll help you create viral content.");
+ speakGuidance("SI voice guidance enabled. I'll help you create viral content.");
  }
  };
 
@@ -107,7 +107,7 @@ export default function AIGuidanceOverlay({
 
  return (
  <div className="absolute inset-0 pointer-events-none">
- {/* Voice Toggle & AI Mode Switcher */}
+ {/* Voice Toggle & SI Mode Switcher */}
  <div className="absolute top-20 left-4 pointer-events-auto flex gap-2">
  {/* Voice Toggle */}
  <button
@@ -121,7 +121,7 @@ export default function AIGuidanceOverlay({
  {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
  </button>
 
- {/* AI Mode Switcher */}
+ {/* SI Mode Switcher */}
  <div className="flex gap-2 bg-black/60 backdrop-blur-md rounded-full p-1 border border-white/20">
  {aiModes.map((mode) => {
  const Icon = mode.icon;
@@ -143,11 +143,11 @@ export default function AIGuidanceOverlay({
  </div>
  </div>
 
- {/* AI Orb Whisper Prompt - Floating purple-glow AI assistant */}
+ {/* SI Orb Whisper Prompt - Floating purple-glow SI assistant */}
  {showWhisper && (
  <div className="absolute top-40 left-1/2 -translate-x-1/2 pointer-events-none">
  <div className="relative">
- {/* Glowing AI Orb */}
+ {/* Glowing SI Orb */}
  <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-primary shadow-[0_0_40px_rgba(98,0,238,0.8)] animate-pulse flex items-center justify-center">
  <Sparkles className="w-4 h-4 text-white animate-spin" style={{ animationDuration: '3s' }} />
  </div>
@@ -198,7 +198,7 @@ export default function AIGuidanceOverlay({
  </div>
  </div>
 
- {/* AI Tips Panel */}
+ {/* SI Tips Panel */}
  <div className="absolute bottom-32 left-4 right-4 pointer-events-auto">
  <div className="bg-black/70 backdrop-blur-md rounded-2xl p-4 border border-primary/30 animate-fade-in">
  <div className="flex items-center gap-2 mb-3">

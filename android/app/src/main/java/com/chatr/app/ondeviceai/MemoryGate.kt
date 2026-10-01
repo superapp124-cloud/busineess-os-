@@ -23,7 +23,7 @@ object MemoryGate {
         val sufficient = memoryInfo.availMem >= REQUIRED_AVAIL_MEM_BYTES
         
         if (!sufficient) {
-            Log.w("MemoryGate", "Insufficient memory for Tier 2 AI. Available: ${memoryInfo.availMem / (1024 * 1024)}MB. Marking unavailable for session.")
+            Log.w("MemoryGate", "Insufficient memory for Tier 2 SI. Available: ${memoryInfo.availMem / (1024 * 1024)}MB. Marking unavailable for session.")
             isTier2UnavailableThisSession = true
         }
         

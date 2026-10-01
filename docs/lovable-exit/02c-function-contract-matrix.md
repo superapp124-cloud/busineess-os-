@@ -11,7 +11,7 @@ Existing Frontend Request
 Same Edge Function Endpoint
         │
         ▼ (Identical Request Schema)
-CHATR AI Router (_core/aiProvider.ts)
+CHATR SI Router (_core/aiProvider.ts)
         │
         ▼ (Direct Provider Execution)
 Same Response Contract (Identical JSON Keys & Status Codes)
@@ -22,7 +22,7 @@ Existing Frontend Component (0 lines changed)
 
 ---
 
-## 2. Active AI Functions Contract Specification
+## 2. Active SI Functions Contract Specification
 
 ### 1. `chatr-world`
 - **Method:** `POST`

@@ -48,7 +48,7 @@ export const CandidateProfileModal = memo(({
 
   const selectedCurrency = CURRENCIES.find(c => c.code === selectedCurrencyCode) ?? CURRENCIES[0];
 
-  // Recruiter AI Copilot State & Handler
+  // Recruiter SI Copilot State & Handler
   const [copilotQuery, setCopilotQuery] = useState('');
   const [copilotAnswer, setCopilotAnswer] = useState<string | null>(null);
   const [copilotLoading, setCopilotLoading] = useState(false);
@@ -118,7 +118,7 @@ export const CandidateProfileModal = memo(({
       // 6. Universal Natural Language Intelligence Synthesis for ANY Arbitrary Question
       else {
         setCopilotAnswer(
-          `🤖 **AI Intelligence Brief for ${full}**: Answer to "${queryToRun}"\n\n` +
+          `🤖 **SI Intelligence Brief for ${full}**: Answer to "${queryToRun}"\n\n` +
           `• **Executive Overview**: ${full} is a **${role}** at **${company}** with **${exp} of total experience** (6.3 years specializing in SAP FICO/CO).\n` +
           `• **Top Employers & Clients**: Delivered solutions for **Infosys, TCS, Capgemini, and S&P Global** across enterprise accounts including **Applied Materials, Intel, Microsoft, and Thales**.\n` +
           `• **Core Competencies**: ${(candidate.skills || ['SAP CO', 'SAP FICO', 'CO-PA', 'S/4HANA', 'Product Costing']).slice(0, 6).join(', ')}.\n` +
@@ -155,7 +155,7 @@ export const CandidateProfileModal = memo(({
     }
   }, [selectedCurrencyCode, fixedComponent, selectedCurrency.symbol]);
 
-  // 360 AI Score Matrix
+  // 360 SI Score Matrix
   const aiBreakdown = candidate.ai_breakdown ?? {
     overall: candidate.ai_match ?? 88,
     technical: 92,
@@ -271,7 +271,7 @@ export const CandidateProfileModal = memo(({
                 navigator.clipboard.writeText(shareUrl);
                 toast.success(`Shareable Scorecard link copied!`);
               }}
-              title="Copy Public AI Scorecard Link"
+              title="Copy Public SI Scorecard Link"
               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
             >
               <Share2 className="w-3.5 h-3.5" /> Share Scorecard
@@ -558,19 +558,19 @@ export const CandidateProfileModal = memo(({
                 </div>
               </div>
 
-              {/* RECRUITER AI COPILOT INTERACTIVE Q&A PANEL */}
+              {/* RECRUITER SI COPILOT INTERACTIVE Q&A PANEL */}
               <div className="bg-gradient-to-r from-[#181B28] to-[#121420] border border-violet-500/30 p-4 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-violet-400" />
-                    <h4 className="font-black text-white text-xs">Recruiter AI Copilot — Ask anything about {full}</h4>
+                    <h4 className="font-black text-white text-xs">Recruiter SI Copilot — Ask anything about {full}</h4>
                   </div>
                   {copilotAnswer && (
                     <button
                       onClick={() => { setCopilotAnswer(null); setCopilotQuery(''); }}
                       className="text-[10px] text-slate-400 hover:text-white font-mono font-bold"
                     >
-                      ✕ Clear AI Output
+                      ✕ Clear SI Output
                     </button>
                   )}
                 </div>
@@ -593,11 +593,11 @@ export const CandidateProfileModal = memo(({
                     disabled={copilotLoading}
                     className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold text-xs rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
                   >
-                    {copilotLoading ? 'Analyzing...' : 'Ask AI'}
+                    {copilotLoading ? 'Analyzing...' : 'Ask SI'}
                   </button>
                 </div>
 
-                {/* SUGGESTED AI PROMPT CHIPS */}
+                {/* SUGGESTED SI PROMPT CHIPS */}
                 <div className="flex flex-wrap gap-1.5 text-[10px]">
                   <span className="text-slate-400 font-bold">Suggested:</span>
                   {[
@@ -616,11 +616,11 @@ export const CandidateProfileModal = memo(({
                   ))}
                 </div>
 
-                {/* ANIMATED AI COPILOT RESPONSE CANVAS */}
+                {/* ANIMATED SI COPILOT RESPONSE CANVAS */}
                 {copilotLoading && (
                   <div className="p-3 bg-[#0E1017] border border-violet-500/40 rounded-xl flex items-center gap-3 animate-pulse">
                     <div className="w-4 h-4 rounded-full border-2 border-violet-400 border-t-transparent animate-spin" />
-                    <span className="text-xs font-bold text-violet-300">Recruiter AI Copilot synthesizing intelligence from candidate dossier...</span>
+                    <span className="text-xs font-bold text-violet-300">Recruiter SI Copilot synthesizing intelligence from candidate dossier...</span>
                   </div>
                 )}
 
@@ -628,7 +628,7 @@ export const CandidateProfileModal = memo(({
                   <div className="p-4 bg-[#0B0D14] border border-violet-500/50 rounded-xl space-y-2 text-xs text-slate-200 animate-in fade-in duration-200">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <span className="font-extrabold text-violet-300 flex items-center gap-1.5">
-                        🤖 AI Intelligence Brief for {full}
+                        🤖 SI Intelligence Brief for {full}
                       </span>
                       <span className="text-[10px] font-mono text-slate-400">Confidence: 98%</span>
                     </div>
@@ -712,7 +712,7 @@ export const CandidateProfileModal = memo(({
             </div>
           )}
 
-          {/* TAB: AGENCY-DRIVEN MULTI-CURRENCY AI SALARY CALCULATOR */}
+          {/* TAB: AGENCY-DRIVEN MULTI-CURRENCY SI SALARY CALCULATOR */}
           {activeTab === 'compensation' && (
             <div className="space-y-4">
               <div className="bg-white dark:bg-[#181B23] border border-slate-200 dark:border-slate-800 p-5 rounded-2xl space-y-5 shadow-sm">
@@ -721,7 +721,7 @@ export const CandidateProfileModal = memo(({
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div>
                     <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-emerald-500" /> Agency Multi-Currency AI Salary Simulator
+                      <DollarSign className="w-4 h-4 text-emerald-500" /> Agency Multi-Currency SI Salary Simulator
                     </h3>
                     <p className="text-[11px] text-slate-400">Configure salary currencies, agency margin markups, and net in-hand take-home estimates.</p>
                   </div>
@@ -828,7 +828,7 @@ export const CandidateProfileModal = memo(({
                   </div>
 
                   <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                    <span>AI Recommended Offer Target:</span>
+                    <span>SI Recommended Offer Target:</span>
                     <span className="font-bold text-[#5c22ff] dark:text-indigo-400">
                       {selectedCurrency.symbol}{(expSalary * 0.98).toFixed(1)} – {selectedCurrency.symbol}{(expSalary * 1.02).toFixed(1)} {selectedCurrency.unit}
                     </span>
@@ -953,10 +953,10 @@ export const CandidateProfileModal = memo(({
                 </div>
               </div>
 
-              {/* EXPLAINABLE AI DOMAIN MATCH (User Requirement #7) */}
+              {/* EXPLAINABLE SI DOMAIN MATCH (User Requirement #7) */}
               <div className="bg-slate-900 text-slate-100 p-4 rounded-xl space-y-2 border border-slate-800">
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-xs text-indigo-400">🤖 Explainable AI Domain Provenance</span>
+                  <span className="font-extrabold text-xs text-indigo-400">🤖 Explainable SI Domain Provenance</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded">
                     Domain: {detectDomainFromSkills(candidate.skills || [], candidate.current_designation || '')[0]}
                   </span>
@@ -1066,12 +1066,12 @@ export const CandidateProfileModal = memo(({
             </div>
           )}
 
-          {/* TAB 4: AI SCORE BREAKDOWN */}
+          {/* TAB 4: SI SCORE BREAKDOWN */}
           {activeTab === 'ai_breakdown' && (
             <div className="space-y-4">
               <div className="bg-white dark:bg-[#181B23] border border-slate-200 dark:border-slate-800 p-5 rounded-2xl space-y-3">
                 <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  <Brain className="w-4 h-4 text-[#5c22ff]" /> Multi-Dimensional AI Fit Matrix
+                  <Brain className="w-4 h-4 text-[#5c22ff]" /> Multi-Dimensional SI Fit Matrix
                 </h3>
 
                 <div className="space-y-2.5 text-xs">

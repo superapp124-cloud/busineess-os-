@@ -123,7 +123,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
     actionLabel: string;
   }> = {
     talent: {
-      verdictTitle: 'AI VERDICT: GOOD FIT (STRONG HIRE)',
+      verdictTitle: 'SI VERDICT: GOOD FIT (STRONG HIRE)',
       scoreBadge: '92% Candidate Match',
       verdictBg: 'bg-emerald-950 text-emerald-100 border-emerald-800',
       summary: 'Candidate exceeds the L5 hiring threshold. 8.3 years of multi-country logistics experience. All background & qualification checks passed cleanly.',
@@ -135,7 +135,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       actionLabel: 'Shortlist Candidate',
     },
     legal: {
-      verdictTitle: 'AI VERDICT: APPROVED — SAFE TO SIGN',
+      verdictTitle: 'SI VERDICT: APPROVED — SAFE TO SIGN',
       scoreBadge: '96% Standard Compliance',
       verdictBg: 'bg-indigo-950 text-indigo-100 border-indigo-800',
       summary: 'Contract complies with enterprise legal standards v3.2. Liability and indemnity clauses are within approved limits.',
@@ -147,7 +147,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       actionLabel: 'Approve Contract',
     },
     finance: {
-      verdictTitle: 'AI VERDICT: FINANCIAL STATEMENT VERIFIED',
+      verdictTitle: 'SI VERDICT: FINANCIAL STATEMENT VERIFIED',
       scoreBadge: '98% Authenticity',
       verdictBg: 'bg-amber-950 text-amber-100 border-amber-800',
       summary: 'Financial statement and account records verified cleanly. Balances and tax deduction details extracted.',
@@ -159,7 +159,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       actionLabel: 'Export Financial Data',
     },
     general: {
-      verdictTitle: 'AI VERDICT: GOOD QUALITY — VERIFIED',
+      verdictTitle: 'SI VERDICT: GOOD QUALITY — VERIFIED',
       scoreBadge: '88% Clarity Index',
       verdictBg: 'bg-slate-900 text-slate-100 border-slate-700',
       summary: 'Document structured and auto-indexed. No sensitive or flagged compliance risks detected.',
@@ -179,7 +179,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
 
   if (docLower.includes('loan') || docLower.includes('interest') || docLower.includes('j&k') || docLower.includes('financial audit')) {
     currentVerdict = {
-      verdictTitle: 'AI VERDICT: VERIFIED BANK HOUSING LOAN CERTIFICATE',
+      verdictTitle: 'SI VERDICT: VERIFIED BANK HOUSING LOAN CERTIFICATE',
       scoreBadge: '100% Tax Proof Verified',
       verdictBg: 'bg-emerald-950 text-emerald-100 border-emerald-800',
       summary: 'Housing loan interest certificate issued by Jammu & Kashmir Bank (BU Budgam) for Mr. Arshid Hussain Wani for FY 2025-26. Total tentative interest: Rs. 2,06,827 at 9.50% interest rate.',
@@ -219,9 +219,9 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       },
       {
         icon: '💬',
-        title: 'Ask AI Assistant',
+        title: 'Ask SI Assistant',
         subtitle: 'Ask questions about interest, bank seal, or tax rules.',
-        resultSummary: 'AI Assistant ready to answer questions regarding this J&K Bank certificate.',
+        resultSummary: 'SI Assistant ready to answer questions regarding this J&K Bank certificate.',
         details: [
           { label: 'Issuing Branch', value: 'Business Unit Budgam (191111)' },
           { label: 'Ref Number', value: 'JKB/Bud/ADV/2026' },
@@ -307,7 +307,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
     ];
   } else if (docLower.includes('strong') || docLower.includes('alignment') || domain === 'legal') {
     currentVerdict = {
-      verdictTitle: 'AI VERDICT: APPROVED — SAFE TO SIGN',
+      verdictTitle: 'SI VERDICT: APPROVED — SAFE TO SIGN',
       scoreBadge: '96% Standard Compliance',
       verdictBg: 'bg-indigo-950 text-indigo-100 border-indigo-800',
       summary: 'Document complies 100% with enterprise security policies v3.2. Data encryption, access control, and SLA guarantees are fully aligned.',
@@ -343,7 +343,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       },
       {
         icon: '💬',
-        title: 'Ask AI about Clauses',
+        title: 'Ask SI about Clauses',
         subtitle: 'Chat with contract to clarify termination or payment terms.',
         resultSummary: 'Contract Q&A Session Ready.',
         details: [
@@ -381,9 +381,9 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
       },
       {
         icon: '💬',
-        title: 'Ask AI Assistant',
-        subtitle: 'Chat with AI about file contents.',
-        resultSummary: 'AI Assistant Ready.',
+        title: 'Ask SI Assistant',
+        subtitle: 'Chat with SI about file contents.',
+        resultSummary: 'SI Assistant Ready.',
         details: [{ label: 'Status', value: 'Natural Language Search Active' }]
       },
       {
@@ -413,7 +413,7 @@ export const MissionSummaryCard: React.FC<Props> = ({ missionContext }) => {
   return (
     <div className="space-y-4">
 
-      {/* ── 1. PROMINENT AI VERDICT BANNER (IS IT GOOD OR BAD?) ── */}
+      {/* ── 1. PROMINENT SI VERDICT BANNER (IS IT GOOD OR BAD?) ── */}
       <div className={`p-5 rounded-2xl border shadow-md ${currentVerdict.verdictBg} space-y-3`}>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">

@@ -36,6 +36,6 @@ These rules MUST NEVER be violated under any circumstances:
 - **Events before polling:** All UI and background updates are pushed via the Event Bus stream.
 - **Composition before duplication:** Combine existing atomic capabilities into skills rather than building duplicate modules.
 - **Human oversight where required:** Approval gates are first-class primitives with automatic pause and rollback.
-- **AI augments execution; it does not define the business model.**
+- **SI augments execution; it does not define the business model.**
 - **Every action is observable.**
 - **The runtime is industry-agnostic.**

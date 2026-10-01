@@ -6,34 +6,34 @@
 
 ---
 
-## 🏛️ PART 1: CORE COMMUNICATION & AI ENGINE MODULES
+## 🏛️ PART 1: CORE COMMUNICATION & SI ENGINE MODULES
 
 ### 1. Chat, Messages & Conversations
-* **⚙️ Functionality:** Real-time end-to-end encrypted messaging engine powered by WebSockets, deduplicated room hydration, message search, rich markdown rendering, LaTeX math support, and AI sidecar copilot integration.
-* **🎨 UI & User Interaction:** Translucent dual-pane layout with search filtering, unread badges, presence indicators, reaction pickers, and inline AI thread summaries (`/summarize`).
+* **⚙️ Functionality:** Real-time end-to-end encrypted messaging engine powered by WebSockets, deduplicated room hydration, message search, rich markdown rendering, LaTeX math support, and SI sidecar copilot integration.
+* **🎨 UI & User Interaction:** Translucent dual-pane layout with search filtering, unread badges, presence indicators, reaction pickers, and inline SI thread summaries (`/summarize`).
 * **💼 Business Impact:** Replaces fragmented team messaging tools (Slack, Teams), reducing context switching by 65% and keeping institutional chat memory search-ready.
 
 ### 2. Universal Inbox (All Channels · One Place)
 * **⚙️ Functionality:** Unified multi-channel routing engine merging WhatsApp Business, Email (Gmail/Outlook), SMS, In-App Chat, and Customer Portals into a single prioritized queue.
-* **🎨 UI & User Interaction:** Split-view inbox with unified channel badges, response SLAs, automated AI draft suggestions, and one-click channel switching without leaving the thread.
+* **🎨 UI & User Interaction:** Split-view inbox with unified channel badges, response SLAs, automated SI draft suggestions, and one-click channel switching without leaving the thread.
 * **💼 Business Impact:** Cuts customer response times from hours to sub-60 seconds, eliminating missed inquiries and elevating customer CSAT scores by up to 40%.
 
 ### 3. Calls (Voice & Video Calls)
-* **⚙️ Functionality:** WebRTC-based HD audio/video calling with live AI transcription, speaker diarization, action item extraction, and automatic recording indexing.
+* **⚙️ Functionality:** WebRTC-based HD audio/video calling with live SI transcription, speaker diarization, action item extraction, and automatic recording indexing.
 * **🎨 UI & User Interaction:** Floating glassmorphic call overlay with live transcript stream, one-click screen sharing, mute controls, and instant post-call summary cards.
 * **💼 Business Impact:** Automates meeting follow-ups and action item tracking, saving managers an average of 45 minutes per meeting.
 
 ### 4. CHATR Docs (Document Intelligence)
-* **⚙️ Functionality:** AI-native document workbench featuring OCR document parsing, multi-modal PDF extraction, automated indexing, and collaborative editing.
+* **⚙️ Functionality:** SI-native document workbench featuring OCR document parsing, multi-modal PDF extraction, automated indexing, and collaborative editing.
 * **🎨 UI & User Interaction:** Split screen with interactive PDF viewer on the left and structured key-value metadata & chat on the right.
 * **💼 Business Impact:** Reduces manual data entry for invoices, medical charts, and contracts by 92%.
 
-### 5. AI Canvas (Business Canvas & Memory)
+### 5. SI Canvas (Business Canvas & Memory)
 * **⚙️ Functionality:** Visual infinite canvas for mapping business processes, dynamic node composition, and organizational memory graph visualization.
 * **🎨 UI & User Interaction:** Smooth pan-and-zoom canvas with drag-and-drop capability nodes, line connectors, and real-time execution node highlights.
 * **💼 Business Impact:** Enables business leaders to visualize complex multi-departmental workflows and identify bottlenecks in seconds.
 
-### 6. AI Agents (Autonomous Agent Hub)
+### 6. SI Agents (Autonomous Agent Hub)
 * **⚙️ Functionality:** Centralized orchestrator managing dynamic subagents, process allocation, background timers, and agent-to-agent message routing.
 * **🎨 UI & User Interaction:** Process manager table showing active agents, CPU/memory usage, active tasks, and one-click pause/kill controls.
 * **💼 Business Impact:** Provides 24/7 autonomous background task processing equivalent to hiring 5+ full-time operational assistants.
@@ -44,7 +44,7 @@
 * **💼 Business Impact:** Allows non-technical business owners to execute complex software workflows purely via natural language.
 
 ### 8. Intent Store (Agents · Workflows · Connectors)
-* **⚙️ Functionality:** Public and private store for discovering, installing, and updating pre-built capability packs, workflow templates, and AI agent skills.
+* **⚙️ Functionality:** Public and private store for discovering, installing, and updating pre-built capability packs, workflow templates, and SI agent skills.
 * **🎨 UI & User Interaction:** App store grid with category filters, maturity badges (L0-L3), installation progress bars, and user reviews.
 * **💼 Business Impact:** Accelerates time-to-market for new business capabilities from months of custom development to 1-click installation.
 
@@ -60,7 +60,7 @@
 ### 10. Recruitment (Talent OS & ATS Engine)
 * **⚙️ Functionality:** Full-lifecycle applicant tracking system with automated resume parsing, candidate scoring, interview scheduling, and offer letter generation.
 * **🎨 UI & User Interaction:** Kanban pipeline view (*Sourced, Screened, Interviewing, Offer, Hired*) with drag-and-drop stage movement and candidate profile modals.
-* **💼 Business Impact:** Decreases time-to-hire by 55% while improving candidate match quality through AI resume scoring.
+* **💼 Business Impact:** Decreases time-to-hire by 55% while improving candidate match quality through SI resume scoring.
 
 ### 11. Business OS (Executive Control & IDE)
 * **⚙️ Functionality:** Root operating surface housing Situation Assessment Runtime (SAR), global event logs, performance telemetry, and system-wide settings.
@@ -73,7 +73,7 @@
 * **💼 Business Impact:** Ensures compliance with HIPAA, GDPR, SOC2, and ISO27001 requirements for large enterprises.
 
 ### 13. Calendar (Schedules & Meetings)
-* **⚙️ Functionality:** Smart calendar engine with multi-provider sync (Google Calendar, Outlook), automated buffer scheduling, and AI meeting room allocation.
+* **⚙️ Functionality:** Smart calendar engine with multi-provider sync (Google Calendar, Outlook), automated buffer scheduling, and SI meeting room allocation.
 * **🎨 UI & User Interaction:** Day, week, and month views with color-coded events, attendee availability overlays, and instant meeting creation dialogs.
 * **💼 Business Impact:** Eliminates scheduling ping-pong, reclaiming up to 5 hours per week per employee.
 
@@ -88,7 +88,7 @@
 * **💼 Business Impact:** Increases deal win rates by 28% through automated follow-up reminders and lead scoring.
 
 ### 16. Tickets (Service Desk)
-* **⚙️ Functionality:** IT & customer service ticketing engine with SLA breach monitoring, automated ticket assignment, and AI response drafts.
+* **⚙️ Functionality:** IT & customer service ticketing engine with SLA breach monitoring, automated ticket assignment, and SI response drafts.
 * **🎨 UI & User Interaction:** Queue list view sorted by SLA priority with ticket status badges, customer sentiment scores, and resolution timers.
 * **💼 Business Impact:** Resolves customer tickets 3x faster while maintaining 98%+ customer satisfaction.
 
@@ -119,10 +119,10 @@
 ### 21. Inspector (Pipeline Observability)
 * **⚙️ Functionality:** Execution graph trace inspector displaying step-by-step telemetry, execution duration, payload inspects, and error tracebacks.
 * **🎨 UI & User Interaction:** Timeline trace visualizer with expandable node cards, timing waterfall bars, and raw JSON payload viewers.
-* **💼 Business Impact:** Cuts debugging and troubleshooting time for complex AI workflows from days to seconds.
+* **💼 Business Impact:** Cuts debugging and troubleshooting time for complex SI workflows from days to seconds.
 
 ### 22. Health (Engine & Provider Health)
-* **⚙️ Functionality:** Real-time system health monitor pinging database connectivity, WebSocket latency, AI engine status, and provider APIs.
+* **⚙️ Functionality:** Real-time system health monitor pinging database connectivity, WebSocket latency, SI engine status, and provider APIs.
 * **🎨 UI & User Interaction:** Status dashboard with green/yellow/red indicators, latency graphs, system uptime metrics, and incident history.
 * **💼 Business Impact:** Guarantees high availability (99.99% uptime) and proactive bottleneck detection.
 
@@ -141,7 +141,7 @@
 * **💼 Business Impact:** Scales hiring output by 3x without increasing recruiter headcount.
 
 ### 25. Hospital (Installed Workspace)
-* **⚙️ Functionality:** Healthcare configuration pack delivering Patient EHRs, AI Symptom Triage, Doctor Roster Management, and Lab Test Dispatch.
+* **⚙️ Functionality:** Healthcare configuration pack delivering Patient EHRs, SI Symptom Triage, Doctor Roster Management, and Lab Test Dispatch.
 * **🎨 UI & User Interaction:** Mission Control displaying patient wait times, active emergency triage queue, bed occupancy, and one-click appointment booking.
 * **💼 Business Impact:** Eliminates patient wait bottlenecks, ensures HIPAA compliance, and optimizes doctor utilization.
 

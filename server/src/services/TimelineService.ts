@@ -64,7 +64,7 @@ class SystemTimelineRuntime {
       case 'WorkObjectCreated': return 'Record was created by Workflow Engine.';
       case 'ApprovalRequested': return 'Execution paused pending approval.';
       case 'ApprovalGranted': return 'Approval granted, workflow resumed.';
-      case 'IntentResolved': return `AI resolved intent to action: ${event.payload.action}`;
+      case 'IntentResolved': return `SI resolved intent to action: ${event.payload.action}`;
       default: return `System Event: ${event.eventType}`;
     }
   }

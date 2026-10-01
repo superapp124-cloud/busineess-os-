@@ -118,7 +118,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
  <button onClick={() => onForward(msg)} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Forward">
  <Forward className="w-3.5 h-3.5" />
  </button>
- <button onClick={() => onAskAI(msg)} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Ask AI">
+ <button onClick={() => onAskAI(msg)} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Ask SI">
  <Sparkles className="w-3.5 h-3.5 text-violet-400 hover:text-violet-300" />
  </button>
  <button className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="More">

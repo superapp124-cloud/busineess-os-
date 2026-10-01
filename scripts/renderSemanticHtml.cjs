@@ -85,7 +85,7 @@ const AUTHORITY_PAGES = [
     relatedPages: [
       { title: 'What is a Universal Business Inbox?', path: '/what-is-a-universal-business-inbox' },
       { title: 'CHATR Calling', path: '/chatr-calling' },
-      { title: 'CHATR AI', path: '/chatr-ai' }
+      { title: 'CHATR SI', path: '/chatr-ai' }
     ]
   },
   {
@@ -164,12 +164,12 @@ const AUTHORITY_PAGES = [
     slug: 'chatr-ai',
     universe: 'ai',
     layer: 'authority',
-    title: 'CHATR AI — AI Canvas, Multi-Agent Swarms & Autonomous Assistants',
-    h1: 'CHATR AI: The Intelligence Engine for Operations',
-    tagline: 'Autonomous AI agents embedded directly into business communication and workflows.',
-    description: 'Supercharge your workforce with CHATR AI: multi-agent coordination swarms, AI Canvas for brainstorming and execution, long-term epistemic memory, and local on-device inference.',
-    keywords: 'CHATR AI, AI Business Agents, Multi-Agent Swarm, AI Canvas, Autonomous Workflow Execution',
-    directAnswer: 'CHATR AI is the cognitive operating layer of CHATR. Rather than functioning as a superficial conversational chatbot, CHATR AI orchestrates goal-conditioned agent swarms that parse customer requests, retrieve organizational memory, draft replies, and execute operational workflows under policy guardrails.',
+    title: 'CHATR SI — AI Canvas, Multi-Agent Swarms & Autonomous Assistants',
+    h1: 'CHATR SI: The Intelligence Engine for Operations',
+    tagline: 'Autonomous SI Agents embedded directly into business communication and workflows.',
+    description: 'Supercharge your workforce with CHATR SI: multi-agent coordination swarms, AI Canvas for brainstorming and execution, long-term epistemic memory, and local on-device inference.',
+    keywords: 'CHATR SI, AI Business Agents, Multi-Agent Swarm, AI Canvas, Autonomous Workflow Execution',
+    directAnswer: 'CHATR SI is the cognitive operating layer of CHATR. Rather than functioning as a superficial conversational chatbot, CHATR SI orchestrates goal-conditioned agent swarms that parse customer requests, retrieve organizational memory, draft replies, and execute operational workflows under policy guardrails.',
     keyCapabilities: [
       'Multi-Agent Swarm orchestration across sales, support, and recruitment',
       'Infinite AI Canvas for visual planning and workflow execution',
@@ -183,8 +183,8 @@ const AUTHORITY_PAGES = [
       { label: 'Human Override', value: '<8.5%', context: 'Guarded autonomous action acceptance' }
     ],
     faqs: [
-      { q: 'Is our customer data used to train public AI models?', a: 'No. CHATR AI operates under strict tenant isolation protocols, and offers private on-device LLM execution for confidential data.' },
-      { q: 'Can CHATR AI take actions, or just write text?', a: 'CHATR AI compiles intents into executable workflow DAGs that trigger database updates, payment links, and booking confirmations.' }
+      { q: 'Is our customer data used to train public AI models?', a: 'No. CHATR SI operates under strict tenant isolation protocols, and offers private on-device LLM execution for confidential data.' },
+      { q: 'Can CHATR SI take actions, or just write text?', a: 'CHATR SI compiles intents into executable workflow DAGs that trigger database updates, payment links, and booking confirmations.' }
     ],
     relatedTools: [
       { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', description: 'Turn natural language requests into structured execution DAGs.' }
@@ -274,7 +274,7 @@ const AUTHORITY_PAGES = [
     tagline: 'From human intent to physical action. The operating system bridging AI reasoning and robotic hardware.',
     description: 'CHATR Robotics OS connects high-level intent, multi-agent reasoning, and real-time communication to autonomous robotic hardware, MuJoCo physics simulation, and low-latency device teleoperation.',
     keywords: 'CHATR Robotics OS, Robotics Operating System, Robot AI, Embodied AI, Autonomous Robotics Platform, MuJoCo SimBridge',
-    directAnswer: 'CHATR Robotics OS is an embodied AI and robotic execution substrate that translates natural language intents into deterministic multi-stage hardware action DAGs. It bridges digital AI agent reasoning with physical robotic actuators, sub-12ms WebSocket telemetry, MuJoCo 29-DOF kinematics simulation, and WebRTC teleoperation.',
+    directAnswer: 'CHATR Robotics OS is an embodied AI and robotic execution substrate that translates natural language intents into deterministic multi-stage hardware action DAGs. It bridges digital SI Agent reasoning with physical robotic actuators, sub-12ms WebSocket telemetry, MuJoCo 29-DOF kinematics simulation, and WebRTC teleoperation.',
     keyCapabilities: [
       'Intent-to-Actuator Compiler translating natural language goals into multi-stage robotic task DAGs',
       'MuJoCo 3.x Physics Engine & SimBridge protocol with 29-DOF full-body kinematics and sub-12ms joint sync',
@@ -288,7 +288,7 @@ const AUTHORITY_PAGES = [
       { label: 'Safety Determinism', value: '99.8%', context: 'Action DAG boundary verification' }
     ],
     faqs: [
-      { q: 'What is CHATR Robotics OS?', a: 'CHATR Robotics OS is the physical execution layer of CHATR, transforming intent and AI agent decisions into physical robot actions, hardware telemetry, and simulated digital twin operations.' },
+      { q: 'What is CHATR Robotics OS?', a: 'CHATR Robotics OS is the physical execution layer of CHATR, transforming intent and SI Agent decisions into physical robot actions, hardware telemetry, and simulated digital twin operations.' },
       { q: 'How does CHATR connect to physical robots?', a: 'Through the SimBridge protocol and low-latency WebSockets, CHATR streams joint states, sensor telemetry, and safety-verified velocity commands to robots or simulation environments.' },
       { q: 'Where can I see the live simulator?', a: 'CHATR includes a live 3D digital twin cockpit and physics simulator accessible directly at /robotos.' }
     ],
@@ -298,7 +298,7 @@ const AUTHORITY_PAGES = [
     ],
     relatedPages: [
       { title: 'CHATR Intent OS', path: '/chatr-intent-os' },
-      { title: 'CHATR AI', path: '/chatr-ai' },
+      { title: 'CHATR SI', path: '/chatr-ai' },
       { title: 'What is a Robotics Operating System?', path: '/what-is-a-robotics-operating-system' },
       { title: 'Robotics OS Cockpit', path: '/robotos' }
     ]
@@ -313,7 +313,7 @@ const AUTHORITY_PAGES = [
     tagline: 'Expand capabilities infinitely with third-party connectors and autonomous agents.',
     description: 'Discover pre-built connectors, workflow templates, verified business agents, and lightweight mini-apps designed to extend the CHATR runtime.',
     keywords: 'CHATR Ecosystem, Intent Store, Connector Hub, Mini-App Runtime, Workflow Templates',
-    directAnswer: 'CHATR Ecosystem is the extensibility platform of CHATR, featuring a Connector Hub for external APIs (Shopify, Meta, Zoho, Google Workspace), an Intent Store for pre-built AI agent templates, and a lightweight mini-app sandbox.',
+    directAnswer: 'CHATR Ecosystem is the extensibility platform of CHATR, featuring a Connector Hub for external APIs (Shopify, Meta, Zoho, Google Workspace), an Intent Store for pre-built SI Agent templates, and a lightweight mini-app sandbox.',
     keyCapabilities: [
       'Pre-built connectors for popular enterprise SaaS and database APIs',
       'Intent Store featuring validated agent templates for sales, HR, and ops',
@@ -433,7 +433,7 @@ const TERMINOLOGY_PAGES = [
       { label: 'Integration Time', value: 'Minutes', context: 'Standardized connector interface' }
     ],
     faqs: [
-      { q: 'How is an Intent OS different from an AI Chatbot?', a: 'A chatbot produces conversational text. An Intent Operating System compiles intents into verified, state-changing transactions across real-world business systems.' },
+      { q: 'How is an Intent OS different from an SI Chatbot?', a: 'A chatbot produces conversational text. An Intent Operating System compiles intents into verified, state-changing transactions across real-world business systems.' },
       { q: 'Does an Intent OS require replacing existing software?', a: 'No. An Intent OS integrates on top of existing APIs, databases, and communication channels, acting as a universal execution runtime.' }
     ],
     relatedTools: [
@@ -717,7 +717,7 @@ const ROBOTICS_CLUSTER_PAGES = [
     relatedPages: [
       { title: 'Robotics Agents', path: '/robotics-agents' },
       { title: 'Robotics Control', path: '/robotics-control' },
-      { title: 'CHATR AI', path: '/chatr-ai' }
+      { title: 'CHATR SI', path: '/chatr-ai' }
     ]
   },
   {
@@ -757,9 +757,9 @@ const ROBOTICS_CLUSTER_PAGES = [
     layer: 'category',
     title: 'Robotics Agents — Autonomous Embodied Task Execution Swarms | CHATR',
     h1: 'Robotics Agents: Embodied Autonomous Agents',
-    tagline: 'Goal-driven AI agents possessing physical bodies, sensory perception, and manipulation capabilities.',
+    tagline: 'Goal-driven SI Agents possessing physical bodies, sensory perception, and manipulation capabilities.',
     description: 'Deploy embodied robotics agents that formulate multi-step plans, coordinate with peer agents, and safely navigate complex physical environments to accomplish high-level objectives.',
-    keywords: 'Robotics Agents, Embodied Agents, Multi-Robot Swarms, Autonomous Task Planning, Embodied AI Agents',
+    keywords: 'Robotics Agents, Embodied Agents, Multi-Robot Swarms, Autonomous Task Planning, Embodied SI Agents',
     directAnswer: 'Robotics Agents are autonomous AI entities deployed on physical machines that break down high-level business goals into sequential manipulation and navigation primitives, adapting their plans dynamically when physical environment conditions change.',
     keyCapabilities: [
       'Hierarchical task networks decomposing abstract goals into verified physical steps',

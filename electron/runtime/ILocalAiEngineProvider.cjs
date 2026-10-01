@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * CHATR AI Runtime — Abstract Provider Interface (ILocalAiEngineProvider)
+ * CHATR SI Runtime — Abstract Provider Interface (ILocalAiEngineProvider)
  * 
  * Standard contract for local inference engines (Ollama, llama.cpp, ONNX, vLLM).
  * Decouples CHATR application layer from specific inference daemon implementations.

@@ -7,7 +7,7 @@ import { LeadArtifact, AccountArtifact, OpportunityArtifact, ProposalArtifact } 
 
 // ─────────────────────────────────────────────────────────────
 // Stage 1: Lead Qualification
-// Uses: AI classify primitive
+// Uses: SI classify primitive
 // ─────────────────────────────────────────────────────────────
 const leadQualificationStage = WorkflowSDK.createStage(
   'lead_qualification',
@@ -34,7 +34,7 @@ const leadQualificationStage = WorkflowSDK.createStage(
 
 // ─────────────────────────────────────────────────────────────
 // Stage 2: Opportunity Creation (BANT Extraction)
-// Uses: AI extractStructuredData primitive
+// Uses: SI extractStructuredData primitive
 // ─────────────────────────────────────────────────────────────
 const opportunityCreationStage = WorkflowSDK.createStage(
   'opportunity_creation',
@@ -71,7 +71,7 @@ const opportunityCreationStage = WorkflowSDK.createStage(
 
 // ─────────────────────────────────────────────────────────────
 // Stage 3: Proposal Generation
-// Uses: AI generate primitive
+// Uses: SI generate primitive
 // ─────────────────────────────────────────────────────────────
 const proposalGenerationStage = WorkflowSDK.createStage(
   'proposal_generation',
@@ -88,7 +88,7 @@ const proposalGenerationStage = WorkflowSDK.createStage(
     ctx.artifacts.proposal = WorkflowSDK.createArtifact<ProposalArtifact>('ProposalArtifact', {
       opportunityId: opportunity.id,
       title: `CHATR OS Proposal — ${opportunity.title}`,
-      executiveSummary: response.result.output || 'CHATR OS is an enterprise AI workflow platform...',
+      executiveSummary: response.result.output || 'CHATR OS is an enterprise SI workflow platform...',
       scope: ['HR Module', 'Finance Module', 'CRM Module', 'Workflow Studio'],
       pricing: [
         { item: 'CHATR OS Enterprise License', quantity: 1, unitPrice: 350000 },

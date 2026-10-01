@@ -36,7 +36,7 @@ export interface WorkflowEconomicsRecord {
   userFacingDisplay: {
     title: string;          // "Interview Scheduled"
     subtitle: string;       // "Rajesh Kumar scheduled for interview · 4s · Approved by you"
-    badgeText: string;      // "AI Recommendation: Strong Match"
+    badgeText: string;      // "SI Recommendation: Strong Match"
   };
   managerFacingDisplay: {
     hoursSaved: number;     // 14.8 hours
@@ -132,7 +132,7 @@ export class WorkflowEconomicsEngine {
       userFacingDisplay: {
         title: 'Interview Scheduled',
         subtitle: 'Rajesh Kumar scheduled for interview · 4s · Approved by recruiter_arshid_01',
-        badgeText: 'AI Recommendation: Strong Match (91.6% Confidence)'
+        badgeText: 'SI Recommendation: Strong Match (91.6% Confidence)'
       },
       managerFacingDisplay: {
         hoursSaved: parseFloat((totalHumanMinutesSaved / 60).toFixed(1)),

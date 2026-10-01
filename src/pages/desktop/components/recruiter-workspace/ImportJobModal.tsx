@@ -78,7 +78,7 @@ export const ImportJobModal = memo(({ open, onClose, onImport }: ImportJobModalP
 
       onImport([newJob]);
       setParsing(false);
-      toast.success(`AI Generated Job Requisition for "${graph.title}"`);
+      toast.success(`SI Generated Job Requisition for "${graph.title}"`);
       onClose();
     }, 600);
   };
@@ -88,7 +88,7 @@ export const ImportJobModal = memo(({ open, onClose, onImport }: ImportJobModalP
       <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden text-white" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <h3 className="font-black text-sm flex items-center gap-2 text-white">
-            <Sparkles className="w-4 h-4 text-violet-400" /> AI JD Creator &amp; Job Requisition Generator
+            <Sparkles className="w-4 h-4 text-violet-400" /> SI JD Creator &amp; Job Requisition Generator
           </h3>
           <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white">
             <X className="w-4 h-4" />
@@ -192,7 +192,7 @@ export const ImportJobModal = memo(({ open, onClose, onImport }: ImportJobModalP
               <textarea
                 className="w-full p-3 text-xs bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500 font-mono resize-none"
                 rows={4}
-                placeholder={`Paste ${activeSourceTab} text here. AI will extract Job Knowledge Graph, mandatory skills, responsibilities & screening questions...`}
+                placeholder={`Paste ${activeSourceTab} text here. SI will extract Job Knowledge Graph, mandatory skills, responsibilities & screening questions...`}
                 value={inputText}
                 onChange={e => setInputText(e.target.value)}
               />

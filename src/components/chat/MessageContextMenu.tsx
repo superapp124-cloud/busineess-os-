@@ -155,13 +155,13 @@ export const MessageContextMenu = ({
  </div>
  )}
 
- {/* AI Actions Section */}
+ {/* SI Actions Section */}
  {aiSectionActions.length > 0 && (
  <>
  <Separator className="my-3" />
  <div className="px-4 py-2 flex items-center gap-2">
  <Sparkles className="w-4 h-4 text-primary" />
- <span className="text-label font-semibold text-primary uppercase tracking-wider">AI Actions</span>
+ <span className="text-label font-semibold text-primary uppercase tracking-wider">SI Actions</span>
  </div>
  <div className="space-y-1">
  {aiSectionActions.map((action, index) => {

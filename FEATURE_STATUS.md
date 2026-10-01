@@ -33,9 +33,9 @@
 - ⚠️ **Missing**: Voice & video calls (buttons present but not functional)
 - ⚠️ **Missing**: Status/Stories
 
-### 3. AI Health Assistant ⚠️
+### 3. SI Health Assistant ⚠️
 - ✅ Page created (`/ai-assistant`)
-- ⚠️ **Missing**: AI chatbot integration
+- ⚠️ **Missing**: SI chatbot integration
 - ⚠️ **Missing**: Daily medicine reminder alarms
 - ⚠️ **Missing**: Calories tracking via photo
 - ⚠️ **Missing**: Step counter + activity monitor
@@ -100,8 +100,8 @@
 3. Implement voice & video calls
 4. Add Status/Stories feature
 
-### **High Priority - AI Health Assistant**
-1. Integrate Lovable AI for health chatbot
+### **High Priority - SI Health Assistant**
+1. Integrate Lovable SI for health chatbot
 2. Add medicine reminder system
 3. Implement photo-based calorie tracking
 4. Add step counter integration
@@ -175,8 +175,8 @@ Based on network logs analysis:
    - Voice/Video calls integration
    - Stories/Status
 
-2. **AI Health Assistant** (2-3 days)
-   - Integrate Lovable AI
+2. **SI Health Assistant** (2-3 days)
+   - Integrate Lovable SI
    - Medicine reminders
    - Calorie tracking
 

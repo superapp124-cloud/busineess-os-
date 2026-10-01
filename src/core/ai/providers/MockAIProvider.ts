@@ -3,7 +3,7 @@ import { ModelProfile, IAIProviderResponse } from '../runtime/RuntimeInterfaces'
 
 export class MockAIProvider implements IAIProvider {
   id = 'mock-ai-provider';
-  name = 'Mock AI Provider';
+  name = 'Mock SI Provider';
   type = 'ai';
   role: any = 'AIProvider';
 

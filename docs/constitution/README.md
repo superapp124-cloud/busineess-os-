@@ -6,7 +6,7 @@ This is the authoritative engineering specification and handbook for the CHATR o
 - [Volume I: Vision & Philosophy](./Volume-01-Vision-and-Philosophy.md)
 - [Volume II: CHATR Kernel](./Volume-02-CHATR-Kernel.md)
 - [Volume III: Memory Architecture](./Volume-03-Memory-Architecture.md)
-- [Volume IV: AI Organization](./Volume-04-AI-Organization.md)
+- [Volume IV: SI Organization](./Volume-04-SI-Organization.md)
 - [Volume V: CHATR Office](./Volume-05-CHATR-Office.md)
 - [Volume VI: Capability Marketplace](./Volume-06-Capability-Marketplace.md)
 - [Volume VII: Continuous Intelligence](./Volume-07-Continuous-Intelligence.md)

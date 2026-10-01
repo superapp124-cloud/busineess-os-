@@ -1,6 +1,6 @@
 /**
  * Invoice Provider Plugin for CHATR Intent OS
- * Specialized Accounting AI provider parsing line items, vendor details, tax IDs, and totals.
+ * Specialized Accounting SI provider parsing line items, vendor details, tax IDs, and totals.
  */
 
 import { IDocumentProviderPlugin, DocumentInput, DocumentOutput } from './DocumentProviderPlugin';
@@ -8,7 +8,7 @@ import { CapabilityManifest } from '../../models/capability/CapabilityManifest';
 
 export class InvoiceProviderPlugin implements IDocumentProviderPlugin {
   public id = 'provider-invoice-accounting-ai';
-  public name = 'Invoice Accounting AI Provider';
+  public name = 'Invoice Accounting SI Provider';
 
   public manifest: CapabilityManifest = {
     id: this.id,
@@ -43,7 +43,7 @@ export class InvoiceProviderPlugin implements IDocumentProviderPlugin {
         currency: 'USD',
         dueDate: '2026-08-15',
         lineItems: [
-          { description: 'CHATR AI Server License', quantity: 1, unitPrice: 4250.00, total: 4250.00 }
+          { description: 'CHATR SI Server License', quantity: 1, unitPrice: 4250.00, total: 4250.00 }
         ]
       },
       parseDurationMs: Math.round(performance.now() - startTime),

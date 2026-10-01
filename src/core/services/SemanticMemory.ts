@@ -15,7 +15,7 @@ export interface SemanticMemoryRecord {
 
 class SemanticMemoryService {
   /**
-   * Stores a new memory record, automatically generating embeddings via local/remote AI.
+   * Stores a new memory record, automatically generating embeddings via local/remote SI.
    */
   async store(type: SemanticMemoryType, content: string, metadata: Record<string, any> = {}): Promise<void> {
     try {
@@ -25,7 +25,7 @@ class SemanticMemoryService {
         return;
       }
 
-      // Generate embedding using AI Service
+      // Generate embedding using SI Service
       // If generate doesn't support embedding directly, we fall back to a dummy vector 
       // or implement the embeddings endpoint in our ai service.
       let embedding: number[] = new Array(1536).fill(0).map(() => Math.random() * 0.01);
@@ -130,7 +130,7 @@ class SemanticMemoryService {
   async buildSystemContext(user_id: string, contextId: string, systemPrompt?: string): Promise<any[]> {
     const system = {
       role: 'system',
-      content: systemPrompt || 'You are CHATR Assistant — a helpful, concise AI built into the CHATR Enterprise Platform.'
+      content: systemPrompt || 'You are CHATR Assistant — a helpful, concise SI built into the CHATR Enterprise Platform.'
     };
     const history = await this.getHistory(user_id, contextId);
     return [system, ...history];

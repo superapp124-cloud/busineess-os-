@@ -22,7 +22,7 @@ class GsmAudioEnhancementController(
     }
 
     fun shouldEnhanceAudio(): Boolean {
-        return flags.isEnabled(GsmFeature.AI) && getCapabilities().let {
+        return flags.isEnabled(GsmFeature.SI) && getCapabilities().let {
             it.noiseSuppressionAvailable || it.echoCancellationAvailable
         }
     }

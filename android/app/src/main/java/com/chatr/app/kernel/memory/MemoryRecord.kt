@@ -47,7 +47,7 @@ data class InteractionSummary(
 )
 
 /**
- * A candidate memory proposed by an AI model or external signal.
+ * A candidate memory proposed by an SI model or external signal.
  * Must pass confidence, provenance, and validation checks before persisting as a durable [MemoryRecord].
  */
 data class CandidateMemory(

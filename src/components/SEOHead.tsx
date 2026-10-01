@@ -21,8 +21,8 @@ interface SEOHeadProps {
 const BASE_URL = 'https://www.chatrchat.in';
 
 export const SEOHead = ({
- title = 'CHATR Communication OS — Universal AI Business Messaging',
- description = 'CHATR Communication OS (chatrchat.in) is the unified AI communication platform for business messaging, WhatsApp integration, candidate screening, and team inbox workflows.',
+ title = 'CHATR Communication OS — Universal SI Business Messaging',
+ description = 'CHATR Communication OS (chatrchat.in) is the unified SI communication platform for business messaging, WhatsApp integration, candidate screening, and team inbox workflows.',
  keywords = 'CHATR Communication OS, Universal Inbox, WhatsApp Candidate Screening, Business Messaging, ChatrChat India',
  ogImage = '/og-image.jpg',
  ogUrl,
@@ -53,7 +53,7 @@ export const SEOHead = ({
  "priceCurrency": "INR"
  },
  "featureList": [
- "AI Candidate Screening & WhatsApp Automation",
+ "SI Candidate Screening & WhatsApp Automation",
  "Business CRM & Intent Planning",
  "Enterprise Communication & Calling",
  "Access Governance & Recruiter Workspace",

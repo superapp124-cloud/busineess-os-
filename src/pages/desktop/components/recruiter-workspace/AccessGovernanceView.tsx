@@ -95,12 +95,12 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
         </button>
       </div>
 
-      {/* AI Guardrails & Autonomous Execution Matrix */}
+      {/* SI Guardrails & Autonomous Execution Matrix */}
       <div className="bg-[#141721] border border-indigo-900/60 rounded-2xl p-5 text-white space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-sm font-bold">Autonomous AI Guardrails &amp; Safety Execution Matrix</h3>
+            <h3 className="text-sm font-bold">Autonomous SI Guardrails &amp; Safety Execution Matrix</h3>
           </div>
           <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
             ✓ Guardrails Enforced (Zero Hallucination Mode)
@@ -109,7 +109,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs pt-1">
           <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-indigo-300">Level 1: Assistive AI</span>
+              <span className="font-bold text-indigo-300">Level 1: Assistive SI</span>
               <span className="text-[10px] text-emerald-400 font-bold">Active</span>
             </div>
             <p className="text-[11px] text-slate-400">Generates draft Job Descriptions and candidate summaries for human recruiter approval.</p>
@@ -174,7 +174,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
                 <th className="p-3 text-[10px] font-bold text-slate-400 uppercase">Role</th>
                 <th className="p-3 text-[10px] font-bold text-slate-400 uppercase">Team</th>
                 <th className="p-3 text-[10px] font-bold text-slate-400 uppercase">Client Access Scopes</th>
-                <th className="p-3 text-[10px] font-bold text-slate-400 uppercase">AI Permissions</th>
+                <th className="p-3 text-[10px] font-bold text-slate-400 uppercase">SI Permissions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -198,7 +198,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
                     <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
                       u.ai_agent_access ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
                     }`}>
-                      {u.ai_agent_access ? 'Full AI Agent Access' : 'AI Sourcing Only'}
+                      {u.ai_agent_access ? 'Full SI Agent Access' : 'SI Sourcing Only'}
                     </span>
                   </td>
                 </tr>
@@ -232,7 +232,7 @@ export const AccessGovernanceView = memo(({}: AccessGovernanceViewProps) => {
                 { module: 'Offer Management', recruiter: 'View', lead: 'Approve', manager: 'Admin', admin: 'Admin' },
                 { module: 'Client Workspaces', recruiter: 'View (Assigned)', lead: 'View (Team)', manager: 'Edit', admin: 'Admin' },
                 { module: 'Commercials & Billing', recruiter: 'No Access', lead: 'No Access', manager: 'View', admin: 'Admin' },
-                { module: 'Autonomous AI Agents', recruiter: 'No Access', lead: 'View', manager: 'Approve', admin: 'Admin' },
+                { module: 'Autonomous SI Agents', recruiter: 'No Access', lead: 'View', manager: 'Approve', admin: 'Admin' },
               ].map((row, idx) => (
                 <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                   <td className="p-3 font-bold text-slate-900 dark:text-white">{row.module}</td>

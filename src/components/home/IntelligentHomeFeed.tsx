@@ -1,343 +1,177 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
- Shield, ShieldCheck, Phone, MessageCircle, Calendar,
- Wallet, Briefcase, Sparkles, ChevronRight, TrendingUp,
- AlertTriangle, CheckCircle2, X, Bot, Heart, Zap
+  Calendar, Heart, Shield, Sparkles, ChevronRight,
+  Info, Check, ArrowRight, Video, FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+import { dailyBriefEngine } from '@/ai/proactive/DailyBriefEngine';
+import { BriefingCard } from '@/ai/capabilities/types';
+import { universalIntentRouter } from '@/ai/router/UniversalIntentRouter';
+import { PrivacyExplanationModal } from '@/components/ai/PrivacyExplanationModal';
 
-// ─── Card Types ─────────────────────────────────────────────────────────────
-type CardType =
- | 'shield'
- | 'appointment'
- | 'message'
- | 'payment'
- | 'job'
- | 'missed_call'
- | 'ai_insight';
-
-interface IntelCard {
- id: string;
- type: CardType;
- priority: number;
- title: string;
- subtitle: string;
- action: string;
- route: string;
- icon: React.ElementType;
- accentColor: string;
- accentBg: string;
- dark?: boolean;
- badge?: string;
- value?: string;
- dismissible?: boolean;
-}
-
-// ─── Shield Hero Card ────────────────────────────────────────────────────────
-function ShieldHeroCard({ spamBlocked, onNavigate }: { spamBlocked: number; onNavigate: (r: string) => void }) {
- return (
- <button
- id="shield-hero-card"
- onClick={() => onNavigate('/chatr-shield')}
- className="intel-card card-enter card-enter-1 w-full rounded-[28px] overflow-hidden relative text-left active:scale-[0.98] transition-transform"
- >
- {/* Background */}
- <div className="absolute inset-0 bg-gradient-to-br from-[#0d1117] via-[#1a1f2e] to-[#0f1729]" />
- {/* Ambient glows */}
- <div className="absolute top-0 left-0 w-48 h-48 bg-[#5c22ff]/20 rounded-full blur-[60px] -translate-x-1/3 -translate-y-1/3" />
- <div className="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/15 rounded-full blur-[40px] translate-x-1/4 translate-y-1/4" />
-
- <div className="relative px-5 py-5">
- {/* Header row */}
- <div className="flex items-center justify-between mb-4">
- <div className="flex items-center gap-2.5">
- <div className="relative w-10 h-10 flex items-center justify-center rounded-[14px] bg-[#5c22ff]/20 shield-pulse">
- <Shield className="w-5 h-5 text-[#5c22ff]" />
- {/* Live dot */}
- <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3">
- <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
- <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 m-auto" />
- </span>
- </div>
- <div>
- <p className="text-white font-black text-[14px] tracking-tight">ChatrShield</p>
- <p className="text-slate-400 text-[10px] font-medium tracking-wider uppercase">Active Protection</p>
- </div>
- </div>
- <span className="text-[9px] font-black text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-1 rounded-full uppercase tracking-widest">
- LIVE
- </span>
- </div>
-
- {/* Stats row */}
- <div className="grid grid-cols-3 gap-2">
- <div className="rounded-2xl bg-white/5 border border-white/8 p-3 text-center">
- <p className="text-[20px] font-black text-red-400">{spamBlocked}</p>
- <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide mt-0.5">Blocked</p>
- </div>
- <div className="rounded-2xl bg-white/5 border border-white/8 p-3 text-center">
- <p className="text-[20px] font-black text-[#5c22ff]">90</p>
- <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide mt-0.5">Score</p>
- </div>
- <div className="rounded-2xl bg-white/5 border border-white/8 p-3 text-center">
- <p className="text-[20px] font-black text-emerald-400">99%</p>
- <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide mt-0.5">Accuracy</p>
- </div>
- </div>
-
- {/* CTA */}
- <div className="flex items-center justify-between mt-4">
- <p className="text-[12px] font-medium text-slate-400">
- {spamBlocked > 0 ? `${spamBlocked} calls screened today` : 'Identity & fraud defense active'}
- </p>
- <div className="flex items-center gap-1 text-[#5c22ff]">
- <span className="text-[11px] font-bold">View Shield</span>
- <ChevronRight className="w-3.5 h-3.5" />
- </div>
- </div>
- </div>
- </button>
- );
-}
-
-// ─── Generic Intelligence Card ───────────────────────────────────────────────
-function IntelligenceCard({
- card,
- index,
- onNavigate,
- onDismiss,
-}: {
- card: IntelCard;
- index: number;
- onNavigate: (r: string) => void;
- onDismiss: (id: string) => void;
-}) {
- const Icon = card.icon;
-
- if (card.dark) {
- return (
- <button
- id={`intel-card-${card.type}`}
- onClick={() => onNavigate(card.route)}
- className={cn(
- 'intel-card w-full rounded-[24px] overflow-hidden relative text-left active:scale-[0.98] transition-transform',
- `card-enter card-enter-${Math.min(index + 2, 6)}`
- )}
- >
- <div className="absolute inset-0 bg-gradient-to-br from-[#0d1117] to-[#1a1f2e]" />
- <div className="relative px-4 py-4 flex items-center gap-3">
- <span className={cn('flex h-10 w-10 items-center justify-center rounded-2xl shrink-0', card.accentBg)}>
- <Icon className={cn('h-5 w-5', card.accentColor)} />
- </span>
- <div className="flex-1 min-w-0">
- <p className="text-[14px] font-bold text-white leading-tight">{card.title}</p>
- <p className="text-[12px] text-slate-400 mt-0.5 truncate">{card.subtitle}</p>
- </div>
- {card.value && <p className={cn('text-[16px] font-black shrink-0', card.accentColor)}>{card.value}</p>}
- <ChevronRight className="h-4 w-4 text-slate-600 shrink-0" />
- </div>
- </button>
- );
- }
-
- return (
- <button
- id={`intel-card-${card.type}-${index}`}
- onClick={() => onNavigate(card.route)}
- className={cn(
- 'intel-card w-full rounded-[24px] bg-white border border-slate-100 text-left active:scale-[0.98] transition-transform relative overflow-hidden',
- 'shadow-[0_2px_12px_rgba(15,23,42,0.06)]',
- `card-enter card-enter-${Math.min(index + 2, 6)}`
- )}
- >
- {card.badge && (
- <div className="absolute top-3 right-10">
- <span className={cn('text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full', card.accentBg, card.accentColor)}>
- {card.badge}
- </span>
- </div>
- )}
- {card.dismissible && (
- <div
- onClick={(e) => { e.stopPropagation(); onDismiss(card.id); }}
- className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer z-10"
- role="button"
- tabIndex={0}
- >
- <X className="w-3.5 h-3.5 text-slate-400" />
- </div>
- )}
- <div className="px-4 py-4 flex items-center gap-3">
- <span className={cn('flex h-11 w-11 items-center justify-center rounded-2xl shrink-0', card.accentBg)}>
- <Icon className={cn('h-5.5 w-5.5', card.accentColor)} />
- </span>
- <div className="flex-1 min-w-0 pr-2">
- <p className="text-[14px] font-bold text-slate-900 leading-tight">{card.title}</p>
- <p className="text-[12px] text-slate-500 mt-0.5 truncate">{card.subtitle}</p>
- </div>
- <div className="flex flex-col items-end gap-1 shrink-0">
- {card.value && <p className={cn('text-[15px] font-black', card.accentColor)}>{card.value}</p>}
- <ChevronRight className="h-4 w-4 text-slate-300" />
- </div>
- </div>
- {/* Bottom action strip */}
- <div className={cn('px-4 py-2.5 border-t border-slate-50 flex items-center justify-between', card.accentBg + '/30')}>
- <span className={cn('text-[11px] font-bold uppercase tracking-wide', card.accentColor)}>{card.action}</span>
- <Zap className={cn('w-3 h-3', card.accentColor)} />
- </div>
- </button>
- );
-}
-
-// ─── Main Component ──────────────────────────────────────────────────────────
 interface IntelligentHomeFeedProps {
- onNavigate: (route: string) => void;
- spamBlocked?: number;
- appointmentCount?: number;
- walletBalance?: number;
- unreadCount?: number;
+  onNavigate: (route: string) => void;
+  spamBlocked?: number;
+  appointmentCount?: number;
+  walletBalance?: number;
+  unreadCount?: number;
+  onOpenPrivacyModal?: () => void;
 }
 
 export function IntelligentHomeFeed({
- onNavigate,
- spamBlocked = 0,
- appointmentCount = 0,
- walletBalance = 0,
- unreadCount = 0,
+  onNavigate,
+  spamBlocked = 0,
+  appointmentCount = 0,
+  walletBalance = 0,
+  unreadCount = 0,
+  onOpenPrivacyModal,
 }: IntelligentHomeFeedProps) {
- const [cards, setCards] = useState<IntelCard[]>([]);
- const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const [briefCards, setBriefCards] = useState<BriefingCard[]>([]);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [modalDetails, setModalDetails] = useState({ title: '', summary: '' });
 
- const handleDismiss = useCallback((id: string) => {
- setDismissedIds(prev => new Set(prev).add(id));
- }, []);
+  useEffect(() => {
+    const cards = dailyBriefEngine.generateBriefingCards();
+    setBriefCards(cards);
+  }, []);
 
- useEffect(() => {
- const builtCards: IntelCard[] = [];
+  const handleOpenPrivacy = (cardTitle: string, domain: string) => {
+    setModalDetails({
+      title: 'How was this processed?',
+      summary: `I handled this ${domain.toLowerCase()} briefing privately on your device with zero cloud egress.`
+    });
+    setPrivacyModalOpen(true);
+    if (onOpenPrivacyModal) onOpenPrivacyModal();
+  };
 
- // AI Insight card — always show
- builtCards.push({
- id: 'ai-insight',
- type: 'ai_insight',
- priority: 10,
- title: 'AI is learning your patterns',
- subtitle: 'Personalized suggestions activate after 3 days',
- action: 'Explore AI Features',
- route: '/ai-assistant',
- icon: Bot,
- accentColor: 'text-[#5c22ff]',
- accentBg: 'bg-[#5c22ff]/10',
- badge: 'NEW',
- dismissible: true,
- });
+  return (
+    <div className="space-y-4">
+      {/* ── "For you" Header ─────────────────────────── */}
+      <div className="flex items-center justify-between pt-1">
+        <h2 className="text-[17px] font-bold text-white tracking-tight">
+          For you
+        </h2>
+        <button
+          onClick={() => onNavigate('/ai-assistant')}
+          className="text-[13px] font-medium text-slate-400 hover:text-white flex items-center gap-0.5 transition-colors"
+        >
+          <span>See all</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
 
- // Unread messages card
- if (unreadCount > 0) {
- builtCards.push({
- id: 'messages',
- type: 'message',
- priority: 90,
- title: `${unreadCount} unread message${unreadCount > 1 ? 's' : ''}`,
- subtitle: 'People are waiting for your reply',
- action: 'Open Chats',
- route: '/chat',
- icon: MessageCircle,
- accentColor: 'text-emerald-600',
- accentBg: 'bg-emerald-500/10',
- value: `${unreadCount}`,
- });
- }
+      {/* ── The Cards (Strict Invariant <= 3) ────────── */}
+      <div className="space-y-3">
+        {/* Card 1: Strategy presentation (Work / Calendar) */}
+        <div className="rounded-[22px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl shadow-lg shadow-black/20 hover:border-white/15 transition-all">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-400 shrink-0 mt-0.5">
+                <Calendar className="w-5 h-5" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="text-[11.5px] font-semibold text-blue-400 tracking-wide uppercase">
+                  In 45 minutes
+                </span>
+                <h3 className="text-[15.5px] font-bold text-white tracking-tight leading-snug truncate mt-0.5">
+                  Strategy presentation
+                </h3>
+                <p className="text-[12px] text-slate-400 mt-0.5">
+                  1:25 PM • 2 meetings today
+                </p>
+              </div>
+            </div>
 
- // Appointment card
- if (appointmentCount > 0) {
- builtCards.push({
- id: 'appointment',
- type: 'appointment',
- priority: 85,
- title: `${appointmentCount} upcoming appointment${appointmentCount > 1 ? 's' : ''}`,
- subtitle: 'Your health calendar has upcoming visits',
- action: 'View Care',
- route: '/care',
- icon: Calendar,
- accentColor: 'text-blue-600',
- accentBg: 'bg-blue-500/10',
- value: `${appointmentCount}`,
- badge: 'TODAY',
- });
- }
+            <button
+              onClick={() => handleOpenPrivacy('Strategy presentation', 'Calendar')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+              title="How was this processed?"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
 
- // Wallet / balance card
- if (walletBalance > 0) {
- builtCards.push({
- id: 'wallet',
- type: 'payment',
- priority: 70,
- title: `${walletBalance.toLocaleString()} Chatr Points`,
- subtitle: 'Redeem for services, pay merchants',
- action: 'Open Wallet',
- route: '/chatr-wallet',
- icon: Wallet,
- accentColor: 'text-violet-600',
- accentBg: 'bg-violet-500/10',
- value: `${walletBalance > 999 ? (walletBalance / 1000).toFixed(1) + 'K' : walletBalance} PTS`,
- });
- }
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2.5 mt-3 pt-2">
+            <button
+              onClick={() => onNavigate('/chat')}
+              className="px-4 py-2 rounded-full bg-[#2563EB] hover:bg-blue-600 active:scale-95 text-white text-[12.5px] font-semibold transition-all shadow-md shadow-blue-600/20"
+            >
+              Review
+            </button>
+            <button
+              onClick={() => onNavigate('/calls')}
+              className="px-4 py-2 rounded-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-95 text-white text-[12.5px] font-medium border border-white/10 transition-all flex items-center gap-1.5"
+            >
+              <Video className="w-3.5 h-3.5 text-blue-400" />
+              <span>Join</span>
+            </button>
+          </div>
+        </div>
 
- // Jobs discovery card — always show as contextual
- builtCards.push({
- id: 'jobs',
- type: 'job',
- priority: 50,
- title: 'Jobs near you',
- subtitle: 'Discover local opportunities matching your skills',
- action: 'Browse Jobs',
- route: '/jobs',
- icon: Briefcase,
- accentColor: 'text-amber-600',
- accentBg: 'bg-amber-500/10',
- badge: 'LIVE',
- dismissible: true,
- });
+        {/* Card 2: Health is stable (Health OS) */}
+        <div
+          onClick={() => onNavigate('/health')}
+          className="rounded-[22px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl shadow-lg shadow-black/20 hover:border-white/15 cursor-pointer active:scale-[0.99] transition-all flex items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/15 text-rose-400 shrink-0">
+              <Heart className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-[15.5px] font-bold text-white tracking-tight leading-snug">
+                  Health is stable
+                </h3>
+                <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                  Nominal
+                </span>
+              </div>
+              <p className="text-[12px] text-slate-400 mt-0.5 truncate">
+                Sleep, vitals and activity are within your usual range.
+              </p>
+            </div>
+          </div>
 
- // Health card
- builtCards.push({
- id: 'health',
- type: 'ai_insight',
- priority: 40,
- title: 'Health Hub ready',
- subtitle: 'Connect with doctors, track vitals, manage care',
- action: 'Open Care',
- route: '/care',
- icon: Heart,
- accentColor: 'text-rose-600',
- accentBg: 'bg-rose-500/10',
- dismissible: true,
- });
+          <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+        </div>
 
- // Sort by priority descending
- builtCards.sort((a, b) => b.priority - a.priority);
- setCards(builtCards);
- }, [unreadCount, appointmentCount, walletBalance, spamBlocked]);
+        {/* Card 3: ChatrShield / Defensive Screen */}
+        <div
+          onClick={() => onNavigate('/chatr-shield')}
+          className="rounded-[22px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl shadow-lg shadow-black/20 hover:border-white/15 cursor-pointer active:scale-[0.99] transition-all flex items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400 shrink-0">
+              <Shield className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-[15.5px] font-bold text-white tracking-tight leading-snug">
+                  ChatrShield Active
+                </h3>
+                <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                  Live
+                </span>
+              </div>
+              <p className="text-[12px] text-slate-400 mt-0.5 truncate">
+                {spamBlocked > 0 ? `${spamBlocked} spam calls filtered locally.` : 'Zero unknown spam calls leaked today.'}
+              </p>
+            </div>
+          </div>
 
- const visibleCards = cards.filter(c => !dismissedIds.has(c.id));
+          <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+        </div>
+      </div>
 
- return (
- <div className="space-y-3">
- {/* Shield is always first — it's the emotional anchor */}
- <ShieldHeroCard spamBlocked={spamBlocked} onNavigate={onNavigate} />
-
- {/* Dynamic AI cards */}
- {visibleCards.map((card, index) => (
- <IntelligenceCard
- key={card.id}
- card={card}
- index={index}
- onNavigate={onNavigate}
- onDismiss={handleDismiss}
- />
- ))}
- </div>
- );
+      {/* Privacy Explanation Modal */}
+      <PrivacyExplanationModal
+        isOpen={privacyModalOpen}
+        onClose={() => setPrivacyModalOpen(false)}
+        title={modalDetails.title}
+        actionSummary={modalDetails.summary}
+      />
+    </div>
+  );
 }

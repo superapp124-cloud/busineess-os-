@@ -110,16 +110,16 @@ const DEFAULT_UNIVERSAL_NODES: KnowledgeNode[] = [
   { id: 'inv-q3-payroll', type: 'invoice', title: 'July Payroll & Vendors (₹48.2L)', subtitle: 'Finance Approval Pending', x: 420, y: 520, health: 65, status: 'warning', domain: 'Finance', people: ['Finance Team'] },
 
   // Connected Risk
-  { id: 'risk-latency', type: 'risk', title: 'Voice AI Latency Spike (>350ms)', subtitle: 'High Severity Risk Alert', x: 180, y: 380, health: 45, status: 'warning', domain: 'Engineering', people: ['DevOps'] },
+  { id: 'risk-latency', type: 'risk', title: 'Voice SI Latency Spike (>350ms)', subtitle: 'High Severity Risk Alert', x: 180, y: 380, health: 45, status: 'warning', domain: 'Engineering', people: ['DevOps'] },
 
   // Connected Workflow
-  { id: 'wf-auto-screen', type: 'workflow', title: 'AI Candidate Screening Workflow', subtitle: 'Automation Studio (Active)', x: 120, y: 240, health: 98, status: 'live', domain: 'Operations', people: ['AI Agent'] },
+  { id: 'wf-auto-screen', type: 'workflow', title: 'SI Candidate Screening Workflow', subtitle: 'Automation Studio (Active)', x: 120, y: 240, health: 98, status: 'live', domain: 'Operations', people: ['SI Agent'] },
 
   // Connected Meeting
   { id: 'meet-sync', type: 'meeting', title: 'Weekly Executive Alignment', subtitle: 'Today 3:00 PM (Calls Room)', x: 420, y: 60, health: 90, status: 'idle', domain: 'Operations', people: ['Arshid', 'Sarah', 'Michael'] },
 
-  // Connected AI Agent
-  { id: 'agent-chief', type: 'agent', title: 'Chief of Staff AI', subtitle: 'Intent Processing Engine', x: 620, y: 460, health: 99, status: 'summarizing', domain: 'Operations', people: ['chatrAI'] },
+  // Connected SI Agent
+  { id: 'agent-chief', type: 'agent', title: 'Chief of Staff SI', subtitle: 'Intent Processing Engine', x: 620, y: 460, health: 99, status: 'summarizing', domain: 'Operations', people: ['chatrAI'] },
 ];
 
 const DEFAULT_UNIVERSAL_EDGES: KnowledgeEdge[] = [
@@ -141,7 +141,7 @@ export function useKnowledgeGraph() {
   const [workLog, setWorkLog] = useState<WorkLogItem[]>([]);
   const [suggestedEdges, setSuggestedEdges] = useState<SuggestedEdge[]>([
     { id: 's1', fromId: 'doc-contract', fromTitle: 'Acme MSA.pdf', toId: 'inv-q3-payroll', toTitle: 'July Payroll & Vendors', reason: 'Contract references payment terms of ₹48.2L invoice', confidence: 94 },
-    { id: 's2', fromId: 'cand-rajesh', fromTitle: 'Rajesh Kumar', toId: 'risk-latency', toTitle: 'Voice AI Latency Spike', reason: 'Candidate has 5+ yrs expertise in WebRTC latency optimization', confidence: 89 },
+    { id: 's2', fromId: 'cand-rajesh', fromTitle: 'Rajesh Kumar', toId: 'risk-latency', toTitle: 'Voice SI Latency Spike', reason: 'Candidate has 5+ yrs expertise in WebRTC latency optimization', confidence: 89 },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -201,13 +201,13 @@ export function useKnowledgeGraph() {
         setTeamMembers([
           { id: '1', name: 'Arshid Wani', initials: 'AW', color: '#8b5cf6', status: 'online', activity: 'Managing Project Apollo' },
           { id: '2', name: 'Sarah Jenkins', initials: 'SJ', color: '#10b981', status: 'online', activity: 'Reviewing Acme MSA' },
-          { id: '3', name: 'Michael Chen', initials: 'MC', color: '#f59e0b', status: 'busy', activity: 'Debugging Voice AI Spike' },
+          { id: '3', name: 'Michael Chen', initials: 'MC', color: '#f59e0b', status: 'busy', activity: 'Debugging Voice SI Spike' },
         ]);
       }
 
       // Worklog & Journey Steps
       setWorkLog([
-        { time: '10:45 AM', actor: 'AI Agent', action: 'flagged risk', target: 'Voice AI Latency Spike (>350ms)', type: 'risk' },
+        { time: '10:45 AM', actor: 'SI Agent', action: 'flagged risk', target: 'Voice SI Latency Spike (>350ms)', type: 'risk' },
         { time: '10:15 AM', actor: 'Arshid Wani', action: 'moved stage', target: 'Rajesh Kumar → Offer Stage', type: 'candidate' },
         { time: '09:30 AM', actor: 'Sarah Jenkins', action: 'updated', target: 'Acme Master Service Agreement.pdf', type: 'contract' },
         { time: '09:00 AM', actor: 'Finance System', action: 'generated invoice', target: 'July Payroll & Vendors (₹48.2L)', type: 'invoice' },
@@ -215,7 +215,7 @@ export function useKnowledgeGraph() {
 
       setJourneySteps([
         { label: 'Project Apollo Created', time: '2 weeks ago', actor: 'Arshid Wani', detail: 'Initialized core Business OS architecture' },
-        { label: 'Candidate Interview Completed', time: '3 days ago', actor: 'Recruitment AI', detail: 'Rajesh Kumar scored 94% technical match' },
+        { label: 'Candidate Interview Completed', time: '3 days ago', actor: 'Recruitment SI', detail: 'Rajesh Kumar scored 94% technical match' },
         { label: 'Acme Corp Deal Signed', time: 'Yesterday', actor: 'Sales Director', detail: 'Enterprise contract sent for final legal review' },
         { label: 'Risk Alert Detected', time: '10 min ago', actor: 'System Telemetry', detail: 'Latency spike triggered engineering priority alert' },
       ]);

@@ -36,14 +36,14 @@ const providerLoginUrls: Record<string, string> = {
 const DEFAULT_TIMELINE = [
   { id: '1', title: 'Rajesh (Acme Corp) sent follow-up query', time: '10 min ago', detail: 'Email & DM', category: 'Customer Care', icon: 'mail' },
   { id: '2', title: 'Payroll Approval requested by HR', time: '45 min ago', detail: 'High Priority', category: 'Finance', icon: 'calendar' },
-  { id: '3', title: 'AI Candidate Screener completed 14 profiles', time: '2 hours ago', detail: 'Recruitment', category: 'HR Automation', icon: 'message-square' },
+  { id: '3', title: 'SI Candidate Screener completed 14 profiles', time: '2 hours ago', detail: 'Recruitment', category: 'HR Automation', icon: 'message-square' },
   { id: '4', title: 'Srinagar Flight Fare Drop detected (-₹4,500)', time: '3 hours ago', detail: 'Travel Intelligence', category: 'Cost Optimization', icon: 'calendar' },
 ];
 
 const DEFAULT_INTENTS = [
   { id: '1', text: 'Screen Senior React Candidates', progress: 85, category: 'Recruitment' },
   { id: '2', text: 'Sync Q3 Revenue & Payroll Models', progress: 60, category: 'Finance' },
-  { id: '3', text: 'Deploy Voice AI Calling Bridge', progress: 40, category: 'Engineering' },
+  { id: '3', text: 'Deploy Voice SI Calling Bridge', progress: 40, category: 'Engineering' },
 ];
 
 const DEFAULT_MEMORY = [
@@ -84,7 +84,7 @@ export default function SmartInbox() {
     actions: [{ label: 'Review Contracts' }, { label: 'Clear Inbox' }]
   });
 
-  // AI Dialog States
+  // SI Dialog States
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showTriageModal, setShowTriageModal] = useState(false);
 
@@ -95,7 +95,7 @@ export default function SmartInbox() {
     else setGreeting('Good evening');
   }, []);
 
-  // Listen for custom AI events dispatched from ChatrAIFab
+  // Listen for custom SI events dispatched from ChatrAIFab
   useEffect(() => {
     const handleSummarizeInbox = () => setShowSummaryModal(true);
     const handleAITriage = () => setShowTriageModal(true);
@@ -312,7 +312,7 @@ export default function SmartInbox() {
                 {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">{userName}</span> 👋
               </h1>
               <p className="text-[11px] font-medium uppercase tracking-wider transition-colors" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                AI Processed {intentFeed.length} events today
+                SI Processed {intentFeed.length} events today
               </p>
             </div>
           </div>
@@ -336,14 +336,14 @@ export default function SmartInbox() {
           </div>
         </div>
 
-        {/* ── 2. Compact AI Intelligence Brief Banner ── */}
+        {/* ── 2. Compact SI Intelligence Brief Banner ── */}
         <div className="rounded-2xl border p-4 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-4 transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto custom-scrollbar pb-1 lg:pb-0">
             <div className="flex items-center gap-2.5 mr-2 shrink-0">
               <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
               </div>
-              <span className="text-[11px] font-black uppercase tracking-widest shrink-0 transition-colors" style={{ color: 'hsl(var(--foreground))' }}>AI Brief</span>
+              <span className="text-[11px] font-black uppercase tracking-widest shrink-0 transition-colors" style={{ color: 'hsl(var(--foreground))' }}>SI Brief</span>
             </div>
 
             <div className="flex items-center gap-2.5 shrink-0">
@@ -365,7 +365,7 @@ export default function SmartInbox() {
           <div className="flex items-center gap-3 shrink-0 w-full lg:w-auto justify-between lg:justify-end">
             <div className="flex items-center gap-2">
               <button onClick={() => setShowSummaryModal(true)} className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-500/30">
-                <BrainCircuit className="w-3.5 h-3.5" /> AI Summary
+                <BrainCircuit className="w-3.5 h-3.5" /> SI Summary
               </button>
               <button onClick={() => setShowTriageModal(true)} className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-300" /> Triage Attention
@@ -488,14 +488,14 @@ export default function SmartInbox() {
 
       </div>
 
-      {/* ── AI Summarize Inbox Modal ───────────────────────────── */}
+      {/* ── SI Summarize Inbox Modal ───────────────────────────── */}
       {showSummaryModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowSummaryModal(false)}>
           <div className="relative w-full max-w-lg rounded-3xl border p-6 shadow-2xl space-y-5 transition-colors" style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <BrainCircuit className="w-5 h-5 text-indigo-400" />
-                <h2 className="text-base font-bold text-white">AI Inbox Executive Summary</h2>
+                <h2 className="text-base font-bold text-white">SI Inbox Executive Summary</h2>
               </div>
               <button onClick={() => setShowSummaryModal(false)} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
             </div>
@@ -534,14 +534,14 @@ export default function SmartInbox() {
         </div>
       )}
 
-      {/* ── AI Triage Modal ────────────────────────────────────── */}
+      {/* ── SI Triage Modal ────────────────────────────────────── */}
       {showTriageModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowTriageModal(false)}>
           <div className="relative w-full max-w-md rounded-3xl border p-6 shadow-2xl space-y-5 transition-colors" style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <Sparkles className="w-5 h-5 text-amber-400" />
-                <h2 className="text-base font-bold text-white">AI Triage Attention List</h2>
+                <h2 className="text-base font-bold text-white">SI Triage Attention List</h2>
               </div>
               <button onClick={() => setShowTriageModal(false)} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
             </div>

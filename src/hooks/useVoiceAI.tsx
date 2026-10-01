@@ -20,7 +20,7 @@ export const useVoiceAI = ({ processCommands = false }: VoiceAIOptions = {}) => 
 
  const processVoiceCommand = async (text: string) => {
  try {
- // Call AI to process the voice command
+ // Call SI to process the voice command
  const { data, error } = await supabase.functions.invoke('ai-smart-reply', {
  body: { 
  message: text,
@@ -33,7 +33,7 @@ export const useVoiceAI = ({ processCommands = false }: VoiceAIOptions = {}) => 
 
  return data;
  } catch (error) {
- console.error('Voice AI error:', error);
+ console.error('Voice SI error:', error);
  return null;
  }
  };

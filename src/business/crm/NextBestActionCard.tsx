@@ -91,7 +91,7 @@ export function NextBestActionCard({ leadId, leadName, onExecuteAction }: NextBe
     return (
       <Card className="p-4 bg-slate-900 border border-slate-800 text-slate-100 flex items-center gap-3">
         <Sparkles className="h-5 w-5 text-indigo-400 animate-spin" />
-        <span className="text-sm text-slate-300">Calculating AI Deal Health & Next Best Action...</span>
+        <span className="text-sm text-slate-300">Calculating SI Deal Health & Next Best Action...</span>
       </Card>
     );
   }
@@ -113,7 +113,7 @@ export function NextBestActionCard({ leadId, leadName, onExecuteAction }: NextBe
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-indigo-400" />
-          <h3 className="font-semibold text-lg text-slate-100">AI Deal Health & Next Best Action</h3>
+          <h3 className="font-semibold text-lg text-slate-100">SI Deal Health & Next Best Action</h3>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-slate-800 text-indigo-300 border-slate-700 font-mono">

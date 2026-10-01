@@ -402,7 +402,7 @@ h1 { color: #4338ca; font-size: 22pt; margin-bottom: 4px; border-bottom: 2px sol
 }
 
 export function exportAnalyticsReport(candidates: Candidate[], requisitions: Requisition[]) {
-  const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Company', 'Stage', 'AI Match %', 'Expected CTC', 'Notice Days', 'Recruiter', 'Priority', 'Risk'];
+  const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Company', 'Stage', 'SI Match %', 'Expected CTC', 'Notice Days', 'Recruiter', 'Priority', 'Risk'];
   const rows = candidates.map(c => [
     c.id, c.first_name, c.last_name, c.email, c.current_company ?? '',
     getCandidateStage(c.status), c.ai_match ?? 0, c.expected_ctc ?? '', c.notice_days ?? '', c.recruiter ?? '', c.priority ?? '', c.risk ?? ''
@@ -425,7 +425,7 @@ Current Company: ${c.current_company ?? 'N/A'}
 Location: ${c.location ?? 'N/A'}
 Stage: ${getCandidateStage(c.status)}
 
-AI MATCH EVALUATION AGAINST JOB REQUISITION:
+SI MATCH EVALUATION AGAINST JOB REQUISITION:
 Match Score: ${c.ai_match ?? 88}%
 Target Requisition: Senior Fullstack Engineer / Architect
 Priority: ${c.priority ?? 'High'}
@@ -738,7 +738,7 @@ export function enrichCandidateData(c: Candidate): Candidate {
     // ── Professional Specialization: scan header lines for declared identity ──
     // e.g. "SAP MM Consultant | email | phone" or "Full Stack Developer"
     {
-      const SPEC_RE = /\b(SAP\s+\w{1,4}|Full\s*Stack|MERN|MEAN|DevOps|Cloud|Data\s*Science|Machine\s*Learning|Cyber\s*Security|\.NET|Java\s*Full\s*Stack|React|Angular|Node|Python|Business\s*Intelligence|Power\s*BI|Tableau|Salesforce|ServiceNow|Oracle|ERP|HR\s*Tech|Blockchain|AI\s*ML|iOS|Android|Flutter|React\s*Native|Embedded|VLSI|FPGA|RPA|Automation|Quality\s*Assurance|QA)\s*(Consultant|Developer|Engineer|Analyst|Architect|Specialist|Expert|Professional|Manager|Lead|Practitioner)?\b/i;
+      const SPEC_RE = /\b(SAP\s+\w{1,4}|Full\s*Stack|MERN|MEAN|DevOps|Cloud|Data\s*Science|Machine\s*Learning|Cyber\s*Security|\.NET|Java\s*Full\s*Stack|React|Angular|Node|Python|Business\s*Intelligence|Power\s*BI|Tableau|Salesforce|ServiceNow|Oracle|ERP|HR\s*Tech|Blockchain|SI\s*ML|iOS|Android|Flutter|React\s*Native|Embedded|VLSI|FPGA|RPA|Automation|Quality\s*Assurance|QA)\s*(Consultant|Developer|Engineer|Analyst|Architect|Specialist|Expert|Professional|Manager|Lead|Practitioner)?\b/i;
       const headerLines = rawDocText.split(/\r?\n/).slice(0, 15).map(l => l.trim());
       for (const hl of headerLines) {
         if (hl.length < 5 || hl.length > 120) continue;
@@ -1518,7 +1518,7 @@ export function enrichCandidateData(c: Candidate): Candidate {
 export interface ProvenanceFieldV4<T> {
   value: T;
   raw_text?: string;
-  source: 'Resume' | 'Recruiter' | 'Candidate' | 'AI' | 'ATS';
+  source: 'Resume' | 'Recruiter' | 'Candidate' | 'SI' | 'ATS';
   confidence: number; // 0.0 to 1.0
   page?: number;
   line?: number;

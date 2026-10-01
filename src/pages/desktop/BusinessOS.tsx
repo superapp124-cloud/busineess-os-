@@ -67,7 +67,7 @@ export default function BusinessOS() {
     name: localStorage.getItem('chatr_company_name') || localStorage.getItem('chatr_org_name') || localStorage.getItem('user_workspace_name') || (localStorage.getItem('chatr_user_name') ? `${localStorage.getItem('chatr_user_name')}'s Workspace` : 'CHATR Business OS'),
     industry: localStorage.getItem('chatr_active_domain') || 'Professional Services',
     dept: ['Executive Office', 'Sales', 'Recruitment', 'Delivery', 'Finance'],
-    tech: ['Microsoft 365', 'Supabase', 'Gemini AI', 'Stripe'],
+    tech: ['Microsoft 365', 'Supabase', 'Gemini SI', 'Stripe'],
     teamSize: '11-50',
     location: 'Noida'
   }));

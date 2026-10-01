@@ -7,9 +7,9 @@ export const manifest = new CapabilityBuilder()
   .minimumKernelVersion(1, 0, 0)
   .status('ENABLED')
   .addAction({
-    id: 'AI.Summarise',
+    id: 'SI.Summarise',
     name: 'Summarise Content',
-    description: 'Demonstrates AI Execution limits and constraints',
+    description: 'Demonstrates SI Execution limits and constraints',
     inputSchema: { type: 'object', properties: { text: { type: 'string' } } },
     outputSchema: { type: 'object', properties: { summary: { type: 'string' } } }
   })

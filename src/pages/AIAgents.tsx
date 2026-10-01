@@ -105,7 +105,7 @@ export default function AIAgents() {
  setAgents((data as any) || []);
  } catch (error) {
  console.error('Error loading agents:', error);
- toast.error('Failed to load AI agents');
+ toast.error('Failed to load SI agents');
  } finally {
  setLoading(false);
  }
@@ -163,7 +163,7 @@ export default function AIAgents() {
  loadAgents();
  } catch (error) {
  console.error('Error creating agent:', error);
- toast.error('Failed to create AI agent');
+ toast.error('Failed to create SI agent');
  }
  };
 
@@ -184,7 +184,7 @@ export default function AIAgents() {
  };
 
  const handleDeleteAgent = async (agentId: string) => {
- if (!confirm('Are you sure you want to delete this AI agent? This cannot be undone.')) {
+ if (!confirm('Are you sure you want to delete this SI agent? This cannot be undone.')) {
  return;
  }
 
@@ -195,7 +195,7 @@ export default function AIAgents() {
  .eq('id', agentId);
 
  if (error) throw error;
- toast.success('AI agent deleted');
+ toast.success('SI agent deleted');
  loadAgents();
  setSelectedAgent(null);
  } catch (error) {
@@ -250,7 +250,7 @@ export default function AIAgents() {
  <div className="flex items-center justify-center min-h-screen">
  <div className="text-center">
  <Bot className="h-12 w-12 animate-pulse mx-auto mb-4 text-primary" />
- <p className="text-muted-foreground">Loading AI Agents...</p>
+ <p className="text-muted-foreground">Loading SI Agents...</p>
  </div>
  </div>
  );
@@ -278,13 +278,13 @@ export default function AIAgents() {
  </div>
  <div>
  <h1 className="text-display sm:text-display bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
- AI Assistants
+ SI Assistants
  </h1>
- <p className="text-secondary text-muted-foreground">Your personal AI assistants</p>
+ <p className="text-secondary text-muted-foreground">Your personal SI assistants</p>
  </div>
  </div>
  <p className="text-muted-foreground max-w-2xl">
- Create an AI assistant that works 24/7 • Auto-replies • Manages conversations • Helps customers • Grows your business
+ Create an SI assistant that works 24/7 • Auto-replies • Manages conversations • Helps customers • Grows your business
  </p>
  </div>
 
@@ -292,17 +292,17 @@ export default function AIAgents() {
  <DialogTrigger asChild>
  <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90">
  <Sparkles className="h-5 w-5" />
- Create AI Assistant
+ Create SI Assistant
  </Button>
  </DialogTrigger>
  <DialogContent className="max-w-2xl max-h-[90vh]">
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2 text-workspace">
  <Bot className="h-6 w-6 text-primary" />
- Create Your AI Assistant
+ Create Your SI Assistant
  </DialogTitle>
  <DialogDescription>
- Build an AI assistant that chats, helps, and works 24/7
+ Build an SI assistant that chats, helps, and works 24/7
  </DialogDescription>
  </DialogHeader>
  <ScrollArea className="max-h-[calc(90vh-120px)] pr-4">
@@ -314,12 +314,12 @@ export default function AIAgents() {
  Assistant Name <span className="text-destructive">*</span>
  </Label>
  <Input
- placeholder="e.g., AI Arshid, AI Shop Bot, Dr. Assistant"
+ placeholder="e.g., SI Arshid, SI Shop Bot, Dr. Assistant"
  value={formData.agent_name}
  onChange={(e) => setFormData({ ...formData, agent_name: e.target.value })}
  className="h-11"
  />
- <p className="text-label text-muted-foreground">Give your AI a unique name</p>
+ <p className="text-label text-muted-foreground">Give your SI a unique name</p>
  </div>
 
  {/* Purpose */}
@@ -333,14 +333,14 @@ export default function AIAgents() {
  onChange={(e) => setFormData({ ...formData, agent_purpose: e.target.value })}
  className="h-11"
  />
- <p className="text-label text-muted-foreground">What will this AI help with?</p>
+ <p className="text-label text-muted-foreground">What will this SI help with?</p>
  </div>
 
  {/* Description */}
  <div className="space-y-2">
  <Label className="text-secondary font-semibold">Description</Label>
  <Textarea
- placeholder="Tell users what your AI agent does and how it can help them..."
+ placeholder="Tell users what your SI agent does and how it can help them..."
  value={formData.agent_description}
  onChange={(e) => setFormData({ ...formData, agent_description: e.target.value })}
  rows={3}
@@ -357,7 +357,7 @@ export default function AIAgents() {
  onChange={(e) => setFormData({ ...formData, agent_personality: e.target.value })}
  className="h-11"
  />
- <p className="text-label text-muted-foreground">How should your AI talk?</p>
+ <p className="text-label text-muted-foreground">How should your SI talk?</p>
  </div>
 
  {/* Knowledge Base */}
@@ -370,14 +370,14 @@ export default function AIAgents() {
  rows={5}
  className="resize-none"
  />
- <p className="text-label text-muted-foreground">The more info you add, the smarter your AI becomes</p>
+ <p className="text-label text-muted-foreground">The more info you add, the smarter your SI becomes</p>
  </div>
 
  {/* Greeting */}
  <div className="space-y-2">
  <Label className="text-secondary font-semibold">Greeting Message</Label>
  <Input
- placeholder="Hi! I'm your AI assistant. How can I help you today?"
+ placeholder="Hi! I'm your SI assistant. How can I help you today?"
  value={formData.greeting_message}
  onChange={(e) => setFormData({ ...formData, greeting_message: e.target.value })}
  className="h-11"
@@ -394,7 +394,7 @@ export default function AIAgents() {
  </div>
  <div>
  <Label className="font-semibold">Enable Auto-Reply</Label>
- <p className="text-label text-muted-foreground">AI replies automatically 24/7</p>
+ <p className="text-label text-muted-foreground">SI replies automatically 24/7</p>
  </div>
  </div>
  <Switch
@@ -412,7 +412,7 @@ export default function AIAgents() {
  size="lg"
  >
  <Sparkles className="h-5 w-5 mr-2" />
- Create AI Agent Now
+ Create SI Agent Now
  </Button>
  </div>
  </ScrollArea>
@@ -429,8 +429,8 @@ export default function AIAgents() {
  <Brain className="h-6 w-6 text-white" />
  </div>
  <div>
- <h3 className="font-semibold">AI Powered</h3>
- <p className="text-label text-muted-foreground">Smart replies using CHATR AI</p>
+ <h3 className="font-semibold">SI Powered</h3>
+ <p className="text-label text-muted-foreground">Smart replies using CHATR SI</p>
  </div>
  </CardContent>
  </Card>
@@ -465,9 +465,9 @@ export default function AIAgents() {
  <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/20 via-purple-600/20 to-pink-600/20 flex items-center justify-center mx-auto mb-4">
  <Bot className="h-10 w-10 text-primary" />
  </div>
- <h3 className="text-page font-bold mb-2">Create Your AI Twin</h3>
+ <h3 className="text-page font-bold mb-2">Create Your SI Twin</h3>
  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
- Join thousands creating AI agents that work for them. Build your first agent in 2 minutes!
+ Join thousands creating SI agents that work for them. Build your first agent in 2 minutes!
  </p>
  <Button 
  onClick={() => setCreateDialogOpen(true)} 
@@ -475,14 +475,14 @@ export default function AIAgents() {
  className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 hover:opacity-90"
  >
  <Sparkles className="h-5 w-5 mr-2" />
- Create Your First AI Agent
+ Create Your First SI Agent
  </Button>
  </CardContent>
  </Card>
  ) : (
  <div>
  <div className="flex items-center justify-between mb-4">
- <h2 className="text-page font-bold">Your AI Agents</h2>
+ <h2 className="text-page font-bold">Your SI Agents</h2>
  <Badge variant="outline" className="text-secondary">
  {agents.length} {agents.length === 1 ? 'Agent' : 'Agents'}
  </Badge>
@@ -584,7 +584,7 @@ export default function AIAgents() {
  {selectedAgent.agent_name}
  </DialogTitle>
  <DialogDescription>
- Manage your AI agent settings, training, and analytics
+ Manage your SI agent settings, training, and analytics
  </DialogDescription>
  </DialogHeader>
 
@@ -672,7 +672,7 @@ export default function AIAgents() {
  <Card className="border-2">
  <CardHeader>
  <CardTitle className="text-body">Knowledge Base</CardTitle>
- <CardDescription>Information your AI uses to respond</CardDescription>
+ <CardDescription>Information your SI uses to respond</CardDescription>
  </CardHeader>
  <CardContent>
  <Textarea
@@ -690,7 +690,7 @@ export default function AIAgents() {
  className="w-full h-11"
  >
  <Trash2 className="h-4 w-4 mr-2" />
- Delete This AI Agent
+ Delete This SI Agent
  </Button>
  </TabsContent>
 
@@ -699,10 +699,10 @@ export default function AIAgents() {
  <CardHeader>
  <CardTitle className="text-body flex items-center gap-2">
  <Brain className="h-5 w-5 text-primary" />
- Train Your AI Agent
+ Train Your SI Agent
  </CardTitle>
  <CardDescription>
- Add Q&A examples to make your AI smarter and more accurate
+ Add Q&A examples to make your SI smarter and more accurate
  </CardDescription>
  </CardHeader>
  <CardContent className="space-y-3">
@@ -718,7 +718,7 @@ export default function AIAgents() {
  <div className="space-y-2">
  <Label className="text-secondary font-semibold">Answer</Label>
  <Textarea
- placeholder="How your AI should respond to this question..."
+ placeholder="How your SI should respond to this question..."
  value={newTraining.answer}
  onChange={(e) => setNewTraining({ ...newTraining, answer: e.target.value })}
  rows={3}
@@ -750,7 +750,7 @@ export default function AIAgents() {
  <CardContent className="p-8 text-center">
  <Brain className="h-12 w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
  <p className="text-secondary text-muted-foreground">
- No training examples yet. Add Q&A pairs above to teach your AI how to respond better.
+ No training examples yet. Add Q&A pairs above to teach your SI how to respond better.
  </p>
  </CardContent>
  </Card>
@@ -832,9 +832,9 @@ export default function AIAgents() {
  <Card className="border-2 border-primary/20 bg-primary/5">
  <CardContent className="p-6 text-center">
  <Sparkles className="h-10 w-10 mx-auto mb-3 text-primary" />
- <p className="font-semibold mb-1">AI Performance</p>
+ <p className="font-semibold mb-1">SI Performance</p>
  <p className="text-label text-muted-foreground">
- Your AI is learning from every conversation. Add more training data to improve accuracy!
+ Your SI is learning from every conversation. Add more training data to improve accuracy!
  </p>
  </CardContent>
  </Card>

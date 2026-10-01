@@ -50,7 +50,7 @@ export const AGENT_CONTRACTS: Record<AgentType, AgentContract> = {
     ],
     vocabulary: {
       mustUse: ['I remember', 'Based on your preferences', 'You usually', 'I noticed'],
-      mustAvoid: ['As an AI', 'I cannot', 'I am not able to', 'error'],
+      mustAvoid: ['As an SI', 'I cannot', 'I am not able to', 'error'],
       tone: 'friendly',
     },
     allowedActions: ['set_reminder', 'save_contact', 'navigate', 'none'],

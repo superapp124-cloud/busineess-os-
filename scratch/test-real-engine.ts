@@ -3,7 +3,7 @@ import { RealContentEngine } from '../src/services/mediaAgency/production/RealCo
 async function main() {
   console.log('Testing Real Content Engine...');
   const result = await RealContentEngine.generate20Variants(
-    'How AI Agent Networks automate business ops in 2026',
+    'How SI Agent Networks automate business ops in 2026',
     'Tech Founders & Operations Leaders',
     'business_ai_scaling'
   );

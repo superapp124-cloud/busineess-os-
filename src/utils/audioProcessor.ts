@@ -1,5 +1,5 @@
 /**
- * Chatr+ AI Audio Processor (Phase 2)
+ * Chatr+ SI Audio Processor (Phase 2)
  *
  * Builds a native Web Audio API pipeline:
  *   Mic ─► HighPass EQ (cut rumble < 80Hz)

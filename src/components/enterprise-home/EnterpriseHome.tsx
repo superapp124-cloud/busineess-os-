@@ -105,7 +105,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
             <div>
               <h1 className="text-lg font-bold tracking-tight text-white">{greetingHeading}</h1>
               <p className="text-zinc-400 text-xs mt-0.5">
-                Upload any document to instantly get summaries, key insights, and AI answers, or start a new task.
+                Upload any document to instantly get summaries, key insights, and SI answers, or start a new task.
               </p>
             </div>
           </div>
@@ -150,8 +150,8 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Ask AI Anything</div>
-                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Chat with AI, draft emails, or ask questions</div>
+                <div className="text-xs font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors">Ask SI Anything</div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 leading-snug">Chat with SI, draft emails, or ask questions</div>
               </div>
             </button>
 
@@ -206,7 +206,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
             <div className="p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-xl space-y-1.5">
               <div className="flex items-center gap-2 font-bold text-zinc-200">
                 <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">2</span>
-                <span>Instant AI Summary</span>
+                <span>Instant SI Summary</span>
               </div>
               <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Get clear bullet-point summaries, key highlights, and risk alerts without reading long pages.
@@ -219,7 +219,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
                 <span>Ask Questions & Act</span>
               </div>
               <p className="text-zinc-400 text-[11px] leading-relaxed">
-                Ask AI anything about the document, generate automated replies, or export key insights.
+                Ask SI anything about the document, generate automated replies, or export key insights.
               </p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export const EnterpriseHome: React.FC<Props> = ({ missionContext, onNavigate, on
                 # Team Tasks
               </button>
               <button onClick={() => onNavigate?.('chat')} className="p-3 bg-zinc-950/60 hover:bg-zinc-800/60 border border-zinc-800/60 rounded-xl text-left font-bold text-zinc-300 transition-colors cursor-pointer">
-                # AI Assistant
+                # SI Assistant
               </button>
             </div>
           </div>

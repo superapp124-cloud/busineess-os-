@@ -85,7 +85,7 @@ CapabilityRegistry.register({
   id: 'core.trigger', label: 'Trigger', icon: 'zap', category: 'Core', description: 'Starts a workflow', inputs: {}, outputs: { payload: 'any' }, propertySchema: {}
 });
 CapabilityRegistry.register({
-  id: 'core.ai_agent', label: 'AI Agent', icon: 'bot', category: 'AI', description: 'Executes an AI prompt', inputs: { prompt: 'string' }, outputs: { response: 'string' }, propertySchema: {}
+  id: 'core.ai_agent', label: 'SI Agent', icon: 'bot', category: 'AI', description: 'Executes an AI prompt', inputs: { prompt: 'string' }, outputs: { response: 'string' }, propertySchema: {}
 });
 CapabilityRegistry.register({
   id: 'core.email', label: 'Send Email', icon: 'mail', category: 'Communication', description: 'Sends an email', inputs: { to: 'string', subject: 'string', body: 'string' }, outputs: { status: 'boolean' }, propertySchema: {}

@@ -47,20 +47,20 @@ interface Game {
 }
 
 const games: Game[] = [
- { id: 'air_runner', title: 'AIR RUNNER', subtitle: 'Endless Sky', description: 'AI-powered infinite plane runner', icon: '✈️', gradient: 'from-cyan-500 via-blue-500 to-indigo-600', accentColor: 'cyan', levels: 100, category: 'featured', isFeatured: true, isNew: true },
+ { id: 'air_runner', title: 'AIR RUNNER', subtitle: 'Endless Sky', description: 'SI-powered infinite plane runner', icon: '✈️', gradient: 'from-cyan-500 via-blue-500 to-indigo-600', accentColor: 'cyan', levels: 100, category: 'featured', isFeatured: true, isNew: true },
  { id: 'sync_mind', title: 'SyncMind', subtitle: 'Think Alike', description: 'Match minds with strangers', icon: '🧠', gradient: 'from-violet-500 to-fuchsia-400', accentColor: 'violet', levels: 50, category: 'multiplayer', isMultiplayer: true, isNew: true, isHot: true },
  { id: 'echo_chain', title: 'EchoChain', subtitle: 'Story Builder', description: 'Build stories together', icon: '🔗', gradient: 'from-emerald-500 to-cyan-400', accentColor: 'emerald', levels: 50, category: 'multiplayer', isMultiplayer: true, isNew: true },
  { id: 'mirror_match', title: 'MirrorMatch', subtitle: 'Real-time Sync', description: 'Mirror moves perfectly', icon: '🪞', gradient: 'from-pink-500 to-red-400', accentColor: 'pink', levels: 50, category: 'multiplayer', isMultiplayer: true },
  { id: 'thought_duel', title: 'ThoughtDuel', subtitle: 'Creative Battle', description: 'Battle of descriptions', icon: '⚔️', gradient: 'from-amber-500 to-orange-400', accentColor: 'amber', levels: 50, category: 'multiplayer', isMultiplayer: true },
  { id: 'vibe_link', title: 'VibeLink', subtitle: 'Emotional Sync', description: 'Feel the same emotion', icon: '💕', gradient: 'from-rose-500 to-purple-400', accentColor: 'rose', levels: 50, category: 'multiplayer', isMultiplayer: true },
- { id: 'car_racing', title: 'AI Racing', subtitle: 'Speed Rush', description: 'Outsmart the AI', icon: '🏎️', gradient: 'from-blue-500 to-cyan-400', accentColor: 'blue', levels: 50, category: 'arcade', isHot: true },
- { id: 'candy_crush', title: 'Candy Match', subtitle: 'Sweet Puzzles', description: 'AI-crafted matching', icon: '🍬', gradient: 'from-pink-500 to-rose-400', accentColor: 'pink', levels: 50, category: 'puzzle' },
- { id: 'parallel_you', title: 'Parallel You', subtitle: 'AI Twin', description: 'Challenge your digital self', icon: '🧬', gradient: 'from-violet-500 to-purple-400', accentColor: 'violet', levels: 50, category: 'ai' },
- { id: 'motorcycle_racing', title: 'Moto Rush', subtitle: 'Nitro Speed', description: 'AI adapts to you', icon: '🏍️', gradient: 'from-orange-500 to-amber-400', accentColor: 'orange', levels: 50, category: 'arcade' },
+ { id: 'car_racing', title: 'SI Racing', subtitle: 'Speed Rush', description: 'Outsmart the SI', icon: '🏎️', gradient: 'from-blue-500 to-cyan-400', accentColor: 'blue', levels: 50, category: 'arcade', isHot: true },
+ { id: 'candy_crush', title: 'Candy Match', subtitle: 'Sweet Puzzles', description: 'SI-crafted matching', icon: '🍬', gradient: 'from-pink-500 to-rose-400', accentColor: 'pink', levels: 50, category: 'puzzle' },
+ { id: 'parallel_you', title: 'Parallel You', subtitle: 'SI Twin', description: 'Challenge your digital self', icon: '🧬', gradient: 'from-violet-500 to-purple-400', accentColor: 'violet', levels: 50, category: 'ai' },
+ { id: 'motorcycle_racing', title: 'Moto Rush', subtitle: 'Nitro Speed', description: 'SI adapts to you', icon: '🏍️', gradient: 'from-orange-500 to-amber-400', accentColor: 'orange', levels: 50, category: 'arcade' },
  { id: 'bubble_shooter', title: 'Bubble Pop', subtitle: 'Strategic Shots', description: 'Pop with precision', icon: '🫧', gradient: 'from-indigo-500 to-blue-400', accentColor: 'indigo', levels: 50, category: 'puzzle' },
  { id: 'word_finder', title: 'Word Hunt', subtitle: 'Brain Teaser', description: 'Find hidden words', icon: '📚', gradient: 'from-emerald-500 to-teal-400', accentColor: 'emerald', levels: 50, category: 'puzzle' },
- { id: 'mindmaze', title: 'MindMaze', subtitle: 'Thought Reader', description: 'Can AI read your mind?', icon: '🧠', gradient: 'from-purple-500 to-indigo-400', accentColor: 'purple', levels: 50, category: 'ai' },
- { id: 'avawars', title: 'AVA Wars', subtitle: 'AI Battle', description: 'Your AI fights for you', icon: '⚔️', gradient: 'from-red-500 to-rose-400', accentColor: 'red', levels: 50, category: 'ai' },
+ { id: 'mindmaze', title: 'MindMaze', subtitle: 'Thought Reader', description: 'Can SI read your mind?', icon: '🧠', gradient: 'from-purple-500 to-indigo-400', accentColor: 'purple', levels: 50, category: 'ai' },
+ { id: 'avawars', title: 'AVA Wars', subtitle: 'SI Battle', description: 'Your SI fights for you', icon: '⚔️', gradient: 'from-red-500 to-rose-400', accentColor: 'red', levels: 50, category: 'ai' },
  { id: 'dreamforge', title: 'DreamForge', subtitle: 'Dream Explorer', description: 'Play inside dreams', icon: '🌙', gradient: 'from-slate-500 to-violet-400', accentColor: 'slate', levels: 50, category: 'adventure' },
  { id: 'socialstorm', title: 'SocialStorm', subtitle: 'Trend Predictor', description: 'Predict viral content', icon: '🔥', gradient: 'from-amber-500 to-orange-400', accentColor: 'amber', levels: 50, category: 'ai' },
  { id: 'shadowverse', title: 'ShadowVerse', subtitle: 'Dark Journey', description: 'Explore your shadow', icon: '👻', gradient: 'from-zinc-600 to-slate-500', accentColor: 'zinc', levels: 50, category: 'adventure' },
@@ -74,7 +74,7 @@ const categories = [
  { id: 'all', label: 'All', icon: '🎮' },
  { id: 'featured', label: 'Featured', icon: '⭐' },
  { id: 'multiplayer', label: 'Multiplayer', icon: '👥' },
- { id: 'ai', label: 'AI Games', icon: '🤖' },
+ { id: 'ai', label: 'SI Games', icon: '🤖' },
  { id: 'arcade', label: 'Arcade', icon: '🕹️' },
  { id: 'puzzle', label: 'Puzzle', icon: '🧩' },
  { id: 'adventure', label: 'Adventure', icon: '🗺️' },
@@ -196,8 +196,8 @@ export default function ChatrGames() {
  return (
  <>
  <SEOHead 
- title="CHATR Games - 21 AI & Multiplayer Games"
- description="21 revolutionary games with 1100 levels. AI-powered + real-time multiplayer gaming."
+ title="CHATR Games - 21 SI & Multiplayer Games"
+ description="21 revolutionary games with 1100 levels. SI-powered + real-time multiplayer gaming."
  />
  <div className="min-h-[100dvh] bg-gradient-to-b from-[#0a0a0f] via-[#0d0d18] to-[#0a0a0f] text-white overflow-x-hidden">
  {/* Ambient Background - Optimized for all displays */}

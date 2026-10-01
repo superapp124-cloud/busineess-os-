@@ -151,7 +151,7 @@ export const WorkspaceCustomers: React.FC = () => {
  </div>
  
  <div>
- <h3 className="text-secondary font-semibold text-slate-400 uppercase tracking-wider mb-3">AI Intelligence</h3>
+ <h3 className="text-secondary font-semibold text-slate-400 uppercase tracking-wider mb-3">SI Intelligence</h3>
  <div className="p-4 bg-blue-900/10 border border-blue-500/20 rounded-lg">
  <p className="text-secondary text-blue-100/80 mb-3">
  <strong className="text-blue-400 block mb-1">Next Best Action</strong>

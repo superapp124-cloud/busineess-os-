@@ -39,7 +39,7 @@ export function AISearchPage() {
  <div className="flex items-center justify-between mb-4">
  <div className="flex items-center gap-2 text-indigo-400">
  <BrainCircuit className="w-6 h-6" />
- <span className="font-bold text-workspace tracking-tight text-white">CHATR <span className="text-indigo-400 font-normal">AI Search</span></span>
+ <span className="font-bold text-workspace tracking-tight text-white">CHATR <span className="text-indigo-400 font-normal">SI Search</span></span>
  </div>
  
  <ModelStatusIndicator 
@@ -71,7 +71,7 @@ export function AISearchPage() {
  <AILandingView onSearch={handleSearch} />
  ) : (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
- {/* Left Column: AI Synthesis */}
+ {/* Left Column: SI Synthesis */}
  <div className="lg:col-span-8 order-2 lg:order-1">
  <StreamingSynthesis text={text} status={status} />
  

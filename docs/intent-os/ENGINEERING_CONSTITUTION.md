@@ -3,7 +3,7 @@
 Date: 2026-07-15
 Status: Active. Supersedes all prior agent instructions.
 
-This document serves as the absolute law for all engineering efforts, human or AI, working on the CHATR OS repository. **Read this before writing any code.**
+This document serves as the absolute law for all engineering efforts, human or SI, working on the CHATR OS repository. **Read this before writing any code.**
 
 1. **Architecture is frozen.**
 2. **Kernel ABI is authoritative.**
@@ -41,7 +41,7 @@ Execution
 Verification
 ```
 
-## AI Agent Directives
+## SI Agent Directives
 
 - **Implementation agents write code.**
 - **Architecture changes require review against the frozen ABI and ADRs.**

@@ -25,7 +25,7 @@ export const SharedCandidateScorecard: React.FC = () => {
       { question: 'Comfortable with remote collaboration & agile sprints?', answer: '5+ years experience in distributed engineering teams.', verified: true }
     ],
     verifiedAt: 'August 2026',
-    verifiedBy: 'TalentXcel AI Screening Engine v3.4'
+    verifiedBy: 'TalentXcel SI Screening Engine v3.4'
   };
 
   const handleCopyLink = () => {
@@ -41,7 +41,7 @@ export const SharedCandidateScorecard: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-bold text-base">
             <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-md text-xs font-black tracking-wider">CHATR</span>
-            <span className="text-slate-400 font-medium text-xs">/ TalentXcel AI Scorecard</span>
+            <span className="text-slate-400 font-medium text-xs">/ TalentXcel SI Scorecard</span>
           </Link>
           <div className="flex items-center gap-2">
             <button
@@ -69,7 +69,7 @@ export const SharedCandidateScorecard: React.FC = () => {
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>AI Pre-Screened & Verified</span>
+                <span>SI Pre-Screened & Verified</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{candidateData.targetRole}</h1>
               <p className="text-xs text-slate-400 font-mono">Dossier ID: {candidateData.id} • {candidateData.verifiedAt}</p>
@@ -120,7 +120,7 @@ export const SharedCandidateScorecard: React.FC = () => {
           </div>
         </section>
 
-        {/* AI Screening Highlights */}
+        {/* SI Screening Highlights */}
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 text-white font-bold text-base">
             <Bot className="w-4 h-4 text-indigo-400" />
@@ -149,7 +149,7 @@ export const SharedCandidateScorecard: React.FC = () => {
             Screen & Parse Candidates in Under 60 Seconds
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
-            Eliminate candidate drop-off and automate WhatsApp screening with AI parser accuracy. Join 1,200+ recruitment agencies and hiring teams.
+            Eliminate candidate drop-off and automate WhatsApp screening with SI parser accuracy. Join 1,200+ recruitment agencies and hiring teams.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
@@ -162,7 +162,7 @@ export const SharedCandidateScorecard: React.FC = () => {
               to="/chatr/whatsapp-candidate-screening"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold text-xs transition-colors"
             >
-              Explore AI Screening Workflow
+              Explore SI Screening Workflow
             </Link>
           </div>
         </div>

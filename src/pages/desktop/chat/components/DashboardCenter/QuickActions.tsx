@@ -11,7 +11,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onNewChat, onCreateC
  const actions = [
  { icon: MessageSquare, title: 'New Chat', subtitle: 'Message anyone', color: 'text-blue-400', bg: 'bg-blue-500/10', onClick: onNewChat },
  { icon: Hash, title: 'Create Channel', subtitle: 'Start a channel', color: 'text-emerald-400', bg: 'bg-emerald-500/10', onClick: onCreateChannel },
- { icon: Zap, title: 'AI Insights', subtitle: 'Get intelligence', color: 'text-violet-400', bg: 'bg-violet-500/10', onClick: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true })) },
+ { icon: Zap, title: 'SI Insights', subtitle: 'Get intelligence', color: 'text-violet-400', bg: 'bg-violet-500/10', onClick: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true })) },
  { icon: UploadCloud, title: 'Upload File', subtitle: 'Share files', color: 'text-sky-400', bg: 'bg-sky-500/10', onClick: () => document.getElementById('global-file-upload')?.click() },
  ];
 

@@ -140,7 +140,7 @@ export default function KPIDashboard() {
  <CardContent className="p-6">
  <div className="flex items-center justify-between">
  <div>
- <p className="text-secondary font-medium text-slate-400">AI Workflow Adoption</p>
+ <p className="text-secondary font-medium text-slate-400">SI Workflow Adoption</p>
  <p className="text-display text-white mt-2">{metrics.ai_usage_pct}%</p>
  </div>
  <div className="p-3 rounded-full bg-cyan-500/20 text-cyan-400">

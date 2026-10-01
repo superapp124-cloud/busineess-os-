@@ -1,5 +1,5 @@
 /**
- * CHATR Media Agency — AI Virtual Influencer Engine
+ * CHATR Media Agency — SI Virtual Influencer Engine
  * Full-Capability Avatar Lifecycle (Talk, Walk, Podcast, Sing, Dance)
  * 10 Recurring CHATR Characters Registry
  */
@@ -95,8 +95,8 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
     id: 'priya_sharma',
     name: 'Priya Sharma',
     handle: '@priya.ai_strat',
-    niche: 'Enterprise AI & Global Tech Strategy',
-    bio: 'Enterprise AI strategist breaking down foundational models, autonomous agents, and cross-border tech disruption.',
+    niche: 'Enterprise SI & Global Tech Strategy',
+    bio: 'Enterprise SI strategist breaking down foundational models, autonomous agents, and cross-border tech disruption.',
     followers: '1.2M',
     voiceKey: 'english_female_journalist',
     languages: ['English', 'Hindi'],
@@ -121,7 +121,7 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
       podcast: 'Deep dive into inference economics and why smaller, specialized fine-tunes outperform monolithic models.',
       sing: 'Acoustic session reflections on builders in the tech ecosystem.',
       dance: 'High-energy studio showcase on modern tech trends.',
-      walk: 'Walking through Cyber Hub discussing the latest AI infrastructure developments.'
+      walk: 'Walking through Cyber Hub discussing the latest SI infrastructure developments.'
     }
   },
   {
@@ -161,7 +161,7 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
     id: 'ananya_iyer',
     name: 'Ananya Iyer',
     handle: '@ananya.creative',
-    niche: 'Creative AI & Digital Arts',
+    niche: 'Creative SI & Digital Arts',
     bio: 'Digital artist & creative director exploring the intersection of generative visual art and Indian classical aesthetics.',
     followers: '820K',
     voiceKey: 'tamil_female_creative',
@@ -194,8 +194,8 @@ export const VIRTUAL_INFLUENCERS: VirtualInfluencerProfile[] = [
     id: 'vikram_joshi',
     name: 'Vikram Joshi',
     handle: '@vikram.oss',
-    niche: 'Open Source & AI Infrastructure',
-    bio: 'Linux kernel hacker & open-source evangelist. Believes in local AI weights, self-hosting, and digital sovereignty.',
+    niche: 'Open Source & SI Infrastructure',
+    bio: 'Linux kernel hacker & open-source evangelist. Believes in local SI weights, self-hosting, and digital sovereignty.',
     followers: '1.1M',
     voiceKey: 'hindi_male_narrator',
     languages: ['Hindi', 'English'],

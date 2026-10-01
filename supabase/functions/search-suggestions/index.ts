@@ -1,4 +1,4 @@
-// Search suggestions edge function using direct AI provider
+// Search suggestions edge function using direct SI provider
 
 import { completeChat } from "../_core/aiProvider.ts";
 
@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
     const { query, recentSearches = [] } = await req.json();
     userQuery = query || '';
 
-    // Generate AI-powered search suggestions via direct fast model (Groq / Gemini)
+    // Generate SI-powered search suggestions via direct fast model (Groq / Gemini)
     const aiResult = await completeChat({
       primaryProvider: "groq",
       fallbackProviders: ["gemini", "openrouter"],

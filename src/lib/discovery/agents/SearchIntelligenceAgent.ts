@@ -23,7 +23,7 @@ export class SearchIntelligenceAgent implements UDXAgent {
     const prompt = `Analyze these search opportunities for emerging trends and gaps:
 ${JSON.stringify(input.opportunities)}
 Identify gaps: high-impression queries with no strong TalentXcel page.
-Cross-reference AI visibility events for citation opportunities.
+Cross-reference SI visibility events for citation opportunities.
 Return ONLY a valid JSON array of AgentRecommendation objects.`;
 
     let recommendations: AgentRecommendation[] = [];
@@ -50,7 +50,7 @@ Return ONLY a valid JSON array of AgentRecommendation objects.`;
       processingTimeMs: Date.now() - startTime,
       modelUsed,
       confidenceOverall: 0.8,
-      reasoning: 'Analyzed GSC query clusters and AI visibility events for citation gaps.',
+      reasoning: 'Analyzed GSC query clusters and SI visibility events for citation gaps.',
       timestamp: new Date().toISOString()
     };
   }

@@ -20,7 +20,7 @@ export const WorkspaceActivities: React.FC = () => {
  const activities = [
  { id: 1, type: 'broadcast_sent', icon: Megaphone, color: 'text-blue-500', bg: 'bg-blue-500/20', title: 'Broadcast Sent', description: 'Summer Sale Announcement sent to 450 VIP customers.', time: '10 mins ago', user: 'System' },
  { id: 2, type: 'reply_received', icon: MessageSquare, color: 'text-emerald-500', bg: 'bg-emerald-500/20', title: 'Reply Received', description: 'John Doe replied to Summer Sale Announcement.', time: '15 mins ago', user: 'John Doe' },
- { id: 3, type: 'ai_action', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/20', title: 'AI Recommendation', description: 'AI suggested sending Proposal Template to John Doe.', time: '16 mins ago', user: 'AI Assistant' },
+ { id: 3, type: 'ai_action', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/20', title: 'SI Recommendation', description: 'SI suggested sending Proposal Template to John Doe.', time: '16 mins ago', user: 'SI Assistant' },
  { id: 4, type: 'lead_created', icon: UserPlus, color: 'text-amber-500', bg: 'bg-amber-500/20', title: 'Segment Updated', description: 'Jane Smith was moved to VIP segment.', time: '2 hrs ago', user: 'System' },
  { id: 5, type: 'task_completed', icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-500/20', title: 'Task Completed', description: 'Followed up with ABC Industries.', time: '4 hrs ago', user: 'You' },
  ];

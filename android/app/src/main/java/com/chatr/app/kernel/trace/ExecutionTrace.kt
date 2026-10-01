@@ -8,7 +8,7 @@ import java.util.UUID
 
 enum class ChatrSurface {
     CALL,       // GSM or VoIP call flow
-    AI,         // Proactive assistant / life agent
+    SI,         // Proactive assistant / life agent
     CONNECT,    // CHATR Session (messaging, video)
     SYSTEM      // Internal / background agent
 }
@@ -28,7 +28,7 @@ enum class TraceOutcome {
  *
  * Every meaningful kernel operation persists an ExecutionTrace.
  * This provides:
- *   - Auditability: what the AI proposed, what trust decided, what actually executed
+ *   - Auditability: what the SI proposed, what trust decided, what actually executed
  *   - Debugging: every step of the Understand -> Act -> Learn loop is traceable
  *   - Learning: the outcome informs future intent and trust tuning
  *

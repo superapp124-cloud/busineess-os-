@@ -1,6 +1,6 @@
 /**
- * CHATR OS v5.0 — Job Knowledge Graph & AI JD Creator Engine
- * Phase 1 Implementation: Job Knowledge Graph, AI JD Generator, and Job 360° Intelligence.
+ * CHATR OS v5.0 — Job Knowledge Graph & SI JD Creator Engine
+ * Phase 1 Implementation: Job Knowledge Graph, SI JD Generator, and Job 360° Intelligence.
  */
 
 export interface JobKnowledgeGraph {
@@ -121,7 +121,7 @@ export function buildJobKnowledgeGraph(
 }
 
 /**
- * Multi-Source AI Job Description Generator
+ * Multi-Source SI Job Description Generator
  * Supports generating JDs from Prompt, Previous JD, Client Email, Voice Transcript, or WhatsApp text.
  */
 export function generateAIJobDescription(input: {

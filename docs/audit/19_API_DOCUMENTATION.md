@@ -94,7 +94,7 @@ Used by Studio: no direct call found.
 
 The repository contains many Edge Functions. Relevant categories include:
 
-- AI: `ai-chat`, `ai-agent-chat`, `ai-answer`, `ai-assistant`, `ai-image-generator`, `universal-ai-search`, `visual-intelligence`.
+- SI: `ai-chat`, `ai-agent-chat`, `ai-answer`, `ai-assistant`, `ai-image-generator`, `universal-ai-search`, `visual-intelligence`.
 - Notifications: `send-sms`, `send-push`, `send-whatsapp-invite`, `send-chat-notification`, `process-scheduled-notifications`.
 - Auth/device/desktop: `auth-phone-otp`, `desktop-pair-init`, `desktop-pair-confirm`, `device-auth`, `qr-login`.
 - Search/retrieval: `universal-search`, `universal-search-engine`, `search-memory`, `web-search-aggregator`.

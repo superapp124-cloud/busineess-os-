@@ -4,7 +4,7 @@ export const recruitmentManifest: CapabilityManifest = {
   id: 'recruitment-os',
   name: 'RecruitmentOS',
   version: '1.0.0',
-  description: 'AI Talent Operating System for sourcing, screening, and hiring.',
+  description: 'SI Talent Operating System for sourcing, screening, and hiring.',
   icon: 'Users',
   color: 'indigo',
   category: 'hr',
@@ -53,7 +53,7 @@ export const recruitmentManifest: CapabilityManifest = {
   deploySteps: [
     { label: 'Creating talent workspace', detail: 'Setting up isolated environment' },
     { label: 'Installing ATS database', detail: 'rec_jobs, rec_candidates' },
-    { label: 'Configuring AI ranker', detail: 'Seeding prompt templates' }
+    { label: 'Configuring SI ranker', detail: 'Seeding prompt templates' }
   ],
 
   tables: [

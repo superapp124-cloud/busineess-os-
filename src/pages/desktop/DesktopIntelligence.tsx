@@ -662,7 +662,7 @@ export default function ExecutionCenter() {
  </div>
  ) : (
  <div className="max-w-full sm:max-w-[85%] w-full flex items-start gap-4">
- {/* AI Avatar */}
+ {/* SI Avatar */}
  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-1">
  <Sparkles className="w-4 h-4 text-primary" />
  </div>

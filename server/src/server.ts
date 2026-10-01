@@ -83,7 +83,7 @@ const handleSearchStream = async (req: express.Request, res: express.Response) =
 
   res.write(`data: ${JSON.stringify({ type: 'sources', cards: mappedCards })}\n\n`);
 
-  // To-Do: Phase 2 AI Synthesis & Semantic Reranking will drop in here
+  // To-Do: Phase 2 SI Synthesis & Semantic Reranking will drop in here
   res.write(`data: ${JSON.stringify({ type: 'token', token: `Phase 1 Retrieval pipeline execution complete. Detected Intent: ${intentResult.intent}. Ranked ${rankedSources.length} sources.` })}\n\n`);
   res.write(`data: ${JSON.stringify({ status: 'complete' })}\n\n`);
   res.end();

@@ -124,7 +124,7 @@ export function ActivityFeed() {
 
  <p className="text-slate-300 text-secondary mb-4">{item.preview}</p>
  
- {/* AI Action Bar */}
+ {/* SI Action Bar */}
  <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-white/10">
  {item.actions.map(action => (
  <button 

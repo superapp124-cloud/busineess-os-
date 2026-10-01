@@ -28,7 +28,7 @@ export const DesktopOnboardingModal: React.FC<Props> = ({ onDismiss }) => {
           </div>
           <div>
             <h2 className="text-xl font-semibold tracking-wide">Welcome to CHATR</h2>
-            <p className="text-xs text-slate-400">Choose your AI workspace experience</p>
+            <p className="text-xs text-slate-400">Choose your SI workspace experience</p>
           </div>
         </div>
 
@@ -37,7 +37,7 @@ export const DesktopOnboardingModal: React.FC<Props> = ({ onDismiss }) => {
           <p className="text-slate-300 font-medium mb-2">Unlock sovereign desktop powers:</p>
           <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">✓</span> Local AI Engine
+              <span className="text-cyan-400 font-bold">✓</span> Local SI Engine
             </div>
             <div className="flex items-center gap-2">
               <span className="text-cyan-400 font-bold">✓</span> Sovereign Privacy
@@ -46,10 +46,10 @@ export const DesktopOnboardingModal: React.FC<Props> = ({ onDismiss }) => {
               <span className="text-cyan-400 font-bold">✓</span> Offline Memory
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">✓</span> Voice AI Engine
+              <span className="text-cyan-400 font-bold">✓</span> Voice SI Engine
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">✓</span> AI Coworkers
+              <span className="text-cyan-400 font-bold">✓</span> SI Coworkers
             </div>
             <div className="flex items-center gap-2">
               <span className="text-cyan-400 font-bold">✓</span> Business OS

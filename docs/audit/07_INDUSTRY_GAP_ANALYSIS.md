@@ -8,7 +8,7 @@ CHATR Studio currently demonstrates a recruitment-style workflow and contains ad
 
 | Industry | Supported today | Partial | Missing | Critical blockers | Recommended capability | Priority |
 | --- | --- | --- | --- | --- | --- | --- |
-| Recruitment | Demo workflow, candidate-style nodes, recruiter panels | AI screen, approval, interview scheduling shown | ATS connectors, durable approvals, resume/document pipeline | Demo data is static and execution is not domain-specific | ATS connector pack, resume parser, interview scheduler, offer approval | Critical |
+| Recruitment | Demo workflow, candidate-style nodes, recruiter panels | SI screen, approval, interview scheduling shown | ATS connectors, durable approvals, resume/document pipeline | Demo data is static and execution is not domain-specific | ATS connector pack, resume parser, interview scheduler, offer approval | Critical |
 | Sales | Static Sales Pipeline project, CRM folders/pages | Basic notification/email/webhook/database actions | Salesforce/HubSpot/Zoho nodes, lead routing, SLA, enrichment | No CRM node registry or connector auth | CRM connector SDK and lead workflow templates | High |
 | Marketing | No dedicated Studio workflow | Email/webhook could be reused | Campaign triggers, segmentation, consent, A/B tests | No audience/consent model | Marketing automation nodes and compliance model | High |
 | Customer Support | Static Customer Support project, Zendesk/Jira labels in agent demo | Notification/webhook/database | Ticket triggers, SLA queues, escalation, knowledge base | No durable queue/SLA runtime | Support ticket connector pack and SLA engine | Critical |

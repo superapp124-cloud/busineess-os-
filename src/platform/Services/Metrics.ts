@@ -10,7 +10,7 @@ class MetricsService implements IService {
   }
 
   recordLatency(operation: string, ms: number) {
-    // Collect stats, e.g. for AI inference
+    // Collect stats, e.g. for SI inference
   }
 }
 

@@ -29,7 +29,7 @@ export const PlatformIdentityAccessSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Identity & Access AI',
+    assistantName: 'Identity & Access SI',
     skills: []
   },
   

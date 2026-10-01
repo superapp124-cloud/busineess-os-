@@ -17,7 +17,7 @@ import {
 const AIBusinessOSStartupsPage: React.FC = () => {
   useEffect(() => {
     // Pure DOM Head Management
-    document.title = 'AI Business OS for Startups — CHATR | Replace Fragmented Tools with One System';
+    document.title = 'SI Business OS for Startups — CHATR | Replace Fragmented Tools with One System';
     
     // Meta Description
     let metaDescription = document.querySelector('meta[name="description"]');
@@ -26,7 +26,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
       metaDescription.setAttribute('name', 'description');
       document.head.appendChild(metaDescription);
     }
-    metaDescription.setAttribute('content', 'CHATR gives startups a single AI-powered operating system for sales, hiring, communications, and operations. Stop managing 12 different tools. Run everything in one place.');
+    metaDescription.setAttribute('content', 'CHATR gives startups a single SI-powered operating system for sales, hiring, communications, and operations. Stop managing 12 different tools. Run everything in one place.');
 
     // Canonical
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -64,10 +64,10 @@ const AIBusinessOSStartupsPage: React.FC = () => {
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is an AI business operating system?",
+          "name": "What is an SI business operating system?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "An AI business operating system is a unified platform that connects your company's core functions—communications, talent acquisition, sales, and knowledge management—into a single interface, augmented by artificial intelligence to automate routine tasks and provide intelligent insights."
+            "text": "An SI business operating system is a unified platform that connects your company's core functions—communications, talent acquisition, sales, and knowledge management—into a single interface, augmented by super intelligence to automate routine tasks and provide intelligent insights."
           }
         },
         {
@@ -99,7 +99,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
           "name": "How do I get started with CHATR Business OS?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "You can start by creating an account and connecting your primary communication channels (like WhatsApp). From there, you can configure your AI agents for specific tasks like customer support or candidate screening, gradually moving more of your operations into the platform."
+            "text": "You can start by creating an account and connecting your primary communication channels (like WhatsApp). From there, you can configure your SI agents for specific tasks like customer support or candidate screening, gradually moving more of your operations into the platform."
           }
         }
       ]
@@ -155,7 +155,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
           </div>
           <div className="flex items-center gap-6 text-sm font-medium text-slate-300">
             <Link to="/business-os" className="hover:text-white transition-colors">Business OS</Link>
-            <Link to="/ai-agents-for-business" className="hover:text-white transition-colors">AI Agents</Link>
+            <Link to="/ai-agents-for-business" className="hover:text-white transition-colors">SI Agents</Link>
             <Link to="/auth" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors">
               Start Your Business OS
             </Link>
@@ -171,11 +171,11 @@ const AIBusinessOSStartupsPage: React.FC = () => {
             Designed for scaling startups
           </div>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            AI Business Operating System for Startups <br />
+            SI Business Operating System for Startups <br />
             <span className="text-indigo-400">— Run Your Company on Intelligence</span>
           </h1>
           <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-            Founders are juggling 12 tools—Slack, Notion, HubSpot, WhatsApp, spreadsheets, Calendly. Stop the madness. CHATR gives startups a single AI-powered operating system for sales, hiring, communications, and operations.
+            Founders are juggling 12 tools—Slack, Notion, HubSpot, WhatsApp, spreadsheets, Calendly. Stop the madness. CHATR gives startups a single SI-powered operating system for sales, hiring, communications, and operations.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/auth" className="px-8 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition-all">
@@ -217,7 +217,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
                 <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">CRM System</div>
                 <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">Helpdesk</div>
                 <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">ATS Platform</div>
-                <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">AI Chatbots</div>
+                <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">SI Chatbots</div>
                 <div className="bg-slate-800 p-4 rounded-lg text-center font-mono text-sm">Knowledge Base</div>
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent flex items-end justify-center pb-8">
@@ -234,7 +234,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold mb-4">What a Business OS Actually Means</h2>
             <p className="text-slate-400 text-lg">
-              A Business Operating System isn't just a dashboard. It's the underlying infrastructure where your data, communications, and workflows converge naturally, powered by AI that understands your business context.
+              A Business Operating System isn't just a dashboard. It's the underlying infrastructure where your data, communications, and workflows converge naturally, powered by SI that understands your business context.
             </p>
           </div>
           
@@ -246,8 +246,8 @@ const AIBusinessOSStartupsPage: React.FC = () => {
             </div>
             <div className="bg-slate-950 p-8 rounded-xl border border-white/5">
               <Zap className="w-10 h-10 text-indigo-400 mb-6" />
-              <h3 className="text-xl font-semibold mb-3">AI-Native Architecture</h3>
-              <p className="text-slate-400">Not an AI wrapper. Intelligence is baked into the OS to summarize threads, route queries, and draft responses automatically.</p>
+              <h3 className="text-xl font-semibold mb-3">SI-Native Architecture</h3>
+              <p className="text-slate-400">Not an SI wrapper. Intelligence is baked into the OS to summarize threads, route queries, and draft responses automatically.</p>
             </div>
             <div className="bg-slate-950 p-8 rounded-xl border border-white/5">
               <Layers className="w-10 h-10 text-indigo-400 mb-6" />
@@ -273,7 +273,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
               <h3 className="text-2xl font-semibold mb-4">Communications</h3>
               <p className="text-slate-400 mb-6">Centralize external communication across channels. Ensure your team never misses a message.</p>
               <Link to="/chatr/universal-inbox-ai" className="text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1">
-                Explore Universal Inbox AI <ArrowRight className="w-4 h-4" />
+                Explore Universal Inbox SI <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
@@ -304,7 +304,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
                 <Database className="w-6 h-6 text-emerald-400" />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Knowledge Management</h3>
-              <p className="text-slate-400 mb-6">Give your AI agents secure access to your internal docs to answer team and customer questions instantly.</p>
+              <p className="text-slate-400 mb-6">Give your SI agents secure access to your internal docs to answer team and customer questions instantly.</p>
             </div>
           </div>
         </section>
@@ -325,7 +325,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
                 <tr>
                   <td className="py-4 px-6 font-medium">Customer Support</td>
                   <td className="py-4 px-6 text-slate-400 bg-slate-900/50">Standalone Helpdesk</td>
-                  <td className="py-4 px-6 text-slate-200 bg-indigo-950/20 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-indigo-400"/> Integrated AI Inbox</td>
+                  <td className="py-4 px-6 text-slate-200 bg-indigo-950/20 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-indigo-400"/> Integrated SI Inbox</td>
                 </tr>
                 <tr>
                   <td className="py-4 px-6 font-medium">Hiring & ATS</td>
@@ -338,9 +338,9 @@ const AIBusinessOSStartupsPage: React.FC = () => {
                   <td className="py-4 px-6 text-slate-200 bg-indigo-950/20 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-indigo-400"/> Native Shared Data Layer</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 font-medium">AI Integration</td>
-                  <td className="py-4 px-6 text-slate-400 bg-slate-900/50">Bolted-on AI wrappers</td>
-                  <td className="py-4 px-6 text-slate-200 bg-indigo-950/20 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-indigo-400"/> AI-Native Foundation</td>
+                  <td className="py-4 px-6 font-medium">SI Integration</td>
+                  <td className="py-4 px-6 text-slate-400 bg-slate-900/50">Bolted-on SI wrappers</td>
+                  <td className="py-4 px-6 text-slate-200 bg-indigo-950/20 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-indigo-400"/> SI-Native Foundation</td>
                 </tr>
                 <tr>
                   <td className="py-4 px-6 font-medium">Cost per User</td>
@@ -388,8 +388,8 @@ const AIBusinessOSStartupsPage: React.FC = () => {
           <h2 className="text-3xl font-bold mb-10 text-center">Frequently Asked Questions</h2>
           <div className="space-y-6">
             <div className="bg-slate-900 p-6 rounded-lg border border-white/5">
-              <h3 className="font-semibold text-lg mb-2">What is an AI business operating system?</h3>
-              <p className="text-slate-400">An AI business operating system is a unified platform that connects your company's core functions—communications, talent acquisition, sales, and knowledge management—into a single interface, augmented by artificial intelligence to automate routine tasks and provide intelligent insights.</p>
+              <h3 className="font-semibold text-lg mb-2">What is an SI business operating system?</h3>
+              <p className="text-slate-400">An SI business operating system is a unified platform that connects your company's core functions—communications, talent acquisition, sales, and knowledge management—into a single interface, augmented by super intelligence to automate routine tasks and provide intelligent insights.</p>
             </div>
             <div className="bg-slate-900 p-6 rounded-lg border border-white/5">
               <h3 className="font-semibold text-lg mb-2">How is CHATR Business OS different from other startup tools?</h3>
@@ -405,7 +405,7 @@ const AIBusinessOSStartupsPage: React.FC = () => {
             </div>
             <div className="bg-slate-900 p-6 rounded-lg border border-white/5">
               <h3 className="font-semibold text-lg mb-2">How do I get started with CHATR Business OS?</h3>
-              <p className="text-slate-400">You can start by creating an account and connecting your primary communication channels (like WhatsApp). From there, you can configure your AI agents for specific tasks like customer support or candidate screening, gradually moving more of your operations into the platform.</p>
+              <p className="text-slate-400">You can start by creating an account and connecting your primary communication channels (like WhatsApp). From there, you can configure your SI agents for specific tasks like customer support or candidate screening, gradually moving more of your operations into the platform.</p>
             </div>
           </div>
         </section>

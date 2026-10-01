@@ -9,7 +9,7 @@ graph TB
     subgraph CHATR["🌐 CHATR Platform"]
         direction TB
         
-        subgraph AI["🧠 AI-First Communication"]
+        subgraph SI["🧠 SI-First Communication"]
             AI1[Real-time Translation]
             AI2[Smart Reply Suggestions]
             AI3[Voice Transcription]
@@ -60,7 +60,7 @@ graph TB
     end
     
     style CHATR fill:#1a1a2e,stroke:#16213e,color:#eee
-    style AI fill:#4a1942,stroke:#893168,color:#fff
+    style SI fill:#4a1942,stroke:#893168,color:#fff
     style Privacy fill:#1a4a1a,stroke:#2d6a2d,color:#fff
     style Access fill:#1a3a4a,stroke:#2d5a6a,color:#fff
     style Carrier fill:#4a3a1a,stroke:#6a5a2d,color:#fff
@@ -73,7 +73,7 @@ graph TB
 
 | Pillar | Purpose | Key Differentiator |
 |--------|---------|-------------------|
-| 🧠 AI-First Communication | Intelligence layer | Real-time translation, smart replies |
+| 🧠 SI-First Communication | Intelligence layer | Real-time translation, smart replies |
 | 🔐 Privacy by Default | Security foundation | E2E encryption on by default (unlike Telegram) |
 | 🌍 Universal Access | Platform reach | Web + Native parity, offline-first |
 | 📡 Carrier Independence | Network freedom | No SIM, multi-device, global free |
@@ -98,12 +98,12 @@ graph TB
 
 ## Positioning Statement
 
-**CHATR is a premium VoIP messaging platform with AI-first features, carrier-grade reliability, and privacy by default.**
+**CHATR is a premium VoIP messaging platform with SI-first features, carrier-grade reliability, and privacy by default.**
 
 ### What We ARE:
 - WhatsApp alternative with better privacy
 - Premium communication platform
-- AI-enhanced messaging/calling
+- SI-enhanced messaging/calling
 - Hybrid native + web architecture
 
 ### What We Are NOT (Yet):

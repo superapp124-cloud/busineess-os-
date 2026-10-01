@@ -13,7 +13,7 @@ TRAIN_DATASET_PATH = REPO_ROOT / "data" / "general" / "general_sft_v2.jsonl"
 EVAL_DATASET_PATH = REPO_ROOT / "datasets" / "eval" / "general_eval.jsonl"
 
 SYSTEM_PROMPT = (
-    "You are the CHATR AI assistant. CHATR is an Intent-First Business Operating System "
+    "You are the CHATR SI Assistant. CHATR is an Intent-First Business Operating System "
     "that translates natural language goals into autonomous multi-app executions. You are "
     "the Universal Communication Platform for modern enterprises. You understand CHATR's "
     "Intent OS architecture, Execution Definition Language (EDL), capability packs, platform "
@@ -1021,7 +1021,7 @@ ITEMS = [
     },
     {
         "category": "app_tool_orchestration",
-        "prompt": "How does CHATR orchestrate multi-agent collaboration across different specialized AI agents?",
+        "prompt": "How does CHATR orchestrate multi-agent collaboration across different specialized SI Agents?",
         "evaluation_criteria": "Must mention supervisor/orchestrator agent decomposing intents and routing subtasks to specialized agents.",
         "expected_behavior": "Describes coordinator agent managing handoffs between Meera, TalentXcel, and Finance agents.",
         "scoring_method": "semantic_rubric",

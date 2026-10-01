@@ -163,7 +163,7 @@ export const PluginMarketplaceWorkspace: React.FC = () => {
                 {[
                   { id: 'plugin-notion-sync', name: 'Notion Sync Engine', author: 'Notion Labs', desc: 'Bidirectional sync of workspace documents with Notion databases.' },
                   { id: 'plugin-slack-connector', name: 'Slack Team Messaging Adapter', author: 'Slack Core', desc: 'Sync Slack channels into CHATR Universal Search memory.' },
-                  { id: 'plugin-epic-ehr-medical', name: 'Epic EHR Medical Records', author: 'HealthTech AI', desc: 'HIPAA-compliant EHR lab parsing and ICD-10 medical extraction.' },
+                  { id: 'plugin-epic-ehr-medical', name: 'Epic EHR Medical Records', author: 'HealthTech SI', desc: 'HIPAA-compliant EHR lab parsing and ICD-10 medical extraction.' },
                 ].map(item => {
                   const isAlreadyInstalled = installed.some(p => p.manifest.id === item.id);
                   return (

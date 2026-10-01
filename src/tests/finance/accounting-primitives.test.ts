@@ -138,7 +138,7 @@ test('Approval control plane: mandatory operations always require HITL', () => {
   assert(MANDATORY_HITL_OPERATIONS.includes('payment_initiation'), 'Payment initiation requires HITL');
   assert(MANDATORY_HITL_OPERATIONS.includes('bank_account_change'), 'Bank account change requires HITL');
   assert(MANDATORY_HITL_OPERATIONS.includes('closed_period_posting'), 'Closed period posting requires HITL');
-  assert(MANDATORY_HITL_OPERATIONS.includes('high_risk_ai_action'), 'High risk AI action requires HITL');
+  assert(MANDATORY_HITL_OPERATIONS.includes('high_risk_ai_action'), 'High risk SI action requires HITL');
   assert(MANDATORY_HITL_OPERATIONS.includes('accounting_policy_change'), 'Policy change requires HITL');
   assertEqual(MANDATORY_HITL_OPERATIONS.length, 12, '12 mandatory HITL operation categories');
 });

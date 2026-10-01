@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, MessageCircle, Sparkles, Briefcase, User } from 'lucide-react';
+import { Home, MessageSquare, Sparkles, Heart, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Capacitor } from '@capacitor/core';
 import type { PluginListenerHandle } from '@capacitor/core';
@@ -10,257 +10,225 @@ import { prefetchRoute } from '@/routes/lazyPages';
 import { useInstantCache } from '@/hooks/useInstantCache';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UI_COPY } from '@/constants/copy';
+import { UnifiedAIActionsSheet } from '@/components/ai/UnifiedAIActionsSheet';
 
-// Primary Navigation: Home | Messages | AI | Business | Me
+// Primary Navigation matching Image 2:
+// Home | Messages | SI (Glowing Center Button) | Health | Me
 const navItems = [
-  { name: UI_COPY.navigation.home, path: '/home', icon: Home, id: 'nav-home' },
-  { name: UI_COPY.navigation.messages, path: '/chat', icon: MessageCircle, id: 'nav-messages' },
-  { name: UI_COPY.navigation.ai, path: '/ai-assistant', icon: Sparkles, id: 'nav-ai', isAi: true },
-  { name: UI_COPY.navigation.business, path: '/dhandha', icon: Briefcase, id: 'nav-business' },
-  { name: UI_COPY.navigation.me, path: '/profile', icon: User, id: 'nav-me', isMe: true },
+  { name: 'Home', path: '/home', icon: Home, id: 'nav-home' },
+  { name: 'Messages', path: '/chat', icon: MessageSquare, id: 'nav-messages' },
+  { name: 'SI', path: '/ai-assistant', icon: Sparkles, id: 'nav-ai', isAi: true },
+  { name: 'Health', path: '/health', icon: Heart, id: 'nav-health' },
+  { name: 'Me', path: '/profile', icon: User, id: 'nav-me', isMe: true },
 ];
 
 export const BottomNav = () => {
- const location = useLocation();
- const haptics = useNativeHaptics();
- const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
- const [spamBlocked, setSpamBlocked] = React.useState(0);
- const searchParams = new URLSearchParams(location.search);
+  const location = useLocation();
+  const haptics = useNativeHaptics();
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isAiSheetOpen, setIsAiSheetOpen] = useState(false);
+  const searchParams = new URLSearchParams(location.search);
 
- React.useEffect(() => {
- if (!Capacitor.isNativePlatform()) return;
- let cancelled = false;
- const listeners: PluginListenerHandle[] = [];
+  React.useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let cancelled = false;
+    const listeners: PluginListenerHandle[] = [];
 
- const registerKeyboardListeners = async () => {
- const showListener = await Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
- const hideListener = await Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
+    const registerKeyboardListeners = async () => {
+      const showListener = await Keyboard.addListener('keyboardWillShow', () => setKeyboardVisible(true));
+      const hideListener = await Keyboard.addListener('keyboardWillHide', () => setKeyboardVisible(false));
 
- if (cancelled) {
- showListener.remove();
- hideListener.remove();
- return;
- }
+      if (cancelled) {
+        showListener.remove();
+        hideListener.remove();
+        return;
+      }
 
- listeners.push(showListener, hideListener);
- };
+      listeners.push(showListener, hideListener);
+    };
 
- void registerKeyboardListeners();
+    void registerKeyboardListeners();
 
- return () => {
- cancelled = true;
- listeners.forEach((listener) => listener.remove());
- };
- }, []);
+    return () => {
+      cancelled = true;
+      listeners.forEach((listener) => listener.remove());
+    };
+  }, []);
 
- // Fetch live spam count for Shield badge
- React.useEffect(() => {
- const fetchSpamCount = async () => {
- try {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return;
- const { count } = await supabase
- .from('caller_reports')
- .select('*', { count: 'exact', head: true })
- .eq('reporter_id', user.id)
- .eq('report_type', 'spam');
- setSpamBlocked(count || 0);
- } catch { /* silent */ }
- };
- fetchSpamCount();
- }, []);
+  const { data: profile } = useInstantCache('user-profile', async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data } = await supabase
+      .from('profiles')
+      .select('avatar_url, username, full_name')
+      .eq('id', user.id)
+      .maybeSingle();
+    return data;
+  }, { ttl: 10 * 60 * 1000 });
 
- const { data: profile } = useInstantCache('user-profile', async () => {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return null;
- const { data } = await supabase
- .from('profiles')
- .select('avatar_url, username, full_name')
- .eq('id', user.id)
- .maybeSingle();
- return data;
- }, { ttl: 10 * 60 * 1000 });
+  const hasLegacyConversationQuery =
+    location.pathname === '/chat' && searchParams.has('conversation');
 
- const hasLegacyConversationQuery =
- location.pathname === '/chat' && searchParams.has('conversation');
+  const shouldHide =
+    location.pathname === '/calls' ||
+    location.pathname === '/auth' ||
+    location.pathname === '/onboarding' ||
+    location.pathname === '/admin' ||
+    location.pathname.startsWith('/chat/') ||
+    hasLegacyConversationQuery ||
+    location.pathname.startsWith('/standalone-messenger/') ||
+    location.pathname.startsWith('/status/create') ||
+    location.pathname.startsWith('/stories/create') ||
+    isKeyboardVisible;
 
- const shouldHide =
- location.pathname === '/calls' ||
- location.pathname === '/auth' ||
- location.pathname === '/onboarding' ||
- location.pathname === '/admin' ||
- location.pathname.startsWith('/chat/') ||
- hasLegacyConversationQuery ||
- location.pathname.startsWith('/standalone-messenger/') ||
- location.pathname.startsWith('/status/create') ||
- location.pathname.startsWith('/stories/create') ||
- isKeyboardVisible;
+  const handleNavClick = useCallback(() => {
+    haptics.light();
+  }, [haptics]);
 
- const handleNavClick = useCallback(() => { /* haptics disabled */ }, []);
+  const handlePrefetch = useCallback((path: string) => {
+    switch (path) {
+      case '/chat': prefetchRoute(() => import('@/pages/Chat')); break;
+      case '/health': prefetchRoute(() => import('@/pages/HealthHub')); break;
+      case '/profile': prefetchRoute(() => import('@/pages/Profile')); break;
+      default: break;
+    }
+  }, []);
 
- const handlePrefetch = useCallback((path: string) => {
- switch (path) {
- case '/chat': prefetchRoute(() => import('@/pages/Chat')); break;
- case '/chatr-shield': prefetchRoute(() => import('@/pages/ChatrShield')); break;
- case '/profile': prefetchRoute(() => import('@/pages/Profile')); break;
- default: break;
- }
- }, []);
+  if (shouldHide) return null;
 
- if (shouldHide) return null;
+  return (
+    <>
+      <div
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[110] flex justify-center"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)'
+        }}
+      >
+        <nav
+          className={cn(
+            "pointer-events-auto w-[calc(100%-28px)] max-w-[440px] relative",
+            "rounded-[32px] border border-white/10",
+            "shadow-[0_12px_40px_rgba(0,0,0,0.7)]"
+          )}
+          style={{
+            backgroundColor: 'rgba(10, 14, 23, 0.94)',
+            backdropFilter: 'blur(28px)',
+            WebkitBackdropFilter: 'blur(28px)',
+            isolation: 'isolate'
+          }}
+        >
+          <div className="flex items-center justify-around px-3 py-2">
+            {navItems.map((item) => {
+              const isActive =
+                location.pathname === item.path ||
+                location.pathname.startsWith(item.path + '/') ||
+                (item.path === '/chat' && location.pathname.startsWith('/chat'));
 
- return (
- <div
- className="pointer-events-none fixed inset-x-0 bottom-0 z-[110] flex justify-center"
- style={{
- paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
- transform: 'translateZ(0)',
- WebkitTransform: 'translateZ(0)'
- }}
- >
- <nav
- className={cn(
- "pointer-events-auto w-[calc(100%-32px)] max-w-[460px] relative",
- "rounded-[36px] border border-white/70",
- "shadow-[0_8px_32px_rgba(15,23,42,0.14),0_2px_8px_rgba(15,23,42,0.08)]"
- )}
- style={{
- backgroundColor: 'rgba(255,255,255,0.96)',
- backdropFilter: 'blur(24px)',
- WebkitBackdropFilter: 'blur(24px)',
- isolation: 'isolate'
- }}
- >
- <div className="flex items-center justify-around px-3 py-2">
- {navItems.map((item) => {
- const isActive =
- location.pathname === item.path ||
- location.pathname.startsWith(item.path + '/') ||
- (item.path === '/chat' && location.pathname.startsWith('/chat'));
+              const Icon = item.icon;
+              const isAiTab = (item as any).isAi;
+              const isMeTab = (item as any).isMe;
 
- const Icon = item.icon;
- const isAiTab = (item as any).isAi;
- const isMeTab = (item as any).isMe;
+              // ── SI Tab — Glowing Floating Center Button (Image 2) ──
+              if (isAiTab) {
+                return (
+                  <button
+                    key={item.path}
+                    type="button"
+                    id={item.id}
+                    onClick={() => {
+                      haptics.medium();
+                      setIsAiSheetOpen(true);
+                    }}
+                    className="relative flex flex-col items-center justify-center -mt-6 active:scale-90 transition-transform"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                  >
+                    <div
+                      className={cn(
+                        'relative flex h-13 w-13 items-center justify-center rounded-[24px]',
+                        'bg-gradient-to-tr from-violet-600 via-indigo-600 to-purple-500',
+                        'border border-white/25',
+                        'shadow-[0_0_24px_rgba(124,58,237,0.65)]'
+                      )}
+                    >
+                      <Sparkles
+                        className="h-6 w-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                        strokeWidth={2.2}
+                      />
+                    </div>
+                  </button>
+                );
+              }
 
- // ── AI Tab — elevated hero button ──────────────────
- if (isAiTab) {
- return (
- <NavLink
- key={item.path}
- to={item.path}
- id={item.id}
- onClick={handleNavClick}
- onMouseEnter={() => handlePrefetch(item.path)}
- onTouchStart={() => handlePrefetch(item.path)}
- className="relative flex flex-col items-center justify-center -mt-5"
- style={{ WebkitTapHighlightColor: 'transparent' }}
- >
- {/* Elevated AI pill */}
- <div className={cn(
- 'relative flex h-14 w-14 items-center justify-center rounded-[22px]',
- 'bg-gradient-to-br from-[#5c22ff] via-[#8b5cf6] to-[#4c1d95]',
- 'transition-all duration-300',
- isActive
- ? 'shadow-[0_8px_28px_rgba(92,34,255,0.50)]'
- : 'shadow-[0_6px_20px_rgba(15,23,42,0.38)]'
- )}>
- {/* Pulse rings when active */}
- {isActive && (
- <>
- <span className="absolute inset-[-3px] rounded-[25px] border border-primary/25 animate-ping"
- style={{ animationDuration: '2.5s' }} />
- <span className="absolute inset-[-7px] rounded-[29px] border border-purple-400/20 animate-ping"
- style={{ animationDuration: '3.8s' }} />
- </>
- )}
+              // ── Standard Tab ───────────────────────────────────────
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  id={item.id}
+                  onClick={handleNavClick}
+                  onMouseEnter={() => handlePrefetch(item.path)}
+                  onTouchStart={() => handlePrefetch(item.path)}
+                  className={cn(
+                    'relative flex flex-col items-center justify-center py-1.5 px-3',
+                    'transition-all duration-200 active:scale-95',
+                    'rounded-2xl',
+                    isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                  )}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                >
+                  <div className={cn(
+                    'relative flex h-7 w-7 items-center justify-center transition-transform',
+                    isActive ? 'scale-105' : 'scale-100'
+                  )}>
+                    {isMeTab ? (
+                      <Avatar className={cn(
+                        'h-6 w-6 border-2 transition-all',
+                        isActive
+                          ? 'border-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.6)]'
+                          : 'border-white/20'
+                      )}>
+                        <AvatarImage src={profile?.avatar_url} />
+                        <AvatarFallback className="bg-violet-600/30 text-white text-[10px] font-bold">
+                          {profile?.full_name?.[0] || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Icon
+                        className={cn(
+                          'h-5 w-5 transition-all',
+                          isActive
+                            ? 'text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]'
+                            : 'text-slate-400'
+                        )}
+                        strokeWidth={isActive ? 2.3 : 1.8}
+                      />
+                    )}
 
- <Sparkles
- className={cn(
- 'h-6 w-6 transition-all duration-300 text-white',
- isActive
- ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]'
- : 'opacity-90'
- )}
- strokeWidth={isActive ? 2.5 : 2}
- />
- </div>
+                    {isActive && (
+                      <div className="absolute -bottom-1 h-1 w-1 rounded-full bg-violet-400 shadow-[0_0_6px_rgba(139,92,246,0.9)]" />
+                    )}
+                  </div>
 
- <span className={cn(
- 'mt-1.5 text-[9px] font-black uppercase tracking-[0.06em] transition-colors duration-300',
- isActive ? 'text-[#5c22ff]' : 'text-black/40'
- )}>
- {UI_COPY.navigation.ai}
- </span>
- </NavLink>
- );
- }
+                  <span className={cn(
+                    'mt-0.5 text-[9.5px] font-semibold tracking-tight transition-colors',
+                    isActive ? 'text-white font-bold' : 'text-slate-400'
+                  )}>
+                    {item.name}
+                  </span>
+                </NavLink>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
 
- // ── Standard Tab ───────────────────────────────────────
- return (
- <NavLink
- key={item.path}
- to={item.path}
- id={item.id}
- onClick={handleNavClick}
- onMouseEnter={() => handlePrefetch(item.path)}
- onTouchStart={() => handlePrefetch(item.path)}
- className={cn(
- 'relative flex flex-col items-center justify-center py-2 px-3',
- 'transition-all duration-300 ease-out active:scale-90',
- 'rounded-2xl'
- )}
- style={{ WebkitTapHighlightColor: 'transparent' }}
- >
- {/* Active background */}
- {isActive && (
- <span className="absolute inset-0 rounded-2xl bg-primary/[0.07]" />
- )}
-
- <div className={cn(
- 'relative flex h-8 w-8 items-center justify-center transition-transform duration-300',
- isActive ? 'scale-110' : 'scale-100'
- )}>
- {isMeTab ? (
- <Avatar className={cn(
- 'h-6 w-6 border-2 transition-all duration-300',
- isActive
- ? 'border-primary shadow-[0_0_10px_rgba(92,34,255,0.4)]'
- : 'border-slate-200'
- )}>
- <AvatarImage src={profile?.avatar_url} />
- <AvatarFallback className="bg-primary/20 text-primary text-[10px] font-bold">
- {profile?.full_name?.[0] || 'U'}
- </AvatarFallback>
- </Avatar>
- ) : (
- <Icon
- className={cn(
- 'h-5 w-5 transition-all duration-300',
- isActive
- ? 'text-primary drop-shadow-[0_0_6px_rgba(92,34,255,0.5)]'
- : 'text-black/30'
- )}
- strokeWidth={isActive ? 2.5 : 2}
- />
- )}
-
- {isActive && (
- <div className="absolute -bottom-1 h-1 w-1 rounded-full bg-primary animate-in fade-in zoom-in duration-500" />
- )}
- </div>
-
- <span className={cn(
- 'mt-0.5 text-[9px] font-black uppercase tracking-[0.05em] transition-colors duration-300',
- isActive ? 'text-primary' : 'text-black/20'
- )}>
- {item.name}
- </span>
- </NavLink>
- );
- })}
- </div>
- </nav>
- </div>
- );
+      {/* Floating Center SI Actions Sheet ("What can I do for you?") */}
+      <UnifiedAIActionsSheet
+        isOpen={isAiSheetOpen}
+        onClose={() => setIsAiSheetOpen(false)}
+      />
+    </>
+  );
 };

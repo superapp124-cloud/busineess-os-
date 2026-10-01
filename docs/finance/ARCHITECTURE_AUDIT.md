@@ -29,7 +29,7 @@ This audit maps every reusable component and every gap so that implementation pr
 | **Calling** | `calls`, `webrtc_signals`, `session_rooms`, `session_room_participants` | ✅ Production |
 | **CRM** | `crm_leads`, `crm_activities`, `crm_agent_tasks`, `crm_lead_dossiers`, `crm_evidence_ledger`, `business_profiles`, `business_team_members` | ✅ Production |
 | **Recruitment OS** | `rec_jobs`, `rec_candidates`, `rec_interviews`, `rec_offer_letters` | ✅ Production |
-| **AI Memory (4-Tier)** | `ai_memory_personal`, `ai_memory_conversation`, `ai_memory_business`, `ai_memory_knowledge`, `ai_sessions` | ✅ Production |
+| **SI Memory (4-Tier)** | `ai_memory_personal`, `ai_memory_conversation`, `ai_memory_business`, `ai_memory_knowledge`, `ai_sessions` | ✅ Production |
 | **Workflow Engine** | `business_workflows`, `workflow_runs`, `workflow_approvals` | ✅ Production |
 | **Policy Engine** | `org_policies` (Global → Org → Workspace → Workflow → Capability) | ✅ Production |
 | **Execution Queue** | `execution_queue` (retry, priority, worker tracking) | ✅ Production |
@@ -51,7 +51,7 @@ Relevant to finance:
 | `persist-events` | ✅ Financial event persistence |
 | `intent-runtime` | ✅ NL financial queries |
 | `connector-hub` | ✅ Bank/payment/ERP connectors |
-| `chatr-brain` | ✅ AI reasoning for finance workers |
+| `chatr-brain` | ✅ SI reasoning for finance workers |
 | `business-campaign-runner` | ✅ Background worker pattern |
 
 No finance-specific edge functions exist.
@@ -79,7 +79,7 @@ No finance-specific edge functions exist.
 - `org_policies` — enforcement: `allow | warn | require_approval | block | audit | rate_limit | quarantine`
 - `execution_queue` — background jobs with retry, priority, worker tracking
 
-### 2.6 AI & Intelligence Layer
+### 2.6 SI & Intelligence Layer
 
 | Component | File | Finance Usage |
 |---|---|---|
@@ -89,7 +89,7 @@ No finance-specific edge functions exist.
 | `ExecutionGraph` | `src/planner/ExecutionGraph.ts` | Multi-step financial workflow DAG |
 | `EntityGraphEngine` | `src/graph/EntityGraphEngine.ts` | Entity resolution (Invoice, Contract) |
 | `BusinessGraph` | `src/business/BusinessGraph.ts` | Supabase graph traversal, tenant-isolated |
-| AI Memory (4-tier) | DB tables | Business context for financial queries |
+| SI Memory (4-tier) | DB tables | Business context for financial queries |
 
 ### 2.7 Frontend
 
@@ -187,13 +187,13 @@ No finance-specific edge functions exist.
 | `FinancialReports` (P&L, BS, CF, TB) | 6 |
 | `FinanceNLInterface` | 9 |
 
-### 4.4 AI Workers (ALL MISSING)
+### 4.4 SI Workers (ALL MISSING)
 
 Finance Analyst, Reconciliation Worker, AR Worker, AP Worker, Revenue Worker, Close Worker, CFO Worker.
 
 ### 4.5 Tests (ALL MISSING)
 
-Double-entry unit tests, property-based invariant tests, idempotency tests, event replay tests, reconciliation scenario tests, AI classification accuracy tests, tenant isolation security tests, load tests.
+Double-entry unit tests, property-based invariant tests, idempotency tests, event replay tests, reconciliation scenario tests, SI classification accuracy tests, tenant isolation security tests, load tests.
 
 ---
 
@@ -208,8 +208,8 @@ Double-entry unit tests, property-based invariant tests, idempotency tests, even
 | No audit trail for accounting policy changes | 🟠 High | Trigger-based audit on `fin_accounting_policies` |
 | No period-lock enforcement at DB level | 🟠 High | DB trigger on `fin_journal_entries` checks period status |
 | No idempotency for incoming payment webhooks | 🟠 High | `fin_events.idempotency_key` unique constraint |
-| AI workers could propose without control gate | 🟡 Medium | All AI proposals routed through Policy Engine before posting |
-| No prompt injection protection for invoice/contract content fed to AI | 🟡 Medium | Treat all external content as untrusted; sanitize before passing to models |
+| SI workers could propose without control gate | 🟡 Medium | All SI proposals routed through Policy Engine before posting |
+| No prompt injection protection for invoice/contract content fed to SI | 🟡 Medium | Treat all external content as untrusted; sanitize before passing to models |
 
 ---
 
@@ -225,8 +225,8 @@ Double-entry unit tests, property-based invariant tests, idempotency tests, even
 **Rationale:** `sys_organizations` supports multi-entity (legal entity) hierarchy. `public.organizations` is messaging-only.  
 **Status:** Accepted.
 
-### ADR-FIN-003: AI proposes → Policy validates → Engine posts
-**Decision:** No AI worker may directly insert into `fin_journal_entries`. AI proposals are validated by `org_policies` + accounting engine before posting.  
+### ADR-FIN-003: SI proposes → Policy validates → Engine posts
+**Decision:** No SI worker may directly insert into `fin_journal_entries`. SI proposals are validated by `org_policies` + accounting engine before posting.  
 **Rationale:** Maintains double-entry integrity and segregation of duties.  
 **Status:** Accepted.
 
@@ -294,9 +294,9 @@ Phase 6  Reporting
 Phase 7  Advanced Multi-Entity
          Intercompany eliminations, entity-level P&L, currency translation
 
-Phase 8  AI Workers
+Phase 8  SI Workers
          Finance Analyst, Reconciliation, AR, AP, Revenue, Close, CFO workers
-         AI classification tests, hallucination resistance tests, authorization tests
+         SI classification tests, hallucination resistance tests, authorization tests
 
 Phase 9  CHATR Intent Layer
          NL → IntentPlanner → Finance capability
@@ -317,7 +317,7 @@ Phase 10 Production Hardening
 | Tenancy / isolation | 70% — `sys_organizations` exists | 🟡 Medium |
 | Approval / controls | 85% — `workflow_approvals` reusable | 🟢 Low |
 | Policy engine | 80% — `org_policies` reusable | 🟢 Low |
-| AI / intent layer | 70% — `IntentPlanner` reusable | 🟡 Medium |
+| SI / intent layer | 70% — `IntentPlanner` reusable | 🟡 Medium |
 | Frontend | 5% — manifest only, no components | 🔴 Critical |
 | Testing | 0% — no financial tests | 🔴 Critical |
 | Security / RLS | 0% — no `fin_*` tables | 🔴 Critical |

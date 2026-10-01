@@ -9,35 +9,35 @@ export const ChatrAIPage: React.FC = () => {
   const capabilities = [
     {
       icon: MessageSquare,
-      title: 'AI Message Triage & Smart Routing',
+      title: 'SI Message Triage & Smart Routing',
       description: 'Automatically analyzes incoming customer inquiries across WhatsApp, email, and web chat. Detects intent, tags urgency, and routes threads to the right team before agents open them.',
       link: '/chatr/ai-message-triage-routing',
       badge: 'Intent Intelligence'
     },
     {
       icon: FileText,
-      title: 'AI Conversation Summarization',
+      title: 'SI Conversation Summarization',
       description: 'Generates instant 3-bullet executive summaries for lengthy multi-turn WhatsApp and candidate threads during agent transfers, eliminating 10-minute catch-up reads.',
       link: '/chatr/ai-conversation-summarization',
       badge: 'Team Productivity'
     },
     {
       icon: UserCheck,
-      title: 'AI Candidate Screening',
+      title: 'SI Candidate Screening',
       description: 'Conducts automated WhatsApp pre-screening questionnaires for recruiters, parsing candidate qualifications, experience, and availability at high applicant volumes.',
       link: '/talentxcel/automate-candidate-screening',
       badge: 'Recruitment OS'
     },
     {
       icon: Zap,
-      title: 'AI Auto-Responder & Lead Capture',
+      title: 'SI Auto-Responder & Lead Capture',
       description: 'Enforces the 5-minute lead response rule with instant intelligent acknowledgments and qualification prompts, preventing leads from going cold after hours.',
       link: '/chatr/ai-auto-responder-lead-capture',
       badge: 'SLA Engine'
     },
     {
       icon: PhoneCall,
-      title: 'AI Phone Agent & Voice Calling',
+      title: 'SI Phone Agent & Voice Calling',
       description: 'Deploys conversational voice assistants capable of answering inbound phone inquiries, conducting initial candidate calls, and logging transcripts into your workspace.',
       link: '/chatr/ai-phone-agent-calling',
       badge: 'Voice Automation'
@@ -53,35 +53,35 @@ export const ChatrAIPage: React.FC = () => {
 
   const faqs = [
     {
-      q: 'What is CHATR AI?',
-      a: 'CHATR AI is an integrated intelligence layer designed specifically for business messaging and candidate screening. It automates message classification, drafts contextual replies, conducts initial candidate screening, and summarizes long threads across WhatsApp, email, and web chat.'
+      q: 'What is CHATR SI?',
+      a: 'CHATR SI is an integrated intelligence layer designed specifically for business messaging and candidate screening. It automates message classification, drafts contextual replies, conducts initial candidate screening, and summarizes long threads across WhatsApp, email, and web chat.'
     },
     {
-      q: 'How does CHATR AI handle customer data privacy?',
-      a: 'CHATR AI operates under strict data isolation protocols. Customer conversations are never used to train global public models. Furthermore, CHATR offers local private model execution for organizations requiring complete data sovereignty.'
+      q: 'How does CHATR SI handle customer data privacy?',
+      a: 'CHATR SI operates under strict data isolation protocols. Customer conversations are never used to train global public models. Furthermore, CHATR offers local private model execution for organizations requiring complete data sovereignty.'
     },
     {
-      q: 'Can CHATR AI work with WhatsApp Business API?',
-      a: 'Yes. CHATR AI integrates natively with WhatsApp Business API to provide automated triage, instant greetings, qualification workflows, and thread summaries directly inside your team inbox.'
+      q: 'Can CHATR SI work with WhatsApp Business API?',
+      a: 'Yes. CHATR SI integrates natively with WhatsApp Business API to provide automated triage, instant greetings, qualification workflows, and thread summaries directly inside your team inbox.'
     },
     {
-      q: 'Does CHATR AI replace human customer support or recruiter teams?',
-      a: 'No. CHATR AI acts as a smart assistant (human-in-the-loop). It handles repetitive first-touch triage, qualification, and administrative summaries so human agents and recruiters can focus on high-value conversations and hiring decisions.'
+      q: 'Does CHATR SI replace human customer support or recruiter teams?',
+      a: 'No. CHATR SI acts as a smart assistant (human-in-the-loop). It handles repetitive first-touch triage, qualification, and administrative summaries so human agents and recruiters can focus on high-value conversations and hiring decisions.'
     }
   ];
 
   return (
     <>
       <SEOHead
-        title="CHATR AI — Intelligent Business Messaging & Workflow Automation"
-        description="Discover CHATR AI: the intelligent communication layer for WhatsApp, email, and candidate screening. Automate message triage, thread summaries, lead capture, and voice agents."
+        title="CHATR SI — Intelligent Business Messaging & Workflow Automation"
+        description="Discover CHATR SI: the intelligent communication layer for WhatsApp, email, and candidate screening. Automate message triage, thread summaries, lead capture, and voice agents."
       />
       <div className="min-h-screen bg-slate-950 text-white font-sans">
         {/* Header */}
         <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
           <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 text-indigo-400 font-extrabold text-lg tracking-tight">
-              <Sparkles className="w-5 h-5 text-indigo-400" /> CHATR AI
+              <Sparkles className="w-5 h-5 text-indigo-400" /> CHATR SI
             </Link>
             <div className="flex items-center gap-4">
               <Link to="/pricing" className="text-xs text-slate-300 hover:text-white transition-colors font-medium">Pricing</Link>
@@ -99,14 +99,14 @@ export const ChatrAIPage: React.FC = () => {
               <Cpu className="w-3.5 h-3.5" /> Platform Intelligence Layer
             </div>
             <h1 className="text-4xl md:text-5xl font-black leading-tight bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
-              AI Built for Business Messaging & Candidate Workflows
+              SI Built for Business Messaging & Candidate Workflows
             </h1>
             <p className="text-slate-300 text-base md:text-lg leading-relaxed">
               Eliminate response delays, automate intent triage, and streamline customer and recruiter conversations across WhatsApp, email, and live channels.
             </p>
             <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
               <Link to="/auth" id="chatr-ai-hero-primary" className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm inline-flex items-center gap-2">
-                Start Free AI Workspace <ArrowRight className="w-4 h-4" />
+                Start Free SI Workspace <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/pricing" id="chatr-ai-hero-pricing" className="border border-slate-700 hover:border-slate-500 text-slate-200 font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
                 View Commercial Plans
@@ -117,9 +117,9 @@ export const ChatrAIPage: React.FC = () => {
           {/* 6 Core Capabilities Grid */}
           <section className="space-y-8">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white">6 Core AI Capabilities</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white">6 Core SI Capabilities</h2>
               <p className="text-slate-400 text-sm max-w-xl mx-auto">
-                Purpose-built AI tools integrated directly into your CHATR workspace.
+                Purpose-built SI tools integrated directly into your CHATR workspace.
               </p>
             </div>
 
@@ -155,7 +155,7 @@ export const ChatrAIPage: React.FC = () => {
               <span>Telemetry & Model Evaluation Principles</span>
             </div>
             <p>
-              <strong className="text-slate-300">Human-in-the-Loop Architecture:</strong> CHATR AI prioritizes assist-mode drafting and intent classification. Final high-concurrency actions remain under supervisor visibility.
+              <strong className="text-slate-300">Human-in-the-Loop Architecture:</strong> CHATR SI prioritizes assist-mode drafting and intent classification. Final high-concurrency actions remain under supervisor visibility.
             </p>
             <p>
               <strong className="text-slate-300">Editorial Policy:</strong> Evaluated under our <Link to="/editorial-policy" className="text-indigo-400 underline font-semibold">Editorial & Research Guidelines</Link>.
@@ -164,7 +164,7 @@ export const ChatrAIPage: React.FC = () => {
 
           {/* FAQ Section */}
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
-            <h2 className="text-xl font-bold text-white">Frequently Asked Questions About CHATR AI</h2>
+            <h2 className="text-xl font-bold text-white">Frequently Asked Questions About CHATR SI</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => (
                 <div key={i} className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950">
@@ -187,7 +187,7 @@ export const ChatrAIPage: React.FC = () => {
 
           {/* Bottom Conversion Card */}
           <section className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-            <h2 className="text-2xl font-bold text-white">Deploy CHATR AI in Your Workspace Today</h2>
+            <h2 className="text-2xl font-bold text-white">Deploy CHATR SI in Your Workspace Today</h2>
             <p className="text-slate-300 text-sm max-w-md mx-auto">
               Automate message triage, eliminate 5-minute lead response bottlenecks, and screening candidate volumes.
             </p>

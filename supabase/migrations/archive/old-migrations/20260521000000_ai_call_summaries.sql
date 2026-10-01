@@ -25,23 +25,23 @@ CREATE INDEX IF NOT EXISTS idx_ai_call_summaries_phone
 ALTER TABLE public.ai_call_summaries ENABLE ROW LEVEL SECURITY;
 
 -- Policies
-CREATE POLICY "Users can read own AI call summaries"
+CREATE POLICY "Users can read own SI call summaries"
     ON public.ai_call_summaries FOR SELECT
     TO authenticated
     USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can insert own AI call summaries"
+CREATE POLICY "Users can insert own SI call summaries"
     ON public.ai_call_summaries FOR INSERT
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own AI call summaries"
+CREATE POLICY "Users can update own SI call summaries"
     ON public.ai_call_summaries FOR UPDATE
     TO authenticated
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete own AI call summaries"
+CREATE POLICY "Users can delete own SI call summaries"
     ON public.ai_call_summaries FOR DELETE
     TO authenticated
     USING (auth.uid() = user_id);

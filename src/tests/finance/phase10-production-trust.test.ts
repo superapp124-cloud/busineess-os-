@@ -93,11 +93,11 @@ test('UglyDataStressTester: safely processes 5 messy production anomalies while 
 });
 
 // ══════════════════════════════════════════════════════════════════════
-// 3. 100-POINT FINANCIAL AI QUANTITATIVE BENCHMARK
+// 3. 100-POINT FINANCIAL SI QUANTITATIVE BENCHMARK
 // ══════════════════════════════════════════════════════════════════════
-console.log('--- 3. 100-Point Financial AI Quantitative Scorecard ---');
+console.log('--- 3. 100-Point Financial SI Quantitative Scorecard ---');
 
-test('FinancialAIBenchmark: evaluates AI CFO scoring Grade A+ (>= 95%) across all 6 core dimensions', () => {
+test('FinancialAIBenchmark: evaluates SI CFO scoring Grade A+ (>= 95%) across all 6 core dimensions', () => {
   const scorecard = FinancialAIBenchmark.evaluateFinanceAI();
 
   assert(scorecard.totalScore >= 95, `Score is ${scorecard.totalScore}/100`);

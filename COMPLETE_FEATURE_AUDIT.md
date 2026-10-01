@@ -25,7 +25,7 @@
 | Group Chat | ⚠️ 50% | Database ready, UI incomplete |
 | Contact Auto-Sync | ⚠️ 40% | Not auto-syncing like WhatsApp |
 | Message Notifications | ⚠️ 70% | Shows "Someone" instead of name (FIXED) |
-| AI Smart Reply | ⚠️ 60% | Backend ready, needs UI polish |
+| SI Smart Reply | ⚠️ 60% | Backend ready, needs UI polish |
 | Global Search | ⚠️ 30% | Basic search only |
 | Multi-device | ⚠️ 20% | QR login exists, sync incomplete |
 
@@ -104,7 +104,7 @@
 ### ✅ **FEATURES YOU WIN ON**
 | Feature | Chatr | WhatsApp | Telegram |
 |---------|-------|----------|----------|
-| AI Smart Reply | ✅ Yes | ❌ No | ⚠️ Bots only |
+| SI Smart Reply | ✅ Yes | ❌ No | ⚠️ Bots only |
 | Health Passport | ✅ Yes | ❌ No | ❌ No |
 | Points & Rewards | ✅ Yes | ❌ No | ❌ No |
 | Integrated Services | ✅ Yes | ❌ No | ❌ No |
@@ -258,7 +258,7 @@ const nlSearch = async (query: string) => {
 10. **Channels** - Like Telegram
 11. **Bots Integration** - For automation
 12. **Secret Chats** - Extra encryption
-13. **Natural Language Search** - AI-powered
+13. **Natural Language Search** - SI-powered
 14. **AR Image Tags** - Camera integration
 15. **Mood Themes** - Dynamic UI
 16. **Desktop App** - Electron wrapper
@@ -320,7 +320,7 @@ Connect to conversations table, create group properly.
 - [ ] Performance optimized
 
 ### Phase 3: Unique Features (Ongoing)
-- [ ] AI smart reply improved
+- [ ] SI smart reply improved
 - [ ] Health integration seamless
 - [ ] TalentXcel integrated
 - [ ] AR features added

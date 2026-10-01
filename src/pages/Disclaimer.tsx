@@ -44,9 +44,9 @@ export default function Disclaimer() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">3. AI-Powered Features</h2>
+            <h2 className="text-base font-bold text-slate-900">3. SI-Powered Features</h2>
             <p className="leading-relaxed">
-              Chatr uses AI for smart replies, chat summaries, and content suggestions. AI-generated content may not always be accurate or appropriate. Users should verify important information independently.
+              Chatr uses SI for smart replies, chat summaries, and content suggestions. SI-generated content may not always be accurate or appropriate. Users should verify important information independently.
             </p>
           </section>
 

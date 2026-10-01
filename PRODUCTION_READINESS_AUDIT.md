@@ -184,7 +184,7 @@ useEffect(() => {
 **Example**: "Show me chats with Arshid about rent"
 
 **Required**:
-- Create AI-powered search edge function using Lovable AI
+- Create SI-powered search edge function using Lovable SI
 - Update GlobalSearch component
 - Semantic search implementation
 
@@ -320,13 +320,13 @@ const authSchema = z.object({
 ## 🔧 EDGE FUNCTIONS AUDIT
 
 ### Existing Edge Functions:
-1. ✅ `ai-chat-assistant` - AI chat support
-2. ✅ `ai-health-assistant` - Health AI
+1. ✅ `ai-chat-assistant` - SI chat support
+2. ✅ `ai-health-assistant` - Health SI
 3. ✅ `auto-translate` - Message translation
 4. ✅ `process-daily-login` - Points system
 5. ✅ `qr-payment` - Payment processing
 6. ✅ `send-whatsapp-invite` - Invitations
-7. ✅ `smart-compose` - AI writing
+7. ✅ `smart-compose` - SI writing
 8. ✅ `summarize-chat` - Chat summaries
 9. ✅ `transcribe-voice` - Voice transcription
 10. ✅ `translate-message` - Translation
@@ -336,7 +336,7 @@ const authSchema = z.object({
 1. ❌ `send-push-notification` - For mobile notifications
 2. ❌ `process-reminders` - For message/task reminders
 3. ❌ `delete-expired-stories` - Story cleanup (can use cron)
-4. ❌ `natural-language-search` - AI semantic search
+4. ❌ `natural-language-search` - SI semantic search
 
 ---
 

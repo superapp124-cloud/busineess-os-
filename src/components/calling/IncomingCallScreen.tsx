@@ -244,7 +244,7 @@ export function IncomingCallScreen({
  <ShieldCheck className="w-3.5 h-3.5 text-white" />
  </div>
  <div className="flex flex-col">
- <span className="text-[#9496a8] text-[11px]">ChatrAI Assistant</span>
+ <span className="text-[#9496a8] text-[11px]">ChatrSI Assistant</span>
  <span className="text-white text-[13px] leading-tight">Insights active</span>
  </div>
  </div>

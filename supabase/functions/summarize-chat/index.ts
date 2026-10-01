@@ -39,7 +39,7 @@ serve(async (req) => {
       throw new Error('No messages to summarize');
     }
 
-    // Format conversation for AI
+    // Format conversation for SI
     const conversationText = messages
       .map((msg: any) => `${msg.sender}: ${msg.content}`)
       .join('\n');
@@ -58,7 +58,7 @@ serve(async (req) => {
 Writing style:
 - Write as if a person created this summary, not a bot
 - NO markdown formatting (no asterisks, bold, or code-like text)
-- NO robotic phrases like "The conversation includes" or "As an AI"
+- NO robotic phrases like "The conversation includes" or "As an SI"
 - Use natural transitions like "Overall," "In summary," "Main highlights"
 - Keep it professional yet conversational
 

@@ -35,7 +35,7 @@ export const financeManifest: CapabilityManifest = {
 
   workflows: [
     { id: 'auto-invoice-reminder', name: 'Auto Invoice Reminder', description: 'Send reminder emails for overdue invoices' },
-    { id: 'expense-auto-categorize', name: 'AI Expense Categorization', description: 'Automatically categorize new expenses using AI' },
+    { id: 'expense-auto-categorize', name: 'SI Expense Categorization', description: 'Automatically categorize new expenses using SI' },
     { id: 'fin-period-close', name: 'Month-End Close Checklist', description: 'Orchestrate period closing with audit controls' }
   ],
 

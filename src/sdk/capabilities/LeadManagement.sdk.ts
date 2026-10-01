@@ -11,7 +11,7 @@
  * ✓ Detail Pages
  * ✓ Dashboard (5 widgets)
  * ✓ Reports (3 reports)
- * ✓ AI Skills (4 skills)
+ * ✓ SI Skills (4 skills)
  * ✓ Automations (3 rules)
  * ✓ Notifications (2 templates)
  * ✓ Seed Data (3 sample leads)
@@ -26,7 +26,7 @@ export const LeadManagementSDK: ICapabilityManifest = {
   // ─── Identity ───────────────────────────────────────────────────────────────
   id: 'CRM.LeadManagement',
   name: 'Lead Management',
-  description: 'Capture, score, and qualify leads from all channels with AI lead scoring, routing rules, and conversion analytics.',
+  description: 'Capture, score, and qualify leads from all channels with SI lead scoring, routing rules, and conversion analytics.',
   department: 'Sales',
   category: 'CRM & Sales',
   version: '2.4.0',
@@ -94,7 +94,7 @@ export const LeadManagementSDK: ICapabilityManifest = {
           width: 'half',
           showInGrid: false,
         },
-        { name: 'Score', label: 'Lead Score', type: 'number', readonly: true, defaultValue: 0, width: 'quarter', displayFormat: 'number', showInGrid: true, helpText: 'AI-calculated lead quality score (0-100)' },
+        { name: 'Score', label: 'Lead Score', type: 'number', readonly: true, defaultValue: 0, width: 'quarter', displayFormat: 'number', showInGrid: true, helpText: 'SI-calculated lead quality score (0-100)' },
         { name: 'Owner', label: 'Assigned To', type: 'user', filterable: true, sortable: true, width: 'half', showInGrid: true },
         { name: 'Value', label: 'Estimated Value ($)', type: 'currency', sortable: true, width: 'half', showInGrid: false, displayFormat: 'currency' },
         { name: 'ExpectedClose', label: 'Expected Close', type: 'date', sortable: true, width: 'half', showInGrid: false },
@@ -176,10 +176,10 @@ export const LeadManagementSDK: ICapabilityManifest = {
     { id: 'conversion-funnel', label: 'Conversion Funnel', icon: '📉', type: 'funnel', object: 'Lead', groupBy: 'Stage', metric: 'count', description: 'Visual funnel of lead conversion through pipeline' },
   ],
 
-  // ─── AI Skills ──────────────────────────────────────────────────────────────
+  // ─── SI Skills ──────────────────────────────────────────────────────────────
   ai: {
-    assistantName: 'Sales AI',
-    assistantDescription: 'Your AI-powered sales assistant for leads and pipeline management.',
+    assistantName: 'Sales SI',
+    assistantDescription: 'Your SI-powered sales assistant for leads and pipeline management.',
     skills: [
       {
         id: 'summarize-lead',
@@ -194,7 +194,7 @@ export const LeadManagementSDK: ICapabilityManifest = {
       {
         id: 'score-lead',
         label: 'Score Lead',
-        description: 'AI-calculate lead quality score based on available data',
+        description: 'SI-calculate lead quality score based on available data',
         intent: 'score',
         object: 'Lead',
         scope: 'record',
@@ -427,7 +427,7 @@ export const LeadManagementSDK: ICapabilityManifest = {
     { key: 'auto_assign', label: 'Auto-Assign Leads', type: 'boolean', defaultValue: true, description: 'Automatically assign new leads to available sales reps', group: 'Automation' },
     { key: 'lead_score_threshold', label: 'Qualify Score Threshold', type: 'number', defaultValue: 60, description: 'Auto-qualify leads scoring above this value', group: 'Scoring' },
     { key: 'duplicate_detection', label: 'Duplicate Detection', type: 'boolean', defaultValue: true, description: 'Flag potential duplicate leads based on email match', group: 'Data Quality' },
-    { key: 'ai_scoring', label: 'AI Lead Scoring', type: 'boolean', defaultValue: true, description: 'Use AI to automatically score incoming leads', group: 'AI' },
+    { key: 'ai_scoring', label: 'SI Lead Scoring', type: 'boolean', defaultValue: true, description: 'Use SI to automatically score incoming leads', group: 'SI' },
   ],
 
   // ─── Integrations ───────────────────────────────────────────────────────────

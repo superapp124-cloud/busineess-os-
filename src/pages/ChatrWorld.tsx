@@ -212,9 +212,9 @@ export default function ChatrWorld() {
  return (
  <>
  <SEOHead
- title="Chatr World - AI Search & Local Discovery | Chatr"
+ title="Chatr World - SI Search & Local Discovery | Chatr"
  description="Your conversational multiverse interface. Search across chat, browser, health, business, community, food, and deals - all in one place."
- keywords="AI search, local discovery, multiverse search, conversational AI, local services"
+ keywords="SI search, local discovery, multiverse search, conversational SI, local services"
  breadcrumbList={[
  { name: 'Home', url: '/' },
  { name: 'Chatr World', url: '/chatr-world' }

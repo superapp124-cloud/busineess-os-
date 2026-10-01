@@ -52,7 +52,7 @@ export class EnterpriseTimelineEngine {
       timestamp: '2026-01-18T14:30:00Z',
       domain: 'Governance',
       title: 'Contract #CTR-8891 Executed',
-      description: 'AI Contract proposal executed and signed by client VP.',
+      description: 'SI Contract proposal executed and signed by client VP.',
       causalityTrace: { causalEventId: 'evt-001', initiatorEntityId: 'user-legal-01', actionType: 'CONTRACT_SIGN' },
       forceDeltaMap: { trustDelta: 0.25, riskDelta: -0.15 }
     },
@@ -91,7 +91,7 @@ export class EnterpriseTimelineEngine {
       entityId: 'tcs-org-001',
       timestamp: '2026-04-06T09:15:00Z',
       domain: 'Governance',
-      title: 'AI Collection Escalation Dispatched',
+      title: 'SI Collection Escalation Dispatched',
       description: 'DecisionCalculusEngine approved automated collection notice & AM escalation.',
       causalityTrace: { causalEventId: 'evt-005', initiatorEntityId: 'ai-decision-engine', actionType: 'ESCALATION_DISPATCH' },
       forceDeltaMap: { riskDelta: -0.08, trustDelta: 0.05 }

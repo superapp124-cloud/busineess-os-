@@ -92,7 +92,7 @@ export const TalentIntelligence: IntelligencePlugin = {
       ],
       insights: [
         { id: 'ti-01', text: 'Resume structure detected. Candidate profile ready for review.', domain: 'talent', severity: 'info' },
-        { id: 'ti-02', text: 'Ask the AI to summarize experience, identify skill gaps, or generate interview questions.', domain: 'talent', severity: 'info' },
+        { id: 'ti-02', text: 'Ask the SI to summarize experience, identify skill gaps, or generate interview questions.', domain: 'talent', severity: 'info' },
       ],
       actions: [
         { id: 'ti-a1', label: 'Generate Interview Questions', domain: 'talent', variant: 'primary' },
@@ -101,7 +101,7 @@ export const TalentIntelligence: IntelligencePlugin = {
         { id: 'ti-a4', label: 'Share with Hiring Manager', domain: 'talent', variant: 'secondary' },
       ],
       recommendations: [
-        { id: 'ti-r1', title: 'Use the Insights tab to query this candidate', detail: 'Ask about experience, education, skills, or salary expectations to get instant AI-sourced answers.', domain: 'talent' },
+        { id: 'ti-r1', title: 'Use the Insights tab to query this candidate', detail: 'Ask about experience, education, skills, or salary expectations to get instant SI-sourced answers.', domain: 'talent' },
       ],
     };
   },

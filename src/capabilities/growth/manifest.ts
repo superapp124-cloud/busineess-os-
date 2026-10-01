@@ -4,7 +4,7 @@ export const GrowthOSManifest: ICapabilityManifest = {
   id: 'growth-os',
   name: 'GrowthOS',
   displayName: 'GrowthOS',
-  description: 'AI-driven Growth Operating System and Executive Advisor.',
+  description: 'SI-driven Growth Operating System and Executive Advisor.',
   department: 'Executive',
   category: 'Core',
   version: '1.0.0',
@@ -14,7 +14,7 @@ export const GrowthOSManifest: ICapabilityManifest = {
   icon: 'LucideTrendingUp',
   rating: 5.0,
   installs: 1,
-  tags: ['Growth', 'Marketing', 'Sales', 'Analytics', 'AI', 'Executive'],
+  tags: ['Growth', 'Marketing', 'Sales', 'Analytics', 'SI', 'Executive'],
   
   dependencies: {
     connectors: ['crm', 'analytics', 'social_media', 'ads'],

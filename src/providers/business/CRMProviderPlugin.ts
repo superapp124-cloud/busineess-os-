@@ -19,7 +19,7 @@ export interface CRMOutput {
 
 export class CRMProviderPlugin implements IProviderPlugin<CRMInput, CRMOutput> {
   public id = 'provider-crm-business-ai';
-  public name = 'CRM Business AI Provider';
+  public name = 'CRM Business SI Provider';
   public apiVersion: '1.0.0' = '1.0.0';
   public compatibleKernelVersion = '^3.0';
 

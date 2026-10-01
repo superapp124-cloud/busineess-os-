@@ -64,7 +64,7 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
         id: 'act_summarize',
         title: 'Summarize Selected Document',
         category: 'DocumentTool',
-        description: 'Execute AI document summarization on current workspace PDF',
+        description: 'Execute SI document summarization on current workspace PDF',
         icon: Sparkles,
         handler: async () => {
           const summary = await DocumentAgentTools.summarize('doc_current');
@@ -104,12 +104,12 @@ export const UniversalSearchModal: React.FC<UniversalSearchModalProps> = ({ isOp
     if (q.includes('invoice') || q.includes('acme') || q.includes('create invoice')) {
       detectedActions.push({
         id: 'act_invoice',
-        title: 'Run Accounting AI Invoice Parsing Workflow',
+        title: 'Run Accounting SI Invoice Parsing Workflow',
         category: 'Workflow',
         description: 'Parse line items, vendor details, and tax totals for INV-2026-884',
         icon: Play,
         handler: () => {
-          setActionFeedback('Launched Accounting AI Workflow: Invoice INV-2026-884 verified.');
+          setActionFeedback('Launched Accounting SI Workflow: Invoice INV-2026-884 verified.');
         },
       });
     }

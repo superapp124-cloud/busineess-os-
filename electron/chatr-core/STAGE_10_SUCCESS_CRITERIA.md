@@ -3,7 +3,7 @@
 The purpose of Stage 10 is to build the Intent Composer and Compiler Pipeline, establishing a robust, UI-agnostic orchestration language for CHATR. Implementation must adhere to the following invariants.
 
 ## 1. Intent IR Independence
-- **Success:** Every authoring source (UI, AI, Voice, API) normalizes into and produces the identical `Intent IR`.
+- **Success:** Every authoring source (UI, SI, Voice, API) normalizes into and produces the identical `Intent IR`.
 - **Success:** The Intent Studio edits graphs only. The Workflow Runtime executes plans only.
 
 ## 2. Three-Level Validation & Purity

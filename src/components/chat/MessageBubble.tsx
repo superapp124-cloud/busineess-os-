@@ -456,7 +456,7 @@ const MessageBubbleComponent = ({
  onScanImage(media.url);
  }}
  className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 opacity-0 group-hover/image:opacity-100 transition-opacity backdrop-blur-sm"
- title="Scan with AI Vision"
+ title="Scan with SI Vision"
  >
  <Sparkles className="w-4 h-4" />
  </button>
@@ -532,7 +532,7 @@ const MessageBubbleComponent = ({
  onScanImage(message.media_url!);
  }}
  className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 opacity-0 group-hover/single-image:opacity-100 transition-opacity backdrop-blur-sm z-10 shadow-sm"
- title="Scan with AI Vision"
+ title="Scan with SI Vision"
  >
  <Sparkles className="w-4 h-4" />
  </button>

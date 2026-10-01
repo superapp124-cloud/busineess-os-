@@ -31,7 +31,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
 
             {/* Supporting Copy */}
             <p className="text-base sm:text-lg text-[#53605C] leading-relaxed max-w-xl">
-              CHATR connects you to people, information and AI agents so you can get things done — faster, smarter and in one place.
+              CHATR connects you to people, information and SI agents so you can get things done — faster, smarter and in one place.
             </p>
 
             {/* CTAs */}
@@ -63,7 +63,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
-                <span>AI-native</span>
+                <span>SI-native</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
@@ -202,7 +202,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
                     {/* Suggested Agent Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
                       {[
-                        { title: 'AI Career Coach', desc: 'Get personalized guidance', badge: 'Career' },
+                        { title: 'SI Career Coach', desc: 'Get personalized guidance', badge: 'Career' },
                         { title: 'Job Match', desc: 'Find the right opportunities', badge: 'Talent' },
                         { title: 'Research Agent', desc: 'Deep research, fast insights', badge: 'Search' },
                       ].map((agent) => (
@@ -245,7 +245,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
                       </div>
                       <div className="p-1 rounded bg-white border border-stone-100 flex items-center gap-1.5">
                         <span className="text-[10px]">✨</span>
-                        <span>AI Agents</span>
+                        <span>SI Agents</span>
                       </div>
                       <div className="p-1 rounded bg-white border border-stone-100 flex items-center gap-1.5">
                         <span className="text-[10px]">🔍</span>

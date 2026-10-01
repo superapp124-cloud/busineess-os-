@@ -31,7 +31,7 @@ const AICloneSettings = () => {
  const [config, setConfig] = useState<CloneConfig>({
  enabled: false,
  personality: '',
- greeting: "Hey! I'm currently away but my AI clone can help. What's up?",
+ greeting: "Hey! I'm currently away but my SI clone can help. What's up?",
  allowJobInquiries: true,
  allowBusinessChats: true,
  allowNetworking: true,
@@ -60,7 +60,7 @@ const AICloneSettings = () => {
  setConfig({
  enabled: data.ai_clone_enabled || false,
  personality: data.ai_clone_personality || '',
- greeting: data.bio || "Hey! I'm currently away but my AI clone can help. What's up?",
+ greeting: data.bio || "Hey! I'm currently away but my SI clone can help. What's up?",
  allowJobInquiries: true,
  allowBusinessChats: true,
  allowNetworking: true,
@@ -91,7 +91,7 @@ const AICloneSettings = () => {
  if (error) {
  toast.error('Failed to save');
  } else {
- toast.success('AI Clone settings saved!');
+ toast.success('SI Clone settings saved!');
  }
  setSaving(false);
  };
@@ -113,9 +113,9 @@ const AICloneSettings = () => {
  </Button>
  <div>
  <h1 className="text-section font-bold flex items-center gap-2">
- <Bot className="h-5 w-5" /> AI Clone
+ <Bot className="h-5 w-5" /> SI Clone
  </h1>
- <p className="text-label text-muted-foreground">Configure your AI identity</p>
+ <p className="text-label text-muted-foreground">Configure your SI identity</p>
  </div>
  </div>
  <Button onClick={saveConfig} disabled={saving} size="sm">
@@ -134,9 +134,9 @@ const AICloneSettings = () => {
  <Bot className="h-6 w-6 text-primary" />
  </div>
  <div>
- <p className="font-bold">AI Clone Active</p>
+ <p className="font-bold">SI Clone Active</p>
  <p className="text-label text-muted-foreground">
- {config.enabled ? 'Your AI clone is responding when you\'re away' : 'Enable to auto-reply when busy'}
+ {config.enabled ? 'Your SI clone is responding when you\'re away' : 'Enable to auto-reply when busy'}
  </p>
  </div>
  </div>
@@ -155,7 +155,7 @@ const AICloneSettings = () => {
  </CardHeader>
  <CardContent className="space-y-3">
  <div>
- <label className="text-label text-muted-foreground">How should your AI talk?</label>
+ <label className="text-label text-muted-foreground">How should your SI talk?</label>
  <Textarea
  value={config.personality}
  onChange={(e) => setConfig({ ...config, personality: e.target.value })}
@@ -252,7 +252,7 @@ const AICloneSettings = () => {
  {config.enabled && (
  <div className="text-center py-4">
  <Badge className="bg-primary/10 text-primary border-primary/20">
- <Bot className="h-3 w-3 mr-1" /> AI Clone is live
+ <Bot className="h-3 w-3 mr-1" /> SI Clone is live
  </Badge>
  </div>
  )}

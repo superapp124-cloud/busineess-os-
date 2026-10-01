@@ -52,7 +52,7 @@ export class UDXCoreLoop {
    * 1. GSC sync (live API or existing DB rows)
    * 2. Demand Graph enrichment (normalize, intent, audience, destination)
    * 3. Opportunity Scoring (calculate_udx_opportunities RPC)
-   * 4. CEO & Specialist AI Organization analysis
+   * 4. CEO & Specialist SI Organization analysis
    * 5. Policy Engine evaluation (AUTO / REVIEW / FORBIDDEN)
    * 6. Audit log logging
    */
@@ -131,7 +131,7 @@ export class UDXCoreLoop {
         stepsCompleted.push(`opportunity_scoring (${opportunitiesFound} scored)`);
       }
 
-      // ─── 5. Fetch Top Opportunities for AI Organization ─────────────────────
+      // ─── 5. Fetch Top Opportunities for SI Organization ─────────────────────
       const { data: topOpps } = await this.supabase
         .from('udx_opportunities')
         .select(`
@@ -160,7 +160,7 @@ export class UDXCoreLoop {
         .order('opportunity_score', { ascending: false })
         .limit(50);
 
-      // ─── 6. AI CEO + Specialist Agents Synthesis ────────────────────────────
+      // ─── 6. SI CEO + Specialist Agents Synthesis ────────────────────────────
       if (topOpps && topOpps.length > 0) {
         // Read Search Memory for context
         const { data: searchMemoryData } = await this.supabase

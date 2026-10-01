@@ -389,7 +389,7 @@ export function CFOCommandCenter({
   }, [loadLiveMetrics, loadAttentionItems]);
 
   // ─────────────────────────────────────────────────────────────
-  // AI COPILOT — DB-grounded, no pre-canned answers
+  // SI COPILOT — DB-grounded, no pre-canned answers
   // ─────────────────────────────────────────────────────────────
   const handleCopilotQuery = useCallback(async (question: string) => {
     if (!finOrganizationId) {
@@ -700,7 +700,7 @@ export function CFOCommandCenter({
         />
       </div>
 
-      {/* 3. Three-Column: Attention Required | AI Proposals | Copilot */}
+      {/* 3. Three-Column: Attention Required | SI Proposals | Copilot */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
 
         {/* Column 1: Attention Required — LIVE */}
@@ -764,12 +764,12 @@ export function CFOCommandCenter({
           </div>
         </Card>
 
-        {/* Column 2: AI Proposals — derived from live risk data */}
+        {/* Column 2: SI Proposals — derived from live risk data */}
         <Card className="p-4 space-y-3 bg-slate-900/95 border border-slate-800 rounded-xl shadow-sm flex flex-col">
           <CardTitle className="text-xs font-bold text-slate-100 flex items-center justify-between border-b border-slate-800 pb-2.5">
             <span className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-sky-400" />
-              AI PROPOSALS
+              SI PROPOSALS
             </span>
             <Badge variant="outline" className="text-[10px] border-sky-500/40 text-sky-400 bg-sky-950/40">
               {attentionItems.length > 0 ? `${attentionItems.length} Active` : 'None'}
@@ -779,7 +779,7 @@ export function CFOCommandCenter({
           <div className="space-y-2.5 mt-1 flex-1">
             {attentionItems.length === 0 && !attentionLoading && (
               <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700 text-slate-400 text-xs">
-                <p>No AI proposals — no overdue AR or open reconciliation exceptions detected.</p>
+                <p>No SI proposals — no overdue AR or open reconciliation exceptions detected.</p>
               </div>
             )}
             {attentionItems.slice(0, 3).map(item => (
@@ -835,12 +835,12 @@ export function CFOCommandCenter({
           </div>
         </Card>
 
-        {/* Column 3: AI Finance Copilot — DB-grounded */}
+        {/* Column 3: SI Finance Copilot — DB-grounded */}
         <Card className="p-4 space-y-3 bg-slate-900/95 border border-slate-800 rounded-xl shadow-sm flex flex-col">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-400" />
-              <h3 className="text-xs font-bold text-slate-100">AI Financial Copilot</h3>
+              <h3 className="text-xs font-bold text-slate-100">SI Financial Copilot</h3>
             </div>
             <Badge variant="outline" className="text-[10px] border-purple-500/40 text-purple-300 bg-purple-950/40">
               DB-Grounded
@@ -935,7 +935,7 @@ export function CFOCommandCenter({
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-slate-600" />
-            AI Workers: <strong>7 Configured (PROPOSE mode)</strong>
+            SI Workers: <strong>7 Configured (PROPOSE mode)</strong>
           </span>
         </div>
         <div className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">

@@ -23,10 +23,10 @@ export const ExecutiveAICopilotDashboard: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider">
             <Brain className="w-4 h-4" />
-            <span>Executive AI & Knowledge OS Suite</span>
+            <span>Executive SI & Knowledge OS Suite</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-            Executive AI Copilot & Company Intelligence Graph
+            Executive SI Copilot & Company Intelligence Graph
           </h1>
         </div>
         <div className="flex items-center space-x-3">
@@ -43,7 +43,7 @@ export const ExecutiveAICopilotDashboard: React.FC = () => {
             <Sparkles className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold">Ask Executive AI Copilot</h2>
+            <h2 className="text-xl font-bold">Ask Executive SI Copilot</h2>
             <p className="text-xs text-slate-300">
               Grounded in real-time enterprise data across Resumes, CRM Deals, Invoices, SOPs, and Communications.
             </p>

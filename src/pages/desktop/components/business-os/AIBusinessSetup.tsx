@@ -50,7 +50,7 @@ export const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTempl
       name: companyName,
       industry: importDomain,
       dept: ['Executive Office', 'Sales', 'Recruitment', 'Delivery', 'Finance'],
-      tech: ['Microsoft 365', 'Supabase', 'Gemini AI', 'Stripe'],
+      tech: ['Microsoft 365', 'Supabase', 'Gemini SI', 'Stripe'],
       teamSize: '11-50',
       location: 'Global'
     };
@@ -213,7 +213,7 @@ export const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTempl
                   { id: 'missing_dept', title: 'Missing Departments', desc: '3 critical departments missing', detail: 'Identified missing Legal, Delivery, and Compliance departments.' },
                   { id: 'bottlenecks', title: 'Operational Bottlenecks', desc: '4 bottlenecks detected', detail: 'Detected manual approval delays in invoice matching, candidate scheduling, client onboarding, and SLA reporting.' },
                   { id: 'reporting', title: 'Reporting Gaps', desc: '2 reporting gaps identified', detail: 'Missing real-time margin tracking and executive attendance velocity metrics.' },
-                  { id: 'digital_opp', title: 'Digital Opportunities', desc: '6 growth opportunities', detail: 'High potential for automated lead qualification, smart triage, AI Document parsing, and 24/7 autonomous responses.' },
+                  { id: 'digital_opp', title: 'Digital Opportunities', desc: '6 growth opportunities', detail: 'High potential for automated lead qualification, smart triage, SI Document parsing, and 24/7 autonomous responses.' },
                   { id: 'automation_proc', title: 'Automation Processes', desc: '5 automation opportunities', detail: '5 repetitive human tasks qualified for 100% autonomous agent execution.' },
                   { id: 'org_risks', title: 'Organizational Risks', desc: '3 potential risks found', detail: 'Single point of failure in key delivery leads, unencrypted document sharing, and delayed client follow-ups.' }
                 ].map(item => (
@@ -245,7 +245,7 @@ export const AIBusinessSetup = ({ onComplete }: { onComplete: (template: OSTempl
               <div className="space-y-4 relative before:absolute before:inset-0 before:ml-[11px] before:h-full before:w-[1px] before:bg-zinc-800">
                 {[
                   { step: 'Step 1', title: "Today's Consultation", desc: "We'll understand your business in detail", icon: <LayoutGrid size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10' },
-                  { step: 'Step 2', title: 'Business Analysis', desc: 'Our AI analyzes data and generates insights', icon: <ListTree size={14} className="text-purple-400"/>, ring: 'border-purple-500/30 bg-purple-500/10' },
+                  { step: 'Step 2', title: 'Business Analysis', desc: 'Our SI analyzes data and generates insights', icon: <ListTree size={14} className="text-purple-400"/>, ring: 'border-purple-500/30 bg-purple-500/10' },
                   { step: 'Step 3', title: 'Business OS Generated', desc: 'Your tailored Business OS is ready', icon: <Package size={14} className="text-amber-400"/>, ring: 'border-amber-500/30 bg-amber-500/10' },
                   { step: 'Step 4', title: 'CEO Dashboard Ready', desc: 'Real-time overview of your business', icon: <LayoutGrid size={14} className="text-blue-400"/>, ring: 'border-blue-500/30 bg-blue-500/10' },
                   { step: 'Step 5', title: 'Ready for Operations', desc: "You're all set to operate and grow", icon: <CheckCircle2 size={14} className="text-emerald-400"/>, ring: 'border-emerald-500/30 bg-emerald-500/10' }

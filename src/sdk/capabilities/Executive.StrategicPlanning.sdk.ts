@@ -82,7 +82,7 @@ export const ExecutiveStrategicPlanningSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Strategic Planning AI',
+    assistantName: 'Strategic Planning SI',
     skills: []
   },
   

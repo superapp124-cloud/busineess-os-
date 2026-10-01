@@ -318,11 +318,11 @@ export default function Automations() {
  </div>
  </div>
 
- {/* Premium AI Suggestions (1-Tap) */}
+ {/* Premium SI Suggestions (1-Tap) */}
  <div className="px-4">
  <div className="flex items-center gap-2 mb-3">
  <Sparkles className="w-4 h-4 text-amber-500" />
- <h3 className="font-bold text-[15px] text-gray-900">AI Suggestions</h3>
+ <h3 className="font-bold text-[15px] text-gray-900">SI Suggestions</h3>
  </div>
  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
  {[
@@ -348,7 +348,7 @@ export default function Automations() {
 
  {/* Categories */}
  <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide px-4 mb-2">
- {['⭐ Popular', '🚗 Driving', '📂 Productivity', '🛡 Security', '🤖 AI'].map((cat) => (
+ {['⭐ Popular', '🚗 Driving', '📂 Productivity', '🛡 Security', '🤖 SI'].map((cat) => (
  <button
  key={cat}
  onClick={() => setActiveCategory(cat)}
@@ -490,10 +490,10 @@ export default function Automations() {
  )}
  </div>
 
- {/* AI Insights Feed */}
+ {/* SI Insights Feed */}
  <div className="px-4 pb-8" ref={insightsRef}>
  <div className="flex items-center justify-between mb-4">
- <h3 className="font-bold text-gray-900 text-[15px]">AI Insights</h3>
+ <h3 className="font-bold text-gray-900 text-[15px]">SI Insights</h3>
  </div>
  
  {insights.length === 0 ? (

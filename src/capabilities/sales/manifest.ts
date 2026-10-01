@@ -4,7 +4,7 @@ export const salesManifest: CapabilityManifest = {
   id: 'sales-os',
   name: 'SalesOS',
   version: '1.0.0',
-  description: 'AI CRM and Pipeline Management for modern sales teams.',
+  description: 'SI CRM and Pipeline Management for modern sales teams.',
   icon: 'TrendingUp',
   color: 'emerald',
   category: 'sales',
@@ -33,7 +33,7 @@ export const salesManifest: CapabilityManifest = {
 
   workflows: [
     { id: 'auto-followup', name: 'Auto Follow-up', description: 'Send automated follow-up email if no reply in 2 days' },
-    { id: 'lead-scoring', name: 'AI Lead Scoring', description: 'Automatically score new leads based on ICP' }
+    { id: 'lead-scoring', name: 'SI Lead Scoring', description: 'Automatically score new leads based on ICP' }
   ],
 
   notifications: {
@@ -52,7 +52,7 @@ export const salesManifest: CapabilityManifest = {
   deploySteps: [
     { label: 'Creating sales workspace', detail: 'Setting up isolated CRM' },
     { label: 'Installing sales database', detail: 'sales_leads, sales_deals' },
-    { label: 'Configuring AI agent', detail: 'Seeding ICP templates' }
+    { label: 'Configuring SI agent', detail: 'Seeding ICP templates' }
   ],
 
   tables: [

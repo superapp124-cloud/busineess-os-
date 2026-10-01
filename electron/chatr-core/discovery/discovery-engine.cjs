@@ -7,7 +7,7 @@
  * - Reads declarative providers.json from category connectors
  * - Geographic filtering: country → region → mode → capability
  * - World Model preference integration
- * - Connector Store pipeline stub (local → remote → AI-generated)
+ * - Connector Store pipeline stub (local → remote → SI-generated)
  */
 
 const path = require('path');

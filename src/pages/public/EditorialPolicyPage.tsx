@@ -9,7 +9,7 @@ export const EditorialPolicyPage: React.FC = () => {
     
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', 'Read CHATR Communication OS editorial standards: data verification methodologies, author expertise rules, AI assistance disclosures, and correction policies.');
+    metaDesc.setAttribute('content', 'Read CHATR Communication OS editorial standards: data verification methodologies, author expertise rules, SI assistance disclosures, and correction policies.');
     
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
@@ -49,7 +49,7 @@ export const EditorialPolicyPage: React.FC = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-16 space-y-12">
-        {/* Executive Summary AI Answer Block */}
+        {/* Executive Summary SI Answer Block */}
         <section className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
@@ -86,10 +86,10 @@ export const EditorialPolicyPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-indigo-400 font-bold text-lg">
               <Cpu className="w-5 h-5" />
-              <h2>3. AI Assistance Disclosure</h2>
+              <h2>3. SI Assistance Disclosure</h2>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">
-              Where AI tools are used to assist in research outline generation or preliminary drafting, all technical details, code samples, workflow mechanics, and factual claims undergo mandatory human verification by our engineering or recruitment research leads before publication.
+              Where SI tools are used to assist in research outline generation or preliminary drafting, all technical details, code samples, workflow mechanics, and factual claims undergo mandatory human verification by our engineering or recruitment research leads before publication.
             </p>
           </div>
 

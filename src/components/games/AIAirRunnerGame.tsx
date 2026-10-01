@@ -46,7 +46,7 @@ const WORLDS: World[] = [
  { name: 'Storm Zone', gradient: 'from-slate-900 via-gray-800 to-zinc-900', particleColor: '#60a5fa', obstacleColor: '#fbbf24' },
  { name: 'Cloud Forest', gradient: 'from-emerald-900 via-teal-800 to-cyan-900', particleColor: '#34d399', obstacleColor: '#14b8a6' },
  { name: 'Crystal Skydomes', gradient: 'from-pink-900 via-fuchsia-900 to-violet-900', particleColor: '#f0abfc', obstacleColor: '#e879f9' },
- { name: 'AI Lab Sky', gradient: 'from-slate-950 via-blue-950 to-indigo-950', particleColor: '#22d3ee', obstacleColor: '#06b6d4' },
+ { name: 'SI Lab Sky', gradient: 'from-slate-950 via-blue-950 to-indigo-950', particleColor: '#22d3ee', obstacleColor: '#06b6d4' },
 ];
 
 const PLANE_EVOLUTIONS = [
@@ -723,7 +723,7 @@ export function AIAirRunnerGame({ level, onComplete, onExit }: AIAirRunnerGamePr
  <Plane className="w-16 h-16 sm:w-24 sm:h-24 mx-auto text-cyan-400 mb-3 sm:mb-4 transform -rotate-45" 
  style={{ filter: 'drop-shadow(0 0 30px rgba(34,211,238,0.8))' }}
  />
- <h1 className="text-page sm:text-display text-white mb-1 sm:mb-2">CHATR AIR RUNNER</h1>
+ <h1 className="text-page sm:text-display text-white mb-1 sm:mb-2">CHATR SIR RUNNER</h1>
  <p className="text-white/60 text-secondary sm:text-body">Level {level}</p>
  {highScore > 0 && (
  <p className="text-yellow-400 mt-1 sm:mt-2 text-secondary sm:text-body">High Score: {highScore.toLocaleString()}</p>

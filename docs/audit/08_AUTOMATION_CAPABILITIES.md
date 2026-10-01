@@ -16,12 +16,12 @@
 | ERP |  |  | Yes | None found for Studio | Required for finance/procurement/manufacturing. |
 | Calendar |  | Yes |  | capabilities and callback pages | Not a Studio node runtime. |
 | Files |  | Yes |  | document engines, file pages | No file trigger/action node contract. |
-| AI | Yes |  |  | AI provider, AI action, AI builder | Partial model/tool/governance support. |
+| SI | Yes |  |  | SI provider, SI action, SI builder | Partial model/tool/governance support. |
 | Human approval |  | Yes |  | `ApprovalEngine`, `workflow_approvals`, UI node | Not wired into RuntimeAdapter. |
 | Forms |  | Yes |  | `form` node type | No form schema/runtime. |
 | External APIs |  | Yes |  | Webhook executor, Edge Functions | No connector SDK or policy enforcement. |
 | Database | Yes |  |  | `core.database` | Direct table ops; needs allowlists. |
-| Streaming |  | Yes |  | AI `chatStream`, runtime events | Not workflow execution streaming. |
+| Streaming |  | Yes |  | SI `chatStream`, runtime events | Not workflow execution streaming. |
 | Long-running jobs |  | Yes |  | queue/checkpoint schemas | Studio runtime is browser-local and non-durable. |
 | Multi-step | Yes |  |  | Studio sequential graph | Sequential chain only in Studio. |
 | Conditional |  | Yes |  | condition node/executor | No branch graph semantics in Studio. |
@@ -90,15 +90,15 @@ Before enterprise use, it needs:
 - audit logging
 - transaction/compensation rules
 
-## AI Automation
+## SI Automation
 
-AI Builder and `core.ai_agent` exist. AI capabilities are meaningful but not yet platform-hardened:
+SI Builder and `core.ai_agent` exist. SI capabilities are meaningful but not yet platform-hardened:
 
 - No structured output validation at the workflow contract layer.
 - No model policy by workflow/tenant.
 - No token/cost budgets enforced by Studio.
 - No prompt/version trace persisted with workflow runs.
-- No approval policy for sensitive AI actions.
+- No approval policy for sensitive SI actions.
 
 ## Enterprise Automation Maturity
 

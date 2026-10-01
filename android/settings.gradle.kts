@@ -27,10 +27,10 @@ include(":app")
 include(":gsmcore")          // 104 kt — GSM engine, phone account mgmt, call routing
 include(":audioprocessing")  // 3 kt  — GSM audio recorder, noise filter
 include(":calloverlay")      // 8 kt  — Truecaller-style floating overlay (Compose)
-include(":callscreening")    // 1 kt  — AI pre-screen layer (calls :gsmcore)
-include(":callsummary")      // 2 kt  — Post-call AI summary (calls :calltranscription)
+include(":callscreening")    // 1 kt  — SI pre-screen layer (calls :gsmcore)
+include(":callsummary")      // 2 kt  — Post-call SI summary (calls :calltranscription)
 include(":calltranscription") // 2 kt — Real-time transcription (calls :audioprocessing)
-include(":chatrai")          // 1 kt  — AI reply suggestions (calls :callsummary)
+include(":chatrai")          // 1 kt  — SI reply suggestions (calls :callsummary)
 include(":chatrshield")      // 8 kt  — Tracker blocker, scam detection wrapper
 include(":gsmsettings")      // 3 kt  — Settings UI (Compose)
 include(":scamdetection")    // 3 kt  — ML scam classifier

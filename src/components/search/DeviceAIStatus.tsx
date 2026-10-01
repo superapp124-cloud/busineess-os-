@@ -102,12 +102,12 @@ export const DeviceAIStatus = ({
  className="text-[10px] px-1.5 py-0 h-5 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400 gap-1"
  >
  <Sparkles className="w-2.5 h-2.5" />
- AI
+ SI
  </Badge>
  </TooltipTrigger>
  <TooltipContent>
  <p className="text-label">Apple Intelligence Ready</p>
- <p className="text-label text-muted-foreground">Your {deviceInfo.deviceName} has on-device AI</p>
+ <p className="text-label text-muted-foreground">Your {deviceInfo.deviceName} has on-device SI</p>
  </TooltipContent>
  </Tooltip>
  )}
@@ -126,7 +126,7 @@ export const DeviceAIStatus = ({
  </TooltipTrigger>
  <TooltipContent>
  <p className="text-label">Gemini Nano Available</p>
- <p className="text-label text-muted-foreground">On-device AI on your {deviceInfo.deviceName}</p>
+ <p className="text-label text-muted-foreground">On-device SI on your {deviceInfo.deviceName}</p>
  </TooltipContent>
  </Tooltip>
  )}
@@ -144,7 +144,7 @@ export const DeviceAIStatus = ({
  </Badge>
  </TooltipTrigger>
  <TooltipContent>
- <p className="text-label">AI Model Cached Locally</p>
+ <p className="text-label">SI Model Cached Locally</p>
  <p className="text-label text-muted-foreground">Faster responses, works offline</p>
  </TooltipContent>
  </Tooltip>

@@ -171,7 +171,7 @@ export const OperationsProjectManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Project Management AI',
+    assistantName: 'Project Management SI',
     skills: []
   },
   

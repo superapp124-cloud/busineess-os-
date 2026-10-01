@@ -33,9 +33,9 @@ export const TinyAIIndicator = () => {
   const [latency, setLatency] = useState<number | null>(45);
   const [ollamaModels, setOllamaMod] = useState<string[]>(['mistral:7b-instruct', 'llama3:8b']);
 
-  // Page-aware AI mode from GlobalIntentProvider
+  // Page-aware SI mode from GlobalIntentProvider
   const { pageContext } = useCHATROS();
-  const pageAILabel = pageContext?.aiLabel || 'CHATR AI';
+  const pageAILabel = pageContext?.aiLabel || 'CHATR SI';
 
   const pollStatus = useCallback(async () => {
     try {
@@ -73,7 +73,7 @@ export const TinyAIIndicator = () => {
       }
     }
 
-    // Default to active Cloud AI
+    // Default to active Cloud SI
     setAIMode('cloud');
     setStatus('healthy');
   }, []);
@@ -120,7 +120,7 @@ export const TinyAIIndicator = () => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
               <div className="flex items-center gap-2">
                 <BrainCircuit className="w-4 h-4 text-cyan-400" />
-                <h3 className="font-bold text-sm">AI Operating Environment</h3>
+                <h3 className="font-bold text-sm">SI Operating Environment</h3>
               </div>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium border border-emerald-500/20">
                 Active
@@ -134,7 +134,7 @@ export const TinyAIIndicator = () => {
               </div>
               <div className="text-emerald-400 text-[11px] font-medium flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5" />
-                <span>Windows OS • Local AI Supported</span>
+                <span>Windows OS • Local SI Supported</span>
               </div>
             </div>
 
@@ -146,11 +146,11 @@ export const TinyAIIndicator = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-                  <span className="text-slate-300">Cloud AI</span>
+                  <span className="text-slate-300">Cloud SI</span>
                   <span className="text-emerald-400 font-bold">✓ Ready</span>
                 </div>
                 <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-                  <span className="text-slate-300">Local AI Engine</span>
+                  <span className="text-slate-300">Local SI Engine</span>
                   <span className={aiMode === 'local' ? 'text-emerald-400 font-bold' : 'text-cyan-400 font-mono'}>
                     {aiMode === 'local' ? '✓ Ready' : 'Active'}
                   </span>
@@ -160,7 +160,7 @@ export const TinyAIIndicator = () => {
                   <span className="text-emerald-400 font-bold">✓ Active</span>
                 </div>
                 <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-                  <span className="text-slate-300">Voice AI</span>
+                  <span className="text-slate-300">Voice SI</span>
                   <span className="text-emerald-400 font-bold">✓ Ready</span>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export const TinyAIIndicator = () => {
 
             {/* Privacy Footer */}
             <div className="text-[10px] text-slate-400 leading-tight border-t border-slate-800 pt-2.5">
-              🔒 Your AI models, memory, and indexed documents remain on this device unless you choose to sync them.
+              🔒 Your SI models, memory, and indexed documents remain on this device unless you choose to sync them.
             </div>
 
           </div>

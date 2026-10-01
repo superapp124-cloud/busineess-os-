@@ -49,14 +49,14 @@ const AGENTS: IntentCapability[] = [
   {
     id: 'a1', moduleId: 'recruitment', moduleColor: 'blue', moduleLucideIcon: 'Users',
     name: 'RecruitmentOS Agent', creator: 'CHATR Core',
-    description: 'End-to-end talent acquisition. Sources candidates from LinkedIn & GitHub, runs AI screening, schedules interviews and drafts offer letters.',
+    description: 'End-to-end talent acquisition. Sources candidates from LinkedIn & GitHub, runs SI screening, schedules interviews and drafts offer letters.',
     category: 'HR & Recruitment', priceModel: 'Free', priceLabel: 'Free',
     icon: <Users className="w-6 h-6" />, verified: true,
     privacyLevel: 'High', dataResidency: 'India / EU', aiModel: 'Gemini 1.5 Pro',
     estimatedTime: '2–10 min/task', permissions: ['Calendar', 'Email', 'LinkedIn', 'Files'],
     deploySteps: [
       { label: 'Creating Recruitment Workspace', detail: 'Initialising dedicated workspace…' },
-      { label: 'Installing RecruitmentOS Agent', detail: 'Loading AI model and agent runtime…' },
+      { label: 'Installing RecruitmentOS Agent', detail: 'Loading SI model and agent runtime…' },
       { label: 'Connecting Gmail & Calendar', detail: 'OAuth handshake in progress…' },
       { label: 'Creating ATS Database', detail: 'Setting up candidate pipeline schema…' },
       { label: 'Building Candidate Pipeline', detail: 'Generating stages: Applied → Screening → Interview → Offer…' },
@@ -66,7 +66,7 @@ const AGENTS: IntentCapability[] = [
     ],
     workspaceStructure: [
       { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Recruiter' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Recruiter' },
       { icon: <Inbox className="w-3.5 h-3.5" />, label: 'Candidate Inbox' },
       { icon: <Calendar className="w-3.5 h-3.5" />, label: 'Interviews' },
       { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Jobs Board' },
@@ -92,7 +92,7 @@ const AGENTS: IntentCapability[] = [
     ],
     workspaceStructure: [
       { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Reviewer' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Reviewer' },
       { icon: <FileText className="w-3.5 h-3.5" />, label: 'Contracts' },
       { icon: <Shield className="w-3.5 h-3.5" />, label: 'Risk Alerts' },
     ],
@@ -115,7 +115,7 @@ const AGENTS: IntentCapability[] = [
     ],
     workspaceStructure: [
       { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Pipeline' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Sales Agent' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Sales Agent' },
       { icon: <Users className="w-3.5 h-3.5" />, label: 'Leads' },
       { icon: <Mail className="w-3.5 h-3.5" />, label: 'Outreach' },
       { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Analytics' },
@@ -135,7 +135,7 @@ const AGENTS: IntentCapability[] = [
       { label: 'Connecting Accounting System', detail: 'Linking existing data…' },
       { label: 'Configuring Tax Rules', detail: 'Setting up GST, TDS rules for India…' },
       { label: 'Building Approval Workflows', detail: 'Multi-level invoice approval ready…' },
-      { label: 'Enabling Anomaly Detection', detail: 'AI risk monitoring activated…' },
+      { label: 'Enabling Anomaly Detection', detail: 'SI risk monitoring activated…' },
     ],
     workspaceStructure: [
       { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Dashboard' },
@@ -173,7 +173,7 @@ const TEMPLATES: IntentCapability[] = [
   {
     id: 't1', moduleId: 'startup', moduleColor: 'violet', moduleLucideIcon: 'Zap',
     name: 'Startup Workspace', creator: 'CHATR Core',
-    description: 'Everything a startup needs from day one. CRM, recruitment, finance, project management and AI tools — deployed in 5 minutes.',
+    description: 'Everything a startup needs from day one. CRM, recruitment, finance, project management and SI tools — deployed in 5 minutes.',
     category: 'Startup', priceModel: 'Free', priceLabel: 'Free',
     icon: <Zap className="w-6 h-6" />, verified: true,
     privacyLevel: 'Standard', dataResidency: 'India / Global', aiModel: 'Multiple',
@@ -194,7 +194,7 @@ const TEMPLATES: IntentCapability[] = [
       { icon: <Users className="w-3.5 h-3.5" />, label: 'Recruitment' },
       { icon: <IndianRupee className="w-3.5 h-3.5" />, label: 'Finance' },
       { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Projects' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Agents' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Agents' },
       { icon: <BarChart className="w-3.5 h-3.5" />, label: 'Analytics' },
       { icon: <Settings className="w-3.5 h-3.5" />, label: 'Settings' },
     ],
@@ -239,7 +239,7 @@ const TEMPLATES: IntentCapability[] = [
     estimatedTime: 'Deploy in 15 min', permissions: ['LinkedIn', 'Email', 'Calendar', 'CRM'],
     deploySteps: [
       { label: 'Creating Agency Workspace', detail: 'Initialising multi-client environment…' },
-      { label: 'Installing RecruitmentOS Agent', detail: 'AI sourcing and screening agent…' },
+      { label: 'Installing RecruitmentOS Agent', detail: 'SI sourcing and screening agent…' },
       { label: 'Connecting LinkedIn & Job Boards', detail: 'Authenticating data sources…' },
       { label: 'Building Client Portal', detail: 'Hiring manager dashboards…' },
       { label: 'Creating Candidate Pipeline', detail: 'Multi-client ATS with stage tracking…' },
@@ -247,7 +247,7 @@ const TEMPLATES: IntentCapability[] = [
     ],
     workspaceStructure: [
       { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Agency Dashboard' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Recruiter' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Recruiter' },
       { icon: <Users className="w-3.5 h-3.5" />, label: 'Candidate Pool' },
       { icon: <Building2 className="w-3.5 h-3.5" />, label: 'Client Portal' },
       { icon: <FolderKanban className="w-3.5 h-3.5" />, label: 'Pipeline' },
@@ -286,19 +286,19 @@ const TEMPLATES: IntentCapability[] = [
 const CONNECTORS: IntentCapability[] = [
   {
     id: 'c1', moduleId: 'gmail', moduleColor: 'red', moduleLucideIcon: 'Mail',
-    name: 'Gmail', creator: 'Google', description: 'Sync emails, draft AI replies and trigger workflows on email events.',
+    name: 'Gmail', creator: 'Google', description: 'Sync emails, draft SI replies and trigger workflows on email events.',
     category: 'Email', priceModel: 'Free', priceLabel: 'Free',
     icon: <Mail className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['Gmail OAuth'], tags: ['Email', 'Google'],
     deploySteps: [
       { label: 'Gmail Authentication', detail: 'Opening OAuth flow…' },
       { label: 'Syncing Mail', detail: 'Importing last 90 days…' },
-      { label: 'AI Categorisation', detail: 'Labelling and sorting with AI…' },
+      { label: 'SI Categorisation', detail: 'Labelling and sorting with SI…' },
       { label: 'Smart Inbox Ready', detail: 'Filtering and priority scoring active…' },
     ],
     workspaceStructure: [
       { icon: <Inbox className="w-3.5 h-3.5" />, label: 'Smart Inbox' },
-      { icon: <Bot className="w-3.5 h-3.5" />, label: 'AI Replies' },
+      { icon: <Bot className="w-3.5 h-3.5" />, label: 'SI Replies' },
     ],
     workspacePath: '/desktop/smart-inbox',
   },
@@ -332,28 +332,28 @@ const CONNECTORS: IntentCapability[] = [
   },
   {
     id: 'c4', moduleId: 'salesforce', moduleColor: 'blue', moduleLucideIcon: 'Database',
-    name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with AI-powered enrichment.',
+    name: 'Salesforce CRM', creator: 'Salesforce', description: 'Bi-directional sync of leads, contacts and deals with SI-powered enrichment.',
     category: 'CRM', priceModel: 'Premium', priceLabel: '₹999/mo',
     icon: <Database className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'US / EU / IN',
     aiModel: 'N/A', estimatedTime: 'Near real-time', permissions: ['Salesforce OAuth'], tags: ['CRM', 'Salesforce'],
     deploySteps: [
       { label: 'Salesforce Authentication', detail: 'Connecting to your org…' },
       { label: 'Syncing Leads & Contacts', detail: 'Bi-directional mapping…' },
-      { label: 'Enabling AI Enrichment', detail: 'Lead scoring and enrichment…' },
+      { label: 'Enabling SI Enrichment', detail: 'Lead scoring and enrichment…' },
     ],
     workspaceStructure: [{ icon: <TrendingUp className="w-3.5 h-3.5" />, label: 'CRM Sync' }],
     workspacePath: '/desktop/pro/business',
   },
   {
     id: 'c5', moduleId: 'whatsapp', moduleColor: 'green', moduleLucideIcon: 'Phone',
-    name: 'WhatsApp Business', creator: 'Meta', description: 'Send AI-powered WhatsApp messages and route customer queries to the right agent.',
+    name: 'WhatsApp Business', creator: 'Meta', description: 'Send SI-powered WhatsApp messages and route customer queries to the right agent.',
     category: 'Messaging', priceModel: 'Pay-per-use', priceLabel: '₹0.50/msg',
     icon: <Phone className="w-6 h-6" />, verified: true, privacyLevel: 'High', dataResidency: 'India',
     aiModel: 'N/A', estimatedTime: 'Real-time', permissions: ['WhatsApp Business API'], tags: ['Messaging', 'WhatsApp'],
     deploySteps: [
       { label: 'API Key Verification', detail: 'Verifying Business API credentials…' },
       { label: 'Connecting Number', detail: 'Linking WhatsApp Business number…' },
-      { label: 'Enabling AI Routing', detail: 'Smart message triage and routing…' },
+      { label: 'Enabling SI Routing', detail: 'Smart message triage and routing…' },
     ],
     workspaceStructure: [{ icon: <Inbox className="w-3.5 h-3.5" />, label: 'WhatsApp Inbox' }],
     workspacePath: '/desktop/smart-inbox',
@@ -445,7 +445,7 @@ const AIDeployAssistant: React.FC<{ onDeploy: (item: IntentCapability) => void }
           <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
-          <span className="text-white font-black text-base tracking-tight">AI Deployment Assistant</span>
+          <span className="text-white font-black text-base tracking-tight">SI Deployment Assistant</span>
           <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30 uppercase tracking-widest">Beta</span>
         </div>
         <p className="text-sm text-white/40 mb-5">Describe what you want to build. I'll recommend and deploy the right capabilities.</p>
@@ -583,7 +583,7 @@ const ConfigModal: React.FC<{
 
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold uppercase tracking-wider text-[10px]">AI Reasoning Model</label>
+            <label className="block text-slate-400 mb-1 font-semibold uppercase tracking-wider text-[10px]">SI Reasoning Model</label>
             <select value={aiModel} onChange={e => setAiModel(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-white outline-none">
               <option value="Gemini 1.5 Pro" className="bg-slate-900">Gemini 1.5 Pro (Recommended)</option>
               <option value="Claude 3.5 Sonnet" className="bg-slate-900">Claude 3.5 Sonnet</option>
@@ -912,7 +912,7 @@ export const IntentStore: React.FC = () => {
       {/* ── Content ── */}
       <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
 
-        {/* AI Assistant always visible on Featured */}
+        {/* SI Assistant always visible on Featured */}
         {activeTab === 'featured' && (
           <>
             <AIDeployAssistant onDeploy={setDeployItem} />

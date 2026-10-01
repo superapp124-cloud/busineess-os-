@@ -49,7 +49,7 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
   const [scrapeVertical, setScrapeVertical] = useState('Recruitment & Staffing Agencies');
   const [isScraping, setIsScraping] = useState(false);
 
-  // Custom AI Hook Generator Input
+  // Custom SI Hook Generator Input
   const [customHookPrompt, setCustomHookPrompt] = useState('');
   const [generatedHook, setGeneratedHook] = useState<string | null>(null);
 
@@ -89,12 +89,12 @@ export const AutonomousAgentsWarRoom: React.FC = () => {
 
     const hook = `🔥 VIRAL HOOK SCRIPT: "${customHookPrompt}"
     
-Scene 1 (0-3s): [Close up on screen showing $500 cloud AI bills being burned]
-Visual Text: "WHY ARE YOU STILL PAYING FOR CLOUD AI TOKENS? ❌"
+Scene 1 (0-3s): [Close up on screen showing $500 cloud SI bills being burned]
+Visual Text: "WHY ARE YOU STILL PAYING FOR CLOUD SI TOKENS? ❌"
 Voiceover: "Here is the exact setup we use to run Llama 3 and DeepSeek 100% offline for $0 in CHATR Desktop."
 
 Scene 2 (4-15s): [Open CHATR Desktop -> Toggle Ollama local model -> Prompt executes at 120 tokens/sec]
-Visual Text: "0ms Latency • 100% Private On-Device AI 💻"
+Visual Text: "0ms Latency • 100% Private On-Device SI 💻"
 Voiceover: "Zero token fees. Unlimited queries. Full local privacy."
 
 Scene 3 (16-30s): [Drag & Drop PDF -> Instant ATS Resume Score]
@@ -144,7 +144,7 @@ Link in bio: https://www.chatrchat.in`;
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Social Media Buzz & Content Machine</h1>
           <p className="text-xs text-slate-400">
-            Generate viral Reels, YouTube Shorts, LinkedIn teardowns, and Reddit community posts highlighting On-Device Ollama AI and the Free ATS Resume Grader
+            Generate viral Reels, YouTube Shorts, LinkedIn teardowns, and Reddit community posts highlighting On-Device Ollama SI and the Free ATS Resume Grader
           </p>
         </div>
 
@@ -178,7 +178,7 @@ Link in bio: https://www.chatrchat.in`;
           <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
             <HardDrive className="w-5 h-5" />
           </div>
-          <h3 className="font-bold text-sm text-white">1. On-Device Ollama AI ($0 / mo)</h3>
+          <h3 className="font-bold text-sm text-white">1. On-Device Ollama SI ($0 / mo)</h3>
           <p className="text-xs text-slate-400">
             Run Llama 3.3 & DeepSeek locally in CHATR Desktop with 0 token fees and 100% offline privacy.
           </p>
@@ -264,7 +264,7 @@ Link in bio: https://www.chatrchat.in`;
           }`}
         >
           <Users className="w-3.5 h-3.5 text-slate-400" />
-          <span>200 AI Agents</span>
+          <span>200 SI Agents</span>
         </button>
       </div>
 
@@ -491,7 +491,7 @@ Link in bio: https://www.chatrchat.in`;
             </div>
           )}
 
-          {/* AI Custom Viral Hook Generator */}
+          {/* SI Custom Viral Hook Generator */}
           <div className="bg-gradient-to-r from-slate-900 via-indigo-950/50 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">

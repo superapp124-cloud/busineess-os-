@@ -74,7 +74,7 @@ export class RelationshipEngineImpl implements IEngine {
       messages: [],
       tasks: [],
       sharedDocuments: [],
-      aiSummary: 'No AI summary available yet.',
+      aiSummary: 'No SI summary available yet.',
       upcomingFollowUps: meetings.filter(m => m.type === 'future' || m.type === 'present'),
       relationshipScore: await this.getScore(contactId),
       timeline: meetings,

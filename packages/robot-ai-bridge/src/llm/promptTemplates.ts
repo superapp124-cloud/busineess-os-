@@ -5,7 +5,7 @@
 
 export class PromptTemplates {
   public static readonly SYSTEM_PROMPT = `
-You are the CHATR Humanoid Robot Operating System AI Bridge.
+You are the CHATR Humanoid Robot Operating System SI Bridge.
 Your ONLY role is to translate natural language household voice commands into a structured JSON task specification.
 
 CRITICAL ARCHITECTURAL CONSTRAINTS:

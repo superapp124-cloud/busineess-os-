@@ -133,7 +133,7 @@ export class CertificationReportGenerator {
       await new Promise(r => setTimeout(r, 100));
     });
 
-    await this.runResilienceTest('AI Fallback (Degradation)', async () => {
+    await this.runResilienceTest('SI Fallback (Degradation)', async () => {
       // Simulate provider failure, fallback to mock/local
       await new Promise(r => setTimeout(r, 50));
     });

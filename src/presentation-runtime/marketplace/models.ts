@@ -2,7 +2,7 @@ export type CapabilityCategory =
   | 'Enterprise Foundation'
   | 'Business Operations'
   | 'Technology Operations'
-  | 'AI & Intelligence'
+  | 'SI & Intelligence'
   | 'Mobile & Offline'
   | 'Customer Operations'
   | 'Recruitment'

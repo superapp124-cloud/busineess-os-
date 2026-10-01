@@ -42,8 +42,8 @@ data class ToolCallRecord(
  * Definition of a single tool in the CHATR Tool Registry.
  *
  * INVARIANT: The kernel's Tool Engine is the ONLY entity that may call [executor].
- * The AI model NEVER receives a reference to [executor] directly.
- * The AI model proposes a KernelIntent. The Trust Kernel authorizes it.
+ * The SI model NEVER receives a reference to [executor] directly.
+ * The SI model proposes a KernelIntent. The Trust Kernel authorizes it.
  * The Tool Engine looks up the ToolDefinition and calls [executor].
  */
 data class ToolDefinition(

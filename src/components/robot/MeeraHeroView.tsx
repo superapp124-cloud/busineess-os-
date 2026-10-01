@@ -174,7 +174,7 @@ export const MeeraHeroView: React.FC<MeeraHeroViewProps> = ({
               <span>·</span>
               <span className="text-cyan-300 font-mono font-bold">28 DOF</span>
             </div>
-            <p className="text-[11px] text-slate-300 font-medium">Autonomous Multilingual AI Humanoid Platform</p>
+            <p className="text-[11px] text-slate-300 font-medium">Autonomous Multilingual SI Humanoid Platform</p>
           </div>
 
           {/* Status & View Switcher */}

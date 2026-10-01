@@ -1,5 +1,5 @@
 /**
- * AI Agent Chat - WhatsApp-Style Interface
+ * SI Agent Chat - WhatsApp-Style Interface
  * Full-featured chat with voice, actions, memory indicators
  */
 
@@ -143,7 +143,7 @@ export default function AIAgentChatNew() {
  }
  } catch (error) {
  console.error('Error loading agent:', error);
- toast.error('Failed to load AI agent');
+ toast.error('Failed to load SI agent');
  navigate('/ai-agents');
  } finally {
  setLoading(false);
@@ -344,7 +344,7 @@ export default function AIAgentChatNew() {
  <h2 className="font-semibold truncate">{agent.agent_name}</h2>
  <div className="flex items-center gap-2 text-label text-muted-foreground">
  <Brain className="h-3 w-3" />
- <span>AI Agent • {agent.is_active ? 'Online' : 'Offline'}</span>
+ <span>SI Agent • {agent.is_active ? 'Online' : 'Offline'}</span>
  </div>
  </div>
 

@@ -25,9 +25,9 @@ function runHeuristics(content: string) {
   };
 }
 
-// Layer 3: AI Risk Classifier (Direct Multi-Provider Router)
+// Layer 3: SI Risk Classifier (Direct Multi-Provider Router)
 async function analyzeThreatWithAI(content: string) {
-  const systemPrompt = `You are CHATR Shield, an advanced active threat detection AI. 
+  const systemPrompt = `You are CHATR Shield, an advanced active threat detection SI. 
 Analyze the following message for scams, phishing, malware links, or fraud.
 Return a strict JSON object with this exact schema:
 {
@@ -58,8 +58,8 @@ Return a strict JSON object with this exact schema:
   try {
     return JSON.parse(response.content);
   } catch (e) {
-    console.error("Failed to parse AI response:", response.content);
-    throw new Error("Invalid AI response format");
+    console.error("Failed to parse SI response:", response.content);
+    throw new Error("Invalid SI response format");
   }
 }
 
@@ -93,7 +93,7 @@ serve(async (req) => {
       });
     }
 
-    // Layer 3: Deep AI Scan
+    // Layer 3: Deep SI Scan
     const aiResult = await analyzeThreatWithAI(record.content);
 
     if (aiResult.overall_score >= 40) {

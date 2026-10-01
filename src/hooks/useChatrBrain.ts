@@ -1,6 +1,6 @@
 /**
  * ChatrAI - React Hook
- * Main interface for using the AI runtime in components
+ * Main interface for using the SI runtime in components
  */
 
 import { useState, useCallback, useEffect } from 'react';

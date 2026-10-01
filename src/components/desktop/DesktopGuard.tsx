@@ -119,7 +119,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
     (window.innerWidth <= 768)
   );
 
-  // MOBILE PHONES & TABLETS: Allow normal web access over Cloud AI + sleek App Store banner
+  // MOBILE PHONES & TABLETS: Allow normal web access over Cloud SI + sleek App Store banner
   if (isMobileDevice) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -130,7 +130,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
             <div>
               <div className="font-bold text-white text-xs flex items-center gap-1.5">
                 <span>CHATR Mobile</span>
-                <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded font-mono">Cloud AI</span>
+                <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded font-mono">Cloud SI</span>
               </div>
               <p className="text-[10px] text-slate-300">Get the native app for iOS & Android</p>
             </div>
@@ -189,7 +189,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
           CHATR Desktop Required
         </h1>
         <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-          The CHATR workspace runs sovereign local AI models, private offline memory, and voice AI on your computer. You must install CHATR Desktop to proceed.
+          The CHATR workspace runs sovereign local SI models, private offline memory, and voice SI on your computer. You must install CHATR Desktop to proceed.
         </p>
 
         {/* Feature Highlights */}
@@ -199,7 +199,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs text-slate-200">
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">✓</span> Local AI Engine
+              <span className="text-cyan-400 font-bold">✓</span> Local SI Engine
             </div>
             <div className="flex items-center gap-2">
               <span className="text-cyan-400 font-bold">✓</span> Sovereign Privacy
@@ -208,7 +208,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
               <span className="text-cyan-400 font-bold">✓</span> Offline Memory
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">✓</span> Voice AI Engine
+              <span className="text-cyan-400 font-bold">✓</span> Voice SI Engine
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export const DesktopGuard: React.FC<{ children: React.ReactNode }> = ({ children
             }}
             className="w-full py-3 px-6 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold text-xs transition-all border border-white/10 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <span>Explore in Web Browser (Cloud AI Mode)</span>
+            <span>Explore in Web Browser (Cloud SI Mode)</span>
           </button>
 
           {isDownloading && (

@@ -36,7 +36,7 @@ export const UniversalDetail: React.FC<Props> = ({ capabilityId, objectDefinitio
  setAiChat(prev => [...prev, { role: 'user', text: aiInput }]);
  setAiInput('');
  
- // Simulate AI response
+ // Simulate SI response
  setTimeout(() => {
  setAiChat(prev => [...prev, { role: 'ai', text: `Based on this ${objectDefinition.name}, here is a summary: ${record[titleField]} is currently ${record[statusField]}.` }]);
  }, 800);
@@ -285,7 +285,7 @@ export const UniversalDetail: React.FC<Props> = ({ capabilityId, objectDefinitio
  <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
  <Sparkles size={32} className="text-indigo-400" />
  </div>
- <p className="text-section">Ask AI about this record...</p>
+ <p className="text-section">Ask SI about this record...</p>
  <p className="text-secondary text-zinc-600 text-center max-w-sm">You can ask for summaries, analysis, or to extract specific information from this object.</p>
  </div>
  ) : (
@@ -304,7 +304,7 @@ export const UniversalDetail: React.FC<Props> = ({ capabilityId, objectDefinitio
  type="text" 
  value={aiInput}
  onChange={e => setAiInput(e.target.value)}
- placeholder="Message AI assistant..."
+ placeholder="Message SI assistant..."
  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl py-4 pl-5 pr-14 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-lg"
  />
  <button type="submit" disabled={!aiInput.trim()} className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-white rounded-xl transition-colors">

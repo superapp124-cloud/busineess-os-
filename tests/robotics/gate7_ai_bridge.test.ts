@@ -10,7 +10,7 @@ import {
 import { TemporalWorldModel } from '../../packages/robot-perception/src';
 import { Vector3, Quaternion } from '../../packages/robot-physics/src';
 
-describe('GATE 7: CHATR AI Bridge & Multi-Lingual Task Engine (G7.1 - G7.8)', () => {
+describe('GATE 7: CHATR SI Bridge & Multi-Lingual Task Engine (G7.1 - G7.8)', () => {
   // ------------------------------------------------------------
   // G7.1: 7-Language Identification & Script Detection
   // ------------------------------------------------------------
@@ -115,9 +115,9 @@ describe('GATE 7: CHATR AI Bridge & Multi-Lingual Task Engine (G7.1 - G7.8)', ()
   });
 
   // ------------------------------------------------------------
-  // G7.5: Operational AI Explainer in Native Languages
+  // G7.5: Operational SI Explainer in Native Languages
   // ------------------------------------------------------------
-  it('G7.5: AI Explainer — Generates native-language natural explanations for user commands', () => {
+  it('G7.5: SI Explainer — Generates native-language natural explanations for user commands', () => {
     const hindiTask = MultilingualNlu.parsePrompt('Kitchen se paani ki bottle le aao');
     const hindiExp = OperationalAiExplainer.explainTaskPlan(hindiTask, 'VALID_AND_EXECUTABLE', 'water_bottle_01');
     expect(hindiExp).toContain('रसोई');
@@ -133,9 +133,9 @@ describe('GATE 7: CHATR AI Bridge & Multi-Lingual Task Engine (G7.1 - G7.8)', ()
   });
 
   // ------------------------------------------------------------
-  // G7.6: Complete End-to-End AI Execution Graph
+  // G7.6: Complete End-to-End SI Execution Graph
   // ------------------------------------------------------------
-  it('G7.6: End-to-End AI Bridge — Decomposes voice command into structured 8-step execution graph', async () => {
+  it('G7.6: End-to-End SI Bridge — Decomposes voice command into structured 8-step execution graph', async () => {
     const pipeline = new RobotAiBridgePipeline();
     const worldModel = new TemporalWorldModel();
     const snap = worldModel.getSnapshot(0.0);

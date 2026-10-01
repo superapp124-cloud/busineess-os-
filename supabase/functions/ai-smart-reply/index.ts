@@ -23,7 +23,7 @@ serve(async (req) => {
       );
     }
 
-    // Handle chat mode (direct AI conversation)
+    // Handle chat mode (direct SI conversation)
     if (message && !action) {
       const messages: AIMessage[] = [];
 
@@ -47,7 +47,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful AI assistant. Provide clear, concise, and friendly responses. Keep answers under 200 words unless specifically asked for more detail.'
+            content: 'You are a helpful SI assistant. Provide clear, concise, and friendly responses. Keep answers under 200 words unless specifically asked for more detail.'
           },
           ...messages
         ]
@@ -59,7 +59,7 @@ serve(async (req) => {
       );
     }
 
-    // Handle different AI actions
+    // Handle different SI actions
     if (action === 'improve_tone') {
       const tonePrompts = {
         polite: 'Rewrite this message to be more polite and courteous',
@@ -141,7 +141,7 @@ Do not include any other text or formatting.`
     );
 
   } catch (error: unknown) {
-    console.error('AI smart reply error:', error);
+    console.error('SI smart reply error:', error);
     const status = error instanceof PlatformError ? error.status : 500;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(

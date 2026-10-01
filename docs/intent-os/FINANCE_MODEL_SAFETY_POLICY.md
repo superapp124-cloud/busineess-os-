@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0.0  
 **Effective Date:** 2026-09-09  
-**Subsystem:** CHATR AI Training Infrastructure / Model Control Plane  
+**Subsystem:** CHATR SI Training Infrastructure / Model Control Plane  
 **Governing Authority:** CHATR Kernel Constitution & Financial Risk Board  
 **Target Capabilities:** `finance`, `business`  
 

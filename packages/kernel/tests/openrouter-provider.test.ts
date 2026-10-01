@@ -42,7 +42,7 @@ async function runOpenRouterTest() {
   const health = await adapter.health();
   console.log(`   - Status: ${health.status}, Latency: ${health.latencyMs}ms`);
 
-  console.log('\n[Step 2] Executing AI Task through AIExecutor & OpenRouterProviderAdapter...');
+  console.log('\n[Step 2] Executing SI Task through AIExecutor & OpenRouterProviderAdapter...');
   const result = await AIExecutor.execute(mockContext, adapter, {
     capability: 'summarize',
     prompt: 'Summarize candidate profile for Java developer',

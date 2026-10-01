@@ -16,7 +16,7 @@ export const recruitmentManifest = new CapabilityBuilder()
   .addAction({
     id: 'Recruitment.ScreenCandidate',
     name: 'Screen Candidate',
-    description: 'Runs AI resume screening and generates score and summary',
+    description: 'Runs SI resume screening and generates score and summary',
     inputSchema: { type: 'object', properties: { candidateId: { type: 'string' }, jobDescription: { type: 'string' } } },
     outputSchema: { type: 'object', properties: { aiScore: { type: 'number' }, fitSummary: { type: 'string' }, recommendedStage: { type: 'string' } } }
   })

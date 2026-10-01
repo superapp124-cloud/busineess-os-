@@ -41,7 +41,7 @@ class OllamaProvider {
     throw new Error('[OllamaProvider] Ollama is not reachable on any configured port.');
   }
 
-  // AI Runtime Model Selection is now handled externally.
+  // SI Runtime Model Selection is now handled externally.
   // The Provider is purely an execution driver.
   async _bestModel() {
     return providerConfig.ollama.defaultModel;

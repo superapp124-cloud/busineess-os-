@@ -39,11 +39,11 @@ function assertEqual<T>(actual: T, expected: T, message: string) {
 console.log('\n🧪 Running CHATR Finance Production Activation Test Suite...\n');
 
 // ══════════════════════════════════════════════════════════════════════
-// 1. UNIVERSAL FINANCIAL DATA IMPORTER & AI SCHEMA MAPPING
+// 1. UNIVERSAL FINANCIAL DATA IMPORTER & SI SCHEMA MAPPING
 // ══════════════════════════════════════════════════════════════════════
 console.log('--- 1. Universal Financial Data Importer ---');
 
-test('UniversalFinancialImporter: AI automatically maps legacy column names to CHATR fields', () => {
+test('UniversalFinancialImporter: SI automatically maps legacy column names to CHATR fields', () => {
   const columns = ['Party Name', 'Invoice Number', 'Due Date', 'Debit', 'Credit', 'GST Amount', 'Ledger Head'];
   const mappings = UniversalFinancialImporter.mapSourceColumnsToChatr(columns);
 
@@ -108,7 +108,7 @@ test('FinanceObservabilityEngine: evaluates system telemetry confirming healthy 
   const report = await FinanceObservabilityEngine.getSystemHealth();
 
   assertEqual(report.overallStatus, 'HEALTHY', 'Overall system is HEALTHY');
-  assertEqual(report.activeWorkersCount, 7, '7/7 AI workers online');
+  assertEqual(report.activeWorkersCount, 7, '7/7 SI workers online');
   assertEqual(report.uptimePercentage, 99.99, '99.99% system uptime');
   assertEqual(report.metrics.length, 9, '9 core metrics evaluated');
 });

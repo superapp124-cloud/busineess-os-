@@ -70,13 +70,13 @@ export const RevenueOSDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Proposal Generator Card */}
+      {/* SI Proposal Generator Card */}
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              AI Executive Proposal Builder
+              SI Executive Proposal Builder
             </h2>
           </div>
           <span className="text-xs text-slate-400">Revenue Optimization</span>

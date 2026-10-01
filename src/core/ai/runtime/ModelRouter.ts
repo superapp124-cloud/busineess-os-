@@ -22,7 +22,7 @@ export class ModelRouter {
     }
 
     if (allModels.length === 0) {
-      throw new Error("No AI Models available across any provider.");
+      throw new Error("No SI Models available across any provider.");
     }
 
     // Sort based on taskType requirements

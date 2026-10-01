@@ -195,12 +195,12 @@ const JDPanel = () => {
  <div className="flex items-center justify-between">
  <div>
  <h2 className="text-workspace font-bold text-white">Job Description Builder</h2>
- <p className="text-secondary text-zinc-500 mt-0.5">Craft and publish your JD — AI suggestions available</p>
+ <p className="text-secondary text-zinc-500 mt-0.5">Craft and publish your JD — SI suggestions available</p>
  </div>
  <div className="flex items-center gap-3">
  <button onClick={simulateAI} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-600/30 text-button transition-all">
  {aiGenerating ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
- {aiGenerating ? 'Generating...' : 'AI Enhance'}
+ {aiGenerating ? 'Generating...' : 'SI Enhance'}
  </button>
  <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white text-button font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/20">
  <Send size={14} /> Publish JD
@@ -641,7 +641,7 @@ const InterviewPanel = () => {
 
  {/* Scoring Rubric */}
  <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5">
- <div className="flex items-center gap-2 text-secondary font-semibold text-zinc-300 mb-4"><BarChart2 size={15} className="text-indigo-400" /> AI Scoring Rubric</div>
+ <div className="flex items-center gap-2 text-secondary font-semibold text-zinc-300 mb-4"><BarChart2 size={15} className="text-indigo-400" /> SI Scoring Rubric</div>
  <div className="grid grid-cols-4 gap-4">
  {[
  { label: 'Technical Skills', weight: 35, color: 'bg-indigo-500' },
@@ -816,7 +816,7 @@ const EmailPanel = () => {
  <span className="text-secondary font-bold text-white">{current.trigger}</span>
  <div className="flex gap-2">
  <button className="flex items-center gap-1.5 text-button px-3 py-1.5 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600/30 transition-all">
- <Sparkles size={12} /> AI Rewrite
+ <Sparkles size={12} /> SI Rewrite
  </button>
  <button className="flex items-center gap-1.5 text-button px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-all">
  <Send size={12} /> Test Send

@@ -70,7 +70,7 @@ export function FinancialImportWizard() {
       const detected = cols.filter(c => c.length > 0);
       setDetectedColumns(detected);
 
-      // AI-map columns to CHATR fields
+      // SI-map columns to CHATR fields
       const maps = UniversalFinancialImporter.mapSourceColumnsToChatr(detected);
       setMappings(maps);
     } catch (err: any) {
@@ -231,7 +231,7 @@ export function FinancialImportWizard() {
                 {uploadedFile.name} ({detectedColumns.length} columns detected)
               </span>
               <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-800 border-blue-300">
-                Ready for AI Mapping
+                Ready for SI Mapping
               </Badge>
             </div>
           )}
@@ -250,19 +250,19 @@ export function FinancialImportWizard() {
               className="gap-1.5 text-xs"
               disabled={!uploadedFile || detectedColumns.length === 0 || parsing}
             >
-              Run AI Schema Mapping <ArrowRight className="w-3.5 h-3.5" />
+              Run SI Schema Mapping <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </div>
         </Card>
       )}
 
-      {/* Step 3: AI Schema Mapping */}
+      {/* Step 3: SI Schema Mapping */}
       {currentStep === 3 && (
         <Card className="p-4 space-y-3">
           <CardTitle className="text-xs font-bold text-foreground flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              Step 3: AI Automated Field Mapping
+              Step 3: SI Automated Field Mapping
             </span>
             <Badge variant="outline" className="text-[10px] text-emerald-700 bg-emerald-50">
               {mappings.filter(m => m.confidence > 0.6).length} / {mappings.length} Columns Mapped

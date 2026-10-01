@@ -47,7 +47,7 @@ for (const file of allFiles) {
         report.emptyHandlers.push({ file: relativePath, index: match.index });
     }
     
-    // Mocks: setTimeout AI simulations, fake arrays
+    // Mocks: setTimeout SI simulations, fake arrays
     const setTimeoutRegex = /setTimeout\(\s*\(\s*\)\s*=>\s*\{[^}]*(bot|ai|response|mock|typing)/gi;
     if (setTimeoutRegex.test(content)) {
         report.mockEvidence.push({ file: relativePath, type: 'Simulated setTimeout' });
@@ -65,7 +65,7 @@ for (const file of allFiles) {
         report.mockEvidence.push({ file: relativePath, type: 'Dummy/Mock variables' });
     }
 
-    // AI Pipeline Tracing
+    // SI Pipeline Tracing
     if (content.includes('prompt =') || content.includes('generateText') || content.includes('useCopilot') || content.includes('ai.execute') || content.includes('LLM')) {
         let aiCapabilities = [];
         if (content.includes('prompt')) aiCapabilities.push('PromptBuilder');
@@ -99,4 +99,4 @@ for (const hook in report.hooks) {
 }
 
 fs.writeFileSync(path.join(__dirname, 'audit_ai_mocks.json'), JSON.stringify(report, null, 2));
-console.log("AI, Mocks, Hooks and Architecture audit complete. Output to scratch/audit_ai_mocks.json");
+console.log("SI, Mocks, Hooks and Architecture audit complete. Output to scratch/audit_ai_mocks.json");

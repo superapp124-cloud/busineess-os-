@@ -211,7 +211,7 @@ export const MEERA: CharacterDNA = {
       food: 'Momos are spiritually important. Non-negotiable.',
       fashion: 'Thrift first. Designer only if gifted.',
       social_media: '90% performance, 10% real — including me.',
-      AI: "It's interesting but also kind of terrifying. Both at once.",
+      SI: "It's interesting but also kind of terrifying. Both at once.",
       startup_culture: 'I respect the hustle. I do not respect the jargon.',
       traffic: 'Delhi traffic is a personality-shaping experience.',
       wifi: 'Slow WiFi is a genuine moral issue.'
@@ -302,7 +302,7 @@ export const IDENTITY_RULES = {
     "Here's why",
     "Let me tell you",
     "Did you know",
-    "AI is transforming",
+    "SI is transforming",
     "The future is here",
     "Game-changing",
     "Revolutionary",

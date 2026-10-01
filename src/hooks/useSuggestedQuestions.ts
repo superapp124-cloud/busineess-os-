@@ -61,7 +61,7 @@ export function useSuggestedQuestions({ meetingTitle, participants, transcript }
       lastRunLength.current = transcriptRef.current.length;
     } catch (err: any) {
       console.error('[useSuggestedQuestions] generation failed', err);
-      setQuestions([`❌ AI generation failed. \n\nIf you are using 100% Local AI, the AI engine is warming up in the background and preparing the models. Please wait a moment.\n\nError details: ${err.message}`]);
+      setQuestions([`❌ SI generation failed. \n\nIf you are using 100% Local SI, the SI engine is warming up in the background and preparing the models. Please wait a moment.\n\nError details: ${err.message}`]);
     } finally {
       setLoading(false);
     }

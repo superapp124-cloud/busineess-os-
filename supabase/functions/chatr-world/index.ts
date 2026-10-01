@@ -25,7 +25,7 @@ function getSearchCities(city: string | undefined): string[] {
   return NEARBY_CITIES[lower] || [lower];
 }
 
-// Simple intent detection without AI
+// Simple intent detection without SI
 function detectIntent(query: string): { modules: string[]; primary_intent: string; search_terms: string[]; location_needed: boolean } {
   const q = query.toLowerCase();
   const modules: string[] = [];
@@ -58,7 +58,7 @@ function detectIntent(query: string): { modules: string[]; primary_intent: strin
   };
 }
 
-// Direct AI call
+// Direct SI call
 async function callDirectAI(systemPrompt: string, userPrompt: string): Promise<string> {
   try {
     const response = await completeChat({
@@ -74,7 +74,7 @@ async function callDirectAI(systemPrompt: string, userPrompt: string): Promise<s
     });
     return response.content || '';
   } catch (err) {
-    console.error('Direct AI error:', err);
+    console.error('Direct SI error:', err);
     return '';
   }
 }
@@ -205,7 +205,7 @@ Give a helpful response about what is available.`;
 
     let conversationalText = await callDirectAI(systemPrompt, userPrompt);
     
-    // Fallback response if AI fails
+    // Fallback response if SI fails
     if (!conversationalText) {
       const dataCount = Object.values(results.data).reduce((sum: number, d: any) => sum + (d.count || d.vendors?.length || d.providers?.length || 0), 0);
       if (dataCount > 0) {

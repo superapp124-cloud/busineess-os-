@@ -10,15 +10,15 @@ Primary evidence:
 
 - `src/App.tsx:481` routes `/desktop/studio` to `LazyPages.WorkflowStudio`.
 - `src/routes/lazyPages.tsx:384` lazy-loads `src/pages/desktop/WorkflowStudio.tsx`.
-- `src/pages/desktop/WorkflowStudio.tsx` contains the main Studio UI, static demo data, React Flow canvas, local run UI, AI builder modal, publish menu, logs, versions, and optimizer panel.
-- `src/platform/AutomationOS/*` contains a separate client-side command bus, kernel store, compiler, runtime adapter, approval/version helpers, and AI provider abstractions.
+- `src/pages/desktop/WorkflowStudio.tsx` contains the main Studio UI, static demo data, React Flow canvas, local run UI, SI builder modal, publish menu, logs, versions, and optimizer panel.
+- `src/platform/AutomationOS/*` contains a separate client-side command bus, kernel store, compiler, runtime adapter, approval/version helpers, and SI provider abstractions.
 - `src/hooks/useBusinessWorkflows.ts` persists workflow lists through Supabase table `business_workflows`.
 - `supabase/functions/business-workflow-engine/index.ts` contains an Edge Function workflow runner, but this is not the runtime used by the Studio route.
 - Electron has a separate kernel/workflow execution stack under `electron/chatr-core/*`.
 
 ## Executive Finding
 
-CHATR has many of the ingredients of a universal automation platform: a desktop Studio route, a React Flow canvas, Supabase workflow persistence, AI workflow generation, workflow version tables, approval tables, queue tables, policy tables, Electron execution services, provider manifests, capability registries, and an event bus.
+CHATR has many of the ingredients of a universal automation platform: a desktop Studio route, a React Flow canvas, Supabase workflow persistence, SI workflow generation, workflow version tables, approval tables, queue tables, policy tables, Electron execution services, provider manifests, capability registries, and an event bus.
 
 The current `/desktop/studio` product, however, is not yet wired as a durable enterprise workflow platform. It behaves as a visually rich Studio shell with partial persistence and a local browser runtime. Important enterprise controls exist in adjacent modules or migrations, but the Studio route mostly does not invoke them.
 
@@ -29,10 +29,10 @@ The current system is split across five major layers:
 | Layer | Current role | Status |
 | --- | --- | --- |
 | React desktop app | Routes, Studio UI, canvas, panels, local state | Production route exists |
-| AutomationOS frontend runtime | Command bus, kernel state, compiler, local runtime, AI planning | Partial and mostly in-memory |
+| AutomationOS frontend runtime | Command bus, kernel state, compiler, local runtime, SI planning | Partial and mostly in-memory |
 | Supabase | Auth, `business_workflows`, workflow runs/version/approval/queue/policy migrations, Edge Functions | Partial and schema-drift risk |
 | Electron CHATR core | IPC, local execution graph, provider discovery, execution ledger, credential vault | Separate runtime, not Studio route |
-| Provider/capability layer | Capabilities, AI service, provider manifests, integrations UI | Fragmented and partially wired |
+| Provider/capability layer | Capabilities, SI service, provider manifests, integrations UI | Fragmented and partially wired |
 
 ## How Studio Loads
 
@@ -41,7 +41,7 @@ The current system is split across five major layers:
 3. `src/routes/lazyPages.tsx:384` lazy-loads `WorkflowStudio`.
 4. `WorkflowStudio` calls `useBusinessWorkflows()` from `src/hooks/useBusinessWorkflows.ts`.
 5. If Supabase returns workflows, the first workflow becomes `activeProject`.
-6. Studio also initializes local display state such as selected tab, selected node, AI modal state, workflow name, and local execution cards.
+6. Studio also initializes local display state such as selected tab, selected node, SI modal state, workflow name, and local execution cards.
 7. The route renders the left project pane, central React Flow canvas, bottom logs/executions/analytics pane, and right optimizer/team/version pane.
 
 The audited in-app browser could not inspect the authenticated page because it redirected to `/auth`. The user-provided screenshot confirms an authenticated Studio view at `http://localhost:8086/desktop/studio`.
@@ -53,7 +53,7 @@ The `/desktop/studio` route is mostly a single large component:
 - `WorkflowStudio`
   - top Studio shell and quick stats
   - left project/library/agent pane
-  - AI Builder modal
+  - SI Builder modal
   - publish menu
   - React Flow canvas
     - `HeaderNode`
@@ -61,7 +61,7 @@ The `/desktop/studio` route is mostly a single large component:
     - `CustomReactFlowNode`
     - `EndNode`
   - bottom tabs: Live Logs, Executions, Errors, Queue, Analytics
-  - right panel: AI Optimizer, Team Live, Recent Versions
+  - right panel: SI Optimizer, Team Live, Recent Versions
 
 There is a second workflow builder at `src/components/business/automation/WorkflowBuilder.tsx` that uses React Flow editing handlers and saves both nodes and edges. It is more editor-like than `WorkflowStudio`, but it is not the implementation behind `/desktop/studio`.
 
@@ -85,7 +85,7 @@ Most business logic lives directly inside `WorkflowStudio.tsx`:
 
 - Demo data: projects, team members, nodes, logs, versions, templates, integrations.
 - React Flow serialization for the publish/export menu.
-- AI generation button behavior.
+- SI generation button behavior.
 - Project selection behavior.
 - Test run button behavior.
 - Save behavior.
@@ -188,10 +188,10 @@ Current Studio monitoring is mostly display-only:
 - Execution cards are local state from EventBus events.
 - Queue view is static.
 - Analytics view is hard-coded.
-- AI Optimizer recommendations are static.
+- SI Optimizer recommendations are static.
 
 The repository has richer observability-oriented services such as `PerformanceAnalyzer`, `FailureAnalyzer`, and workflow metrics migrations, but these are not wired into the visible Studio panels.
 
 ## Overall Assessment
 
-CHATR Studio is a promising shell for a universal automation platform, but today the durable enterprise contract is incomplete. The strongest parts are visual workflow presentation, broad adjacent platform investment, Supabase schema direction, AI provider experimentation, and Electron execution infrastructure. The highest-risk parts are fragmented sources of truth, non-durable runs, edge loss, schema drift, static monitoring, and unconnected version/approval/security infrastructure.
+CHATR Studio is a promising shell for a universal automation platform, but today the durable enterprise contract is incomplete. The strongest parts are visual workflow presentation, broad adjacent platform investment, Supabase schema direction, SI provider experimentation, and Electron execution infrastructure. The highest-risk parts are fragmented sources of truth, non-durable runs, edge loss, schema drift, static monitoring, and unconnected version/approval/security infrastructure.

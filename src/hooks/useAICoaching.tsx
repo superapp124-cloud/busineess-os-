@@ -1,5 +1,5 @@
 /**
- * AI Coaching Hook - Feature #45
+ * SI Coaching Hook - Feature #45
  * Real-time agent guidance during calls
  */
 import { useState, useCallback, useRef } from 'react';

@@ -73,13 +73,13 @@ export const BusinessIntelligenceDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Financial Analysis Card */}
+      {/* SI Financial Analysis Card */}
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Sparkles className="w-5 h-5 text-purple-500" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              AI Executive Financial Summary Engine
+              SI Executive Financial Summary Engine
             </h2>
           </div>
           <span className="text-xs text-slate-400">Capability: BICapability (L5)</span>

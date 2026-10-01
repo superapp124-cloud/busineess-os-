@@ -11,7 +11,7 @@ export interface OS_Event {
 export class EventStore {
   /**
    * Persists an event to the sys_event_store table.
-   * Supports comprehensive audit trailing: Logins, Intents, AI Prompts, Denials, Configuration Changes.
+   * Supports comprehensive audit trailing: Logins, Intents, SI Prompts, Denials, Configuration Changes.
    */
   static async append(event: OS_Event, context: any) {
     if (!context?.organizationId) return; // Cannot store without org context

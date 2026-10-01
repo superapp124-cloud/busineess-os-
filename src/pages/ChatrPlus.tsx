@@ -92,7 +92,7 @@ export default function ChatrPlus() {
  className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full"
  >
  <Sparkles className="w-5 h-5 text-primary" />
- <span className="text-secondary font-medium">AI-Powered Super App</span>
+ <span className="text-secondary font-medium">SI-Powered Super App</span>
  </motion.div>
 
  <motion.h1
@@ -113,7 +113,7 @@ export default function ChatrPlus() {
  One app for everything — Find. Book. Pay. Earn.
  </motion.p>
 
- {/* AI Search Bar */}
+ {/* SI Search Bar */}
  <motion.div
  initial={{ opacity: 0, y: 20 }}
  animate={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ export default function ChatrPlus() {
  </Button>
  </div>
  <p className="text-secondary text-muted-foreground mt-3">
- Powered by AI • Real-time local results • GPS-based discovery
+ Powered by SI • Real-time local results • GPS-based discovery
  </p>
  </motion.div>
 
@@ -190,7 +190,7 @@ export default function ChatrPlus() {
  </div>
  <div className="flex items-center gap-1">
  <Sparkles className="w-4 h-4 text-amber-500" />
- <span>AI recommendations</span>
+ <span>SI recommendations</span>
  </div>
  <div className="flex items-center gap-1">
  <Wallet className="w-4 h-4 text-amber-500" />
@@ -342,7 +342,7 @@ export default function ChatrPlus() {
  </div>
  <div className="flex items-center gap-2">
  <Sparkles className="w-5 h-5 text-purple-500" />
- <span>AI-powered leads</span>
+ <span>SI-powered leads</span>
  </div>
  </div>
  </div>

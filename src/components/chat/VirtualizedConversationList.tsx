@@ -211,7 +211,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  .limit(convIds.length),
  supabase
  .from('conversation_participants')
- .select('conversation_id, user_id, profiles!inner(id, username, avatar_url, is_online)')
+ .select('conversation_id, user_id, profiles!inner(id, username, full_name, avatar_url, is_online, phone_number)')
  .in('conversation_id', convIds)
  .neq('user_id', userId)
  ]);
@@ -363,7 +363,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
 
  onConversationSelect(data, {
  id: contact.contact_user_id,
- username: contact.username || contact.contact_name,
+ username: contact.contact_name || contact.username || contact.contact_phone,
  avatar_url: contact.avatar_url
  });
  setSearchQuery(''); // Clear search after selection
@@ -574,7 +574,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  return (
  <div className="flex flex-col h-full min-h-0">
  {/* Filter Tabs */}
- <div className="flex items-center overflow-x-auto scrollbar-hide bg-[#FFFFFF] border-b-[0.5px] border-[#EEEEF4] px-2 space-x-1">
+ <div className="flex items-center overflow-x-auto scrollbar-hide bg-[#0B0E14] border-b border-white/[0.06] px-3 py-2 space-x-2">
  {['all', 'personal', 'work', 'finance', 'otp', 'shopping', 'unread', 'groups', 'archived'].map((tab) => (
  <button
  key={tab}
@@ -591,25 +591,25 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  </div>
 
  {/* Clean pill search bar */}
- <div className="sticky top-0 z-10 bg-[#FFFFFF] px-[8px] py-[8px]">
+ <div className="sticky top-0 z-10 bg-[#0B0E14] px-3 py-2">
  <div className="relative w-full">
- <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
- <Search className="w-[18px] h-[18px] text-[#9898B3]" />
+ <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+ <Search className="w-[18px] h-[18px] text-slate-400" />
  </div>
  <Input
  ref={inputRef}
  type="text"
- placeholder="Search chats, contacts, numbers"
+ placeholder="Search messages..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full h-11 pl-11 pr-[80px] bg-white border-0 text-[#1A1A2E] placeholder:text-[#9898B3] rounded-2xl shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] focus-visible:ring-1 focus-visible:ring-[#7C3AED]/20"
+ className="w-full h-11 pl-11 pr-[80px] bg-white/[0.05] border border-white/[0.08] text-white placeholder:text-slate-400 rounded-full focus-visible:ring-1 focus-visible:ring-indigo-500/50"
  />
  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
  {searchQuery && (
  <Button 
  variant="ghost" 
  size="icon" 
- className="h-8 w-8 text-[#9898B3] hover:text-[#1A1A2E] rounded-xl hover:bg-[#F3F4F6]"
+ className="h-8 w-8 text-slate-400 hover:text-white rounded-xl hover:bg-[#F3F4F6]"
  onClick={() => {
  setSearchQuery('');
  inputRef.current?.focus();
@@ -761,21 +761,34 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  <p className="text-label text-muted-foreground uppercase tracking-wide px-1 mb-2">Chats</p>
  )}
  {searchResults.conversations.map(conv => {
- const rawDisplayName = conv.is_group ? conv.group_name : (conv.other_user?.username || 'User');
- const rawPhone = conv.other_user?.phone_number || '';
- 
- // Strict name resolution rule
- const resolveContactName = (rawName: string, phoneStr: string) => {
- const cleanName = (rawName || '').replace(/_fb/i, '');
- if (!cleanName || /^\d+$/.test(cleanName.replace(/\D/g, ''))) {
- return `Unknown Contact`;
- }
- return cleanName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
- };
- 
- const resolvedName = resolveContactName(rawDisplayName || '', rawPhone);
- const isUnknown = !conv.is_group && (!resolvedName || resolvedName === 'Unknown Contact');
- const displayName = isUnknown ? formatPhone(rawPhone || rawDisplayName) : resolvedName;
+       const rawDisplayName = conv.is_group ? conv.group_name : (conv.other_user?.username || 'User');
+      const rawPhone = conv.other_user?.phone_number || '';
+      
+      // Smart Contact Name Resolution:
+      // 1. Saved contacts list (by contact_user_id or by phone number)
+      const savedContact = !conv.is_group && (
+        contacts.find(c => 
+          (c.contact_user_id && conv.other_user?.id && c.contact_user_id === conv.other_user.id) ||
+          (c.contact_phone && rawPhone && c.contact_phone.replace(/\D/g, '').endsWith(rawPhone.replace(/\D/g, '').slice(-10)))
+        )
+      );
+      const contactSavedName = savedContact?.contact_name;
+      const profileFullName = conv.other_user?.full_name || conv.other_user?.display_name;
+      const usernameIsName = conv.other_user?.username && /[a-zA-Z]/.test(conv.other_user.username);
+
+      let resolvedName = '';
+      if (conv.is_group) {
+        resolvedName = conv.group_name || 'Group';
+      } else if (contactSavedName) {
+        resolvedName = contactSavedName;
+      } else if (profileFullName && /[a-zA-Z]/.test(profileFullName)) {
+        resolvedName = profileFullName;
+      } else if (usernameIsName) {
+        resolvedName = conv.other_user.username.replace(/_fb$/i, '');
+      }
+
+      const isUnknown = !conv.is_group && !resolvedName;
+      const displayName = resolvedName || formatPhone(rawPhone || rawDisplayName);
  
  const lastMessage = conv.last_message;
  const isRead = lastMessage?.read_at != null;
@@ -820,7 +833,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  onConversationSelect(conv.id, conv.other_user);
  setSearchQuery(''); // Clear search after selection
  }}
- className="flex items-center gap-[12px] px-[12px] py-[10px] min-h-[72px] cursor-pointer transition-colors hover:bg-accent/30 relative"
+ className="flex items-center gap-[12px] px-[12px] py-[10px] min-h-[72px] cursor-pointer transition-colors hover:bg-white/[0.04] relative"
  >
  <div className="relative shrink-0">
  {isUnknown ? (
@@ -854,22 +867,22 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  </div>
  
  {/* Inset Divider container */}
- <div className="flex-1 min-w-0 border-b-[0.5px] border-[#EEEEF4] pb-[10px] self-stretch flex flex-col justify-center">
+ <div className="flex-1 min-w-0 border-b border-white/[0.06] pb-[10px] self-stretch flex flex-col justify-center">
  <div className="flex justify-between items-baseline mb-[4px]">
  <div className="flex items-center gap-[6px] min-w-0">
- <p className={`text-[15px] text-[#1A1A2E] truncate ${(conv.unread_count || 0) > 0 ? 'font-[700]' : 'font-[600]'}`}>
+ <p className={`text-[15px] text-white truncate ${(conv.unread_count || 0) > 0 ? 'font-[700]' : 'font-[600]'}`}>
  <HighlightText text={displayName} query={searchQuery} />
  </p>
  {isPinned && <Pin className="w-[12px] h-[12px] text-[#6C63FF] shrink-0" />}
- {conv.is_muted && <BellOff className="w-[12px] h-[12px] text-[#9898B3] shrink-0" />}
- {conv.is_group && <Users className="w-[12px] h-[12px] text-[#9898B3] shrink-0" />}
+ {conv.is_muted && <BellOff className="w-[12px] h-[12px] text-slate-400 shrink-0" />}
+ {conv.is_group && <Users className="w-[12px] h-[12px] text-slate-400 shrink-0" />}
  </div>
  <div className="flex items-center gap-2 shrink-0">
  {conv.category === 'otp' && <Fingerprint className="w-[14px] h-[14px] text-blue-500" />}
  {conv.category === 'finance' && <CircleDollarSign className="w-[14px] h-[14px] text-emerald-500" />}
  {conv.category === 'shopping' && <ShoppingCart className="w-[14px] h-[14px] text-orange-500" />}
  {conv.category === 'work' && <Briefcase className="w-[14px] h-[14px] text-purple-500" />}
- <span className={`text-[12px] ${(!isRead && !isSent) || (conv.unread_count || 0) > 0 ? 'text-[#6C63FF] font-[600]' : 'text-[#3D3D5C]'}`}>
+ <span className={`text-[12px] ${(!isRead && !isSent) || (conv.unread_count || 0) > 0 ? 'text-[#6C63FF] font-[600]' : 'text-slate-400'}`}>
  {timestamp}
  </span>
  </div>
@@ -880,9 +893,9 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  {isSent && lastMessage && (
  isRead 
  ? <CheckCheck className="w-[14px] h-[14px] text-[#00BFA5] shrink-0" /> 
- : <Check className="w-[14px] h-[14px] text-[#9898B3] shrink-0" />
+ : <Check className="w-[14px] h-[14px] text-slate-400 shrink-0" />
  )}
- <p className={`text-[13px] truncate ${(conv.unread_count || 0) > 0 || (!isRead && !isSent) ? 'font-[600] text-[#1A1A2E]' : 'font-[400] text-[#9898B3]'}`}>
+ <p className={`text-[13px] truncate ${(conv.unread_count || 0) > 0 || (!isRead && !isSent) ? 'font-[600] text-white' : 'font-[400] text-slate-400'}`}>
  <HighlightText text={messagePreview} query={searchQuery} />
  </p>
  </div>

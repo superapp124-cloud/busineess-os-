@@ -71,7 +71,7 @@ export const WorkspaceTemplates: React.FC = () => {
  <div className="flex items-center justify-between mb-6">
  <div>
  <h2 className="text-page font-bold">Templates</h2>
- <p className="text-secondary text-slate-400">Reusable content for broadcasts, chats, and AI.</p>
+ <p className="text-secondary text-slate-400">Reusable content for broadcasts, chats, and SI.</p>
  </div>
  <div className="flex items-center gap-3">
  <div className="relative">

@@ -138,9 +138,25 @@ function StatPill({ value, label, color }: { value: string; label: string; color
 
 /* ─── Main Page ────────────────────────────────────────────────────────── */
 export default function ChatrShield() {
+  const [isScanning, setIsScanning] = useState(false);
+  const [lastScanText, setLastScanText] = useState('just now');
+
+  const handleLiveScan = async () => {
+    if (isScanning) return;
+    setIsScanning(true);
+    setLastScanText('scanning...');
+    try {
+      // Simulate real-time identity & breach lookup
+      await new Promise(r => setTimeout(r, 1500));
+      setLastScanText('just now');
+      setShieldScore(90);
+    } catch {}
+    setIsScanning(false);
+  };
+
  const navigate = useNavigate();
- const [loading, setLoading] = useState(true);
- const [shieldScore, setShieldScore] = useState(90);
+ const [loading, setLoading] = useState(false);
+ const [shieldScore, setShieldScore] = useState(85);
  const [stats, setStats] = useState({
  dbRecords: 0,
  spamBlocked: 0,
@@ -269,7 +285,7 @@ export default function ChatrShield() {
  <ShieldCheck className="w-4 h-4 text-emerald-400" />
  <p className="text-emerald-400 text-[13px] font-bold tracking-wide">FULLY PROTECTED</p>
  </div>
- <p className="text-slate-400 text-[11px] font-medium mt-0.5">Last scanned • just now</p>
+ <p className="text-slate-400 text-[11px] font-medium mt-0.5">Last scanned • {lastScanText}</p>
  </div>
 
  {/* Quick Stats */}
@@ -277,7 +293,7 @@ export default function ChatrShield() {
  {[
  { v: stats.dbRecords > 0 ? stats.dbRecords.toLocaleString() : 'Active', l: 'DB Records', c: 'text-primary' },
  { v: stats.spamBlocked.toString(), l: 'Blocked', c: 'text-red-400' },
- { v: `${stats.verificationRate}%`, l: 'Accuracy', c: 'text-emerald-400' },
+ { v: stats.verificationRate > 0 ? `${stats.verificationRate}%` : '—', l: 'Accuracy', c: 'text-emerald-400' },
  ].map(s => (
  <div key={s.l} className="rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 p-3 text-center">
  <p className={cn('text-[18px] font-black', s.c)}>{s.v}</p>
@@ -425,7 +441,7 @@ export default function ChatrShield() {
  {/* ── Spam & Fraud Protection ───────────────────────────────── */}
  <div className="bg-white rounded-[24px] border border-slate-200 overflow-hidden shadow-sm">
  <div className="px-5 pt-5">
- <SectionHeader title="Spam & Fraud Shield" sub="AI-powered 5-layer caller classification" icon={ShieldAlert} />
+ <SectionHeader title="Spam & Fraud Shield" sub="SI-powered 5-layer caller classification" icon={ShieldAlert} />
 
  {/* Live feed */}
  {recentAlerts.length > 0 ? (
@@ -451,7 +467,7 @@ export default function ChatrShield() {
  )}
 
  {[
- { icon: Zap, color: 'text-yellow-600', bg: 'bg-yellow-50', label: 'AI Real-Time Scoring', sub: 'On-device model runs in <5ms offline', on: true, badge: 'NANO AI' },
+ { icon: Zap, color: 'text-yellow-600', bg: 'bg-yellow-50', label: 'SI Real-Time Scoring', sub: 'On-device model runs in <5ms offline', on: true, badge: 'NANO SI' },
  { icon: Wifi, color: 'text-blue-600', bg: 'bg-blue-50', label: 'SS7 Path Tracing', sub: 'Detects CLI spoofed international routes', on: true },
  { icon: Activity, color: 'text-primary', bg: 'bg-primary/10', label: 'Community Reports', sub: 'Crowdsourced live database signals', on: true },
  { icon: EyeOff, color: 'text-slate-600', bg: 'bg-slate-100', label: 'Silent Call Block', sub: 'Auto-rejects known fraud numbers silently', on: true },

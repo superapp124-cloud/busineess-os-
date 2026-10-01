@@ -1470,28 +1470,28 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
-  CREATE POLICY "Users can create their own AI agents" ON public."ai_agents"
+  CREATE POLICY "Users can create their own SI Agents" ON public."ai_agents"
   FOR INSERT
   WITH CHECK ((auth.uid() = user_id))
 ;
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
-  CREATE POLICY "Users can delete their own AI agents" ON public."ai_agents"
+  CREATE POLICY "Users can delete their own SI Agents" ON public."ai_agents"
   FOR DELETE
   USING ((auth.uid() = user_id))
 ;
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
-  CREATE POLICY "Users can update their own AI agents" ON public."ai_agents"
+  CREATE POLICY "Users can update their own SI Agents" ON public."ai_agents"
   FOR UPDATE
   USING ((auth.uid() = user_id))
 ;
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
-  CREATE POLICY "Users can view their own AI agents" ON public."ai_agents"
+  CREATE POLICY "Users can view their own SI Agents" ON public."ai_agents"
   FOR SELECT
   USING ((auth.uid() = user_id))
 ;

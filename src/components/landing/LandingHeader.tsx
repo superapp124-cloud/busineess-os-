@@ -88,7 +88,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             )}
           </div>
 
-          {/* AI Agents */}
+          {/* SI Agents */}
           <div 
             className="relative"
             onMouseEnter={() => setActiveDropdown('agents')}
@@ -98,7 +98,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
               onClick={() => handleNavClick('features')}
               className="flex items-center gap-1 text-[#53605C] hover:text-[#111817] transition-colors py-2"
             >
-              <span>AI Agents</span>
+              <span>SI Agents</span>
               <ChevronDown className="w-3.5 h-3.5 opacity-60" />
             </button>
             {activeDropdown === 'agents' && (
@@ -265,7 +265,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         <div className="md:hidden bg-[#F8F8F5] border-b border-[#DDE3DF] px-6 py-5 space-y-4 animate-in slide-in-from-top duration-200">
           <nav className="flex flex-col space-y-3 text-base font-medium text-[#111817]">
             <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#111817]">Product</button>
-            <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#53605C]">AI Agents</button>
+            <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#53605C]">SI Agents</button>
             <button onClick={() => handleNavClick('audiences')} className="text-left py-1 text-[#53605C]">Use Cases</button>
             <button onClick={() => handleNavClick('pricing')} className="text-left py-1 text-[#53605C]">Pricing</button>
             <a 

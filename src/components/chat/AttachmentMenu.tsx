@@ -95,7 +95,7 @@ export const AttachmentMenu = ({
  },
  ...(onVisualAI ? [{
  icon: Sparkles,
- label: 'Visual AI',
+ label: 'Visual SI',
  description: 'Analyze image',
  onClick: onVisualAI,
  gradient: 'from-violet-500 to-fuchsia-500'

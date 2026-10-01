@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Apply AI effects to your video feed."
+        android:text="Apply SI effects to your video feed."
         android:textColor="@color/shield_text_secondary"
         android:textSize="14sp" />
 

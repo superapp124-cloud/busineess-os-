@@ -42,7 +42,7 @@ export const CandidateWorkspace: React.FC = () => {
  <div className="flex items-center justify-between mb-8">
  <div>
  <h1 className="text-page font-bold text-slate-800">My Application</h1>
- <p className="text-secondary text-slate-500 mt-1">Track your progress and communicate with the AI Recruiter.</p>
+ <p className="text-secondary text-slate-500 mt-1">Track your progress and communicate with the SI Recruiter.</p>
  </div>
  <div className="flex items-center gap-3">
  <Avatar>

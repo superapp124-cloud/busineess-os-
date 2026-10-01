@@ -1,5 +1,5 @@
 ﻿/**
- * CHATR AI Reconciliation Worker (Phase 4)
+ * CHATR SI Reconciliation Worker (Phase 4)
  * Operates strictly in PROPOSAL MODE:
  * Analyzes unmatched bank exceptions, identifies likely underlying invoices or processor fee deductions,
  * and proposes an accounting resolution for human sign-off before posting.

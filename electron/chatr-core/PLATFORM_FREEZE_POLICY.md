@@ -29,9 +29,9 @@ To give future contributors explicit guidance, every platform artifact is classi
 - Intelligence Contract Standard
 
 ### Evolvable (Ecosystem Scale)
-- Solution Packs (Industry, Enterprise, AI, Experience, Regional, etc.)
+- Solution Packs (Industry, Enterprise, SI, Experience, Regional, etc.)
 - Provider Adapters
-- AI Planners, Evaluators, and Reasoning Models
+- SI Planners, Evaluators, and Reasoning Models
 - Business Journeys & Templates
 - UI Dashboards and Command Palettes
 

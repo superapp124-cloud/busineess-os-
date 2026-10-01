@@ -9,12 +9,12 @@ The current `/desktop/studio` workflow engine is a visual and partially executab
 There are three creation paths in the codebase:
 
 1. Manual create through `useBusinessWorkflows.createWorkflow()` in `src/hooks/useBusinessWorkflows.ts:47`.
-2. AI generation through `WorkflowStudio.handleAIGenerate()` at `src/pages/desktop/WorkflowStudio.tsx:1015`.
+2. SI generation through `WorkflowStudio.handleAIGenerate()` at `src/pages/desktop/WorkflowStudio.tsx:1015`.
 3. Node addition inside Studio through `addNode()` at `src/pages/desktop/WorkflowStudio.tsx:1081`.
 
 `createWorkflow()` inserts a row into Supabase table `business_workflows` with `nodes: []`, `edges: []`, and `status: 'draft'`.
 
-`handleAIGenerate()` dispatches `GENERATE_WORKFLOW` to `CommandBus`. `CommandBus` calls the AI provider plan method and publishes `WORKFLOW_GENERATED`. Studio listens for this event and replaces local node state.
+`handleAIGenerate()` dispatches `GENERATE_WORKFLOW` to `CommandBus`. `CommandBus` calls the SI provider plan method and publishes `WORKFLOW_GENERATED`. Studio listens for this event and replaces local node state.
 
 ## How Workflows Load
 
@@ -160,7 +160,7 @@ Current validation layers:
 
 - `compileWorkflow()` validates only non-empty executable nodes.
 - `Compiler.ts` performs topological sorting and cycle detection.
-- AI-generated plans can be mapped into graph form.
+- SI-generated plans can be mapped into graph form.
 
 Missing validation:
 

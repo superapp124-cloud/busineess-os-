@@ -1,5 +1,5 @@
 /**
- * Agent Voice TTS - Text to Speech for AI Agents
+ * Agent Voice TTS - Text to Speech for SI Agents
  * Direct OpenAI TTS synthesis with browser fallback
  */
 

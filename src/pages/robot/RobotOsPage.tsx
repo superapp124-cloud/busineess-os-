@@ -1,5 +1,5 @@
 /**
- * CHATR RobotOS Master Cockpit (Meera AI Humanoid Platform)
+ * CHATR RobotOS Master Cockpit (Meera SI Humanoid Platform)
  * Unified High-Fidelity Robotics Interface matching the user design reference.
  * Integrated with MuJoCo 3.12.0 physics, Web Speech API Voice synthesis, and multi-modal perception.
  */
@@ -120,7 +120,7 @@ export const RobotOsPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="hidden xl:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-cyan-800/80 text-xs font-mono text-cyan-300">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="font-bold">In-House AI: chatr:meera-latest</span>
+            <span className="font-bold">In-House SI: chatr:meera-latest</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
@@ -213,7 +213,7 @@ export const RobotOsPage: React.FC = () => {
           </div>
           <span className="font-bold text-white">MEERA — CHATR-H170</span>
           <span className="hidden sm:inline text-slate-500 text-[11px]">
-            Autonomous Multilingual AI Humanoid Platform
+            Autonomous Multilingual SI Humanoid Platform
           </span>
         </div>
 

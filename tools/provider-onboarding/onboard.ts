@@ -26,9 +26,9 @@ export async function onboardProvider(providerName: string, portalUrl: string) {
   if (!profile) {
     console.log('No CHATR Company Profile found. Creating default...');
     profile = {
-      companyName: 'CHATR AI',
-      legalName: 'CHATR AI Inc.',
-      address: '123 AI Street, Silicon Valley, CA',
+      companyName: 'CHATR SI',
+      legalName: 'CHATR SI Inc.',
+      address: '123 SI Street, Silicon Valley, CA',
       supportEmail: 'support@chatr.ai',
       developerEmail: 'dev@chatr.ai',
       website: 'https://chatr.ai',

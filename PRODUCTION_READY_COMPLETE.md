@@ -102,7 +102,7 @@
 
 ### Phase 4: Full Native Integration (Week 2)
 1. Replace localStorage with Secure Storage everywhere
-2. Integrate Speech Recognition in AI Assistant
+2. Integrate Speech Recognition in SI Assistant
 3. Add File Opener to all document links
 4. Replace HTML5 video with Native Player
 5. Add Background Tasks to message sync

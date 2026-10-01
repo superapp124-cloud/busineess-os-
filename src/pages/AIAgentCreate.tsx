@@ -1,6 +1,6 @@
 /**
- * AI Agent Creation - Step by Step Wizard
- * Create AI Clone, Business Agent, or Custom Agent
+ * SI Agent Creation - Step by Step Wizard
+ * Create SI Clone, Business Agent, or Custom Agent
  */
 
 import React, { useState, useEffect } from 'react';
@@ -41,7 +41,7 @@ import { toast } from 'sonner';
 const AGENT_TYPES = [
  {
  id: 'clone',
- name: 'AI Clone',
+ name: 'SI Clone',
  description: 'Creates a digital twin that talks, thinks, and replies like you',
  icon: Users,
  color: 'from-cyan-500 to-blue-600',
@@ -58,7 +58,7 @@ const AGENT_TYPES = [
  {
  id: 'custom',
  name: 'Custom Agent',
- description: 'Build any AI personality or assistant from scratch',
+ description: 'Build any SI personality or assistant from scratch',
  icon: Sparkles,
  color: 'from-violet-500 to-fuchsia-600',
  features: ['Full control', 'Any personality', 'Custom knowledge'],
@@ -202,7 +202,7 @@ export default function AIAgentCreate() {
  <ArrowLeft className="h-5 w-5" />
  </Button>
  <div>
- <h1 className="text-section font-bold">Create AI Agent</h1>
+ <h1 className="text-section font-bold">Create SI Agent</h1>
  <p className="text-label text-muted-foreground">Step {step} of {totalSteps}</p>
  </div>
  </div>
@@ -225,7 +225,7 @@ export default function AIAgentCreate() {
  >
  <div className="text-center mb-6">
  <h2 className="text-page font-bold mb-2">What kind of agent?</h2>
- <p className="text-muted-foreground">Choose how your AI will work</p>
+ <p className="text-muted-foreground">Choose how your SI will work</p>
  </div>
 
  <div className="space-y-3">
@@ -298,7 +298,7 @@ export default function AIAgentCreate() {
  <div className="space-y-2">
  <Label className="font-semibold">Agent Name *</Label>
  <Input
- placeholder="e.g., AI Arshid, Dr. Assistant, Shop Helper"
+ placeholder="e.g., SI Arshid, Dr. Assistant, Shop Helper"
  value={name}
  onChange={(e) => setName(e.target.value)}
  className="h-12"
@@ -421,7 +421,7 @@ export default function AIAgentCreate() {
  </div>
  <div>
  <p className="font-semibold">Auto-Reply</p>
- <p className="text-label text-muted-foreground">AI replies automatically 24/7</p>
+ <p className="text-label text-muted-foreground">SI replies automatically 24/7</p>
  </div>
  </div>
  <Switch checked={autoReply} onCheckedChange={setAutoReply} />

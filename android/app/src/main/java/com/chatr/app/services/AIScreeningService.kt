@@ -33,7 +33,7 @@ import java.io.File
 import java.util.Locale
 
 /**
- * AIScreeningService -- Conversational Multi-Turn AI Call Screening Service.
+ * AIScreeningService -- Conversational Multi-Turn SI Call Screening Service.
  *
  * Implements Phase 1B two-way dialogue loop:
  *   1. Starts when incoming GSM call is intercepted and answered.
@@ -156,7 +156,7 @@ class AIScreeningService : Service() {
         val greeting = when (screeningMode) {
             "MODE_DELIVERY_GUIDE" -> "Hello bhaiya, Arshid sir busy hain. Aap main gate par aake security ko bata dijiye, flat number 402 hai."
             "MODE_AI_BOUNCER" -> "Namaskar. Arshid ji currently busy hain. Kya aap loan ya credit card ke silsile mein call kar rahe hain?"
-            else -> "Hi, I am Chatr AI screening this call for Arshid. Who is calling and what is the purpose of your call?"
+            else -> "Hi, I am Chatr SI screening this call for Arshid. Who is calling and what is the purpose of your call?"
         }
 
         speakUtterance(greeting)
@@ -363,7 +363,7 @@ class AIScreeningService : Service() {
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Chatr AI is actively screening this call"
+                description = "Chatr SI is actively screening this call"
                 setShowBadge(false)
             }
             getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
@@ -371,8 +371,8 @@ class AIScreeningService : Service() {
     }
 
     private fun buildNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle("Chatr AI Screening Call...")
-        .setContentText("Conversational AI receptionist active for $phoneNumber")
+        .setContentTitle("Chatr SI Screening Call...")
+        .setContentText("Conversational SI receptionist active for $phoneNumber")
         .setSmallIcon(android.R.drawable.ic_btn_speak_now)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setOngoing(true)
@@ -436,7 +436,7 @@ class AIScreeningService : Service() {
         const val RESULT_RECOGNITION_UNAVAILABLE = "__recognition_unavailable__"
 
         private const val CHANNEL_ID   = "ChatrAIScreening"
-        private const val CHANNEL_NAME = "Chatr AI Call Screening"
+        private const val CHANNEL_NAME = "Chatr SI Call Screening"
         private const val NOTIFICATION_ID = 7001
         private const val UTTERANCE_ID = "chatr_dialogue"
 

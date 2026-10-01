@@ -19,7 +19,7 @@ export default function ProUpgrade() {
 
   const features = [
     {
-      title: 'Proactive AI Agent',
+      title: 'Proactive SI Agent',
       description: 'Your autonomous assistant that reads PDFs, drafts proposals, and prepares email replies in the background.',
       icon: <BrainCircuit className="w-6 h-6 text-purple-500" />,
       color: isDark ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-100 border-purple-200'
@@ -31,7 +31,7 @@ export default function ProUpgrade() {
       color: isDark ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-100 border-blue-200'
     },
     {
-      title: 'AI Voice Cloning',
+      title: 'SI Voice Cloning',
       description: 'Train your custom Voice Clone. It answers declined calls, negotiates meetings, and texts you the summary.',
       icon: <PhoneForwarded className="w-6 h-6 text-emerald-500" />,
       color: isDark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-100 border-emerald-200'
@@ -118,7 +118,7 @@ export default function ProUpgrade() {
               </span>
             </h1>
             <p className={cn("text-section max-w-2xl mx-auto font-medium", isDark ? "text-slate-400" : "text-slate-600")}>
-              Your personal AI executive assistant that manages communications, screens candidates, speaks your languages, and auto-schedules your workflows.
+              Your personal SI executive assistant that manages communications, screens candidates, speaks your languages, and auto-schedules your workflows.
             </p>
           </motion.div>
 
@@ -206,7 +206,7 @@ export default function ProUpgrade() {
                 <div className="space-y-4 mb-8 flex-1">
                   {[
                     "Everything in Free / Starter",
-                    "Full ATS & Candidate AI Screening",
+                    "Full ATS & Candidate SI Screening",
                     "500 Outbound Telephony Minutes",
                     "Automated WhatsApp Interview Scheduling",
                     "Dedicated SLA & Pilot Support"

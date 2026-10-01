@@ -70,7 +70,7 @@ export const ExecutiveBoardManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Board Management AI',
+    assistantName: 'Board Management SI',
     skills: []
   },
   

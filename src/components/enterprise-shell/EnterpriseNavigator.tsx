@@ -46,7 +46,7 @@ export const EnterpriseNavigator: React.FC<Props> = ({
     {
       title: 'KNOWLEDGE',
       items: [
-        { id: 'canvas', label: 'AI Canvas', icon: Layout },
+        { id: 'canvas', label: 'SI Canvas', icon: Layout },
         { id: 'files', label: 'Files', icon: Folder },
       ]
     },
@@ -60,9 +60,9 @@ export const EnterpriseNavigator: React.FC<Props> = ({
       ]
     },
     {
-      title: 'AI',
+      title: 'SI',
       items: [
-        { id: 'agents', label: 'Your AI Team', icon: Bot },
+        { id: 'agents', label: 'Your SI Team', icon: Bot },
         { id: 'business_os', label: 'Business Dashboard', icon: BarChart2 },
         { id: 'governance', label: 'Security & Governance', icon: ShieldCheck },
       ]

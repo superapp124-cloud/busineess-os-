@@ -49,7 +49,7 @@ export default function ChatrPlusSearch() {
  enabled: searchQuery.length > 0
  });
 
- // AI-powered search
+ // SI-powered search
  const performAiSearch = async () => {
  if (!searchQuery.trim()) return;
 
@@ -63,11 +63,11 @@ export default function ChatrPlusSearch() {
  
  if (data?.suggestions) {
  setAiResults(data.suggestions);
- toast.success('AI found relevant services!');
+ toast.success('SI found relevant services!');
  }
  } catch (error) {
- console.error('AI search error:', error);
- toast.error('AI search unavailable, showing standard results');
+ console.error('SI search error:', error);
+ toast.error('SI search unavailable, showing standard results');
  } finally {
  setIsAiSearching(false);
  }
@@ -131,7 +131,7 @@ export default function ChatrPlusSearch() {
  {isAiSearching && (
  <div className="flex items-center gap-2 mt-3 text-secondary text-muted-foreground">
  <Loader2 className="w-4 h-4 animate-spin" />
- <span>AI is finding the best results for you...</span>
+ <span>SI is finding the best results for you...</span>
  </div>
  )}
  </div>

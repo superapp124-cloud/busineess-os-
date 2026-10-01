@@ -1,4 +1,4 @@
-# Phase 2A: Lovable AI Gateway Forensic Inventory
+# Phase 2A: Lovable SI Gateway Forensic Inventory
 
 ## 1. Executive Summary
 
@@ -22,10 +22,10 @@ Raw dataset: [`scratch/exact_recon.json`](file:///C:/Users/Arshid.Wani/.gemini/a
 Total unique functions across both repos:            149
 Functions present in local workspace:                137
 Functions present in lovable/main:                   120
-Total AI-related functions:                          64
-Total Non-AI functions:                              85
+Total SI-related functions:                          64
+Total Non-SI functions:                              85
 Functions with Confirmed Invocation Sites:           50
-AI functions with Confirmed Invocation Sites:        39
+SI functions with Confirmed Invocation Sites:        39
 
 === LOVABLE GATEWAY DEPENDENCY ===
 Functions in lovable/main calling ai.gateway.lovable.dev: 39
@@ -47,7 +47,7 @@ Category C — Requires Migration (Legacy Upstream Only):       5 functions
   * In lovable/main only (superseded locally): 5
   * Confirmed Invocation in Frontend: 0
 
-Category D — Non-AI / Unrelated (No migration needed):       85 functions
+Category D — Non-SI / Unrelated (No migration needed):       85 functions
 ```
 
 ---

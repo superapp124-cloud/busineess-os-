@@ -559,7 +559,7 @@ java -jar bundletool.jar install-apks --apks=chatr.apks
   • Share photos, videos, and files
 
   🏥 HEALTH HUB
-  • AI-powered health assistant
+  • SI-powered health assistant
   • Digital health passport with QR code
   • Store and manage lab reports
   • Medication reminders
@@ -617,7 +617,7 @@ java -jar bundletool.jar install-apks --apks=chatr.apks
    ✨ Features:
    • Real-time messaging
    • Voice & video calls
-   • Health Hub with AI assistant
+   • Health Hub with SI assistant
    • Communities & stories
    • Points & rewards
    • Mini Apps Store

@@ -20,7 +20,7 @@ export class PolicyViolationError extends Error {
 
 /**
  * Policy Engine
- * Enforces action policies and guarantees "AI recommends, humans approve" for risky tasks
+ * Enforces action policies and guarantees "SI recommends, humans approve" for risky tasks
  */
 export class PolicyEngine {
   

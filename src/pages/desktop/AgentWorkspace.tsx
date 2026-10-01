@@ -175,7 +175,7 @@ export const AgentWorkspace: React.FC = () => {
  // Build system prompt from agent config
  const systemPrompt = agent?.objective
  ? `You are ${agentName}. Your objective: ${agent.objective}. Answer concisely and helpfully.`
- : `You are ${agentName}, an AI agent in the CHATR Desktop OS. Help the user with their tasks.`;
+ : `You are ${agentName}, an SI agent in the CHATR Desktop OS. Help the user with their tasks.`;
 
  const response = await generate({
  prompt: query,
@@ -397,7 +397,7 @@ export const AgentWorkspace: React.FC = () => {
  </form>
  <div className="mt-2 text-center">
  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium flex items-center justify-center gap-1">
- <CheckCircle2 className="w-3 h-3" /> Powered by CHATR AI Execution Engine
+ <CheckCircle2 className="w-3 h-3" /> Powered by CHATR SI Execution Engine
  </span>
  </div>
  </div>

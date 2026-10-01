@@ -151,7 +151,7 @@ export const VoiceConversationConsole: React.FC<VoiceConversationConsoleProps> =
           </div>
 
           <div className="flex items-center gap-2">
-            {/* In-House AI Badge */}
+            {/* In-House SI Badge */}
             <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-cyan-950/80 border border-cyan-700/60 text-cyan-300">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
               <span>Ollama: {ollamaStatus.model}</span>

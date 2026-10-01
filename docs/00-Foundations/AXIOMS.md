@@ -1,7 +1,7 @@
 # 00-Foundations — Universal System Axioms (docs/00-Foundations/AXIOMS.md)
 
 > **Status**: Supreme Constitutional Invariants (Level A)  
-> **Axiomatic Rule**: **Constitutions do not freeze documents; constitutions freeze AXIOMS. Domain jargon (CRM, Recruitment, Sales, AI) is strictly excluded at Level A.**
+> **Axiomatic Rule**: **Constitutions do not freeze documents; constitutions freeze AXIOMS. Domain jargon (CRM, Recruitment, Sales, SI) is strictly excluded at Level A.**
 
 ---
 

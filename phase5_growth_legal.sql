@@ -63,7 +63,7 @@ CREATE TABLE growth_campaigns (
   status text NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Review', 'Approved', 'Active', 'Paused', 'Completed', 'Archived')),
   version integer NOT NULL DEFAULT 1,
   
-  -- AI & Governance
+  -- SI & Governance
   generated_by_ai boolean DEFAULT false,
   model text,
   prompt_version text,
@@ -104,7 +104,7 @@ CREATE TABLE growth_assets (
   status text NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Review', 'Approved', 'Published', 'Archived')),
   version integer NOT NULL DEFAULT 1,
 
-  -- AI & Governance
+  -- SI & Governance
   generated_by_ai boolean DEFAULT false,
   model text,
   approval_state text DEFAULT 'Pending' CHECK (approval_state IN ('Pending', 'Approved', 'Rejected', 'Auto-Approved')),
@@ -164,7 +164,7 @@ CREATE TABLE growth_memory (
   -- Lifecycle
   version integer NOT NULL DEFAULT 1,
 
-  -- AI & Governance
+  -- SI & Governance
   generated_by_ai boolean DEFAULT true,
   model text,
   
@@ -235,7 +235,7 @@ CREATE TABLE legal_contracts (
   review_status text DEFAULT 'Pending' CHECK (review_status IN ('Pending', 'In Progress', 'Completed')),
   version integer NOT NULL DEFAULT 1,
 
-  -- AI & Risk
+  -- SI & Risk
   risk_level text DEFAULT 'Medium' CHECK (risk_level IN ('Low', 'Medium', 'High', 'Critical')),
   risk_factors jsonb, -- Array of identified risks
   suggested_review_areas jsonb, -- Array of specific clauses requiring human review

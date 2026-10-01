@@ -63,7 +63,7 @@ sealed class TrustDecision {
 }
 
 /**
- * The TrustPermissionKernel — a hard security boundary between the AI model
+ * The TrustPermissionKernel — a hard security boundary between the SI model
  * and the Tool Engine.
  *
  * It evaluates a KernelIntent against: action destructiveness, entity familiarity,
@@ -87,7 +87,7 @@ interface TrustPermissionKernel {
     /**
      * Evaluates [intent] and returns the appropriate [TrustDecision].
      *
-     * @param intent             The KernelIntent proposed by the AI model.
+     * @param intent             The KernelIntent proposed by the SI model.
      * @param contextConfidence  0.0-1.0. How confident we are the user is
      *                           present and aware (1.0 = unlocked, in-hand;
      *                           0.2 = locked screen, background operation).

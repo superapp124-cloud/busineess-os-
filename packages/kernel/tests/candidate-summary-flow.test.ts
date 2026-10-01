@@ -8,7 +8,7 @@ import { DefaultSecretsServiceAdapter } from '../src/services/SecretsService';
 async function runCandidateSummaryFlowTest() {
   console.log('========================================================');
   console.log('   TEST: Candidate Summary End-to-End Pipeline         ');
-  console.log('   Goal: Intent -> Search -> OpenRouter AI -> Summary   ');
+  console.log('   Goal: Intent -> Search -> OpenRouter SI -> Summary   ');
   console.log('========================================================\n');
 
   // Register OS System Services
@@ -53,8 +53,8 @@ async function runCandidateSummaryFlowTest() {
   });
   console.log(`   - Search Status: ${searchResult.status}, Candidates Found: ${(searchResult.output as any)?.items?.length}`);
 
-  // 4. Step 2 DAG Node: Candidate Summary (OpenRouter AI Execution)
-  console.log('\n[Step 3] Executing Probabilistic CandidateSummaryCapability via OpenRouter AI...');
+  // 4. Step 2 DAG Node: Candidate Summary (OpenRouter SI Execution)
+  console.log('\n[Step 3] Executing Probabilistic CandidateSummaryCapability via OpenRouter SI...');
   const summaryCapability = new CandidateSummaryCapability();
   const summaryResult = await summaryCapability.execute(mockContext, {
     candidateId: 'cand_101',

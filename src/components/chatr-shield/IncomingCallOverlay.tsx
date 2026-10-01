@@ -26,7 +26,7 @@ const IncomingCallOverlay: React.FC<IncomingCallOverlayProps> = ({
  const [scanPhase, setScanPhase] = useState(0);
 
  const SCAN_PHASES = [
- "Chatr AI scanning caller ID, spam reports, and local history...",
+ "Chatr SI scanning caller ID, spam reports, and local history...",
  "Cross-checking global community database...",
  "Analyzing carrier metadata and registration signals...",
  "Finalizing trust score...",
@@ -165,7 +165,7 @@ const IncomingCallOverlay: React.FC<IncomingCallOverlayProps> = ({
  )}
  </div>
 
- {/* AI Result Card - High Fidelity */}
+ {/* SI Result Card - High Fidelity */}
  <div className={cn(
  "rounded-2xl p-4 mb-6 border transition-all duration-500",
  scanning ? "bg-white/5 border-white/5 animate-pulse" :

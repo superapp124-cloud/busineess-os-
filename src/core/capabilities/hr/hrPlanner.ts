@@ -13,7 +13,7 @@ const leaveIntakeStage = WorkflowSDK.createStage(
       throw new Error("PAUSED_FOR_INPUT");
     }
 
-    // In a real implementation, we route through AI Runtime to extract dates
+    // In a real implementation, we route through SI Runtime to extract dates
     // For now, we mock the extraction
     const artifactId = crypto.randomUUID();
     ctx.artifacts.leaveRequest = WorkflowSDK.createArtifact<LeaveRequestArtifact>('LeaveRequestArtifact', {

@@ -60,7 +60,7 @@ const TEMPLATES: Template[] = [
  rationale: 'Hourly bucket prevents repeat pings for the same thread.',
  },
 
- // Lifestyle / AI nudges
+ // Lifestyle / SI nudges
  {
  id: 'wellness-morning',
  category: 'lifestyle',
@@ -69,7 +69,7 @@ const TEMPLATES: Template[] = [
  body: 'Start with a glass of water — your brain wakes up faster.',
  metadata: { slot: 'morning' },
  when: '10:00 AM IST',
- rationale: 'AI-crafted morning nudge (CHATR AI · gemini-2.5-flash-lite).',
+ rationale: 'SI-crafted morning nudge (CHATR SI · gemini-2.5-flash-lite).',
  },
  {
  id: 'wellness-afternoon',
@@ -79,7 +79,7 @@ const TEMPLATES: Template[] = [
  body: "You haven't walked in a while. A 3-min walk resets focus.",
  metadata: { slot: 'afternoon' },
  when: '3:00 PM IST',
- rationale: 'Movement nudge — AI varies wording each day.',
+ rationale: 'Movement nudge — SI varies wording each day.',
  },
  {
  id: 'wellness-night',
@@ -133,7 +133,7 @@ const CAT_META: Record<
  { label: string; icon: React.ReactNode; color: string }
 > = {
  missed: { label: 'Missed', icon: <Phone className="w-4 h-4" />, color: 'text-emerald-500' },
- lifestyle: { label: 'AI nudges', icon: <Sparkles className="w-4 h-4" />, color: 'text-primary' },
+ lifestyle: { label: 'SI nudges', icon: <Sparkles className="w-4 h-4" />, color: 'text-primary' },
  earning: { label: 'Earning', icon: <Coins className="w-4 h-4" />, color: 'text-amber-500' },
  calendar: { label: 'Calendar', icon: <CalendarIcon className="w-4 h-4" />, color: 'text-blue-500' },
 };
@@ -174,7 +174,7 @@ export default function NotificationTemplates() {
  <TabsList className="grid w-full grid-cols-5">
  <TabsTrigger value="all">All</TabsTrigger>
  <TabsTrigger value="missed">Missed</TabsTrigger>
- <TabsTrigger value="lifestyle">AI</TabsTrigger>
+ <TabsTrigger value="lifestyle">SI</TabsTrigger>
  <TabsTrigger value="earning">Earn</TabsTrigger>
  <TabsTrigger value="calendar">Cal</TabsTrigger>
  </TabsList>

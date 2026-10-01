@@ -142,7 +142,7 @@ const DomainSuperintendentView = ({ template }: { template: OSTemplate }) => {
             </div>
           </div>
           <button className="px-5 py-2.5 bg-white text-black font-bold rounded-xl hover:bg-zinc-200 transition-colors flex items-center gap-2">
-            <Settings size={16} /> Configure AI
+            <Settings size={16} /> Configure SI
           </button>
         </div>
 

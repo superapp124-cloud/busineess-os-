@@ -1,7 +1,7 @@
 /**
- * CHATR Business OS — Outcome Learning Engine & AI Engineering Metrics
+ * CHATR Business OS — Outcome Learning Engine & SI Engineering Metrics
  *
- * Tracks user interactions with AI recommendations:
+ * Tracks user interactions with SI recommendations:
  *   Recommendation ➔ User Action (Accepted / Modified / Rejected) ➔ Memory Store ➔ Future Weighting
  *
  * Tracks engineering KPIs:
@@ -50,7 +50,7 @@ class OutcomeLearningEngine {
   }
 
   /**
-   * Log user decision on an AI recommendation
+   * Log user decision on an SI recommendation
    */
   public async recordOutcome(recommendationId: string, action: 'ACCEPTED' | 'MODIFIED' | 'REJECTED', feedback?: string) {
     const outcome: RecommendationOutcome = {
@@ -71,7 +71,7 @@ class OutcomeLearningEngine {
   }
 
   /**
-   * Calculate current AI Engineering KPIs
+   * Calculate current SI Engineering KPIs
    */
   public getMetrics(): AIMetrics {
     const total = this.outcomes.length || 15;

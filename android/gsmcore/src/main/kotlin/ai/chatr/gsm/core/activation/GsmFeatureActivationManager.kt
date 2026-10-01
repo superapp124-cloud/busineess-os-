@@ -184,7 +184,7 @@ class GsmFeatureActivationManager(
             return deny(feature, stage, GsmActivationDecisionReason.USER_NOT_OPTED_IN)
         }
 
-        if (feature == GsmFeature.AI ||
+        if (feature == GsmFeature.SI ||
             feature == GsmFeature.TRANSCRIPTION ||
             feature == GsmFeature.RECORDING
         ) {
@@ -261,7 +261,7 @@ class GsmFeatureActivationManager(
             GsmFeature.OVERLAY -> GsmActivationStage.PASSIVE_OVERLAY
             GsmFeature.GSM_INTELLIGENCE -> GsmActivationStage.CHATR_PEER_ENRICHMENT
             GsmFeature.SMART_DIALER,
-            GsmFeature.AI,
+            GsmFeature.SI,
             GsmFeature.TRANSCRIPTION,
             GsmFeature.RECORDING -> GsmActivationStage.OFF
         }
@@ -293,7 +293,7 @@ class GsmFeatureActivationManager(
                 android.Manifest.permission.READ_PHONE_STATE,
                 android.Manifest.permission.READ_CONTACTS,
             )
-            GsmFeature.AI,
+            GsmFeature.SI,
             GsmFeature.TRANSCRIPTION -> setOf(
                 android.Manifest.permission.READ_PHONE_STATE,
                 android.Manifest.permission.RECORD_AUDIO,

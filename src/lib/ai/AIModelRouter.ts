@@ -41,12 +41,12 @@ export class AIModelRouter {
   }
 
   private static async executeLocalModel(prompt: string, taskType: string): Promise<string> {
-    console.log(`[AI Router] Executing LOCAL model for task: ${taskType}`);
+    console.log(`[SI Router] Executing LOCAL model for task: ${taskType}`);
     return generate({ prompt, preferLocal: true });
   }
 
   private static async executeEnterpriseModel(prompt: string): Promise<string> {
-    console.log(`[AI Router] Executing ENTERPRISE model`);
+    console.log(`[SI Router] Executing ENTERPRISE model`);
     // Connects to a user-defined local inference server (e.g., vLLM or Ollama endpoint)
     return "Simulated enterprise response.";
   }

@@ -2,7 +2,7 @@ export type KnowledgeType =
   | 'fact'         // Absolute truth, immutably verified
   | 'experience'   // Historical record of a goal's success/failure
   | 'heuristic'    // Learned rule of thumb (e.g., "Email node usually fails on weekends")
-  | 'prediction'   // AI-generated forecast
+  | 'prediction'   // SI-generated forecast
   | 'explanation'  // Why a decision was made
   | 'policy';      // Immutable organizational governance rule
 

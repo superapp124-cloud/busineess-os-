@@ -8,7 +8,7 @@ export const WorkspaceSettings: React.FC = () => {
  const MENU_SECTIONS = [
  { label: 'Platform', items: ['General', 'Organization', 'Branding'] },
  { label: 'Access', items: ['Users', 'Security', 'Policies'] },
- { label: 'System', items: ['AI', 'Notifications', 'Marketplace', 'Capability Runtime', 'Sync'] },
+ { label: 'System', items: ['SI', 'Notifications', 'Marketplace', 'Capability Runtime', 'Sync'] },
  { label: 'Advanced', items: ['Developer', 'About'] }
  ];
 
@@ -17,7 +17,7 @@ export const WorkspaceSettings: React.FC = () => {
  case 'General': return <SettingsIcon size={16} />;
  case 'Organization': return <Shield size={16} />;
  case 'Security': return <Lock size={16} />;
- case 'AI': return <Cpu size={16} />;
+ case 'SI': return <Cpu size={16} />;
  case 'Sync': return <Cloud size={16} />;
  case 'Developer': return <Hexagon size={16} />;
  case 'Marketplace': return <Store size={16} />;

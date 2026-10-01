@@ -2,7 +2,7 @@
 // WorkspaceRegistry — CHATR Intelligence Platform v1.1
 //
 // The registry no longer uses static extension/keyword matching.
-// It reads the AI ClassificationResult stamped onto each WorkspaceItem
+// It reads the SI ClassificationResult stamped onto each WorkspaceItem
 // (__classification__) and routes to the correct Domain Intelligence plugin
 // based on domainIntelligence + confidence score.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,10 +33,10 @@ export class WorkspaceRegistry {
       return { workspace, confidence: match.confidence };
     });
 
-    // Sort by highest confidence — AI-classified domains float to top
+    // Sort by highest confidence — SI-classified domains float to top
     candidates.sort((a, b) => b.confidence - a.confidence);
 
-    // The winner is whichever Domain Intelligence the AI says is most relevant
+    // The winner is whichever Domain Intelligence the SI says is most relevant
     const winner = candidates[0];
 
     // Minimum confidence bar: if nothing scored above 0.1, fall back to generic

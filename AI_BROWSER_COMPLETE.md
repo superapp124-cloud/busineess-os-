@@ -1,7 +1,7 @@
-# AI Browser - Full Production Implementation ✅
+# SI Browser - Full Production Implementation ✅
 
 ## Overview
-A comprehensive, production-ready AI-powered browser integrated into Chatr.chat with multi-source search, AI chat assistance, and intelligent categorization.
+A comprehensive, production-ready SI-powered browser integrated into Chatr.chat with multi-source search, SI chat assistance, and intelligent categorization.
 
 ## 🎯 Features Implemented
 
@@ -13,16 +13,16 @@ A comprehensive, production-ready AI-powered browser integrated into Chatr.chat 
 - **Social**: Reddit posts with thumbnails
 - **Research**: arXiv academic papers
 
-### 2. **AI Chat Mode**
+### 2. **SI Chat Mode**
 - Toggle between Search and Chat modes
-- Conversational AI assistant powered by Lovable AI (Gemini)
+- Conversational SI assistant powered by Lovable SI (Gemini)
 - Context-aware responses
 - Quick action prompts
 - Real-time streaming messages
 - WhatsApp-style chat bubbles
 
 ### 3. **Smart Search Intelligence**
-- **AI-Generated Summaries**: Each search includes an AI-powered summary synthesizing results
+- **SI-Generated Summaries**: Each search includes an SI-powered summary synthesizing results
 - **Multi-Source Aggregation**: Parallel searches across 9+ data sources
 - **Category-Specific Results**: Tailored presentation for images, videos, tech content
 - **Performance Metrics**: Search time and result count displayed
@@ -42,7 +42,7 @@ A comprehensive, production-ready AI-powered browser integrated into Chatr.chat 
 - **Location**: `supabase/functions/ai-browser-search/index.ts`
 - **Capabilities**:
   - Parallel API calls to multiple search providers
-  - AI summary generation using Lovable AI Gateway
+  - SI summary generation using Lovable SI Gateway
   - Error handling and rate limit management
   - CORS-enabled for web access
 
@@ -53,10 +53,10 @@ A comprehensive, production-ready AI-powered browser integrated into Chatr.chat 
 - Responsive layouts for different content types
 - Integration with Supabase functions
 
-### AI Integration
+### SI Integration
 - **Chat Assistant**: Uses `ai-smart-reply` edge function
 - **Search Summaries**: Uses `ai-browser-search` with Gemini 2.5 Flash
-- **No API Keys Required**: All AI powered by Lovable AI Gateway
+- **No API Keys Required**: All SI powered by Lovable SI Gateway
 
 ## 📊 Search Sources
 
@@ -74,7 +74,7 @@ A comprehensive, production-ready AI-powered browser integrated into Chatr.chat 
 ### Search Mode
 1. **Search Bar**: With voice search button (placeholder)
 2. **Tab Navigation**: 6 category tabs with icons
-3. **AI Summary Card**: Contextual summary with "Ask AI" button
+3. **SI Summary Card**: Contextual summary with "Ask SI" button
 4. **Results Grid**: Category-specific layouts
 5. **Live Actions**: Quick action buttons
 
@@ -82,7 +82,7 @@ A comprehensive, production-ready AI-powered browser integrated into Chatr.chat 
 1. **Message Thread**: Scrollable chat history
 2. **Input Area**: Multi-line textarea with send button
 3. **Quick Prompts**: Pre-defined conversation starters
-4. **Typing Indicators**: Visual feedback during AI response
+4. **Typing Indicators**: Visual feedback during SI response
 
 ## 🚀 Usage
 
@@ -92,13 +92,13 @@ Navigate to `/home` or click the Search icon in bottom navigation.
 ### Search Workflow
 1. Enter query in search bar
 2. Select category tab (Web/Images/Videos/Tech/Social/Research)
-3. View AI summary and categorized results
-4. Click "Ask AI" or toggle to Chat mode for follow-up questions
+3. View SI summary and categorized results
+4. Click "Ask SI" or toggle to Chat mode for follow-up questions
 
 ### Chat Workflow
 1. Click "Chat" button in header
 2. Type message or select quick prompt
-3. AI responds with context-aware answers
+3. SI responds with context-aware answers
 4. Toggle back to Search mode anytime
 
 ## 🔐 Security & Performance
@@ -128,7 +128,7 @@ Navigate to `/home` or click the Search icon in bottom navigation.
 
 ✅ **Fully Functional**
 - All 6 search categories working
-- AI chat integration complete
+- SI chat integration complete
 - Error handling implemented
 - Loading states polished
 
@@ -157,8 +157,8 @@ Navigate to `/home` or click the Search icon in bottom navigation.
 ## 📍 Routes
 
 - **Main Browser**: `/home`
-- **AI Chat**: Toggle within browser
-- **Related**: `/chat-ai` (separate AI chat page)
+- **SI Chat**: Toggle within browser
+- **Related**: `/chat-ai` (separate SI chat page)
 
 ## 🎨 Design System
 
@@ -173,7 +173,7 @@ Navigate to `/home` or click the Search icon in bottom navigation.
 
 - All existing Chatr.chat functionality preserved
 - WhatsApp-style design language maintained
-- Lovable AI powers all intelligence features
+- Lovable SI powers all intelligence features
 - Zero external API keys required from users
 - Production-ready and fully tested
 

@@ -84,7 +84,7 @@ export interface ItineraryArtifact extends BaseArtifact {
   hotelId: string;
   taxiId?: string;
   totalCost: MonetaryValue;
-  summary: string;             // AI-generated travel briefing
+  summary: string;             // SI-generated travel briefing
   policyCompliant: boolean;
   checkpoints: WorkflowCheckpoint[];
   status: 'DRAFT' | 'APPROVED' | 'ACTIVE' | 'COMPLETED' | 'COMPENSATED';

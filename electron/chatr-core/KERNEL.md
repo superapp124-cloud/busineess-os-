@@ -61,7 +61,7 @@ No constraint may be invented to keep a workflow moving.
 
 ## 1. What the Kernel Is
 
-The CHATR Kernel is the runtime that sits between all user-facing interfaces and all intelligence providers. It is not a chat API. It is not an AI wrapper. It is the foundational operating layer of CHATR — equivalent in purpose to what the Linux Kernel is to processes.
+The CHATR Kernel is the runtime that sits between all user-facing interfaces and all intelligence providers. It is not a chat API. It is not an SI wrapper. It is the foundational operating layer of CHATR — equivalent in purpose to what the Linux Kernel is to processes.
 
 The Kernel's sole responsibility is to:
 - Boot and register modules

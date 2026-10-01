@@ -47,7 +47,7 @@ export class AITaskEngine {
     const aiProviders = providerRegistry.getProvidersByType('ai') as IAIProvider[];
     
     if (aiProviders.length === 0) {
-      console.warn('[AITaskEngine] No AI providers registered. Executing task directly.');
+      console.warn('[AITaskEngine] No SI providers registered. Executing task directly.');
       return task.execute(input, contextSources);
     }
 

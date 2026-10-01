@@ -13,11 +13,11 @@ describe('Phase D: Node Platform', () => {
   it('D-02: NodeRegistry dynamically lists manifests for the Studio palette', () => {
     const registry = new BrowserNodeRegistry();
     const manifests = registry.manifests();
-    expect(manifests.length).toBeGreaterThanOrEqual(3); // Trigger, AI, Condition
+    expect(manifests.length).toBeGreaterThanOrEqual(3); // Trigger, SI, Condition
     
     const aiManifest = manifests.find(m => m.type === 'core.ai_agent');
     expect(aiManifest).toBeDefined();
-    expect(aiManifest?.label).toBe('AI Agent');
+    expect(aiManifest?.label).toBe('SI Agent');
     expect(aiManifest?.category).toBe('ai');
   });
 
@@ -32,7 +32,7 @@ describe('Phase D: Node Platform', () => {
     expect(provider.id).toBe('local-ai'); // Fallback configured in our stub
 
     const result = await provider.execute({ prompt: 'Hello World' });
-    expect(result.data).toContain('Mock AI Provider');
+    expect(result.data).toContain('Mock SI Provider');
   });
 
   it('D-04: AIAgentNode executes via the capability rather than hardcoded logic', async () => {
@@ -52,7 +52,7 @@ describe('Phase D: Node Platform', () => {
   });
 
   it('D-06: Nodes validate configuration prior to execution', () => {
-    // AI Agent missing 'prompt' should fail
+    // SI Agent missing 'prompt' should fail
     const result = AIAgentNode.validate({});
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBe(1);

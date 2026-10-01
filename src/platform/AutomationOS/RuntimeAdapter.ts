@@ -14,7 +14,7 @@ const executors: Record<string, (data: Record<string, any>) => Promise<Record<st
       const response = await generate({ prompt });
       return { response, model: 'local', success: true };
     } catch (err: any) {
-      throw new Error(`AI Agent failed: ${err.message}`);
+      throw new Error(`SI Agent failed: ${err.message}`);
     }
   },
   'core.email': async (data) => {

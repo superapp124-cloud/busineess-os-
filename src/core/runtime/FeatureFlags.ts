@@ -24,8 +24,8 @@ const FLAG_DEFS: FeatureFlagDef[] = [
   },
   {
     id: 'ai_timeline',
-    name: 'AI Timeline',
-    description: 'AI-predicted future events and commitments',
+    name: 'SI Timeline',
+    description: 'SI-predicted future events and commitments',
     defaultEnabled: true,
   },
   {
@@ -37,13 +37,13 @@ const FLAG_DEFS: FeatureFlagDef[] = [
   {
     id: 'workspace_os',
     name: 'Workspace OS',
-    description: 'Template-based workspace with AI builder',
+    description: 'Template-based workspace with SI builder',
     defaultEnabled: true,
   },
   {
     id: 'voice_copilot',
     name: 'Voice Copilot',
-    description: 'Voice-activated AI assistant',
+    description: 'Voice-activated SI assistant',
     defaultEnabled: false,
   },
   {
@@ -85,8 +85,8 @@ const FLAG_DEFS: FeatureFlagDef[] = [
     runtimeModes: ['developer'],
   },
   {
-    id: 'ai_agent_runtime',
-    name: 'AI Agent Runtime',
+    id: 'si_agent_runtime',
+    name: 'SI Agent Runtime',
     description: 'Multi-agent planner/executor pipeline',
     defaultEnabled: false,
     runtimeModes: ['developer', 'enterprise'],

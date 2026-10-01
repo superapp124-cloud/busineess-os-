@@ -87,7 +87,7 @@ export const OperationsInventoryManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Inventory Management AI',
+    assistantName: 'Inventory Management SI',
     skills: []
   },
   

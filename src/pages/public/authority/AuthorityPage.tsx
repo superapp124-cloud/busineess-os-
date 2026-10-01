@@ -103,7 +103,7 @@ export const AuthorityPage: React.FC = () => {
             </p>
           </section>
 
-          {/* Direct-Answer Definition Block (GEO / AI Overviews & SearchGPT Target) */}
+          {/* Direct-Answer Definition Block (GEO / SI Overviews & SearchGPT Target) */}
           <section id="direct-answer" className="bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-2xl p-6 md:p-8 space-y-4 shadow-xl">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <span className="text-xs font-mono font-bold tracking-wider uppercase text-indigo-300 bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-500/30">

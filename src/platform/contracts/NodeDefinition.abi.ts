@@ -122,7 +122,7 @@ export interface NodeResult {
   /** Optional: the capability and provider that handled this execution */
   capabilityId?: string;
   providerUsed?: string;
-  /** Optional: AI-specific fields */
+  /** Optional: SI-specific fields */
   tokensUsed?: number;
   costUsd?: number;
 }

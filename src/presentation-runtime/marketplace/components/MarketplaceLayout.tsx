@@ -83,7 +83,7 @@ export const MarketplaceLayout: React.FC = () => {
  to="/enterprise/executive" 
  className={`${styles.navItem} ${location.pathname.startsWith('/enterprise/executive') ? styles.active : ''}`}
  >
- <BrainCircuit /> Executive AI
+ <BrainCircuit /> Executive SI
  </Link>
  </nav>
  </div>

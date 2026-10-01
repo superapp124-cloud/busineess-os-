@@ -20,7 +20,7 @@ CREATE POLICY "Users can manage their desktop sessions"
     FOR ALL
     USING (auth.uid() = user_id);
 
--- Phase 5: AI Learning & Personalization Engine (Telemetry Store)
+-- Phase 5: SI Learning & Personalization Engine (Telemetry Store)
 CREATE TABLE IF NOT EXISTS public.ai_user_telemetry (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,

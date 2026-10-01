@@ -40,7 +40,7 @@ const OrganizationView = ({ template }: { template: OSTemplate }) => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-10">
           <h1 className="text-display font-extrabold text-white tracking-tight">Organization Structure</h1>
-          <p className="text-secondary text-zinc-400 mt-2">Manage your departments, packages, and AI agents mapped across the {template.name} semantic object.</p>
+          <p className="text-secondary text-zinc-400 mt-2">Manage your departments, packages, and SI agents mapped across the {template.name} semantic object.</p>
         </div>
 
         {loading ? (

@@ -45,7 +45,7 @@ export default function ChatrPlusSubscribe() {
  },
  {
  icon: Sparkles,
- title: 'AI Assistant 24/7',
+ title: 'SI Assistant 24/7',
  description: 'Smart recommendations & support'
  },
  {
@@ -178,7 +178,7 @@ export default function ChatrPlusSubscribe() {
  <div className="space-y-3">
  {[
  'Unlimited service bookings across all categories',
- 'AI-powered service recommendations',
+ 'SI-powered service recommendations',
  '24/7 priority customer support',
  'Instant chat & call with sellers',
  'Cashback on every booking',

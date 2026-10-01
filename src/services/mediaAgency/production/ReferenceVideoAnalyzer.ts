@@ -136,9 +136,9 @@ export class ReferenceVideoAnalyzer {
         notes: 'Pivoted completely away from corporate B2B SaaS topics.'
       },
       {
-        name: 'AI-Artifact Absence Score',
+        name: 'SI-Artifact Absence Score',
         category: 'ENGAGEMENT',
-        referenceTarget: 'Zero corporate AI clichés ("In today\'s evolving world...")',
+        referenceTarget: 'Zero corporate SI clichés ("In today\'s evolving world...")',
         generatedMetric: 'Human writing audit: 0 clichés found, 96/100 conversational score',
         score: 98,
         passed: true,

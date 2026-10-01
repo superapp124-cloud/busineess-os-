@@ -99,14 +99,14 @@ class RobotCommandEngineImpl {
       this.stepTimer = null;
     }
 
-    // 1. Try In-House Trained Ollama AI (chatr:meera-latest)
+    // 1. Try In-House Trained Ollama SI (chatr:meera-latest)
     try {
       const aiPlan = await MeeraOllamaService.planAndRespond(rawCommand, lang);
       if (aiPlan && aiPlan.action) {
         return this._executeAiPlan(rawCommand, aiPlan, lang);
       }
     } catch (e) {
-      console.warn('[RobotCommandEngine] Ollama AI plan bypassed, using fast rule engine:', e);
+      console.warn('[RobotCommandEngine] Ollama SI plan bypassed, using fast rule engine:', e);
     }
 
     // 2. High-Speed Rule-Based Fallback Engine
@@ -464,7 +464,7 @@ class RobotCommandEngineImpl {
     return this.activeTask;
   }
 
-  // ── Recipe: In-House Ollama AI Plan Dispatch
+  // ── Recipe: In-House Ollama SI Plan Dispatch
   private async _executeAiPlan(rawCommand: string, plan: MeeraPlanResult, lang: string): Promise<ActiveTaskState> {
     const steps: TaskStep[] = plan.steps.map((s, idx) => ({
       num: s.num || idx + 1,

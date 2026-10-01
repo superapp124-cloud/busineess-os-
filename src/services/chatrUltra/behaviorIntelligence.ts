@@ -24,7 +24,7 @@ export interface UserBehaviorProfile {
 
 /**
  * Behavior Intelligence Service
- * Analyzes on-device behavior to improve AI responses
+ * Analyzes on-device behavior to improve SI responses
  */
 class BehaviorIntelligenceService {
   private behaviorProfile: UserBehaviorProfile | null = null;
@@ -186,7 +186,7 @@ class BehaviorIntelligenceService {
   }
 
   /**
-   * Personalize AI prompt based on behavior
+   * Personalize SI prompt based on behavior
    */
   personalizePrompt(basePrompt: string, module: string): string {
     if (!this.isEnabled()) return basePrompt;

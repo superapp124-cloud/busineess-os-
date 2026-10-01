@@ -1,4 +1,4 @@
-// Universal AI search intent detection using CHATR AI Router
+// Universal SI search intent detection using CHATR SI Router
 import { completeChat } from "../_core/aiProvider.ts";
 import { PlatformError } from "../_core/errors.ts";
 
@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are an AI search assistant for Chatr.chat - a universal search platform.
+            content: `You are an SI search assistant for Chatr.chat - a universal search platform.
 Analyze the user's search query and extract:
 1. Intent: What is the user looking for?
 2. Category: Main category
@@ -57,7 +57,7 @@ Respond in JSON format:
       const cleaned = aiMessage.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       parsedIntent = JSON.parse(cleaned);
     } catch (aiErr) {
-      console.warn('AI search intent parsing fallback:', aiErr);
+      console.warn('SI search intent parsing fallback:', aiErr);
       parsedIntent = {
         intent: 'general search',
         category: 'general',
@@ -73,7 +73,7 @@ Respond in JSON format:
     );
 
   } catch (error) {
-    console.error('Universal AI Search error:', error);
+    console.error('Universal SI Search error:', error);
     const status = error instanceof PlatformError ? error.status : 500;
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),

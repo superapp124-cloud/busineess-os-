@@ -1,6 +1,6 @@
 /**
  * Voice Conversation Component
- * Real-time voice chat with AI agents using Web Speech API + CHATR AI TTS
+ * Real-time voice chat with SI agents using Web Speech API + CHATR SI TTS
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -107,7 +107,7 @@ export function VoiceConversation({
  conversationHistory.current.push({ role: 'user', content: text });
 
  try {
- // Get AI response
+ // Get SI response
  const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
  body: {
  agentId,
@@ -129,7 +129,7 @@ export function VoiceConversation({
  }
 
  } catch (error) {
- console.error('AI response error:', error);
+ console.error('SI response error:', error);
  toast.error('Failed to get response');
  } finally {
  setIsProcessing(false);
@@ -145,7 +145,7 @@ export function VoiceConversation({
  setIsSpeaking(true);
  
  try {
- // Use CHATR AI TTS
+ // Use CHATR SI TTS
  const response = await fetch(
  `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agent-voice-tts`,
  {

@@ -141,7 +141,7 @@ export const CallScreeningOverlay: React.FC<CallScreeningOverlayProps> = ({
  <div className="flex items-center justify-between px-4 py-3 border-b">
  <div className="flex items-center gap-2">
  <Shield className="h-5 w-5 text-primary" />
- <span className="text-secondary font-semibold">AI Call Screening</span>
+ <span className="text-secondary font-semibold">SI Call Screening</span>
  </div>
  <Button variant="ghost" size="icon" onClick={onDismiss}>
  <X className="h-4 w-4" />
@@ -238,7 +238,7 @@ export const CallScreeningOverlay: React.FC<CallScreeningOverlayProps> = ({
  {/* Confidence */}
  {screening.confidence !== undefined && screening.confidence > 0 && (
  <p className="text-[10px] text-muted-foreground text-right">
- AI Confidence: {Math.round(screening.confidence * 100)}%
+ SI Confidence: {Math.round(screening.confidence * 100)}%
  </p>
  )}
  </CardContent>

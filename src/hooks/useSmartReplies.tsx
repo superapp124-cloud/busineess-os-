@@ -126,7 +126,7 @@ export const useSmartReplies = () => {
  // Fallback to pattern-based
  return getPatternReplies(message);
  } catch (error) {
- console.error('AI smart replies error:', error);
+ console.error('SI smart replies error:', error);
  return getPatternReplies(message);
  } finally {
  setIsLoading(false);

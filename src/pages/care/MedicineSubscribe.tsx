@@ -328,7 +328,7 @@ const MedicineSubscribe = () => {
  </div>
  </div>
 
- {/* AI Scan CTA */}
+ {/* SI Scan CTA */}
  <motion.div
  initial={{ opacity: 0, y: 20 }}
  animate={{ opacity: 1, y: 0 }}
@@ -353,7 +353,7 @@ const MedicineSubscribe = () => {
  <Sparkles className="h-6 w-6 text-white" />
  </motion.div>
  <div>
- <h3 className="font-bold text-white">AI Prescription Scanner</h3>
+ <h3 className="font-bold text-white">SI Prescription Scanner</h3>
  <p className="text-secondary text-white/80">Auto-detect medicines instantly</p>
  </div>
  </div>

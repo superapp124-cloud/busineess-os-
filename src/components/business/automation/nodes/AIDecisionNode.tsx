@@ -12,7 +12,7 @@ export default function AIDecisionNode({ data, selected }: NodeProps) {
  <BrainCircuit className="w-4 h-4" />
  </div>
  <div>
- <div className="text-label font-semibold uppercase tracking-wider text-purple-500">AI Decision</div>
+ <div className="text-label font-semibold uppercase tracking-wider text-purple-500">SI Decision</div>
  <div className="text-secondary font-medium text-gray-900 dark:text-white mt-0.5">{data.label as string}</div>
  </div>
  </div>
@@ -24,7 +24,7 @@ export default function AIDecisionNode({ data, selected }: NodeProps) {
  )}
  </div>
  
- {/* AI Decision can have dynamic outputs, but we'll provide standard ones for now */}
+ {/* SI Decision can have dynamic outputs, but we'll provide standard ones for now */}
  <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-purple-500 border-2 border-white dark:border-[#1A1F2E]" />
  </div>
  );

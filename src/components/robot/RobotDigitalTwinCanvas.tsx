@@ -402,7 +402,7 @@ export const RobotDigitalTwinCanvas: React.FC<RobotDigitalTwinCanvasProps> = ({
                 CHATR-H170 · 1.75m
               </span>
             </div>
-            <div className="text-[10px] text-slate-400">Autonomous Multilingual AI Humanoid Platform</div>
+            <div className="text-[10px] text-slate-400">Autonomous Multilingual SI Humanoid Platform</div>
           </div>
         </div>
 

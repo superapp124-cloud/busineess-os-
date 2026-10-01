@@ -34,7 +34,7 @@ const inviteSchema = z.object({
 
 ---
 
-#### 2. **AI Chat Assistant - Input Validation** ✅
+#### 2. **SI Chat Assistant - Input Validation** ✅
 **File**: `supabase/functions/ai-chat-assistant/index.ts`
 
 **Changes**:
@@ -45,7 +45,7 @@ const inviteSchema = z.object({
 
 ---
 
-#### 3. **AI Health Assistant - Input Validation** ✅
+#### 3. **SI Health Assistant - Input Validation** ✅
 **File**: `supabase/functions/ai-health-assistant/index.ts`
 
 **Changes**:
@@ -234,7 +234,7 @@ const { data, error } = await supabase.functions.invoke('ai-health-assistant', {
 
 ✅ **Input Validation**: All user inputs validated server-side  
 ✅ **SQL Injection Prevention**: Fixed search_path on SECURITY DEFINER functions  
-✅ **Rate Limiting**: Already handled by Lovable AI Gateway  
+✅ **Rate Limiting**: Already handled by Lovable SI Gateway  
 ✅ **Error Messages**: Detailed but don't expose internals  
 ✅ **Authentication**: Proper JWT verification on protected endpoints  
 ✅ **RLS Policies**: All 112 tables secured with Row-Level Security  

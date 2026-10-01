@@ -1,5 +1,5 @@
 /**
- * CHATR AI Training Infrastructure
+ * CHATR SI Training Infrastructure
  * src/services/ai/SoupTrainingClient.ts
  *
  * Dedicated TypeScript client for the Soup training worker running on Colab/Kaggle T4.

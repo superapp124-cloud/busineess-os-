@@ -191,7 +191,7 @@ export default function DesktopChat() {
  setActiveThreadId(null);
  setRightPaneTab('copilot');
  if (!selectedId) {
- const defaultRoom = rooms.find(r => r.id === 'chatr-ai-room' || r.name === 'CHATR AI') || rooms[0];
+ const defaultRoom = rooms.find(r => r.id === 'chatr-ai-room' || r.name === 'CHATR SI') || rooms[0];
  if (defaultRoom) {
  setSelectedId(defaultRoom.id);
  }
@@ -310,7 +310,7 @@ export default function DesktopChat() {
  id: crypto.randomUUID(),
  roomId: selectedId,
  senderId: 'system',
- senderName: 'CHATR AI',
+ senderName: 'CHATR SI',
  content: JSON.stringify({
  title: raw?.title || text,
  type: type,
@@ -751,12 +751,12 @@ export default function DesktopChat() {
  
  try {
  const context = selectedRoom ? `The user is currently in a chat named "${selectedRoom.name}". ` : '';
- const conversationHistory = copilotMessages.map(m => `${m.role === 'user' ? 'User' : 'CHATR AI'}: ${m.content}`).join('\n');
- const prompt = `${context}You are CHATR AI, an AI assistant embedded in the CHATR enterprise messaging platform. Help the user with their question concisely and professionally.\n\n${conversationHistory}\nUser: ${textToSend}\nCHATR AI:`;
+ const conversationHistory = copilotMessages.map(m => `${m.role === 'user' ? 'User' : 'CHATR SI'}: ${m.content}`).join('\n');
+ const prompt = `${context}You are CHATR SI, an SI assistant embedded in the CHATR enterprise messaging platform. Help the user with their question concisely and professionally.\n\n${conversationHistory}\nUser: ${textToSend}\nCHATR SI:`;
  const reply = await generate({ prompt, preferLocal: true });
  setCopilotMessages(prev => [...prev, { role: 'assistant', content: reply }]);
  } catch (error) {
- const message = error instanceof Error ? error.message : 'Local AI is unavailable.';
+ const message = error instanceof Error ? error.message : 'Local SI is unavailable.';
  setCopilotMessages(prev => [...prev, { role: 'assistant', content: message }]);
  } finally {
  setCopilotLoading(false);
@@ -771,7 +771,7 @@ export default function DesktopChat() {
  const prompt = `Rewrite the following message to be more professional, clear, and concise. Only output the rewritten text without any quotes or preamble.\n\nOriginal: ${messageInput}`;
  const rewritten = await generate({ prompt, preferLocal: true });
  setMessageInput(rewritten.trim());
- toast.success('Message rewritten by AI');
+ toast.success('Message rewritten by SI');
  } catch (e) {
  toast.error('Failed to rewrite message');
  } finally {
@@ -787,8 +787,8 @@ export default function DesktopChat() {
  setMessageInput('');
  setAttachments([]);
 
- // 1. If it's explicitly directed at CHATR AI via inline @chatr or we are in the CHATR AI room
- const isAiRoom = selectedRoom?.name === 'CHATR AI';
+ // 1. If it's explicitly directed at CHATR SI via inline @chatr or we are in the CHATR SI room
+ const isAiRoom = selectedRoom?.name === 'CHATR SI';
  if (isAiRoom || content.toLowerCase().startsWith('@chatr ') || (currentAttachments.length > 0 && content.toLowerCase().includes('@chatr'))) {
  const question = isAiRoom ? content : content.replace(/@chatr/i, '').trim();
  
@@ -810,7 +810,7 @@ export default function DesktopChat() {
  } else {
  // Normal text-based @chatr response
  const recentMessages = messages.slice(-10).map(m => `${m.senderName || 'User'}: ${m.content}`).join('\n');
- const prompt = `You are CHATR AI, an AI assistant embedded in this conversation. Answer the following question concisely based on recent context:\n\nRecent messages:\n${recentMessages}\n\nQuestion: ${question}\nCHATR AI:`;
+ const prompt = `You are CHATR SI, an SI assistant embedded in this conversation. Answer the following question concisely based on recent context:\n\nRecent messages:\n${recentMessages}\n\nQuestion: ${question}\nCHATR SI:`;
  try {
  const reply = await generate({ prompt, preferLocal: true });
  const aiMsg = await messagingService.sendAiMessage(selectedId, reply);
@@ -1010,15 +1010,15 @@ export default function DesktopChat() {
  </div>
  <div className="space-y-0.5">
  <button onClick={() => {
- const aiRoom = rooms.find(r => r.name === 'AI Assistant');
+ const aiRoom = rooms.find(r => r.name === 'SI Assistant');
  if (aiRoom) setSelectedId(aiRoom.id);
  }} className={cn(
  'w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition-colors group',
- selectedRoom?.name === 'AI Assistant' ? 'bg-violet-600/20 text-violet-300' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
+ selectedRoom?.name === 'SI Assistant' ? 'bg-violet-600/20 text-violet-300' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
  )}>
  <div className="flex items-center gap-2 overflow-hidden">
  <BrainCircuit className="w-3.5 h-3.5 shrink-0 text-violet-400" />
- <span className="text-[13px] truncate font-medium">CHATR AI</span>
+ <span className="text-[13px] truncate font-medium">CHATR SI</span>
  </div>
  </button>
 
@@ -1064,9 +1064,9 @@ export default function DesktopChat() {
  <Plus className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40" />
  </div>
  <div className="space-y-0.5">
- {dms.filter(dm => dm.name !== 'AI Assistant' && dm.name !== 'CHATR AI' && dm.id !== 'chatr-ai-room').length === 0 ? (
+ {dms.filter(dm => dm.name !== 'SI Assistant' && dm.name !== 'CHATR SI' && dm.id !== 'chatr-ai-room').length === 0 ? (
  <div className="px-2 py-2 text-label text-white/30">No direct messages yet</div>
- ) : dms.filter(dm => dm.name !== 'AI Assistant' && dm.name !== 'CHATR AI' && dm.id !== 'chatr-ai-room').map(dm => (
+ ) : dms.filter(dm => dm.name !== 'SI Assistant' && dm.name !== 'CHATR SI' && dm.id !== 'chatr-ai-room').map(dm => (
  <button key={dm.id} onClick={() => setSelectedId(dm.id)} className={cn(
  'w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg transition-colors text-left group relative',
  selectedId === dm.id ? 'bg-violet-600/20' : 'hover:bg-white/[0.04]'
@@ -1138,7 +1138,7 @@ export default function DesktopChat() {
  <Zap className="w-5 h-5" />
  </div>
  <div>
- <span className="text-secondary font-bold text-white/90 block mb-0.5">AI Insights</span>
+ <span className="text-secondary font-bold text-white/90 block mb-0.5">SI Insights</span>
  <span className="text-label text-white/50">View network intelligence</span>
  </div>
  </button>
@@ -1183,7 +1183,7 @@ export default function DesktopChat() {
  {/* Extracted Context */}
  <div className="rounded-2xl p-5 border transition-colors" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
  <div className="flex items-center justify-between mb-5">
- <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>AI Priority Context</h3>
+ <h3 className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>SI Priority Context</h3>
  <Sparkles className="w-4 h-4 text-violet-400" />
  </div>
  <div className="space-y-3">
@@ -1210,16 +1210,16 @@ export default function DesktopChat() {
  <div className="h-14 shrink-0 border-b backdrop-blur-md flex items-center justify-between px-5 relative z-10 transition-colors duration-300" style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--background) / 0.85)' }}>
  <div className="flex items-center gap-3">
  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-label font-bold text-white shadow-lg", 
- selectedRoom.name === 'AI Assistant' ? 'bg-violet-600' : 'bg-gradient-to-br from-indigo-500 to-purple-500'
+ selectedRoom.name === 'SI Assistant' ? 'bg-violet-600' : 'bg-gradient-to-br from-indigo-500 to-purple-500'
  )}>
- {selectedRoom.name === 'AI Assistant' ? <BrainCircuit className="w-4 h-4 text-white" /> : (selectedRoom.name?.slice(0, 2).toUpperCase() || '??')}
+ {selectedRoom.name === 'SI Assistant' ? <BrainCircuit className="w-4 h-4 text-white" /> : (selectedRoom.name?.slice(0, 2).toUpperCase() || '??')}
  </div>
  <div>
  <h2 className="text-secondary font-bold flex items-center gap-2" style={{ color: 'hsl(var(--foreground))' }}>
  {selectedRoom.name}
  </h2>
  <div className="flex items-center gap-1.5 mt-0.5">
- {selectedRoom.type === 'dm' && selectedRoom.name !== 'AI Assistant' ? (
+ {selectedRoom.type === 'dm' && selectedRoom.name !== 'SI Assistant' ? (
  <>
  <div className="relative w-2 h-2 rounded-full mt-0.5">
  <PresenceDot status={(selectedRoom.otherUserPresence || 'offline') as any} />
@@ -1292,7 +1292,7 @@ export default function DesktopChat() {
  <Zap className="w-4 h-4 mr-2.5 text-white/50" /> Disappearing Messages
  </DropdownMenuItem>
  <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10 cursor-pointer py-2.5 rounded-lg text-label text-violet-300 focus:text-violet-200">
- <Sparkles className="w-4 h-4 mr-2.5 text-violet-400" /> AI features
+ <Sparkles className="w-4 h-4 mr-2.5 text-violet-400" /> SI features
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
@@ -1309,10 +1309,10 @@ export default function DesktopChat() {
  const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
  const displayTime = isToday(dateObj) ? time : (isYesterday(dateObj) ? `Yesterday ${time}` : `${dateObj.toLocaleDateString()} ${time}`);
  
- // Map AI system messages to proper UI
+ // Map SI system messages to proper UI
  const isAI = msg.senderId === '11111111-1111-1111-1111-111111111111' || msg.actorId === '11111111-1111-1111-1111-111111111111';
- const avatar = isAI ? 'AI' : (msg.senderName ? msg.senderName.substring(0, 2).toUpperCase() : 'U');
- const senderName = isAI ? 'CHATR AI' : (msg.senderName || 'Unknown User');
+ const avatar = isAI ? 'SI' : (msg.senderName ? msg.senderName.substring(0, 2).toUpperCase() : 'U');
+ const senderName = isAI ? 'CHATR SI' : (msg.senderName || 'Unknown User');
 
  if (msg.metadata?.isAction && msg.metadata?.actionType) {
  return (
@@ -1450,7 +1450,7 @@ export default function DesktopChat() {
  <button onClick={() => setForwardMessage(msg)} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Forward">
  <Forward className="w-3.5 h-3.5" />
  </button>
- <button onClick={() => { setRightPaneTab('copilot'); setCopilotInput(`Explain this message: "${msg.content}"`); }} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Ask AI">
+ <button onClick={() => { setRightPaneTab('copilot'); setCopilotInput(`Explain this message: "${msg.content}"`); }} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="Ask SI">
  <Sparkles className="w-3.5 h-3.5 text-violet-400 hover:text-violet-300" />
  </button>
  <button onClick={() => toast.info('More options coming soon')} className="p-1.5 rounded-md hover:bg-white/10 text-white/60 hover:text-white transition-colors group/btn relative" title="More">
@@ -1472,7 +1472,7 @@ export default function DesktopChat() {
  {isAiLoading && (
  <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 mt-2">
  <div className="px-3 py-2 rounded-2xl bg-zinc-900 border border-white/[0.05] rounded-tl-sm shadow-black/20 text-label text-violet-400 flex items-center gap-2">
- <Loader2 className="w-3.5 h-3.5 animate-spin" /> AI Coworker processing...
+ <Loader2 className="w-3.5 h-3.5 animate-spin" /> SI Coworker processing...
  </div>
  </div>
  )}
@@ -1585,7 +1585,7 @@ export default function DesktopChat() {
  value={messageInput}
  onChange={e => setMessageInput(e.target.value)}
  onKeyDown={handleInputKeyDown}
- placeholder={`Message ${selectedRoom.name}... (Type @chatr to ask AI)`}
+ placeholder={`Message ${selectedRoom.name}... (Type @chatr to ask SI)`}
  className="flex-1 h-10 bg-transparent text-secondary px-2 focus:outline-none placeholder:text-white/30 text-white"
  />
  <div className="pr-1">
@@ -1609,9 +1609,9 @@ export default function DesktopChat() {
  </button>
  <Popover>
  <PopoverTrigger asChild>
- <button disabled={!messageInput.trim()} className="p-1.5 rounded-md hover:bg-white/10 text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 disabled:opacity-50 outline-none" title="AI Features">
+ <button disabled={!messageInput.trim()} className="p-1.5 rounded-md hover:bg-white/10 text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 disabled:opacity-50 outline-none" title="SI Features">
  <Sparkles className="w-3.5 h-3.5" />
- <span className="text-[10px] font-bold tracking-wider uppercase">CHATR AI</span>
+ <span className="text-[10px] font-bold tracking-wider uppercase">CHATR SI</span>
  </button>
  </PopoverTrigger>
  <PopoverContent align="center" side="top" className="bg-[#111] border border-white/10 p-2 w-48 shadow-2xl rounded-2xl mb-2">
@@ -1622,7 +1622,7 @@ export default function DesktopChat() {
  </div>
  <div>
  <p className="text-label font-semibold text-white/90">Smart Replies</p>
- <p className="text-[9px] text-white/40">Get AI suggestions</p>
+ <p className="text-[9px] text-white/40">Get SI suggestions</p>
  </div>
  </button>
  <button onClick={handleRewrite} disabled={isRewriting || !messageInput.trim()} className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-left group">

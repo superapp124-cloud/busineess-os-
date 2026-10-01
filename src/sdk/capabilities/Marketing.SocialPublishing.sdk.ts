@@ -29,7 +29,7 @@ export const MarketingSocialPublishingSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Social Publishing AI',
+    assistantName: 'Social Publishing SI',
     skills: []
   },
   

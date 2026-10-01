@@ -23,7 +23,7 @@ const CommandPalette = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     { id: 'compile', label: 'Compile to v1.0', icon: <Code2 className="w-4 h-4 text-indigo-400" />, action: () => toast.success('Dispatched: COMPILE_WORKFLOW') },
     { id: 'logs', label: 'Open Telemetry Console', icon: <Activity className="w-4 h-4 text-purple-400" />, action: () => toast.success('Dispatched: OPEN_TELEMETRY') },
     { id: 'add-email', label: 'Add Email Capability', icon: <Mail className="w-4 h-4 text-slate-400" />, action: () => toast.success('Dispatched: CREATE_NODE') },
-    { id: 'add-ai', label: 'Add AI Agent Capability', icon: <Bot className="w-4 h-4 text-slate-400" />, action: () => toast.success('Dispatched: CREATE_NODE') },
+    { id: 'add-ai', label: 'Add SI Agent Capability', icon: <Bot className="w-4 h-4 text-slate-400" />, action: () => toast.success('Dispatched: CREATE_NODE') },
   ].filter(c => c.label.toLowerCase().includes(query.toLowerCase()));
 
   return (

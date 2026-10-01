@@ -22,7 +22,7 @@ const GenericOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
               <div className="text-sm font-semibold text-indigo-600 mb-1">{result.documentTypeLabel}</div>
               <div className="text-xs text-slate-500">{result.domainLabel}</div>
               <div className="mt-2 text-[10px] font-bold text-slate-400">
-                AI Confidence: {Math.round(result.confidence * 100)}%
+                SI Confidence: {Math.round(result.confidence * 100)}%
               </div>
               {result.summary && (
                 <p className="mt-3 text-xs text-slate-600 text-left leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">

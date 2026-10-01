@@ -1,17 +1,17 @@
-# 10 AI Capabilities
+# 10 SI Capabilities
 
 ## Summary
 
-CHATR has meaningful AI foundations: an AI service, local-first model routing, an AI workflow planner, AI builder UI, AI action runtime, agent demos, memory services, semantic memory, and intelligence analyzers. In Workflow Studio, AI is still partial: it can generate workflow-like plans and execute an AI action, but it lacks a durable AI governance, trace, model policy, tool-calling, and evaluation layer.
+CHATR has meaningful SI foundations: an SI service, local-first model routing, an SI workflow planner, SI builder UI, SI action runtime, agent demos, memory services, semantic memory, and intelligence analyzers. In Workflow Studio, SI is still partial: it can generate workflow-like plans and execute an SI action, but it lacks a durable SI governance, trace, model policy, tool-calling, and evaluation layer.
 
-## AI Builder
+## SI Builder
 
-Studio AI Builder is implemented in `WorkflowStudio.handleAIGenerate()`:
+Studio SI Builder is implemented in `WorkflowStudio.handleAIGenerate()`:
 
 1. User enters a prompt.
 2. Studio dispatches `GENERATE_WORKFLOW`.
 3. `CommandBus` calls `ActiveAIProvider.plan()`.
-4. AI provider returns a graph-like plan.
+4. SI provider returns a graph-like plan.
 5. `WORKFLOW_GENERATED` event updates local Studio nodes.
 
 Limitations:
@@ -24,7 +24,7 @@ Limitations:
 
 ## Prompting
 
-`RealAIProvider.plan()` prompts the AI service to create a JSON workflow graph using core node types such as:
+`RealAIProvider.plan()` prompts the SI service to create a JSON workflow graph using core node types such as:
 
 - `core.trigger`
 - `core.ai_agent`
@@ -33,7 +33,7 @@ Limitations:
 - `core.webhook`
 - `core.database`
 
-Fallback provider returns mock workflow output if AI fails.
+Fallback provider returns mock workflow output if SI fails.
 
 ## Model Selection
 
@@ -53,10 +53,10 @@ The repository contains memory-related modules:
 
 - `src/core/services/SemanticMemory.ts`
 - `src/core/engines/MemoryEngine.ts`
-- `src/platform/Domain/AI/AIPlatform.ts`
+- `src/platform/Domain/SI/AIPlatform.ts`
 - Electron execution memory modules
 
-Studio AI generation and test run history do not visibly persist AI memory or trace to the workflow run model.
+Studio SI generation and test run history do not visibly persist SI memory or trace to the workflow run model.
 
 ## Agents
 
@@ -66,7 +66,7 @@ Studio contains static agent cards:
 - Sales Researcher
 - Code Reviewer
 
-AI agent execution in RuntimeAdapter is generic `core.ai_agent`, which calls `generate({ prompt })`.
+SI agent execution in RuntimeAdapter is generic `core.ai_agent`, which calls `generate({ prompt })`.
 
 Missing:
 
@@ -79,15 +79,15 @@ Missing:
 
 ## Tool Calling
 
-No first-class tool calling contract was found in the Studio workflow runtime. AI actions call the model and return text/result. Tool use exists more broadly in CHATR core concepts, but not as Studio node-level AI tool contracts.
+No first-class tool calling contract was found in the Studio workflow runtime. SI actions call the model and return text/result. Tool use exists more broadly in CHATR core concepts, but not as Studio node-level SI tool contracts.
 
 ## Reasoning and Planning
 
-AI planning exists for workflow generation. It is useful for scaffolding but should be treated as assistant output, not authoritative workflow definition, until validated by a formal schema and publish checks.
+SI planning exists for workflow generation. It is useful for scaffolding but should be treated as assistant output, not authoritative workflow definition, until validated by a formal schema and publish checks.
 
 ## Vector Search and RAG
 
-The repository includes document/search/memory capabilities and server retrieval code, but Workflow Studio does not expose a RAG node, vector-search node, knowledge-base selector, or document-grounded AI action configuration.
+The repository includes document/search/memory capabilities and server retrieval code, but Workflow Studio does not expose a RAG node, vector-search node, knowledge-base selector, or document-grounded SI action configuration.
 
 ## Knowledge
 
@@ -96,16 +96,16 @@ Knowledge support is fragmented:
 - document engines
 - semantic memory
 - retrieval server
-- AI services
+- SI services
 
 No Studio knowledge connector binding was found.
 
-## AI Execution
+## SI Execution
 
 `core.ai_agent` does:
 
 ```text
-generate({ prompt: data.prompt || data.label || 'Run AI task' })
+generate({ prompt: data.prompt || data.label || 'Run SI task' })
 ```
 
 Missing:
@@ -118,16 +118,16 @@ Missing:
 - fallback policy by tenant
 - deterministic replay
 
-## AI Monitoring
+## SI Monitoring
 
 `workflow_runs` richer schema includes `ai_tokens_used` and `ai_cost_usd`. `ai_traces` exists in later validation migration. Studio does not write these fields during test runs.
 
-## AI Optimizer Panel
+## SI Optimizer Panel
 
 The right panel shows optimizer recommendations, but in the audited Studio route these are static recommendations. The codebase has `PerformanceAnalyzer`, `FailureAnalyzer`, and `OptimizationAdvisor`, but they are not wired to the visible Studio optimizer panel.
 
-## AI Readiness Score
+## SI Readiness Score
 
-AI readiness score: 58/100.
+SI readiness score: 58/100.
 
-AI is one of the stronger areas conceptually, especially because CHATR is local-first and has multiple AI surfaces. Enterprise AI readiness still requires model governance, traceability, tool contracts, structured outputs, cost controls, and run persistence.
+SI is one of the stronger areas conceptually, especially because CHATR is local-first and has multiple SI surfaces. Enterprise SI readiness still requires model governance, traceability, tool contracts, structured outputs, cost controls, and run persistence.

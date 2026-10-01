@@ -61,7 +61,7 @@ export class EnterpriseMemoryImpl {
         for (const match of matches) {
           results.push({
             entity: match,
-            confidence: 0.95, // AI ranking would happen here later
+            confidence: 0.95, // SI ranking would happen here later
             provider: provider.name,
             source: 'Directory',
             timestamp: new Date(),

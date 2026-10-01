@@ -96,7 +96,7 @@ export const UserManagement: React.FC = () => {
  <th style={{ padding: '1rem' }}>Role</th>
  <th style={{ padding: '1rem' }}>Department & Team</th>
  <th style={{ padding: '1rem', textAlign: 'center' }}>MFA Status</th>
- <th style={{ padding: '1rem', textAlign: 'center' }}>AI Exec Access</th>
+ <th style={{ padding: '1rem', textAlign: 'center' }}>SI Exec Access</th>
  <th style={{ padding: '1rem' }}>Last Login</th>
  <th style={{ padding: '1rem', textAlign: 'right' }}>Actions</th>
  </tr>

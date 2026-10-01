@@ -1,5 +1,5 @@
 // ============================================================
-// @chatr/intelligence — AI Services
+// @chatr/intelligence — SI Services
 // 
 // EXPLICIT PROHIBITIONS:
 // This package must NEVER import from or know about:

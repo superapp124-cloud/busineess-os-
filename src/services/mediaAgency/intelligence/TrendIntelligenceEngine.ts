@@ -49,10 +49,10 @@ export class TrendIntelligenceEngine {
     });
 
     const candidateTopics = [
-      { topic: 'AI Autonomous Agents in Enterprise', category: 'Tech & Scaling', baseVelocity: 95, baseInterest: 94, sampleHeadline: 'Why autonomous agent networks are replacing rigid SaaS workflows in 2026' },
-      { topic: 'India Tech Hiring & High-Growth Talent', category: 'Career & Work', baseVelocity: 90, baseInterest: 88, sampleHeadline: 'The sudden talent migration toward AI-first engineering hubs across India' },
-      { topic: 'Startup Runway & Autonomous Unit Economics', category: 'Business & Finance', baseVelocity: 85, baseInterest: 84, sampleHeadline: 'How zero-overhead startups are outcompeting legacy teams with AI ops' },
-      { topic: 'Local LLMs and On-Device Edge Computing', category: 'AI Architecture', baseVelocity: 92, baseInterest: 86, sampleHeadline: 'Why on-device Ollama execution is saving businesses thousands in cloud API fees' },
+      { topic: 'SI Autonomous Agents in Enterprise', category: 'Tech & Scaling', baseVelocity: 95, baseInterest: 94, sampleHeadline: 'Why autonomous agent networks are replacing rigid SaaS workflows in 2026' },
+      { topic: 'India Tech Hiring & High-Growth Talent', category: 'Career & Work', baseVelocity: 90, baseInterest: 88, sampleHeadline: 'The sudden talent migration toward SI-first engineering hubs across India' },
+      { topic: 'Startup Runway & Autonomous Unit Economics', category: 'Business & Finance', baseVelocity: 85, baseInterest: 84, sampleHeadline: 'How zero-overhead startups are outcompeting legacy teams with SI ops' },
+      { topic: 'Local LLMs and On-Device Edge Computing', category: 'SI Architecture', baseVelocity: 92, baseInterest: 86, sampleHeadline: 'Why on-device Ollama execution is saving businesses thousands in cloud API fees' },
       { topic: 'Automated Creator Studios & Algorithmic Media', category: 'Media & Growth', baseVelocity: 88, baseInterest: 82, sampleHeadline: 'The shift from manual social scheduling to closed-loop growth engines' }
     ];
 
@@ -133,7 +133,7 @@ export class TrendIntelligenceEngine {
     }
     return [
       {
-        topic: 'AI Autonomous Agents in Enterprise',
+        topic: 'SI Autonomous Agents in Enterprise',
         category: 'Tech & Scaling',
         trendScore: 94,
         metrics: { velocityScore: 95, searchInterestScore: 94, engagementVelocity: 91, noveltyScore: 88, audienceFitScore: 90 },
@@ -147,7 +147,7 @@ export class TrendIntelligenceEngine {
         trendScore: 89,
         metrics: { velocityScore: 90, searchInterestScore: 88, engagementVelocity: 86, noveltyScore: 85, audienceFitScore: 90 },
         sourceSignals: { youtubeMentions: 1200, rssHeadlineCount: 22, redditPostVelocity: 84 },
-        sampleHeadline: 'The sudden talent migration toward AI-first engineering hubs across India',
+        sampleHeadline: 'The sudden talent migration toward SI-first engineering hubs across India',
         discoveredAt: new Date().toISOString()
       },
       {
@@ -156,7 +156,7 @@ export class TrendIntelligenceEngine {
         trendScore: 84,
         metrics: { velocityScore: 85, searchInterestScore: 84, engagementVelocity: 80, noveltyScore: 82, audienceFitScore: 90 },
         sourceSignals: { youtubeMentions: 980, rssHeadlineCount: 18, redditPostVelocity: 79 },
-        sampleHeadline: 'How zero-overhead startups are outcompeting legacy teams with AI ops',
+        sampleHeadline: 'How zero-overhead startups are outcompeting legacy teams with SI ops',
         discoveredAt: new Date().toISOString()
       }
     ];

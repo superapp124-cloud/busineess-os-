@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * CHATR AI Runtime — OllamaEngineProvider
+ * CHATR SI Runtime — OllamaEngineProvider
  * 
  * Concrete implementation of ILocalAiEngineProvider for Ollama inference engine.
  * Handles daemon lifecycle, binary isolation, model pulls, and inference requests.
@@ -23,7 +23,7 @@ const OLLAMA_PREFERRED_PORT = 3717;
 const OLLAMA_FALLBACK_PORT = 11434;
 
 const DEFAULT_MODELS = [
-  { name: 'llama3.2:3b', sizeGB: 2.0, description: 'Fast local AI reasoning' },
+  { name: 'llama3.2:3b', sizeGB: 2.0, description: 'Fast local SI reasoning' },
   { name: 'phi3:mini', sizeGB: 2.3, description: 'Lightweight intent model' }
 ];
 
@@ -51,7 +51,7 @@ class OllamaEngineProvider extends ILocalAiEngineProvider {
   }
 
   get id() { return 'ollama'; }
-  get name() { return 'Ollama AI Engine Provider'; }
+  get name() { return 'Ollama SI Engine Provider'; }
   get version() { return '0.3.14'; }
 
   aiDir() {

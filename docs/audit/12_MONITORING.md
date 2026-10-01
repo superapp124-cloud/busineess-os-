@@ -64,7 +64,7 @@ Studio does not write these during test execution.
 
 ## Alerts
 
-The right panel shows AI Optimizer recommendation cards such as approval SLA and model upgrade suggestions. These are static in the current Studio route. No alert rule engine or notification binding was found for Studio workflow health.
+The right panel shows SI Optimizer recommendation cards such as approval SLA and model upgrade suggestions. These are static in the current Studio route. No alert rule engine or notification binding was found for Studio workflow health.
 
 ## Performance and Health
 

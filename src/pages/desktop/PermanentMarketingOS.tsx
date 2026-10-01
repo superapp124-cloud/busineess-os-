@@ -56,7 +56,7 @@ interface ResearchAsset {
   id: string;
   week: number;
   title: string;
-  status: 'Research' | 'Draft' | 'AI Adapted' | 'Human Approved' | 'Published';
+  status: 'Research' | 'Draft' | 'SI Adapted' | 'Human Approved' | 'Published';
   founder: string;
   createdAt: string;
   distributions: DistributionItem[];
@@ -66,7 +66,7 @@ interface QueueItem {
   id: string;
   title: string;
   platform: string;
-  status: 'Draft' | 'AI Generated' | 'Human Approved' | 'Published' | 'Failed';
+  status: 'Draft' | 'SI Generated' | 'Human Approved' | 'Published' | 'Failed';
   createdAt: string;
   author: string;
 }
@@ -126,7 +126,7 @@ const INITIAL_ASSETS: ResearchAsset[] = [
 
 const INITIAL_QUEUE: QueueItem[] = [
   { id: 'q1', title: 'WhatsApp drop-off stats', platform: 'LinkedIn', status: 'Draft', createdAt: '2026-08-11', author: 'Sanobar Jahan' },
-  { id: 'q2', title: 'Why WhatsApp is better than Email for recruiting', platform: 'X', status: 'AI Generated', createdAt: '2026-08-11', author: 'AI Agent' },
+  { id: 'q2', title: 'Why WhatsApp is better than Email for recruiting', platform: 'X', status: 'SI Generated', createdAt: '2026-08-11', author: 'SI Agent' },
   { id: 'q3', title: 'Recruitment WhatsApp templates', platform: 'LinkedIn', status: 'Human Approved', createdAt: '2026-08-10', author: 'Sanobar Jahan' },
   { id: 'q4', title: 'Full Guide to WhatsApp Recruiting', platform: 'Article', status: 'Draft', createdAt: '2026-08-11', author: 'Sanobar Jahan' },
 ];
@@ -320,7 +320,7 @@ export default function PermanentMarketingOS() {
   };
 
   const renderDistributionQueue = () => {
-    const columns = ['Draft', 'AI Generated', 'Human Approved', 'Published', 'Failed'];
+    const columns = ['Draft', 'SI Generated', 'Human Approved', 'Published', 'Failed'];
     
     return (
       <div className="flex-1 overflow-auto bg-gray-950 p-8 flex flex-col">

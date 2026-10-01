@@ -46,7 +46,7 @@ export const LauncherHome: React.FC<LauncherHomeProps> = ({
  {
  icon: Heart,
  title: 'Health Hub',
- description: 'AI assistant, vitals & reports',
+ description: 'SI assistant, vitals & reports',
  iconColor: 'bg-gradient-to-br from-emerald-400 to-teal-600',
  route: '/health',
  },
@@ -90,8 +90,8 @@ export const LauncherHome: React.FC<LauncherHomeProps> = ({
  const quickAccessServices = [
  {
  icon: Globe,
- title: 'AI Browser',
- description: 'Search & browse with AI assistance',
+ title: 'SI Browser',
+ description: 'Search & browse with SI assistance',
  iconColor: 'bg-gradient-to-br from-blue-400 to-cyan-500',
  route: '/ai-browser-home'
  },
@@ -104,7 +104,7 @@ export const LauncherHome: React.FC<LauncherHomeProps> = ({
  },
  {
  icon: Bot,
- title: 'AI Assistant',
+ title: 'SI Assistant',
  description: 'Instant health advice',
  iconColor: 'bg-gradient-to-br from-teal-400 to-emerald-500',
  route: '/ai-assistant'

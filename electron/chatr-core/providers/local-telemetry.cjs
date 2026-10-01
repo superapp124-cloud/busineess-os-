@@ -2,7 +2,7 @@
 
 /**
  * CHATR Kernel - Local Telemetry Provider
- * Listens to the Event Bus and writes AI metrics to the database.
+ * Listens to the Event Bus and writes SI metrics to the database.
  * Phase 1 of the Learning Engine (Read-only).
  */
 

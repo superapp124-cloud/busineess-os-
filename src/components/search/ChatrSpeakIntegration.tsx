@@ -103,7 +103,7 @@ export const ChatrSpeakIntegration = ({ query, onVoiceSearch }: ChatrSpeakIntegr
 
  return (
  <div className="relative">
- {/* Device AI Badge */}
+ {/* Device SI Badge */}
  {(capabilities.hasAppleIntelligence || capabilities.hasGeminiNano) && (
  <Badge 
  variant="outline" 

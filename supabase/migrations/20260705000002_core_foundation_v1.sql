@@ -1,8 +1,8 @@
 -- Migration: Core Foundation v1 Schema Additions
--- Description: Non-destructive additions for the AI Conversation API foundation.
+-- Description: Non-destructive additions for the SI Conversation API foundation.
 -- Includes: ai_settings, conversation_summaries, expanded ai_memory, ai_tools.
 
--- 1. AI Settings
+-- 1. SI Settings
 CREATE TABLE IF NOT EXISTS public.ai_settings (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     organization_id uuid REFERENCES public.organizations(id) ON DELETE CASCADE,
@@ -42,7 +42,7 @@ CREATE POLICY "Participants can view conversation_summaries"
         SELECT conversation_id FROM public.conversation_participants WHERE user_id = auth.uid()
     ));
 
--- 3. AI Tools
+-- 3. SI Tools
 CREATE TABLE IF NOT EXISTS public.ai_tools (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     conversation_id uuid REFERENCES public.conversations(id) ON DELETE CASCADE,
@@ -64,7 +64,7 @@ CREATE POLICY "Participants can view ai_tools"
         SELECT conversation_id FROM public.conversation_participants WHERE user_id = auth.uid()
     ));
 
--- 4. Expand AI Memory
+-- 4. Expand SI Memory
 -- Existing ai_memory table has: id, user_id, organization_id, fact, confidence_score
 -- We need to add: memory_type, scope, content, importance, last_accessed, embedding_id, source_message_id, expires_at, created_at, updated_at
 ALTER TABLE public.ai_memory 

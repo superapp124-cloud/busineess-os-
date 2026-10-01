@@ -19,7 +19,7 @@ async function runComplianceTest() {
   
   const adapter = new GitHubGistAdapter();
   
-  // MOCK: Intercept HttpClient ONLY for the network egress to simulate GitHub for the AI Agent
+  // MOCK: Intercept HttpClient ONLY for the network egress to simulate GitHub for the SI Agent
   // The rest of the OS, Circuit Breaker, Metrics, and Normalization remain real.
   const originalRequest = (adapter as any).client.request.bind((adapter as any).client);
   let requestCount = 0;

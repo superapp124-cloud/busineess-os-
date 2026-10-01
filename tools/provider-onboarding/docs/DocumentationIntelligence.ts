@@ -27,7 +27,7 @@ export class DocumentationIntelligence {
   async discover(providerUrl: string): Promise<ProviderDocs> {
     console.log(`[DocumentationIntelligence] Discovering documentation for ${providerUrl}...`);
     
-    // Simulate crawling and AI extraction of docs layout
+    // Simulate crawling and SI extraction of docs layout
     // We would use playwright to fetch the HTML, then use Gemini to extract the OpenAPI links, etc.
     const mockResult: ProviderDocs = {
       hasOpenApi: true,

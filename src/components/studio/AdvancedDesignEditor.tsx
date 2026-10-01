@@ -106,7 +106,7 @@ export const AdvancedDesignEditor = ({ template, onBack }: AdvancedDesignEditorP
  canvas.add(img);
  canvas.sendObjectToBack(img);
  canvas.renderAll();
- toast.success('AI background applied!');
+ toast.success('SI background applied!');
  }).catch(() => {
  toast.error('Failed to apply background');
  });
@@ -244,7 +244,7 @@ export const AdvancedDesignEditor = ({ template, onBack }: AdvancedDesignEditorP
  </TabsTrigger>
  <TabsTrigger value="ai" className="gap-1 text-label">
  <Sparkles className="h-3 w-3" />
- AI
+ SI
  </TabsTrigger>
  </TabsList>
 

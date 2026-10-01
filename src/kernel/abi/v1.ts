@@ -5,7 +5,7 @@
  *
  * RULES:
  *   1. This file defines interfaces only. No implementations.
- *   2. Nothing in this file may reference AI, MCP, REST, LLM, cloud,
+ *   2. Nothing in this file may reference SI, MCP, REST, LLM, cloud,
  *      or any current technology. Those are plugins.
  *   3. Fields may not be added to existing interfaces without a major version
  *      bump to KernelABI.version.
@@ -57,7 +57,7 @@ export type Opaque        = unknown; // Kernel does not interpret this
  * PRIMITIVE 1: Entity
  * ───────────────────
  * Everything that exists.
- * Human, AI, device, org, robot, API, document, memory, process.
+ * Human, SI, device, org, robot, API, document, memory, process.
  *
  * The kernel makes no distinction between entity types.
  * "type" is an open string — the kernel never validates it.
@@ -573,7 +573,7 @@ export type PluginType =
   | 'experience'     // New UI surface
   | 'policy'         // Governance ruleset
   | 'knowledge'      // Domain knowledge pack
-  | 'model'          // AI/ML model
+  | 'model'          // SI/ML model
   | 'security'       // Security module
   | 'economy'        // Billing / economy module
   | 'industry';      // Vertical capability pack
@@ -662,7 +662,7 @@ export type ProcessState =
  * with the kernel. Internal implementations are invisible.
  *
  * No implementation of this interface may:
- *   - Import from AI or LLM libraries directly
+ *   - Import from SI or LLM libraries directly
  *   - Reference MCP, REST, GraphQL, or any transport
  *   - Reference cloud providers (AWS, GCP, Supabase)
  *   - Reference business domains (recruitment, healthcare, etc.)

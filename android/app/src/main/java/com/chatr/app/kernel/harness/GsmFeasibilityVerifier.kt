@@ -195,7 +195,7 @@ class GsmFeasibilityVerifier(
             )
 
             // Turn 1
-            history.add(DialogueTurn(DialogueSpeaker.CHATR, "Hi, this is Chatr AI. Who is calling?"))
+            history.add(DialogueTurn(DialogueSpeaker.CHATR, "Hi, this is Chatr SI. Who is calling?"))
             val turn1 = intelligenceApi.conductDialogueTurn(callerInfo, "I am calling from DHL regarding your package", history)
             val reply1 = (turn1 as? DialogueAction.Speak)?.text ?: "Understood."
             history.add(DialogueTurn(DialogueSpeaker.CALLER, "I am calling from DHL regarding your package"))

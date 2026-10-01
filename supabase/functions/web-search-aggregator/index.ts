@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     }
 
     try {
-      console.log('Calling direct AI provider for web search...');
+      console.log('Calling direct SI provider for web search...');
       
       const locationContext = location ? ` in ${location} area` : '';
       const aiPrompt = `You are a comprehensive search engine. For the query "${query}"${locationContext}, provide:
@@ -98,7 +98,7 @@ Provide realistic, detailed information as if you're aggregating real search res
         );
       }
     } catch (error) {
-      console.error('Direct AI search error:', error);
+      console.error('Direct SI search error:', error);
     }
 
     // Fallback response with structured local data based on query

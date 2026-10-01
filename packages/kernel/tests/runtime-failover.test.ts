@@ -11,7 +11,7 @@ async function runRuntimeFailoverTest() {
   // 1. Define Primary Runtime (Simulated Failure)
   const primaryRuntime: Runtime = {
     id: 'runtime-browser-ai-failing',
-    name: 'Browser AI Runtime (Failing)',
+    name: 'Browser SI Runtime (Failing)',
     category: 'LOCAL',
     features: {
       supportsLLM: true,

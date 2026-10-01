@@ -136,7 +136,7 @@ class EngineHealthStoreImpl {
       this.notify();
     });
 
-    // We simulate AI Runtime events since we don't have explicit hook points in all providers yet
+    // We simulate SI Runtime events since we don't have explicit hook points in all providers yet
     eventBus.subscribe('AI_INFERENCE_COMPLETED', (e: any) => {
       const p = e.payload || e;
       if (p.overheadMs) this.addRollingMetric(this.aiLatencies, p.overheadMs);

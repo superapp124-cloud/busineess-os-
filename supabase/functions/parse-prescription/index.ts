@@ -65,7 +65,7 @@ serve(async (req) => {
         parsedData = JSON.parse(jsonMatch[0]);
       }
     } catch (error) {
-      console.error("Error parsing AI response:", error);
+      console.error("Error parsing SI response:", error);
     }
 
     const { error: updateError } = await serviceClient

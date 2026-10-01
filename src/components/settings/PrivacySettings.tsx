@@ -276,12 +276,12 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({ userId }) => {
 
  <Separator />
 
- {/* On-device AI */}
+ {/* On-device SI */}
  <div className="flex items-center justify-between">
  <div className="space-y-0.5">
  <Label className="flex items-center gap-2 text-secondary">
  <BrainCircuit className="w-3.5 h-3.5 text-muted-foreground" />
- On-device AI
+ On-device SI
  </Label>
  <p className="text-label text-muted-foreground">
  Use Gemini Nano when this phone supports it

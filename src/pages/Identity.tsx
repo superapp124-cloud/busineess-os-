@@ -288,7 +288,7 @@ const Identity = () => {
  <div className="flex items-center gap-2">
  {identity.ai_clone_enabled && (
  <Badge variant="outline" className="text-orange-500 border-orange-500/30 text-[10px]">
- <Bot className="h-3 w-3 mr-1" /> AI Active
+ <Bot className="h-3 w-3 mr-1" /> SI Active
  </Badge>
  )}
  <Badge variant={identity.is_active ? 'default' : 'secondary'} className="text-[10px]">
@@ -327,18 +327,18 @@ const Identity = () => {
  {identity.identity_type === 'ai_clone' && (
  <>
  <div className="flex items-center justify-between">
- <span className="text-secondary">AI Clone Active</span>
+ <span className="text-secondary">SI Clone Active</span>
  <Switch
  checked={identity.ai_clone_enabled}
  onCheckedChange={(checked) => updateIdentity(identity.id, { ai_clone_enabled: checked } as any)}
  />
  </div>
  <div>
- <label className="text-label text-muted-foreground">AI Personality</label>
+ <label className="text-label text-muted-foreground">SI Personality</label>
  <Textarea
  defaultValue={identity.ai_clone_personality || ''}
  onBlur={(e) => updateIdentity(identity.id, { ai_clone_personality: e.target.value } as any)}
- placeholder="Describe how your AI clone should talk..."
+ placeholder="Describe how your SI clone should talk..."
  className="mt-1"
  rows={3}
  />
@@ -376,7 +376,7 @@ const Identity = () => {
  <Input
  defaultValue={discoveryProfile?.headline || ''}
  onBlur={(e) => updateDiscoveryProfile({ headline: e.target.value })}
- placeholder="Full-stack developer | AI enthusiast"
+ placeholder="Full-stack developer | SI enthusiast"
  />
  </div>
  <div className="grid grid-cols-2 gap-3">

@@ -188,7 +188,7 @@ ${contextText}${locationContext}`.trim();
   }
 
   // General query
-  return `You are a factual AI assistant.
+  return `You are a factual SI assistant.
 
 TASK:
 Write a clear, informative summary using ONLY the provided search context.
@@ -363,9 +363,9 @@ serve(async (req) => {
     const body: AIAnswerRequest = await req.json();
     const { query, results, images: googleImages, location } = body;
 
-    console.log("📝 AI Answer request:", query);
+    console.log("📝 SI Answer request:", query);
 
-    // ALWAYS attempt AI summary if query exists (even with empty results)
+    // ALWAYS attempt SI summary if query exists (even with empty results)
     if (!query) {
       return new Response(
         JSON.stringify({ text: null, sources: [], images: [] }),
@@ -463,7 +463,7 @@ Content: ${r.snippet}`
     const systemPrompt = getSystemPrompt(queryType, contextText, locationContext);
     const userMessage = `User Query: ${query}\n\nWrite a factual 5-10 line summary. Each line must contain real information. No disclaimers.`;
 
-    /* ---------- Call AI Router with automatic provider failover ---------- */
+    /* ---------- Call SI Router with automatic provider failover ---------- */
     let aiText: string | null = null;
     try {
       const chatResult = await completeChat({
@@ -476,7 +476,7 @@ Content: ${r.snippet}`
       });
       aiText = chatResult.content?.trim() || null;
     } catch (routerErr) {
-      console.warn("⚠️ AI router unavailable or failed, using fallback summary:", routerErr);
+      console.warn("⚠️ SI router unavailable or failed, using fallback summary:", routerErr);
     }
 
     /* ---------- Sources ---------- */
@@ -486,7 +486,7 @@ Content: ${r.snippet}`
       domain: new URL(r.url).hostname.replace("www.", ""),
     }));
 
-    /* ---------- Extract and validate AI text ---------- */
+    /* ---------- Extract and validate SI text ---------- */
 
     // Clean any markdown that might have slipped through
     if (aiText) {
@@ -505,12 +505,12 @@ Content: ${r.snippet}`
     
     // If response is too short, contains disclaimers, or is empty - use fallback
     if (!aiText || lines.length < 5 || hasDisclaimers) {
-      console.warn(`⚠️ AI response inadequate (lines: ${lines.length}, disclaimers: ${hasDisclaimers}), using fallback`);
+      console.warn(`⚠️ SI response inadequate (lines: ${lines.length}, disclaimers: ${hasDisclaimers}), using fallback`);
       aiText = getFallbackSummary(query, queryType);
     }
 
     /* ---------- Final Response ---------- */
-    console.log(`✅ AI Answer generated successfully for query type: ${queryType}`);
+    console.log(`✅ SI Answer generated successfully for query type: ${queryType}`);
     return new Response(
       JSON.stringify({
         text: aiText,
@@ -522,7 +522,7 @@ Content: ${r.snippet}`
       }
     );
   } catch (error) {
-    console.error("❌ AI Answer Error:", error);
+    console.error("❌ SI Answer Error:", error);
     // Return graceful fallback - never expose raw errors
     const query = "your search";
     return new Response(

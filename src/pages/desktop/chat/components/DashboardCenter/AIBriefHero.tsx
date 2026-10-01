@@ -48,8 +48,8 @@ export const AIBriefHero: React.FC = () => {
         };
 
         const defaultInsightsList = [
-          { title: 'Workspace Active', message: 'All messaging channels and AI services operating normally', type: 'system' },
-          { title: 'Smart Briefing Ready', message: 'AI context memory is up to date with your latest conversation highlights', type: 'digest' },
+          { title: 'Workspace Active', message: 'All messaging channels and SI services operating normally', type: 'system' },
+          { title: 'Smart Briefing Ready', message: 'SI context memory is up to date with your latest conversation highlights', type: 'digest' },
           { title: 'Realtime Voice & Video', message: 'SIP and WebRTC calling engine standing by', type: 'system' },
           { title: 'Security & Auth Guard', message: 'Session encrypted with active device monitoring', type: 'security' }
         ];
@@ -64,7 +64,7 @@ export const AIBriefHero: React.FC = () => {
             const titleFallbacks = [
               'Workspace Active',
               'Smart Briefing Updated',
-              'AI Context Refreshed',
+              'SI Context Refreshed',
               'Realtime Services Ready',
               'Security Guard Active',
               'System Health Optimal'
@@ -75,8 +75,8 @@ export const AIBriefHero: React.FC = () => {
           let cleanBody = n.message || n.body || 'Operational update';
           if (cleanBody === 'System Update' || cleanBody.includes('Your Chatr update')) {
             const bodyFallbacks = [
-              'All messaging channels and AI services operating normally.',
-              'AI context memory is up to date with your latest conversation highlights.',
+              'All messaging channels and SI services operating normally.',
+              'SI context memory is up to date with your latest conversation highlights.',
               'Realtime WebRTC voice & video signaling operational.',
               'Session encrypted with active device monitoring.',
               'Automated background tasks synced across devices.',
@@ -194,11 +194,11 @@ export const AIBriefHero: React.FC = () => {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className={cn("w-10 h-10 rounded-xl overflow-hidden border shadow-lg shrink-0", isDark ? "border-violet-500/40 shadow-violet-500/20" : "border-violet-200 shadow-violet-500/5")}>
-            <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
+            <img src="/chatr-ai-logo.jpg" alt="chatrSI" className="w-full h-full object-cover" />
           </div>
           <div>
             <h2 className={cn("text-xl font-bold tracking-tight", isDark ? "text-white" : "text-zinc-900")}>Today I noticed</h2>
-            <p className={cn("text-xs mt-0.5", isDark ? "text-white/40" : "text-zinc-500")}>AI-curated briefing · Updated just now</p>
+            <p className={cn("text-xs mt-0.5", isDark ? "text-white/40" : "text-zinc-500")}>SI-curated briefing · Updated just now</p>
           </div>
           {/* Live dot */}
           <div className="ml-auto flex items-center gap-1.5">
@@ -250,7 +250,7 @@ export const AIBriefHero: React.FC = () => {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-sm font-bold text-white transition-all shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:scale-[1.02] active:scale-[0.98] ml-auto cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
-              Open CHATR AI
+              Open CHATR SI
             </button>
           </div>
         </div>

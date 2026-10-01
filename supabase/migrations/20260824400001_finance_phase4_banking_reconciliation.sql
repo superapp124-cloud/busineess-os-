@@ -222,7 +222,7 @@ BEGIN
       END IF;
     END IF;
 
-    -- If no rule matched, insert into Exception Queue for AI / Human review
+    -- If no rule matched, insert into Exception Queue for SI / Human review
     INSERT INTO public.fin_reconciliation_exceptions (
       bank_transaction_id, exception_type, severity, suggested_action, status
     ) VALUES (

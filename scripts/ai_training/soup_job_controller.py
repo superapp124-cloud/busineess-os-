@@ -1,11 +1,11 @@
 """
-CHATR AI Training Infrastructure
+CHATR SI Training Infrastructure
 scripts/ai_training/soup_job_controller.py
 
 Translates an approved TrainingJobPlan into a locked soup.yaml,
 uploads dataset to the Colab worker, submits the job, and polls for results.
 
-The soup.yaml is auto-generated and locked — AI agents cannot modify it.
+The soup.yaml is auto-generated and locked — SI Agents cannot modify it.
 """
 
 import os
@@ -39,7 +39,7 @@ def build_soup_yaml(plan: TrainingJobPlan, policy_hash: str, dataset_path: str) 
     """
     Generates a locked soup.yaml from an approved TrainingJobPlan.
     This YAML is the only thing Soup ever receives.
-    No AI agent can modify it after policy approval.
+    No SI Agent can modify it after policy approval.
     """
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
     job_id = f"chatr_{plan.capability}_{plan.method}_{int(time.time())}"

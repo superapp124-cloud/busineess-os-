@@ -71,7 +71,7 @@ async function runPhase7ProductionBuildAudit(): Promise<Phase7BuildAuditManifest
     { route: '/desktop/revenue', suiteName: 'Revenue OS Suite' },
     { route: '/desktop/hiring', suiteName: 'Recruitment & Hiring OS Suite' },
     { route: '/desktop/business-intelligence', suiteName: 'Business Intelligence Suite' },
-    { route: '/desktop/ai-agents', suiteName: 'Knowledge OS & AI Agent Hub' }
+    { route: '/desktop/ai-agents', suiteName: 'Knowledge OS & SI Agent Hub' }
   ];
 
   const routeResolutionChecks: RouteResolutionCheck[] = routesToVerify.map((r) => {

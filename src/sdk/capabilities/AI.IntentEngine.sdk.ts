@@ -1,16 +1,16 @@
 /**
  * CHATR OS — Auto-Generated Capability SDK
- * Capability: Intent Engine (AI.IntentEngine)
+ * Capability: Intent Engine (SI.IntentEngine)
  */
 
 import { ICapabilityManifest } from '../types';
 
 export const AIIntentEngineSDK: ICapabilityManifest = {
-  id: 'AI.IntentEngine',
+  id: 'SI.IntentEngine',
   name: 'Intent Engine',
   description: 'Natural language understanding engine that powers CHATR\'s universal command bar and intent resolution.',
   department: 'Enterprise Platform',
-  category: 'AI & Automation',
+  category: 'SI & Automation',
   version: '3.0.0',
   maturity: 'L5',
   icon: '🧠',
@@ -29,7 +29,7 @@ export const AIIntentEngineSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Intent Engine AI',
+    assistantName: 'Intent Engine SI',
     skills: []
   },
   

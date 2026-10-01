@@ -126,10 +126,10 @@
 
 ### 7. **Health Hub Features - Major Gaps**
 
-#### AI Health Assistant May Not Work
-- **Issue:** Need to verify Lovable AI integration is active
+#### SI Health Assistant May Not Work
+- **Issue:** Need to verify Lovable SI integration is active
 - **Impact:** Core health feature may be broken
-- **Required:** Test AI health chatbot with actual queries
+- **Required:** Test SI health chatbot with actual queries
 - **Files:** `src/pages/AIAssistant.tsx`, edge function `ai-health-assistant`
 
 #### Lab Reports Upload Flow
@@ -338,7 +338,7 @@
 7. **Implement Message Reactions** in MessageBubble
 8. **Add Message Forwarding** to context menu
 9. **Create Broadcast Lists** UI
-10. **Test AI Health Assistant** end-to-end
+10. **Test SI Health Assistant** end-to-end
 
 ### Week 3 - Health & Appointments
 11. **Verify Lab Reports** upload/download flow
@@ -418,7 +418,7 @@
 - [ ] Book appointment
 - [ ] Pay for appointment
 - [ ] Join teleconsultation
-- [ ] AI health assistant responds
+- [ ] SI health assistant responds
 
 ### Social Features
 - [ ] Create community

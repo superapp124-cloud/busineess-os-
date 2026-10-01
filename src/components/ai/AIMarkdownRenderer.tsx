@@ -7,7 +7,7 @@ interface AIMarkdownRendererProps {
 }
 
 /**
- * Universal CHATR AI Markdown & Formatting Renderer
+ * Universal CHATR SI Markdown & Formatting Renderer
  * Converts executive briefings, lists, headers, bold text, and inline formatting
  * into polished, scannable enterprise UI components.
  */

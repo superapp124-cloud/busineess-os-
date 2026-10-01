@@ -1,8 +1,8 @@
 /**
  * CHATR 200-AGENT AUTONOMOUS ENTERPRISE KERNEL
  * 
- * True Autonomous AI Organization Engine where 1 Human CEO sets high-level goals
- * and 200 Specialized AI Agents execute scraping, outreach, candidate screening,
+ * True Autonomous SI Organization Engine where 1 Human CEO sets high-level goals
+ * and 200 Specialized SI Agents execute scraping, outreach, candidate screening,
  * sales triage, support, finance, and SEO 24/7 in an automated pipeline.
  */
 

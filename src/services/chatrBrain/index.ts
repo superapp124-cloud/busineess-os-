@@ -1,6 +1,6 @@
 /**
  * ChatrAI - Main Orchestrator
- * The unified AI runtime that routes to all agents
+ * The unified SI runtime that routes to all agents
  */
 
 import { 
@@ -19,7 +19,7 @@ import { deviceGpt } from './deviceGpt';
 
 /**
  * ChatrAI Orchestrator
- * The central AI routing and coordination system
+ * The central SI routing and coordination system
  */
 class ChatrBrainService {
   private initialized = false;
@@ -74,7 +74,7 @@ class ChatrBrainService {
     // Step 4: Build system prompt for primary agent
     const systemPrompt = buildSystemPrompt(agents[0], agentContext);
 
-    // Step 5: Call AI with multi-agent awareness
+    // Step 5: Call SI with multi-agent awareness
     const aiResponse = await this.callAI(
       request.query,
       systemPrompt,
@@ -126,7 +126,7 @@ class ChatrBrainService {
   }
 
   /**
-   * Call AI service with context
+   * Call SI service with context
    */
   private async callAI(
     query: string,
@@ -170,7 +170,7 @@ class ChatrBrainService {
       });
 
       if (error) {
-        console.error('AI call error:', error);
+        console.error('SI call error:', error);
         throw error;
       }
 
@@ -182,14 +182,14 @@ class ChatrBrainService {
           mode: 'cloud',
           label: 'ChatrAI connected',
           model: data.model || 'ChatrAI Connected Runtime',
-          provider: data.provider || 'Connected AI runtime',
+          provider: data.provider || 'Connected SI runtime',
           privacy: 'cloud',
-          detail: 'Connected AI handled this request after privacy routing.',
+          detail: 'Connected SI handled this request after privacy routing.',
         },
         confidence: data.confidence,
       };
     } catch (error) {
-      console.error('[ChatrAI] AI call failed:', error);
+      console.error('[ChatrAI] SI call failed:', error);
       
       const local = await deviceGpt.process({
         query,
@@ -249,7 +249,7 @@ class ChatrBrainService {
   }
 
   /**
-   * Get fallback response when AI fails
+   * Get fallback response when SI fails
    */
   private getFallbackResponse(agent: AgentType, query: string): string {
     const persona = getAgentPersona(agent);

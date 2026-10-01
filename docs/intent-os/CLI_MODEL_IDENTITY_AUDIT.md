@@ -1,7 +1,7 @@
 # CHATR CLI & Model Identity Forensic Audit Report
 
 **Audit Date**: September 9, 2026  
-**Auditor**: Senior ML Infrastructure Engineer / CHATR AI Quality Assurance  
+**Auditor**: Senior ML Infrastructure Engineer / CHATR SI Quality Assurance  
 **Incident Reference**: Terminal Model Identity Failure (`>>> chatr` interpreted as "chat", "chatter", "no information on TalentXcel")
 
 ---
@@ -19,7 +19,7 @@ A strict forensic tracing of the execution chain, binary paths, Ollama blobs, an
    - The user launched an interactive session with `ollama run phi3:mini` (or `chatr:general-v1`).
 2. **`chatr:general-v1` Has Zero Learned Weights**:
    - Forensic analysis of `C:\Users\Arshid.Wani\.ollama\models\blobs\` proved that `chatr:general-v1` points directly to blob `sha256:633fc5be925f9a484b61d6f9b9a78021eeb462100bd557309f01ba84cac26adf`, which is the **100% vanilla `phi3:mini` base model**.
-   - The only difference is a 122-byte text blob containing a 1-line system prompt: `"You are CHATR Core, a fast, accurate, and thoughtful AI assistant..."`. No LoRA adapter was ever merged into it.
+   - The only difference is a 122-byte text blob containing a 1-line system prompt: `"You are CHATR Core, a fast, accurate, and thoughtful SI assistant..."`. No LoRA adapter was ever merged into it.
 3. **`chatr:general-v2` Does NOT Exist in Ollama Yet**:
    - `chatr:general-v2` is correctly tracked in `data/adapters/_registry.json` in lifecycle state `READY_FOR_REAL_TRAINING`.
    - No GGUF file exists in `data/models/` because the physical Qwen 2.5 7B training has not yet executed on Google Colab GPU.
@@ -94,7 +94,7 @@ Inspection of `chatr:general-v1` rootfs layers:
 }
 ```
 - **Layer 0 (`sha256:633fc5be...`)**: The raw, un-adapted base model of `phi3:mini`.
-- **Layer 3 (`sha256:9c6212f3...`)**: Plain text system prompt: `"You are CHATR Core, a fast, accurate, and thoughtful AI assistant. Be concise, structured, and helpful across all domains."`
+- **Layer 3 (`sha256:9c6212f3...`)**: Plain text system prompt: `"You are CHATR Core, a fast, accurate, and thoughtful SI assistant. Be concise, structured, and helpful across all domains."`
 - **Trained LoRA Weights**: 0 bytes.
 
 ### GGUF File Verification on Disk:

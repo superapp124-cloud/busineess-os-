@@ -1,6 +1,6 @@
-# CHATR AI Search Backend Architecture
+# CHATR SI Search Backend Architecture
 
-CHATR AI Search is implemented as a grounded, streaming RAG orchestration service. The browser client talks to `GET /api/search/agent?q=...` over Server-Sent Events. Non-streaming consumers can use `GET /api/search/answer?q=...` for the same pipeline returned as JSON.
+CHATR SI Search is implemented as a grounded, streaming RAG orchestration service. The browser client talks to `GET /api/search/agent?q=...` over Server-Sent Events. Non-streaming consumers can use `GET /api/search/answer?q=...` for the same pipeline returned as JSON.
 
 ## Runtime Flow
 

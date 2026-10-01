@@ -168,7 +168,7 @@ export default function ChatrPlusSellerRegistration() {
  'Full analytics suite',
  '1.5% transaction fee',
  'Verified badge',
- 'AI-powered leads',
+ 'SI-powered leads',
  'Custom promotions',
  'Dedicated account manager'
  ]

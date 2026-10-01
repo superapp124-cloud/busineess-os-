@@ -9,7 +9,7 @@ export interface SpeechRecognitionResult {
 
 /**
  * Premium speech recognition hook
- * Supports voice search, AI assistant input, and voice commands
+ * Supports voice search, SI assistant input, and voice commands
  */
 export const useSpeechRecognition = () => {
  const [isListening, setIsListening] = useState(false);

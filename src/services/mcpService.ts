@@ -156,7 +156,7 @@ export const MCP_TOOLS = {
     { name: 'notifications_schedule', description: 'Schedule a future notification' },
   ],
   brain: [
-    { name: 'brain_query', description: 'Query CHATR Brain AI' },
+    { name: 'brain_query', description: 'Query CHATR Brain SI' },
     { name: 'brain_search', description: 'Web search via CHATR' },
   ],
   user: [
@@ -171,5 +171,5 @@ export const MCP_PERMISSIONS = [
   { value: 'calls.read', label: 'View Call History', category: 'Calls' },
   { value: 'calls.initiate', label: 'Make Calls', category: 'Calls' },
   { value: 'notifications.send', label: 'Send Notifications', category: 'Notifications' },
-  { value: 'brain.query', label: 'Query AI Brain', category: 'Brain' },
+  { value: 'brain.query', label: 'Query SI Brain', category: 'Brain' },
 ];

@@ -62,7 +62,7 @@ export default function CallHistory() {
  const [insightDuration, setInsightDuration] = useState(0);
  const [spamPhone, setSpamPhone] = useState<string | null>(null);
 
- // Listen for nativeNavigate events from Android (post-call AI + spam report)
+ // Listen for nativeNavigate events from Android (post-call SI + spam report)
  useEffect(() => {
  const unsub = subscribeToNativeNavigate(detail => {
  if (detail.showInsights && detail.phoneNumber) {

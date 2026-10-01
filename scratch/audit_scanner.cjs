@@ -26,8 +26,8 @@ function analyzeFile(filePath) {
     let hasContext = content.includes('useContext');
     
     let aiStatus = 'Disconnected';
-    if (hasAi) aiStatus = 'Partial AI'; // Need deeper check, defaulting to Partial
-    if (hasAi && content.includes('stream')) aiStatus = 'Production AI';
+    if (hasAi) aiStatus = 'Partial SI'; // Need deeper check, defaulting to Partial
+    if (hasAi && content.includes('stream')) aiStatus = 'Production SI';
     
     let backendStatus = 'Disconnected';
     if (hasSupabase || hasUseQuery) backendStatus = 'Backend Connected';

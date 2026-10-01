@@ -39,7 +39,7 @@ graph TD
     B --> C["Phase 3C: User Reconciliation & Idempotent Provisioning"]
     C --> D["Phase 3D: Profile Synchronization & Trigger Assertion"]
     D --> E["Phase 3E: Relational Integrity & FK Assertion (0 Orphans)"]
-    E --> F["Phase 3F: AI Memory Verification (768-dim ai_memory)"]
+    E --> F["Phase 3F: SI Memory Verification (768-dim ai_memory)"]
     F --> G["Phase 3G: Storage & Zero-Lovable CI Governance Audit"]
     G --> H["Phase 3H: Final Production Verification & Acceptance"]
 ```
@@ -60,7 +60,7 @@ graph TD
 - Run assertions against `messages`, `conversations`, `conversation_participants`, `contacts`, `attachments`, `calls`, `notifications`, `user_devices`, `ai_memory`.
 - Target: **0 orphaned records**.
 
-### Phase 3F & 3G — AI Memory & Zero Lovable
+### Phase 3F & 3G — SI Memory & Zero Lovable
 - Ensure `public.ai_memory` maintains 768-dim embeddings.
 - Add non-destructive view `CREATE OR REPLACE VIEW public.communication_memory AS SELECT * FROM public.ai_memory;`.
 - Confirm `npm run edge:functions:audit` passes with 0 Lovable dependencies.

@@ -150,7 +150,7 @@ export default function PostPreviewDialog({
  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
  <div className="text-center text-white">
  <Sparkles className="w-8 h-8 mx-auto mb-2 animate-spin" />
- <p>AI analyzing your content...</p>
+ <p>SI analyzing your content...</p>
  </div>
  </div>
  )}
@@ -188,7 +188,7 @@ export default function PostPreviewDialog({
  <div className="bg-secondary rounded-lg p-4">
  <h4 className="font-semibold mb-2 flex items-center gap-2">
  <Sparkles className="w-4 h-4 text-primary" />
- AI Optimization Tips
+ SI Optimization Tips
  </h4>
  <ul className="space-y-1 text-secondary">
  {analysis.optimizations.map((tip: string, idx: number) => (
@@ -215,7 +215,7 @@ export default function PostPreviewDialog({
  </div>
 
  <div className="space-y-2">
- <label className="text-secondary font-medium">AI Suggested Hashtags</label>
+ <label className="text-secondary font-medium">SI Suggested Hashtags</label>
  <div className="flex flex-wrap gap-2">
  {hashtags.map((tag, idx) => (
  <Badge key={idx} variant="secondary">

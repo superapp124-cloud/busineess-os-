@@ -2,9 +2,9 @@ import React from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
- Popover,
- PopoverContent,
- PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,122 +12,150 @@ import { cn } from "@/lib/utils";
 import { POPULAR_COUNTRIES, ALL_COUNTRIES, type Country } from "@/utils/countryCodeUtil";
 
 interface CountryCodeSelectorProps {
- value: string;
- onChange: (dialCode: string) => void;
- disabled?: boolean;
- className?: string;
+  value: string;
+  onChange: (dialCode: string) => void;
+  disabled?: boolean;
+  className?: string;
+  variant?: 'dark' | 'light';
+  showCode?: boolean;
 }
 
-export const CountryCodeSelector = ({ value, onChange, disabled, className }: CountryCodeSelectorProps) => {
- const [open, setOpen] = React.useState(false);
- const [search, setSearch] = React.useState("");
+export const CountryCodeSelector = ({ 
+  value, 
+  onChange, 
+  disabled, 
+  className,
+  variant = 'dark',
+  showCode = false
+}: CountryCodeSelectorProps) => {
+  const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
 
- const selectedCountry = ALL_COUNTRIES.find(c => c.dialCode === value) || POPULAR_COUNTRIES[0];
+  const selectedCountry = ALL_COUNTRIES.find(c => c.dialCode === value) || POPULAR_COUNTRIES[0];
 
- const filteredCountries = search
- ? ALL_COUNTRIES.filter(
- country =>
- country.name.toLowerCase().includes(search.toLowerCase()) ||
- country.dialCode.includes(search)
- )
- : ALL_COUNTRIES;
+  const filteredCountries = search
+    ? ALL_COUNTRIES.filter(
+        country =>
+          country.name.toLowerCase().includes(search.toLowerCase()) ||
+          country.dialCode.includes(search)
+      )
+    : ALL_COUNTRIES;
 
- const handleSelect = (country: Country) => {
- onChange(country.dialCode);
- setOpen(false);
- setSearch("");
- };
+  const handleSelect = (country: Country) => {
+    onChange(country.dialCode);
+    setOpen(false);
+    setSearch("");
+  };
 
- return (
- <Popover open={open} onOpenChange={setOpen}>
- <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn(
-            "w-[105px] justify-between h-12 bg-[#12132A] border border-purple-500/30 text-white rounded-xl hover:bg-[#1A1B38] hover:text-white",
-            className
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        {variant === 'light' ? (
+          <button
+            type="button"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "flex items-center gap-1.5 h-full px-3.5 py-2 bg-transparent text-gray-900 hover:bg-gray-50/50 focus:outline-none transition-colors shrink-0 select-none",
+              className
+            )}
+            disabled={disabled}
+          >
+            <span className="text-base leading-none">{selectedCountry.flag}</span>
+            <span className="text-sm font-semibold text-gray-900 tracking-tight">
+              {showCode ? `${selectedCountry.code} ` : ''}{selectedCountry.dialCode}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+          </button>
+        ) : (
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "w-[105px] justify-between h-12 bg-[#12132A] border border-purple-500/30 text-white rounded-xl hover:bg-[#1A1B38] hover:text-white",
+              className
+            )}
+            disabled={disabled}
+          >
+            <span className="flex items-center gap-1.5 text-xs font-medium">
+              <span>{selectedCountry.flag}</span>
+              <span>{selectedCountry.dialCode}</span>
+            </span>
+            <ChevronDown className="ml-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+          </Button>
+        )}
+      </PopoverTrigger>
+      <PopoverContent className={cn("w-[300px] p-0 z-50", variant === 'light' ? "bg-white text-slate-900 border-slate-200 shadow-xl" : "bg-[#12132A] text-white border-purple-500/30")} align="start">
+        <div className="border-b px-3 py-2">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search countries..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+        </div>
+        <ScrollArea className="h-[300px]">
+          {!search && (
+            <div className="px-2 py-2">
+              <div className="mb-2 px-2 text-label text-muted-foreground">
+                Popular Countries
+              </div>
+              {POPULAR_COUNTRIES.map((country) => (
+                <div
+                  key={country.code}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-secondary hover:bg-accent",
+                    selectedCountry.code === country.code && "bg-accent"
+                  )}
+                  onClick={() => handleSelect(country)}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-section">{country.flag}</span>
+                    <span>{country.name}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">{country.dialCode}</span>
+                    {selectedCountry.code === country.code && (
+                      <Check className="h-4 w-4" />
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div className="my-2 border-t" />
+              <div className="mb-2 px-2 text-label text-muted-foreground">
+                All Countries
+              </div>
+            </div>
           )}
-          disabled={disabled}
-        >
-          <span className="flex items-center gap-1.5 text-xs font-medium">
-            <span>{selectedCountry.flag}</span>
-            <span>{selectedCountry.dialCode}</span>
-          </span>
-          <ChevronDown className="ml-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
-        </Button>
- </PopoverTrigger>
- <PopoverContent className="w-[300px] p-0" align="start">
- <div className="border-b px-3 py-2">
- <div className="relative">
- <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
- <Input
- placeholder="Search countries..."
- value={search}
- onChange={(e) => setSearch(e.target.value)}
- className="pl-8"
- />
- </div>
- </div>
- <ScrollArea className="h-[300px]">
- {!search && (
- <div className="px-2 py-2">
- <div className="mb-2 px-2 text-label text-muted-foreground">
- Popular Countries
- </div>
- {POPULAR_COUNTRIES.map((country) => (
- <div
- key={country.code}
- className={cn(
- "flex cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-secondary hover:bg-accent",
- selectedCountry.code === country.code && "bg-accent"
- )}
- onClick={() => handleSelect(country)}
- >
- <span className="flex items-center gap-2">
- <span className="text-section">{country.flag}</span>
- <span>{country.name}</span>
- </span>
- <div className="flex items-center gap-2">
- <span className="text-muted-foreground">{country.dialCode}</span>
- {selectedCountry.code === country.code && (
- <Check className="h-4 w-4" />
- )}
- </div>
- </div>
- ))}
- <div className="my-2 border-t" />
- <div className="mb-2 px-2 text-label text-muted-foreground">
- All Countries
- </div>
- </div>
- )}
- <div className="px-2 pb-2">
- {filteredCountries.map((country) => (
- <div
- key={country.code}
- className={cn(
- "flex cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-secondary hover:bg-accent",
- selectedCountry.code === country.code && "bg-accent"
- )}
- onClick={() => handleSelect(country)}
- >
- <span className="flex items-center gap-2">
- <span className="text-section">{country.flag}</span>
- <span>{country.name}</span>
- </span>
- <div className="flex items-center gap-2">
- <span className="text-muted-foreground">{country.dialCode}</span>
- {selectedCountry.code === country.code && (
- <Check className="h-4 w-4" />
- )}
- </div>
- </div>
- ))}
- </div>
- </ScrollArea>
- </PopoverContent>
- </Popover>
- );
+          <div className="px-2 pb-2">
+            {filteredCountries.map((country) => (
+              <div
+                key={country.code}
+                className={cn(
+                  "flex cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-secondary hover:bg-accent",
+                  selectedCountry.code === country.code && "bg-accent"
+                )}
+                onClick={() => handleSelect(country)}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-section">{country.flag}</span>
+                  <span>{country.name}</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">{country.dialCode}</span>
+                  {selectedCountry.code === country.code && (
+                    <Check className="h-4 w-4" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
 };

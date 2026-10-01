@@ -141,7 +141,7 @@ export const EngineHealthDashboard: React.FC = () => {
  target={10} warningThreshold={10} criticalThreshold={50} 
  />
  <MetricCard 
- title="AI Overhead (Avg)" 
+ title="SI Overhead (Avg)" 
  value={metrics.aiRuntimeLatencyMs} unit="ms" icon={Cpu} 
  target={50} warningThreshold={50} criticalThreshold={200} 
  />

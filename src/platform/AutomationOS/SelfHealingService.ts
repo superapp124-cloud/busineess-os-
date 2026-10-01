@@ -27,7 +27,7 @@ export class SelfHealingService {
 
       try {
         const recommendation = await ActiveAIProvider.heal(failure, {} as any);
-        console.log('[SelfHealingService] AI confidence:', recommendation.confidence);
+        console.log('[SelfHealingService] SI confidence:', recommendation.confidence);
 
         CommandBus.dispatch({ type: 'RECOMMEND_FIX', payload: { nodeId, recommendation }, timestamp: Date.now() });
 

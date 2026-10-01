@@ -19,7 +19,7 @@ export function InterviewPrepCard({ data }: { data: InterviewPrepViewModel }) {
  </div>
  <div>
  <h3 className="text-white font-medium">Interview Plan: {data.candidateName}</h3>
- <p className="text-slate-400 text-label">AI Generated based on Skill Gaps</p>
+ <p className="text-slate-400 text-label">SI Generated based on Skill Gaps</p>
  </div>
  </div>
  <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-3 flex items-start gap-3">

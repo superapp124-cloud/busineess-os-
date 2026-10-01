@@ -19,7 +19,7 @@ export const ChatrWhatsAppBusinessAPIPage: React.FC = () => {
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Web, iOS, Android',
       url: 'https://www.chatrchat.in/chatr/whatsapp-business-api',
-      description: 'Official WhatsApp Business API platform for multi-agent team inbox, automated lead distribution, candidate screening, and AI chat automation for Indian businesses.',
+      description: 'Official WhatsApp Business API platform for multi-agent team inbox, automated lead distribution, candidate screening, and SI chat automation for Indian businesses.',
       publisher: {
         '@type': 'Organization',
         name: 'CHATR Communication OS',
@@ -34,7 +34,7 @@ export const ChatrWhatsAppBusinessAPIPage: React.FC = () => {
     <>
       <SEOHead
         title="WhatsApp Business API Platform — CHATR Communication OS | Multi-Agent Team Inbox"
-        description="Connect your WhatsApp Business API to CHATR. Enable shared team inboxes, automated lead assignment, AI chat agents, and candidate screening without green-tick complexity."
+        description="Connect your WhatsApp Business API to CHATR. Enable shared team inboxes, automated lead assignment, SI chat agents, and candidate screening without green-tick complexity."
         canonical="https://www.chatrchat.in/chatr/whatsapp-business-api"
       />
 
@@ -91,9 +91,9 @@ export const ChatrWhatsAppBusinessAPIPage: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <Bot className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-white text-lg">AI Triage & Qualification</h3>
+              <h3 className="font-bold text-white text-lg">SI Triage & Qualification</h3>
               <p className="text-slate-400 text-xs leading-relaxed">
-                Automate first-line candidate qualification and customer lead routing. AI agents ask screening questions and hand off qualified leads to your team.
+                Automate first-line candidate qualification and customer lead routing. SI agents ask screening questions and hand off qualified leads to your team.
               </p>
             </div>
 
@@ -130,7 +130,7 @@ export const ChatrWhatsAppBusinessAPIPage: React.FC = () => {
 
               <div className="bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-2">
                 <span className="text-xs font-extrabold text-indigo-400 font-mono">03. AUTOMATE</span>
-                <h4 className="font-bold text-white text-sm">Set Up AI Agents</h4>
+                <h4 className="font-bold text-white text-sm">Set Up SI Agents</h4>
                 <p className="text-slate-400 text-xs">Configure auto-responders, lead assignment rules, and candidate pre-screeners.</p>
               </div>
 
@@ -151,7 +151,7 @@ export const ChatrWhatsAppBusinessAPIPage: React.FC = () => {
                 <div className="text-slate-400">Automate applicant shortlisting on WhatsApp for recruitment agencies.</div>
               </Link>
               <Link to="/talentxcel/ai-resume-parser" className="block bg-slate-950 border border-slate-800 p-4 rounded-xl hover:border-indigo-500/40 transition-colors space-y-1">
-                <div className="font-semibold text-white">AI Resume Parser →</div>
+                <div className="font-semibold text-white">SI Resume Parser →</div>
                 <div className="text-slate-400">Extract skills, experience, and candidate profiles from PDFs in seconds.</div>
               </Link>
             </div>

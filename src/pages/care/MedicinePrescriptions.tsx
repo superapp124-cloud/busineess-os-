@@ -86,7 +86,7 @@ const MedicinePrescriptions = () => {
 
  if (dbError) throw dbError;
 
- toast.success('Prescription uploaded! Processing with AI...');
+ toast.success('Prescription uploaded! Processing with SI...');
  setPrescriptions(prev => [prescription, ...prev]);
 
  processWithOCR(prescription.id, publicUrl);
@@ -159,7 +159,7 @@ const MedicinePrescriptions = () => {
  >
  <Sparkles className="h-8 w-8 text-white" />
  </motion.div>
- <h3 className="font-bold text-white text-section mb-1">AI-Powered Scanner</h3>
+ <h3 className="font-bold text-white text-section mb-1">SI-Powered Scanner</h3>
  <p className="text-secondary text-white/80 mb-4">
  Upload prescription & auto-detect medicines
  </p>

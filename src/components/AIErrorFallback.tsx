@@ -13,7 +13,7 @@ interface AIErrorFallbackProps {
 export function AIErrorFallback({ 
  error, 
  onRetry, 
- title = "AI Assistant Unavailable",
+ title = "SI Assistant Unavailable",
  message 
 }: AIErrorFallbackProps) {
   const getErrorMessage = () => {
@@ -22,11 +22,11 @@ export function AIErrorFallback({
     const errorStr = typeof error === 'string' ? error : error?.message || '';
     
     if (errorStr.includes('429') || errorStr.includes('rate limit')) {
-      return 'CHATR AI is receiving high demand right now. Please try again in a moment.';
+      return 'CHATR SI is receiving high demand right now. Please try again in a moment.';
     }
     
     if (errorStr.includes('402') || errorStr.includes('payment')) {
-      return 'AI service credits are needed. Please contact support or try again later.';
+      return 'SI service credits are needed. Please contact support or try again later.';
     }
     
     if (errorStr.includes('network') || errorStr.includes('fetch')) {

@@ -1,5 +1,5 @@
 /**
- * CHATR Robot AI Bridge Pipeline (Gate 7 Integration)
+ * CHATR Robot SI Bridge Pipeline (Gate 7 Integration)
  * Orchestrates multi-lingual voice/text processing, local Ollama parsing, spatial grounding,
  * deterministic capability matching, and execution sub-task graph generation.
  */

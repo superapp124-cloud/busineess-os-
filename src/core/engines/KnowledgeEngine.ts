@@ -68,7 +68,7 @@ export class KnowledgeEngineImpl implements IEngine {
     console.log(`[KnowledgeEngine] Extracting from: ${source}`);
     
     // Stub implementation for now - returning an empty graph
-    // The actual AI extraction happens in AIEngine or WorkerPool
+    // The actual SI extraction happens in AIEngine or WorkerPool
     const nodes: KnowledgeNode[] = [];
     const edges: KnowledgeEdge[] = [];
     

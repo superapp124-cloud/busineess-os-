@@ -36,7 +36,7 @@
 
         <LinearLayout android:id="@+id/btnAiAssistant" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
             <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_shield_check" app:tint="@color/shield_text_secondary" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Assistant" android:textColor="@color/shield_text_secondary" android:textSize="12sp" android:layout_marginTop="8dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SI Assist" android:textColor="@color/shield_text_secondary" android:textSize="12sp" android:layout_marginTop="8dp" />
         </LinearLayout>
         
         <LinearLayout android:id="@+id/btnBackground" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">

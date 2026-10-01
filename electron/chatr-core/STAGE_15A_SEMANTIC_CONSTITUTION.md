@@ -24,7 +24,7 @@ But:
 - *What exists?*
 - *How are things related?*
 - *How do they evolve?*
-- *How do humans, AI agents, workflows, providers, and organizations refer to exactly the same thing?*
+- *How do humans, SI agents, workflows, providers, and organizations refer to exactly the same thing?*
 
 This document is the semantic equivalent of the Kernel ABI. It is the Business Constitution of the platform.
 
@@ -97,12 +97,12 @@ Relationships are semantic objects, not foreign keys. They carry:
 - **Provenance** (who/what established this relationship)
 - **Policy Constraints** (governance rules on the relationship)
 
-This is critical for AI reasoning. An AI agent that reads `Person works_for Organization` has semantics, not just data.
+This is critical for SI reasoning. An SI agent that reads `Person works_for Organization` has semantics, not just data.
 
 ---
 
 ### Law 6 — Meaning Is Immutable
-Attributes may evolve. Meaning may not. An `Invoice` is always a formal request for payment. That meaning cannot be repurposed by an Industry Pack, an AI model, or a capability.
+Attributes may evolve. Meaning may not. An `Invoice` is always a formal request for payment. That meaning cannot be repurposed by an Industry Pack, an SI model, or a capability.
 
 Changing the meaning of a canonical object requires creating a **new canonical entity** with a formal **ODR**, not redefining the existing one.
 
@@ -115,8 +115,8 @@ Industry Packs are not allowed to define business fundamentals. They extend them
 
 ---
 
-### Law 8 — AI Must Use Canonical Semantics
-AI agents, LLMs, planners, and recommendation engines operating on the CHATR platform must operate on ontology entities — not raw JSON, not arbitrary field names, not ad-hoc schemas.
+### Law 8 — SI Must Use Canonical Semantics
+SI agents, LLMs, planners, and recommendation engines operating on the CHATR platform must operate on ontology entities — not raw JSON, not arbitrary field names, not ad-hoc schemas.
 
 This ensures that recommendations, predictions, simulations, and generated plans are explainable because they reason over well-defined semantic objects with known meaning.
 
@@ -129,7 +129,7 @@ Canonical events describe **business reality changes**, not user interface inter
 
 **Forbidden:** `ButtonClicked`, `FormSubmitted`, `PageLoaded`, `DropdownChanged`
 
-Events are the shared signal vocabulary between the Execution Plane and the Observability, Intelligence, and AI planes.
+Events are the shared signal vocabulary between the Execution Plane and the Observability, Intelligence, and SI planes.
 
 ---
 
@@ -190,7 +190,7 @@ Each domain is a governed view over the ontology organized around an Aggregate R
 | Human Capital | Employee       | Candidate, Manager, Skill, Resume             |
 | Cust. Success | Case           | Ticket, Incident, SLA, Feedback               |
 | Marketing     | Campaign       | Audience, Segment, Journey, Lead Source       |
-| AI            | Intent         | Goal, Memory, Recommendation, Prompt, Agent   |
+| SI            | Intent         | Goal, Memory, Recommendation, Prompt, Agent   |
 | Automation    | Capability     | Provider, Trigger, Action, Rule               |
 | Platform      | Package        | Exchange, Registry, Policy, Trust             |
 | Analytics     | Dashboard      | Metric, KPI, Chart, Alert, Threshold          |
@@ -244,7 +244,7 @@ Objects compose traits from eight governed categories instead of implementing be
 ### Operational Traits
 `LifecycleManaged`, `HistoryEnabled`, `Taggable`, `Localizable`, `TimeAware`, `Archivable`
 
-### AI Traits
+### SI Traits
 `AIDiscoverable`, `AIReasonable`, `EmbeddingEnabled`, `ContextAware`, `ExplainabilitySupported`
 
 ### Security Traits
@@ -270,7 +270,7 @@ Lifecycle is a reusable profile, not a per-entity definition.
 | Package Lifecycle  | Draft → Validated → Certified → Signed → Published → Revoked|
 | Trust Lifecycle    | Proposed → Verified → Negotiated → Active → Revoked         |
 | Execution Lifecycle| Queued → Running → Paused → Completed → Failed              |
-| AI Lifecycle       | Generated → Reviewed → Accepted → Applied → Expired         |
+| SI Lifecycle       | Generated → Reviewed → Accepted → Applied → Expired         |
 | Federation Lifecycle| Proposed → Negotiated → Active → Suspended → Revoked       |
 
 ---
@@ -294,7 +294,7 @@ Events describe business reality changes. They are the shared signal vocabulary 
 ### Knowledge Events
 `DocumentCreated`, `DocumentPublished`, `DocumentVersioned`, `KnowledgeIndexed`
 
-### AI Events
+### SI Events
 `IntentCaptured`, `RecommendationGenerated`, `PredictionProduced`, `SimulationCompleted`, `LearningArtifactCreated`
 
 ### Platform Events
@@ -322,7 +322,7 @@ Strongly-typed canonical objects generated from domain catalogs (e.g., `Customer
 
 ## Part 9 — Universal Semantic Metadata
 
-Every canonical object automatically exposes standardized metadata enabling AI reasoning, SDK generation, search, and federation.
+Every canonical object automatically exposes standardized metadata enabling SI reasoning, SDK generation, search, and federation.
 
 ```json
 {
@@ -359,7 +359,7 @@ Any change to canonical entities, relationship predicates, aggregate roots, life
 - **Status** — Proposed | Accepted | Rejected | Deprecated
 - **Context** — the business or technical need driving the change
 - **Decision** — the exact semantic change being made
-- **Consequences** — impact on existing entities, SDK generators, AI models
+- **Consequences** — impact on existing entities, SDK generators, SI models
 - **Alternatives Considered** — other semantic approaches evaluated
 - **Approval** — governance authority that ratified it
 
@@ -370,5 +370,5 @@ Any change to canonical entities, relationship predicates, aggregate roots, life
 4. New relationship predicates require an **ODR**.
 5. Lifecycle profiles are **reusable** rather than embedded.
 6. All capabilities operate **on** canonical entities.
-7. AI models consume **ontology definitions**, not hard-coded schemas.
+7. SI models consume **ontology definitions**, not hard-coded schemas.
 8. SDKs are **generated from** the ontology, not maintained independently.

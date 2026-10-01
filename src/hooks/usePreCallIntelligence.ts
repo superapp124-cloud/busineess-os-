@@ -122,7 +122,7 @@ export function usePreCallIntelligence(
           ringProfile = 'voicemail'; // Block and route straight to silent voicemail
         } else if (trustScore >= 0.3 && trustScore < 0.65) {
           if (category === 'delivery' || category === 'bank') {
-            ringProfile = 'screen'; // Force AI call screening to verify purpose
+            ringProfile = 'screen'; // Force SI call screening to verify purpose
           } else {
             ringProfile = 'vibrate'; // Low-trust unrecognized numbers get non-intrusive alert
           }

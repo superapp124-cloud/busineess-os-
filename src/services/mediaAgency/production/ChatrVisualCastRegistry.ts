@@ -48,15 +48,15 @@ export interface CastMemberProfile {
 
 export class ChatrVisualCastRegistry {
   private static CAST: Record<string, CastMemberProfile> = {
-    // 1. Priya Sharma — Enterprise AI & Tech Strategist
+    // 1. Priya Sharma — Enterprise SI & Tech Strategist
     'priya_sharma': {
       characterId: 'priya_sharma',
       name: 'Priya Sharma',
       ageRange: '26–30',
-      role: 'Enterprise AI & Tech Strategist',
+      role: 'Enterprise SI & Tech Strategist',
       demographic: 'Indian Woman • Tech & Systems',
-      contentDomain: 'AI agents, Enterprise workflows, Productivity',
-      approvedTopics: ['AI Agents', 'Enterprise Workflows', 'Productivity', 'Tech Architecture'],
+      contentDomain: 'SI agents, Enterprise workflows, Productivity',
+      approvedTopics: ['SI Agents', 'Enterprise Workflows', 'Productivity', 'Tech Architecture'],
       personality: 'Analytical, authoritative, fast-paced, high clarity',
       vocalProfile: {
         voiceId: 'priya_v1_en_in',
@@ -174,14 +174,14 @@ export class ChatrVisualCastRegistry {
       consistencyScorePercent: 96
     },
 
-    // 4. Vikram Joshi — AI/OSS & Tech Hacker
+    // 4. Vikram Joshi — SI/OSS & Tech Hacker
     'vikram_joshi': {
       characterId: 'vikram_joshi',
       name: 'Vikram Joshi',
       ageRange: '25–30',
       role: 'Tech Hacker & Open Source Builder',
       demographic: 'Indian Man • Hacker Culture',
-      contentDomain: 'Weird tech experiments, Local AI, Hardware hacks',
+      contentDomain: 'Weird tech experiments, Local SI, Hardware hacks',
       approvedTopics: ['Weird Tech', 'Open Source', 'Ollama Experiments', 'Hardware Hacks'],
       personality: 'Energetic, fast-talking, curiosity-driven',
       vocalProfile: {
@@ -426,7 +426,7 @@ export class ChatrVisualCastRegistry {
       consistencyScorePercent: 99
     },
 
-    // 10. Dev Bhatia — Viral Tech & Consumer AI Trends
+    // 10. Dev Bhatia — Viral Tech & Consumer SI Trends
     'dev_bhatia': {
       characterId: 'dev_bhatia',
       name: 'Dev Bhatia',

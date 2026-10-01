@@ -1,19 +1,20 @@
 /**
- * WORK AI AGENT
+ * WORK SI AGENT
  * Handles tasks, documents, meetings, schedules, work-related queries
  */
 
 import { AgentType, ActionType, DetectedIntent } from '../types';
 import { memoryLayer } from '../memoryLayer';
 import { AgentResponse, AgentContext } from './personalAI';
+import { localAIEngine } from '@/services/ai/LocalAIEngine';
 
 /**
- * Work AI Agent
+ * Work SI Agent
  * Manages work tasks, meetings, documents, and professional context
  */
 class WorkAIAgent {
   readonly type: AgentType = 'work';
-  readonly name = 'Work AI';
+  readonly name = 'Work SI';
 
   /**
    * Process a work-related query
@@ -122,6 +123,22 @@ class WorkAIAgent {
     // Default work message
     if (!message) {
       message = `I understand this is work-related. How can I help with your professional tasks?`;
+    }
+
+    // If on-device Local SI is ready, augment with intelligent reasoning
+    try {
+      if (await localAIEngine.isModelAvailable()) {
+        const aiResult = await localAIEngine.generate(query, {
+          systemPrompt: `You are CHATR Work SI. Assist the user with work tasks, meeting planning, summaries, and professional communications. Be concise, structured, and action-oriented.`,
+          maxTokens: 300,
+        });
+        if (aiResult?.text && aiResult.provider !== 'HEURISTIC_FALLBACK') {
+          message = aiResult.text;
+          confidence = 0.94;
+        }
+      }
+    } catch {
+      // Deterministic fallback preserved
     }
     
     return {

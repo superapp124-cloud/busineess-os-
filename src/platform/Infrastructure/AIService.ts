@@ -28,7 +28,7 @@ export class AIService {
     });
 
     if (!response.ok) {
-      throw new Error(`AI Service Error: ${response.statusText}`);
+      throw new Error(`SI Service Error: ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -102,7 +102,7 @@ export class AIService {
   }
 
   /**
-   * Check the health of the AI API.
+   * Check the health of the SI API.
    */
   static async checkHealth(): Promise<boolean> {
     try {

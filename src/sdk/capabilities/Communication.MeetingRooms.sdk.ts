@@ -78,7 +78,7 @@ export const CommunicationMeetingRoomsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Meeting Room Booking AI',
+    assistantName: 'Meeting Room Booking SI',
     skills: []
   },
   

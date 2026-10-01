@@ -19,7 +19,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   { icon: Phone, label: 'Call', color: 'text-blue-400', hoverColor: 'hover:bg-blue-500/20', bg: 'bg-blue-500/10 border-blue-500/20', event: 'open-new-call' },
   { icon: Video, label: 'Video Meeting', color: 'text-violet-400', hoverColor: 'hover:bg-violet-500/20', bg: 'bg-violet-500/10 border-violet-500/20', event: 'open-new-video' },
   { icon: Users, label: 'New Group', color: 'text-amber-400', hoverColor: 'hover:bg-amber-500/20', bg: 'bg-amber-500/10 border-amber-500/20', event: 'open-new-group' },
-  { icon: Sparkles, label: 'Ask AI', color: 'text-pink-400', hoverColor: 'hover:bg-pink-500/20', bg: 'bg-pink-500/10 border-pink-500/20', path: '/ai-agents/chat/new' },
+  { icon: Sparkles, label: 'Ask SI', color: 'text-pink-400', hoverColor: 'hover:bg-pink-500/20', bg: 'bg-pink-500/10 border-pink-500/20', path: '/ai-agents/chat/new' },
   { icon: Calendar, label: 'Schedule', color: 'text-cyan-400', hoverColor: 'hover:bg-cyan-500/20', bg: 'bg-cyan-500/10 border-cyan-500/20', path: '/desktop/calendar' },
   { icon: Hash, label: 'New Ticket', color: 'text-orange-400', hoverColor: 'hover:bg-orange-500/20', bg: 'bg-orange-500/10 border-orange-500/20', path: '/desktop/smart-inbox' },
 ];

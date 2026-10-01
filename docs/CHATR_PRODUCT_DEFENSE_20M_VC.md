@@ -7,7 +7,7 @@
 
 ## 🛡️ 1. The True Moat: Organizational Execution Memory (OEM)
 Intent-first prompts are not a moat. Microsoft Copilot, Agentforce, and Gemini can all build chat boxes.  
-CHATR's true moat is **Organizational Execution Memory (OEM)**. While competitors treat every prompt as a stateless conversation, CHATR records, learns, caches, and refines every single execution graph, approval pattern, exception flow, and vendor response across your company's live APIs. After 12 months, CHATR holds your company's **Operational DNA**. Switching AI providers would be like wiping 10 years of institutional memory.
+CHATR's true moat is **Organizational Execution Memory (OEM)**. While competitors treat every prompt as a stateless conversation, CHATR records, learns, caches, and refines every single execution graph, approval pattern, exception flow, and vendor response across your company's live APIs. After 12 months, CHATR holds your company's **Operational DNA**. Switching SI providers would be like wiping 10 years of institutional memory.
 
 ---
 

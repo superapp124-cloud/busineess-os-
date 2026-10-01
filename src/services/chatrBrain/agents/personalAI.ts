@@ -1,10 +1,11 @@
 /**
- * PERSONAL AI AGENT
+ * PERSONAL SI AGENT
  * Handles habits, tone, preferences, reminders, personal context
  */
 
 import { AgentType, ActionType, DetectedIntent } from '../types';
 import { memoryLayer } from '../memoryLayer';
+import { localAIEngine } from '@/services/ai/LocalAIEngine';
 
 export interface AgentResponse {
   message: string;
@@ -33,12 +34,12 @@ export interface IAgent {
 }
 
 /**
- * Personal AI Agent
+ * Personal SI Agent
  * Learns user habits, tone, preferences; handles reminders and personal tasks
  */
 class PersonalAIAgent implements IAgent {
   readonly type: AgentType = 'personal';
-  readonly name = 'Personal AI';
+  readonly name = 'Personal SI';
 
   /**
    * Process a query and generate response
@@ -122,8 +123,24 @@ class PersonalAIAgent implements IAgent {
       }
     }
     
-    // Build personalized message
-    const message = this.buildMessage(context, patterns, actions);
+    // Build personalized message (heuristic fallback)
+    let message = this.buildMessage(context, patterns, actions);
+
+    // If on-device Local SI is ready, augment with intelligent multilingual generation
+    try {
+      if (await localAIEngine.isModelAvailable()) {
+        const aiResult = await localAIEngine.generate(query, {
+          systemPrompt: `You are CHATR Personal SI. Be helpful, concise, and empathetic. Respect the user's habits and tone. If actions are prepared, mention them naturally. Answer in the user's language (English/Hindi/Hinglish).`,
+          maxTokens: 256,
+        });
+        if (aiResult?.text && aiResult.provider !== 'HEURISTIC_FALLBACK') {
+          message = aiResult.text;
+          confidence = 0.92;
+        }
+      }
+    } catch {
+      // Deterministic fallback preserved
+    }
     
     return {
       message,

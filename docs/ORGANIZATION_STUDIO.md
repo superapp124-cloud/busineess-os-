@@ -20,7 +20,7 @@ CHATR allows business owners to customize **how their organization operates**, n
 │ LEVEL 5 — SKILLS & AUTOMATIONS                                         │
 │ Visual skill composition (New Customer → GST → Folder → Welcome Email) │
 ├────────────────────────────────────────────────────────────────────────┤
-│ LEVEL 4 — AI WORKFORCE BEHAVIOR                                        │
+│ LEVEL 4 — SI WORKFORCE BEHAVIOR                                        │
 │ Operational rules ("Never interview after 6 PM", "Collect GST first")  │
 ├────────────────────────────────────────────────────────────────────────┤
 │ LEVEL 3 — BUSINESS RULES & GOVERNANCE                                  │
@@ -63,7 +63,7 @@ To guarantee 100% stability, security, and zero architectural drift, these struc
 Organization Studio is **NOT a settings page**. It is an **Organization Digital Twin Builder** that models how a company actually operates across 9 evolutionary phases.
 
 ```
-Organization → Departments → People → Assets → Processes → Knowledge → AI Workforce → Execution → Outcomes
+Organization → Departments → People → Assets → Processes → Knowledge → SI Workforce → Execution → Outcomes
 ```
 
 ---
@@ -82,13 +82,13 @@ Organization → Departments → People → Assets → Processes → Knowledge �
 │ External adapters (Email, WhatsApp, Stripe, SAP, Salesforce, Tally)   │
 ├────────────────────────────────────────────────────────────────────────┤
 │ PHASE 6 — INTELLIGENCE                                                 │
-│ Business health score, predictions, proactive AI advisory, risks      │
+│ Business health score, predictions, proactive SI advisory, risks      │
 ├────────────────────────────────────────────────────────────────────────┤
 │ PHASE 5 — OPERATIONS                                                   │
 │ Processes → Execution Graphs → Skills → Capabilities                   │
 ├────────────────────────────────────────────────────────────────────────┤
 │ PHASE 4 — KNOWLEDGE                                                    │
-│ SOPs, policies, FAQs, contracts, AI organizational memory, playbooks   │
+│ SOPs, policies, FAQs, contracts, SI organizational memory, playbooks   │
 ├────────────────────────────────────────────────────────────────────────┤
 │ PHASE 3 — PEOPLE                                                       │
 │ Employees, contractors, vendors, customers, patients (Bound to Person)│
@@ -125,7 +125,7 @@ To guarantee 100% stability, security, and zero architectural drift, these struc
 | **Branding & Terminology** | ✅ | ✅ | — |
 | **Dashboard & Workspace** | ✅ | ✅ | — |
 | **Business Rules & Approvals** | ✅ | ✅ | — |
-| **AI Instructions & Memory** | ✅ | ✅ | — |
+| **SI Instructions & Memory** | ✅ | ✅ | — |
 | **Roles & Permissions** | ✅ | ✅ | — |
 | **Skills & Automations** | ✅ | ✅ | — |
 | **Forms & Object Extensions** | ✅ | ✅ | — |

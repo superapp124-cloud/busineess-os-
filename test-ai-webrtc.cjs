@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
     ]
   });
 
-  console.log('Testing AI Track Swap...');
+  console.log('Testing SI Track Swap...');
   const context = await browser.newContext();
   const page1 = await context.newPage();
   

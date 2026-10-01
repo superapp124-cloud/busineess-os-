@@ -6,7 +6,7 @@
  * Web Worker pool for CPU-intensive tasks that must not block the UI thread:
  * - Knowledge entity extraction from long documents
  * - Search index updates
- * - AI summary generation queue
+ * - SI summary generation queue
  * - Embedding generation (future semantic search)
  * - Knowledge graph edge resolution
  *

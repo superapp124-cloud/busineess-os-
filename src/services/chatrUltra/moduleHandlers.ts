@@ -1,6 +1,6 @@
 /**
  * CHATR ULTRA - Module-Specific Handlers
- * Each CHATR module has custom AI logic and behavior
+ * Each CHATR module has custom SI logic and behavior
  */
 
 import { deviceAI, DeviceAIResponse } from './deviceAI';
@@ -30,7 +30,7 @@ export interface ModuleResponse {
 
 /**
  * Module Handler Service
- * Routes requests to module-specific AI logic
+ * Routes requests to module-specific SI logic
  */
 class ModuleHandlerService {
   /**
@@ -58,11 +58,11 @@ class ModuleHandlerService {
   }
 
   /**
-   * AI AGENTS MODULE
-   * Create, train, and optimize AI agents
+   * SI AGENTS MODULE
+   * Create, train, and optimize SI agents
    */
   private async handleAIAgents(request: ModuleRequest): Promise<ModuleResponse> {
-    const systemPrompt = `You are an AI Agent trainer and optimizer.
+    const systemPrompt = `You are an SI Agent trainer and optimizer.
 Your role:
 - Create high-quality training data (Q/A pairs, persona, rules)
 - Improve agent reasoning, personality, memory, behavior
@@ -126,7 +126,7 @@ Keep responses structured and easy to scan.`;
    * Parse and analyze job listings
    */
   private async handleLocalJobs(request: ModuleRequest): Promise<ModuleResponse> {
-    const systemPrompt = `You are a job matching and career advisor AI.
+    const systemPrompt = `You are a job matching and career advisor SI.
 Parse job listings and provide:
 - Role, skills, salary, company, location
 - Apply-match score for user

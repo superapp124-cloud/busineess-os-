@@ -1,12 +1,12 @@
-// Smart AI Push Engine
+// Smart SI Push Engine
 // Sends 4-6 personalized push notifications/day per user, surfacing
 // features they haven't tried yet based on engagement history.
 //
 // Invoked by pg_cron at fixed daily slots. For each active user it:
 //   1. Loads engagement history + preferences
 //   2. Filters out muted modules, quiet hours, daily-cap, recent dupes
-//   3. Asks Lovable AI (Gemini Flash) to pick the BEST feature + craft copy
-//   4. Falls back to deterministic ranker if AI is unavailable
+//   3. Asks Lovable SI (Gemini Flash) to pick the BEST feature + craft copy
+//   4. Falls back to deterministic ranker if SI is unavailable
 //   5. Delivers via existing send-module-notification (FCM v1)
 //   6. Logs everything to smart_push_log
 
@@ -98,7 +98,7 @@ async function pickFeatureWithAI(opts: {
     if (!parsed?.feature_key) return null;
     return parsed;
   } catch (e) {
-    console.warn("[smart-push] AI failed, fallback", e);
+    console.warn("[smart-push] SI failed, fallback", e);
     return null;
   }
 }
@@ -187,7 +187,7 @@ async function processUser(supabase: any, user: any, slot: Slot, catalog: any[],
   const filtered = catalog.filter((f) => !(prefs.muted_modules ?? []).includes(f.module));
   if (filtered.length === 0) return { skipped: "all_muted" };
 
-  // Pick feature (AI then fallback)
+  // Pick feature (SI then fallback)
   let pick = await pickFeatureWithAI({
     user,
     catalog: filtered,

@@ -109,14 +109,14 @@ export const EnterpriseAnalytics: React.FC = () => {
  </div>
  </section>
 
- {/* 3. Executive AI */}
+ {/* 3. Executive SI */}
  <section>
  <h3 style={{ color: '#e2e8f0', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
- <BrainCircuit size={18} color="#3b82f6" /> Executive AI
+ <BrainCircuit size={18} color="#3b82f6" /> Executive SI
  </h3>
  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
  <div className={styles.glassCard} style={{ padding: '1.5rem' }}>
- <h4 style={{ marginBottom: '1.5rem', color: '#94a3b8' }}>AI Intent Distribution</h4>
+ <h4 style={{ marginBottom: '1.5rem', color: '#94a3b8' }}>SI Intent Distribution</h4>
  <div style={{ height: '250px' }}>
  <ResponsiveContainer width="100%" height="100%">
  <PieChart>

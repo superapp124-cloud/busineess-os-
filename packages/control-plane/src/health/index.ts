@@ -17,6 +17,6 @@ export interface AlertManager {
 
 export interface Recommendation { action: string; reason: string; confidence: number; }
 export interface RecommendationEngine {
-  /** Initially deterministic — AI plugs in later without redesign */
+  /** Initially deterministic — SI plugs in later without redesign */
   recommend(environment: string, healthStatus: HealthStatus): Promise<Recommendation[]>;
 }

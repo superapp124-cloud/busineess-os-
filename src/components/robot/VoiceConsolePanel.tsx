@@ -113,7 +113,7 @@ export const VoiceConsolePanel: React.FC<VoiceConsolePanelProps> = ({
           </div>
 
           <div className="text-sm font-semibold text-slate-200 bg-slate-900/90 p-2.5 rounded border border-slate-800">
-            💬 <span className="text-cyan-300 font-bold">Operational AI Explainer:</span> {activePlan.explanation}
+            💬 <span className="text-cyan-300 font-bold">Operational SI Explainer:</span> {activePlan.explanation}
           </div>
 
           {activePlan.rejectionReason && (

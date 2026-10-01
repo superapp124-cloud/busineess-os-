@@ -51,7 +51,7 @@ Connect with friends and family like never before:
 
 🏥 HEALTH HUB
 Your complete health management solution:
-• AI-powered health assistant for instant advice
+• SI-powered health assistant for instant advice
 • Digital health passport with QR code
 • Securely store and manage lab reports
 • Medication reminders that actually work
@@ -161,7 +161,7 @@ Crystal-clear HD video and voice calls. Connect face-to-face with loved ones any
 **File**: `screenshot-3-health.png`  
 **Caption**:
 ```
-Manage your health with AI assistant, digital passport, lab reports, and medication reminders.
+Manage your health with SI assistant, digital passport, lab reports, and medication reminders.
 ```
 
 ### Screenshot 4: Mini Apps

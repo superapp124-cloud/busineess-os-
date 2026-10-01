@@ -62,7 +62,7 @@ export class ContinuousFinanceEngine {
         severity: 'MEDIUM',
         title: `Intramonth Recon Alert: ${context.unreconciledBankTxnCount} un-matched bank transactions`,
         projected_month_end_impact: 'Will cause Day 1 month-end close bottleneck if left unresolved.',
-        recommended_early_intervention: 'Run AI Reconciliation Worker auto-matcher batch.',
+        recommended_early_intervention: 'Run SI Reconciliation Worker auto-matcher batch.',
       });
     }
 

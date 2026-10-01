@@ -6,7 +6,7 @@
  * loaded into the CapabilityRuntime at server startup.
  * 
  * Every package follows the exact same kernel ABI — no special cases.
- * The kernel discovers objects, workflows, permissions, AI agents, and
+ * The kernel discovers objects, workflows, permissions, SI agents, and
  * automations from each package identically.
  * 
  * Architecture: Kernel → CapabilityRuntime → StaticCapabilityRegistry
@@ -62,7 +62,7 @@ const EXECUTIVE_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'Executive.OKRGoals',
     name: 'OKR & Goals',
-    description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and AI-powered outcome predictions.',
+    description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and SI-powered outcome predictions.',
     department: 'Executive Office',
     category: 'Executive & Strategy',
     version: '1.8.0',
@@ -79,7 +79,7 @@ const EXECUTIVE_PACKAGES: ICapabilityPackage[] = [
       { key: 'okr_cycle', label: 'OKR Cycle', type: 'select', defaultValue: 'Quarterly', options: ['Monthly', 'Quarterly', 'Annually'], group: 'Schedule' },
       { key: 'grading_scale', label: 'Grading Scale', type: 'select', defaultValue: '0-1.0', options: ['0-1.0', '0-100%', 'RAG', 'Stars'], group: 'Scoring' },
       { key: 'cascade_levels', label: 'Cascade Levels', type: 'number', defaultValue: 3, description: 'How deep goals cascade through org', group: 'Hierarchy' },
-      { key: 'ai_predictions', label: 'AI Outcome Predictions', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_predictions', label: 'SI Outcome Predictions', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'checkin_frequency', label: 'Check-in Frequency', type: 'select', defaultValue: 'Weekly', options: ['Daily', 'Weekly', 'Bi-weekly'], group: 'Cadence' },
     ],
     objectSchemas: [
@@ -223,7 +223,7 @@ const CRM_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'Sales.LeadManagement',
     name: 'Lead Management',
-    description: 'Full-cycle lead capture, scoring, nurturing, and routing with AI-powered qualification and automated follow-up sequences.',
+    description: 'Full-cycle lead capture, scoring, nurturing, and routing with SI-powered qualification and automated follow-up sequences.',
     department: 'Sales',
     category: 'CRM & Sales',
     version: '2.4.0',
@@ -237,7 +237,7 @@ const CRM_PACKAGES: ICapabilityPackage[] = [
     eventsProduced: ['LeadCreated', 'LeadQualified', 'LeadConverted'],
     tags: ['leads', 'sales', 'crm', 'pipeline', 'ai'],
     configSchema: [
-      { key: 'scoring_model', label: 'Lead Scoring Model', type: 'select', defaultValue: 'AI-Powered', options: ['AI-Powered', 'Rule-Based', 'Manual'], group: 'Scoring' },
+      { key: 'scoring_model', label: 'Lead Scoring Model', type: 'select', defaultValue: 'SI-Powered', options: ['SI-Powered', 'Rule-Based', 'Manual'], group: 'Scoring' },
       { key: 'score_threshold', label: 'Qualification Score', type: 'number', defaultValue: 70, group: 'Scoring' },
       { key: 'auto_assign', label: 'Auto-Route Leads', type: 'boolean', defaultValue: true, group: 'Routing' },
       { key: 'follow_up_sequence', label: 'Follow-Up Sequence (days)', type: 'text', defaultValue: '1,3,7,14', group: 'Automation' },
@@ -448,7 +448,7 @@ const MARKETING_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'Marketing.SocialPublishing',
     name: 'Social Publishing',
-    description: 'Schedule and publish to all social platforms from one place with AI-generated captions, hashtag suggestions, and performance analytics.',
+    description: 'Schedule and publish to all social platforms from one place with SI-generated captions, hashtag suggestions, and performance analytics.',
     department: 'Marketing',
     category: 'Marketing',
     version: '1.2.0',
@@ -462,8 +462,8 @@ const MARKETING_PACKAGES: ICapabilityPackage[] = [
     tags: ['social media', 'publishing', 'instagram', 'linkedin', 'twitter'],
     configSchema: [
       { key: 'platforms', label: 'Connected Platforms', type: 'multiselect', defaultValue: ['LinkedIn', 'Twitter/X'], options: ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube'], group: 'Platforms' },
-      { key: 'ai_captions', label: 'AI Caption Suggestions', type: 'boolean', defaultValue: true, group: 'AI' },
-      { key: 'best_time_posting', label: 'Best Time to Post', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_captions', label: 'SI Caption Suggestions', type: 'boolean', defaultValue: true, group: 'SI' },
+      { key: 'best_time_posting', label: 'Best Time to Post', type: 'boolean', defaultValue: true, group: 'SI' },
     ],
   }),
   cap({
@@ -536,7 +536,7 @@ const HR_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'HR.ATS',
     name: 'ATS',
-    description: 'End-to-end applicant tracking with multi-board posting, AI resume screening, structured interviews, and offer management.',
+    description: 'End-to-end applicant tracking with multi-board posting, SI resume screening, structured interviews, and offer management.',
     department: 'HR',
     category: 'Recruitment & HR',
     version: '2.2.0',
@@ -551,7 +551,7 @@ const HR_PACKAGES: ICapabilityPackage[] = [
     tags: ['ats', 'recruiting', 'hiring', 'hr'],
     configSchema: [
       { key: 'hiring_stages', label: 'Hiring Stages', type: 'multiselect', defaultValue: ['Applied', 'Phone Screen', 'Technical', 'Final Round', 'Offer', 'Hired'], group: 'Pipeline' },
-      { key: 'ai_screening', label: 'AI Resume Screening', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_screening', label: 'SI Resume Screening', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'job_boards', label: 'Job Boards', type: 'multiselect', defaultValue: ['Internal', 'LinkedIn'], options: ['Internal', 'LinkedIn', 'Indeed', 'Naukri', 'AngelList'], group: 'Posting' },
     ],
   }),
@@ -700,7 +700,7 @@ const HR_PACKAGES: ICapabilityPackage[] = [
     configSchema: [
       { key: 'completion_certificate', label: 'Auto-Issue Certificates', type: 'boolean', defaultValue: true, group: 'Certifications' },
       { key: 'mandatory_training', label: 'Mandatory Training Types', type: 'multiselect', defaultValue: ['Compliance', 'Security', 'HR Policy'], group: 'Mandatory' },
-      { key: 'learning_path_ai', label: 'AI Learning Paths', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'learning_path_ai', label: 'SI Learning Paths', type: 'boolean', defaultValue: true, group: 'SI' },
     ],
   }),
 ];
@@ -725,7 +725,7 @@ const FINANCE_PACKAGES: ICapabilityPackage[] = [
     tags: ['expenses', 'finance', 'reimbursement', 'ocr'],
     configSchema: [
       { key: 'auto_approval_limit', label: 'Auto-Approval Limit ($)', type: 'number', defaultValue: 100, group: 'Approvals' },
-      { key: 'ocr_receipts', label: 'OCR Receipt Scanning', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ocr_receipts', label: 'OCR Receipt Scanning', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'categories', label: 'Expense Categories', type: 'multiselect', defaultValue: ['Travel', 'Meals', 'Software', 'Office Supplies'], group: 'Categories' },
     ],
   }),
@@ -1072,7 +1072,7 @@ const SUPPORT_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'Knowledge.Base',
     name: 'Knowledge Base',
-    description: 'AI-powered customer-facing and internal knowledge base with smart search, article suggestions, and deflection analytics.',
+    description: 'SI-powered customer-facing and internal knowledge base with smart search, article suggestions, and deflection analytics.',
     department: 'Support',
     category: 'Customer Support',
     version: '1.5.0',
@@ -1086,14 +1086,14 @@ const SUPPORT_PACKAGES: ICapabilityPackage[] = [
     tags: ['knowledge base', 'faq', 'documentation', 'self-service'],
     configSchema: [
       { key: 'public_access', label: 'Public Access', type: 'boolean', defaultValue: true, group: 'Access' },
-      { key: 'ai_search', label: 'AI-Powered Search', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_search', label: 'SI-Powered Search', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'deflection_goal', label: 'Ticket Deflection Goal (%)', type: 'number', defaultValue: 40, group: 'Analytics' },
     ],
   }),
   cap({
     id: 'Support.LiveChat',
     name: 'Live Chat',
-    description: 'Real-time website and in-app chat with AI chatbot handoff, proactive triggers, co-browsing, and conversation history.',
+    description: 'Real-time website and in-app chat with SI chatbot handoff, proactive triggers, co-browsing, and conversation history.',
     department: 'Support',
     category: 'Customer Support',
     version: '1.3.0',
@@ -1106,7 +1106,7 @@ const SUPPORT_PACKAGES: ICapabilityPackage[] = [
     permissions: ['support.chat.manage'],
     tags: ['live chat', 'chatbot', 'support', 'website'],
     configSchema: [
-      { key: 'ai_bot_enabled', label: 'AI Chatbot', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_bot_enabled', label: 'SI Chatbot', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'proactive_triggers', label: 'Proactive Chat Triggers', type: 'boolean', defaultValue: true, group: 'Engagement' },
       { key: 'response_time_target', label: 'Response Time Target (seconds)', type: 'number', defaultValue: 60, group: 'SLA' },
     ],
@@ -1176,7 +1176,7 @@ const COMMUNICATION_PACKAGES: ICapabilityPackage[] = [
     configSchema: [
       { key: 'working_hours_start', label: 'Working Hours Start', type: 'text', defaultValue: '09:00', group: 'Schedule' },
       { key: 'working_hours_end', label: 'Working Hours End', type: 'text', defaultValue: '18:00', group: 'Schedule' },
-      { key: 'smart_scheduling', label: 'AI Smart Scheduling', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'smart_scheduling', label: 'SI Smart Scheduling', type: 'boolean', defaultValue: true, group: 'SI' },
     ],
   }),
   cap({
@@ -1221,15 +1221,15 @@ const COMMUNICATION_PACKAGES: ICapabilityPackage[] = [
   }),
 ];
 
-// ─── AI & AUTOMATION ──────────────────────────────────────────────────────────
+// ─── SI & AUTOMATION ──────────────────────────────────────────────────────────
 
 const AI_PACKAGES: ICapabilityPackage[] = [
   cap({
-    id: 'AI.Agents',
-    name: 'AI Agents',
-    description: 'Deploy autonomous AI agents that execute multi-step business workflows with human-in-the-loop oversight and full audit trails.',
+    id: 'SI.Agents',
+    name: 'SI Agents',
+    description: 'Deploy autonomous SI agents that execute multi-step business workflows with human-in-the-loop oversight and full audit trails.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '1.0.0',
     maturity: 'L4',
     icon: '🤖',
@@ -1238,9 +1238,9 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     verbs: ['deploy', 'configure', 'monitor', 'pause', 'replay'],
     nouns: ['agent', 'task', 'workflow', 'execution', 'audit'],
     permissions: ['ai.agents.deploy'],
-    tags: ['ai agents', 'autonomous', 'automation', 'llm'],
+    tags: ['si agents', 'autonomous', 'automation', 'llm'],
     configSchema: [
-      { key: 'llm_provider', label: 'LLM Provider', type: 'select', defaultValue: 'Ollama (Local)', options: ['Ollama (Local)', 'OpenAI', 'Gemini', 'Claude'], group: 'AI' },
+      { key: 'llm_provider', label: 'LLM Provider', type: 'select', defaultValue: 'Ollama (Local)', options: ['Ollama (Local)', 'OpenAI', 'Gemini', 'Claude'], group: 'SI' },
       { key: 'max_autonomy_level', label: 'Max Autonomy Level', type: 'select', defaultValue: 'Semi-Autonomous', options: ['Supervised', 'Semi-Autonomous', 'Fully Autonomous'], group: 'Safety' },
       { key: 'hitl_threshold', label: 'Human-in-Loop Confidence Threshold (%)', type: 'number', defaultValue: 85, group: 'Safety' },
     ],
@@ -1250,7 +1250,7 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     name: 'Workflow Builder',
     description: 'Visual no-code workflow designer with 200+ action nodes, conditional logic, loops, webhooks, and one-click deployment.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '2.4.0',
     maturity: 'L5',
     icon: '⚙️',
@@ -1267,11 +1267,11 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     ],
   }),
   cap({
-    id: 'AI.PromptLibrary',
+    id: 'SI.PromptLibrary',
     name: 'Prompt Library',
     description: 'Curated library of battle-tested business prompts for every department, with version control and performance analytics.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '1.0.0',
     maturity: 'L3',
     icon: '📝',
@@ -1282,16 +1282,16 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     permissions: ['ai.prompts.create'],
     tags: ['prompts', 'llm', 'ai', 'templates'],
     configSchema: [
-      { key: 'default_model', label: 'Default Model', type: 'select', defaultValue: 'Ollama', options: ['Ollama', 'GPT-4', 'Gemini', 'Claude'], group: 'AI' },
+      { key: 'default_model', label: 'Default Model', type: 'select', defaultValue: 'Ollama', options: ['Ollama', 'GPT-4', 'Gemini', 'Claude'], group: 'SI' },
       { key: 'sharing_policy', label: 'Prompt Sharing', type: 'select', defaultValue: 'Team', options: ['Private', 'Team', 'Organization'], group: 'Sharing' },
     ],
   }),
   cap({
-    id: 'AI.DocumentAI',
-    name: 'Document AI',
+    id: 'SI.DocumentAI',
+    name: 'Document SI',
     description: 'Intelligent document processing with OCR, entity extraction, classification, summarization, and structured data output.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '1.2.0',
     maturity: 'L4',
     icon: '🔍',
@@ -1308,11 +1308,11 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     ],
   }),
   cap({
-    id: 'AI.AutomationRules',
+    id: 'SI.AutomationRules',
     name: 'Automation Rules',
     description: 'If-this-then-that rule engine across all modules. Create complex event-driven automations without coding.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '1.5.0',
     maturity: 'L5',
     icon: '⚡',
@@ -1328,11 +1328,11 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     ],
   }),
   cap({
-    id: 'AI.AssistantMarketplace',
-    name: 'AI Assistant Marketplace',
-    description: 'Install and configure specialized AI assistants for every business function — from HR advisor to finance analyst.',
+    id: 'SI.AssistantMarketplace',
+    name: 'SI Assistant Marketplace',
+    description: 'Install and configure specialized SI assistants for every business function — from HR advisor to finance analyst.',
     department: 'System',
-    category: 'AI & Automation',
+    category: 'SI & Automation',
     version: '1.0.0',
     maturity: 'L4',
     icon: '🧠',
@@ -1341,7 +1341,7 @@ const AI_PACKAGES: ICapabilityPackage[] = [
     verbs: ['install', 'configure', 'chat', 'customize', 'deploy'],
     nouns: ['assistant', 'bot', 'advisor', 'specialist'],
     permissions: ['ai.assistants.install'],
-    tags: ['ai assistants', 'chatbots', 'specialist ai', 'marketplace'],
+    tags: ['si assistants', 'chatbots', 'specialist ai', 'marketplace'],
     configSchema: [
       { key: 'max_assistants', label: 'Max Installed Assistants', type: 'number', defaultValue: 10, group: 'Limits' },
       { key: 'data_access_policy', label: 'Assistant Data Access', type: 'select', defaultValue: 'Scoped', options: ['None', 'Scoped', 'Full Tenant'], group: 'Security' },
@@ -1459,7 +1459,7 @@ const PLATFORM_PACKAGES: ICapabilityPackage[] = [
   cap({
     id: 'Platform.KnowledgeFabric',
     name: 'Enterprise Knowledge Fabric',
-    description: 'Semantic layer that connects all your business data into a unified, AI-queryable knowledge graph with real-time indexing.',
+    description: 'Semantic layer that connects all your business data into a unified, SI-queryable knowledge graph with real-time indexing.',
     department: 'System',
     category: 'Enterprise Platform',
     version: '1.0.0',
@@ -1472,7 +1472,7 @@ const PLATFORM_PACKAGES: ICapabilityPackage[] = [
     permissions: ['platform.knowledge.manage'],
     tags: ['knowledge graph', 'semantic', 'ai', 'vectors'],
     configSchema: [
-      { key: 'vector_model', label: 'Embedding Model', type: 'select', defaultValue: 'nomic-embed-text', options: ['nomic-embed-text', 'text-embedding-3-small', 'all-MiniLM'], group: 'AI' },
+      { key: 'vector_model', label: 'Embedding Model', type: 'select', defaultValue: 'nomic-embed-text', options: ['nomic-embed-text', 'text-embedding-3-small', 'all-MiniLM'], group: 'SI' },
       { key: 'reindex_frequency', label: 'Reindex Frequency', type: 'select', defaultValue: 'Hourly', options: ['Real-time', 'Hourly', 'Daily'], group: 'Indexing' },
     ],
   }),

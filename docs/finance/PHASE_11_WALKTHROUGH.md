@@ -36,7 +36,7 @@ Orchestrates and tracks the 4-week parallel run against live enterprise books.
 ---
 
 ### 2.2 CFO Blind Test Evaluator ([`CFOBindTestEvaluator.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/pilot_certification/CFOBindTestEvaluator.ts))
-Quantitatively benchmarks AI causal explanations against human CFO analyses.
+Quantitatively benchmarks SI causal explanations against human CFO analyses.
 
 ---
 
@@ -88,7 +88,7 @@ node --import tsx src/tests/finance/phase11-shadow-accounting.test.ts
 🧪 Running CHATR Finance Phase 5.5 (Adversarial & Certification) Test Suite...
   ✅ PASS: 6/6 tests passed (100%)
 
-🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...
+🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...
   ✅ PASS: 4/4 tests passed (100%)
 
 🧪 Running CHATR Finance Phase 7 (Golden Ledger & Financial Trust) Test Suite...

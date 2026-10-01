@@ -181,7 +181,7 @@ export default function HealthRiskPredictions() {
  setRisks(mappedRisks);
  calculateOverallScore(mappedRisks);
  } else {
- // Fallback to AI assistant for analysis
+ // Fallback to SI assistant for analysis
  const fallbackRisks: HealthRisk[] = RISK_CATEGORIES.map(cat => ({
  id: cat.id,
  risk_type: cat.id,
@@ -273,7 +273,7 @@ export default function HealthRiskPredictions() {
  </Button>
  <div>
  <h1 className="text-workspace font-bold">Health Risk Predictions</h1>
- <p className="text-secondary text-blue-100">AI-powered health insights</p>
+ <p className="text-secondary text-blue-100">SI-powered health insights</p>
  </div>
  </div>
  <Button
@@ -454,7 +454,7 @@ export default function HealthRiskPredictions() {
  <div>
  <p className="font-medium text-yellow-800">Important Disclaimer</p>
  <p className="text-secondary text-yellow-700 mt-1">
- These predictions are based on AI analysis and should not replace professional medical advice. 
+ These predictions are based on SI analysis and should not replace professional medical advice. 
  Always consult with a healthcare provider for accurate diagnosis and treatment.
  </p>
  </div>

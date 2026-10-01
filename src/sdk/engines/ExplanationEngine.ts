@@ -2,7 +2,7 @@
  * CHATR OS — Explanation Engine
  * 
  * Part of the Universal Executive Runtime.
- * Provides the "Why?" audit trails and reasoning for decisions made by the AI.
+ * Provides the "Why?" audit trails and reasoning for decisions made by the SI.
  */
 
 export class ExplanationEngine {
@@ -17,7 +17,7 @@ export class ExplanationEngine {
     }
 
     if (action === 'inform') {
-      return `These metrics were aggregated directly from the BusinessObjectStore. Confidence is 99% as no AI estimation was used.`;
+      return `These metrics were aggregated directly from the BusinessObjectStore. Confidence is 99% as no SI estimation was used.`;
     }
 
     return 'The operation completed successfully based on standard system rules.';

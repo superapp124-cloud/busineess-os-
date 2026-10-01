@@ -32,7 +32,7 @@ export interface EvidencePackage {
 /**
  * The Evidence Builder
  * 
- * This is where CHATR OS becomes genuinely AI-native.
+ * This is where CHATR OS becomes genuinely SI-native.
  * Instead of an LLM deciding what context to retrieve, it consumes a curated
  * Evidence Package built deterministically from the Kernel with 7-Stage Evidence Lifecycle:
  * SOURCE -> VERIFIED -> INFERRED -> RECOMMENDED -> APPROVED -> EXECUTED -> CONFIRMED

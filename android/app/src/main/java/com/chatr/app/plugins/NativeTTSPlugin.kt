@@ -16,7 +16,7 @@ import java.util.UUID
  * NativeTTSPlugin
  *
  * Capacitor plugin exposing Android TextToSpeech to the web layer.
- * Called by the web app for AI screening voice prompts and live translation readouts.
+ * Called by the web app for SI screening voice prompts and live translation readouts.
  *
  * JS usage:
  *   import { Plugins } from '@capacitor/core';

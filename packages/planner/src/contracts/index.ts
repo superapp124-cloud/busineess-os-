@@ -1,5 +1,5 @@
 // ============================================================
-// FROZEN AI CONTRACTS — v1.0
+// FROZEN SI CONTRACTS — v1.0
 // These interfaces are stable. Internal implementations evolve.
 // Changes require a Major RFC.
 // ============================================================

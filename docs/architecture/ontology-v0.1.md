@@ -12,7 +12,7 @@ The Kernel is divided into two distinct categories:
 
 ### A. Core Kernel Primitives (What Exists)
 These are the physical and conceptual building blocks of the organization.
-1. **Actor:** An entity capable of initiating an action (Humans, AI, Organizations, Systems).
+1. **Actor:** An entity capable of initiating an action (Humans, SI, Organizations, Systems).
 2. **Living Object:** A digital twin of any noun with identity and a lifecycle (Assets, Candidates, Meetings, Workflows, Notifications).
 3. **Relationship:** A typed, directed edge connecting two primitives.
 4. **Event:** An immutable record of a state change in time.
@@ -38,7 +38,7 @@ Entity
 │     ├── Employee
 │     ├── Customer
 │     ├── Vendor
-│     └── AI Agent
+│     └── SI Agent
 │
 ├── Living Object (Anything with Identity & Lifecycle)
 │     ├── Asset (Laptop, Vehicle)
@@ -105,6 +105,6 @@ To eliminate module-specific exceptions, **every** Living Object automatically r
 * **Documents:** Attached unstructured `Knowledge`.
 * **Health:** Current operational status or health indicator.
 * **Capabilities:** What actions can currently be performed on this object.
-* **Evidence:** Supporting deterministic facts used by the AI for explainability.
-* **Intelligence:** `AI Summary` (Auto-generated rolling summary).
+* **Evidence:** Supporting deterministic facts used by the SI for explainability.
+* **Intelligence:** `SI Summary` (Auto-generated rolling summary).
 * **Metadata:** Arbitrary Key/Value tags.

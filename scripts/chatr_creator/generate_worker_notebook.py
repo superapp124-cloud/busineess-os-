@@ -18,7 +18,7 @@ notebook = {
                 "1. In Colab, go to **Runtime** → **Change runtime type** → Select **T4 GPU** (Free tier).\n",
                 "2. Click **Runtime** → **Run all**.\n",
                 "3. The final cell will print your public Cloudflare Tunnel URL: `https://xxxx.trycloudflare.com`.\n",
-                "4. Copy that URL and paste it into CHATR **AI Hub** and **Virtual Creator Studio** on your Dell.\n"
+                "4. Copy that URL and paste it into CHATR **SI Hub** and **Virtual Creator Studio** on your Dell.\n"
             ]
         },
         {
@@ -408,7 +408,7 @@ notebook = {
                 "tunnel = try_cloudflare(port=8000)\n",
                 "print('\\n' + '='*65)\n",
                 "print('🎉 CHATR UNIFIED GPU WORKER IS READY!')\n",
-                "print('👉 Copy this Worker URL to your Dell CHATR Studio & AI Hub:')\n",
+                "print('👉 Copy this Worker URL to your Dell CHATR Studio & SI Hub:')\n",
                 "print(f'   {tunnel.tunnel}')\n",
                 "print('='*65 + '\\n')\n"
             ]

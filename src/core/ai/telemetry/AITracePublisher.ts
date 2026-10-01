@@ -1,5 +1,5 @@
 /**
- * CHATR Business OS — AI Execution Trace Publisher
+ * CHATR Business OS — SI Execution Trace Publisher
  *
  * Emits real-time trace events onto EventBus for inspection by AITracePanel.
  */

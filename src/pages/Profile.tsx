@@ -33,13 +33,19 @@ import { AppleButton } from '@/components/ui/AppleButton';
 import { AppleCard, AppleGroupedList, AppleListItem } from '@/components/ui/AppleCard';
 import { useNativeHaptics } from '@/hooks/useNativeHaptics';
 
-const Profile = () => {
+import ModernProfileSettingsView from '@/components/profile/ModernProfileSettingsView';
+
+export default function Profile() {
+  return <ModernProfileSettingsView />;
+}
+
+const LegacyProfile = () => {
  const haptics = useNativeHaptics();
  const navigate = useNavigate();
  const [user, setUser] = useState<any>(null);
  const [profile, setProfile] = useState<any>(null);
  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
- const [loading, setLoading] = useState(true);
+ const [loading, setLoading] = useState(false);
  
  // Real-time states
  const [badges, setBadges] = useState<any[]>([]);
@@ -202,11 +208,11 @@ const Profile = () => {
  </div>
 
  {profile?.primary_handle && (
- <p className="text-secondary text-muted-foreground font-mono mb-1">@{profile.primary_handle}</p>
+ <p className="text-slate-600 font-mono text-[13px] mb-1 font-medium">@{profile.primary_handle}</p>
  )}
  
  {profile?.status && (
- <p className="text-secondary text-muted-foreground mb-3">{profile.status}</p>
+ <p className="text-slate-600 text-[13px] mb-3">{profile.status}</p>
  )}
  
  <AppleButton 
@@ -246,8 +252,8 @@ const Profile = () => {
  <Fingerprint className="h-5 w-5 text-primary" />
  </div>
  <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">CHATR++ Identity</h3>
- <p className="text-label text-muted-foreground truncate">
+ <h3 className="font-semibold text-slate-900 text-[14px]">CHATR++ Identity</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
  {profile?.primary_handle 
  ? `@${profile.primary_handle} • ${identityCount} identit${identityCount === 1 ? 'y' : 'ies'}` 
  : 'Claim your handle'}
@@ -264,9 +270,9 @@ const Profile = () => {
  <Bot className="h-5 w-5 text-primary" />
  </div>
  <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">AI Clone Settings</h3>
- <p className="text-label text-muted-foreground truncate">
- {aiCloneCount > 0 ? `${aiCloneCount} AI clone${aiCloneCount > 1 ? 's' : ''} active` : 'Configure your AI identity'}
+ <h3 className="font-semibold text-slate-900 text-[14px]">SI Clone Settings</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
+ {aiCloneCount > 0 ? `${aiCloneCount} SI clone${aiCloneCount > 1 ? 's' : ''} active` : 'Configure your SI identity'}
  </p>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -280,8 +286,8 @@ const Profile = () => {
  <Globe className="h-5 w-5 text-primary" />
  </div>
  <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Discover People</h3>
- <p className="text-label text-muted-foreground truncate">
+ <h3 className="font-semibold text-slate-900 text-[14px]">Discover People</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
  {isDiscoverable ? 'Publicly discoverable' : 'Hidden from search'}
  </p>
  </div>
@@ -295,12 +301,8 @@ const Profile = () => {
  onClick={() => navigate('/health-passport')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
- <Heart className="h-5 w-5 text-primary" />
- </div>
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Health Passport</h3>
- <p className="text-label text-muted-foreground truncate">
+ <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center flex-shrink-0"><Heart className="h-5 w-5 text-rose-500" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Health Passport</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
  {healthRecordCount > 0 ? `${healthRecordCount} medical record${healthRecordCount > 1 ? 's' : ''} linked` : 'Manage health records'}
  </p>
  </div>
@@ -311,12 +313,8 @@ const Profile = () => {
  onClick={() => navigate('/chatr-points')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
- <Coins className="h-5 w-5 text-primary" />
- </div>
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Chatr Points</h3>
- <p className="text-label text-muted-foreground truncate">
+ <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"><Coins className="h-5 w-5 text-amber-500" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Chatr Points</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
  {pointsBalance > 0 ? `${pointsBalance.toLocaleString()} points balance` : 'View rewards & wallet'}
  </p>
  </div>
@@ -327,12 +325,8 @@ const Profile = () => {
  onClick={() => navigate('/device-management')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
- <Smartphone className="h-5 w-5 text-primary" />
- </div>
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Device Management</h3>
- <p className="text-label text-muted-foreground truncate">
+ <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><Smartphone className="h-5 w-5 text-blue-500" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Device Management</h3>
+ <p className="text-[12px] text-slate-500 font-normal truncate">
  {deviceCount > 0 ? `${deviceCount} linked device${deviceCount > 1 ? 's' : ''}` : 'Manage linked devices'}
  </p>
  </div>
@@ -352,10 +346,7 @@ const Profile = () => {
  onClick={() => navigate('/settings/chat-folders')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Folder className="h-5 w-5 text-[#5c22ff] flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Chat Folders</h3>
- <p className="text-[10px] text-muted-foreground">Organize your chats</p>
+ <div className="h-9 w-9 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0"><Folder className="h-4 w-4 text-[#5c22ff]" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Chat Folders</h3><p className="text-[12px] text-slate-500 font-normal">Organize your chats</p>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -364,10 +355,7 @@ const Profile = () => {
  onClick={() => navigate('/settings/appearance')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Palette className="h-5 w-5 text-[#5c22ff] flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Profile Themes</h3>
- <p className="text-[10px] text-muted-foreground">Customize colors</p>
+ <div className="h-9 w-9 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0"><Palette className="h-4 w-4 text-purple-600" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Profile Themes</h3><p className="text-[12px] text-slate-500 font-normal">Customize colors</p>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -376,10 +364,7 @@ const Profile = () => {
  onClick={() => navigate('/settings/wallpaper')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Image className="h-5 w-5 text-[#5c22ff] flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">AI Wallpapers</h3>
- <p className="text-[10px] text-muted-foreground">Generative backgrounds</p>
+ <div className="h-9 w-9 rounded-xl bg-pink-50 flex items-center justify-center flex-shrink-0"><Image className="h-4 w-4 text-pink-600" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">SI Wallpapers</h3><p className="text-[12px] text-slate-500 font-normal">Generative backgrounds</p>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -388,10 +373,7 @@ const Profile = () => {
  onClick={() => navigate('/settings/app-icon')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Smartphone className="h-5 w-5 text-[#5c22ff] flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">App Icon</h3>
- <p className="text-[10px] text-muted-foreground">Change home screen icon</p>
+ <div className="h-9 w-9 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0"><Smartphone className="h-4 w-4 text-violet-600" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">App Icon</h3><p className="text-[12px] text-slate-500 font-normal">Change home screen icon</p>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -400,9 +382,7 @@ const Profile = () => {
  onClick={() => navigate('/notification-settings')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Bell className="h-5 w-5 text-muted-foreground flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Notifications</h3>
+ <div className="h-9 w-9 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0"><Bell className="h-4 w-4 text-orange-500" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Notifications</h3>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -411,9 +391,7 @@ const Profile = () => {
  onClick={() => navigate('/privacy')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Shield className="h-5 w-5 text-muted-foreground flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Privacy & Security</h3>
+ <div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0"><Shield className="h-4 w-4 text-emerald-600" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Privacy & Security</h3>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -422,9 +400,7 @@ const Profile = () => {
  onClick={() => navigate('/account')}
  className="w-full flex items-center gap-3 p-3 active:bg-accent/50 transition-colors"
  >
- <Settings className="h-5 w-5 text-muted-foreground flex-shrink-0" />
- <div className="flex-1 text-left min-w-0">
- <h3 className="font-medium text-secondary">Account Settings</h3>
+ <div className="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0"><Settings className="h-4 w-4 text-slate-600" /></div><div className="flex-1 text-left min-w-0"><h3 className="font-semibold text-slate-900 text-[14px]">Account Settings</h3>
  </div>
  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
  </button>
@@ -470,5 +446,3 @@ const Profile = () => {
  </div>
  );
 };
-
-export default Profile;

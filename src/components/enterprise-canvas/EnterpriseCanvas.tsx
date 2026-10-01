@@ -102,7 +102,7 @@ export const EnterpriseCanvas: React.FC<Props> = ({ missionContext, mode, isProc
             <div className="space-y-1.5">
               <h2 className="text-xl font-bold text-slate-900 tracking-tight">Upload & Analyze Document</h2>
               <p className="text-slate-500 text-xs max-w-md mx-auto leading-relaxed">
-                Drag & drop your PDF, Word document, Resume, Medical Report, Contract, or Invoice here to perform instant AI Document Intelligence.
+                Drag & drop your PDF, Word document, Resume, Medical Report, Contract, or Invoice here to perform instant SI Document Intelligence.
               </p>
             </div>
             <button
@@ -361,7 +361,7 @@ const RichDecisionCard: React.FC<RichDecisionCardProps> = ({ rec }) => {
           {showAltActions && (
             <div className="absolute right-0 top-16 z-20 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 text-xs font-semibold text-slate-700 animate-in fade-in duration-100">
               <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">Alternative Actions</div>
-              <button onClick={() => setShowAltActions(false)} className="w-full text-left px-2 py-1.5 hover:bg-indigo-50 rounded hover:text-indigo-600">⚡ Ask AI Assistant</button>
+              <button onClick={() => setShowAltActions(false)} className="w-full text-left px-2 py-1.5 hover:bg-indigo-50 rounded hover:text-indigo-600">⚡ Ask SI Assistant</button>
               <button onClick={() => setShowAltActions(false)} className="w-full text-left px-2 py-1.5 hover:bg-indigo-50 rounded hover:text-indigo-600">👤 Assign Domain Expert</button>
               <button onClick={() => setShowAltActions(false)} className="w-full text-left px-2 py-1.5 hover:bg-indigo-50 rounded hover:text-indigo-600">🔄 Reclassify Document</button>
               <button onClick={() => setShowAltActions(false)} className="w-full text-left px-2 py-1.5 hover:bg-amber-50 rounded hover:text-amber-700">⏳ Defer Decision</button>

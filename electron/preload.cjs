@@ -28,7 +28,7 @@ const validInvokeChannels = [
   'chatr:runtime-prepare',
   'chatr:runtime-generate',
   'chatr:runtime-list-models',
-  // AI Engine (ollama.cjs)
+  // SI Engine (ollama.cjs)
   'ai:status',
   'ai:ask',
   'ai:list-models',
@@ -110,7 +110,7 @@ const validListenChannels = [
   'updater:status',
   'updater:progress',
   'chatr:runtime-status-change',
-  // AI Engine events (broadcast by ollama.cjs)
+  // SI Engine events (broadcast by ollama.cjs)
   'ai:status',
   // Legacy compat
   'ai:readiness-changed',
@@ -231,9 +231,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 
   /**
-   * AI — Ask local Ollama model.
+   * SI — Ask local Ollama model.
    * Returns { text } on success or { error, message } when unavailable.
-   * Strict privacy mode: renderer must not fall back to cloud AI.
+   * Strict privacy mode: renderer must not fall back to cloud SI.
    */
   ai: {
     ask: (prompt, opts = {}) =>
@@ -248,7 +248,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     retrySetup: () =>
       ipcRenderer.invoke('ai:retry-setup'),
 
-    /** Listen for AI engine state changes (phase, progress, readyModels) */
+    /** Listen for SI engine state changes (phase, progress, readyModels) */
     onStatusChange: (callback) => {
       ipcRenderer.on('ai:status', (event, data) => callback(data));
     },

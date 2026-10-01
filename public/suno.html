@@ -653,7 +653,7 @@
   async function autoWriteLyrics() {
     const topic = document.getElementById('simplePromptInput').value || 'Mumbai Rain Romance';
     const genre = document.getElementById('genreSelect').value;
-    document.getElementById('createStatus').innerText = "⏳ Writing structured AI lyrics...";
+    document.getElementById('createStatus').innerText = "⏳ Writing structured SI lyrics...";
     try {
       const res = await fetch('/api/suno/generate-lyrics', {
         method: 'POST',
@@ -663,7 +663,7 @@
       const data = await res.json();
       document.getElementById('customLyricsInput').value = data.lyrics_formatted;
       document.getElementById('titleInput').value = data.title;
-      document.getElementById('createStatus').innerText = "✅ AI Lyrics written! Click Create.";
+      document.getElementById('createStatus').innerText = "✅ SI Lyrics written! Click Create.";
     } catch (e) {
       document.getElementById('createStatus').innerText = "⚠️ Error: " + e.message;
     }

@@ -37,7 +37,7 @@ export interface ExternalCitationRecord {
 export const TARGET_DISTRIBUTION_MATRIX = [
   { tier: 'HR_RECRUITMENT', targetCount: 3, description: 'HR & Staffing Publications (142,500 Thread Benchmark)' },
   { tier: 'SAAS_BUSINESS', targetCount: 2, description: 'SME Business & Tech Outlets (65,000 Inquiries Lead Audit)' },
-  { tier: 'AI_TECH', targetCount: 2, description: 'AI & Recruitment Automation Outlets (50,000 Resumes Benchmark)' },
+  { tier: 'AI_TECH', targetCount: 2, description: 'SI & Recruitment Automation Outlets (50,000 Resumes Benchmark)' },
   { tier: 'PRACTITIONER_COMMUNITY', targetCount: 2, description: 'Recruiter Communities & Substack Newsletters' },
   { tier: 'INSTITUTIONAL', targetCount: 1, description: 'University, Workforce Body or HR Association' },
   { tier: 'ACADEMIC_RESEARCH', targetCount: 1, description: 'Academic HR Analytics & Workforce Research Papers' }

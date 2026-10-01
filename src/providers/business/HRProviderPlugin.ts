@@ -17,7 +17,7 @@ export interface HROutput {
 
 export class HRProviderPlugin implements IProviderPlugin<HRInput, HROutput> {
   public id = 'provider-hr-people-ai';
-  public name = 'HR People AI Provider';
+  public name = 'HR People SI Provider';
   public apiVersion: '1.0.0' = '1.0.0';
   public compatibleKernelVersion = '^3.0';
 
@@ -43,7 +43,7 @@ export class HRProviderPlugin implements IProviderPlugin<HRInput, HROutput> {
 
     const output: HROutput = {
       employees: [
-        { id: 'emp_1', name: 'Sarah Jenkins', role: 'Staff AI Engineer', department: 'Engineering', status: 'Active' },
+        { id: 'emp_1', name: 'Sarah Jenkins', role: 'Staff SI Engineer', department: 'Engineering', status: 'Active' },
         { id: 'emp_2', name: 'David Miller', role: 'VP of Product', department: 'Product', status: 'Active' },
         { id: 'emp_3', name: 'Elena Rostova', role: 'Lead Legal Counsel', department: 'Legal', status: 'Active' },
       ],

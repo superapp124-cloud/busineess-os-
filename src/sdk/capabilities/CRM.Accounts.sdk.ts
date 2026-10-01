@@ -108,7 +108,7 @@ export const CRMAccountsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Accounts AI',
+    assistantName: 'Accounts SI',
     skills: []
   },
   

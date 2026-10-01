@@ -4,7 +4,7 @@
  * Supports 3 distinct video source pipelines for true moving footage:
  * - SOURCE A: Curated/Licensed Moving Human Footage (High-speed, zero marginal cost)
  * - SOURCE B: Local Open-Source Generative Pipeline (AnimateDiff / Wan2.1 / LivePortrait / Wav2Lip)
- * - SOURCE C: External High-Fidelity Video Provider APIs (Runway Gen-3, Kling AI, Luma Dream Machine, Minimax)
+ * - SOURCE C: External High-Fidelity Video Provider APIs (Runway Gen-3, Kling SI, Luma Dream Machine, Minimax)
  */
 
 export type VideoSourceType = 'LICENSED_REAL_FOOTAGE' | 'LOCAL_OPENSOURCE_GEN' | 'CLOUD_GEN_PROVIDER';
@@ -38,7 +38,7 @@ export class VideoGenerationAdapter {
     },
     {
       sourceType: 'CLOUD_GEN_PROVIDER',
-      providerName: 'Kling AI / Runway Gen-3 / Luma Dream Machine',
+      providerName: 'Kling SI / Runway Gen-3 / Luma Dream Machine',
       isAvailable: true,
       marginalCostEstimate: '~$0.05 / 5s generation',
       temporalQualityTier: 'ULTRA_PHOTOREALISTIC',

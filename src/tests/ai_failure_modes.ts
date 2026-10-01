@@ -1,7 +1,7 @@
 /**
- * Local AI Failure Mode Validation — Gate A3 (v1.1A)
+ * Local SI Failure Mode Validation — Gate A3 (v1.1A)
  *
- * Validates that the AI Runtime degrades gracefully under every real-world
+ * Validates that the SI Runtime degrades gracefully under every real-world
  * local failure scenario. The platform must never hang or crash — it must
  * recover, emit a telemetry event, and allow workflows to continue.
  */
@@ -17,7 +17,7 @@ export interface FailureModeResult {
 }
 
 export async function runLocalAIFailureModeTests(): Promise<{ allPassed: boolean; results: FailureModeResult[] }> {
-  console.log('\n[Gate A3] Local AI Failure Mode Validation...');
+  console.log('\n[Gate A3] Local SI Failure Mode Validation...');
   const results: FailureModeResult[] = [];
 
   // ── Scenario 1: Model Unavailable (Ollama not running) ────────────────────

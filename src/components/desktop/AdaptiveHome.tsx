@@ -36,7 +36,7 @@ const RECENT_CONVERSATIONS = [
  { id: '1', name: 'Rahul Sharma', avatar: 'RS', color: 'from-blue-600 to-cyan-500', message: 'Can we push the deadline to Friday?', time: '2m', unread: 3, status: 'typing', presence: 'online' as const },
  { id: '2', name: 'Isha Kapoor', avatar: 'IK', color: 'from-pink-600 to-rose-400', message: '✓ Invoice approved — see attachment', time: '14m', unread: 0, status: null, presence: 'online' as const },
  { id: '3', name: 'Recruitment Team', avatar: 'RT', color: 'from-purple-600 to-fuchsia-400', message: 'Shortlisted 4 candidates for review', time: '1h', unread: 7, status: null, presence: 'busy' as const },
- { id: '4', name: 'AI Assistant', avatar: 'AI', color: 'from-violet-700 to-purple-500', message: 'Your meeting summary is ready', time: '1h', unread: 1, status: null, presence: 'online' as const },
+ { id: '4', name: 'SI Assistant', avatar: 'SI', color: 'from-violet-700 to-purple-500', message: 'Your meeting summary is ready', time: '1h', unread: 1, status: null, presence: 'online' as const },
  { id: '5', name: 'Finance Dept', avatar: 'FD', color: 'from-emerald-600 to-teal-400', message: 'Q3 budget report uploaded', time: '3h', unread: 0, status: null, presence: 'away' as const },
  { id: '6', name: 'Sanobar', avatar: 'SA', color: 'from-orange-600 to-amber-400', message: 'Proposal_v3.pdf sent for your review', time: '5h', unread: 2, status: null, presence: 'away' as const },
 ];
@@ -44,7 +44,7 @@ const RECENT_CONVERSATIONS = [
 const PINNED_ITEMS = [
  { name: 'Product Roadmap', icon: Presentation, color: 'text-blue-400' },
  { name: 'Finance Channel', icon: BarChart3, color: 'text-emerald-400' },
- { name: 'AI Workspace', icon: BrainCircuit, color: 'text-violet-400' },
+ { name: 'SI Workspace', icon: BrainCircuit, color: 'text-violet-400' },
 ];
 
 const TEAM_PULSE = [
@@ -74,14 +74,14 @@ const PRIORITY_INBOX = [
  subject: 'Invoice #244 — Approval required (₹1,24,000)',
  snippet: 'Please approve the attached invoice from vendor Acme Corp for Q3 services...',
  time: '8:52 AM', tag: 'Invoice', tagColor: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
- aiSuggestion: 'AI: Vendor verified, amount matches PO. Safe to approve.'
+ aiSuggestion: 'SI: Vendor verified, amount matches PO. Safe to approve.'
  },
  {
  id: 'e3', sender: 'Sanobar Khan', avatar: 'SK', color: 'from-orange-600 to-amber-400',
  subject: 'Proposal_v3 — Review requested',
  snippet: 'Attaching the updated proposal with the revised pricing model and timeline...',
  time: 'Yesterday', tag: 'Action', tagColor: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
- aiSuggestion: 'AI summarized: 3 key changes from v2. View summary?'
+ aiSuggestion: 'SI summarized: 3 key changes from v2. View summary?'
  },
 ];
 
@@ -103,7 +103,7 @@ const TASKS = {
  ],
  done: [
  { id: 't5', text: 'Product review meeting', priority: 'low' },
- { id: 't6', text: 'AI summary reviewed', priority: 'low' },
+ { id: 't6', text: 'SI summary reviewed', priority: 'low' },
  ],
 };
 
@@ -328,7 +328,7 @@ export const AdaptiveHome: React.FC = () => {
  <div className="flex flex-col h-full overflow-hidden bg-[#0a0a12]">
 
  {/* ══════════════════════════════════════════════════════
- AI DAILY BRIEF BAR
+ SI DAILY BRIEF BAR
  ══════════════════════════════════════════════════════ */}
  <div className={cn(
  'shrink-0 border-b border-white/[0.06] bg-gradient-to-r from-violet-950/70 via-[#0e0b1f]/80 to-indigo-950/50 backdrop-blur-xl transition-all duration-300 relative overflow-hidden',
@@ -416,7 +416,7 @@ export const AdaptiveHome: React.FC = () => {
  ))}
  </div>
  <div className="space-y-2">
- <div className="text-[10px] font-bold text-white/35 uppercase tracking-widest">AI Can Handle</div>
+ <div className="text-[10px] font-bold text-white/35 uppercase tracking-widest">SI Can Handle</div>
  {['Draft contract reply (2 min)', 'Approve invoice with summary (1 min)', 'Generate interview brief (4 min)'].map((a, i) => (
  <button key={i} className="flex items-center gap-2 text-button text-violet-300 hover:text-white transition-colors">
  <Sparkles className="w-3 h-3 shrink-0 text-violet-400" />{a}
@@ -446,7 +446,7 @@ export const AdaptiveHome: React.FC = () => {
  { icon: MessageSquare, label: 'New Chat', color: 'text-blue-400', onClick: () => navigate('/desktop/chat') },
  { icon: Phone, label: 'Call Back', color: 'text-emerald-400', onClick: () => navigate('/desktop/calls') },
  { icon: Video, label: 'Start Meet', color: 'text-purple-400', onClick: () => navigate('/desktop/calls') },
- { icon: Sparkles, label: 'Ask AI', color: 'text-violet-400', onClick: () => navigate('/desktop/canvas') },
+ { icon: Sparkles, label: 'Ask SI', color: 'text-violet-400', onClick: () => navigate('/desktop/canvas') },
  ].map((a, i) => (
  <button key={i} onClick={a.onClick} className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.05] transition-all group">
  <a.icon className={cn('w-3.5 h-3.5 shrink-0', a.color)} />
@@ -583,7 +583,7 @@ export const AdaptiveHome: React.FC = () => {
  ))}
  </div>
  <button className="w-full py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/35 border border-violet-500/25 text-[11px] font-bold text-violet-300 transition-all flex items-center justify-center gap-2">
- <Sparkles className="w-3.5 h-3.5" /> AI can complete all three for you
+ <Sparkles className="w-3.5 h-3.5" /> SI can complete all three for you
  </button>
  </div>
  </Card>
@@ -676,7 +676,7 @@ export const AdaptiveHome: React.FC = () => {
  {/* Expanded actions */}
  {expandedEmail === email.id && (
  <div className="px-3 pb-3 animate-in fade-in slide-in-from-top-1 duration-150">
- {/* AI suggestion */}
+ {/* SI suggestion */}
  <div className="flex items-start gap-2 p-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20 mb-2.5">
  <Sparkles className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
  <p className="text-[10px] text-violet-300 leading-relaxed">{email.aiSuggestion}</p>
@@ -687,7 +687,7 @@ export const AdaptiveHome: React.FC = () => {
  { icon: Reply, label: 'Reply', color: 'bg-blue-600/80 hover:bg-blue-500 text-white border-blue-500/30' },
  { icon: Archive, label: 'Archive', color: 'bg-white/[0.06] hover:bg-white/[0.1] text-white/70 border-white/[0.08]' },
  { icon: CalendarPlus, label: 'Schedule', color: 'bg-white/[0.06] hover:bg-white/[0.1] text-white/70 border-white/[0.08]' },
- { icon: Sparkles, label: 'AI Draft', color: 'bg-violet-600/60 hover:bg-violet-500 text-violet-200 border-violet-500/30' },
+ { icon: Sparkles, label: 'SI Draft', color: 'bg-violet-600/60 hover:bg-violet-500 text-violet-200 border-violet-500/30' },
  { icon: Hash, label: 'Assign', color: 'bg-white/[0.06] hover:bg-white/[0.1] text-white/70 border-white/[0.08]' },
  ].map((action, i) => (
  <button key={i} className={cn('flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-bold transition-all', action.color)}>
@@ -808,19 +808,19 @@ export const AdaptiveHome: React.FC = () => {
  </ScrollArea>
  </div>
 
- {/* ── RIGHT COLUMN — AI & Automation ──────────────────────────── */}
+ {/* ── RIGHT COLUMN — SI & Automation ──────────────────────────── */}
  <div className="w-[22%] min-w-[240px] max-w-[300px] shrink-0 border-l border-white/[0.06] bg-gradient-to-b from-violet-950/20 via-[#0b0b15] to-[#0a0a12] flex flex-col">
  <ScrollArea className="flex-1">
  <div className="p-3 space-y-4 pb-4">
 
- {/* AI Copilot Header */}
+ {/* SI Copilot Header */}
  <div className="flex items-center justify-between px-0.5">
  <div className="flex items-center gap-2">
  <div className="w-7 h-7 rounded-lg bg-violet-600/25 border border-violet-500/30 flex items-center justify-center">
  <BrainCircuit className="w-3.5 h-3.5 text-violet-300" />
  </div>
  <div>
- <div className="text-label font-bold text-white/90">AI Copilot</div>
+ <div className="text-label font-bold text-white/90">SI Copilot</div>
  <div className="text-[9px] text-violet-400/70">Continuously working</div>
  </div>
  </div>
@@ -892,9 +892,9 @@ export const AdaptiveHome: React.FC = () => {
  </div>
  </div>
 
- {/* AI Timeline */}
+ {/* SI Timeline */}
  <div>
- <SectionLabel icon={Activity} label="AI Timeline" />
+ <SectionLabel icon={Activity} label="SI Timeline" />
  <div className="space-y-0 relative">
  {AI_TIMELINE.map((event, i) => (
  <div key={i} className="relative flex items-start gap-2.5 pl-3 pb-3 last:pb-0">
@@ -968,7 +968,7 @@ export const AdaptiveHome: React.FC = () => {
  { icon: Lock, label: 'Device Trusted', value: 'Verified', color: 'text-emerald-400', dot: 'bg-emerald-400' },
  { icon: Wifi, label: networkStatus === 'poor' ? 'Offline' : 'Network', value: networkStatus === 'excellent' ? 'Excellent' : networkStatus === 'good' ? 'Good' : 'Poor', color: networkStatus === 'poor' ? 'text-red-400' : 'text-emerald-400', dot: networkStatus === 'poor' ? 'bg-red-500' : 'bg-emerald-400' },
  { icon: RefreshCw, label: 'Sync', value: 'Complete', color: 'text-emerald-400', dot: 'bg-emerald-400' },
- { icon: BrainCircuit, label: 'AI', value: 'Ready', color: 'text-violet-400', dot: 'bg-violet-400' },
+ { icon: BrainCircuit, label: 'SI', value: 'Ready', color: 'text-violet-400', dot: 'bg-violet-400' },
  { icon: Users, label: 'Teammates', value: '42 online', color: 'text-blue-400', dot: 'bg-blue-400' },
  { icon: HardDrive, label: 'Storage', value: '14 GB', color: 'text-white/40', dot: 'bg-white/25' },
  { icon: Activity, label: 'Tasks', value: '3 background', color: 'text-white/40', dot: 'bg-white/25' },

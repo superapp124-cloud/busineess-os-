@@ -2,10 +2,10 @@
  * CHATR Intent OS — Global Context Engine
  *
  * Maps the current route to:
- * - AI mode (which persona the floating AI uses)
+ * - SI mode (which persona the floating SI uses)
  * - Page-specific capabilities (what intents are most likely)
  * - Right panel mode
- * - Context label (what the user sees as "AI context")
+ * - Context label (what the user sees as "SI context")
  */
 
 export type PageAIMode =
@@ -35,7 +35,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/chat': {
     route: '/desktop/chat',
     aiMode: 'conversation',
-    aiLabel: 'Conversation AI',
+    aiLabel: 'Conversation SI',
     aiDescription: 'I understand your messages and detect commitments automatically.',
     aiEmoji: '💬',
     rightPanel: 'intelligence',
@@ -69,7 +69,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/contacts': {
     route: '/desktop/contacts',
     aiMode: 'relationship',
-    aiLabel: 'Relationship AI',
+    aiLabel: 'Relationship SI',
     aiDescription: 'I surface the full history of every person you work with.',
     aiEmoji: '🤝',
     rightPanel: 'relationship-history',
@@ -86,7 +86,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/canvas': {
     route: '/desktop/canvas',
     aiMode: 'knowledge',
-    aiLabel: 'Knowledge AI',
+    aiLabel: 'Knowledge SI',
     aiDescription: 'I connect your people, meetings, documents and decisions into one graph.',
     aiEmoji: '🧠',
     rightPanel: 'knowledge-graph',
@@ -103,7 +103,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/smart-inbox': {
     route: '/desktop/smart-inbox',
     aiMode: 'command-center',
-    aiLabel: 'Command Center AI',
+    aiLabel: 'Command Center SI',
     aiDescription: 'I search across all your mail, messages, files, meetings and tasks.',
     aiEmoji: '📡',
     rightPanel: 'unified-search',
@@ -120,7 +120,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/workspace': {
     route: '/desktop/workspace',
     aiMode: 'workspace',
-    aiLabel: 'Workspace AI',
+    aiLabel: 'Workspace SI',
     aiDescription: 'I set up intelligent workspaces tailored to your industry.',
     aiEmoji: '🏗️',
     rightPanel: 'workspace-builder',
@@ -137,7 +137,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
   '/desktop/recruitment': {
     route: '/desktop/recruitment',
     aiMode: 'recruitment',
-    aiLabel: 'Recruitment AI',
+    aiLabel: 'Recruitment SI',
     aiDescription: 'I help you track candidates, schedule interviews, and manage hiring.',
     aiEmoji: '🎯',
     rightPanel: 'recruitment-pipeline',
@@ -156,7 +156,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
 const DEFAULT_CONTEXT: PageContext = {
   route: '/',
   aiMode: 'generic',
-  aiLabel: 'CHATR AI',
+  aiLabel: 'CHATR SI',
   aiDescription: 'I understand your intent and get work done.',
   aiEmoji: '⚡',
   rightPanel: 'generic',

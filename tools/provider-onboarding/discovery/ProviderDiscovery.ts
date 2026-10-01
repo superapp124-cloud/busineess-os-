@@ -26,7 +26,7 @@ export class ProviderDiscovery {
     console.log(`[ProviderDiscovery] Simulating web search for ${providerName} developer portals...`);
     
     if (!this.aiClient) {
-      console.warn('[ProviderDiscovery] No AI client available. Returning empty discovery.');
+      console.warn('[ProviderDiscovery] No SI client available. Returning empty discovery.');
       return { developerPortal: null, signup: null, documentation: null };
     }
 

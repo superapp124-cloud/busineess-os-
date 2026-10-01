@@ -124,7 +124,7 @@ export class VideoRealismGate {
       },
       {
         id: 'no_obvious_morphing',
-        label: 'No Obvious AI Morphing',
+        label: 'No Obvious SI Morphing',
         category: 'MOTION_CONTINUITY',
         passed: true,
         score: 97,

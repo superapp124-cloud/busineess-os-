@@ -74,7 +74,7 @@ CREATE INDEX IF NOT EXISTS idx_email_queue_send_at ON public.email_queue(send_at
 CREATE INDEX IF NOT EXISTS idx_email_queue_created_by ON public.email_queue(created_by);
 
 -- ═══════════════════════════════════════════════════════════
--- 3. AGENT SESSIONS — Persistent AI conversation memory
+-- 3. AGENT SESSIONS — Persistent SI conversation memory
 -- ═══════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.agent_sessions (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -229,7 +229,7 @@ CREATE POLICY "Business owners can manage groups"
   );
 
 -- ═══════════════════════════════════════════════════════════
--- 8. AI ROLES CONFIG — Persist business AI role configurations
+-- 8. SI ROLES CONFIG — Persist business SI role configurations
 -- ═══════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.business_ai_roles (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS public.business_ai_roles (
 
 ALTER TABLE public.business_ai_roles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Business owners can manage AI roles"
+CREATE POLICY "Business owners can manage SI roles"
   ON public.business_ai_roles FOR ALL
   USING (
     business_id IN (

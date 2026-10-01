@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CHATR AI DIALER v2 SCHEMA (Truecaller+++)
+-- CHATR SI DIALER v2 SCHEMA (Truecaller+++)
 -- Run this in your Supabase SQL Editor
 -- ==============================================================================
 
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.spam_reports (
 
 CREATE INDEX IF NOT EXISTS idx_spam_reports_number ON public.spam_reports(number);
 
--- 3. Call Insights (Post-Call AI Data)
+-- 3. Call Insights (Post-Call SI Data)
 CREATE TABLE IF NOT EXISTS public.call_insights (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,

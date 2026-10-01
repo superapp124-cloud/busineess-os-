@@ -67,10 +67,10 @@ export const EVIDENCE_GRAPH: EvidenceFindingNode[] = [
   {
     findingId: 'TALENTXCEL-RES-2026-003-F001',
     researchId: 'TALENTXCEL-RES-2026-003',
-    reportTitle: 'AI Resume Parser Accuracy and Screening Velocity Benchmark',
+    reportTitle: 'SI Resume Parser Accuracy and Screening Velocity Benchmark',
     reportPath: '/research/ai-resume-parser-accuracy-benchmark-2026',
     findingIndex: 1,
-    claimText: 'TalentXcel AI Parser v1.4 achieved a 96.4% precision rate (F1: 0.952) in extracting core technical skills from non-standard PDF formats on held-out test data (N=7,500).',
+    claimText: 'TalentXcel SI Parser v1.4 achieved a 96.4% precision rate (F1: 0.952) in extracting core technical skills from non-standard PDF formats on held-out test data (N=7,500).',
     claimType: 'BENCHMARK',
     causalClaimPermitted: true,
     evidenceStrength: 'HIGH',

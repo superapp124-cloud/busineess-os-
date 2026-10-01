@@ -50,11 +50,11 @@ export class PlaywrightMakeMyTripProvider implements ICapabilityExecutor {
       },
       { 
         id: 'mmt_airindia_1', 
-        name: 'Air India AI-805', 
+        name: 'Air India SI-805', 
         price: 5100, 
         time: '08:00 PM - 10:20 PM', 
         airline: 'Air India',
-        flightNumber: 'AI-805',
+        flightNumber: 'SI-805',
         recommended: false, 
         logo: '✈️', 
         reasons: ['Free meals included'] 
@@ -71,7 +71,7 @@ export class PlaywrightMakeMyTripProvider implements ICapabilityExecutor {
     const urlMap: Record<string, string> = {
       'mmt_indigo_1': `https://www.makemytrip.com/flights/checkout?flightId=6E-201&origin=${this.currentOrigin}&dest=${this.currentDestination}`,
       'mmt_vistara_1': `https://www.makemytrip.com/flights/checkout?flightId=UK-995&origin=${this.currentOrigin}&dest=${this.currentDestination}`,
-      'mmt_airindia_1': `https://www.makemytrip.com/flights/checkout?flightId=AI-805&origin=${this.currentOrigin}&dest=${this.currentDestination}`,
+      'mmt_airindia_1': `https://www.makemytrip.com/flights/checkout?flightId=SI-805&origin=${this.currentOrigin}&dest=${this.currentDestination}`,
     };
 
     if (itemId && urlMap[itemId]) {

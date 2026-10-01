@@ -60,7 +60,7 @@ serve(async (req) => {
         Communication style:
         - Write like a knowledgeable person, not a robot
         - NO markdown formatting (no asterisks, bold, or code-like text)
-        - NO phrases like "As an AI" or robotic disclaimers
+        - NO phrases like "As an SI" or robotic disclaimers
         - Use natural transitions like "Overall," "In summary," "Here's what I'd suggest"
         - Keep it professional yet conversational
         

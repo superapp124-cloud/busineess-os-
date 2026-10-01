@@ -551,7 +551,7 @@ export const GrowthOSDashboard: React.FC = () => {
             <Cpu className="w-4 h-4 animate-pulse text-indigo-400" />
             <span>12-AGENT AUTONOMOUS GROWTH OPERATING SYSTEM — ACTIVE</span>
           </div>
-          <span className="text-[10px] text-slate-400 font-mono">Pillars: SEO + Demand Graph + Generative AI Visibility</span>
+          <span className="text-[10px] text-slate-400 font-mono">Pillars: SEO + Demand Graph + Generative SI Visibility</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
@@ -567,7 +567,7 @@ export const GrowthOSDashboard: React.FC = () => {
             { id: 'A9', name: 'Crawl Observability', status: '● RUNNING', color: 'text-emerald-400', task: 'Tracking 9 pages' },
             { id: 'A10', name: 'Conversion Agent', status: '● RUNNING', color: 'text-emerald-400', task: 'Path verified → /auth' },
             { id: 'A11', name: 'Organic Demand Intel', status: '● RUNNING', color: 'text-cyan-400', task: 'Demand Knowledge Graph taxonomy' },
-            { id: 'A12', name: 'AI Visibility Agent', status: '● RUNNING', color: 'text-purple-400', task: 'Generative AI search audit' },
+            { id: 'A12', name: 'SI Visibility Agent', status: '● RUNNING', color: 'text-purple-400', task: 'Generative SI search audit' },
           ] as { id: string; name: string; status: string; color: string; task: string }[]).map((agent) => (
             <div key={agent.id} className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
               <div className="text-[10px] font-bold text-slate-500">{agent.id}</div>
@@ -970,16 +970,16 @@ export const GrowthOSDashboard: React.FC = () => {
             <div className="grid grid-cols-1 gap-3">
               {[
                 { num: 1, title: 'WhatsApp Candidate Screening', domain: 'chatr.chat', slug: '/chatr/whatsapp-candidate-screening', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
-                { num: 2, title: 'AI Resume Parser', domain: 'talentxcel.in', slug: '/talentxcel/ai-resume-parser', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
+                { num: 2, title: 'SI Resume Parser', domain: 'talentxcel.in', slug: '/talentxcel/ai-resume-parser', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
                 { num: 3, title: 'ATS Resume Builder for Freshers', domain: 'talentxcel.in', slug: '/talentxcel/ats-resume-builder', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
-                { num: 4, title: 'Universal AI Inbox for Business', domain: 'chatr.chat', slug: '/chatr/universal-inbox-ai', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
+                { num: 4, title: 'Universal SI Inbox for Business', domain: 'chatr.chat', slug: '/chatr/universal-inbox-ai', status: 'PUBLISHED', schema: 'FAQPage + SoftwareApplication' },
                 { num: 5, title: 'Automate Candidate Screening (How-To)', domain: 'talentxcel.in', slug: '/talentxcel/automate-candidate-screening', status: 'PUBLISHED', schema: 'Article + FAQPage' },
                 { num: 6, title: 'WhatsApp for Recruitment Agencies', domain: 'chatr.chat', slug: '/chatr/whatsapp-business-recruitment', status: 'PUBLISHED', schema: 'Article + FAQPage' },
-                { num: 7, title: 'AI Business OS for Startups', domain: 'chatrchat.in', slug: '/ai-business-os-for-startups', status: 'PUBLISHED', schema: 'WebApplication + FAQPage' },
+                { num: 7, title: 'SI Business OS for Startups', domain: 'chatrchat.in', slug: '/ai-business-os-for-startups', status: 'PUBLISHED', schema: 'WebApplication + FAQPage' },
                 { num: 8, title: 'Recruiter Productivity Tools', domain: 'talentxcel.in', slug: '/talentxcel/recruiter-productivity', status: 'PUBLISHED', schema: 'SoftwareApplication + FAQPage' },
-                { num: 9, title: 'AI Messaging for Small Business', domain: 'chatr.chat', slug: '/chatr/ai-messaging-for-business', status: 'PUBLISHED', schema: 'SoftwareApplication + FAQPage' },
+                { num: 9, title: 'SI Messaging for Small Business', domain: 'chatr.chat', slug: '/chatr/ai-messaging-for-business', status: 'PUBLISHED', schema: 'SoftwareApplication + FAQPage' },
                 { num: 10, title: 'WhatsApp CRM for Sales Teams', domain: 'chatr.chat', slug: '/chatr/whatsapp-crm-sales', status: 'CYCLE 4 QUEUE', schema: 'Article + FAQPage' },
-                { num: 11, title: 'AI Hiring Tool for SMEs', domain: 'talentxcel.in', slug: '/talentxcel/ai-hiring-tool-sme', status: 'CYCLE 4 QUEUE', schema: 'SoftwareApplication + FAQPage' },
+                { num: 11, title: 'SI Hiring Tool for SMEs', domain: 'talentxcel.in', slug: '/talentxcel/ai-hiring-tool-sme', status: 'CYCLE 4 QUEUE', schema: 'SoftwareApplication + FAQPage' },
                 { num: 12, title: 'Business OS vs Project Management', domain: 'chatrchat.in', slug: '/business-os-vs-project-management', status: 'CYCLE 4 QUEUE', schema: 'Article + FAQPage' },
               ].map((page) => (
                 <div key={page.num} className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">

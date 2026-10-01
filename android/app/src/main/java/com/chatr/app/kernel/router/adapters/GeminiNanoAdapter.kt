@@ -39,7 +39,7 @@ class GeminiNanoAdapter(
     ): IntentResult {
         return try {
             val prompt = """
-                Extract the primary user intent and parameters for a mobile AI assistant.
+                Extract the primary user intent and parameters for a mobile SI assistant.
                 User input: "$input"
                 Recent context: ${context.activeEntityIds.joinToString()}
                 Return JSON only: {"action": "INTENT_ACTION_NAME", "confidence": 0.0-1.0, "parameters": {}}
@@ -80,7 +80,7 @@ class GeminiNanoAdapter(
         return try {
             val transcript = history.joinToString("\n") { "${it.speaker}: ${it.text}" }
             val prompt = """
-                You are CHATR AI receptionist screening a phone call for Arshid.
+                You are CHATR SI receptionist screening a phone call for Arshid.
                 Caller: ${callerInfo.phoneNumber} (${callerInfo.resolvedEntity?.canonicalName ?: "Unknown"})
                 Conversation so far:
                 $transcript

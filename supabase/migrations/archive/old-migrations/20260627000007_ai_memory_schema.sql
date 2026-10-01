@@ -1,4 +1,4 @@
--- Phase 1 (Workspace Pivot): AI Memory Foundations
+-- Phase 1 (Workspace Pivot): SI Memory Foundations
 -- This schema represents the "Chronological Log" of a user's daily activity,
 -- replacing the traditional concept of just "chat history".
 
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.ai_memory (
     message_id UUID REFERENCES public.messages(id) ON DELETE SET NULL,
     call_id UUID REFERENCES public.calls(id) ON DELETE SET NULL,
     
-    -- Extracted Entities by the AI (JSON array of people, projects, keywords)
+    -- Extracted Entities by the SI (JSON array of people, projects, keywords)
     entities JSONB DEFAULT '[]'::jsonb,
     
     -- The temporal location of this memory
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS public.ai_memory (
 ALTER TABLE public.ai_memory ENABLE ROW LEVEL SECURITY;
 
 -- Policies
-CREATE POLICY "Users can manage their own AI memory" 
+CREATE POLICY "Users can manage their own SI memory" 
     ON public.ai_memory 
     FOR ALL 
     USING (auth.uid() = user_id);

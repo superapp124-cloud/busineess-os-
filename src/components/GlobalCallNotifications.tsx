@@ -34,7 +34,7 @@ export const GlobalCallNotifications = ({ userId, username }: GlobalCallNotifica
  const [callerLanguage, setCallerLanguage] = useState('Hindi');
  const [isTranslating, setIsTranslating] = useState(false);
 
- // AI Voice Interceptor
+ // SI Voice Interceptor
  const { processedStream } = useAudioInterceptor(isTranslating, rawLocalStream, myLanguage, callerLanguage);
 
  // Update peer connection when processed stream changes
@@ -785,9 +785,9 @@ export const GlobalCallNotifications = ({ userId, username }: GlobalCallNotifica
  variant={isTranslating ? 'default' : 'outline'}
  size="lg"
  className={`rounded-full h-14 px-6 shadow-lg hover:scale-105 transition-transform ${isTranslating ? 'bg-purple-600 hover:bg-purple-700 text-white border-none' : 'border-white/20 text-white hover:bg-white/10'}`}
- title={isTranslating ? 'Stop AI Translation' : 'Start AI Translation'}
+ title={isTranslating ? 'Stop SI Translation' : 'Start SI Translation'}
  >
- <span className="font-bold">{isTranslating ? 'AI Live' : 'Start AI'}</span>
+ <span className="font-bold">{isTranslating ? 'SI Live' : 'Start SI'}</span>
  </Button>
 
  <Button

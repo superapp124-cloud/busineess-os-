@@ -180,12 +180,12 @@ object NativeGsmDefenseEngine {
             else -> "allow"
         }
         val summary = when (decision) {
-            "block" -> "Chatr AI: High-risk spam detected. Call blocked."
-            "challenge" -> "Chatr AI: Call screening required. Identity unverified."
-            "warn" -> "Chatr AI: Suspicious behavior. Proceed with caution."
+            "block" -> "Chatr SI: High-risk spam detected. Call blocked."
+            "challenge" -> "Chatr SI: Call screening required. Identity unverified."
+            "warn" -> "Chatr SI: Suspicious behavior. Proceed with caution."
             else -> {
-                if (contact != null) "Chatr AI: Safe saved contact calling."
-                else "Chatr AI: No risk signals detected."
+                if (contact != null) "Chatr SI: Safe saved contact calling."
+                else "Chatr SI: No risk signals detected."
             }
         }
 

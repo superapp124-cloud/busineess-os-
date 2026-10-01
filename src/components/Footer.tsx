@@ -12,11 +12,11 @@ export const Footer = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Solutions</h3>
             <ul className="space-y-2">
-              <li><Link to="/chatr/ai" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">CHATR AI Platform</Link></li>
+              <li><Link to="/chatr/ai" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">CHATR SI Platform</Link></li>
               <li><Link to="/chatr/whatsapp-business-api" className="hover:text-indigo-400 transition-colors">WhatsApp Business API</Link></li>
-              <li><Link to="/chatr/universal-inbox-ai" className="hover:text-indigo-400 transition-colors">Universal AI Inbox</Link></li>
+              <li><Link to="/chatr/universal-inbox-ai" className="hover:text-indigo-400 transition-colors">Universal SI Inbox</Link></li>
               <li><Link to="/chatr/whatsapp-candidate-screening" className="hover:text-indigo-400 transition-colors">WhatsApp Candidate Screening</Link></li>
-              <li><Link to="/talentxcel/ai-resume-parser" className="hover:text-indigo-400 transition-colors">AI Resume Parser</Link></li>
+              <li><Link to="/talentxcel/ai-resume-parser" className="hover:text-indigo-400 transition-colors">SI Resume Parser</Link></li>
               <li><Link to="/talentxcel/ats-resume-builder" className="hover:text-indigo-400 transition-colors">ATS Resume Builder</Link></li>
             </ul>
           </div>
@@ -52,10 +52,10 @@ export const Footer = () => {
               <span>Location Hubs</span>
             </h3>
             <ul className="space-y-2">
-              <li><Link to="/locations/mumbai" className="hover:text-indigo-400 transition-colors">Mumbai Hub</Link></li>
+              <li><Link to="/locations/mumbai" className="hover:text-indigo-400 transition-colors">MumbSI Hub</Link></li>
               <li><Link to="/locations/delhi-ncr" className="hover:text-indigo-400 transition-colors">Delhi NCR Hub</Link></li>
               <li><Link to="/locations/bangalore" className="hover:text-indigo-400 transition-colors">Bangalore Hub</Link></li>
-              <li><Link to="/locations/dubai" className="hover:text-indigo-400 transition-colors">Dubai Hub</Link></li>
+              <li><Link to="/locations/dubai" className="hover:text-indigo-400 transition-colors">DubSI Hub</Link></li>
               <li><Link to="/locations/london" className="hover:text-indigo-400 transition-colors">London Hub</Link></li>
               <li><Link to="/locations" className="text-emerald-400 font-semibold hover:underline">All 1,758 Cities →</Link></li>
             </ul>

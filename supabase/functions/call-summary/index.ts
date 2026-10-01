@@ -107,7 +107,7 @@ Return ONLY valid JSON, no markdown.`;
         };
         console.log('[call-summary] Generated summary:', result.summary.substring(0, 50));
       } catch (parseError) {
-        console.error('[call-summary] Parse or AI error:', parseError);
+        console.error('[call-summary] Parse or SI error:', parseError);
       }
     } else {
       result.summary = 'No transcript available for this call';

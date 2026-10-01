@@ -153,7 +153,7 @@ const Index = () => {
  recognition.start();
  };
 
- // Fetch AI search suggestions
+ // Fetch SI search suggestions
  const fetchSuggestions = React.useCallback(async (query: string) => {
  if (!query || query.length < 2) {
  setSearchSuggestions([]);
@@ -528,28 +528,28 @@ const Index = () => {
  {
  icon: Brain,
  title: 'Chatr Intelligence',
- description: 'Unified AI brain — 6 agents',
+ description: 'Unified SI brain — 6 agents',
  iconColor: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600',
  route: '/chat-ai'
  },
  {
  icon: Sparkles,
- title: 'AI Agents',
- description: 'Create your AI self',
+ title: 'SI Agents',
+ description: 'Create your SI self',
  iconColor: 'bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-600',
  route: '/ai-agents'
  },
  {
  icon: Zap,
  title: 'Chatr World',
- description: 'AI search + nearby',
+ description: 'SI search + nearby',
  iconColor: 'bg-gradient-to-br from-amber-400 via-orange-500 to-red-600',
  route: '/chatr-world'
  },
  {
  icon: Gamepad2,
  title: 'Chatr Games',
- description: 'AI-native games',
+ description: 'SI-native games',
  iconColor: 'bg-gradient-to-br from-violet-500 via-purple-500 to-pink-600',
  route: '/chatr-games'
  },
@@ -618,7 +618,7 @@ const Index = () => {
  {
  icon: Globe,
  title: 'Chatr Browser',
- description: 'Search & browse with AI',
+ description: 'Search & browse with SI',
  iconColor: 'bg-gradient-to-br from-blue-400 to-cyan-500',
  route: '/ai-browser-home'
  },
@@ -641,7 +641,7 @@ const Index = () => {
  },
  {
  icon: Bot,
- title: 'AI Assistant',
+ title: 'SI Assistant',
  description: 'Instant health advice',
  iconColor: 'bg-gradient-to-br from-teal-400 to-emerald-500',
  route: '/ai-assistant'
@@ -738,7 +738,7 @@ const Index = () => {
  <SEOHead
  title="Chatr — Communication OS | Chat, Healthcare, Jobs & More"
  description="Chatr is the universal Communication OS. Chat with friends, find healthcare providers, discover local jobs, order food, and access 100+ services - all in one app."
- keywords="chatr, superapp, india, messaging app, healthcare app, job search, food delivery, AI assistant, local services, telemedicine"
+ keywords="chatr, superapp, india, messaging app, healthcare app, job search, food delivery, SI assistant, local services, telemedicine"
  schemaData={{
  "@context": "https://schema.org",
  "@type": "MobileApplication",
@@ -1006,7 +1006,7 @@ const Index = () => {
  className="h-14 rounded-[22px] bg-gradient-to-r from-cyan-400 to-cyan-500 px-2 flex flex-col items-center justify-center shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
  >
  <Bot className="w-5 h-5 text-white/90" strokeWidth={1.5} />
- <span className="text-[9px] text-white font-medium mt-0.5">AI Assistant</span>
+ <span className="text-[9px] text-white font-medium mt-0.5">SI Assistant</span>
  </button>
  <button
  onClick={() => navigate('/emergency-services')}

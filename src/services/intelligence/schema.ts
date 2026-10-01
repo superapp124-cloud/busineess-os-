@@ -67,7 +67,7 @@ export interface ExtractedEntity {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI Results (Decision 8 – unified pipeline output)
+// SI Results (Decision 8 – unified pipeline output)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ThreatType =
@@ -122,7 +122,7 @@ export interface AttentionScore {
   relationshipWeight: number;
 }
 
-/** Explainable AI reasons (Decision 10) */
+/** Explainable SI reasons (Decision 10) */
 export interface AIExplanation {
   summary: string;
   reasons: string[];
@@ -194,7 +194,7 @@ export interface CommunicationAttachment {
   sizeBytes: number;
   /** Local on-device path if downloaded */
   localPath?: string;
-  /** URL if available (not sent to cloud AI unless user explicitly approves) */
+  /** URL if available (not sent to cloud SI unless user explicitly approves) */
   url?: string;
 }
 
@@ -243,7 +243,7 @@ export interface CommunicationEvent {
   // ── Source-specific extra data ────────────────────────────────────────────
   metadata: Record<string, unknown>;
 
-  // ── AI Results ────────────────────────────────────────────────────────────
+  // ── SI Results ────────────────────────────────────────────────────────────
   /** Populated by the Intelligence pipeline after ingest */
   aiResults?: AIResults;
 

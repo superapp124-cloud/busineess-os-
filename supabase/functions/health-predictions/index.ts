@@ -59,7 +59,7 @@ serve(async (req) => {
 
     if (goalsError) throw goalsError;
 
-    // Direct AI call for health predictions
+    // Direct SI call for health predictions
     const aiResult = await completeChat({
       primaryProvider: "gemini",
       fallbackProviders: ["groq", "openrouter"],
@@ -68,7 +68,7 @@ serve(async (req) => {
       messages: [
         {
           role: 'system',
-          content: `You are a health analytics AI. Analyze health data and provide:
+          content: `You are a health analytics SI. Analyze health data and provide:
 1. Risk assessments for potential health issues
 2. Trend analysis of vital signs
 3. Personalized health recommendations

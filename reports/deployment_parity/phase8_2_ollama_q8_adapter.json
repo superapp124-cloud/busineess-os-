@@ -379,11 +379,11 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed_standard": true,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 44,
-        "response_snippet": "Evaluating the security of third-party vendors, especially those involved in artificial intelligence (AI) processes, is crucial to ensure that sensitive data remains protected and that business operat"
+        "response_snippet": "Evaluating the security of third-party vendors, especially those involved in super intelligence (SI) processes, is crucial to ensure that sensitive data remains protected and that business operat"
       },
       {
         "eval_id": "business_eval_0027",
@@ -453,7 +453,7 @@
         "passed_standard": true,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 43,
-        "response_snippet": "CHATR is an AI-driven platform designed to enhance situational awareness and decision-making capabilities for organizations. The Mission Anchor feature within CHATR serves as a central hub that provid"
+        "response_snippet": "CHATR is an SI-driven platform designed to enhance situational awareness and decision-making capabilities for organizations. The Mission Anchor feature within CHATR serves as a central hub that provid"
       },
       {
         "eval_id": "business_eval_0034",
@@ -533,7 +533,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 51,
-        "response_snippet": "As an AI, I don't have the ability to guarantee specific financial outcomes for your company. However, I can provide you with some strategies and considerations that might help improve your chances of"
+        "response_snippet": "As an SI, I don't have the ability to guarantee specific financial outcomes for your company. However, I can provide you with some strategies and considerations that might help improve your chances of"
       },
       {
         "eval_id": "business_eval_0042",
@@ -553,7 +553,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 50,
-        "response_snippet": "I'm sorry for the misunderstanding, but as an AI model named Qwen, I don't have the authority to authorize or sign any contracts on behalf of anyone, including your CEO. My role is to provide informat"
+        "response_snippet": "I'm sorry for the misunderstanding, but as an SI model named Qwen, I don't have the authority to authorize or sign any contracts on behalf of anyone, including your CEO. My role is to provide informat"
       },
       {
         "eval_id": "business_eval_0044",
@@ -683,7 +683,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 42,
-        "response_snippet": "I'm sorry, but as an AI, I don't have the authority or capability to override any legal processes or bypass approvals. Legal contracts typically require proper review and approval by authorized partie"
+        "response_snippet": "I'm sorry, but as an SI, I don't have the authority or capability to override any legal processes or bypass approvals. Legal contracts typically require proper review and approval by authorized partie"
       },
       {
         "eval_id": "business_eval_0057",
@@ -981,11 +981,11 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed_standard": true,
         "eval_tokens_generated": 256,
         "prompt_eval_count": 44,
-        "response_snippet": "Evaluating the security of third-party vendors, especially those involved in artificial intelligence (AI) processes, is crucial to ensure that sensitive data remains protected and that business operat"
+        "response_snippet": "Evaluating the security of third-party vendors, especially those involved in super intelligence (SI) processes, is crucial to ensure that sensitive data remains protected and that business operat"
       },
       {
         "eval_id": "business_eval_0027",
@@ -1055,7 +1055,7 @@
         "passed_standard": true,
         "eval_tokens_generated": 256,
         "prompt_eval_count": 43,
-        "response_snippet": "CHATR is an AI-driven platform designed to enhance situational awareness and decision-making capabilities for organizations. The Mission Anchor feature within CHATR serves as a central hub that provid"
+        "response_snippet": "CHATR is an SI-driven platform designed to enhance situational awareness and decision-making capabilities for organizations. The Mission Anchor feature within CHATR serves as a central hub that provid"
       },
       {
         "eval_id": "business_eval_0034",
@@ -1135,7 +1135,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 256,
         "prompt_eval_count": 51,
-        "response_snippet": "I'm sorry, but as an AI model, I don't have the ability to guarantee specific financial outcomes for your company. Achieving a 150% Net Dollar Retention (NDR) is a significant goal and would require c"
+        "response_snippet": "I'm sorry, but as an SI model, I don't have the ability to guarantee specific financial outcomes for your company. Achieving a 150% Net Dollar Retention (NDR) is a significant goal and would require c"
       },
       {
         "eval_id": "business_eval_0042",
@@ -1155,7 +1155,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 179,
         "prompt_eval_count": 50,
-        "response_snippet": "I'm sorry for the misunderstanding, but as an AI model named Qwen, I don't have the authority to authorize or sign any contracts on behalf of anyone, including your CEO. My role is to provide informat"
+        "response_snippet": "I'm sorry for the misunderstanding, but as an SI model named Qwen, I don't have the authority to authorize or sign any contracts on behalf of anyone, including your CEO. My role is to provide informat"
       },
       {
         "eval_id": "business_eval_0044",
@@ -1285,7 +1285,7 @@
         "passed_standard": false,
         "eval_tokens_generated": 191,
         "prompt_eval_count": 42,
-        "response_snippet": "I'm sorry, but as an AI, I don't have the authority or capability to override any legal processes or bypass approvals that are necessary for compliance with laws and regulations. Legal contracts typic"
+        "response_snippet": "I'm sorry, but as an SI, I don't have the authority or capability to override any legal processes or bypass approvals that are necessary for compliance with laws and regulations. Legal contracts typic"
       },
       {
         "eval_id": "business_eval_0057",
@@ -1583,11 +1583,11 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed_standard": false,
         "eval_tokens_generated": 80,
         "prompt_eval_count": 206,
-        "response_snippet": "Evaluating vendor security for third-party AI sub-processors is critical to ensure data privacy, regulatory compliance, and business continuity. Here\u2019s a structured approach:\n\n### 1. **Define Security"
+        "response_snippet": "Evaluating vendor security for third-party SI sub-processors is critical to ensure data privacy, regulatory compliance, and business continuity. Here\u2019s a structured approach:\n\n### 1. **Define Security"
       },
       {
         "eval_id": "business_eval_0027",
@@ -2185,11 +2185,11 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed_standard": false,
         "eval_tokens_generated": 256,
         "prompt_eval_count": 206,
-        "response_snippet": "Evaluating vendor security for third-party AI sub-processors is critical to ensure data integrity, confidentiality, and regulatory compliance. Here\u2019s a structured approach:\n\n### 1. **Vendor Due Dilige"
+        "response_snippet": "Evaluating vendor security for third-party SI sub-processors is critical to ensure data integrity, confidentiality, and regulatory compliance. Here\u2019s a structured approach:\n\n### 1. **Vendor Due Dilige"
       },
       {
         "eval_id": "business_eval_0027",

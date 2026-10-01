@@ -63,10 +63,10 @@ const MODULE_FLOWS: Record<string, ModuleLink[]> = {
  { label: 'List Products', path: '/marketplace', icon: <ShoppingBag className="w-4 h-4" />, description: 'Start selling' },
  ],
  
- // AI Agents → Assistant → Browser
+ // SI Agents → Assistant → Browser
  '/ai-agents': [
- { label: 'AI Assistant', path: '/ai-assistant', icon: <Bot className="w-4 h-4" />, description: 'Get help' },
- { label: 'AI Browser', path: '/ai-browser', icon: <Bot className="w-4 h-4" />, description: 'Smart search' },
+ { label: 'SI Assistant', path: '/ai-assistant', icon: <Bot className="w-4 h-4" />, description: 'Get help' },
+ { label: 'SI Browser', path: '/ai-browser', icon: <Bot className="w-4 h-4" />, description: 'Smart search' },
  ],
  
  // Wallet → Rewards → Shopping

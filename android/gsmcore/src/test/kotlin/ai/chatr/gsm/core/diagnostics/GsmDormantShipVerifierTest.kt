@@ -54,7 +54,7 @@ class GsmDormantShipVerifierTest {
         val verifier = GsmDormantShipVerifier(
             flags = object : GsmFeatureFlagProvider {
                 override fun isEnabled(feature: GsmFeature): Boolean {
-                    return feature == GsmFeature.AI || feature == GsmFeature.RECORDING
+                    return feature == GsmFeature.SI || feature == GsmFeature.RECORDING
                 }
             },
         )

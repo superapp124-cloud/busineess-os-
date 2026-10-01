@@ -79,8 +79,8 @@ const NAV_SECTIONS = [
   {
     label: 'Intelligence',
     items: [
-      { icon: BrainCircuit,  label: 'AI Canvas',    subtitle: 'Business Canvas & Memory',          path: '/desktop/canvas' },
-      { icon: Bot,           label: 'AI Agents',    subtitle: 'Autonomous Agent Hub',              path: '/desktop/ai-agents' },
+      { icon: BrainCircuit,  label: 'SI Canvas',    subtitle: 'Business Canvas & Memory',          path: '/desktop/canvas' },
+      { icon: Bot,           label: 'SI Agents',    subtitle: 'Autonomous Agent Hub',              path: '/desktop/ai-agents' },
       { icon: Zap,           label: 'Execution',    subtitle: 'Intent OS Engine',                  path: '/desktop/intelligence' },
       { icon: Store,         label: 'Intent Store', subtitle: 'Agents · Workflows · Connectors',   path: '/desktop/intent-store' },
       { icon: Package,       label: 'Ecosystem',    subtitle: 'Connector Marketplace',             path: '/desktop/connector-store' },
@@ -95,7 +95,7 @@ const NAV_SECTIONS = [
       { icon: Building2,     label: 'Revenue OS',            subtitle: 'Pipeline & Proposal Engine',                       path: '/desktop/revenue' },
       { icon: Users,         label: 'Customer Operations',   subtitle: 'Deployments & Retention Health',                      path: '/desktop/customer-success' },
       { icon: Activity,      label: 'Business Intelligence', subtitle: 'Cashflow & Executive Financials',                 path: '/desktop/business-intelligence' },
-      { icon: BrainCircuit,  label: 'Knowledge OS & AI',     subtitle: 'Enterprise Memory & Intelligence',                path: '/desktop/knowledge' },
+      { icon: BrainCircuit,  label: 'Knowledge OS & SI',     subtitle: 'Enterprise Memory & Intelligence',                path: '/desktop/knowledge' },
     ],
   },
   {
@@ -375,7 +375,7 @@ const DesktopLayoutInner = () => {
             </div>
             <div className="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap [-webkit-app-region:no-drag] overflow-hidden">
               <span className={cn('font-bold text-base leading-tight tracking-tight', isDark ? 'text-white' : 'text-zinc-900')}>chatr+</span>
-              <span className={cn('text-[9px] font-medium', isDark ? 'text-white/40' : 'text-zinc-400')}>AI OS Platform</span>
+              <span className={cn('text-[9px] font-medium', isDark ? 'text-white/40' : 'text-zinc-400')}>SI OS Platform</span>
             </div>
           </div>
 
@@ -489,7 +489,7 @@ const DesktopLayoutInner = () => {
               )}
           </ScrollArea>
 
-          {/* AI Engine Status — non-intrusive, auto-hides when ready */}
+          {/* SI Engine Status — non-intrusive, auto-hides when ready */}
           <AIStatusBadge />
 
           {/* Bottom: User presence + logout */}
@@ -629,7 +629,7 @@ const DesktopLayoutInner = () => {
 
             {/* Right actions */}
             <div className="flex items-center gap-4 [-webkit-app-region:no-drag]">
-              {/* AI System Indicator */}
+              {/* SI System Indicator */}
               <TinyAIIndicator />
 
               <AppearanceSettings />

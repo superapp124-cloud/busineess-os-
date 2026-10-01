@@ -20,7 +20,7 @@ sealed class MemoryWriteResult {
  * PersonalMemoryEngine — On-device encrypted personal memory and commitment manager.
  *
  * HARDENING INVARIANT (Rule 1: Strict Memory Write Policy):
- * AI model output NEVER directly writes to durable memory without validation.
+ * SI model output NEVER directly writes to durable memory without validation.
  * Every proposed memory must pass through [proposeCandidateMemory] where provenance,
  * verification level, and confidence thresholds are strictly enforced to prevent
  * hallucination pollution.

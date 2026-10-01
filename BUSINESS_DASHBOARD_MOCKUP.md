@@ -532,7 +532,7 @@ Element gap:     2 (8px)
    - User preferences saved
    - Multiple dashboard views
 
-2. **AI Insights Panel**
+2. **SI Insights Panel**
    - Customer sentiment trends
    - Predicted busy hours
    - Recommended actions

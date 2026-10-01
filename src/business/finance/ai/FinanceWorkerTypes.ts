@@ -1,5 +1,5 @@
 ﻿/**
- * CHATR Finance AI Worker Infrastructure (Phase 6)
+ * CHATR Finance SI Worker Infrastructure (Phase 6)
  * Defines worker roles, operating modes, and the Financial Risk Queue contracts.
  */
 

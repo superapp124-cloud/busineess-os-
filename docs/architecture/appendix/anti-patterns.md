@@ -3,7 +3,7 @@
 This document logs the architectural anti-patterns that must be actively avoided. Reviewing this list is mandatory before merging significant architectural changes. Future contributors will thank you.
 
 ## ❌ 1. Don't put business logic inside React.
-**Why it's bad:** React is the presentation layer. If a rule like "Invoices over $5k require approval" is written in `InvoiceView.tsx`, Studio cannot read it, the AI cannot reason about it, and it cannot be executed headlessly.
+**Why it's bad:** React is the presentation layer. If a rule like "Invoices over $5k require approval" is written in `InvoiceView.tsx`, Studio cannot read it, the SI cannot reason about it, and it cannot be executed headlessly.
 **Do this instead:** Define the rule in the `Policy Engine` metadata. React simply renders the state of the object.
 
 ## ❌ 2. Don't hardcode departments.

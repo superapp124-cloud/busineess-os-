@@ -1,7 +1,7 @@
 /**
  * CHATR Core — Conversation SDK
  *
- * The ONLY entry point for all UI components that need AI.
+ * The ONLY entry point for all UI components that need SI.
  * Nothing in the UI imports from transport.ts, types.ts, or any CHATR Core internal.
  * Everything flows through conversation.send() / conversation.stream().
  *
@@ -60,7 +60,7 @@ async function health(): Promise<HealthResponse> {
 }
 
 /**
- * List available AI models.
+ * List available SI models.
  */
 async function models(): Promise<Model[]> {
   const result = await httpModels();

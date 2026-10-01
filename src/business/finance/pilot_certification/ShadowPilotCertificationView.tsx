@@ -136,7 +136,7 @@ export function ShadowPilotCertificationView() {
 
                 <div className="p-2 rounded bg-background border space-y-1 text-[11px]">
                   <div><strong className="text-foreground">Human CFO Ground Truth: </strong><span className="text-muted-foreground">{tc.human_cfo_ground_truth}</span></div>
-                  <div><strong className="text-foreground">CHATR AI Causal Response: </strong><span className="text-primary font-medium">{tc.chatr_ai_response.claim}</span></div>
+                  <div><strong className="text-foreground">CHATR SI Causal Response: </strong><span className="text-primary font-medium">{tc.chatr_ai_response.claim}</span></div>
                 </div>
 
                 <div className="text-[10px] text-muted-foreground italic flex items-center justify-between">

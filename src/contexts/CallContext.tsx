@@ -7,6 +7,7 @@ import { GroupCallManager } from '@/packages/communication-engine/core/GroupCall
 import { toast } from 'sonner';
 import { getFlagFromPhone } from '@/utils/countryCodeUtil';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 
 interface IncomingRoom {
  roomId: string;
@@ -49,6 +50,9 @@ interface CallContextType {
  setRemoteUserName: (name: string) => void;
  setRemoteUserAvatar: (avatar: string) => void;
  startCall: (dialInput: string, video?: boolean) => Promise<void>;
+  initiateCall: (options: { partnerId?: string; partnerName?: string; partnerAvatar?: string; partnerPhone?: string; callType?: 'voice' | 'video'; conversationId?: string; } | string) => Promise<string>;
+  isInCall: boolean;
+  hasIncomingCall: boolean;
  answerCall: () => Promise<void>;
  declineCall: () => void;
  endCall: () => void;
@@ -609,7 +613,9 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
     }
 
     toast.success(`Calling ${target.name}...`);
-    navigate('/desktop/calls');
+    if (typeof window !== 'undefined' && !Capacitor.isNativePlatform() && window.location.pathname.startsWith('/desktop')) {
+      navigate('/desktop/calls');
+    }
   };
 
 
@@ -648,7 +654,9 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
 
     const peerCallIds = incomingCallId && callerId ? { [callerId]: incomingCallId } : undefined;
     await gcm.joinRoom(roomId, peers, stream, { video: isVideoCall, audio: true }, false, peerCallIds);
-    navigate('/desktop/calls');
+    if (typeof window !== 'undefined' && !Capacitor.isNativePlatform() && window.location.pathname.startsWith('/desktop')) {
+      navigate('/desktop/calls');
+    }
  };
 
  const declineCall = () => setIncomingRoom(null);
@@ -731,6 +739,93 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  setActiveCallTargetId(null);
  };
 
+
+  const initiateCall = async (options: {
+    partnerId?: string;
+    partnerName?: string;
+    partnerAvatar?: string;
+    partnerPhone?: string;
+    callType?: 'voice' | 'video';
+    conversationId?: string;
+  } | string): Promise<string> => {
+    let partnerId = '';
+    let partnerName = '';
+    let partnerAvatar = '';
+    let partnerPhone = '';
+    let callType: 'voice' | 'video' = 'voice';
+    let conversationId: string | undefined;
+
+    if (typeof options === 'string') {
+      partnerId = options;
+      partnerName = options;
+      partnerPhone = options;
+    } else {
+      partnerId = options.partnerId || '';
+      partnerName = options.partnerName || '';
+      partnerAvatar = options.partnerAvatar || '';
+      partnerPhone = options.partnerPhone || '';
+      callType = options.callType || 'voice';
+      conversationId = options.conversationId;
+    }
+
+    const callId = crypto.randomUUID();
+    let userId = currentUserId;
+    if (!userId) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        userId = user.id;
+        setCurrentUserId(user.id);
+      }
+    }
+
+    // Try to record in calls table
+    try {
+      if (userId && partnerId) {
+        await supabase.from('calls').insert({
+          id: callId,
+          caller_id: userId,
+          receiver_id: partnerId,
+          caller_name: currentUserName || 'Caller',
+          receiver_name: partnerName || 'Contact',
+          receiver_avatar: partnerAvatar,
+          receiver_phone: partnerPhone,
+          call_type: callType,
+          status: 'ringing',
+          conversation_id: conversationId,
+          started_at: new Date().toISOString()
+        });
+      }
+    } catch (err) {
+      console.warn('[CallContext] Could not insert call row:', err);
+    }
+
+    // Trigger desktop startCall ONLY when in desktop environment
+    if (typeof window !== 'undefined' && !Capacitor.isNativePlatform() && window.location.pathname.startsWith('/desktop')) {
+      try {
+        const targetInput = partnerPhone || partnerName || partnerId;
+        if (targetInput) {
+          await startCall(targetInput, callType === 'video');
+        }
+      } catch (e) {
+        console.warn('[CallContext] startCall attempt notice:', e);
+      }
+    }
+
+    // Dispatch initiate-call event for GlobalCallListener to present UnifiedCallScreen
+    window.dispatchEvent(new CustomEvent('initiate-call', {
+      detail: {
+        callId,
+        receiverId: partnerId || partnerPhone,
+        displayName: partnerName || partnerPhone || 'Contact',
+        avatar: partnerAvatar,
+        phone: partnerPhone,
+        callType
+      }
+    }));
+
+    return callId;
+  };
+
  const toggleMute = () => {
  localStreamRef.current?.getAudioTracks().forEach(t => { t.enabled = !t.enabled; });
  setIsMuted(m => !m);
@@ -748,7 +843,7 @@ export const CallProvider = ({ children }: { children: ReactNode }) => {
  isMuted, isVideoOff, callDuration, isVideoCall, remoteUserName, remoteUserAvatar,
  remoteUserFlag, sessionGoal, transcriptRef,
  setSessionGoal, setRemoteUserName, setRemoteUserAvatar,
- startCall, answerCall, declineCall, endCall, addParticipant, toggleMute, toggleVideo
+ startCall, initiateCall, isInCall: callState !== 'idle', hasIncomingCall: incomingRoom !== null, answerCall, declineCall, endCall, addParticipant, toggleMute, toggleVideo
  }}>
  {children}
  </CallContext.Provider>

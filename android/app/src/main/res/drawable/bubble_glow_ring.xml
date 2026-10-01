@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Outer pulsing glow ring for the AI bubble -->
+<!-- Outer pulsing glow ring for the SI bubble -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <solid android:color="#336366F1"/>

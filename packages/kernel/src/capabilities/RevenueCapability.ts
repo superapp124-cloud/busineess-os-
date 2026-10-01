@@ -15,8 +15,8 @@ export class RevenueCapability implements Capability<ProposalInput, { proposalId
   public manifest: CapabilityManifest = {
     id: 'capability-revenue-proposal',
     version: '1.0.0',
-    name: 'Revenue OS AI Proposal Generator Capability',
-    description: 'Generates client executive proposals and quotations via OpenRouter AI',
+    name: 'Revenue OS SI Proposal Generator Capability',
+    description: 'Generates client executive proposals and quotations via OpenRouter SI',
     maturityLevel: 'L5',
     inputSchema: {},
     outputSchema: {},
@@ -54,7 +54,7 @@ export class RevenueCapability implements Capability<ProposalInput, { proposalId
         estimatedMargin: Math.round(input.dealValue * 0.35),
       },
       diagnostics: [
-        { severity: 'info', message: `Proposal generated via OpenRouter AI (${adapter.name})` },
+        { severity: 'info', message: `Proposal generated via OpenRouter SI (${adapter.name})` },
       ],
       metrics: {
         durationMs: aiResult.metrics.durationMs + 4,

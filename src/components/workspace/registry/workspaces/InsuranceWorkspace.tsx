@@ -12,7 +12,7 @@ import { ClassificationResult } from '../../../../context-engine';
 const InsuranceOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
   const result: ClassificationResult | undefined = (item as any).__classification__;
 
-  // Extract key entities from AI classification
+  // Extract key entities from SI classification
   const getEntity = (label: string) =>
     result?.keyEntities?.find(e => e.label.toLowerCase().includes(label.toLowerCase()))?.value ?? '—';
 
@@ -44,7 +44,7 @@ const InsuranceOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
             <CheckCircle className="w-3 h-3" />
             {Math.round((result?.confidence ?? 0.9) * 100)}% Confidence
           </div>
-          <div className="text-[10px] text-blue-200 font-medium">AI Classified</div>
+          <div className="text-[10px] text-blue-200 font-medium">SI Classified</div>
         </div>
       </div>
 
@@ -69,10 +69,10 @@ const InsuranceOverview: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
         ))}
       </div>
 
-      {/* AI Summary */}
+      {/* SI Summary */}
       {result?.summary && (
         <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mb-1.5">AI Summary</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mb-1.5">SI Summary</div>
           <p className="text-xs text-slate-700 leading-relaxed">{result.summary}</p>
         </div>
       )}
@@ -115,7 +115,7 @@ const InsuranceClaims: React.FC<{ item: WorkspaceItem }> = ({ item }) => {
         ))}
       </div>
 
-      {/* All AI-extracted entities */}
+      {/* All SI-extracted entities */}
       {result?.keyEntities && result.keyEntities.length > 0 && (
         <div className="mt-4">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">All Extracted Fields</div>
@@ -150,7 +150,7 @@ export const createInsuranceWorkspace = (item: WorkspaceItem): BusinessWorkspace
       return {
         workspaceId: 'insurance-intelligence',
         confidence: isInsurance ? classification.confidence : 0,
-        reasoning: isInsurance ? [`AI classified as ${classification.documentTypeLabel} (${Math.round(classification.confidence * 100)}%)`] : [],
+        reasoning: isInsurance ? [`SI classified as ${classification.documentTypeLabel} (${Math.round(classification.confidence * 100)}%)`] : [],
       };
     },
     modules: [

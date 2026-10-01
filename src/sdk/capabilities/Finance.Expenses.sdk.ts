@@ -104,7 +104,7 @@ export const FinanceExpensesSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Expenses AI',
+    assistantName: 'Expenses SI',
     skills: []
   },
   

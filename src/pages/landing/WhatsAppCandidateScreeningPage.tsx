@@ -114,7 +114,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
   const faqs = [
     {
       q: 'How does WhatsApp Candidate Screening work?',
-      a: 'When job candidates apply via your career portal, job boards, or QR codes, CHATR instantly initiates an automated, conversational screening session on WhatsApp using official Meta Cloud APIs. The AI asks customized qualification questions, accepts resume uploads, and evaluates candidate fit within 2 minutes.'
+      a: 'When job candidates apply via your career portal, job boards, or QR codes, CHATR instantly initiates an automated, conversational screening session on WhatsApp using official Meta Cloud APIs. The SI asks customized qualification questions, accepts resume uploads, and evaluates candidate fit within 2 minutes.'
     },
     {
       q: 'Is CHATR compliant with Meta WhatsApp Cloud API policies?',
@@ -122,7 +122,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
     },
     {
       q: 'Can CHATR parse candidate resumes sent via WhatsApp?',
-      a: 'Yes! When a candidate uploads a PDF or Word CV in the WhatsApp chat, CHATR AI OCR parses key skills, work history, education, and contact details automatically, creating a structured candidate profile in your Universal Inbox.'
+      a: 'Yes! When a candidate uploads a PDF or Word CV in the WhatsApp chat, CHATR SI OCR parses key skills, work history, education, and contact details automatically, creating a structured candidate profile in your Universal Inbox.'
     },
     {
       q: 'How does interview scheduling work over WhatsApp?',
@@ -153,7 +153,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
     'name': 'CHATR WhatsApp Candidate Screening Engine',
     'operatingSystem': 'Web, Android, iOS, Windows, macOS',
     'applicationCategory': 'BusinessApplication',
-    'description': 'Automated initial candidate screening, AI resume OCR parsing, and interview scheduling over official Meta WhatsApp Cloud API.',
+    'description': 'Automated initial candidate screening, SI resume OCR parsing, and interview scheduling over official Meta WhatsApp Cloud API.',
     'url': 'https://chatr.chat/chatr/whatsapp-candidate-screening',
     'offers': {
       '@type': 'Offer',
@@ -165,13 +165,13 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950">
       <Helmet>
-        <title>WhatsApp Candidate Screening & AI Universal Inbox | CHATR</title>
-        <meta name="description" content="Automate candidate screening, AI resume parsing, and interview scheduling on official Meta WhatsApp Cloud API. Achieve 98% candidate response rates with CHATR." />
+        <title>WhatsApp Candidate Screening & SI Universal Inbox | CHATR</title>
+        <meta name="description" content="Automate candidate screening, SI resume parsing, and interview scheduling on official Meta WhatsApp Cloud API. Achieve 98% candidate response rates with CHATR." />
         <link rel="canonical" href="https://chatr.chat/chatr/whatsapp-candidate-screening" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 
         {/* Open Graph / Social */}
-        <meta property="og:title" content="WhatsApp Candidate Screening & AI Universal Inbox | CHATR" />
+        <meta property="og:title" content="WhatsApp Candidate Screening & SI Universal Inbox | CHATR" />
         <meta property="og:description" content="Automate candidate screening & resume parsing over WhatsApp. 98% candidate response rates for high-velocity hiring." />
         <meta property="og:url" content="https://chatr.chat/chatr/whatsapp-candidate-screening" />
         <meta property="og:type" content="website" />
@@ -274,7 +274,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
           <div className="text-center space-y-3">
             <h2 className="text-2xl sm:text-4xl font-black text-white">Experience Interactive Candidate Screening</h2>
             <p className="text-slate-400 text-sm max-w-xl mx-auto">
-              See how CHATR AI converts candidate applications into structured candidate cards over WhatsApp in real time.
+              See how CHATR SI converts candidate applications into structured candidate cards over WhatsApp in real time.
             </p>
           </div>
 
@@ -304,7 +304,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
               <div className="space-y-4 text-xs">
                 <div className="flex justify-start">
                   <div className="bg-slate-900 border border-slate-800 p-3 rounded-2xl rounded-tl-none max-w-[85%] space-y-1">
-                    <span className="text-emerald-400 font-bold block">CHATR AI Bot:</span>
+                    <span className="text-emerald-400 font-bold block">CHATR SI Bot:</span>
                     <p className="text-slate-200">Hi Rahul! Thanks for applying for the Senior React Developer role at Enterprise Corp. Do you have 3+ years of commercial TypeScript experience?</p>
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
                 </div>
                 <div className="flex justify-start">
                   <div className="bg-slate-900 border border-slate-800 p-3 rounded-2xl rounded-tl-none max-w-[85%] space-y-1">
-                    <span className="text-emerald-400 font-bold block">CHATR AI Bot:</span>
+                    <span className="text-emerald-400 font-bold block">CHATR SI Bot:</span>
                     <p className="text-slate-200">Awesome! Please reply with your updated PDF CV so our recruitment team can review it instantly.</p>
                   </div>
                 </div>
@@ -356,7 +356,7 @@ export const WhatsAppCandidateScreeningPage: React.FC = () => {
           <div className="text-center space-y-3">
             <h2 className="text-2xl sm:text-4xl font-black text-white">Why Top Agencies Choose WhatsApp Screening</h2>
             <p className="text-slate-400 text-sm max-w-xl mx-auto">
-              Compare traditional email ATS screening against CHATR AI WhatsApp automation.
+              Compare traditional email ATS screening against CHATR SI WhatsApp automation.
             </p>
           </div>
 

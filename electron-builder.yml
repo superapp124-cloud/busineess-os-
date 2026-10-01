@@ -56,7 +56,7 @@ fileAssociations:
     name: CHATR Automation Workflow
     role: Editor
   - ext: memory
-    name: CHATR AI Memory Pack
+    name: CHATR SI Memory Pack
     role: Viewer
 
 mac:

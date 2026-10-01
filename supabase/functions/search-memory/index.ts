@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Synthesize answer using direct AI Router (Gemini / OpenRouter / Groq)
+// Synthesize answer using direct SI Router (Gemini / OpenRouter / Groq)
 async function synthesizeAnswer(query: string, memories: any[]): Promise<string> {
   const contextText = memories.map((m, i) => `[Source ${i+1} - ${m.memory_type}]: ${m.content}`).join('\n\n');
 

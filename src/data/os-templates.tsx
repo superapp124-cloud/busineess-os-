@@ -155,7 +155,7 @@ export const TEMPLATES: OSTemplate[] = [
  modules: [
  { id: 'requisitions', name: 'Job Requisitions', type: 'core' },
  { id: 'candidates', name: 'Candidate Database', type: 'core' },
- { id: 'ai_matching', name: 'AI Matching', type: 'scalable' },
+ { id: 'ai_matching', name: 'SI Matching', type: 'scalable' },
  { id: 'interview_sched', name: 'Interview Scheduling', type: 'core' },
  { id: 'offers', name: 'Offer Management', type: 'core' },
  { id: 'bench', name: 'Bench Management', type: 'scalable' }

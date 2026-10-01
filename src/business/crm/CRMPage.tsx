@@ -186,7 +186,7 @@ export default function CRMPage() {
  </div>
 
  <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
- {/* AI Next Best Action & Health Card */}
+ {/* SI Next Best Action & Health Card */}
  <NextBestActionCard businessId={businessId || undefined} />
  {/* Filters and View Toggle */}
  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">

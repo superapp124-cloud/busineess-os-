@@ -85,10 +85,10 @@ export const DEMAND_KNOWLEDGE_GRAPH: DemandKnowledgeGraphNode[] = [
   { category: 'problems', slug: '/growth/problems/lost-leads', title: 'How Startups & SMEs Lose WhatsApp & Social Leads', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Unanswered incoming inquiries & lead response decay', associatedAgent: 'A11_OrganicDemandIntelligence' },
   { category: 'problems', slug: '/growth/problems/whatsapp-follow-up', title: 'Automating WhatsApp Follow-Ups Without Spam Rate Risks', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Manual WhatsApp messaging & account blockage risks', associatedAgent: 'A11_OrganicDemandIntelligence' },
   { category: 'problems', slug: '/growth/problems/lead-response-time', title: 'The 5-Minute Rule: Lead Response Time in B2B & Recruiting', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Slow response times costing customer acquisitions', associatedAgent: 'A11_OrganicDemandIntelligence' },
-  { category: 'industries', slug: '/growth/industries/recruitment', title: 'AI Business OS for Staffing & Recruitment Agencies', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High candidate volume & screening bottlenecks', associatedAgent: 'A11_OrganicDemandIntelligence' },
-  { category: 'industries', slug: '/growth/industries/real-estate', title: 'WhatsApp & AI Automation for Real Estate Brokers', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High property inquiry volume & manual site visit bookings', associatedAgent: 'A11_OrganicDemandIntelligence' },
-  { category: 'use-cases', slug: '/growth/use-cases/universal-inbox', title: 'Consolidating WhatsApp, Email, & CRM into One AI Inbox', targetDomain: 'chatr.chat', coreProblemAddressed: 'Fragmented team messaging tabs', associatedAgent: 'A11_OrganicDemandIntelligence' },
-  { category: 'use-cases', slug: '/growth/use-cases/ai-business-agents', title: 'Deploying Autonomous AI Agents for Customer Support & Ops', targetDomain: 'chatr.chat', coreProblemAddressed: '24/7 business availability without hiring night shifts', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'industries', slug: '/growth/industries/recruitment', title: 'SI Business OS for Staffing & Recruitment Agencies', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High candidate volume & screening bottlenecks', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'industries', slug: '/growth/industries/real-estate', title: 'WhatsApp & SI Automation for Real Estate Brokers', targetDomain: 'chatrchat.in', coreProblemAddressed: 'High property inquiry volume & manual site visit bookings', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'use-cases', slug: '/growth/use-cases/universal-inbox', title: 'Consolidating WhatsApp, Email, & CRM into One SI Inbox', targetDomain: 'chatr.chat', coreProblemAddressed: 'Fragmented team messaging tabs', associatedAgent: 'A11_OrganicDemandIntelligence' },
+  { category: 'use-cases', slug: '/growth/use-cases/ai-business-agents', title: 'Deploying Autonomous SI Agents for Customer Support & Ops', targetDomain: 'chatr.chat', coreProblemAddressed: '24/7 business availability without hiring night shifts', associatedAgent: 'A11_OrganicDemandIntelligence' },
   { category: 'compare', slug: '/growth/compare/chatr-vs-crm', title: 'CHATR Business OS vs Traditional CRM: Why Messaging-First Wins', targetDomain: 'chatr.chat', coreProblemAddressed: 'Complex, unadopted legacy CRMs vs real-time chat OS', associatedAgent: 'A11_OrganicDemandIntelligence' },
   { category: 'research', slug: '/growth/research/lead-response', title: '2026 Indian SME Business Messaging Benchmark Report', targetDomain: 'chatrchat.in', coreProblemAddressed: 'Lack of empirical benchmark data for Indian business messaging', associatedAgent: 'A12_AIVisibility' }
 ];
@@ -143,7 +143,7 @@ export interface TopicCluster {
  */
 export const CONTENT_PILLARS: ContentPillar[] = [
   // ============================================================
-  // CHATR.CHAT — Universal Inbox & AI Messaging
+  // CHATR.CHAT — Universal Inbox & SI Messaging
   // ============================================================
   {
     property: 'chatr.chat',
@@ -166,7 +166,7 @@ export const CONTENT_PILLARS: ContentPillar[] = [
   },
   {
     property: 'chatr.chat',
-    pillarName: 'Universal AI Inbox',
+    pillarName: 'Universal SI Inbox',
     pillarSlug: '/chatr/universal-inbox-ai',
     targetAudience: 'Business owners, SMEs, team leads',
     primaryIntent: 'informational / commercial',
@@ -182,17 +182,17 @@ export const CONTENT_PILLARS: ContentPillar[] = [
   },
 
   // ============================================================
-  // TALENTXCEL.IN — Recruitment OS & AI Resume
+  // TALENTXCEL.IN — Recruitment OS & SI Resume
   // ============================================================
   {
     property: 'talentxcel.in',
-    pillarName: 'AI Resume & Candidate Screening',
+    pillarName: 'SI Resume & Candidate Screening',
     pillarSlug: '/talentxcel/ai-resume-parser',
     targetAudience: 'Recruiters, HR teams, staffing companies',
     primaryIntent: 'commercial / tool-seeking',
     clusters: [
       {
-        name: 'AI-Powered Resume Parsing',
+        name: 'SI-Powered Resume Parsing',
         primaryPage: '/talentxcel/ai-resume-parser',
         supportingPages: [
           '/talentxcel/ats-resume-builder',
@@ -225,7 +225,7 @@ export const CONTENT_PILLARS: ContentPillar[] = [
   // ============================================================
   {
     property: 'chatrchat.in',
-    pillarName: 'AI Business Operating System',
+    pillarName: 'SI Business Operating System',
     pillarSlug: '/business-os',
     targetAudience: 'Founders, enterprise ops teams, business leaders',
     primaryIntent: 'commercial / enterprise',
@@ -282,8 +282,8 @@ export const LIVE_OPPORTUNITY_QUEUE: SEOOpportunity[] = [
     id: 'opp_002',
     priority: 2,
     property: 'talentxcel.in',
-    pillar: 'AI Resume & Candidate Screening',
-    clusterTopic: 'AI resume parsing',
+    pillar: 'SI Resume & Candidate Screening',
+    clusterTopic: 'SI resume parsing',
     targetQuery: 'ai resume parser candidate screening',
     targetSlug: '/talentxcel/ai-resume-parser',
     opportunityType: 'NEW_INTENT',
@@ -330,8 +330,8 @@ export const LIVE_OPPORTUNITY_QUEUE: SEOOpportunity[] = [
     id: 'opp_004',
     priority: 4,
     property: 'chatr.chat',
-    pillar: 'Universal AI Inbox',
-    clusterTopic: 'AI inbox for business',
+    pillar: 'Universal SI Inbox',
+    clusterTopic: 'SI inbox for business',
     targetQuery: 'universal inbox ai for business',
     targetSlug: '/chatr/universal-inbox-ai',
     opportunityType: 'NEW_INTENT',
@@ -356,7 +356,7 @@ export const LIVE_OPPORTUNITY_QUEUE: SEOOpportunity[] = [
     id: 'opp_005',
     priority: 5,
     property: 'talentxcel.in',
-    pillar: 'AI Resume & Candidate Screening',
+    pillar: 'SI Resume & Candidate Screening',
     clusterTopic: 'Candidate screening automation',
     targetQuery: 'how to automate candidate screening for recruiting',
     targetSlug: '/talentxcel/automate-candidate-screening',
@@ -404,7 +404,7 @@ export const LIVE_OPPORTUNITY_QUEUE: SEOOpportunity[] = [
     id: 'opp_007',
     priority: 7,
     property: 'chatrchat.in',
-    pillar: 'AI Business Operating System',
+    pillar: 'SI Business Operating System',
     clusterTopic: 'Business OS for founders',
     targetQuery: 'ai business operating system for startups',
     targetSlug: '/ai-business-os-for-startups',

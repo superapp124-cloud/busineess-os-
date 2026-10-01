@@ -41,7 +41,7 @@ export const AIInsights: React.FC = () => {
  <div className="bg-gradient-to-br from-violet-900/40 to-indigo-900/20 border border-violet-500/20 rounded-2xl p-4 relative overflow-hidden group flex-1 flex flex-col h-full min-h-[150px]">
  <div className="relative z-10 flex-1 flex flex-col">
  <div className="flex items-center justify-between mb-2">
- <h2 className="text-secondary font-bold text-white/90">AI Insights</h2>
+ <h2 className="text-secondary font-bold text-white/90">SI Insights</h2>
  <button className="text-[10px] text-violet-400 hover:text-violet-300">View all</button>
  </div>
  
@@ -56,7 +56,7 @@ export const AIInsights: React.FC = () => {
  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
  <span className="text-workspace">✨</span>
  </div>
- <p className="text-secondary font-semibold text-white/90">AI Intelligence</p>
+ <p className="text-secondary font-semibold text-white/90">SI Intelligence</p>
  <p className="text-label text-white/50 mt-2">Start collaborating and CHATR will analyze your team's productivity and automatically highlight critical items here.</p>
  </div>
  ) : (

@@ -106,7 +106,7 @@ export const MarketingCampaignManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Campaign Management AI',
+    assistantName: 'Campaign Management SI',
     skills: []
   },
   

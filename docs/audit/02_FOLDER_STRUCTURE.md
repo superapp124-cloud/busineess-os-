@@ -74,11 +74,11 @@ src
 |-- config/                          Production app config
 |-- contexts/                        Production React context providers
 |-- core/                            Production/partial CHATR OS core
-|   |-- ai/                          Partial AI providers
+|   |-- ai/                          Partial SI providers
 |   |-- auth/                        Production/partial identity/session/OAuth
 |   |-- capabilities/                Production capability registry and many capability folders
 |   |-- document/                    Partial document engine
-|   |-- engines/                     Partial AI/memory engines
+|   |-- engines/                     Partial SI/memory engines
 |   |-- intelligence/                Partial performance/failure/optimization analyzers
 |   |-- os/                          Production/partial global intent layer
 |   |-- providers/                   Production/partial providers
@@ -103,7 +103,7 @@ src
 |-- providers/                       Production React providers
 |-- routes/                          Production lazy route registry
 |-- scripts/                         Utility scripts
-|-- services/                        Production/partial app services including AI service
+|-- services/                        Production/partial app services including SI service
 |-- tests/                           Local source tests
 |-- types/                           Shared TS types
 |-- utils/                           Production utilities
@@ -156,7 +156,7 @@ supabase
 |   |-- business-workflow-engine/    Partial workflow runner
 |   |-- orchestration-event-router/  Partial event router
 |   |-- process-scheduled-notifications/
-|   |-- ai-*/                        AI-related Edge Functions
+|   |-- ai-*/                        SI-related Edge Functions
 |   |-- send-sms, send-push, etc.    Notification/provider functions
 |-- migrations/                      Production/partial schema migrations
 |   |-- 20260709000006_*             execution_queue

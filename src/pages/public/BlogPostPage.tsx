@@ -198,30 +198,30 @@ const ARTICLES: BlogArticle[] = [
   },
   {
     slug: 'ai-lead-triage-guide',
-    title: 'AI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
-    metaDescription: 'Discover how AI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    title: 'SI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+    metaDescription: 'Discover how SI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
     canonicalDomain: 'https://www.chatrchat.in',
-    category: 'AI and Automation',
+    category: 'SI and Automation',
     author: 'CHATR Team',
     publishedAt: '2026-08-11',
     readingMinutes: 6,
     body: (
       <div className="prose prose-invert max-w-none space-y-5 text-slate-300 leading-relaxed">
         <p>When high lead volumes hit your business inboxes, manual sorting becomes the primary operational bottleneck. Sales inquiries sit behind billing questions, and candidate applications wait behind general support threads.</p>
-        <p>AI message triage solves this bottleneck by classifying incoming intent in real-time, tagging urgency, and routing messages directly to the appropriate team workspace.</p>
+        <p>SI message triage solves this bottleneck by classifying incoming intent in real-time, tagging urgency, and routing messages directly to the appropriate team workspace.</p>
 
         {/* Contextual Product CTA */}
         <div className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
           <h3 className="text-white font-bold text-lg">Classify and route incoming leads automatically</h3>
-          <p className="text-slate-300 text-sm">Use AI intent classification to route sales leads, candidate inquiries, and customer support threads instantly.</p>
+          <p className="text-slate-300 text-sm">Use SI intent classification to route sales leads, candidate inquiries, and customer support threads instantly.</p>
           <Link to="/chatr/ai-message-triage-routing" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
-            Explore AI Lead Triage & Routing <ArrowRight className="w-4 h-4" />
+            Explore SI Lead Triage & Routing <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
     ),
     faqs: [
-      { q: 'How does AI lead triage work?', a: 'CHATR AI analyzes incoming message intent, urgency, and topic in real-time, categorizing threads before team members open them.' },
+      { q: 'How does SI lead triage work?', a: 'CHATR SI analyzes incoming message intent, urgency, and topic in real-time, categorizing threads before team members open them.' },
       { q: 'Can I define custom routing rules?', a: 'Yes. Custom tags, escalation alerts, and department triggers are defined in CHATR Studio.' },
     ],
   },
@@ -297,7 +297,7 @@ export const BlogPostPage: React.FC = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-white">{article.title}</h1>
           
-          {/* AI / GEO Direct Answer Block */}
+          {/* SI / GEO Direct Answer Block */}
           <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-5 space-y-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Executive Summary & Key Takeaway</span>
             <p className="text-slate-200 text-sm leading-relaxed">{article.metaDescription}</p>
@@ -332,7 +332,7 @@ export const BlogPostPage: React.FC = () => {
             </div>
             <p className="text-xs text-indigo-400 font-semibold">CHATR Engineering & Research Group</p>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Specialized research unit developing unified business communication infrastructure and AI candidate screening systems.
+              Specialized research unit developing unified business communication infrastructure and SI candidate screening systems.
             </p>
           </div>
         </div>
@@ -351,13 +351,13 @@ export const BlogPostPage: React.FC = () => {
         {/* CTA Footer */}
         <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
           <h2 className="text-xl font-bold text-white">Try CHATR Communication OS Today</h2>
-          <p className="text-slate-400 text-sm">Universal Team Inbox • WhatsApp Integration • Candidate Screening • AI Agents</p>
+          <p className="text-slate-400 text-sm">Universal Team Inbox • WhatsApp Integration • Candidate Screening • SI Agents</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
               Get Started Free <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">
-              Explore AI capabilities →
+              Explore SI capabilities →
             </Link>
           </div>
         </div>

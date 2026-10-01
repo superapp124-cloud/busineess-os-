@@ -16,7 +16,7 @@ export class CustomerSuccessCapability implements Capability<CustomerHealthInput
     id: 'capability-customer-success-health',
     version: '1.0.0',
     name: 'Customer Success OS Account Health & Risk Capability',
-    description: 'Computes deterministic customer health scores and generates AI retention recommendations via OpenRouter',
+    description: 'Computes deterministic customer health scores and generates SI retention recommendations via OpenRouter',
     maturityLevel: 'L5',
     inputSchema: {},
     outputSchema: {},
@@ -37,7 +37,7 @@ export class CustomerSuccessCapability implements Capability<CustomerHealthInput
   ): Promise<ExecutionResult<{ healthScore: number; riskLevel: 'LOW' | 'MEDIUM' | 'HIGH'; aiRecommendation: string }>> {
     console.log(`[CustomerSuccessCapability] Computing account health for '${input.accountName}'`);
 
-    // 1. Deterministic Health Score Calculation ($0 AI cost)
+    // 1. Deterministic Health Score Calculation ($0 SI cost)
     let healthScore = 100;
     if (input.slaCompliancePercent < 95) healthScore -= 15;
     if (input.invoiceAgeingDays > 30) healthScore -= 20;
@@ -45,7 +45,7 @@ export class CustomerSuccessCapability implements Capability<CustomerHealthInput
 
     const riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' = healthScore >= 80 ? 'LOW' : healthScore >= 60 ? 'MEDIUM' : 'HIGH';
 
-    // 2. Probabilistic AI Retention Recommendation
+    // 2. Probabilistic SI Retention Recommendation
     const adapter = new OpenRouterProviderAdapter();
     const aiResult = await AIExecutor.execute(ctx, adapter, {
       capability: this.manifest.id,
@@ -63,7 +63,7 @@ export class CustomerSuccessCapability implements Capability<CustomerHealthInput
         aiRecommendation,
       },
       diagnostics: [
-        { severity: 'info', message: `Health calculated deterministically; retention strategy generated via OpenRouter AI` },
+        { severity: 'info', message: `Health calculated deterministically; retention strategy generated via OpenRouter SI` },
       ],
       metrics: {
         durationMs: aiResult.metrics.durationMs + 3,

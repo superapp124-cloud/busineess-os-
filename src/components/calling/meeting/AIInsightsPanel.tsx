@@ -75,7 +75,7 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
  else setParticipationLevel('Low');
  }, [transcript]);
 
- // Generate live AI suggestions from transcript
+ // Generate live SI suggestions from transcript
  const generateSuggestions = async () => {
  if (!transcript && !remoteUserName) return;
  setLoadingSuggestions(true);
@@ -106,8 +106,8 @@ Context: ${context}`,
  if (raw.length > 0) setSuggestions(raw);
  } catch {
  setSuggestions([
- { type: 'info', text: transcript ? `${transcript.split(' ').filter(Boolean).length} words captured in transcript.` : 'AI is listening. Start speaking to get live suggestions.' },
- { type: 'action', text: 'Click "Summary" tab when ready for an AI-generated call summary.' },
+ { type: 'info', text: transcript ? `${transcript.split(' ').filter(Boolean).length} words captured in transcript.` : 'SI is listening. Start speaking to get live suggestions.' },
+ { type: 'action', text: 'Click "Summary" tab when ready for an SI-generated call summary.' },
  ]);
  } finally {
  setLoadingSuggestions(false);
@@ -205,18 +205,18 @@ Context: ${context}`,
  </div>
  <div className="p-2.5 rounded-lg bg-black/30 text-center">
  <div className="text-body font-bold text-blue-400">{transcript ? '🟢' : '🔴'}</div>
- <div className="text-[9px] text-white/40">AI Active</div>
+ <div className="text-[9px] text-white/40">SI Active</div>
  </div>
  </div>
  </div>
  </div>
 
- {/* AI Suggestions — generated from real transcript */}
+ {/* SI Suggestions — generated from real transcript */}
  <div className="space-y-2">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-1.5">
  <Bot className="w-3.5 h-3.5 text-indigo-400" />
- <h4 className="text-[10px] font-bold text-white/50 uppercase tracking-widest">AI Suggestions</h4>
+ <h4 className="text-[10px] font-bold text-white/50 uppercase tracking-widest">SI Suggestions</h4>
  </div>
  <button
  onClick={generateSuggestions}
@@ -231,13 +231,13 @@ Context: ${context}`,
  {loadingSuggestions && (
  <div className="flex items-center gap-2 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10">
  <Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
- <span className="text-label text-indigo-400">Chatr AI is analyzing the call...</span>
+ <span className="text-label text-indigo-400">Chatr SI is analyzing the call...</span>
  </div>
  )}
 
  {suggestions.length === 0 && !loadingSuggestions && (
  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
- <p className="text-label text-white/30">AI suggestions will appear as the conversation progresses.</p>
+ <p className="text-label text-white/30">SI suggestions will appear as the conversation progresses.</p>
  </div>
  )}
 

@@ -107,7 +107,7 @@ class PersonalMemoryEngineTest {
 
     @Test
     fun testStrictMemoryWritePolicyDiscardsLowConfidence() = runBlocking {
-        // AI proposed an uncertain statement (confidence 0.40 < 0.65 threshold)
+        // SI proposed an uncertain statement (confidence 0.40 < 0.65 threshold)
         val lowConfidence = CandidateMemory(
             type = MemoryType.FACT,
             content = "User might be traveling to Delhi next month",

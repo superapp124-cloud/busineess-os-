@@ -159,7 +159,7 @@ export const useCallTranscription = (
             setDownloadProgress(null);
           }
           else if (e.data.type === 'error' && onResultRef.current) {
-            console.error('[Transcription Hook] Whisper AI Worker Error:', e.data.error);
+            console.error('[Transcription Hook] Whisper SI Worker Error:', e.data.error);
             setError(`Local transcription failed: ${e.data.error}`);
             setDownloadProgress(null);
           }

@@ -48,7 +48,7 @@ data class CallerInfo(
     val intentLabel: String?      // from IntentPredictor, e.g. "delivery", "recruiter"
 )
 
-/** The action the AI model requests during a screening dialogue turn. */
+/** The action the SI model requests during a screening dialogue turn. */
 sealed class DialogueAction {
     /** Speak this text to the caller via TTS. */
     data class Speak(
@@ -70,7 +70,7 @@ sealed class DialogueAction {
 
 /**
  * ChatrIntelligenceApi — The single, model-agnostic intelligence contract
- * that the CHATR kernel depends on for all AI capabilities.
+ * that the CHATR kernel depends on for all SI capabilities.
  *
  * INVARIANT: The kernel NEVER imports any model SDK (OnDeviceGemma,
  * GenerativeModel, Gemini SDK, etc.) directly. All model implementations

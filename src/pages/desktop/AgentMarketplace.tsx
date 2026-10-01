@@ -238,7 +238,7 @@ export const AgentMarketplace: React.FC = () => {
  <div className="max-w-5xl mx-auto relative z-10">
  <h1 className="text-display mb-2">Agent Marketplace</h1>
  <p className="text-[#5c22ff] text-blue-100 max-w-xl">
- Expand your CHATR Workspace. Install specialized AI Agents to automate your unique business workflows.
+ Expand your CHATR Workspace. Install specialized SI Agents to automate your unique business workflows.
  </p>
  
  <div className="mt-8 flex gap-4 max-w-2xl">

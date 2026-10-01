@@ -169,7 +169,7 @@ const taxiReserveStage = WorkflowSDK.createStage(
 
 // ─────────────────────────────────────────────────────────────
 // Stage 2: Build Itinerary (depends on ALL three parallel stages)
-// AI Runtime: summarize + reason (travel policy)
+// SI Runtime: summarize + reason (travel policy)
 // ─────────────────────────────────────────────────────────────
 const buildItineraryStage = WorkflowSDK.createStage(
   'build_itinerary',
@@ -183,11 +183,11 @@ const buildItineraryStage = WorkflowSDK.createStage(
     const aiProviders = providerRegistry.getProvidersByTypeAndRole('ai', 'AIProvider') as unknown as IAIProvider[];
     const { provider } = await ModelRouter.route('summarize', aiProviders);
 
-    // AI: travel briefing via generic summarize()
+    // SI: travel briefing via generic summarize()
     const tripContext = `Flight ${flight.flightNumber} (${flight.origin}→${flight.destination}), Hotel: ${hotel.hotelName} (${hotel.checkIn}-${hotel.checkOut}), Taxi: ${taxi ? taxi.provider : 'Not booked'}`;
     const summary = await provider.summarize(tripContext);
 
-    // AI: travel policy evaluation via generic reason()
+    // SI: travel policy evaluation via generic reason()
     const totalAmount = flight.price.amount + hotel.totalPrice.amount + (taxi?.estimatedPrice.amount || 0);
     const policy = await provider.reason(
       `Total trip cost: ₹${totalAmount}. Employee grade: ${ctx.state.employeeGrade || 'L4'}`,

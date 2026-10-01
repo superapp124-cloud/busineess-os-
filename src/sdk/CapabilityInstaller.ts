@@ -28,7 +28,7 @@ const STEPS = [
   'Registering workflows',
   'Applying permissions',
   'Indexing search fields',
-  'Registering AI skills',
+  'Registering SI skills',
   'Setting up automations',
   'Registering notifications',
   'Activating capability',
@@ -119,7 +119,7 @@ export const CapabilityInstaller = {
       emit(6, STEPS[5], 'done');
       await delay(100);
 
-      // Step 7: AI skills
+      // Step 7: SI skills
       emit(7, STEPS[6], 'running');
       AISkillRegistry.register(sdk.id, sdk.ai);
       emit(7, STEPS[6], 'done');

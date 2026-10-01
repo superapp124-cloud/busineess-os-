@@ -38,7 +38,7 @@ Required base fields: `id`, `kind`, `tenantId`, `lifecycle`, `version`, `created
 | Automation | A persisted trigger-to-action rule. |
 | Memory | Retained context with scope, retention, provenance, and access policy. |
 | Conversation | A communication timeline and participant context. |
-| Resource | An allocatable or constrained enterprise asset: budget, time, licence, AI credit, compute, storage, team capacity, equipment, inventory, or credential material. |
+| Resource | An allocatable or constrained enterprise asset: budget, time, licence, SI credit, compute, storage, team capacity, equipment, inventory, or credential material. |
 | Event | An immutable, versioned assertion that an enterprise state transition or observation occurred. |
 
 ## Lifecycle and state
@@ -51,7 +51,7 @@ All `EnterpriseObject` instances use one lifecycle: `draft -> active -> suspende
 
 Links use a typed edge: `sourceId`, `targetId`, `relationshipType`, `validFrom`, `validTo`, `evidenceIds`, and `confidence`. Canonical relationship families are structural (`part_of`, `reports_to`), authority (`owned_by`, `approved_by`), dependency (`depends_on`, `blocks`), temporal (`precedes`, `supersedes`), reference (`references`, `related_to`), and operational (`triggers`, `produces`, `governs`).
 
-Artifacts and Knowledge carry provenance. AI-generated facts, recommendations, and summaries must link to source evidence, model/provider metadata, and a confidence statement.
+Artifacts and Knowledge carry provenance. SI-generated facts, recommendations, and summaries must link to source evidence, model/provider metadata, and a confidence statement.
 
 ## Explicit non-objects
 

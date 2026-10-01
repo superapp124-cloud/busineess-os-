@@ -233,7 +233,7 @@ export function useCopilot() {
       const context = selectedRoom ? `The user is currently in a chat named "${selectedRoom.name}". ` : '';
       const response = await generate({
         prompt: userMsg,
-        systemPrompt: `You are CHATR Executive Intelligence, an elite AI advisor built into CHATR Business OS. ${context}
+        systemPrompt: `You are CHATR Executive Intelligence, an elite SI advisor built into CHATR Business OS. ${context}
 Structure your answers clearly using markdown formatting:
 - Use headers (## or ###) on new lines for major sections or categories
 - Put a blank newline before and after headers

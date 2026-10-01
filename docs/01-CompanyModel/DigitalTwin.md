@@ -12,7 +12,7 @@ Layer 15: Industry Compositions (Vertical OS Packs: Staffing, Healthcare, Manufa
 Layer 14: Role Perspectives (Executive, Recruiter, Sales, Finance, Operations)
 Layer 13: Experiences (Multi-Modal Command Center Surfaces)
 Layer 12: Coordination Engine (Cross-Functional Work Allocation & Resource Balancing)
-Layer 11: Execution Engine (Substrate Runtimes: Humans, AI Agents, APIs, Robots)
+Layer 11: Execution Engine (Substrate Runtimes: Humans, SI Agents, APIs, Robots)
 Layer 10: Decision Engine (DecisionCalculusEngine & Circuit Breakers)
 Layer 9:  Simulation Engine (Scenario Generation & Monte Carlo Trajectories)
 Layer 8:  Prediction Engine (Probabilistic Delta Predictions)
@@ -32,7 +32,7 @@ Layer 0:  Constitutional Axioms (AXIOMS.md Level A Universal Invariants)
 
 1. **Enterprise Identity Engine**: Authoritative single source of truth for canonical identities (`Person`, `Organization`). Zero duplicate records across modules.
 2. **Enterprise Flow Engine**: Reusable first-class end-to-end lifecycles (`Lead ➔ Contract ➔ Invoice ➔ Renewal`, `Candidate ➔ Interview ➔ Offer ➔ Deployed ➔ Rehire`).
-3. **Coordination Engine**: Orchestrates cross-functional work allocation, capacity balancing, and bottleneck escalation across humans, AI agents, and automations.
+3. **Coordination Engine**: Orchestrates cross-functional work allocation, capacity balancing, and bottleneck escalation across humans, SI agents, and automations.
 4. **Outcome Engine**: Replaces vanity activity metrics (*50 interviews, 100 emails*) with quantitative outcome metrics (*Hiring Velocity, Quality of Hire, Invoices Collected, Revenue Closed, Risk Reduced*).
 
 ---

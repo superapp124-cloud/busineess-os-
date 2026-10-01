@@ -4,7 +4,7 @@
 Accepted
 
 ## Reason
-Users historically viewed AI features as "chatbots" requiring explicit conversational interaction. We needed an interaction pattern that made the semantic processing feel ambient, progressive, and native.
+Users historically viewed SI features as "chatbots" requiring explicit conversational interaction. We needed an interaction pattern that made the semantic processing feel ambient, progressive, and native.
 
 ## Decision
 We implemented the `Understanding Horizon`. It is a dedicated, reserved spatial layer in the UI that expands smoothly to reveal extracted Entities (Who, When, Where) as they are resolved in real-time. 

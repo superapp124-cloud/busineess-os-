@@ -1,5 +1,5 @@
 /**
- * CHATR AI Talent Operating System (TOS) v3.0
+ * CHATR SI Talent Operating System (TOS) v3.0
  * Enterprise ATS — /desktop/recruitment
  * 
  * Capability Shell Architecture:
@@ -71,7 +71,7 @@ The primary objective of this role is to drive mission-critical technical execut
 
 4. SELECTION SLA & RECRUITMENT TIMELINE
 --------------------------------------------------------------------
-• Round 1: AI Dossier & Skill Screening (24 Hours)
+• Round 1: SI Dossier & Skill Screening (24 Hours)
 • Round 2: Deep Technical & System Design Assessment (48 Hours)
 • Round 3: Client Account SPOC Approval & Offer Signoff (24 Hours)
 
@@ -309,7 +309,7 @@ export const RecruiterWorkspace: React.FC = () => {
     setCandidates(prev => [newCand, ...prev]);
     publishTOSEvent({ type: 'CandidateApplied', candidateId: newCand.id,
       candidateName: `${newCand.first_name} ${newCand.last_name}`,
-      timestamp: new Date(), actor: 'AI CV Parser' });
+      timestamp: new Date(), actor: 'SI CV Parser' });
     const { error: candidateInsertError } = await supabase.from('rec_candidates').insert({
       id: newCand.id,
       user_id: user?.id,

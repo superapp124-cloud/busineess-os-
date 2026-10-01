@@ -20,7 +20,7 @@
       "requiresSignature": true
     },
     "EXPERIMENTAL": {
-      "description": "AI-generated or unreviewed connector. Use at your own risk.",
+      "description": "SI-generated or unreviewed connector. Use at your own risk.",
       "badge": "⚗ Experimental",
       "autoInstall": false,
       "requiresSignature": false,

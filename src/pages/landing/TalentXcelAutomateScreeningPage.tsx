@@ -31,7 +31,7 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
 
     const metaDesc = document.createElement('meta');
     metaDesc.name = 'description';
-    metaDesc.content = 'Learn how to automate candidate screening using AI resume parsing, structured pre-screens, and workflow triggers. Cut time-to-shortlist by hours, not weeks.';
+    metaDesc.content = 'Learn how to automate candidate screening using SI resume parsing, structured pre-screens, and workflow triggers. Cut time-to-shortlist by hours, not weeks.';
     document.head.appendChild(metaDesc);
 
     // Article JSON-LD
@@ -70,15 +70,15 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
           "name": "What is candidate screening automation?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Candidate screening automation is the use of software—such as AI resume parsers, rules-based triggers, and automated pre-screen questionnaires—to filter and rank applicants without manual human review of every single application."
+            "text": "Candidate screening automation is the use of software—such as SI resume parsers, rules-based triggers, and automated pre-screen questionnaires—to filter and rank applicants without manual human review of every single application."
           }
         },
         {
           "@type": "Question",
-          "name": "How does AI resume parsing work in screening?",
+          "name": "How does SI resume parsing work in screening?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "AI resume parsers read the unstructured data in a resume (like a PDF or DOCX) and extract structured fields—skills, years of experience, education, and job titles. This allows screening tools to easily match candidate data against job requirements."
+            "text": "SI resume parsers read the unstructured data in a resume (like a PDF or DOCX) and extract structured fields—skills, years of experience, education, and job titles. This allows screening tools to easily match candidate data against job requirements."
           }
         },
         {
@@ -102,7 +102,7 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
           "name": "How do I start automating candidate screening today?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Start by identifying your minimum hard requirements for a role. Next, implement a simple pre-screen questionnaire, and adopt an ATS or AI tool that automatically extracts and scores resume data."
+            "text": "Start by identifying your minimum hard requirements for a role. Next, implement a simple pre-screen questionnaire, and adopt an ATS or SI tool that automatically extracts and scores resume data."
           }
         }
       ]
@@ -121,11 +121,11 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
   }, []);
 
   const faqs = [
-    { q: "What is candidate screening automation?", a: "Candidate screening automation is the use of software—such as AI resume parsers, rules-based triggers, and automated pre-screen questionnaires—to filter and rank applicants without manual human review of every single application." },
-    { q: "How does AI resume parsing work in screening?", a: "AI resume parsers read the unstructured data in a resume (like a PDF or DOCX) and extract structured fields—skills, years of experience, education, and job titles. This allows screening tools to easily match candidate data against job requirements." },
+    { q: "What is candidate screening automation?", a: "Candidate screening automation is the use of software—such as SI resume parsers, rules-based triggers, and automated pre-screen questionnaires—to filter and rank applicants without manual human review of every single application." },
+    { q: "How does SI resume parsing work in screening?", a: "SI resume parsers read the unstructured data in a resume (like a PDF or DOCX) and extract structured fields—skills, years of experience, education, and job titles. This allows screening tools to easily match candidate data against job requirements." },
     { q: "What types of roles benefit most from automated screening?", a: "High-volume roles such as customer support, retail, entry-level sales, and tech roles with specific hard-skill requirements see the most benefit. Executive or highly nuanced creative roles generally require more manual, personalized screening." },
     { q: "What is the difference between screening and shortlisting?", a: "Screening is the process of removing candidates who do not meet the minimum requirements (the 'no' pile). Shortlisting is selecting the best candidates from the remaining pool to move forward to interviews." },
-    { q: "How do I start automating candidate screening today?", a: "Start by identifying your minimum hard requirements for a role. Next, implement a simple pre-screen questionnaire, and adopt an ATS or AI tool that automatically extracts and scores resume data." }
+    { q: "How do I start automating candidate screening today?", a: "Start by identifying your minimum hard requirements for a role. Next, implement a simple pre-screen questionnaire, and adopt an ATS or SI tool that automatically extracts and scores resume data." }
   ];
 
   return (
@@ -154,7 +154,7 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
             How to Automate Candidate Screening: A Practical Guide for Recruiters
           </h1>
           <p className="text-xl text-slate-400 leading-relaxed mb-8 max-w-2xl mx-auto">
-            Learn how to automate candidate screening using AI resume parsing, structured pre-screens, and workflow triggers. Cut time-to-shortlist by hours, not weeks.
+            Learn how to automate candidate screening using SI resume parsing, structured pre-screens, and workflow triggers. Cut time-to-shortlist by hours, not weeks.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
             <span>By TalentXcel Product Team</span>
@@ -189,12 +189,12 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
             <li><strong>Certifications:</strong> Do they hold required licenses (e.g., nursing license, CPA)?</li>
           </ul>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6">Step 2: Use AI Resume Parsing to Extract Structured Data</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6">Step 2: Use SI Resume Parsing to Extract Structured Data</h2>
           <p>
             Resumes are notoriously unstructured. Some candidates use functional formats, others chronological. Some hide their skills in dense paragraphs.
           </p>
           <p>
-            This is where <Link to="/talentxcel/ai-resume-parser">AI resume parsing</Link> comes in. Modern parsers don't just rely on keyword matching; they use natural language processing to understand the context. They extract years of experience, aggregate skills, and map job titles to standard industry taxonomies. By turning a messy PDF into clean JSON data, your system can automatically check if a candidate meets the criteria you set in Step 1.
+            This is where <Link to="/talentxcel/ai-resume-parser">SI resume parsing</Link> comes in. Modern parsers don't just rely on keyword matching; they use natural language processing to understand the context. They extract years of experience, aggregate skills, and map job titles to standard industry taxonomies. By turning a messy PDF into clean JSON data, your system can automatically check if a candidate meets the criteria you set in Step 1.
           </p>
 
           <h2 className="text-2xl font-bold mt-12 mb-6">Step 3: Define Automated Pass/Fail Rules</h2>
@@ -290,11 +290,11 @@ export const TalentXcelAutomateScreeningPage: React.FC = () => {
             </li>
             <li className="flex items-start gap-3">
               <XCircle className="w-5 h-5 text-rose-500 shrink-0 mt-1" />
-              <span><strong>Creative Portfolios:</strong> An AI parser can read text, but it cannot evaluate the quality of a graphic designer's portfolio or a UX researcher's case study.</span>
+              <span><strong>Creative Portfolios:</strong> An SI parser can read text, but it cannot evaluate the quality of a graphic designer's portfolio or a UX researcher's case study.</span>
             </li>
             <li className="flex items-start gap-3">
               <XCircle className="w-5 h-5 text-rose-500 shrink-0 mt-1" />
-              <span><strong>Culture Fit:</strong> Never automate final hiring decisions based on personality tests or 'culture' AI. These introduce massive compliance and bias risks. Automation is for the top of the funnel, not the bottom.</span>
+              <span><strong>Culture Fit:</strong> Never automate final hiring decisions based on personality tests or 'culture' SI. These introduce massive compliance and bias risks. Automation is for the top of the funnel, not the bottom.</span>
             </li>
           </ul>
 

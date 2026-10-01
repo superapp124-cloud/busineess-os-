@@ -1,5 +1,5 @@
 /**
- * ChatrAI - Clean and smooth AI chat
+ * ChatrAI - Clean and smooth SI chat
  * 6 Specialized Agents | Minimal | Fast
  */
 
@@ -195,7 +195,7 @@ const readinessModes: Record<'ready' | 'listening' | 'thinking' | 'private', Orb
  label: 'Private mode',
  feeling: 'Local first',
  detail: 'Private checks stay local when the native route is available; otherwise CHATR clearly falls back.',
- prompt: 'Show my private AI status and what is available on this device',
+ prompt: 'Show my private SI status and what is available on this device',
  icon: ShieldCheck,
  coreClass: 'from-emerald-500 via-teal-500 to-indigo-600',
  ringClass: 'border-emerald-500/40',
@@ -259,7 +259,7 @@ export default function AIChat() {
  const approvalToolCount = registeredTools.filter((tool) => tool.requiresApproval).length;
 
  const runtimeLabel = runtimeStatus?.label || (isReady ? 'ChatrAI ready' : 'Starting ChatrAI...');
- const runtimeDetail = runtimeStatus?.detail || 'Preparing private AI runtime.';
+ const runtimeDetail = runtimeStatus?.detail || 'Preparing private SI runtime.';
  const RuntimeStatusIcon = runtimeStatus?.isOffline
  ? LockKeyhole
  : runtimeStatus?.mode === 'cloud'
@@ -533,7 +533,7 @@ export default function AIChat() {
  <div className="mt-4 grid grid-cols-3 gap-2 text-left">
  {[
  { label: 'Cloud uploads', icon: CloudOff, value: localMode ? '0 this session' : 'Connected' },
- { label: 'AI route', icon: Fingerprint, value: aiRouteLabel },
+ { label: 'SI route', icon: Fingerprint, value: aiRouteLabel },
  { label: 'Live alerts', icon: Radio, value: 'None yet' },
  ].map((item) => (
  <div
@@ -784,7 +784,7 @@ export default function AIChat() {
  <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
  <span className="inline-flex items-center gap-1 rounded-full bg-background/70 px-2 py-1">
  <CloudOff className="h-3 w-3 text-emerald-600" />
- {message.privacy === 'cloud' ? 'Connected AI' : 'Processed locally'}
+ {message.privacy === 'cloud' ? 'Connected SI' : 'Processed locally'}
  </span>
  {message.confidence !== undefined && (
  <span className="rounded-full bg-background/70 px-2 py-1">

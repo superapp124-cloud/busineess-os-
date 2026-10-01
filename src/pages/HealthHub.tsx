@@ -1,376 +1,351 @@
+/**
+ * CHATR HEALTH OS — HealthHub
+ * ============================================================================
+ * Calm Personal Health Command Center
+ *
+ * Information Hierarchy:
+ *   1. HEADER (Minimal: Back, Brand, Notifications, Settings)
+ *   2. GREETING (GOOD AFTERNOON, ARSHID)
+ *   3. HEALTH STATE (Primary Calm Health State Card)
+ *   4. TODAY (2–3 Most Relevant Biometric Observations: BP, Sleep, Activity)
+ *   5. TODAY'S FOCUS (Max 3 Actionable Items from AttentionEngine)
+ *   6. CONNECTED SOURCES (Compact summary: ● Watch ● Ring + 2 more  View all →)
+ *   7. OPTIONAL RECENT INSIGHT
+ *   8. PROGRESSIVE DISCLOSURE (All Health Services preserved)
+ *   9. BOTTOM NAVIGATION
+ * ============================================================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
- Bot, 
- Activity, 
- Pill, 
- Shield, 
- FileText,
- Heart,
- TrendingUp,
- Brain,
- Calendar,
- Sparkles,
- ArrowLeft,
- Bell,
- Settings,
- Flame,
- AlertTriangle,
- Droplet
+  ArrowLeft,
+  Bell,
+  Settings,
+  Mic,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Stethoscope,
+  Pill,
+  FlaskConical,
+  Calendar,
+  Wallet,
+  FileText,
+  Activity,
+  Shield,
+  Bot,
+  Flame,
+  AlertTriangle,
+  Droplet
 } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
 import { HealthBottomNav } from '@/components/health/HealthBottomNav';
 import { HealthHeroCard } from '@/components/health/HealthHeroCard';
-import { HealthQuickAction } from '@/components/health/HealthQuickAction';
-import { HealthUrgentBanner } from '@/components/health/HealthUrgentBanner';
+import { TodayObservations } from '@/components/health/TodayObservations';
+import { TodayFocusCard } from '@/components/health/TodayFocusCard';
+import { ConnectedSourcesSummary } from '@/components/health/ConnectedSourcesSummary';
+import { VoiceVitalsModal } from '@/components/health/VoiceVitalsModal';
+import { DeviceConnectionWizard } from '@/components/health/devices/DeviceConnectionWizard';
+import { DeviceMetadata } from '@/services/health/devices/DeviceTypes';
+import { deviceSyncManager } from '@/services/health/devices/DeviceSyncManager';
+import { useHealthOS } from '@/hooks/useHealthOS';
 import logo from '@/assets/chatr-logo.png';
 
+import WorldClassHealthHub from '@/components/health/WorldClassHealthHub';
+
 export default function HealthHub() {
- const navigate = useNavigate();
- const [loading, setLoading] = useState(true);
- const [userName, setUserName] = useState('');
- const [healthData, setHealthData] = useState<any>({
- vitals: [],
- reminders: [],
- reports: [],
- healthScore: 0
- });
- const [aiInsight, setAiInsight] = useState('');
+  return <WorldClassHealthHub />;
+}
 
- useEffect(() => {
- loadHealthData();
- generateAIInsight();
- }, []);
+function LegacyHealthHub() {
+  const navigate = useNavigate();
 
- const loadHealthData = async () => {
- try {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) {
- setLoading(false);
- return;
- }
+  // ── Health OS Orchestration Engine ───────────────────────────────────────
+  const {
+    loading,
+    userName,
+    healthState,
+    healthStateLabel,
+    healthScore,
+    domainStates,
+    todayFocus,
+    activeInsights,
+    recentVitals,
+    lastComputedAt,
+    refresh,
+  } = useHealthOS();
 
- // Load profile
- const { data: profile } = await supabase
- .from('profiles')
- .select('username')
- .eq('id', user.id)
- .single();
- 
- if (profile?.username) {
- setUserName(profile.username);
- }
+  // ── Modals & Wizards ─────────────────────────────────────────────────────
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [wizardDevice, setWizardDevice] = useState<DeviceMetadata | null>(null);
+  const [wizardCategory, setWizardCategory] = useState<string | null>(null);
+  const [showAllServices, setShowAllServices] = useState(false);
+  const [connectedDevices, setConnectedDevices] = useState(deviceSyncManager.getConnectedDevices());
 
- // Load medication reminders
- const { data: reminders } = await supabase
- .from('medication_reminders')
- .select('*')
- .eq('user_id', user.id)
- .eq('is_active', true);
+  useEffect(() => {
+    setConnectedDevices(deviceSyncManager.getConnectedDevices());
+    const unsub = deviceSyncManager.subscribe(() => {
+      setConnectedDevices(deviceSyncManager.getConnectedDevices());
+    });
+    return unsub;
+  }, []);
 
- // Load lab reports
- const { data: reports } = await supabase
- .from('lab_reports')
- .select('*')
- .eq('user_id', user.id)
- .order('test_date', { ascending: false })
- .limit(5);
+  const handleOpenConnect = (category?: string) => {
+    if (category) {
+      const catMap: Record<string, string> = {
+        ring: 'smart_ring',
+        watch: 'smartwatch',
+        bp: 'blood_pressure_monitor',
+        glucose: 'continuous_glucose_monitor',
+        scale: 'smart_scale',
+        sleep: 'smart_ring',
+      };
+      setWizardCategory(catMap[category] || category);
+    } else {
+      setWizardCategory('all');
+    }
+    setWizardDevice(null);
+    setWizardOpen(true);
+  };
 
- // Calculate health score based on available data
- const score = 75 + (reminders?.length || 0) * 2 + (reports?.length || 0) * 3;
+  const handleCloseWizard = (open: boolean) => {
+    setWizardOpen(open);
+    if (!open) {
+      setWizardDevice(null);
+      setWizardCategory(null);
+    }
+  };
 
- setHealthData({
- vitals: [],
- reminders: reminders || [],
- reports: reports || [],
- healthScore: Math.min(100, score)
- });
- } catch (error) {
- console.error('Error loading health data:', error);
- toast('Could not load health data');
- } finally {
- setLoading(false);
- }
- };
+  // Greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    const name = userName ? `, ${userName.toUpperCase()}` : '';
+    if (hour < 12) return `GOOD MORNING${name}`;
+    if (hour < 17) return `GOOD AFTERNOON${name}`;
+    return `GOOD EVENING${name}`;
+  };
 
- const generateAIInsight = async () => {
- try {
- const { data: { user } } = await supabase.auth.getUser();
- if (!user) return;
+  // Full Clinical & Marketplace Services (Progressive Disclosure)
+  const healthServices = [
+    { icon: Stethoscope, label: 'Doctors', path: '/local-healthcare', desc: 'Find specialists' },
+    { icon: Sparkles, label: 'Teleconsult', path: '/teleconsultation', desc: 'Instant video doctor' },
+    { icon: Pill, label: 'Medicines', path: '/care/medicines', desc: 'Reminders & refills' },
+    { icon: FlaskConical, label: 'Lab Reports', path: '/lab-reports', desc: 'Test results' },
+    { icon: Calendar, label: 'Bookings', path: '/booking', desc: 'Appointments' },
+    { icon: Wallet, label: 'Health Wallet', path: '/health-wallet', desc: 'Insurance & bills' },
+    { icon: FileText, label: 'Health Passport', path: '/health-passport', desc: 'Medical identity' },
+    { icon: Bot, label: 'SI Assistant', path: '/ai-assistant', desc: 'Clinical Q&A' },
+    { icon: Activity, label: 'Wellness Hub', path: '/wellness', desc: 'Fitness & recovery' },
+  ];
 
- const { data, error } = await supabase.functions.invoke('ai-health-assistant', {
- body: {
- message: 'Generate a brief personalized health insight for today in 2-3 sentences'
- }
- });
+  // ── Initial Blocking Loader (Only before first data fetch) ───────────────
+  if (loading && !lastComputedAt) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground font-medium">Connecting Health OS…</p>
+        </div>
+      </div>
+    );
+  }
 
- if (!error && data?.response) {
- setAiInsight(data.response);
- }
- } catch (error) {
- console.log('AI insight unavailable');
- }
- };
+  return (
+    <>
+      <SEOHead
+        title="Health Hub — Personal Health OS | Chatr"
+        description="Calm, intelligent personal health command center. Live biometrics, baseline deviations, and daily focus."
+        breadcrumbList={[
+          { name: 'Home', url: '/' },
+          { name: 'Health Hub', url: '/health' }
+        ]}
+      />
 
- const urgentReminders = healthData.reminders.filter((r: any) => {
- const now = new Date();
- const slots = r.time_slots || [];
- return slots.some((slot: string) => {
- const [hour] = slot.split(':');
- return Math.abs(now.getHours() - parseInt(hour)) <= 1;
- });
- });
+      <div className="min-h-screen bg-background pb-32">
+        {/* ── 1. MINIMAL HEADER ───────────────────────────────────────────── */}
+        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/40">
+          <div className="px-4 py-3 max-w-lg mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/')}
+                className="h-8 w-8 rounded-full"
+                aria-label="Back to home"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <img 
+                src={logo} 
+                alt="Chatr" 
+                className="h-5 cursor-pointer" 
+                onClick={() => navigate('/')} 
+              />
+            </div>
 
- const quickActions = [
- {
- icon: Bot,
- label: 'AI Assistant',
- description: 'Get health advice',
- color: 'text-teal-600',
- bgColor: 'bg-teal-50',
- path: '/ai-assistant'
- },
- {
- icon: Activity,
- label: 'Wellness',
- description: 'Track metrics',
- color: 'text-pink-600',
- bgColor: 'bg-pink-50',
- path: '/wellness',
- badge: healthData.vitals.length || undefined
- },
- {
- icon: TrendingUp,
- label: 'BMI Calculator',
- description: 'Body mass index',
- color: 'text-emerald-600',
- bgColor: 'bg-emerald-50',
- path: '/bmi-calculator'
- },
- {
- icon: Activity,
- label: 'Nutrition',
- description: 'Track meals',
- color: 'text-orange-600',
- bgColor: 'bg-orange-50',
- path: '/nutrition-tracker'
- },
- {
- icon: Brain,
- label: 'Mental Health',
- description: 'Assessments & support',
- color: 'text-purple-600',
- bgColor: 'bg-purple-50',
- path: '/mental-health'
- },
- {
- icon: Pill,
- label: 'Medications',
- description: 'Reminders',
- color: 'text-blue-600',
- bgColor: 'bg-blue-50',
- path: '/medicine-reminders',
- badge: healthData.reminders.length || undefined
- },
- {
- icon: Calendar,
- label: 'Reminders',
- description: 'Appointments',
- color: 'text-amber-600',
- bgColor: 'bg-amber-50',
- path: '/health-reminders'
- },
- {
- icon: Shield,
- label: 'Passport',
- description: 'Health records',
- color: 'text-indigo-600',
- bgColor: 'bg-indigo-50',
- path: '/health-passport'
- },
- {
- icon: FileText,
- label: 'Lab Reports',
- description: 'View reports',
- color: 'text-cyan-600',
- bgColor: 'bg-cyan-50',
- path: '/lab-reports',
- badge: healthData.reports.length || undefined
- },
- {
- icon: Heart,
- label: 'Risk Analysis',
- description: 'AI predictions',
- color: 'text-rose-600',
- bgColor: 'bg-rose-50',
- path: '/health-risks'
- },
- {
- icon: Brain,
- label: 'Symptom Checker',
- description: 'AI triage',
- color: 'text-violet-600',
- bgColor: 'bg-violet-50',
- path: '/symptom-checker'
- },
- {
- icon: Sparkles,
- label: 'Teleconsult',
- description: 'Talk to doctor',
- color: 'text-sky-600',
- bgColor: 'bg-sky-50',
- path: '/teleconsultation'
- },
- {
- icon: AlertTriangle,
- label: 'Drug Interactions',
- description: 'Check safety',
- color: 'text-amber-600',
- bgColor: 'bg-amber-50',
- path: '/medication-interactions'
- },
- {
- icon: Flame,
- label: 'Streaks',
- description: 'Earn rewards',
- color: 'text-orange-600',
- bgColor: 'bg-orange-50',
- path: '/health-streaks'
- },
- {
- icon: Droplet,
- label: 'Vitals Log',
- description: 'Track vitals',
- color: 'text-teal-600',
- bgColor: 'bg-teal-50',
- path: '/chronic-vitals'
- }
- ];
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowVoiceModal(true)}
+                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10"
+                title="Voice vitals logger"
+              >
+                <Mic className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/notifications/health')}
+                className="h-8 w-8 rounded-full text-muted-foreground"
+                aria-label="Health notifications"
+              >
+                <Bell className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/settings')}
+                className="h-8 w-8 rounded-full text-muted-foreground"
+                aria-label="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </header>
 
- if (loading) {
- return (
- <div className="min-h-screen bg-background flex items-center justify-center">
- <div className="text-center">
- <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
- <p className="text-muted-foreground text-secondary">Loading your health data...</p>
- </div>
- </div>
- );
- }
+        {/* ── MAIN CONTENT (Calm, spacious, progressive disclosure) ───────── */}
+        <main className="px-4 py-4 max-w-lg mx-auto space-y-4">
 
- return (
- <>
- <SEOHead
- title="Health Hub - Complete Health Dashboard | Chatr"
- description="Track your wellness, manage medications, store lab reports, and access AI health insights. Your complete digital health companion."
- keywords="health tracking, wellness, medication reminders, lab reports, health passport, AI health assistant"
- breadcrumbList={[
- { name: 'Home', url: '/' },
- { name: 'Health Hub', url: '/health' }
- ]}
- />
- 
- <div className="min-h-screen bg-background pb-24">
- {/* Header */}
- <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border">
- <div className="px-4 py-3 max-w-lg mx-auto">
- <div className="flex items-center justify-between">
- <div className="flex items-center gap-3">
- <Button
- variant="ghost"
- size="icon"
- onClick={() => navigate('/')}
- className="h-9 w-9 rounded-xl"
- >
- <ArrowLeft className="h-5 w-5" />
- </Button>
- <img 
- src={logo} 
- alt="Chatr" 
- className="h-6 cursor-pointer" 
- onClick={() => navigate('/')} 
- />
- </div>
- <div className="flex items-center gap-1">
- <Button
- variant="ghost"
- size="icon"
- onClick={() => navigate('/notifications')}
- className="h-9 w-9 rounded-xl relative"
- >
- <Bell className="h-5 w-5" />
- {healthData.reminders.length > 0 && (
- <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
- )}
- </Button>
- <Button
- variant="ghost"
- size="icon"
- onClick={() => navigate('/settings')}
- className="h-9 w-9 rounded-xl"
- >
- <Settings className="h-5 w-5" />
- </Button>
- </div>
- </div>
- </div>
- </div>
+          {/* ── 2. PERSONAL GREETING ──────────────────────────────────────── */}
+          <div className="pt-1 px-1">
+            <p className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">
+              {getGreeting()}
+            </p>
+          </div>
 
- {/* Content */}
- <div className="px-4 py-4 max-w-lg mx-auto space-y-5">
- {/* Hero Card */}
- <HealthHeroCard 
- healthScore={healthData.healthScore}
- aiInsight={aiInsight}
- userName={userName}
- />
+          {/* ── 3. HEALTH STATE (Primary Command Card) ────────────────────── */}
+          <HealthHeroCard
+            healthState={healthState}
+            healthStateLabel={healthStateLabel}
+            healthScore={healthScore}
+            domainStates={domainStates}
+            userName={userName}
+            connectedDevicesCount={connectedDevices.length}
+            onOpenDevices={() => navigate('/health/devices')}
+            onOpenDetails={() => navigate('/chronic-vitals')}
+          />
 
- {/* Urgent Reminders */}
- {urgentReminders.length > 0 && (
- <HealthUrgentBanner reminders={urgentReminders} />
- )}
+          {/* ── 4. TODAY (2–3 Key Observations: BP, Sleep, Activity) ──────── */}
+          <TodayObservations
+            recentVitals={recentVitals}
+            domainStates={domainStates}
+            onNavigate={(route) => navigate(route)}
+          />
 
- {/* Section Title */}
- <div className="flex items-center justify-between pt-2">
- <h2 className="text-section font-bold text-foreground">Health Services</h2>
- <Button
- variant="ghost"
- size="sm"
- className="text-primary text-secondary h-8"
- onClick={() => navigate('/care')}
- >
- View All
- </Button>
- </div>
+          {/* ── 5. TODAY'S FOCUS (Max 3 Attention Items) ───────────────────── */}
+          <TodayFocusCard items={todayFocus} />
 
- {/* Quick Actions Grid */}
- <div className="grid grid-cols-3 gap-3">
- {quickActions.map((action, index) => (
- <HealthQuickAction
- key={action.path}
- icon={action.icon}
- label={action.label}
- description={action.description}
- color={action.color}
- bgColor={action.bgColor}
- onClick={() => navigate(action.path)}
- badge={action.badge}
- index={index}
- />
- ))}
- </div>
+          {/* ── 6. CONNECTED SOURCES (Compact Summary) ────────────────────── */}
+          <ConnectedSourcesSummary
+            devices={connectedDevices}
+            onOpenDevices={() => navigate('/health/devices')}
+            onAddDevice={() => handleOpenConnect()}
+          />
 
- {/* Bottom spacing for nav */}
- <div className="h-4" />
- </div>
+          {/* ── 7. OPTIONAL RECENT INSIGHT ─────────────────────────────────── */}
+          {activeInsights.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-sm space-y-1.5"
+            >
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>OBSERVATION</span>
+              </div>
+              <p className="text-xs text-foreground font-medium leading-relaxed">
+                {activeInsights[0].candidate.title}
+              </p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                {activeInsights[0].candidate.body}
+              </p>
+            </motion.div>
+          )}
 
- {/* Bottom Navigation */}
- <HealthBottomNav />
- </div>
- </>
- );
+          {/* ── 8. PROGRESSIVE DISCLOSURE: ALL HEALTH SERVICES ─────────────── */}
+          <div className="pt-2 border-t border-border/40">
+            <button
+              type="button"
+              onClick={() => setShowAllServices(!showAllServices)}
+              className="w-full flex items-center justify-between py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors px-1"
+            >
+              <span>HEALTH SERVICES & CARE</span>
+              {showAllServices ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
+
+            <AnimatePresence>
+              {showAllServices && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="grid grid-cols-3 gap-2.5 pt-2 pb-1 overflow-hidden"
+                >
+                  {healthServices.map((srv) => (
+                    <motion.button
+                      key={srv.path}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => navigate(srv.path)}
+                      className="p-3 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors flex flex-col items-center text-center gap-1.5 shadow-xs"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                        <srv.icon className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground line-clamp-1">{srv.label}</span>
+                      <span className="text-[10px] text-muted-foreground line-clamp-1">{srv.desc}</span>
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Extra bottom scroll spacing for fixed nav */}
+          <div className="h-6" />
+        </main>
+
+        {/* ── 9. BOTTOM NAVIGATION (Preserved) ────────────────────────────── */}
+        <HealthBottomNav />
+
+        {/* ── Hands-Free Voice Vitals Logger Modal ──────────────────────────── */}
+        <VoiceVitalsModal
+          isOpen={showVoiceModal}
+          onClose={() => setShowVoiceModal(false)}
+          onVitalLogged={refresh}
+        />
+
+        {/* ── Universal Device Connection Wizard ───────────────────────────── */}
+        <DeviceConnectionWizard 
+          open={wizardOpen}
+          onOpenChange={handleCloseWizard}
+          initialDevice={wizardDevice}
+          initialCategory={wizardCategory}
+          onDeviceConnected={() => {
+            setConnectedDevices(deviceSyncManager.getConnectedDevices());
+            refresh();
+          }}
+        />
+      </div>
+    </>
+  );
 }

@@ -50,7 +50,7 @@ export interface ReceiptArtifact extends BaseArtifact {
   date: string;
   lineItems: Array<{ description: string; amount: MonetaryValue }>;
   totalAmount: MonetaryValue;
-  category?: string; // filled by AI classify()
+  category?: string; // filled by SI classify()
   rawText?: string;
 }
 

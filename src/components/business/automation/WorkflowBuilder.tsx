@@ -137,8 +137,8 @@ export default function WorkflowBuilder({ workflowId }: WorkflowBuilderProps) {
  <Button variant="ghost" size="sm" className="justify-start text-amber-600 dark:text-amber-400" onClick={() => addNode('condition', 'New Condition')}>
  <GitBranch className="w-4 h-4 mr-2" /> Condition
  </Button>
- <Button variant="ghost" size="sm" className="justify-start text-purple-600 dark:text-purple-400" onClick={() => addNode('ai_decision', 'AI Action')}>
- <BrainCircuit className="w-4 h-4 mr-2" /> AI Decision
+ <Button variant="ghost" size="sm" className="justify-start text-purple-600 dark:text-purple-400" onClick={() => addNode('ai_decision', 'SI Action')}>
+ <BrainCircuit className="w-4 h-4 mr-2" /> SI Decision
  </Button>
  <Button variant="ghost" size="sm" className="justify-start text-blue-600 dark:text-blue-400" onClick={() => addNode('action', 'New Action')}>
  <Play className="w-4 h-4 mr-2" /> Action

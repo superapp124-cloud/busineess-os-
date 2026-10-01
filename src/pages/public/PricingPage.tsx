@@ -16,7 +16,7 @@ export const PricingPage: React.FC = () => {
       features: [
         'Single WhatsApp Business API number',
         'Universal Team Inbox (WhatsApp + Email)',
-        'Basic AI Lead Triage & Greetings',
+        'Basic SI Lead Triage & Greetings',
         'Up to 3 team seats',
         'Standard community support'
       ],
@@ -46,12 +46,12 @@ export const PricingPage: React.FC = () => {
       name: 'Growth & Team OS',
       price: '₹2,999',
       period: 'per month',
-      description: 'Advanced team collaboration, AI triage, and multi-location management.',
+      description: 'Advanced team collaboration, SI triage, and multi-location management.',
       badge: 'High Concurrency',
       features: [
         'Everything in Starter SME OS',
         'Multi-account & multi-branch WhatsApp management',
-        'AI Conversation Summarization & intent tagging',
+        'SI Conversation Summarization & intent tagging',
         'Recruiter candidate screening pipeline',
         'Agent collision locks & typing indicators',
         'Manager SLA performance analytics',
@@ -64,12 +64,12 @@ export const PricingPage: React.FC = () => {
   ];
 
   const desktopProPlan = {
-    name: 'CHATR AI Executive Desktop (Pro App)',
+    name: 'CHATR SI Executive Desktop (Pro App)',
     monthlyPrice: '$19',
     annualPrice: '$15',
-    description: 'Personal AI executive assistant app for desktop & mobile power users.',
+    description: 'Personal SI executive assistant app for desktop & mobile power users.',
     features: [
-      'Unlimited local private AI model (Ollama) usage',
+      'Unlimited local private SI model (Ollama) usage',
       'Voice Clone setup & hosting',
       '5 Burner Numbers per month',
       'Cross-platform sync (Windows, macOS, Mobile)',
@@ -100,7 +100,7 @@ export const PricingPage: React.FC = () => {
     <>
       <SEOHead
         title="CHATR Pricing — Commercial Plans & Free Trial"
-        description="Simple, transparent pricing for CHATR Business OS and AI Workspace. Explore free trial, SME Starter plans from ₹999/mo, Growth OS, and Desktop Pro options."
+        description="Simple, transparent pricing for CHATR Business OS and SI Workspace. Explore free trial, SME Starter plans from ₹999/mo, Growth OS, and Desktop Pro options."
       />
       <div className="min-h-screen bg-slate-950 text-white font-sans">
         {/* Header */}
@@ -110,7 +110,7 @@ export const PricingPage: React.FC = () => {
               <Sparkles className="w-5 h-5 text-indigo-400" /> CHATR Pricing
             </Link>
             <div className="flex items-center gap-4">
-              <Link to="/chatr/ai" className="text-xs text-slate-300 hover:text-white transition-colors font-medium">CHATR AI</Link>
+              <Link to="/chatr/ai" className="text-xs text-slate-300 hover:text-white transition-colors font-medium">CHATR SI</Link>
               <Link to="/auth" id="pricing-header-cta" className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
                 Get Started Free
               </Link>
@@ -195,12 +195,12 @@ export const PricingPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 2: Personal AI Executive Desktop Edition */}
+          {/* Section 2: Personal SI Executive Desktop Edition */}
           <section className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 space-y-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
               <div className="space-y-2 max-w-xl">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-purple-400 bg-purple-950/60 border border-purple-500/30 px-3 py-1 rounded-full">
-                  Personal AI App Edition
+                  Personal SI App Edition
                 </span>
                 <h3 className="text-2xl font-bold text-white">{desktopProPlan.name}</h3>
                 <p className="text-slate-300 text-xs leading-relaxed">{desktopProPlan.description}</p>

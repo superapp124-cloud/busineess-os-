@@ -1,6 +1,6 @@
 /**
  * Agent Actions Component
- * Enables AI agents to perform real actions (book, order, message, etc.)
+ * Enables SI agents to perform real actions (book, order, message, etc.)
  */
 
 import { useState } from 'react';
@@ -288,7 +288,7 @@ async function executeBooking(data: Record<string, any>) {
  provider_id: data.providerId,
  appointment_date: `${data.date}T${data.time}:00`,
  status: 'scheduled',
- notes: data.notes || 'Booked via AI Agent'
+ notes: data.notes || 'Booked via SI Agent'
  });
 
  if (error) throw error;
@@ -350,7 +350,7 @@ function executeNavigate(data: Record<string, any>) {
  window.open(`https://maps.google.com/maps?q=${encodedAddress}`, '_blank');
 }
 
-// Parse AI response for action intents
+// Parse SI response for action intents
 export function parseActionsFromResponse(response: string): Partial<AgentAction>[] {
  const actions: Partial<AgentAction>[] = [];
  

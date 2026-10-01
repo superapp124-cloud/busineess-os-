@@ -47,7 +47,7 @@ export const ATSResultWidget = memo(function ATSResultWidget({ instance }: Widge
  <div className="text-white font-semibold text-section">{insight.title}</div>
  <div className="text-white/60 text-secondary mt-1">{insight.summary}</div>
  <div className="mt-2 text-label bg-white/5 p-2 rounded-lg text-white/70 border border-white/5">
- <span className="font-semibold text-white/90">AI Note: </span>
+ <span className="font-semibold text-white/90">SI Note: </span>
  {insight.explanation}
  </div>
  </div>

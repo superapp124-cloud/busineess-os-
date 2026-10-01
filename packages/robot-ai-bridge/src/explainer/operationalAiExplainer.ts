@@ -1,5 +1,5 @@
 /**
- * CHATR Operational AI Explainer (Gate 7)
+ * CHATR Operational SI Explainer (Gate 7)
  * Generates transparent, natural language explanations of the robot's intended actions
  * and failure causes in the user's native language.
  */

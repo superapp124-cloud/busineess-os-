@@ -28,7 +28,7 @@ export function StreamingSynthesis({ text, status }: StreamingSynthesisProps) {
  
  <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-4">
  <Sparkles className="w-5 h-5 text-indigo-400" />
- <h2 className="text-section font-medium text-white tracking-wide">AI Synthesis</h2>
+ <h2 className="text-section font-medium text-white tracking-wide">SI Synthesis</h2>
  {isSynthesizing && <Loader2 className="w-4 h-4 text-indigo-400 animate-spin ml-2" />}
  </div>
 

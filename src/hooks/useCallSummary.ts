@@ -135,7 +135,7 @@ function buildLocalSummary(meetingTitle: string, transcript: string): string {
 
 /**
  * Generates a call summary with strict local-only behavior.
- * First tries the desktop local AI service, then falls back to deterministic
+ * First tries the desktop local SI service, then falls back to deterministic
  * on-device extraction so users still get usable notes without cloud calls.
  */
 export function useCallSummary({ meetingTitle, transcript }: UseCallSummaryArgs) {
@@ -158,7 +158,7 @@ export function useCallSummary({ meetingTitle, transcript }: UseCallSummaryArgs)
       setSummary(result);
       return result;
     } catch (err) {
-      console.warn('[useCallSummary] Local AI unavailable, using extractive fallback', err);
+      console.warn('[useCallSummary] Local SI unavailable, using extractive fallback', err);
       const fallback = buildLocalSummary(meetingTitle, finalTranscript);
       setSummary(fallback);
       return fallback;

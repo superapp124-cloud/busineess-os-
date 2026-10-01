@@ -89,7 +89,7 @@ export const CustomerSuccessOSDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Account Health & Retention AI Engine */}
+      {/* Account Health & Retention SI Engine */}
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -145,7 +145,7 @@ export const CustomerSuccessOSDashboard: React.FC = () => {
           className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center justify-center space-x-2"
         >
           <HeartPulse className="w-4 h-4" />
-          <span>{isComputing ? 'Computing Health Score & Retention AI Strategy...' : 'Compute Account Health & Retention Strategy'}</span>
+          <span>{isComputing ? 'Computing Health Score & Retention SI Strategy...' : 'Compute Account Health & Retention Strategy'}</span>
         </button>
 
         {healthOutput && (

@@ -1,5 +1,5 @@
 // electron/workers/ai-worker.cjs
-// This file runs in a dedicated Node.js UtilityProcess to keep AI inference (Ollama/Gemini)
+// This file runs in a dedicated Node.js UtilityProcess to keep SI inference (Ollama/Gemini)
 // off the main Electron thread, preventing UI freezes during heavy processing.
 
 const { parentPort } = require('electron');

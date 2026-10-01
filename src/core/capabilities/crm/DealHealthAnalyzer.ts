@@ -3,7 +3,7 @@ import { DealHealthAnalysis } from './types';
 
 export class DealHealthAnalyzer {
   /**
-   * Calculate deal health score and AI Next Best Action (NBA) for a given lead
+   * Calculate deal health score and SI Next Best Action (NBA) for a given lead
    */
   static async analyzeDealHealth(leadId: string): Promise<DealHealthAnalysis> {
     try {

@@ -51,10 +51,10 @@ serve(async (req) => {
     };
 
     const systemPrompt = context === 'sales' 
-      ? 'You are a real-time sales coaching AI helping agents close deals effectively.'
+      ? 'You are a real-time sales coaching SI helping agents close deals effectively.'
       : context === 'support'
-      ? 'You are a real-time customer support coaching AI helping agents resolve issues efficiently.'
-      : 'You are a real-time call coaching AI helping agents communicate effectively.';
+      ? 'You are a real-time customer support coaching SI helping agents resolve issues efficiently.'
+      : 'You are a real-time call coaching SI helping agents communicate effectively.';
 
     const userPrompt = `Analyze this live call transcript and provide real-time coaching for the agent${agentName ? ` (${agentName})` : ''}.
 

@@ -7,7 +7,7 @@ export class ResponseCache {
 
   constructor() {
     eventBus.subscribe('MEMORY_WARNING', () => {
-      console.warn('[ResponseCache] Memory warning received. Flushing 50% of oldest AI cache entries.');
+      console.warn('[ResponseCache] Memory warning received. Flushing 50% of oldest SI cache entries.');
       this.evictLRU(Math.floor(this.cache.size / 2));
     });
   }

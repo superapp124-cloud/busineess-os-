@@ -162,13 +162,13 @@ export const IndianFusion100Studio: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-bold text-white">100 AI Indian Songs × 100 AI Dances Fusion Studio</h1>
+                <h1 className="text-xl font-bold text-white">100 SI Indian Songs × 100 SI Dances Fusion Studio</h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-mono text-[10px] font-bold border border-rose-500/40">
                   10,000 VIRAL COMBINATIONS (1-MIN FULL LENGTH) 🔥
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                100 Manufactured Indian Songs • 100 AI Dance Choreographies • Automated Audience Virality Fusions
+                100 Manufactured Indian Songs • 100 SI Dance Choreographies • Automated Audience Virality Fusions
               </p>
             </div>
           </div>
@@ -342,7 +342,7 @@ export const IndianFusion100Studio: React.FC = () => {
                 }`}
               >
                 <Music className="w-3.5 h-3.5" />
-                <span>100 AI Songs</span>
+                <span>100 SI Songs</span>
               </button>
               <button
                 onClick={() => setActiveTab('dances_100')}
@@ -353,7 +353,7 @@ export const IndianFusion100Studio: React.FC = () => {
                 }`}
               >
                 <Film className="w-3.5 h-3.5" />
-                <span>100 AI Dances</span>
+                <span>100 SI Dances</span>
               </button>
             </div>
 
@@ -409,13 +409,13 @@ export const IndianFusion100Studio: React.FC = () => {
               )}
             </div>
 
-            {/* TAB 1: 100 AI SONGS CATALOG */}
+            {/* TAB 1: 100 SI SONGS CATALOG */}
             {activeTab === 'songs_100' && (
               <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                     <Music className="w-4 h-4 text-rose-400" />
-                    <span>100 AI Indian Songs Library (1-Minute Full Tracks):</span>
+                    <span>100 SI Indian Songs Library (1-Minute Full Tracks):</span>
                   </h3>
                   <span className="text-xs font-mono text-rose-400 font-bold">{filteredSongs.length} Songs</span>
                 </div>
@@ -452,13 +452,13 @@ export const IndianFusion100Studio: React.FC = () => {
               </div>
             )}
 
-            {/* TAB 2: 100 AI DANCE CHOREOGRAPHIES CATALOG */}
+            {/* TAB 2: 100 SI DANCE CHOREOGRAPHIES CATALOG */}
             {activeTab === 'dances_100' && (
               <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                     <Film className="w-4 h-4 text-emerald-400" />
-                    <span>100 AI Dance Choreographies (1-Minute Full Motion):</span>
+                    <span>100 SI Dance Choreographies (1-Minute Full Motion):</span>
                   </h3>
                   <span className="text-xs font-mono text-emerald-400 font-bold">{filteredDances.length} Dances</span>
                 </div>

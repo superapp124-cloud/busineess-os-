@@ -78,7 +78,7 @@ export function FinanceHealthDashboard({ finOrganizationId }: FinanceHealthDashb
                 )}
               </div>
               <p className="text-xs text-slate-400">
-                Live monitoring — GL invariant, subledger reconciliation, event log, AI worker fleet.
+                Live monitoring — GL invariant, subledger reconciliation, event log, SI worker fleet.
               </p>
               {!finOrganizationId && (
                 <p className="text-xs text-amber-400 mt-1">⚠ No organization configured — connect Finance OS first.</p>

@@ -71,7 +71,7 @@ export function CreateLeadDialog({ businessId, open, onOpenChange, onLeadCreated
 
  if (error) throw error;
 
- // Enqueue AI Agent Enrichment Task asynchronously
+ // Enqueue SI Agent Enrichment Task asynchronously
  if (createdLead?.id) {
    AgentTaskDispatcher.enqueueTask(businessId, 'ENRICH_LEAD', createdLead.id, {
      name: validatedData.name,
@@ -86,7 +86,7 @@ export function CreateLeadDialog({ businessId, open, onOpenChange, onLeadCreated
 
  toast({
  title: 'Success',
- description: 'Lead created successfully. AI Agent background research initiated.'
+ description: 'Lead created successfully. SI Agent background research initiated.'
  });
 
  // Reset form

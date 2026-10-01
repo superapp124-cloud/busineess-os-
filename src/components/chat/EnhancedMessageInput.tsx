@@ -150,8 +150,8 @@ export const EnhancedMessageInput = ({
  setVisualAIImage(imageUrl);
  setShowVisualAI(true);
  } catch (error) {
- console.error('Error starting Visual AI:', error);
- toast.error('Failed to open Visual AI');
+ console.error('Error starting Visual SI:', error);
+ toast.error('Failed to open Visual SI');
  }
  };
 
@@ -308,11 +308,11 @@ export const EnhancedMessageInput = ({
 
  const handleAIImageSend = async (imageUrl: string, prompt: string) => {
  try {
- await onSendMessage(`[AI Image] ${prompt}: ${imageUrl}`, 'ai_image');
- toast.success('AI image sent successfully');
+ await onSendMessage(`[SI Image] ${prompt}: ${imageUrl}`, 'ai_image');
+ toast.success('SI image sent successfully');
  } catch (error) {
- console.error('Error sending AI image:', error);
- toast.error('Failed to send AI image');
+ console.error('Error sending SI image:', error);
+ toast.error('Failed to send SI image');
  }
  };
 
@@ -435,7 +435,7 @@ export const EnhancedMessageInput = ({
  </DialogContent>
  </Dialog>
 
- {/* AI Smart Reply Panel */}
+ {/* SI Smart Reply Panel */}
  <AISmartReplyPanel
  lastMessage={lastMessage || ''}
  onSelectReply={(reply) => {

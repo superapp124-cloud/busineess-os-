@@ -72,7 +72,7 @@ fs.writeFileSync(path.join(rootDir, 'PLATFORM_ASSET_REGISTER.json'), JSON.string
 const markdownContent = `# CHATR Platform Asset Register 1.0 (PLATFORM_ASSET_REGISTER.md)
 
 > **Status**: Mandatory Baseline Inventory & Governance Artifact  
-> **Mandatory Rule**: **No engineer, AI agent, or contributor may modify navigation, routes, menus, or desktop/mobile layouts until this register is referenced.**
+> **Mandatory Rule**: **No engineer, SI Agent, or contributor may modify navigation, routes, menus, or desktop/mobile layouts until this register is referenced.**
 
 ---
 

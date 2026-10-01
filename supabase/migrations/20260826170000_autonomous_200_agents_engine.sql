@@ -1,10 +1,10 @@
 -- ==============================================================================
--- CHATR AUTONOMOUS 200-AGENT 24/7 AI ENTERPRISE ENGINE
+-- CHATR AUTONOMOUS 200-AGENT 24/7 SI ENTERPRISE ENGINE
 -- Migration: 20260826170000_autonomous_200_agents_engine.sql
 --
 -- Architecture:
 -- 1. 1 Human CEO (Supreme Authority & Approval Vault)
--- 2. 200 Specialized Autonomous AI Agents across 7 Squads
+-- 2. 200 Specialized Autonomous SI Agents across 7 Squads
 -- 3. 24/7 Web Scraping & Lead Discovery Engine
 -- 4. High-Throughput Task Execution Queue
 -- 5. Human-in-the-Loop (HITL) CEO Approval Vault

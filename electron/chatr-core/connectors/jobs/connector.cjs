@@ -6,7 +6,7 @@
  * Implements job description generation, job posting, and candidate search
  * across LinkedIn, Naukri, Indeed, and Foundit.
  *
- * JD generation uses a professional template engine — no AI call required.
+ * JD generation uses a professional template engine — no SI call required.
  */
 
 const log = (() => {

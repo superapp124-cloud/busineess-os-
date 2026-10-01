@@ -64,7 +64,7 @@ class MockToolRegistry {
             mapOf("entityId" to ToolParameterType.ENTITY_ID, "phoneNumber" to ToolParameterType.PHONE_NUMBER)),
         mockTool("phone.answer", "Answer Call", RiskTier.MEDIUM, true),
         mockTool("phone.end", "End Call", RiskTier.MEDIUM, true),
-        mockTool("phone.takeover", "Take Over AI-Screened Call", RiskTier.LOW, true),
+        mockTool("phone.takeover", "Take Over SI-Screened Call", RiskTier.LOW, true),
         mockTool("sms.send", "Send SMS", RiskTier.MEDIUM, false,
             mapOf("phoneNumber" to ToolParameterType.PHONE_NUMBER, "body" to ToolParameterType.STRING)),
         mockTool("chatr.message.send", "Send CHATR Message", RiskTier.MEDIUM, false,

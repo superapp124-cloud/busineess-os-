@@ -20,7 +20,7 @@ export class FinanceAnalystWorker {
 
     // Find the largest contributing expense spike
     const sorted = [...context.opexBreakdown].sort((a, b) => b.deltaAmount - a.deltaAmount);
-    const topDriver = sorted[0] || { category: 'Infrastructure', deltaAmount: 1200000, primaryVendor: 'AWS Cloud', reason: 'Cluster expansion for AI models' };
+    const topDriver = sorted[0] || { category: 'Infrastructure', deltaAmount: 1200000, primaryVendor: 'AWS Cloud', reason: 'Cluster expansion for SI models' };
 
     return {
       question: 'Why did gross margin decline this month?',

@@ -59,9 +59,9 @@ export interface ExecutionResult {
   /** Ordered list of per-node execution summaries */
   nodeSummaries: NodeExecutionSummary[];
 
-  /** Total AI tokens consumed across all AI nodes in this run */
+  /** Total SI tokens consumed across all SI nodes in this run */
   totalTokensUsed?: number;
-  /** Estimated total AI cost in USD */
+  /** Estimated total SI cost in USD */
   totalCostUsd?: number;
 
   /** Total retry count across all nodes */

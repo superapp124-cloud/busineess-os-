@@ -8,7 +8,7 @@
 
 ## 1. Purpose & Business Objective
 
-Provide a unified, 360-degree candidate profile consolidating resume parsing, AI skill matrix extraction, interview history, activity timeline, and client placement status into a single operational interface for recruiters.
+Provide a unified, 360-degree candidate profile consolidating resume parsing, SI skill matrix extraction, interview history, activity timeline, and client placement status into a single operational interface for recruiters.
 
 ---
 
@@ -16,14 +16,14 @@ Provide a unified, 360-degree candidate profile consolidating resume parsing, AI
 
 - **Recruitment Consultant / Lead Recruiter**: Candidate sourcing, resume parsing, candidate submission to client, interview scheduling.
 - **Account Manager**: Matching candidate skill profiles against open job requirements.
-- **Client Hiring Manager**: Reviewing candidate AI executive summaries and interview feedback.
+- **Client Hiring Manager**: Reviewing candidate SI executive summaries and interview feedback.
 
 ---
 
 ## 3. Core Functional Capabilities
 
-- **Resume Intelligence**: Parses PDF/Docx resumes using `CandidateSummaryCapability` $\rightarrow$ OpenRouter AI to extract work history, education, skills, and contact information.
-- **AI Match Score**: Calculates deterministic match score (0-100%) comparing candidate experience against job requirements.
+- **Resume Intelligence**: Parses PDF/Docx resumes using `CandidateSummaryCapability` $\rightarrow$ OpenRouter SI to extract work history, education, skills, and contact information.
+- **SI Match Score**: Calculates deterministic match score (0-100%) comparing candidate experience against job requirements.
 - **Communication History**: Consolidated timeline of all emails, WhatsApp chats, call logs, and notes.
 
 ---

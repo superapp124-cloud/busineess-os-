@@ -1,6 +1,6 @@
 ﻿/**
  * CHATR CFO Blind Test Benchmark Evaluator (Phase 11)
- * Evaluates CHATR Finance AI reasoning against Human CFO ground truth across 7 critical questions:
+ * Evaluates CHATR Finance SI reasoning against Human CFO ground truth across 7 critical questions:
  * 1. "Why did gross margin fall?"
  * 2. "Which customers are causing the AR problem?"
  * 3. "Why is cash lower than expected?"

@@ -1,7 +1,7 @@
 /**
- * CHATR Business OS — Developer AI Execution Trace Panel
+ * CHATR Business OS — Developer SI Execution Trace Panel
  *
- * Real-time inspection panel visualizing the complete execution pipeline for AI requests:
+ * Real-time inspection panel visualizing the complete execution pipeline for SI requests:
  *   User Intent ➔ Intent Router ➔ BOS Retrieval ➔ Knowledge Graph ➔ Prompt Assembly ➔ Provider ➔ Inference ➔ Tool Execution
  */
 
@@ -43,7 +43,7 @@ export const AITracePanel: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // Subscribe to AI execution trace events on EventBus
+    // Subscribe to SI execution trace events on EventBus
     const unsubscribe = EventBus.subscribe('*', 'AI_EXECUTION_TRACE', (payload: any) => {
       if (payload) {
         setTraces(prev => [payload as AITraceStep, ...prev.slice(0, 19)]);
@@ -57,7 +57,7 @@ export const AITracePanel: React.FC = () => {
       <div className="flex items-center justify-between border-b border-gray-800 pb-3">
         <div className="flex items-center gap-2">
           <Cpu className="h-4 w-4 text-emerald-400 animate-pulse" />
-          <span className="font-bold text-sm text-gray-200">AI Execution Pipeline Trace</span>
+          <span className="font-bold text-sm text-gray-200">SI Execution Pipeline Trace</span>
         </div>
         <span className="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px]">
           Developer Mode Active

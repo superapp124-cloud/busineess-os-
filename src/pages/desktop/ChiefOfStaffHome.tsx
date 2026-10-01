@@ -1,7 +1,7 @@
 /**
  * CHATR — Universal Business OS (Home Page)
  *
- * User-Driven Command Center for Communications, AI Assistant & Workspace.
+ * User-Driven Command Center for Communications, SI Assistant & Workspace.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -63,8 +63,8 @@ const DEFAULT_TIMELINE_ITEMS: TimelineItem[] = [
     id: '1',
     source: 'system',
     sender: 'CHATR Operating Hub',
-    subject: 'Welcome to your AI Business Workspace',
-    preview: 'Your communication dashboard is active. Connect your messaging apps, email accounts, and AI assistants to stream all updates here.',
+    subject: 'Welcome to your SI Business Workspace',
+    preview: 'Your communication dashboard is active. Connect your messaging apps, email accounts, and SI assistants to stream all updates here.',
     time: 'Just now',
     priority: 'action',
     category: 'Getting Started',
@@ -74,12 +74,12 @@ const DEFAULT_TIMELINE_ITEMS: TimelineItem[] = [
   {
     id: '2',
     source: 'system',
-    sender: 'AI Executive Assistant',
-    subject: 'AI Copilot standing by',
-    preview: 'Ask AI to summarize messages, draft responses, manage schedule, and analyze work documents in real-time.',
+    sender: 'SI Executive Assistant',
+    subject: 'SI Copilot standing by',
+    preview: 'Ask SI to summarize messages, draft responses, manage schedule, and analyze work documents in real-time.',
     time: '5m ago',
     priority: 'action',
-    category: 'AI Assistant',
+    category: 'SI Assistant',
     read: false,
     actionPath: '/desktop/ai-agents',
   },
@@ -109,7 +109,7 @@ const DEFAULT_TIMELINE_ITEMS: TimelineItem[] = [
   },
 ];
 
-// ── AI Brief Summary ────────────────────────────────────────────────────────
+// ── SI Brief Summary ────────────────────────────────────────────────────────
 
 const AI_BRIEF = {
   urgent: 0,
@@ -117,13 +117,13 @@ const AI_BRIEF = {
   canWait: 1,
   fyi: 4,
   topActions: [
-    { id: 'a1', label: 'Explore AI Assistant', category: 'AI Assistant', icon: Sparkles, urgent: false, path: '/desktop/ai-agents' },
+    { id: 'a1', label: 'Explore SI Assistant', category: 'SI Assistant', icon: Sparkles, urgent: false, path: '/desktop/ai-agents' },
     { id: 'a2', label: 'Connect Communications', category: 'Workspace', icon: Inbox, urgent: false, path: '/desktop/settings' },
     { id: 'a3', label: 'Manage Profile & Security', category: 'Security', icon: Shield, urgent: false, path: '/desktop/settings' },
   ],
   categories: [
     { name: 'Getting Started', count: 1, color: 'bg-violet-500', path: '/desktop/settings' },
-    { name: 'AI Assistant', count: 2, color: 'bg-cyan-500', path: '/desktop/ai-agents' },
+    { name: 'SI Assistant', count: 2, color: 'bg-cyan-500', path: '/desktop/ai-agents' },
     { name: 'Workspace', count: 2, color: 'bg-emerald-500', path: '/desktop/inbox' },
     { name: 'Security', count: 1, color: 'bg-amber-500', path: '/desktop/settings' },
   ],
@@ -133,7 +133,7 @@ const AI_BRIEF = {
 
 const ACTIVE_COPILOTS = [
   { id: '1', name: 'Smart Communication Sync', status: 'Active', path: '/desktop/inbox' },
-  { id: '2', name: 'AI Executive Assistant', status: 'Ready', path: '/desktop/ai-agents' },
+  { id: '2', name: 'SI Executive Assistant', status: 'Ready', path: '/desktop/ai-agents' },
   { id: '3', name: 'Encrypted Memory Vault', status: 'Protected', path: '/desktop/settings' },
 ];
 
@@ -481,11 +481,11 @@ export const ChiefOfStaffHome: React.FC = () => {
                 </p>
               </div>
 
-              {/* AI Summary */}
+              {/* SI Summary */}
               <div className="p-4 border-b border-[#DDE3DF]">
                 <div className="flex items-center gap-1.5 mb-2">
                   <Sparkles className="w-3.5 h-3.5 text-[#164E3F]" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">AI Recommendation</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#53605C]">SI Recommendation</span>
                 </div>
                 <p className="text-xs text-[#53605C] leading-relaxed">
                   {selectedItem.priority === 'urgent'
@@ -537,7 +537,7 @@ export const ChiefOfStaffHome: React.FC = () => {
                     onClick={() => navigate('/desktop/ai-agents')}
                     className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#F8F8F5] hover:bg-[#E8F0EB] border border-[#DDE3DF] text-[#53605C] text-xs font-semibold transition-all cursor-pointer"
                   >
-                    <Bot className="w-3.5 h-3.5 text-[#164E3F]" /> Delegate to AI
+                    <Bot className="w-3.5 h-3.5 text-[#164E3F]" /> Delegate to SI
                   </button>
                 </div>
               </div>

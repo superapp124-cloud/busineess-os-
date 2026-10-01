@@ -11,7 +11,7 @@ The repository contains platform-level foundations that are stronger than a typi
 - Intent IR, Kernel ABI, and Runtime Contract specifications under `docs/intent-os`.
 - Frozen ABI and ADR governance policies.
 - Electron execution infrastructure, execution ledger, provider discovery, and credential vault.
-- AI planning layer and local-first AI service direction.
+- SI planning layer and local-first SI service direction.
 - Enterprise control-plane direction in platform architecture documents.
 
 These assets do not raise today's production-readiness score by themselves because they are not fully wired into Workflow Studio. They do, however, reduce the amount of redesign needed if the next phase consolidates around them.
@@ -63,14 +63,14 @@ These assets do not raise today's production-readiness score by themselves becau
 - Build succeeds with Vite.
 - React Flow is already present.
 - Supabase backend direction includes versions, runs, approvals, secrets, queue, policies, metrics, and audit.
-- AI workflow generation and AI action runtime exist.
+- SI workflow generation and SI action runtime exist.
 - Electron core includes execution ledger, credential vault, provider discovery, and runtime execution abstractions.
 - Provider manifests show early connector thinking.
 
 ## Major Enterprise Blockers
 
 1. No single authoritative runtime across Studio, AutomationOS, Supabase, and Electron.
-2. No canonical workflow graph shared by UI, React Flow, KernelStore, Supabase, AI Builder, Runtime, Publish, and Templates.
+2. No canonical workflow graph shared by UI, React Flow, KernelStore, Supabase, SI Builder, Runtime, Publish, and Templates.
 3. Studio ignores persisted edges and regenerates sequential edges.
 4. Test run can execute stale `KernelStore` state.
 5. Runs are not durable in `workflow_runs`.
@@ -84,11 +84,11 @@ These assets do not raise today's production-readiness score by themselves becau
 
 ### Phase A - Establish a Single Runtime
 
-Create one authoritative runtime. Desktop, Web, Mobile, AI Builder, Test Run, Publish, and future industry packs should execute through the same engine. Avoid adding new node types until this is true.
+Create one authoritative runtime. Desktop, Web, Mobile, SI Builder, Test Run, Publish, and future industry packs should execute through the same engine. Avoid adding new node types until this is true.
 
 ### Phase B - Canonical Workflow Graph
 
-Create one canonical graph object that owns nodes, edges, variables, metadata, layout, version, permissions, and execution hints. Studio, AI Builder, Runtime, Publish, and Templates should all consume this object.
+Create one canonical graph object that owns nodes, edges, variables, metadata, layout, version, permissions, and execution hints. Studio, SI Builder, Runtime, Publish, and Templates should all consume this object.
 
 ### Phase C - Enterprise Lifecycle
 

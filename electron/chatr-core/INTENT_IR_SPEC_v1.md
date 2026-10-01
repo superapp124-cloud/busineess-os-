@@ -1,6 +1,6 @@
 ﻿# Intent IR Specification v1.0
 
-The Intent Intermediate Representation (IR) is the foundational contract for the CHATR Intent Composer. It is a canonical, normalized syntax tree that all authoring methods (UI, AI, Voice, API, Templates) must compile into before the Planner can generate an Execution Plan.
+The Intent Intermediate Representation (IR) is the foundational contract for the CHATR Intent Composer. It is a canonical, normalized syntax tree that all authoring methods (UI, SI, Voice, API, Templates) must compile into before the Planner can generate an Execution Plan.
 
 ## 1. The Normalized IR Envelope
 Every Intent IR document must adhere to this schema:

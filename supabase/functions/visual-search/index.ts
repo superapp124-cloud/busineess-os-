@@ -149,7 +149,7 @@ Respond in JSON format:
       }
     }
 
-    // Step 3: Get AI recommendations based on image
+    // Step 3: Get SI recommendations based on image
     let aiRecommendations = null;
     if (imageAnalysis) {
       try {
@@ -171,7 +171,7 @@ Respond in JSON format:
         });
         aiRecommendations = recResult.content;
       } catch (e) {
-        console.warn('AI recommendation fallback notice:', e);
+        console.warn('SI recommendation fallback notice:', e);
       }
     }
 

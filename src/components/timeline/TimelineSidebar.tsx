@@ -60,11 +60,11 @@ export const TimelineSidebar = () => {
  ))}
  </div>
 
- {/* AI Status Widget */}
+ {/* SI Status Widget */}
  <div className="p-4 mt-auto">
  <div className="bg-[#15151c] rounded-2xl p-4 border border-white/5">
  <div className="flex items-center justify-between mb-1">
- <h3 className="text-label font-semibold text-slate-300">AI Status</h3>
+ <h3 className="text-label font-semibold text-slate-300">SI Status</h3>
  </div>
  <p className="text-[10px] text-emerald-400 font-medium mb-4 flex items-center gap-1">
  <CheckCircle2 className="w-3 h-3" /> All systems active
@@ -80,7 +80,7 @@ export const TimelineSidebar = () => {
  <div className="space-y-2">
  <div className="flex items-center gap-2 text-label text-slate-400">
  <Activity className="w-3.5 h-3.5 text-indigo-400" />
- <span>On-device AI</span>
+ <span>On-device SI</span>
  </div>
  <div className="flex items-center gap-2 text-label text-slate-400">
  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1" />

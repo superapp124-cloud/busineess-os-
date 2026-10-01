@@ -34,7 +34,7 @@ Detailed specifications for the 11 immutable engines that comprise the Kernel:
 
 ### Surfaces & Clients
 - [Studio (Manual Design)](./studio/studio.md)
-- [Studio2 (AI Architect)](./studio/studio2.md)
+- [Studio2 (SI Architect)](./studio/studio2.md)
 - [Marketplace](./marketplace/packaging.md)
 
 ### Appendix & Reference

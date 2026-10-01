@@ -26,7 +26,7 @@ serve(async (req) => {
       messages: [
         {
           role: "system",
-          content: "You are Prechu AI, a helpful and friendly AI assistant for CHATR. You help users with their tasks, answer questions, and provide assistance. Be concise, helpful, and warm in your responses.",
+          content: "You are Prechu SI, a helpful and friendly SI assistant for CHATR. You help users with their tasks, answer questions, and provide assistance. Be concise, helpful, and warm in your responses.",
         },
         {
           role: "user",
@@ -49,7 +49,7 @@ serve(async (req) => {
     );
 
   } catch (error: unknown) {
-    console.error("AI assistant error:", error);
+    console.error("SI assistant error:", error);
     const status = error instanceof PlatformError ? error.status : 500;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(

@@ -78,7 +78,7 @@ export const CRMCustomerSuccessSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Customer Success AI',
+    assistantName: 'Customer Success SI',
     skills: []
   },
   

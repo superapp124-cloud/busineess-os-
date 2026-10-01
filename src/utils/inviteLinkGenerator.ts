@@ -60,8 +60,8 @@ export const createInviteLink = async (userId: string): Promise<string> => {
 
 export const getInviteMessage = (inviteLink: string, userName?: string): string => {
   const message = userName 
-    ? `Hey! ${userName} invited you to CHATR+ for unblocked HD voice & video calls, zero-tracking private messaging, and AI agents. Join or install free: ${inviteLink}`
-    : `Join me on CHATR+ — unblocked HD voice/video calls, private messaging & AI: ${inviteLink}`;
+    ? `Hey! ${userName} invited you to CHATR+ for unblocked HD voice & video calls, zero-tracking private messaging, and SI agents. Join or install free: ${inviteLink}`
+    : `Join me on CHATR+ — unblocked HD voice/video calls, private messaging & SI: ${inviteLink}`;
   
   return message;
 };

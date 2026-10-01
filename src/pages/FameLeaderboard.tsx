@@ -213,7 +213,7 @@ export default function FameLeaderboard() {
  <Camera className="w-12 h-12 mx-auto mb-3 text-primary" />
  <h3 className="font-semibold mb-2">Ready to go viral?</h3>
  <p className="text-secondary text-muted-foreground mb-4">
- Create content with AI guidance and earn Chatr Coins
+ Create content with SI guidance and earn Chatr Coins
  </p>
  <Button onClick={() => navigate('/fame-cam')} size="lg">
  Open FameCam

@@ -54,7 +54,7 @@ const AIMotorcycleRacingGame: React.FC<AIMotorcycleRacingGameProps> = ({ level, 
  return newDistance;
  });
 
- // AI adjusts difficulty based on player performance
+ // SI adjusts difficulty based on player performance
  if (distance > 0 && distance % 50 === 0) {
  setAiDifficulty(prev => Math.min(prev + 0.1, 3));
  }
@@ -64,10 +64,10 @@ const AIMotorcycleRacingGame: React.FC<AIMotorcycleRacingGameProps> = ({ level, 
  const moved = prev.map(o => ({ ...o, y: o.y + speed }))
  .filter(o => o.y < 110);
 
- // AI-driven obstacle placement
+ // SI-driven obstacle placement
  if (Math.random() < 0.04 * aiDifficulty) {
  const types: ('car' | 'oil' | 'cone')[] = ['car', 'oil', 'cone'];
- const aiX = playerX + (Math.random() - 0.5) * 40; // AI targets near player
+ const aiX = playerX + (Math.random() - 0.5) * 40; // SI targets near player
  moved.push({
  id: Date.now(),
  x: Math.max(10, Math.min(90, aiX)),
@@ -168,9 +168,9 @@ const AIMotorcycleRacingGame: React.FC<AIMotorcycleRacingGameProps> = ({ level, 
  className="text-center py-12"
  >
  <Bike className="w-20 h-20 mx-auto text-orange-400 mb-4" />
- <h2 className="text-page font-bold text-white mb-2">AI Motorcycle Racing</h2>
+ <h2 className="text-page font-bold text-white mb-2">SI Motorcycle Racing</h2>
  <p className="text-gray-400 mb-6">
- AI learns your riding style and adapts! Swipe to steer, tap for nitro.
+ SI learns your riding style and adapts! Swipe to steer, tap for nitro.
  </p>
  <Button onClick={startGame} className="bg-orange-600 hover:bg-orange-700">
  <Zap className="w-4 h-4 mr-2" /> Start Race

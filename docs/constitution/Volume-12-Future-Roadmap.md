@@ -6,5 +6,5 @@
 ## CHATR Studio
 ## CHATR Enterprise
 ## CHATR Marketplace
-## CHATR AI Network
+## CHATR SI Network
 ## CHATR Developer Platform

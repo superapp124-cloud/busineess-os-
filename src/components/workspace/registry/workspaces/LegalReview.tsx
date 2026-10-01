@@ -77,13 +77,13 @@ export const createLegalReviewWorkspace = (item: WorkspaceItem): BusinessWorkspa
     displayName: name,
     businessIntent: 'Legal Review',
     matcher: (testItem) => {
-      // ── AI Classification takes priority ──
+      // ── SI Classification takes priority ──
       const aiResult = (testItem as any).__classification__;
       if (aiResult?.domainIntelligence === 'legal') {
         return {
           workspaceId: 'legal-review',
           confidence: aiResult.confidence,
-          reasoning: [`AI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
+          reasoning: [`SI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
         };
       }
 

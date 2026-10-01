@@ -7,11 +7,11 @@ const corsHeaders = {
 };
 
 const SYSTEM_PROMPTS: Record<string, string> = {
-  sales: `You are a sales coaching AI. Given the context of a sales call, generate exactly {count} specific, actionable conversation topics or questions the salesperson should raise with this client. Make them specific to the context provided, not generic. Return ONLY a JSON array of strings like ["topic 1", "topic 2"]. No explanation.`,
-  recruitment: `You are a technical recruiter AI. Given the context of an interview, generate exactly {count} specific interview questions tailored to the candidate and role. Make them insightful and specific. Return ONLY a JSON array of strings like ["question 1", "question 2"]. No explanation.`,
-  clinic: `You are a clinical assistant AI. Given the patient consultation context, generate exactly {count} clinical next steps the doctor should take. Be medically appropriate and specific to the complaint. Return ONLY a JSON array of strings like ["step 1", "step 2"]. No explanation.`,
-  general: `You are a meeting assistant AI. Given the meeting context and transcript, generate exactly {count} AI-powered suggestions or action items for the current meeting. Return ONLY a JSON array of strings like ["suggestion 1", "suggestion 2"]. No explanation.`,
-  insights: `You are a real-time meeting AI. Analyze the meeting transcript and generate exactly {count} live AI suggestions (e.g. silent participants, action items, decisions, follow-ups). Be specific to the transcript. Return ONLY a JSON array of JSON objects like [{"type":"info","text":"..."}, {"type":"action","text":"..."}]. Types: info, warning, action. No explanation.`,
+  sales: `You are a sales coaching SI. Given the context of a sales call, generate exactly {count} specific, actionable conversation topics or questions the salesperson should raise with this client. Make them specific to the context provided, not generic. Return ONLY a JSON array of strings like ["topic 1", "topic 2"]. No explanation.`,
+  recruitment: `You are a technical recruiter SI. Given the context of an interview, generate exactly {count} specific interview questions tailored to the candidate and role. Make them insightful and specific. Return ONLY a JSON array of strings like ["question 1", "question 2"]. No explanation.`,
+  clinic: `You are a clinical assistant SI. Given the patient consultation context, generate exactly {count} clinical next steps the doctor should take. Be medically appropriate and specific to the complaint. Return ONLY a JSON array of strings like ["step 1", "step 2"]. No explanation.`,
+  general: `You are a meeting assistant SI. Given the meeting context and transcript, generate exactly {count} SI-powered suggestions or action items for the current meeting. Return ONLY a JSON array of strings like ["suggestion 1", "suggestion 2"]. No explanation.`,
+  insights: `You are a real-time meeting SI. Analyze the meeting transcript and generate exactly {count} live SI suggestions (e.g. silent participants, action items, decisions, follow-ups). Be specific to the transcript. Return ONLY a JSON array of JSON objects like [{"type":"info","text":"..."}, {"type":"action","text":"..."}]. Types: info, warning, action. No explanation.`,
 };
 
 serve(async (req) => {
@@ -36,7 +36,7 @@ serve(async (req) => {
 
     const raw = chatResult.content || '[]';
 
-    // Parse the JSON array from the AI response
+    // Parse the JSON array from the SI response
     let parsed: any[] = [];
     try {
       // Strip markdown code fences if present

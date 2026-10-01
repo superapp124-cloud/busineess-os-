@@ -1,8 +1,8 @@
-# Phase 2A: CHATR AI Provider Architecture & Routing Map
+# Phase 2A: CHATR SI Provider Architecture & Routing Map
 
 ## 1. Deep Architecture of `_core/aiProvider.ts`
 
-The CHATR AI Router ([`supabase/functions/_core/aiProvider.ts`](file:///c:/Users/Arshid.Wani/chatrchat/supabase/functions/_core/aiProvider.ts)) is a dependency-free Deno module providing unified failover, streaming, vector embedding, and image generation.
+The CHATR SI Router ([`supabase/functions/_core/aiProvider.ts`](file:///c:/Users/Arshid.Wani/chatrchat/supabase/functions/_core/aiProvider.ts)) is a dependency-free Deno module providing unified failover, streaming, vector embedding, and image generation.
 
 ### Verified Source Code Properties
 - **Supported Providers (`AIProviderName`):** `"gemini" | "groq" | "openrouter" | "openai"`
@@ -77,4 +77,4 @@ sequenceDiagram
 The router automatically normalizes model identifiers to prevent cross-provider naming conflicts:
 - In `gemini`: Strips `google/` prefixes and `-preview` suffixes.
 - In `groq`: Strips `meta-llama/` prefixes.
-- In `openai`: Strictly maps to standard OpenAI model IDs (`gpt-4o-mini`, `o1`, `o3`).
+- In `openai`: Strictly maps to standard OpenSI model IDs (`gpt-4o-mini`, `o1`, `o3`).

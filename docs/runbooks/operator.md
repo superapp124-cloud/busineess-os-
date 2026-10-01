@@ -21,4 +21,4 @@ To replay events without triggering duplicate notifications:
 ## 4. Investigating Provider Failures
 1. Check the `ProviderLatencyMs` and `errorRate` in `EngineHealthStore`.
 2. Inspect the audit logs via `SecurityManager.getAuditLog({ action: 'API_CALL' })` for detailed error codes.
-3. If the AI Provider is failing, the platform will attempt BYOAI fallback. If local Ollama fails, workflows will stall until resolved.
+3. If the SI Provider is failing, the platform will attempt BYOSI fallback. If local Ollama fails, workflows will stall until resolved.

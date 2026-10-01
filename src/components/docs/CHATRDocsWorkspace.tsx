@@ -32,7 +32,7 @@ interface ChatMessage {
     page: number;
     clause: string;
     confidence: number;
-    trustBadge: 'Verified Grounded' | 'High Confidence' | 'AI Estimate';
+    trustBadge: 'Verified Grounded' | 'High Confidence' | 'SI Estimate';
     bbox: BoundingBox;
     conversationalText?: string;
   };
@@ -549,7 +549,7 @@ export const CHATRDocsWorkspace: React.FC = () => {
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-cyan-400" />
               <h3 className="text-sm font-semibold text-white">
-                {isDeveloperMode ? 'Grounded AI Assistant' : 'Assistant'}
+                {isDeveloperMode ? 'Grounded SI Assistant' : 'Assistant'}
               </h3>
             </div>
             {isDeveloperMode && (

@@ -31,7 +31,7 @@ export const DashboardCenterPanel: React.FC<{
           {/* ── 2. Command Bar ────────────────────────────────────── */}
           <UniversalCommandBar />
 
-          {/* ── 3. AI Brief Hero ──────────────────────────────────── */}
+          {/* ── 3. SI Brief Hero ──────────────────────────────────── */}
           {experience.dashboard.showAIBrief && <AIBriefHero />}
 
           {/* ── 4. Primary Actions ────────────────────────────────── */}

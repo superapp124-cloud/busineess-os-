@@ -86,7 +86,7 @@ serve(async (req) => {
       `Q: ${t.question}\nA: ${t.answer}`
     ).join("\n\n") || "";
 
-    const systemPrompt = `You are ${agent.agent_name}, an AI assistant.
+    const systemPrompt = `You are ${agent.agent_name}, an SI assistant.
 Description: ${agent.agent_description}
 Personality: ${agent.agent_personality}
 Purpose: ${agent.agent_purpose}
@@ -124,7 +124,7 @@ Keep responses concise and helpful (2-3 sentences).`;
     });
 
     const reply = aiResult.content;
-    if (!reply) throw new Error("No response from AI");
+    if (!reply) throw new Error("No response from SI");
 
     if (conversationId) {
       await serviceClient.from("messages").insert({

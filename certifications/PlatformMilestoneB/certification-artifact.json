@@ -72,6 +72,6 @@
   "governance_impact": "None",
   "implementation_quality": "Improvement",
   "approved_by": ["Technical Steering Committee"],
-  "tsc_assessment": "This is the first point where CHATR is described not as an ambitious AI application, but as an operating system platform under disciplined engineering governance.",
+  "tsc_assessment": "This is the first point where CHATR is described not as an ambitious SI application, but as an operating system platform under disciplined engineering governance.",
   "next_milestone": "Platform Milestone C — Strategy Resolver → Provider Intelligence → Trust Service → Policy Service → Resource Manager"
 }

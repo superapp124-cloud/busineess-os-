@@ -78,17 +78,17 @@ import { UnderstandingLayer } from '@/components/semantic/UnderstandingLayer';
 import { useIntentObserver } from '@/hooks/useIntentObserver';
 
 const ChatEnhancedContent = () => {
- const [wallpaperClass, setWallpaperClass] = React.useState('bg-[#F0F0F8]');
+ const [wallpaperClass, setWallpaperClass] = React.useState('bg-[#0B0E14]');
  
  React.useEffect(() => {
  const savedWallpaperId = localStorage.getItem(WALLPAPER_KEY) || 'default';
  const wpClass = getWallpaperClass(savedWallpaperId);
- setWallpaperClass(savedWallpaperId === 'default' ? 'bg-[#F0F0F8]' : wpClass);
+ setWallpaperClass(savedWallpaperId === 'default' ? 'bg-[#0B0E14]' : wpClass);
  
  const handleStorage = (e: StorageEvent) => {
  if (e.key === WALLPAPER_KEY) {
  const newClass = getWallpaperClass(e.newValue || 'default');
- setWallpaperClass(e.newValue === 'default' || !e.newValue ? 'bg-[#F0F0F8]' : newClass);
+ setWallpaperClass(e.newValue === 'default' || !e.newValue ? 'bg-[#0B0E14]' : newClass);
  }
  };
  
@@ -194,10 +194,17 @@ const ChatEnhancedContent = () => {
  try {
  console.log(`📞 [Chat] startCall: type=${type}, partner=${otherUser?.username} (${otherUser?.id})`);
  if (!peer?.id) {
- console.error('❌ [Chat] Cannot start call: otherUser.id is missing');
- toast.error('Contact info not available. Please try refreshing.');
- return;
- }
+      // For phone-number-only contacts, fall back to GSM dialer
+      const phone = peer?.phone_number || (peer as any)?.contact_phone;
+      if (phone) {
+        console.log('[Chat] Falling back to GSM call for phone-only contact:', phone);
+        toast.info(`📞 Calling ${phone} via phone...`);
+        window.location.href = `tel:${phone.replace(/\s+/g, '')}`;
+      } else {
+        toast.error('Cannot start call — no phone number or Chatr ID found.');
+      }
+      return;
+    }
 
  const callId = await initiateCall({
  partnerId: peer.id,
@@ -254,7 +261,7 @@ const ChatEnhancedContent = () => {
  const [selectionMode, setSelectionMode] = React.useState(false);
  const [selectedMessages, setSelectedMessages] = React.useState<Set<string>>(new Set());
  
- // AI Features State
+ // SI Features State
  const [showSmartReplies, setShowSmartReplies] = React.useState(false);
  const [showSummary, setShowSummary] = React.useState(false);
  const [showInsights, setShowInsights] = React.useState(false);
@@ -393,13 +400,16 @@ const ChatEnhancedContent = () => {
  
  const loadNotifications = async () => {
  const { count } = await supabase
- .from('notifications')
- .select('*', { count: 'exact', head: true })
- .eq('user_id', user.id)
- .eq('read', false);
- 
- setNotificationCount(count || 0);
- };
+ try {
+        const { data: convs } = await supabase.rpc('get_user_conversations_optimized', { p_user_id: user.id });
+        if (convs && Array.isArray(convs)) {
+          const totalUnread = convs.reduce((sum: number, c: any) => sum + (c.unreadcount || c.unread_count || 0), 0);
+          setNotificationCount(totalUnread);
+          return;
+        }
+      } catch {}
+      setNotificationCount(0);
+    };
  
  // Defer by 2 seconds
  const timer = setTimeout(() => {
@@ -860,7 +870,7 @@ const ChatEnhancedContent = () => {
  toast.info('Tone improvement coming soon!');
  break;
  default:
- console.warn('Unknown AI action:', action);
+ console.warn('Unknown SI action:', action);
  }
  };
 
@@ -944,7 +954,7 @@ const ChatEnhancedContent = () => {
  <>
  <div
  data-chat-container
- className="sticky top-0 z-20 shrink-0 border-b-[0.5px] border-[#EEEEF4] bg-[#FFFFFF] px-[16px] flex items-center min-h-[56px]"
+ className="sticky top-0 z-20 shrink-0 border-b border-white/[0.08] bg-[#0B0E14]/95 backdrop-blur-xl px-[16px] flex items-center min-h-[58px] text-white"
  >
  {selectionMode ? (
  <div className="flex items-center gap-2 w-full py-[8px]">
@@ -986,7 +996,7 @@ const ChatEnhancedContent = () => {
  onClick={() => {
  navigate('/chat');
  }}
- className="min-h-[44px] min-w-[44px] rounded-full text-[#3D3D5C] hover:bg-black/[0.04] mr-1"
+ className="min-h-[44px] min-w-[44px] rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors mr-1"
  >
  <ArrowLeft className="w-[24px] h-[24px]" />
  </Button>
@@ -1009,8 +1019,8 @@ const ChatEnhancedContent = () => {
  <div style={{ position: 'relative', flexShrink: 0 }}>
  <div style={{
  width: 38, height: 38, borderRadius: '50%',
- background: '#EDE8FF',
- color: '#6C63FF',
+ background: '#161B26',
+ color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: 15, fontWeight: 700
  }}>
@@ -1020,7 +1030,7 @@ const ChatEnhancedContent = () => {
 
  <div style={{ minWidth: 0 }}>
  <div style={{
- fontSize: 15, fontWeight: 600, color: '#1A1A2E',
+ fontSize: 15, fontWeight: 600, color: '#FFFFFF',
  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
  }}>
  Note to Self
@@ -1049,8 +1059,8 @@ const ChatEnhancedContent = () => {
  ) : (
  <div style={{
  width: 38, height: 38, borderRadius: '50%',
- background: isUnknown ? '#EEEEF4' : '#EDE8FF',
- color: isUnknown ? '#9898B3' : '#6C63FF',
+ background: '#161B26',
+ color: '#10B981', border: '1px solid rgba(255, 255, 255, 0.1)',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: 13, fontWeight: 700
  }}>
@@ -1068,13 +1078,13 @@ const ChatEnhancedContent = () => {
 
  <div style={{ minWidth: 0 }}>
  <div style={{
- fontSize: 15, fontWeight: 600, color: '#1A1A2E',
+ fontSize: 15, fontWeight: 600, color: '#FFFFFF',
  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
  }}>
  {displayName}
  </div>
- <div style={{ fontSize: 12, color: otherUser.is_online ? '#00BFA5' : '#9898B3' }}>
- {otherUser.is_online ? 'Online' 
+ <div style={{ fontSize: 12, color: otherUser.is_online ? '#10B981' : 'rgba(255, 255, 255, 0.5)' }}>
+ {otherUser.is_online ? '✦ Chatr Verified • Active now' 
  : otherUser.last_seen ? `Last seen recently` 
  : 'Tap to view profile'}
  </div>
@@ -1087,8 +1097,8 @@ const ChatEnhancedContent = () => {
  <Button
  variant="ghost"
  size="icon"
- onClick={() => handleStartCall('voice')}
- className="min-h-[44px] min-w-[44px] rounded-full text-[#3D3D5C] hover:bg-black/[0.04]"
+ onClick={() => { if (!callActive) handleStartCall('voice'); }}
+ className="min-h-[44px] min-w-[44px] rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
  title="Voice Call"
  >
  <Phone className="w-[24px] h-[24px]" />
@@ -1096,8 +1106,8 @@ const ChatEnhancedContent = () => {
  <Button
  variant="ghost"
  size="icon"
- onClick={() => handleStartCall('video')}
- className="min-h-[44px] min-w-[44px] rounded-full text-[#3D3D5C] hover:bg-black/[0.04]"
+ onClick={() => { if (!callActive) handleStartCall('video'); }}
+ className="min-h-[44px] min-w-[44px] rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
  title="Video Call"
  >
  <Video className="w-[24px] h-[24px]" />
@@ -1107,7 +1117,7 @@ const ChatEnhancedContent = () => {
  <Button
  variant="ghost"
  size="icon"
- className="min-h-[44px] min-w-[44px] rounded-full text-[#3D3D5C] hover:bg-black/[0.04]"
+ className="min-h-[44px] min-w-[44px] rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
  >
  <MoreVertical className="w-[24px] h-[24px]" />
  </Button>
@@ -1171,7 +1181,7 @@ const ChatEnhancedContent = () => {
  Disappearing Messages
  </DropdownMenuItem>
  <DropdownMenuItem onClick={() => setShowAIFeatures(true)}>
- AI features
+ SI features
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
@@ -1236,7 +1246,7 @@ const ChatEnhancedContent = () => {
  </div>
 
  <div
- className="shrink-0 border-t border-black/[0.05] bg-white/96 backdrop-blur-2xl"
+ className="shrink-0 border-t border-white/[0.08] bg-[#0B0E14]/95 backdrop-blur-2xl"
  style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}
  >
  {/* ── Experience Alpha: Understanding Layer ── */}
@@ -1269,10 +1279,10 @@ const ChatEnhancedContent = () => {
  </div>
  </>
  ) : (
- <div className="flex flex-1 flex-col h-full bg-white">
- <div className="flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),16px)] pb-2 bg-white border-b border-[#EEEEF4] shrink-0 sticky top-0 z-10 shadow-sm">
- <h1 className="text-page font-bold text-[#1A1A2E] flex items-center gap-2">
- Chats
+ <div className="flex flex-1 flex-col h-full bg-[#0B0E14] text-white">
+ <div className="flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),16px)] pb-3 bg-[#0B0E14] border-b border-white/[0.06] shrink-0 sticky top-0 z-10">
+ <h1 className="text-[22px] font-extrabold text-white tracking-tight flex items-center gap-2">
+ Messages
  {notificationCount > 0 && (
  <span className="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
  {notificationCount}

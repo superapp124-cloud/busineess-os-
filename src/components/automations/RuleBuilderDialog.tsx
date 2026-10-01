@@ -94,7 +94,7 @@ export const RuleBuilderDialog = ({ isOpen, onClose, onSave, initialRule, userId
  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
  <DialogTitle className="flex items-center gap-2 text-workspace font-bold text-white z-10 relative">
  <BrainCircuit className="w-5 h-5" />
- {initialRule ? 'Edit Workflow' : 'Create AI Workflow'}
+ {initialRule ? 'Edit Workflow' : 'Create SI Workflow'}
  </DialogTitle>
  <p className="text-purple-100 text-[13px] mt-1 relative z-10">Build automation logic using visual nodes.</p>
  </div>
@@ -134,7 +134,7 @@ export const RuleBuilderDialog = ({ isOpen, onClose, onSave, initialRule, userId
  </div>
  </div>
 
- {/* CONDITIONS (AI MEMORY NODES) */}
+ {/* CONDITIONS (SI MEMORY NODES) */}
  {conditions.map((cond, idx) => (
  <React.Fragment key={idx}>
  <NodeConnection />
@@ -144,7 +144,7 @@ export const RuleBuilderDialog = ({ isOpen, onClose, onSave, initialRule, userId
  <span className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center">
  <BrainCircuit className="w-3 h-3 text-purple-600" />
  </span>
- <span className="text-[11px] font-bold text-purple-700 uppercase tracking-wider">AI EXTRACT</span>
+ <span className="text-[11px] font-bold text-purple-700 uppercase tracking-wider">SI EXTRACT</span>
  </div>
  <button onClick={() => removeCondition(idx)} className="text-gray-400 hover:text-red-500">
  <Trash2 className="w-3.5 h-3.5" />
@@ -156,7 +156,7 @@ export const RuleBuilderDialog = ({ isOpen, onClose, onSave, initialRule, userId
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
- <SelectItem value="matches_ai">Matches AI</SelectItem>
+ <SelectItem value="matches_ai">Matches SI</SelectItem>
  <SelectItem value="contains">Contains</SelectItem>
  </SelectContent>
  </Select>

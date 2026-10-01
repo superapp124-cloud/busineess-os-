@@ -2,7 +2,7 @@
  * KernelClient — React to CHATR Kernel Boundary
  *
  * This client defines the strict contract between the React UI and the Node Kernel.
- * The UI must remain completely agnostic of underlying AI models, execution paths,
+ * The UI must remain completely agnostic of underlying SI models, execution paths,
  * or provider specifics. It only communicates "Intents".
  */
 

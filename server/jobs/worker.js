@@ -19,7 +19,7 @@ const handlers = {
   },
   'conversation_summary': async (payload) => {
     console.log(`[Job] Generating summary for conversation: ${payload.conversation_id}`);
-    // Call the AI Provider to summarize and insert into conversation_summaries
+    // Call the SI Provider to summarize and insert into conversation_summaries
     return { success: true };
   }
 };

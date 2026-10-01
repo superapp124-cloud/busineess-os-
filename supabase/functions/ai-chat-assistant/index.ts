@@ -89,7 +89,7 @@ serve(async (req) => {
     }
 
     const systemInstruction =
-      system_prompt || "You are CHATR AI — a helpful, intelligent, and concise executive assistant. Provide professional, action-oriented responses.";
+      system_prompt || "You are CHATR SI — a helpful, intelligent, and concise executive assistant. Provide professional, action-oriented responses.";
 
     const chatResult = await completeChat({
       messages: [

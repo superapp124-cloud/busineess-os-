@@ -15,7 +15,7 @@ This constitution defines the immutable rules for extending the CHATR Intent Ope
 ---
 
 ## 1. Composition Over Modification
-Nothing modifies the Kernel, the frozen ABI contracts, the Canonical Ontology, or the Business Runtime. Every Industry, Enterprise, AI, Experience, or Regional Solution is a **Composition Package**.
+Nothing modifies the Kernel, the frozen ABI contracts, the Canonical Ontology, or the Business Runtime. Every Industry, Enterprise, SI, Experience, or Regional Solution is a **Composition Package**.
 
 ## 2. Extension Before Replacement
 Every Solution Pack extends canonical behavior; nothing replaces canonical behavior. If a capability exists, it must be reused.

@@ -61,7 +61,7 @@ export const AIPhotoEnhancer: React.FC<AIPhotoEnhancerProps> = ({
  <Dialog open={isOpen} onOpenChange={onClose}>
  <DialogContent className="sm:max-w-2xl">
  <DialogHeader>
- <DialogTitle>AI Photo Enhancement</DialogTitle>
+ <DialogTitle>SI Photo Enhancement</DialogTitle>
  </DialogHeader>
 
  <div className="space-y-4">

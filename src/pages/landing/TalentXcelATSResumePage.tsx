@@ -313,7 +313,7 @@ export const TalentXcelATSResumePage = () => {
         <h2 className="text-2xl font-bold text-white mb-6">Explore More Tools</h2>
         <div className="flex flex-col sm:flex-row justify-center gap-6 mb-12">
           <Link to="/talentxcel/ai-resume-parser" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4">
-            Test Your Resume with AI Parser
+            Test Your Resume with SI Parser
           </Link>
           <Link to="/chatr/whatsapp-candidate-screening" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4">
             WhatsApp Candidate Screening for Recruiters

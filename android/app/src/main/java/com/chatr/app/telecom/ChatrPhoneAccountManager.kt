@@ -59,7 +59,7 @@ object ChatrPhoneAccountManager {
 
             // Android 11+ supports short description
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                builder.setShortDescription("Chatr+ AI-powered calls")
+                builder.setShortDescription("Chatr+ SI-powered calls")
             }
 
             telecomManager.registerPhoneAccount(builder.build())

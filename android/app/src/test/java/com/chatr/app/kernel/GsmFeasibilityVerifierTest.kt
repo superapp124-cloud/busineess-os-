@@ -44,7 +44,7 @@ class GsmFeasibilityVerifierTest {
     @Test
     fun test1B5TwoWayConversationalDialogueExchange() = runBlocking {
         val dialogueScript = listOf(
-            DialogueAction.Speak("Hi, this is Chatr AI answering. Who is calling?"),
+            DialogueAction.Speak("Hi, this is Chatr SI answering. Who is calling?"),
             DialogueAction.Speak("Understood, leave it with the security desk at flat 402."),
             DialogueAction.EndScreening
         )
@@ -64,7 +64,7 @@ class GsmFeasibilityVerifierTest {
         val adapter = MockIntelligenceAdapter()
         val verifier = GsmFeasibilityVerifier(testContext, adapter, trustKernel, toolRegistry)
 
-        // 1. Direct intent evaluation: User requesting handover from AI
+        // 1. Direct intent evaluation: User requesting handover from SI
         val handoverIntent = KernelIntent(
             traceId = UUID.randomUUID().toString(),
             action = IntentAction.CALL_TAKEOVER_FROM_AI,
@@ -98,7 +98,7 @@ class GsmFeasibilityVerifierTest {
     @Test
     fun testRunAllGatesProducesComprehensiveReport() = runBlocking {
         val dialogueScript = listOf(
-            DialogueAction.Speak("Hi, this is Chatr AI answering. Who is calling?"),
+            DialogueAction.Speak("Hi, this is Chatr SI answering. Who is calling?"),
             DialogueAction.Speak("Understood, leave it with the security desk at flat 402."),
             DialogueAction.EndScreening
         )

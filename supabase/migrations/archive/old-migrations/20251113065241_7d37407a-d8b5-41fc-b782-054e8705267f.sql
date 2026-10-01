@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS public.visual_search_history (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
-  image_analysis JSONB DEFAULT '{}'::jsonb, -- AI detected objects, colors, etc.
+  image_analysis JSONB DEFAULT '{}'::jsonb, -- SI detected objects, colors, etc.
   search_query_generated TEXT,
   results_found INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()

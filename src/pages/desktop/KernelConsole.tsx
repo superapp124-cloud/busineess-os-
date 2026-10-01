@@ -61,7 +61,7 @@ export default function KernelConsole() {
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
  <div className="bg-zinc-900 p-4 rounded border border-zinc-800">
- <p className="text-zinc-500 text-label mb-1 uppercase tracking-wider">AI Provider</p>
+ <p className="text-zinc-500 text-label mb-1 uppercase tracking-wider">SI Provider</p>
  <p className="text-workspace text-white capitalize">{health.provider}</p>
  <p className="text-label text-zinc-400 mt-1">{health.providerOk ? '● Online' : '○ Offline'}</p>
  </div>

@@ -3,7 +3,7 @@
  *
  * Single React Context that wraps the entire DesktopLayout.
  * Any component on any page calls useCHATROS() to get:
- * - Current page context (AI mode, label, suggestions)
+ * - Current page context (SI mode, label, suggestions)
  * - Extracted knowledge (people, dates, intents from conversation)
  * - Active commitments
  * - OSScheduler entries for timeline

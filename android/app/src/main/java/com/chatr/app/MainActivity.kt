@@ -449,7 +449,7 @@ class MainActivity : BridgeActivity() {
                     followUp.put("Save evidence snapshot")
                     followUp.put("Block sender checklist")
                     """
-                    CHATR AI scan: treat this as high-risk until verified.
+                    CHATR SI scan: treat this as high-risk until verified.
 
                     Do this now:
                     1. Do not share OTP, PIN, UPI PIN, card details, or passwords.
@@ -467,7 +467,7 @@ class MainActivity : BridgeActivity() {
                     followUp.put("Create follow-up tasks")
                     followUp.put("Turn call into reminder")
                     """
-                    CHATR AI Call Copilot is ready.
+                    CHATR SI Call Copilot is ready.
 
                     Choose a recent call from Recents or paste call notes here, and I will create:
                     1. Key points and important names.
@@ -486,7 +486,7 @@ class MainActivity : BridgeActivity() {
                             followUp.put("Make ATS keywords")
                             followUp.put("Draft cover letter")
                             """
-                            CHATR AI resume helper is ready on-device.
+                            CHATR SI resume helper is ready on-device.
 
                             Paste your current resume summary, skills, or target role and I will rewrite it.
 
@@ -506,7 +506,7 @@ class MainActivity : BridgeActivity() {
                             followUp.put("Practice salary answer")
                             followUp.put("Prepare self introduction")
                             """
-                            CHATR AI interview practice is ready.
+                            CHATR SI interview practice is ready.
 
                             We can run this voice-first:
                             1. I ask one interview question at a time.
@@ -525,7 +525,7 @@ class MainActivity : BridgeActivity() {
                                 followUp.put("Draft verification questions")
                                 followUp.put("Practice interview")
                                 """
-                                CHATR AI recruiter scan needs evidence.
+                                CHATR SI recruiter scan needs evidence.
 
                                 I cannot honestly score this recruiter yet because I only have the request, not the message or offer details.
 
@@ -550,7 +550,7 @@ class MainActivity : BridgeActivity() {
                                     "needs verification"
                                 }
                                 """
-                                CHATR AI recruiter scan: $severity.
+                                CHATR SI recruiter scan: $severity.
 
                                 Do this before replying:
                                 1. Verify the company domain and recruiter email. Avoid free email IDs for official offers.
@@ -569,7 +569,7 @@ class MainActivity : BridgeActivity() {
                             followUp.put("Improve resume summary")
                             followUp.put("Practice interview")
                             """
-                            CHATR AI Jobs Engine is active.
+                            CHATR SI Jobs Engine is active.
 
                             Tell me your target role, city or remote preference, experience level, expected salary, and 3 strongest skills.
 
@@ -591,7 +591,7 @@ class MainActivity : BridgeActivity() {
                     followUp.put("Prepare family call script")
                     followUp.put("Make doctor question list")
                     """
-                    CHATR AI Family Care is ready.
+                    CHATR SI Family Care is ready.
 
                     On-device care plan:
                     1. Confirm the medicine name, dosage, and time.
@@ -607,7 +607,7 @@ class MainActivity : BridgeActivity() {
                     followUp.put("Check payment link safety")
                     followUp.put("Build low-data plan")
                     """
-                    CHATR AI Life Assistant can manage this offline.
+                    CHATR SI Life Assistant can manage this offline.
 
                     Suggested next step:
                     1. Confirm the bill, recharge, or subscription name.
@@ -623,7 +623,7 @@ class MainActivity : BridgeActivity() {
                     """
                     CHATR local fallback answer
 
-                    I do not need cloud AI to start helping with this.
+                    I do not need cloud SI to start helping with this.
 
                     Right now I can act on:
                     1. Scam Shield: check OTP, bank, UPI, fake recruiter, and suspicious caller patterns.
@@ -867,7 +867,7 @@ class MainActivity : BridgeActivity() {
             toneManager.stopTone()
             ChatrConnectionService.getConnection(callId)?.handoffToWebCall()
             ChatrNotificationCoordinator.cancelIncomingCallNotification(this@MainActivity, callId)
-            // Start AI overlay bubble on top of VoIP call
+            // Start SI overlay bubble on top of VoIP call
             InCallOverlayService.start(this@MainActivity, callId)
         }
 
@@ -878,7 +878,7 @@ class MainActivity : BridgeActivity() {
             ChatrConnectionService.getConnection(callId)?.endCall()
             ChatrNotificationCoordinator.cancelIncomingCallNotification(this@MainActivity, callId)
             ChatrVoipCallRegistry.clear(this@MainActivity, callId)
-            // Stop AI overlay when call ends
+            // Stop SI overlay when call ends
             InCallOverlayService.stop(this@MainActivity)
         }
 
@@ -1268,19 +1268,6 @@ class MainActivity : BridgeActivity() {
             // Phase 8 — Network Handoff: give NetworkChangeReceiver a reference to
             // dispatch nativeNetworkChanged events for proactive ICE restart
             com.chatr.app.receivers.NetworkChangeReceiver.webViewRef = webView
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (isWebAppReady || startupFallbackAttempted) return@postDelayed
-                if (webView.url?.startsWith(activeBridge?.localUrl ?: "https://localhost") == true &&
-                    webView.progress <= 10
-                ) {
-                    Log.w(
-                        TAG,
-                        "Initial Capacitor WebView load is still pending after bridge setup; loading bundled index fallback",
-                    )
-                    startupFallbackAttempted = true
-                    loadBundledIndexHtmlFallback(webView)
-                }
-            }, 4_000L)
             scheduleWebViewStartupFallback(webView)
             Log.i(TAG, "WebView configured with native bridges")
     }
@@ -1289,35 +1276,11 @@ class MainActivity : BridgeActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             if (isWebAppReady || startupFallbackAttempted) return@postDelayed
 
-            Log.w(
+            Log.i(
                 TAG,
-                "WebView early startup check: url=${webView.url} progress=${webView.progress}"
+                "WebView startup status: url=${webView.url} progress=${webView.progress}"
             )
-        }, 900L)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (isWebAppReady || startupFallbackAttempted) return@postDelayed
-            recoverBlankWebViewIfNeeded(webView)
-        }, 8_000L)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (isWebAppReady || startupFallbackAttempted) return@postDelayed
-
-            Log.w(
-                TAG,
-                "WebView has not reported ready yet. " +
-                    "url=${webView.url} progress=${webView.progress}"
-            )
-
-            // Do not interrupt a real bundled app load. On slower devices React can
-            // still be parsing/running while the WebView progress is low; forcing a
-            // reload here leaves users on a white screen. Only recover when the
-            // WebView has not started a navigation at all.
-            if (webView.url.isNullOrBlank() && webView.progress <= 0) {
-                startupFallbackAttempted = true
-                restartCapacitorLocalLoad(webView)
-            }
-        }, 20_000L)
+        }, 2_000L)
     }
 
     private fun recoverBlankWebViewIfNeeded(webView: WebView) {
@@ -1552,7 +1515,7 @@ class MainActivity : BridgeActivity() {
         Log.i(TAG, "Handling action=$action intentAction=$intentAction data=$dataUri")
 
         if (intent.getBooleanExtra("show_post_call_ai", false)) {
-            Log.i(TAG, "Triggering Post-Call AI panel for $phoneNumber")
+            Log.i(TAG, "Triggering Post-Call SI panel for $phoneNumber")
             emitNativeEvent("nativeNavigate", org.json.JSONObject().apply {
                 put("path", "/call-history")
                 put("showInsights", true)
@@ -2096,6 +2059,22 @@ class MainActivity : BridgeActivity() {
         if (webView != null) {
             Log.i(TAG, "Forcing WebView to remain resumed in onStop")
             webView.onResume()
+        }
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Log.w(TAG, "MainActivity onTrimMemory: level=$level")
+        // If memory is low/critical or UI is in background, release native LLM context & KV cache
+        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW ||
+            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            try {
+                Log.w(TAG, "OS Memory Pressure detected (level=$level). Unloading native LLM models & KV cache.")
+                com.chatr.app.ondeviceai.LlamaCppEngine.unloadActiveInstance()
+                com.chatr.app.ondeviceai.ChatrAIRouter(applicationContext).unloadModels()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error trimming SI memory", e)
+            }
         }
     }
 

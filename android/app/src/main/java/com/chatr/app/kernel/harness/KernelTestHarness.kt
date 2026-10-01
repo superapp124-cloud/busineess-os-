@@ -47,7 +47,7 @@ class KernelTestHarness(
     private val intelligence: ChatrIntelligenceApi,
     private val trustKernel: TrustPermissionKernel,
     private val toolRegistry: MockToolRegistry,
-    private val surface: ChatrSurface = ChatrSurface.AI
+    private val surface: ChatrSurface = ChatrSurface.SI
 ) {
 
     /**
@@ -284,7 +284,7 @@ class KernelTestHarness(
         fun create(
             trustKernel: TrustPermissionKernel,
             intelligence: ChatrIntelligenceApi = MockIntelligenceAdapter(),
-            surface: ChatrSurface = ChatrSurface.AI
+            surface: ChatrSurface = ChatrSurface.SI
         ): KernelTestHarness = KernelTestHarness(
             intelligence = intelligence,
             trustKernel = trustKernel,

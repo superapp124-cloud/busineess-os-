@@ -38,7 +38,7 @@ export class PDFProviderPlugin implements IDocumentProviderPlugin {
     const output: DocumentOutput = {
       documentId: input.documentId,
       totalPages: 12,
-      markdown: `# Sample Document (${input.filePath})\n\nProcessed with Baidu Unlimited-OCR Reference Sliding Window Attention.\n\n## Section 1: Intent OS Architecture\nCHATR is an Intent Operating System powered by local AI and event-driven runtimes.`,
+      markdown: `# Sample Document (${input.filePath})\n\nProcessed with Baidu Unlimited-OCR Reference Sliding Window Attention.\n\n## Section 1: Intent OS Architecture\nCHATR is an Intent Operating System powered by local SI and event-driven runtimes.`,
       structuredData: {
         provider: this.id,
         parsedPages: 12,

@@ -43,7 +43,7 @@ export const ProductivityDock: React.FC = () => {
  {
  id: 'ai',
  icon: BrainCircuit,
- label: 'Ask AI',
+ label: 'Ask SI',
  color: 'text-violet-400 hover:bg-violet-500/20',
  action: () => { navigate('/desktop/canvas'); setExpanded(false); },
  },
@@ -125,7 +125,7 @@ export const ProductivityDock: React.FC = () => {
  </div>
  {clipboardContent && clipboardContent.startsWith('http') && (
  <div className="mt-2 text-label text-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-lg ">
- 🔗 URL detected — open in AI Browser?
+ 🔗 URL detected — open in SI Browser?
  </div>
  )}
  </div>
@@ -182,7 +182,7 @@ export const ProductivityDock: React.FC = () => {
  </button>
  </div>
  <p className={cn('text-label mb-3', isDark ? 'text-white/50' : 'text-zinc-500')}>
- Ask AI to translate your clipboard content:
+ Ask SI to translate your clipboard content:
  </p>
  <button
  onClick={() => { navigate('/desktop/canvas'); setActivePanel(null); }}

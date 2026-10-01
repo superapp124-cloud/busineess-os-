@@ -22,7 +22,7 @@ serve(async (req) => {
       messages: [
         {
           role: "system",
-          content: `You are an AI assistant for Chatr+, a superapp for local services in India. 
+          content: `You are an SI assistant for Chatr+, a superapp for local services in India. 
 When users search for something, analyze their intent and suggest relevant service categories and keywords.
 
 Available categories:

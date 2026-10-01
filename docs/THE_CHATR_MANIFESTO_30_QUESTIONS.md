@@ -15,14 +15,14 @@ They **do not replace** Microsoft 365, Salesforce, SAP, or Tally on Day 1. CHATR
 > **CHATR is an Intent-First Business Operating System that translates natural language goals into autonomous multi-app executions.**
 
 ### 3. What category are you creating?
-**AI Business Execution OS** (The interaction paradigm: *Intent Execution Surface*).
+**SI Business Execution OS** (The interaction paradigm: *Intent Execution Surface*).
 
 ---
 
 ## 🎨 SECTION 2: USER EXPERIENCE & THE 80% REMOVAL RULE
 
 ### 4. Can a CEO accomplish something meaningful in under 30 seconds?
-**Yes.** Log in → Read 3-line AI narration (*"Revenue up 12%. 2 payouts pending."*) → Click `[Approve ₹2.4L Payout]` or type *"Show top 3 risks"* → Experience completed result in 8 seconds.
+**Yes.** Log in → Read 3-line SI narration (*"Revenue up 12%. 2 payouts pending."*) → Click `[Approve ₹2.4L Payout]` or type *"Show top 3 risks"* → Experience completed result in 8 seconds.
 
 ### 5. Why does the homepage exist?
 To answer strictly three questions and nothing else:
@@ -38,20 +38,20 @@ To answer strictly three questions and nothing else:
 
 ---
 
-## 🧠 SECTION 3: AI TRANSPARENCY, BOUNDARIES & TRUST
+## 🧠 SECTION 3: SI TRANSPARENCY, BOUNDARIES & TRUST
 
-### 8. What is AI doing right now?
+### 8. What is SI doing right now?
 Every process thread visually displays its exact state:
 `Thinking` | `Planning` | `Waiting for Webhook` | `Needs Approval` | `Retrying` | `Completed`.
 
-### 9. Why should users trust AI?
+### 9. Why should users trust SI?
 Every execution features a **1-Click Audit Trace** detailing:
 * Exact RAG source documents
 * Confidence score (0–100%)
 * Evaluated policy rules
 * Executed API graph steps
 
-### 10. When should AI stop (The Human Boundary)?
+### 10. When should SI stop (The Human Boundary)?
 At **Human Approval Gates**. High-stakes actions (financial payouts > threshold, contract binding, data deletion, external email dispatch to VIPs) automatically pause in `NeedsApproval` state until a authorized human signs off.
 
 ---
@@ -96,15 +96,15 @@ The remaining 24 views become **Contextual Views** that open automatically on de
 
 ## ⚙️ SECTION 6: ENTERPRISE, DIGITAL TWIN, MOAT & ECONOMICS
 
-### 21. How does IT govern AI?
-IT defines **Policy Invariants (What AI CANNOT Do)**:
+### 21. How does IT govern SI?
+IT defines **Policy Invariants (What SI CANNOT Do)**:
 * *"Never transfer funds > ₹50,000 without CFO sign-off."*
 * *"Never export PII data outside the jurisdiction."*
 
-### 22. Can every AI action be audited 3 years later?
+### 22. Can every SI action be audited 3 years later?
 **Yes.** Every execution carries an immutable `traceId` logging *Who, What, Why, When, Data Used, Model Version, and Approval Sign-off*.
 
-### 23. Can a company disable AI entirely?
+### 23. Can a company disable SI entirely?
 **Yes (Graceful Degradation).** CHATR falls back into a high-speed manual workflow & task execution engine.
 
 ### 24. Is your Digital Twin descriptive or operational?
@@ -118,7 +118,7 @@ Neither can build a **vendor-agnostic execution kernel** that unifies competitor
 ### 26. What becomes smarter after 5 years?
 **Organization Execution Memory & Decision Patterns.**
 
-### 27. If AI API costs increase 10×, does CHATR still work?
+### 27. If SI API costs increase 10×, does CHATR still work?
 **Yes.** Fallback hierarchy: `Local Models (Ollama/Llama3)` → `Cached Execution Graphs` → `Rule-Based Heuristics`.
 
 ### 28. What is your gross margin?

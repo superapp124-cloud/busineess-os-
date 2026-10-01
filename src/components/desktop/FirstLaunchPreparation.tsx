@@ -11,7 +11,7 @@ interface RuntimeState {
 export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onReady }) => {
   const [state, setState] = useState<RuntimeState>({
     phase: 'preparing',
-    currentStep: 'Preparing AI Runtime...',
+    currentStep: 'Preparing SI Runtime...',
     progress: 35,
     readyModels: []
   });
@@ -45,7 +45,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
   };
 
   const steps = [
-    { label: 'Preparing AI Runtime', done: state.progress >= 25, active: state.progress < 25 },
+    { label: 'Preparing SI Runtime', done: state.progress >= 25, active: state.progress < 25 },
     { label: 'Optimizing for your computer', done: state.progress >= 45, active: state.progress >= 25 && state.progress < 45 },
     { label: 'Installing Intelligence Models', done: state.progress >= 75, active: state.progress >= 45 && state.progress < 75 },
     { label: 'Preparing Secure Memory', done: state.progress >= 90, active: state.progress >= 75 && state.progress < 90 },
@@ -68,12 +68,12 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
           Welcome to CHATR
         </h1>
         <p className="text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-5">
-          Preparing Your AI Operating Environment
+          Preparing Your SI Operating Environment
         </p>
 
         {/* Visual Benefits Tags */}
         <div className="flex flex-wrap justify-center gap-2 mb-6 text-xs text-slate-200">
-          <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 font-medium">✓ Local AI</span>
+          <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 font-medium">✓ Local SI</span>
           <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 font-medium">✓ Private Memory</span>
           <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 font-medium">✓ Voice Intelligence</span>
           <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 font-medium">✓ Enterprise Automation</span>
@@ -82,7 +82,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
         {/* Hardware Adaptation Summary */}
         <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs text-emerald-400 flex items-center justify-center gap-2 mb-6">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Computer Ready: Windows OS • Hardware Local AI Acceleration Supported</span>
+          <span>Computer Ready: Windows OS • Hardware Local SI Acceleration Supported</span>
         </div>
 
         {/* Progressive Capability Status Panel */}
@@ -94,11 +94,11 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-slate-300">Cloud AI</span>
+              <span className="text-slate-300">Cloud SI</span>
               <span className="text-emerald-400 font-bold">✓ Ready</span>
             </div>
             <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-slate-300">Local AI Engine</span>
+              <span className="text-slate-300">Local SI Engine</span>
               <span className="text-cyan-400 font-mono">{state.phase === 'ready' ? '✓ Ready' : `${state.progress}%`}</span>
             </div>
             <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
@@ -106,7 +106,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
               <span className="text-slate-400 font-mono">{state.progress >= 90 ? '✓ Ready' : 'Preparing...'}</span>
             </div>
             <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-slate-300">Voice AI</span>
+              <span className="text-slate-300">Voice SI</span>
               <span className="text-slate-400 font-mono">{state.phase === 'ready' ? '✓ Ready' : 'Queued'}</span>
             </div>
           </div>
@@ -137,7 +137,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
             Launch Business OS Workspace
           </button>
           <p className="text-[11px] text-slate-400">
-            You can start using CHATR immediately with Cloud AI while local intelligence finishes setting up in the background.
+            You can start using CHATR immediately with Cloud SI while local intelligence finishes setting up in the background.
           </p>
         </div>
 
@@ -154,7 +154,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
           {showDetails && (
             <div className="mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 leading-relaxed space-y-2">
               <p>
-                CHATR prepares a sovereign local AI runtime so your conversations, document memory, and business automations execute privately on your device.
+                CHATR prepares a sovereign local SI runtime so your conversations, document memory, and business automations execute privately on your device.
               </p>
               <p>
                 This enables zero-latency local LLM reasoning, offline RAG over private files, and enterprise-grade privacy without cloud API fees.
@@ -165,7 +165,7 @@ export const FirstLaunchPreparation: React.FC<{ onReady?: () => void }> = ({ onR
 
         {/* Privacy Footer */}
         <div className="mt-6 text-[11px] text-slate-400 font-medium border-t border-slate-800/60 pt-4">
-          🔒 Your AI models, memory, and indexed documents remain on this device unless you choose to sync them.
+          🔒 Your SI models, memory, and indexed documents remain on this device unless you choose to sync them.
         </div>
 
       </div>

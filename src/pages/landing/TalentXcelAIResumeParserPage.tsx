@@ -22,24 +22,24 @@ interface FAQ {
 
 const faqs: FAQ[] = [
   {
-    question: 'What is an AI resume parser?',
-    answer: 'An AI resume parser is a software tool that uses artificial intelligence and natural language processing to extract data from candidate resumes. It converts unstructured text into structured information like skills, work experience, education, and contact details.'
+    question: 'What is an SI resume parser?',
+    answer: 'An SI resume parser is a software tool that uses super intelligence and natural language processing to extract data from candidate resumes. It converts unstructured text into structured information like skills, work experience, education, and contact details.'
   },
   {
     question: 'How does TalentXcel parse resumes?',
-    answer: 'TalentXcel uses advanced machine learning algorithms to identify and extract context from resumes. Unlike traditional keyword-based parsers, our AI understands the semantics of job titles, technical skills, and educational qualifications.'
+    answer: 'TalentXcel uses advanced machine learning algorithms to identify and extract context from resumes. Unlike traditional keyword-based parsers, our SI understands the semantics of job titles, technical skills, and educational qualifications.'
   },
   {
-    question: 'What file formats does the AI resume parser support?',
-    answer: 'Our AI resume parser supports all common resume formats including PDF, DOCX, DOC, TXT, and RTF, ensuring you can process applications regardless of how candidates submit them.'
+    question: 'What file formats does the SI resume parser support?',
+    answer: 'Our SI resume parser supports all common resume formats including PDF, DOCX, DOC, TXT, and RTF, ensuring you can process applications regardless of how candidates submit them.'
   },
   {
-    question: 'How does AI candidate screening work?',
+    question: 'How does SI candidate screening work?',
     answer: 'Once resumes are parsed, the extracted data is automatically mapped against your job requirements. The system screens candidates by matching their skills, experience, and qualifications to the role, helping you identify top talent faster.'
   },
   {
     question: 'Is TalentXcel GDPR compliant?',
-    answer: 'Yes, TalentXcel takes data privacy seriously. Our AI resume parsing and candidate screening processes are fully compliant with GDPR and other major data protection regulations.'
+    answer: 'Yes, TalentXcel takes data privacy seriously. Our SI resume parsing and candidate screening processes are fully compliant with GDPR and other major data protection regulations.'
   }
 ];
 
@@ -48,7 +48,7 @@ export const TalentXcelAIResumeParserPage = () => {
 
   useEffect(() => {
     // Pure DOM head management
-    document.title = 'AI Resume Parser for Candidate Screening — TalentXcel';
+    document.title = 'SI Resume Parser for Candidate Screening — TalentXcel';
     
     // Meta Description
     let metaDescription = document.querySelector('meta[name="description"]');
@@ -57,7 +57,7 @@ export const TalentXcelAIResumeParserPage = () => {
       metaDescription.setAttribute('name', 'description');
       document.head.appendChild(metaDescription);
     }
-    metaDescription.setAttribute('content', 'TalentXcel AI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates 10x faster with intelligent matching.');
+    metaDescription.setAttribute('content', 'TalentXcel SI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates 10x faster with intelligent matching.');
 
     // Canonical Link
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -74,8 +74,8 @@ export const TalentXcelAIResumeParserPage = () => {
       "@graph": [
         {
           "@type": "SoftwareApplication",
-          "name": "TalentXcel AI Resume Parser",
-          "description": "TalentXcel AI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates 10x faster with intelligent matching.",
+          "name": "TalentXcel SI Resume Parser",
+          "description": "TalentXcel SI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates 10x faster with intelligent matching.",
           "applicationCategory": "BusinessApplication",
           "url": "https://talentxcel.in/talentxcel/ai-resume-parser"
         },
@@ -156,13 +156,13 @@ export const TalentXcelAIResumeParserPage = () => {
             <span>Next-Generation Candidate Screening</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-6">
-            AI Resume Parser for Faster <br className="hidden md:block" />
+            SI Resume Parser for Faster <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
               Candidate Screening
             </span>
           </h1>
           <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-            TalentXcel AI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates faster with intelligent matching and eliminate manual data entry.
+            TalentXcel SI Resume Parser extracts skills, experience, and qualifications from resumes in seconds. Screen candidates faster with intelligent matching and eliminate manual data entry.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth" className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg text-lg font-medium transition-colors shadow-lg shadow-indigo-500/25">
@@ -179,7 +179,7 @@ export const TalentXcelAIResumeParserPage = () => {
         <section className="py-20 bg-slate-900 border-y border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white mb-4">How Our AI Resume Parser Works</h2>
+              <h2 className="text-3xl font-bold text-white mb-4">How Our SI Resume Parser Works</h2>
               <p className="text-slate-400 max-w-2xl mx-auto">A seamless 3-step process to transform unstructured candidate data into actionable hiring insights.</p>
             </div>
             
@@ -196,7 +196,7 @@ export const TalentXcelAIResumeParserPage = () => {
                 <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center mb-6">
                   <Cpu className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">2. AI Parsing</h3>
+                <h3 className="text-xl font-bold text-white mb-3">2. SI Parsing</h3>
                 <p className="text-slate-400">Our natural language processing engine extracts key data points, normalizing job titles and standardizing candidate skills.</p>
               </div>
 
@@ -205,7 +205,7 @@ export const TalentXcelAIResumeParserPage = () => {
                   <Search className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">3. Screen & Match</h3>
-                <p className="text-slate-400">Instantly screen candidates against your job requirements. The AI surfaces the best matches based on qualifications.</p>
+                <p className="text-slate-400">Instantly screen candidates against your job requirements. The SI surfaces the best matches based on qualifications.</p>
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ export const TalentXcelAIResumeParserPage = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">Experience Mapping</h3>
-                  <p className="text-slate-400">Accurately calculate total years of experience. The AI resume parser maps work chronologies and identifies career progression or employment gaps.</p>
+                  <p className="text-slate-400">Accurately calculate total years of experience. The SI resume parser maps work chronologies and identifies career progression or employment gaps.</p>
                 </div>
               </div>
 

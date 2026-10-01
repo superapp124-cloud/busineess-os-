@@ -3,7 +3,7 @@
  * 
  * Divides platform telemetry into three distinct audiences:
  * 1. Runtime Metrics (Infrastructure / Engine Health)
- * 2. AI Metrics (Planner Costs / Accuracy)
+ * 2. SI Metrics (Planner Costs / Accuracy)
  * 3. Business Metrics (Workflow Outcomes / Approval Delays)
  */
 
@@ -70,7 +70,7 @@ export class ExecutionAnalytics {
   }
 
   /**
-   * Track AI consumption (e.g., planner generated a graph)
+   * Track SI consumption (e.g., planner generated a graph)
    */
   static recordAIUsage(tokens: number, cost: number, latencyMs: number, validIEM: boolean) {
     this.ai.totalTokensConsumed += tokens;

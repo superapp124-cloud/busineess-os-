@@ -1,9 +1,9 @@
 /**
- * ExecutionConsoleWidget — AI Execution Transparency Panel
+ * ExecutionConsoleWidget — SI Execution Transparency Panel
  *
  * Shows each phase of the workflow with per-phase latency and status.
  * This is CHATR's "trust layer" — enterprise users see exactly what
- * the AI is doing and how long each step takes.
+ * the SI is doing and how long each step takes.
  *
  * Collapsible by default. Expands on click.
  */
@@ -71,7 +71,7 @@ function PhaseRow({ phase }: { phase: ExecutionPhase }) {
  );
 }
 
-// ─── AI Mode Badge ─────────────────────────────────────────────────────────────
+// ─── SI Mode Badge ─────────────────────────────────────────────────────────────
 
 function AiModeBadge({ mode }: { mode: 'local' | 'cloud' | 'hybrid' }) {
  return (
@@ -82,7 +82,7 @@ function AiModeBadge({ mode }: { mode: 'local' | 'cloud' | 'hybrid' }) {
  mode === 'local' || mode === 'hybrid' ? 'bg-emerald-400' : 'bg-white/20'
  }`}
  />
- <span className="text-[10px] text-white/50">Local AI</span>
+ <span className="text-[10px] text-white/50">Local SI</span>
  {(mode === 'local' || mode === 'hybrid') && (
  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
  )}
@@ -93,7 +93,7 @@ function AiModeBadge({ mode }: { mode: 'local' | 'cloud' | 'hybrid' }) {
  mode === 'cloud' || mode === 'hybrid' ? 'bg-blue-400' : 'bg-white/20'
  }`}
  />
- <span className="text-[10px] text-white/50">Cloud AI</span>
+ <span className="text-[10px] text-white/50">Cloud SI</span>
  {(mode === 'cloud' || mode === 'hybrid') ? (
  <CheckCircle2 className="w-3 h-3 text-blue-400" />
  ) : (

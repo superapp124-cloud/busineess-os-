@@ -7,7 +7,7 @@ import com.chatr.app.kernel.tools.RiskTier
 import java.util.UUID
 
 /**
- * TrustPermissionKernelImpl — The hard security boundary between the AI model
+ * TrustPermissionKernelImpl — The hard security boundary between the SI model
  * and the Tool Engine.
  *
  * This is the ONLY path from a proposed KernelIntent to an Authorized execution.

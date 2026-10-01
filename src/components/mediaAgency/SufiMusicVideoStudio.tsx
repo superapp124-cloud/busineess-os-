@@ -182,14 +182,14 @@ export const SufiMusicVideoStudio: React.FC = () => {
             <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-3 text-xs text-slate-300">
               <h4 className="font-bold text-white text-sm flex items-center space-x-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>How Real Generative AI Videos Are Produced</span>
+                <span>How Real Generative SI Videos Are Produced</span>
               </h4>
               <p>
                 Generative video engines (Kling, Runway, Veo, Sora) render photorealistic video frames on cloud GPU clusters.
               </p>
               <ul className="list-disc pl-5 space-y-1 text-slate-400">
-                <li><strong>Full Song / Vocal Track</strong>: Generated with Suno AI / Udio AI.</li>
-                <li><strong>Photorealistic Video Video Shots</strong>: Generated with Kling AI 1.5 or Runway Gen-4.5.</li>
+                <li><strong>Full Song / Vocal Track</strong>: Generated with Suno SI / Udio SI.</li>
+                <li><strong>Photorealistic Video Video Shots</strong>: Generated with Kling SI 1.5 or Runway Gen-4.5.</li>
                 <li><strong>Cloud Credits</strong>: Active API account credits are required on Kling/Runway for live rendering.</li>
               </ul>
             </div>

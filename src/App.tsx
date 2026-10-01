@@ -260,10 +260,21 @@ const SubdomainRedirect = () => {
   const [redirected, setRedirected] = React.useState(false);
 
   React.useEffect(() => {
-    // Mobile platform goes to mobile home
-    if (platform === "mobile") {
-      navigate('/home', { replace: true });
-      setRedirected(true);
+        // Mobile platform check session: active session -> /home, guest -> /auth
+    if (platform === "mobile" || Capacitor.isNativePlatform()) {
+      import('@/integrations/supabase/client').then(({ supabase }) => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            navigate('/home', { replace: true });
+          } else {
+            navigate('/auth', { replace: true });
+          }
+          setRedirected(true);
+        }).catch(() => {
+          navigate('/auth', { replace: true });
+          setRedirected(true);
+        });
+      });
       return;
     }
 
@@ -415,7 +426,20 @@ const NativeStartupRouteGate = ({ children }: { children: React.ReactNode }) => 
     const defaultRoute = isChatrCallsApp ? '/calls' : '/home';
 
     if (shouldNormalizeNativeStartupPath(nativePath)) {
-      navigate(defaultRoute, { replace: true });
+      import('@/integrations/supabase/client').then(({ supabase }) => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            navigate(defaultRoute, { replace: true });
+          } else {
+            navigate('/auth', { replace: true });
+          }
+          setIsReady(true);
+        }).catch(() => {
+          navigate('/auth', { replace: true });
+          setIsReady(true);
+        });
+      });
+      return;
     }
     
     setIsReady(true);
@@ -617,7 +641,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <QueryClientProvider client={queryClient}>
  <SocketProvider>
  <ContextEngineProvider>
- <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+ <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
  <ThemeCustomizationProvider>
  <LocationProvider>
  <PlatformProvider>
@@ -669,7 +693,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="growth-os" element={<LazyRoute component={GrowthOSDashboard} />} />
   <Route path="marketing-os" element={<LazyRoute component={PermanentMarketingOS} />} />
   <Route path="media-distribution" element={<SuperAdminGuard><Suspense fallback={<PageLoader message="Verifying Super Admin Authorization..." />}><MediaDistributionControlCenter /></Suspense></SuperAdminGuard>} />
-  <Route path="ai-hub" element={<Suspense fallback={<PageLoader message="Loading AI Training Hub..." />}><AIHubPage /></Suspense>} />
+  <Route path="ai-hub" element={<Suspense fallback={<PageLoader message="Loading SI Training Hub..." />}><AIHubPage /></Suspense>} />
   <Route path="revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
   <Route path="business-intelligence" element={<LazyRoute component={BusinessIntelligenceDashboard} />} />
@@ -730,7 +754,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  </Route>
 
  {/* ── Canonical Object Routes — tenant-scoped, permission-checked ── */}
- {/* These allow AI-generated notifications and chat messages to deep-link */}
+ {/* These allow SI-generated notifications and chat messages to deep-link */}
  {/* directly to a specific business object without going through Home → Search. */}
  <Route path="hiring/candidate/:candidateId" element={<LazyRoute component={LazyPages.CandidateWorkspace} />} />
  <Route path="crm/contact/:contactId" element={<LazyRoute component={LazyPages.DesktopContacts} />} />
@@ -1055,11 +1079,11 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
   <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
 
-  {/* talentxcel.in SEO Cluster — AI Resume & Candidate Screening (Cycle 1) */}
+  {/* talentxcel.in SEO Cluster — SI Resume & Candidate Screening (Cycle 1) */}
   <Route path="/talentxcel/ai-resume-parser" element={<LazyRoute component={TalentXcelAIResumeParserPage} />} />
   <Route path="/talentxcel/ats-resume-builder" element={<LazyRoute component={TalentXcelATSResumePage} />} />
 
-  {/* chatr.chat SEO Cluster — Universal AI Inbox (Cycle 1) */}
+  {/* chatr.chat SEO Cluster — Universal SI Inbox (Cycle 1) */}
   <Route path="/chatr/universal-inbox-ai" element={<LazyRoute component={ChatrUniversalInboxPage} />} />
   <Route path="/chatr/whatsapp-business-api" element={<LazyRoute component={ChatrWhatsAppBusinessAPIPage} />} />
 
@@ -1095,7 +1119,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  
  {/* Consolidated Hub Routes */}
  <Route path="/health" element={<LazyRoute component={LazyPages.HealthHub} />} />
- <Route path="/care" element={<LazyRoute component={LazyPages.CareAccess} />} />
+ <Route path="/health/devices" element={<LazyRoute component={LazyPages.DeviceCenter} />} />
+
  <Route path="/community" element={<LazyRoute component={LazyPages.CommunitySpace} />} />
  
  {/* New Feature Routes */}
@@ -1111,6 +1136,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route element={<MobileTabFrame />}>
  <Route path="/home" element={<LazyRoute component={LazyPages.Home} />} />
  <Route path="/chat" element={<LazyRoute component={LazyPages.Chat} />} />
+ <Route path="/ai-assistant" element={<LazyRoute component={LazyPages.AIAssistant} />} />
+ <Route path="/care" element={<LazyRoute component={LazyPages.CareAccess} />} />
  <Route path="/jobs" element={<LazyRoute component={LazyPages.LocalJobs} />} />
  <Route path="/marketplace" element={<LazyRoute component={LazyPages.Marketplace} />} />
  <Route path="/profile" element={<LazyRoute component={LazyPages.Profile} />} />
@@ -1220,7 +1247,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/qr-payment" element={<LazyRoute component={LazyPages.QRPayment} />} />
  <Route path="/kyc-verification" element={<ProtectedLazyRoute component={LazyPages.KYCVerificationPage} />} />
 
- {/* AI & Settings Routes */}
+ {/* SI & Settings Routes */}
  <Route path="/chatr-world" element={<LazyRoute component={LazyPages.ChatrWorld} />} />
  <Route path="/chatr-games" element={<LazyRoute component={LazyPages.ChatrGames} />} />
  <Route path="/native-apps" element={<LazyRoute component={LazyPages.MiniApps} />} />
@@ -1273,7 +1300,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/device-management" element={<LazyRoute component={LazyPages.DeviceManagement} />} />
  <Route path="/bluetooth-test" element={<LazyRoute component={LazyPages.BluetoothTest} />} />
  
- {/* AI Command Center (CEO portal) */}
+ {/* SI Command Center (CEO portal) */}
  <Route path="/command-center" element={<ProtectedLazyRoute component={LazyPages.CommandCenter} />} />
  <Route path="/dev/execution-dashboard" element={<ProtectedRoute><ExecutionDashboard /></ProtectedRoute>} />
 

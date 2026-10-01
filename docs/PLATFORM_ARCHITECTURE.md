@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the long-lived architecture for the CHATR Conversation Platform. It complements the product vision and the Customer Zero execution plan by specifying the platform services, extension model, AI tool registry, observability layer, trust model, and internal console needed for multi-year evolution.
+This document defines the long-lived architecture for the CHATR Conversation Platform. It complements the product vision and the Customer Zero execution plan by specifying the platform services, extension model, SI tool registry, observability layer, trust model, and internal console needed for multi-year evolution.
 
 ## Core Platform Services
 
@@ -91,9 +91,9 @@ Responsibilities:
 
 Use-case logic such as recruitment, support, collections, or sales must live as workflow configuration or agent plans, not in generic routers.
 
-### AI Orchestrator
+### SI Orchestrator
 
-The AI Orchestrator decides what should happen.
+The SI Orchestrator decides what should happen.
 
 Responsibilities:
 
@@ -132,15 +132,15 @@ interface PlatformAgent {
 
 Agents must never call platform services directly. They request tools through the Tool Registry.
 
-## AI Tool Registry
+## SI Tool Registry
 
-The Tool Registry is the gateway between AI agents and platform capabilities.
+The Tool Registry is the gateway between SI agents and platform capabilities.
 
 Flow:
 
 ```text
-AI Agent
-  -> AI Orchestrator
+SI Agent
+  -> SI Orchestrator
   -> Tool Registry
   -> Permission Check
   -> Platform API
@@ -180,7 +180,7 @@ interface AiToolDefinition<TInput = unknown, TOutput = unknown> {
 }
 ```
 
-Tool executions must emit events and write audit records. New tools should be added by registration, not by editing the AI Orchestrator.
+Tool executions must emit events and write audit records. New tools should be added by registration, not by editing the SI Orchestrator.
 
 ## Plugin And Extension Framework
 
@@ -261,7 +261,7 @@ Required signals:
 
 - Event tracing.
 - Workflow execution history.
-- AI decision logs.
+- SI decision logs.
 - Agent execution logs.
 - Tool execution logs.
 - API latency.

@@ -152,7 +152,7 @@ export const HRATSSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Applicant Tracking AI',
+    assistantName: 'Applicant Tracking SI',
     skills: []
   },
   
@@ -245,10 +245,10 @@ export const HRATSSDK: ICapabilityManifest = {
     },
     {
         key: "auto_screen_resumes",
-        label: "AI Resume Screening",
+        label: "SI Resume Screening",
         type: "boolean",
         defaultValue: true,
-        group: "AI"
+        group: "SI"
     }
 ],
   integrations: [],

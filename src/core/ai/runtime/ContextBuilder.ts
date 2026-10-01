@@ -1,7 +1,7 @@
 export class ContextBuilder {
   /**
    * Assembles the full context strings from various Enterprise Memory sources
-   * and previous artifacts so the AI Provider doesn't have to.
+   * and previous artifacts so the SI Provider doesn't have to.
    */
   static buildContext(baseInput: string, contextSources?: string[]): string {
     if (!contextSources || contextSources.length === 0) return baseInput;

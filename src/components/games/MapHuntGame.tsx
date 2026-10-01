@@ -329,7 +329,7 @@ export const MapHuntGame = ({ onBack }: MapHuntGameProps) => {
  {isLoading ? (
  <>
  <Sparkles className="h-4 w-4 mr-2 animate-spin" />
- AI Verifying...
+ SI Verifying...
  </>
  ) : (
  <>

@@ -83,7 +83,7 @@ export const TerminologyPage: React.FC = () => {
             </p>
           </section>
 
-          {/* The Definitive Answer Block (Citable for AI Overviews & SearchGPT) */}
+          {/* The Definitive Answer Block (Citable for SI Overviews & SearchGPT) */}
           <section id="canonical-definition" className="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-950 border border-indigo-500/40 rounded-2xl p-6 md:p-8 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <span className="text-xs font-mono font-bold tracking-wider uppercase text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">

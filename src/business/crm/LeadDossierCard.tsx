@@ -76,7 +76,7 @@ export function LeadDossierCard({ businessId, leadId, companyName }: LeadDossier
           <div className="flex items-center gap-3">
             <Sparkles className="h-5 w-5 text-indigo-400 animate-spin" />
             <div>
-              <h4 className="font-semibold text-indigo-200">AI Agent Researching Dossier...</h4>
+              <h4 className="font-semibold text-indigo-200">SI Agent Researching Dossier...</h4>
               <p className="text-xs text-slate-400">Scraping web data & compiling evidence-backed dossier</p>
             </div>
           </div>
@@ -92,7 +92,7 @@ export function LeadDossierCard({ businessId, leadId, companyName }: LeadDossier
     return (
       <Card className="p-4 bg-slate-900 border-slate-800 text-slate-200">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-400">No AI dossier compiled yet for {companyName || 'this lead'}.</p>
+          <p className="text-sm text-slate-400">No SI dossier compiled yet for {companyName || 'this lead'}.</p>
           <Button size="sm" onClick={handleEnrich} className="gap-2 bg-indigo-600 hover:bg-indigo-500 text-white">
             <Sparkles className="h-4 w-4" />
             Generate Dossier
@@ -108,7 +108,7 @@ export function LeadDossierCard({ businessId, leadId, companyName }: LeadDossier
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-indigo-400" />
-          <h3 className="font-semibold text-lg text-slate-100">AI Account Dossier</h3>
+          <h3 className="font-semibold text-lg text-slate-100">SI Account Dossier</h3>
           <Badge variant="outline" className="ml-2 border-indigo-500/40 text-indigo-300 bg-indigo-500/10 text-xs">
             Zero-Guessing Evidence Logged
           </Badge>

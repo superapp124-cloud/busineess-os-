@@ -36,7 +36,7 @@ export interface CustomerWorkflowResult {
  * Executes real customer workflows on chatrchat.in with strict causal lineage:
  * customerWorkflowId ➔ workflowExecutionId ➔ taskExecutionId ➔ idempotencyKey
  * 
- * Enforces Human-in-the-Loop AI Governance: AI recommends ➔ Recruiter Approves ➔ Kernel Dispatches.
+ * Enforces Human-in-the-Loop SI Governance: SI recommends ➔ Recruiter Approves ➔ Kernel Dispatches.
  */
 export class CustomerWorkflowEngine {
   public static async executeRecruitmentWorkflow(
@@ -79,7 +79,7 @@ export class CustomerWorkflowEngine {
       recruiterId
     );
 
-    // 3. AI Fit Evaluation & Recommendation
+    // 3. SI Fit Evaluation & Recommendation
     console.log('[Step 3/6] Evaluating candidate fit via ModelRouter (Ollama / Cloud LLM)...');
     
     // 4. Human-in-the-Loop Recruiter Approval Gate

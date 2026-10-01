@@ -17,7 +17,7 @@ export interface CommunicationMemoryResponse {
 
 /**
  * Invokes the search-memory Edge Function to perform a hybrid search
- * and synthesize an AI answer based on the communication memory.
+ * and synthesize an SI answer based on the communication memory.
  */
 export async function searchCommunicationMemory(
   query: string, 

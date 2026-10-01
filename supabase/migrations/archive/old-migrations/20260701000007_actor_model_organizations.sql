@@ -15,7 +15,7 @@ ALTER TABLE public.workspaces
 -- 2. Actors Model
 CREATE TABLE IF NOT EXISTS public.actors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type TEXT NOT NULL DEFAULT 'USER' CHECK (type IN ('USER', 'AI', 'SYSTEM', 'BOT', 'SERVICE', 'INTEGRATION')),
+  type TEXT NOT NULL DEFAULT 'USER' CHECK (type IN ('USER', 'SI', 'SYSTEM', 'BOT', 'SERVICE', 'INTEGRATION')),
   display_name TEXT NOT NULL,
   avatar_url TEXT,
   status TEXT DEFAULT 'online',
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.actors (
 INSERT INTO public.actors (id, type, display_name, avatar_url, status)
 VALUES 
   ('00000000-0000-0000-0000-000000000000', 'SYSTEM', 'SYSTEM', NULL, 'online'),
-  ('11111111-1111-1111-1111-111111111111', 'AI', 'CHATR AI', NULL, 'online')
+  ('11111111-1111-1111-1111-111111111111', 'SI', 'CHATR SI', NULL, 'online')
 ON CONFLICT (id) DO NOTHING;
 
 -- Migrate existing profiles to actors

@@ -31,7 +31,7 @@ export class CapabilitySandbox {
   }
 
   /**
-   * Used by connectors or AI planners to record token/API usage against a capability
+   * Used by connectors or SI planners to record token/API usage against a capability
    */
   static recordUsage(capabilityId: string, tokens: number, apiCalls: number) {
     this.scheduler.recordUsage(capabilityId, { aiTokensUsed: tokens, apiCallsMade: apiCalls });

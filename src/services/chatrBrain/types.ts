@@ -1,16 +1,16 @@
 /**
  * CHATR BRAIN - Type Definitions
- * Core types for the unified AI routing system
+ * Core types for the unified SI routing system
  */
 
 // ============ Agent Types ============
 export type AgentType = 
-  | 'personal'   // Personal AI - habits, tone, preferences
-  | 'work'       // Work AI - tasks, docs, meetings
-  | 'search'     // Search AI - Perplexity-style answers
-  | 'local'      // Local Services AI - plumbers, food, doctors
-  | 'jobs'       // Job-Matching AI - resume, skills, applications
-  | 'health';    // Health AI - symptoms, doctor search
+  | 'personal'   // Personal SI - habits, tone, preferences
+  | 'work'       // Work SI - tasks, docs, meetings
+  | 'search'     // Search SI - Perplexity-style answers
+  | 'local'      // Local Services SI - plumbers, food, doctors
+  | 'jobs'       // Job-Matching SI - resume, skills, applications
+  | 'health';    // Health SI - symptoms, doctor search
 
 // ============ Intent Types ============
 export type IntentCategory = 

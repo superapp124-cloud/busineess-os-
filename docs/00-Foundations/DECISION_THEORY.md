@@ -17,7 +17,7 @@ State Engine ──> Prediction Engine ──> Simulation Engine ──> Optimiz
 4. **Optimization Engine**: Solves objective functions subject to resource constraints.
 5. **Policy Engine**: Enforces mandatory risk, governance, and compliance guardrails.
 6. **Decision Engine**: Combines prediction, policy, and confidence into actionable verdicts (`APPROVED`, `REJECTED`, `ESCALATE_TO_HUMAN`).
-7. **Execution Engine**: Dispatches action to assigned Substrate (Human, AI, Robot).
+7. **Execution Engine**: Dispatches action to assigned Substrate (Human, SI, Robot).
 
 ---
 

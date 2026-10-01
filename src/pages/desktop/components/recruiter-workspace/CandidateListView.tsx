@@ -36,7 +36,7 @@ const SEMANTIC_SKILL_MAP: Record<string, string[]> = {
 const PLACEHOLDER_EXAMPLES = [
   "Java Spring Boot Noida 5 years under 20 LPA",
   "React Developer immediate joiner",
-  "AWS DevOps 15 LPA 90% AI Match",
+  "AWS DevOps 15 LPA 90% SI Match",
   "Candidates from TCS in Noida",
   "Notice period less than 30 days",
   "Data Centre Operation Trainee",
@@ -535,7 +535,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                       {candSkills.length > 0 ? skillsLine : (c.professional_specialization || 'Enterprise Technology • Operations')}
                     </p>
 
-                    {/* SECTION 4: UNIQUE AI RECOMMENDATION */}
+                    {/* SECTION 4: UNIQUE SI RECOMMENDATION */}
                     <div className={`p-1.5 rounded-lg text-[10px] font-bold border flex items-center justify-between gap-1.5 ${
                       aiRec.type === 'green' ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300'
                       : aiRec.type === 'yellow' ? 'bg-amber-950/30 border-amber-800/50 text-amber-300'
@@ -591,7 +591,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
               <tr>
                 <th className="px-3 py-2.5 w-8"></th>
                 {savedView === 'client' ? (
-                  ['Client-Ready Candidate Dossier', 'Primary Skill Chips', 'Title & Employer', 'AI Match Score', 'Notice Period', 'Client Actions'].map(h => (
+                  ['Client-Ready Candidate Dossier', 'Primary Skill Chips', 'Title & Employer', 'SI Match Score', 'Notice Period', 'Client Actions'].map(h => (
                     <th key={h} className="text-left px-3 py-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{h}</th>
                   ))
                 ) : savedView === 'manager' ? (
@@ -599,7 +599,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                     <th key={h} className="text-left px-3 py-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{h}</th>
                   ))
                 ) : savedView === 'delivery' ? (
-                  ['Candidate Dossier', 'Target Client / Job', 'Days in Stage (SLA)', 'AI Readiness %', 'Relocation & Work Mode', 'Delivery Actions'].map(h => (
+                  ['Candidate Dossier', 'Target Client / Job', 'Days in Stage (SLA)', 'SI Readiness %', 'Relocation & Work Mode', 'Delivery Actions'].map(h => (
                     <th key={h} className="text-left px-3 py-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{h}</th>
                   ))
                 ) : savedView === 'recruiter' ? (
@@ -607,7 +607,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                     <th key={h} className="text-left px-3 py-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{h}</th>
                   ))
                 ) : (
-                  ['Candidate Intelligence Dossier', 'Skill Chips', 'Title & Employer', 'Pipeline Stage', 'Requisition AI Match', 'Current vs Expected CTC', 'Notice Period', 'Recruiter Actions'].map(h => (
+                  ['Candidate Intelligence Dossier', 'Skill Chips', 'Title & Employer', 'Pipeline Stage', 'Requisition SI Match', 'Current vs Expected CTC', 'Notice Period', 'Recruiter Actions'].map(h => (
                     <th key={h} className="text-left px-3 py-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{h}</th>
                   ))
                 )}
@@ -651,7 +651,7 @@ export const CandidatesTab = memo(({ candidates = [], requisitions = [], loading
                               📧 {obfuscateEmail(email)} · 📞 {obfuscatePhone(c.phone || '')}
                             </p>
 
-                            {/* SINGLE ACTIONABLE AI STATUS */}
+                            {/* SINGLE ACTIONABLE SI STATUS */}
                             <div className="flex items-center gap-2 pt-0.5">
                               <span className={`px-2 py-0.5 font-bold rounded border text-[9px] ${singleAiBadge.color}`}>
                                 {singleAiBadge.label}

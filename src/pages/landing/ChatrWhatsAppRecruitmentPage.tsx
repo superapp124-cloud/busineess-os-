@@ -272,7 +272,7 @@ export const ChatrWhatsAppRecruitmentPage: React.FC = () => {
               <strong className="text-white">The Pre-Call Nudge:</strong> Before dialing a candidate, send a quick WhatsApp message introducing yourself and asking if it's a good time to call. This dramatically increases pickup rates.
             </li>
             <li className="pl-2">
-              <strong className="text-white">Document Collection:</strong> Request portfolios or CVs via WhatsApp. If you pair this with tools like the <Link to="/talentxcel/ai-resume-parser" className="text-indigo-400 hover:underline">AI resume parser</Link>, you can streamline candidate intake significantly.
+              <strong className="text-white">Document Collection:</strong> Request portfolios or CVs via WhatsApp. If you pair this with tools like the <Link to="/talentxcel/ai-resume-parser" className="text-indigo-400 hover:underline">SI resume parser</Link>, you can streamline candidate intake significantly.
             </li>
             <li className="pl-2">
               <strong className="text-white">Interview Reminders:</strong> Send an automated message 24 hours and 1 hour before an interview with Google Maps links or Zoom details to reduce no-shows.

@@ -59,7 +59,7 @@ export const certifyCommand = new Command('certify')
 
     // Stage 5: Security Validation
     stages.push(await runStage('Security Validation', async () => ({
-      passed: true, details: 'Signature tampering, tenant isolation, RBAC escalation, AI safety gate — all enforced'
+      passed: true, details: 'Signature tampering, tenant isolation, RBAC escalation, SI safety gate — all enforced'
     })));
 
     // Stage 6: Performance Check

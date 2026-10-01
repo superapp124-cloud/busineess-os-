@@ -1,5 +1,5 @@
 /**
- * CHATR BRAIN - Unified AI Routing Edge Function
+ * CHATR BRAIN - Unified SI Routing Edge Function
  * Routes queries to appropriate agents and returns intelligent responses.
  */
 
@@ -37,13 +37,13 @@ interface BrainRequest {
   stream?: boolean;
 }
 
-const CHATR_INTELLIGENCE_PROMPT = `You are CHATR Intelligence - a unified AI assistant with 6 specialized capabilities:
-1. Personal AI - personal context, memory, reminders
-2. Work AI - emails, tasks, documents
-3. Search AI - factual answers, real-time info, web knowledge
-4. Local AI - nearby services, food, businesses
-5. Jobs AI - job matching, career advice
-6. Health AI - health info, doctor search
+const CHATR_INTELLIGENCE_PROMPT = `You are CHATR Intelligence - a unified SI assistant with 6 specialized capabilities:
+1. Personal SI - personal context, memory, reminders
+2. Work SI - emails, tasks, documents
+3. Search SI - factual answers, real-time info, web knowledge
+4. Local SI - nearby services, food, businesses
+5. Jobs SI - job matching, career advice
+6. Health SI - health info, doctor search
 
 CRITICAL RULES:
 - You have access to real-time information. Answer weather, news, sports, etc. with current data.

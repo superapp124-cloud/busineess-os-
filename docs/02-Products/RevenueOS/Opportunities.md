@@ -8,7 +8,7 @@
 
 ## 1. Purpose & Business Objective
 
-Manage every sales opportunity from initial qualification through executive proposal generation, negotiation, and contract sign-off while ensuring full visibility for management and automated AI proposal drafting.
+Manage every sales opportunity from initial qualification through executive proposal generation, negotiation, and contract sign-off while ensuring full visibility for management and automated SI proposal drafting.
 
 ---
 
@@ -25,7 +25,7 @@ Manage every sales opportunity from initial qualification through executive prop
 
 - Scattered opportunity tracking across disconnected spreadsheets.
 - Zero pipeline velocity visibility or deal ageing alerts.
-- Time-consuming manual sales proposal creation (reduced from 4 hours to 30 seconds via AI).
+- Time-consuming manual sales proposal creation (reduced from 4 hours to 30 seconds via SI).
 - Missed follow-ups due to manual reminder tracking.
 - Duplicate account entries and lack of unified customer communication history.
 
@@ -46,13 +46,13 @@ Manage every sales opportunity from initial qualification through executive prop
 
 ### Filters & Search Controls
 - **Filter By**: Stage, Owner, Deal Value Range, Industry, Next Follow-up Overdue.
-- **Bulk Actions**: Reassign Owner, Export CSV, Send WhatsApp Reminder, Generate AI Proposals, Batch Archive.
+- **Bulk Actions**: Reassign Owner, Export CSV, Send WhatsApp Reminder, Generate SI Proposals, Batch Archive.
 
 ---
 
-## 5. AI Features & Automation Integration
+## 5. SI Features & Automation Integration
 
-- **`Generate AI Proposal`**: Invokes `RevenueCapability` $\rightarrow$ `AIExecutor` $\rightarrow$ `OpenRouterProviderAdapter` (`google/gemini-2.5-flash`) to generate structured executive proposals.
+- **`Generate SI Proposal`**: Invokes `RevenueCapability` $\rightarrow$ `AIExecutor` $\rightarrow$ `OpenRouterProviderAdapter` (`google/gemini-2.5-flash`) to generate structured executive proposals.
 - **`Deal Win Probability Prediction`**: Analyzes historical placement data, company payment behavior, and deal velocity to score close likelihood.
 - **`Follow-up Automation`**: Triggers automated email/WhatsApp reminders via `CommunicationExecutor` when deal remains idle > 7 days.
 

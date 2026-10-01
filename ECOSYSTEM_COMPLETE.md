@@ -18,7 +18,7 @@ Visual app builder where users can create and publish mini-apps:
 - Create projects from templates
 - Save and manage multiple projects
 - Publish to Chatr Hub (Mini-Apps Store)
-- AI-powered building assistance
+- SI-powered building assistance
 
 **Database Tables:**
 - `app_builder_projects` - Store user projects
@@ -146,7 +146,7 @@ Community-based exclusive offers:
 
 3. **Explores Homescreen** → Sees system apps:
    - Chat (messages, calls, video)
-   - Health Hub (AI assistant, vitals)
+   - Health Hub (SI assistant, vitals)
    - Care Access (doctors, emergency)
    - Community (groups, stories)
    - Mini-Apps Store
@@ -255,7 +255,7 @@ Ecosystem:
 
 Quick Access:
 ├─ Chatr Studio 🎨
-├─ AI Assistant 🤖
+├─ SI Assistant 🤖
 └─ Emergency 🚨
 ```
 
@@ -316,7 +316,7 @@ const paymentId = await supabase.rpc('process_coin_payment', {
 ✅ **Micro-Payments** - Seamless transactions  
 ✅ **Food Ordering** - Real service integration  
 ✅ **Local Deals** - Community benefits  
-✅ **AI Integration** - Smart suggestions  
+✅ **SI Integration** - Smart suggestions  
 ✅ **Earning System** - Referrals, daily login, activities  
 ✅ **Spending Options** - Multiple use cases  
 

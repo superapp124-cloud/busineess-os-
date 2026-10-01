@@ -29,7 +29,7 @@ serve(async (req) => {
 Writing style:
 - Write in a clear, human tone as if a person wrote this summary
 - NO markdown formatting (no asterisks, bold, or code-like text)
-- NO robotic phrases like "As an AI" or "The conversation shows"
+- NO robotic phrases like "As an SI" or "The conversation shows"
 - Use natural transitions like "Overall," "In summary," "Here's what happened"
 - Keep it professional yet conversational
 - Prioritize clarity over formality`;

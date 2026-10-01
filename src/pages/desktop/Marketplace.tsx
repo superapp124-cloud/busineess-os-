@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LucideShoppingBag, LucideBox, LucideZap, LucideSettings, LucideBookOpen, LucideCpu, LucideLayers, LucideDownload, LucideCheckCircle, LucideShieldCheck } from 'lucide-react';
 
-type MarketplaceCategory = 'Capabilities' | 'Connectors' | 'AI Models' | 'Templates' | 'Workflow Packs' | 'Knowledge Packs' | 'Automation Packs';
+type MarketplaceCategory = 'Capabilities' | 'Connectors' | 'SI Models' | 'Templates' | 'Workflow Packs' | 'Knowledge Packs' | 'Automation Packs';
 
 export default function Marketplace() {
   const [activeCategory, setActiveCategory] = useState<MarketplaceCategory>('Capabilities');
@@ -9,7 +9,7 @@ export default function Marketplace() {
   const categories: { name: MarketplaceCategory, icon: React.ReactNode, count: number }[] = [
     { name: 'Capabilities', icon: <LucideBox size={16} />, count: 12 },
     { name: 'Connectors', icon: <LucideZap size={16} />, count: 45 },
-    { name: 'AI Models', icon: <LucideCpu size={16} />, count: 8 },
+    { name: 'SI Models', icon: <LucideCpu size={16} />, count: 8 },
     { name: 'Templates', icon: <LucideLayers size={16} />, count: 24 },
     { name: 'Workflow Packs', icon: <LucideSettings size={16} />, count: 15 },
     { name: 'Knowledge Packs', icon: <LucideBookOpen size={16} />, count: 6 },
@@ -19,9 +19,9 @@ export default function Marketplace() {
   const items = [
     { id: '1', name: 'FinanceOS', provider: 'CHATR Kernel', category: 'Capabilities', rating: 4.9, installs: '12k', certified: true, desc: 'Complete AR/AP, Payroll, and Ledger management.' },
     { id: '2', name: 'LegalOS', provider: 'CHATR Kernel', category: 'Capabilities', rating: 4.8, installs: '8k', certified: true, desc: 'High-risk contract generation and compliance tracking.' },
-    { id: '3', name: 'GrowthOS', provider: 'CHATR Kernel', category: 'Capabilities', rating: 4.9, installs: '15k', certified: true, desc: 'AI-driven campaign and pipeline generation.' },
+    { id: '3', name: 'GrowthOS', provider: 'CHATR Kernel', category: 'Capabilities', rating: 4.9, installs: '15k', certified: true, desc: 'SI-driven campaign and pipeline generation.' },
     { id: '4', name: 'Salesforce Sync', provider: 'Third Party', category: 'Connectors', rating: 4.2, installs: '45k', certified: false, desc: 'Two-way sync with Salesforce CRM objects.' },
-    { id: '5', name: 'GPT-4o Reasoning', provider: 'OpenAI', category: 'AI Models', rating: 5.0, installs: '120k', certified: true, desc: 'Advanced reasoning model for complex Intent planning.' },
+    { id: '5', name: 'GPT-4o Reasoning', provider: 'OpenAI', category: 'SI Models', rating: 5.0, installs: '120k', certified: true, desc: 'Advanced reasoning model for complex Intent planning.' },
     { id: '6', name: 'B2B SaaS Onboarding', provider: 'CHATR Labs', category: 'Workflow Packs', rating: 4.7, installs: '3k', certified: true, desc: 'IEM Workflow graph for enterprise client onboarding.' },
   ];
 
@@ -71,7 +71,7 @@ export default function Marketplace() {
                     <h3 className="font-semibold text-lg flex items-center gap-2">
                       {item.name}
                       {item.certified && (
-                        <span title="CHATR Certified (Passed Manifest, RLS & AI Governance Checks)">
+                        <span title="CHATR Certified (Passed Manifest, RLS & SI Governance Checks)">
                           <LucideShieldCheck size={16} className="text-green-400" />
                         </span>
                       )}

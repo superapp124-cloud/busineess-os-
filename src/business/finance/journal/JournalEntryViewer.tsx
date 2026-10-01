@@ -164,7 +164,7 @@ export function JournalEntryViewer({ finOrganizationId, legalEntityId, periodId 
                       {je.entry_number}
                       {je.ai_proposed && (
                         <Badge variant="secondary" className="text-[9px] px-1 py-0 ml-1.5 bg-blue-50 text-blue-700">
-                          AI
+                          SI
                         </Badge>
                       )}
                     </td>

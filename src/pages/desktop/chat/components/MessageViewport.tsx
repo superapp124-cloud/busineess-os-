@@ -51,11 +51,11 @@ export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
  const displayTime = isToday(dateObj) ? time : (isYesterday(dateObj) ? `Yesterday ${time}` : `${dateObj.toLocaleDateString()} ${time}`);
  
- // Map AI system messages to proper UI
- const isAI = Boolean(msg.isAi || msg.senderId === 'chatr-ai' || msg.senderName === 'CHATR AI' || msg.senderId === '11111111-1111-1111-1111-111111111111' || msg.actorId === '11111111-1111-1111-1111-111111111111');
+ // Map SI system messages to proper UI
+ const isAI = Boolean(msg.isAi || msg.senderId === 'chatr-ai' || msg.senderName === 'CHATR SI' || msg.senderId === '11111111-1111-1111-1111-111111111111' || msg.actorId === '11111111-1111-1111-1111-111111111111');
  const rawName = (msg.senderName && msg.senderName !== 'Unknown User' && msg.senderName !== 'Unknown') ? msg.senderName : (selectedRoomName && selectedRoomName !== 'Direct Contact' && selectedRoomName !== 'Unnamed' ? selectedRoomName : 'Sanobar Jahan');
  const avatarUrl = isAI ? '/chatr-ai-logo.jpg' : getAvatarUrl(rawName, msg.senderAvatar);
- const senderName = isAI ? 'CHATR AI' : rawName;
+ const senderName = isAI ? 'CHATR SI' : rawName;
 
  return (
  <div key={msg.id} className={cn("flex gap-3 group relative animate-in fade-in slide-in-from-bottom-2", isOwn ? "flex-row-reverse" : "flex-row")}>
@@ -110,7 +110,7 @@ export const MessageViewport: React.FC<MessageViewportProps> = React.memo(({
  {isAiLoading && (
  <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 mt-2">
  <div className="px-3 py-2 rounded-2xl bg-zinc-900 border border-white/[0.05] rounded-tl-sm shadow-black/20 text-label text-violet-400 flex items-center gap-2">
- <Loader2 className="w-3.5 h-3.5 animate-spin" /> AI Coworker processing...
+ <Loader2 className="w-3.5 h-3.5 animate-spin" /> SI Coworker processing...
  </div>
  </div>
  )}

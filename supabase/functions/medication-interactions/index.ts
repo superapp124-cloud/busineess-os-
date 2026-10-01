@@ -40,7 +40,7 @@ serve(async (req) => {
       );
     }
 
-    // Use direct AI router to check for medication interactions
+    // Use direct SI router to check for medication interactions
     const aiResult = await completeChat({
       primaryProvider: "gemini",
       fallbackProviders: ["groq", "openrouter"],
@@ -49,7 +49,7 @@ serve(async (req) => {
       messages: [
         {
           role: 'system',
-          content: `You are a pharmaceutical AI expert. Analyze medication combinations for potential interactions.
+          content: `You are a pharmaceutical SI expert. Analyze medication combinations for potential interactions.
 For each pair of medications, determine:
 1. Interaction severity (minor, moderate, severe)
 2. Description of the interaction
@@ -86,7 +86,7 @@ Return JSON: {interactions: [{med1, med2, severity, description, recommendation}
       ...interactions
     ];
 
-    // Store new interactions found by AI
+    // Store new interactions found by SI
     for (const interaction of interactions) {
       if (interaction.med1 && interaction.med2) {
         await supabase

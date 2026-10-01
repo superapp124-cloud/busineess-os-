@@ -19,7 +19,7 @@ describe('Phase D.5: Provider Platform', () => {
     // Register capability
     const aiCap: CapabilityDefinition = {
       capabilityId: 'chatr.ai.generate',
-      name: 'AI Generation',
+      name: 'SI Generation',
       description: 'Generates text',
       category: 'ai',
       inputSchema: { type: 'object' },

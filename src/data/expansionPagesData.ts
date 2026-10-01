@@ -23,7 +23,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'Assign incoming WhatsApp conversations, collaborate across team members, and track customer response times in one shared business inbox.',
     keywords: 'shared team inbox whatsapp business, whatsapp multi agent inbox, team whatsapp management',
     h1: 'Shared Team Inbox for WhatsApp Business',
-    executiveSummary: 'CHATR Shared Team Inbox turns a single WhatsApp Business number into a multi-user workspace with conversation assignment, internal notes, and AI triage.',
+    executiveSummary: 'CHATR Shared Team Inbox turns a single WhatsApp Business number into a multi-user workspace with conversation assignment, internal notes, and SI triage.',
     faqs: [
       { q: 'Can multiple team members use one WhatsApp Business number?', a: 'Yes. CHATR routes incoming WhatsApp messages to multiple team agents based on availability and skill.' },
       { q: 'Does CHATR Shared Inbox store conversation history securely?', a: 'Yes. All threads are backed up and role-restricted with enterprise encryption.' }
@@ -33,20 +33,20 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
   {
     path: '/chatr/ai-message-triage-routing',
     category: 'Product',
-    title: 'AI Message Triage and Smart Routing -- CHATR Communication OS',
+    title: 'SI Message Triage and Smart Routing -- CHATR Communication OS',
     description: 'Auto-classify incoming business messages on WhatsApp and email. Route urgent leads to sales and screening inquiries to HR automatically.',
     keywords: 'ai message triage, smart lead routing, automated business message classification',
-    h1: 'AI Message Triage & Smart Routing for Business Inboxes',
-    executiveSummary: 'Stop manually reading and forwarding incoming messages. CHATR AI Triage analyzes intent in real-time and routes messages to the right team instantly.',
+    h1: 'SI Message Triage & Smart Routing for Business Inboxes',
+    executiveSummary: 'Stop manually reading and forwarding incoming messages. CHATR SI Triage analyzes intent in real-time and routes messages to the right team instantly.',
     faqs: [
-      { q: 'How does AI message triage work?', a: 'Our NLP engine detects lead intent, urgency, and topic, categorizing messages before team members open them.' },
+      { q: 'How does SI message triage work?', a: 'Our NLP engine detects lead intent, urgency, and topic, categorizing messages before team members open them.' },
       { q: 'Can I customize routing rules for my business?', a: 'Yes. Define custom tags, escalation rules, and department triggers in CHATR Studio.' }
     ],
-    evidenceText: 'Verified against CHATR AI classifier telemetry processing 45,000+ incoming message threads.',
-    ctaTitle: 'Explore all CHATR AI capabilities',
-    ctaDescription: 'AI Message Triage is one of six integrated AI capabilities in the CHATR AI Platform. Discover the full intelligence layer for your business.',
+    evidenceText: 'Verified against CHATR SI classifier telemetry processing 45,000+ incoming message threads.',
+    ctaTitle: 'Explore all CHATR SI capabilities',
+    ctaDescription: 'SI Message Triage is one of six integrated SI capabilities in the CHATR SI Platform. Discover the full intelligence layer for your business.',
     ctaTarget: '/chatr/ai',
-    ctaButtonText: 'Explore CHATR AI Platform'
+    ctaButtonText: 'Explore CHATR SI Platform'
   },
   {
     path: '/chatr/multi-channel-business-messaging',
@@ -77,19 +77,19 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
   {
     path: '/chatr/ai-conversation-summarization',
     category: 'Product',
-    title: 'AI Conversation Summarization for Teams -- CHATR Communication OS',
+    title: 'SI Conversation Summarization for Teams -- CHATR Communication OS',
     description: 'Generate instant executive summaries of long customer and candidate WhatsApp threads before handing off conversations.',
     keywords: 'ai conversation summarization, thread summary ai, chat handoff summary',
-    h1: 'AI Conversation Summarization for Team Handoffs',
-    executiveSummary: 'Eliminate 10-minute catch-up reads. CHATR AI summarizes 50-message WhatsApp threads into 3 bullet points during agent transfers.',
+    h1: 'SI Conversation Summarization for Team Handoffs',
+    executiveSummary: 'Eliminate 10-minute catch-up reads. CHATR SI summarizes 50-message WhatsApp threads into 3 bullet points during agent transfers.',
     faqs: [
-      { q: 'Can managers view AI summaries across all threads?', a: 'Yes. Executive dashboards display instant bullet-point summaries for rapid audit.' }
+      { q: 'Can managers view SI summaries across all threads?', a: 'Yes. Executive dashboards display instant bullet-point summaries for rapid audit.' }
     ],
     evidenceText: 'Tested across 12,000+ multi-turn customer support and screening conversations.',
-    ctaTitle: 'Part of the CHATR AI intelligence layer',
-    ctaDescription: 'Conversation Summarization is one of six AI capabilities in CHATR. See the complete platform overview.',
+    ctaTitle: 'Part of the CHATR SI intelligence layer',
+    ctaDescription: 'Conversation Summarization is one of six SI capabilities in CHATR. See the complete platform overview.',
     ctaTarget: '/chatr/ai',
-    ctaButtonText: 'View all CHATR AI capabilities'
+    ctaButtonText: 'View all CHATR SI capabilities'
   },
 
   // --- PROBLEM ENGINE (5 Pages) ---
@@ -148,7 +148,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/problem/fix-slow-customer-response-times',
     category: 'Problem',
     title: 'How to Fix Slow Customer Response Times -- CHATR Communication OS',
-    description: 'Diagnose response bottlenecks across email and WhatsApp. Implement automated SLAs and instant AI acknowledgments.',
+    description: 'Diagnose response bottlenecks across email and WhatsApp. Implement automated SLAs and instant SI acknowledgments.',
     keywords: 'fix slow customer response times, business response SLA, automated customer triage',
     h1: 'How to Fix Slow Customer Response Times',
     executiveSummary: 'Slow response times directly harm customer retention. Discover how shared inboxes and automated SLAs cut response time by 80%.',
@@ -156,10 +156,10 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
       { q: 'What is an acceptable business response time on WhatsApp?', a: 'Under 5 minutes during business hours, and under 1 minute for automated acknowledgments.' }
     ],
     evidenceText: 'Based on CHATR SLA telemetry processing over 60,000 customer touchpoints.',
-    ctaTitle: 'Cut customer response times by 80% with AI Triage',
+    ctaTitle: 'Cut customer response times by 80% with SI Triage',
     ctaDescription: 'Automatically classify intent and route urgent leads to sales agents before conversations go cold.',
     ctaTarget: '/chatr/ai-message-triage-routing',
-    ctaButtonText: 'Explore AI Lead Triage & Routing'
+    ctaButtonText: 'Explore SI Lead Triage & Routing'
   },
   {
     path: '/problem/eliminate-context-switching-inboxes',
@@ -189,7 +189,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     h1: 'Step-by-Step WhatsApp Lead Response Workflow',
     executiveSummary: 'A structured lead response workflow ensures no inquiry falls through the cracks. Automate greeting, qualification, and sales assignment.',
     faqs: [
-      { q: 'What are the 3 stages of a lead response workflow?', a: 'Stage 1: Instant AI Acknowledgment. Stage 2: Qualification Questionnaire. Stage 3: Direct Sales Handoff.' }
+      { q: 'What are the 3 stages of a lead response workflow?', a: 'Stage 1: Instant SI Acknowledgment. Stage 2: Qualification Questionnaire. Stage 3: Direct Sales Handoff.' }
     ],
     evidenceText: 'Validated across 80+ sales teams using CHATR Communication OS.'
   },
@@ -197,7 +197,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/workflow/automated-candidate-screening-workflow',
     category: 'Workflow',
     title: 'Automated Candidate Screening Workflow -- CHATR Communication OS',
-    description: 'Build an automated WhatsApp screening pipeline: Resume Upload -> AI Parser -> Pre-screen Questions -> Recruiter Shortlist.',
+    description: 'Build an automated WhatsApp screening pipeline: Resume Upload -> SI Parser -> Pre-screen Questions -> Recruiter Shortlist.',
     keywords: 'automated candidate screening workflow, whatsapp screening pipeline, recruiter automation',
     h1: 'Automated Candidate Screening Workflow',
     executiveSummary: 'Screen 100 applicants in 10 minutes. TalentXcel and CHATR automate CV parsing and screening questions directly in WhatsApp.',
@@ -236,12 +236,12 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/workflow/after-hours-business-messaging-workflow',
     category: 'Workflow',
     title: 'After-Hours Business Messaging Workflow -- CHATR Communication OS',
-    description: 'Capture weekend and evening leads with automated AI triage, FAQs, and scheduled next-day agent callbacks.',
+    description: 'Capture weekend and evening leads with automated SI triage, FAQs, and scheduled next-day agent callbacks.',
     keywords: 'after hours business messaging workflow, weekend whatsapp auto reply, evening lead capture',
     h1: 'After-Hours Business Messaging Workflow',
-    executiveSummary: 'Never lose a weekend customer. CHATR AI greets off-hours inquiries, answers common questions, and queues callbacks for Monday morning.',
+    executiveSummary: 'Never lose a weekend customer. CHATR SI greets off-hours inquiries, answers common questions, and queues callbacks for Monday morning.',
     faqs: [
-      { q: 'Does after-hours AI messaging require human supervision?', a: 'No. Off-hours workflows operate autonomously within boundaries defined in CHATR Studio.' }
+      { q: 'Does after-hours SI messaging require human supervision?', a: 'No. Off-hours workflows operate autonomously within boundaries defined in CHATR Studio.' }
     ],
     evidenceText: 'Source: CHATR Telemetry analysis of off-hours customer conversions.'
   },
@@ -321,9 +321,9 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'Compare CHATR Communication OS against standard WhatsApp Business App for multi-agent support, collision detection, and analytics.',
     keywords: 'chatr vs whatsapp business app, whatsapp business app limits, multi agent whatsapp comparison',
     h1: 'CHATR Communication OS vs WhatsApp Business App',
-    executiveSummary: 'The free WhatsApp Business App is built for micro-businesses with 1 phone. CHATR OS adds multi-agent access, AI triage, and team analytics for growing teams.',
+    executiveSummary: 'The free WhatsApp Business App is built for micro-businesses with 1 phone. CHATR OS adds multi-agent access, SI triage, and team analytics for growing teams.',
     faqs: [
-      { q: 'Why upgrade from WhatsApp Business App to CHATR OS?', a: 'Standard WhatsApp App cannot assign threads to 10+ agents, run AI candidate screening, or track team SLAs.' }
+      { q: 'Why upgrade from WhatsApp Business App to CHATR OS?', a: 'Standard WhatsApp App cannot assign threads to 10+ agents, run SI candidate screening, or track team SLAs.' }
     ],
     evidenceText: 'Factual comparison based on WhatsApp API capabilities vs standard App limitations.'
   },
@@ -373,7 +373,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'See how replacing 8 disconnected tools (Slack, Notion, WhatsApp, Calendly, Typeform) with CHATR OS saves startup founders hours and money.',
     keywords: 'chatr business os vs fragmented tools, startup tool stack consolidation, replace 10 startup apps',
     h1: 'CHATR Business OS vs Fragmented Startup Tool Stack',
-    executiveSummary: 'Founders waste hours daily switching between disconnected apps. CHATR unifies communications, candidate screening, and AI workflows.',
+    executiveSummary: 'Founders waste hours daily switching between disconnected apps. CHATR unifies communications, candidate screening, and SI workflows.',
     faqs: [
       { q: 'What tools does CHATR OS replace for a startup?', a: 'CHATR replaces shared inbox tools, manual screening forms, separate chat widgets, and disjointed team communication apps.' }
     ],
@@ -386,19 +386,19 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
   {
     path: '/chatr/ai-phone-agent-calling',
     category: 'Product',
-    title: 'AI Phone Agent and Automated Voice Calling -- CHATR Communication OS',
-    description: 'Deploy AI phone agents to handle inbound phone calls, answer customer FAQs, and qualify leads with human-like voice synthesis.',
+    title: 'SI Phone Agent and Automated Voice Calling -- CHATR Communication OS',
+    description: 'Deploy SI phone agents to handle inbound phone calls, answer customer FAQs, and qualify leads with human-like voice synthesis.',
     keywords: 'ai phone agent, automated voice calling business, voice ai triage',
-    h1: 'AI Phone Agent & Automated Voice Calling',
-    executiveSummary: 'CHATR AI Voice Agents answer incoming business calls 24/7, qualifying callers and transcribing audio directly into your team inbox.',
+    h1: 'SI Phone Agent & Automated Voice Calling',
+    executiveSummary: 'CHATR SI Voice Agents answer incoming business calls 24/7, qualifying callers and transcribing audio directly into your team inbox.',
     faqs: [
-      { q: 'Can the AI voice agent transfer calls to live agents?', a: 'Yes. CHATR routes warm caller transfers to available human agents based on SLA rules.' }
+      { q: 'Can the SI voice agent transfer calls to live agents?', a: 'Yes. CHATR routes warm caller transfers to available human agents based on SLA rules.' }
     ],
-    evidenceText: 'Based on CHATR Voice AI telemetry across 15,000+ call minutes (July--August 2026).',
-    ctaTitle: 'AI Voice is part of CHATR AI',
-    ctaDescription: 'The AI Phone Agent is one of six capabilities in the CHATR AI platform. Explore the full intelligent business communication layer.',
+    evidenceText: 'Based on CHATR Voice SI telemetry across 15,000+ call minutes (July--August 2026).',
+    ctaTitle: 'SI Voice is part of CHATR SI',
+    ctaDescription: 'The SI Phone Agent is one of six capabilities in the CHATR SI platform. Explore the full intelligent business communication layer.',
     ctaTarget: '/chatr/ai',
-    ctaButtonText: 'Explore the CHATR AI Platform'
+    ctaButtonText: 'Explore the CHATR SI Platform'
   },
   {
     path: '/chatr/whatsapp-broadcast-campaigns',
@@ -442,19 +442,19 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
   {
     path: '/chatr/ai-auto-responder-lead-capture',
     category: 'Product',
-    title: 'AI Auto-Responder for Instant Lead Capture -- CHATR Communication OS',
+    title: 'SI Auto-Responder for Instant Lead Capture -- CHATR Communication OS',
     description: 'Capture inbound leads instantly on WhatsApp and web chat with intelligent conversational intake and questionnaire triggers.',
     keywords: 'ai auto responder, instant lead capture whatsapp, conversational lead intake',
-    h1: 'AI Auto-Responder for Instant Lead Capture',
-    executiveSummary: 'Acknowledge leads in under 10 seconds. CHATR AI Auto-Responder collects contact details and project needs automatically.',
+    h1: 'SI Auto-Responder for Instant Lead Capture',
+    executiveSummary: 'Acknowledge leads in under 10 seconds. CHATR SI Auto-Responder collects contact details and project needs automatically.',
     faqs: [
       { q: 'Does the auto-responder work on weekends?', a: 'Yes. It operates 24/7/365 to capture off-hours inquiries.' }
     ],
     evidenceText: 'Tested across 30,000+ inbound lead capture conversations.',
-    ctaTitle: 'Auto-Responder is part of the CHATR AI layer',
-    ctaDescription: 'Instant lead capture is one of six AI capabilities built into CHATR. See the complete AI platform overview for your business.',
+    ctaTitle: 'Auto-Responder is part of the CHATR SI layer',
+    ctaDescription: 'Instant lead capture is one of six SI capabilities built into CHATR. See the complete SI platform overview for your business.',
     ctaTarget: '/chatr/ai',
-    ctaButtonText: 'See all CHATR AI capabilities'
+    ctaButtonText: 'See all CHATR SI capabilities'
   },
 
   // --- PROBLEM ENGINE (5 New Pages) ---
@@ -465,13 +465,13 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'Learn how high-growth businesses handle 500+ daily WhatsApp inquiries without adding headcount or missing high-intent buyers.',
     keywords: 'manage high whatsapp lead volume, scale whatsapp business messages, multi agent inbox',
     h1: 'How to Manage High WhatsApp Lead Volume',
-    executiveSummary: 'High message volume creates chaos on single phones. CHATR AI triage and round-robin assignment distribute volume smoothly.',
+    executiveSummary: 'High message volume creates chaos on single phones. CHATR SI triage and round-robin assignment distribute volume smoothly.',
     faqs: [
       { q: 'How many agents can share one WhatsApp number?', a: 'CHATR supports unlimited concurrent team agents on a single official WhatsApp Business API number.' }
     ],
     evidenceText: 'Source: CHATR High-Volume Messaging Benchmark 2026.',
     ctaTitle: 'Handle high WhatsApp volume with a shared team inbox',
-    ctaDescription: 'Turn one WhatsApp Business number into a multi-agent workspace with AI-powered round-robin assignment and conversation routing.',
+    ctaDescription: 'Turn one WhatsApp Business number into a multi-agent workspace with SI-powered round-robin assignment and conversation routing.',
     ctaTarget: '/chatr/shared-team-inbox-whatsapp',
     ctaButtonText: 'Explore the CHATR Shared Team Inbox'
   },
@@ -487,10 +487,10 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
       { q: 'What happens to messages received when all reps are busy?', a: 'CHATR places chats into a prioritized queue with automated holding messages.' }
     ],
     evidenceText: 'Based on 40,000+ unassigned thread triage evaluations.',
-    ctaTitle: 'Eliminate unassigned message queues with AI Triage',
-    ctaDescription: 'CHATR AI automatically classifies and routes incoming messages before agents open them, so no thread goes unassigned.',
+    ctaTitle: 'Eliminate unassigned message queues with SI Triage',
+    ctaDescription: 'CHATR SI automatically classifies and routes incoming messages before agents open them, so no thread goes unassigned.',
     ctaTarget: '/chatr/ai-message-triage-routing',
-    ctaButtonText: 'See AI Message Triage in action'
+    ctaButtonText: 'See SI Message Triage in action'
   },
   {
     path: '/problem/stop-candidate-ghosting-recruitment',
@@ -533,15 +533,15 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'Practical steps to cut first-response times from 4 hours to under 2 minutes across email and WhatsApp channels.',
     keywords: 'reduce customer support response delay, fast support response time, automated triage',
     h1: 'How to Reduce Customer Support Response Delays',
-    executiveSummary: 'Slow support destroys customer lifetime value. CHATR AI triage answers instant FAQs and routes complex issues to specialist reps.',
+    executiveSummary: 'Slow support destroys customer lifetime value. CHATR SI triage answers instant FAQs and routes complex issues to specialist reps.',
     faqs: [
-      { q: 'How does AI triage reduce response delays?', a: 'By resolving 35% of repetitive questions automatically without human intervention.' }
+      { q: 'How does SI triage reduce response delays?', a: 'By resolving 35% of repetitive questions automatically without human intervention.' }
     ],
     evidenceText: 'Source: CHATR Customer Support SLA Telemetry 2026.',
-    ctaTitle: 'Cut first-response time with AI intent classification',
-    ctaDescription: 'CHATR AI Triage automatically resolves 35% of repetitive support queries and routes urgent threads to specialist agents in under 10 seconds.',
+    ctaTitle: 'Cut first-response time with SI intent classification',
+    ctaDescription: 'CHATR SI Triage automatically resolves 35% of repetitive support queries and routes urgent threads to specialist agents in under 10 seconds.',
     ctaTarget: '/chatr/ai-message-triage-routing',
-    ctaButtonText: 'Explore AI-Powered Support Triage'
+    ctaButtonText: 'Explore SI-Powered Support Triage'
   },
 
   // --- WORKFLOW ENGINE (5 New Pages) ---
@@ -591,7 +591,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     description: 'Automate evening and weekend lead intake: Instant Greeting -> Qualification Questions -> Scheduled Morning Handoff.',
     keywords: 'out of hours lead capture workflow, weekend lead capture whatsapp, evening sales workflow',
     h1: 'Out-of-Hours Lead Capture & Callback Workflow',
-    executiveSummary: 'Capture 100% of weekend inquiries. CHATR AI engages off-hours buyers and schedules priority callbacks for your sales team.',
+    executiveSummary: 'Capture 100% of weekend inquiries. CHATR SI engages off-hours buyers and schedules priority callbacks for your sales team.',
     faqs: [
       { q: 'Does the client receive a confirmation of their morning callback slot?', a: 'Yes. CHATR sends an automated confirmation with calendar invite.' }
     ],
@@ -688,7 +688,7 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     h1: 'CHATR Communication OS vs Intercom',
     executiveSummary: 'Intercom is built for SaaS web chat with expensive seat pricing. CHATR provides a complete Communication OS unifying WhatsApp, candidate screening, and team inboxes.',
     faqs: [
-      { q: 'Why switch from Intercom to CHATR OS?', a: 'CHATR offers native WhatsApp Business API, AI resume parsing, and predictable flat-tier pricing.' }
+      { q: 'Why switch from Intercom to CHATR OS?', a: 'CHATR offers native WhatsApp Business API, SI resume parsing, and predictable flat-tier pricing.' }
     ],
     evidenceText: 'Factual capability and pricing comparison as of August 2026.'
   },
@@ -709,12 +709,12 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/comparison/chatr-vs-gallabox',
     category: 'Comparison',
     title: 'CHATR Communication OS vs Gallabox -- CHATR Communication OS',
-    description: 'Compare CHATR OS against Gallabox for AI candidate screening, multi-channel email integration, and team collaboration.',
+    description: 'Compare CHATR OS against Gallabox for SI candidate screening, multi-channel email integration, and team collaboration.',
     keywords: 'chatr vs gallabox, gallabox alternative, multi channel team inbox comparison',
     h1: 'CHATR Communication OS vs Gallabox',
-    executiveSummary: 'Gallabox focuses strictly on WhatsApp. CHATR Communication OS unifies WhatsApp, email, candidate screening, and AI voice into one system.',
+    executiveSummary: 'Gallabox focuses strictly on WhatsApp. CHATR Communication OS unifies WhatsApp, email, candidate screening, and SI voice into one system.',
     faqs: [
-      { q: 'Does Gallabox support candidate resume parsing?', a: 'No. TalentXcel and CHATR provide native AI resume parsing and ATS candidate pipelines.' }
+      { q: 'Does Gallabox support candidate resume parsing?', a: 'No. TalentXcel and CHATR provide native SI resume parsing and ATS candidate pipelines.' }
     ],
     evidenceText: 'Factual platform capability assessment.'
   },
@@ -722,10 +722,10 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/comparison/chatr-vs-wati',
     category: 'Comparison',
     title: 'CHATR Communication OS vs WATI -- CHATR Communication OS',
-    description: 'Compare CHATR OS against WATI for team collaboration, multi-channel support, and AI lead triage.',
+    description: 'Compare CHATR OS against WATI for team collaboration, multi-channel support, and SI lead triage.',
     keywords: 'chatr vs wati, wati alternative, whatsapp team inbox comparison',
     h1: 'CHATR Communication OS vs WATI',
-    executiveSummary: 'WATI is a basic WhatsApp wrapper. CHATR Communication OS provides full multi-channel messaging, AI conversation summaries, and candidate screening.',
+    executiveSummary: 'WATI is a basic WhatsApp wrapper. CHATR Communication OS provides full multi-channel messaging, SI conversation summaries, and candidate screening.',
     faqs: [
       { q: 'Can CHATR handle email and candidate ATS threads alongside WhatsApp?', a: 'Yes. CHATR natively unifies WhatsApp, email, and candidate screening queues.' }
     ],
@@ -735,10 +735,10 @@ export const EXPANSION_PAGES: ExpansionPageConfig[] = [
     path: '/comparison/chatr-vs-aisensy',
     category: 'Comparison',
     title: 'CHATR Communication OS vs AiSensy -- CHATR Communication OS',
-    description: 'Compare CHATR OS against AiSensy for multi-agent support, collision detection, and AI candidate qualification.',
+    description: 'Compare CHATR OS against AiSensy for multi-agent support, collision detection, and SI candidate qualification.',
     keywords: 'chatr vs aisensy, aisensy alternative, multi agent whatsapp inbox',
     h1: 'CHATR Communication OS vs AiSensy',
-    executiveSummary: 'AiSensy provides basic broadcast tools. CHATR OS adds supervisor collision detection, AI thread summaries, and candidate screening.',
+    executiveSummary: 'AiSensy provides basic broadcast tools. CHATR OS adds supervisor collision detection, SI thread summaries, and candidate screening.',
     faqs: [
       { q: 'Does CHATR prevent two agents from replying to the same customer at once?', a: 'Yes. CHATR supervisor collision detection locks active threads while an agent is typing.' }
     ],

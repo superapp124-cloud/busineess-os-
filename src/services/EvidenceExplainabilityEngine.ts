@@ -1,7 +1,7 @@
 /**
  * Evidence & Explainability Engine (Phase 3 Core Service)
  * 
- * Provides end-to-end auditability and mathematical explainability for every AI recommendation,
+ * Provides end-to-end auditability and mathematical explainability for every SI recommendation,
  * linking evidence nodes, timeline event IDs, policy constraints, expected ROI, and confidence.
  */
 

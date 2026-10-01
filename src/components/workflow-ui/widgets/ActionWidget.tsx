@@ -23,7 +23,7 @@ const ActionWidget = memo(function ActionWidget({ instance, workflowId, onAction
  const isGrid = payload.layout === 'grid';
 
  const handleAction = (action: ActionWidgetPayload['actions'][number]) => {
- // If the action has a prompt, send it as a new AI message
+ // If the action has a prompt, send it as a new SI message
  if (action.prompt) {
  eventBus.publish('AI_CHAT_PROMPT', { prompt: action.prompt }, { source: 'ActionWidget' });
  }

@@ -17,7 +17,7 @@
 8. [Deep Link Map](#7-deep-link-map)
 9. [Integration Checklist](#8-integration-checklist)
 10. [WebRTC & Calling Architecture](#9-webrtc--calling-architecture)
-11. [CHATR Brain AI System](#10-chatr-brain-ai-system)
+11. [CHATR Brain SI System](#10-chatr-brain-ai-system)
 12. [Database Triggers & Automation](#11-database-triggers--automation)
 
 ---
@@ -344,7 +344,7 @@ Production: https://sbayuqgomlflmxgicplz.supabase.co/functions/v1
 |--------|----------|-------------|------|------------------|
 | POST | `universal-search` | Universal search | No | `{ query, lat?, lon?, category? }` |
 | POST | `universal-search-engine` | Full search engine | No | `{ query, filters?, pagination? }` |
-| POST | `ai-browser-search` | AI-powered search | Yes | `{ query, context? }` |
+| POST | `ai-browser-search` | SI-powered search | Yes | `{ query, context? }` |
 | POST | `visual-search` | Image-based search | No | `{ imageUrl?, imageBase64? }` |
 | POST | `geo-search` | Location search | No | `{ query, lat, lon, radius? }` |
 | POST | `perplexity-search` | Deep web search | No | `{ query }` |
@@ -355,30 +355,30 @@ Production: https://sbayuqgomlflmxgicplz.supabase.co/functions/v1
 | POST | `search-alerts-notifier` | Trigger saved search alerts | Yes | - |
 | POST | `chatr-world-search` | Chatr World content search | Yes | `{ query }` |
 
-### 1.10 AI Services
+### 1.10 SI Services
 
 | Method | Endpoint | Description | Auth | Request/Response |
 |--------|----------|-------------|------|------------------|
-| POST | `ai-assistant` | AI assistant chat | No | `{ message, context? }` |
-| POST | `ai-chat-assistant` | Conversational AI chat | Yes | `{ message, history? }` |
-| POST | `ai-agent-chat` | AI agent conversation | Yes | `{ agent_id, message }` |
-| POST | `ai-answer` | Get AI answer | No | `{ query, context? }` |
-| POST | `ai-health-assistant` | Health AI | No | `{ symptoms, history? }` |
+| POST | `ai-assistant` | SI assistant chat | No | `{ message, context? }` |
+| POST | `ai-chat-assistant` | Conversational SI chat | Yes | `{ message, history? }` |
+| POST | `ai-agent-chat` | SI agent conversation | Yes | `{ agent_id, message }` |
+| POST | `ai-answer` | Get SI answer | No | `{ query, context? }` |
+| POST | `ai-health-assistant` | Health SI | No | `{ symptoms, history? }` |
 | POST | `ai-smart-reply` | Smart reply suggestions | No | `{ conversation_context }` |
-| POST | `smart-compose` | AI compose | Yes | `{ partial_text, context }` |
+| POST | `smart-compose` | SI compose | Yes | `{ partial_text, context }` |
 | POST | `symptom-checker` | Symptom analysis | Yes | `{ symptoms: string[] }` |
 | POST | `summarize-chat` | Chat summary | Yes | `{ conversation_id }` |
-| POST | `ai-chat-summary` | AI-powered chat summary | Yes | `{ conversationId }` |
+| POST | `ai-chat-summary` | SI-powered chat summary | Yes | `{ conversationId }` |
 | POST | `translate-message` | Translate text | Yes | `{ text, target_lang }` |
 | POST | `auto-translate` | Auto-detect & translate | Yes | `{ text }` |
 | POST | `transcribe-voice` | Voice to text | Yes | `{ audio_url }` |
-| POST | `ai-image-generator` | Generate AI image | Yes | `{ prompt }` |
+| POST | `ai-image-generator` | Generate SI image | Yes | `{ prompt }` |
 | POST | `ai-message-insights` | Message analytics insights | Yes | `{ conversationId }` |
-| POST | `ai-coaching` | AI life coaching | Yes | `{ message, context }` |
+| POST | `ai-coaching` | SI life coaching | Yes | `{ message, context }` |
 | POST | `ai-voice-summarize` | Voice message summary | Yes | `{ audioUrl }` |
 | POST | `agent-voice-tts` | Text-to-speech for agents | Yes | `{ text, voice? }` |
-| POST | `generate-sticker` | AI sticker generation | Yes | `{ photoUrl, style }` |
-| POST | `generate-feature` | AI feature generation | Yes | `{ description }` |
+| POST | `generate-sticker` | SI sticker generation | Yes | `{ photoUrl, style }` |
+| POST | `generate-feature` | SI feature generation | Yes | `{ description }` |
 | POST | `analyze-fame-content` | Analyze content virality | Yes | `{ contentUrl }` |
 | POST | `analyze-chat-brands` | Brand detection in chat | Yes | `{ conversationId }` |
 | POST | `world-content-moderation` | Content moderation | Yes | `{ contentId, type }` |
@@ -409,7 +409,7 @@ Production: https://sbayuqgomlflmxgicplz.supabase.co/functions/v1
 | POST | `health-wallet-transaction` | Wallet transaction | Yes | `{ amount, type }` |
 | POST | `sync-health-data` | Sync health data | Yes | `{ data: HealthData }` |
 | POST | `medication-interactions` | Check interactions | Yes | `{ medications: string[] }` |
-| POST | `health-predictions` | AI health predictions | Yes | `{ health_data }` |
+| POST | `health-predictions` | SI health predictions | Yes | `{ health_data }` |
 | POST | `health-bmi-calculator` | BMI calculation | Yes | `{ height_cm, weight_kg }` |
 | POST | `health-passport-export` | Export health passport | Yes | `{ format: "pdf"|"json" }` |
 | POST | `nutrition-tracker` | Log nutrition data | Yes | `{ meals, water_ml }` |
@@ -423,7 +423,7 @@ Production: https://sbayuqgomlflmxgicplz.supabase.co/functions/v1
 | POST | `fetch-jobs` | Search jobs | No | `{ query, lat?, lon?, location? }` |
 | POST | `scrape-jobs` | Scrape job listings | No | `{ query, location }` |
 | POST | `crawl-jobs` | Crawl job boards | No | `{ sources, query }` |
-| POST | `job-matching` | AI job matching | Yes | `{ user_profile }` |
+| POST | `job-matching` | SI job matching | Yes | `{ user_profile }` |
 
 ### 1.15 Payment Services
 
@@ -465,17 +465,17 @@ Production: https://sbayuqgomlflmxgicplz.supabase.co/functions/v1
 | POST | `send-sms` | Send SMS notification | Yes | `{ phoneNumber, message }` |
 | POST | `send-broadcast-email` | Broadcast email to users | Yes | `{ subject, body, recipients }` |
 
-### 1.18 CHATR Brain AI Services
+### 1.18 CHATR Brain SI Services
 
 | Method | Endpoint | Description | Auth | Request/Response |
 |--------|----------|-------------|------|------------------|
-| POST | `chatr-brain` | Unified AI router | Yes | `{ message, context?, agentHint? }` |
-| POST | `chatr-world-ai` | Social feed AI | Yes | `{ query, context }` |
+| POST | `chatr-brain` | Unified SI router | Yes | `{ message, context?, agentHint? }` |
+| POST | `chatr-world-ai` | Social feed SI | Yes | `{ query, context }` |
 | POST | `chatr-world` | Chatr World content engine | Yes | `{ action, data }` |
-| POST | `chatr-games-ai` | Gaming AI assistant | Yes | `{ gameContext, action }` |
-| POST | `universal-ai-search` | Universal AI search | Yes | `{ query, category? }` |
-| POST | `mental-health-assistant` | Mental health AI | Yes | `{ message, history? }` |
-| POST | `chatr-plus-ai-search` | Chatr+ service AI search | Yes | `{ query, location? }` |
+| POST | `chatr-games-ai` | Gaming SI assistant | Yes | `{ gameContext, action }` |
+| POST | `universal-ai-search` | Universal SI search | Yes | `{ query, category? }` |
+| POST | `mental-health-assistant` | Mental health SI | Yes | `{ message, history? }` |
+| POST | `chatr-plus-ai-search` | Chatr+ service SI search | Yes | `{ query, location? }` |
 
 ### 1.19 Chatr+ Marketplace Services
 
@@ -608,7 +608,7 @@ Response:
 }
 ```
 
-### 3.3 AI Browser Search
+### 3.3 SI Browser Search
 ```
 POST /functions/v1/ai-browser-search
 Request:
@@ -618,7 +618,7 @@ Request:
 }
 Response:
 {
-  "answer": "AI-generated answer",
+  "answer": "SI-generated answer",
   "sources": [{ title, url, snippet }],
   "relatedQueries": [...]
 }
@@ -642,7 +642,7 @@ Request:
 POST /functions/v1/perplexity-search
 Request:
 {
-  "query": "latest news on AI"
+  "query": "latest news on SI"
 }
 Response:
 {
@@ -685,9 +685,9 @@ Response:
 | `/web` | ChatrWeb | Web app entry |
 | `/search` | UniversalSearch | Global search |
 | `/universal-search` | UniversalSearch | Alias for search |
-| `/ai-browser-home` | AIBrowserHome | AI Browser landing |
-| `/ai-search` | AIBrowserHome | AI Search alias |
-| `/ai-browser` | AIBrowserView | AI Browser results |
+| `/ai-browser-home` | AIBrowserHome | SI Browser landing |
+| `/ai-search` | AIBrowserHome | SI Search alias |
+| `/ai-browser` | AIBrowserView | SI Browser results |
 | `/chatr-home` | ChatrHome | Search home |
 | `/chatr-results` | ChatrResults | Search results |
 
@@ -714,7 +714,7 @@ Response:
 | `/global-contacts` | GlobalContacts | Global directory |
 | `/call-history` | CallHistory | Call log |
 | `/calls` | Calls | Calls page |
-| `/smart-inbox` | SmartInbox | AI-sorted inbox |
+| `/smart-inbox` | SmartInbox | SI-sorted inbox |
 | `/starred-messages` | StarredMessages | Starred messages |
 | `/stories` | Stories | Stories feed |
 
@@ -728,7 +728,7 @@ Response:
 | `/health-passport` | HealthPassport | Health records |
 | `/lab-reports` | LabReports | Lab results |
 | `/medicine-reminders` | MedicineReminders | Medication reminders |
-| `/symptom-checker` | SymptomCheckerPage | AI symptom checker |
+| `/symptom-checker` | SymptomCheckerPage | SI symptom checker |
 | `/health-wallet` | HealthWalletPage | Health wallet |
 | `/teleconsultation` | TeleconsultationPage | Video consultation |
 | `/medication-interactions` | MedicationInteractionsPage | Drug interaction check |
@@ -738,7 +738,7 @@ Response:
 | `/nutrition-tracker` | NutritionTracker | Nutrition logging |
 | `/mental-health` | MentalHealth | Mental health support |
 | `/health-reminders` | HealthReminders | Health reminders |
-| `/health-risks` | HealthRiskPredictions | AI risk predictions |
+| `/health-risks` | HealthRiskPredictions | SI risk predictions |
 | `/emergency` | EmergencyButton | Emergency SOS |
 | `/emergency-services` | EmergencyServices | Emergency directory |
 | `/local-healthcare` | LocalHealthcare | Nearby healthcare |
@@ -784,17 +784,17 @@ Response:
 | `/marketplace/order-success` | OrderSuccessPage | Order success |
 | `/home-services` | HomeServices | Home services |
 
-### 4.6 AI & Assistant Routes
+### 4.6 SI & Assistant Routes
 
 | Route | Page | Description |
 |-------|------|-------------|
-| `/ai-agents` | AIAgentsHub | AI agents marketplace |
-| `/ai-agents/create` | AIAgentCreate | Create AI agent |
-| `/ai-agents/chat/:agentId` | AIAgentChatNew | Chat with AI agent |
-| `/ai-agents/settings/:agentId` | AIAgents | AI agent settings |
-| `/ai-assistant` | AIAssistant | AI assistant |
-| `/prechu-ai` | PrechuAI | Prechu AI chat (protected) |
-| `/chat-ai` | AIChat | AI conversation |
+| `/ai-agents` | AIAgentsHub | SI agents marketplace |
+| `/ai-agents/create` | AIAgentCreate | Create SI agent |
+| `/ai-agents/chat/:agentId` | AIAgentChatNew | Chat with SI agent |
+| `/ai-agents/settings/:agentId` | AIAgents | SI agent settings |
+| `/ai-assistant` | AIAssistant | SI assistant |
+| `/prechu-ai` | PrechuAI | Prechu SI chat (protected) |
+| `/chat-ai` | AIChat | SI conversation |
 
 ### 4.7 Community Routes
 
@@ -1537,7 +1537,7 @@ object NetworkModule {
 - [x] Retrofit Setup with `ChatrApi`, `SearchApi`, `AIApi`, `ContactsApi`
 - [x] `NetworkModule` with Hilt DI
 - [x] API key interceptor for auth
-- [x] Repository Layer (Auth, Chat, Call, Search, AI, Contacts)
+- [x] Repository Layer (Auth, Chat, Call, Search, SI, Contacts)
 
 ### ✅ Phase 2: Authentication
 - [x] Phone OTP authentication (Firebase + Custom)
@@ -1555,7 +1555,7 @@ object NetworkModule {
 ### ✅ Phase 4: Search Integration
 - [x] Universal Search with categories
 - [x] Visual Search with camera
-- [x] AI Browser Search
+- [x] SI Browser Search
 - [x] Geo Search with location
 
 ### ✅ Phase 5: Contacts & Sync
@@ -1563,9 +1563,9 @@ object NetworkModule {
 - [x] Block/unblock via `ContactsRepository`
 - [x] Phone hash privacy
 
-### ✅ Phase 6: AI Features
-- [x] AI Assistant, Agent Chat, Smart Reply
-- [x] Health AI, Symptom Checker
+### ✅ Phase 6: SI Features
+- [x] SI Assistant, Agent Chat, Smart Reply
+- [x] Health SI, Symptom Checker
 - [x] CHATR Brain unified routing
 - [x] Mental Health Assistant
 
@@ -1680,7 +1680,7 @@ telecomManager.addNewIncomingCall(phoneAccountHandle, extras)
 
 ---
 
-## 10. CHATR Brain AI System
+## 10. CHATR Brain SI System
 
 ### 10.1 Unified Router Architecture
 
@@ -1694,8 +1694,8 @@ telecomManager.addNewIncomingCall(phoneAccountHandle, extras)
 └───────────────────────────┬─────────────────────────────────────┘
                             ▼
     ┌───────────┬───────────┬───────────┬───────────┬───────────┬───────────┐
-    │ Personal  │ Work AI   │ Search AI │ Local     │ Job       │ Health AI │
-    │ AI        │           │           │ Services  │ Matching  │           │
+    │ Personal  │ Work SI   │ Search SI │ Local     │ Job       │ Health SI │
+    │ SI        │           │           │ Services  │ Matching  │           │
     │ (habits)  │ (tasks)   │ (answers) │ (booking) │ (resume)  │ (symptoms)│
     └───────────┴───────────┴───────────┴───────────┴───────────┴───────────┘
 ```
@@ -1704,12 +1704,12 @@ telecomManager.addNewIncomingCall(phoneAccountHandle, extras)
 
 | Agent | Type | Purpose | Actions |
 |-------|------|---------|---------|
-| Personal AI | `personal` | Learns habits, tone, preferences | Reminders, personalization |
-| Work AI | `work` | Tasks, docs, meetings | Summarize, schedule, organize |
-| Search AI | `search` | Perplexity-style answers | Web search with citations |
+| Personal SI | `personal` | Learns habits, tone, preferences | Reminders, personalization |
+| Work SI | `work` | Tasks, docs, meetings | Summarize, schedule, organize |
+| Search SI | `search` | Perplexity-style answers | Web search with citations |
 | Local Services | `local` | Plumbers, food, groceries, doctors | Book, order, schedule |
-| Job-Matching AI | `jobs` | Resume to job application | Apply, match, prepare |
-| Health AI | `health` | Symptoms, doctor search | Check symptoms, find doctors |
+| Job-Matching SI | `jobs` | Resume to job application | Apply, match, prepare |
+| Health SI | `health` | Symptoms, doctor search | Check symptoms, find doctors |
 
 ### 10.3 Intent Categories
 
@@ -1804,7 +1804,7 @@ interface SharedContext {
 | Repositories | 6 |
 | Database RPC Functions | 50+ |
 | Database Triggers | 16+ |
-| AI Agents | 6 |
+| SI Agents | 6 |
 | Native Android Components | 15+ |
 
 ---
@@ -1838,12 +1838,12 @@ interface SharedContext {
 
 **New Edge Functions (since v3.0.0):**
 - `fcm-call-trigger` - DB-trigger initiated FCM call notifications
-- `ai-chat-assistant` - Conversational AI chat
-- `ai-chat-summary` - AI-powered chat summaries
-- `ai-coaching` - Life coaching AI
+- `ai-chat-assistant` - Conversational SI chat
+- `ai-chat-summary` - SI-powered chat summaries
+- `ai-coaching` - Life coaching SI
 - `ai-voice-summarize` - Voice message summarization
 - `ai-message-insights` - Chat analytics insights
-- `agent-voice-tts` - Text-to-speech for AI agents
+- `agent-voice-tts` - Text-to-speech for SI agents
 - `auto-translate` - Auto-detect and translate
 - `call-sentiment` - Call sentiment analysis
 - `call-summary` - Call summary generation
@@ -1882,7 +1882,7 @@ interface SharedContext {
 - Android Native Architecture overhaul
 - Dual-protocol signaling (WebSocket + Realtime)
 - FCM v1 migration with OAuth2
-- CHATR Brain AI System with 6 specialized agents
+- CHATR Brain SI System with 6 specialized agents
 - SecureStore credential sync
 
 ### v2.1.0 (December 21, 2025)

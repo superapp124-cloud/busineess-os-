@@ -1,19 +1,21 @@
 /**
- * HEALTH AI AGENT
+ * HEALTH SI AGENT
  * Handles symptoms, doctor search, appointments, health information
  */
 
 import { AgentType, DetectedIntent } from '../types';
 import { memoryLayer } from '../memoryLayer';
 import { AgentResponse, AgentContext } from './personalAI';
+import { healthQueryEngine } from '@/services/health/HealthQueryEngine';
+import { localAIEngine } from '@/services/ai/LocalAIEngine';
 
 /**
- * Health AI Agent
+ * Health SI Agent
  * Provides health information, finds doctors, books appointments
  */
 class HealthAIAgent {
   readonly type: AgentType = 'health';
-  readonly name = 'Health AI';
+  readonly name = 'Health SI';
 
   // IMPORTANT: Health disclaimers
   private readonly DISCLAIMER = "Please note: I provide general health information, not medical advice. Always consult a qualified healthcare professional for diagnosis and treatment.";
@@ -27,6 +29,28 @@ class HealthAIAgent {
     // Check for emergency keywords first
     if (this.isEmergency(query)) {
       return this.handleEmergency(context);
+    }
+
+    // Check if query is asking about vitals, sleep, baseline, or health state from local memory
+    if (healthQueryEngine.canHandle(query)) {
+      const result = healthQueryEngine.query(query);
+      return {
+        message: `${result.answer}\n\n_${this.DISCLAIMER}_`,
+        confidence: 0.95,
+        actions: result.suggestedActionRoute ? [
+          {
+            type: 'navigate',
+            data: { destination: result.suggestedActionRoute },
+            ready: true,
+          }
+        ] : [],
+        metadata: {
+          metric: result.metric,
+          dataPointsCount: result.dataPointsCount,
+          timeRange: result.timeRange,
+          provenance: result.provenanceSources,
+        }
+      };
     }
     
     // Detect health patterns
@@ -238,7 +262,23 @@ I can help you find the nearest hospital. Share your location?`;
     if (!message) {
       message = `I can help you with health-related questions. Looking for a ${specialtyName}? `;
     }
-    
+
+    // Try Local SI generation if available
+    try {
+      if (await localAIEngine.isModelAvailable()) {
+        const aiResult = await localAIEngine.generate(context.query, {
+          systemPrompt: `You are CHATR Health SI. Provide supportive, accurate general health information. Never make definitive clinical diagnoses or prescribe drugs. Always advise consulting a qualified physician. Keep response concise (under 100 words).`,
+          maxTokens: 256,
+        });
+        if (aiResult?.text && aiResult.provider !== 'HEURISTIC_FALLBACK') {
+          message = aiResult.text;
+          confidence = 0.90;
+        }
+      }
+    } catch {
+      // Deterministic fallback preserved
+    }
+
     // Always add disclaimer
     message += `\n\n_${this.DISCLAIMER}_`;
     

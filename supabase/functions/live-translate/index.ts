@@ -82,7 +82,7 @@ Return ONLY valid JSON, no markdown or explanation.`
         console.log('[live-translate] Used raw response as translation');
       }
     } catch (routerError) {
-      console.warn('[live-translate] AI router failed, keeping original text:', routerError);
+      console.warn('[live-translate] SI router failed, keeping original text:', routerError);
     }
 
     return new Response(

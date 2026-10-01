@@ -1,7 +1,7 @@
 import { DryRun001Engine } from '../src/services/mediaAgency/production/DryRun001Engine';
 
 async function main() {
-  console.log('Testing DRY RUN #001 (AI / Work / India)...');
+  console.log('Testing DRY RUN #001 (SI / Work / India)...');
   const summary = await DryRun001Engine.executeDryRun();
 
   console.log('\n--- DRY RUN #001 ACCEPTANCE MATRIX ---');

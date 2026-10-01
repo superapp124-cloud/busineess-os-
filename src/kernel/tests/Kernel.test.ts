@@ -5,7 +5,7 @@ import { createExecutionContext } from '../ExecutionContext';
 import { describe, it, expect, vi } from 'vitest';
 
 describe('Business OS Kernel', () => {
-  it('should route text generation intent to the registered AI provider', async () => {
+  it('should route text generation intent to the registered SI provider', async () => {
     const mockProvider = {
       providerId: 'mock-ai',
       capabilityType: 'TextGeneration' as const,

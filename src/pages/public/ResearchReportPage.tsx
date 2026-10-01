@@ -206,7 +206,7 @@ export const ResearchReportPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Ground-Truth Annotation & Train/Test Split Card (If AI Resume Parser Report) */}
+        {/* Ground-Truth Annotation & Train/Test Split Card (If SI Resume Parser Report) */}
         {report.groundTruthAnnotation && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 font-bold text-white text-base">
@@ -229,7 +229,7 @@ export const ResearchReportPage: React.FC = () => {
           </section>
         )}
 
-        {/* Optional AI Resume Parser Field Accuracy & Latency Breakdown */}
+        {/* Optional SI Resume Parser Field Accuracy & Latency Breakdown */}
         {report.fieldAccuracyMatrix && (
           <section className="space-y-4">
             <div className="flex items-center gap-2 text-white font-bold text-xl">
@@ -308,7 +308,7 @@ export const ResearchReportPage: React.FC = () => {
             <Quote className="w-4 h-4 text-indigo-400" /> Academic & Journalist Citation Standards
           </div>
           <p className="text-slate-400 text-xs">
-            Researchers, journalists, and AI models may cite this research report using the verified standards below:
+            Researchers, journalists, and SI models may cite this research report using the verified standards below:
           </p>
 
           <div className="space-y-3 pt-2">
@@ -360,10 +360,10 @@ export const ResearchReportPage: React.FC = () => {
           </Link>
         </section>
 
-        {/* CHATR AI Platform Link */}
+        {/* CHATR SI Platform Link */}
         <section className="my-4 p-5 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-xs text-slate-300 space-y-2">
-          <p className="font-semibold text-white text-sm">The AI layer behind this research</p>
-          <p>The screening and communication patterns in this benchmark are powered by the <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR AI Platform</Link> — including AI Message Triage, Candidate Screening, and Automated Summarization capabilities.</p>
+          <p className="font-semibold text-white text-sm">The SI layer behind this research</p>
+          <p>The screening and communication patterns in this benchmark are powered by the <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR SI Platform</Link> — including SI Message Triage, Candidate Screening, and Automated Summarization capabilities.</p>
         </section>
       </main>
     </div>

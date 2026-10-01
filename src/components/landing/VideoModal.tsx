@@ -23,7 +23,7 @@ const chapters = [
     id: 'agents',
     title: '2. Intelligence in Action',
     headline: 'Autonomous agents coordinate the workflow',
-    copy: 'Specialized AI agents for talent, research, business operations, and communication execute tasks concurrently without manual context switching.',
+    copy: 'Specialized SI agents for talent, research, business operations, and communication execute tasks concurrently without manual context switching.',
     icon: Briefcase,
     preview: {
       status: 'Recruitment Agent + Screening Agent active',
@@ -149,7 +149,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onOpenA
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
               <div className="space-y-0.5 text-center sm:text-left">
                 <div className="text-xs text-[#111817] font-semibold">
-                  CHATR Intent OS: Autonomous communication, AI agents & universal workspace
+                  CHATR Intent OS: Autonomous communication, SI agents & universal workspace
                 </div>
                 <div className="text-[11px] text-[#53605C] flex items-center justify-center sm:justify-start gap-1.5">
                   <span>Watch more deep dives on</span>

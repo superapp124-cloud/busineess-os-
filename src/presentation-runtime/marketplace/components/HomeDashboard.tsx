@@ -12,7 +12,7 @@ export const HomeDashboard: React.FC = () => {
  const [industries, setIndustries] = useState<Industry[]>([]);
  const [packs, setPacks] = useState<CapabilityPack[]>([]);
  
- // AI State
+ // SI State
  const [aiQuery, setAiQuery] = useState('');
  const [isAiThinking, setIsAiThinking] = useState(false);
  const [recommendation, setRecommendation] = useState<{template: IndustryTemplate, packs: CapabilityPack[]} | null>(null);
@@ -35,7 +35,7 @@ export const HomeDashboard: React.FC = () => {
  setIsAiThinking(true);
  setRecommendation(null);
  
- // Simulate AI intent parsing and search
+ // Simulate SI intent parsing and search
  await new Promise(resolve => setTimeout(resolve, 1500));
  
  const res = await context.marketplaceRepository.search(aiQuery);
@@ -54,7 +54,7 @@ export const HomeDashboard: React.FC = () => {
  <div className={styles.hero}>
  <div className={styles.heroContent}>
  <div className="text-secondary font-semibold tracking-wide text-indigo-400 mb-2 uppercase">
- Ask Executive AI
+ Ask Executive SI
  </div>
  <h1 style={{ fontSize: '1.75rem', marginBottom: '1rem' }}>What do you want to build?</h1>
  
@@ -112,13 +112,13 @@ export const HomeDashboard: React.FC = () => {
  </div>
  </div>
 
- {/* AI Recommendation */}
+ {/* SI Recommendation */}
  {recommendation && (
  <div className={styles.panel} style={{ background: 'linear-gradient(135deg, rgba(91, 108, 255, 0.1), rgba(124, 77, 255, 0.1))', borderColor: 'var(--border-focus)' }}>
  <div className={styles.panelHeader}>
  <div className="flex items-center gap-2">
  <Activity size={18} className="text-indigo-400" />
- <h3>AI Recommended Solution</h3>
+ <h3>SI Recommended Solution</h3>
  </div>
  </div>
  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

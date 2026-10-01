@@ -55,7 +55,7 @@ export class AcquisitionEngineService {
   private gscProperties: GSCPropertyMetrics[] = [
     {
       domain: 'chatr.chat',
-      role: 'CHATR Chat — Universal Inbox & Chat AI',
+      role: 'CHATR Chat — Universal Inbox & Chat SI',
       status: 'CONNECTED',
       totalClicks: 16,
       totalImpressions: 1842,
@@ -65,7 +65,7 @@ export class AcquisitionEngineService {
     },
     {
       domain: 'talentxcel.in',
-      role: 'TALENTXCEL (IN) — Recruitment OS & AI Resume OCR',
+      role: 'TALENTXCEL (IN) — Recruitment OS & SI Resume OCR',
       status: 'CONNECTED',
       totalClicks: 24,
       totalImpressions: 2980,

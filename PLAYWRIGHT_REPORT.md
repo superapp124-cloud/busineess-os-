@@ -13,5 +13,5 @@
 | **RecruitmentOS TOS Header & Kanban Pipeline** | ✅ PASS | 310 ms | 100% |
 | **Candidate Dossier Modal Inspection** | ✅ PASS | 180 ms | 100% |
 | **Job Requisition Creation & Import** | ✅ PASS | 250 ms | 100% |
-| **AI Copilot Workspace Chat Resolution** | ✅ PASS | 380 ms | 100% |
+| **SI Copilot Workspace Chat Resolution** | ✅ PASS | 380 ms | 100% |
 | **New Hire Onboarding Tracker Stepper** | ✅ PASS | 210 ms | 100% |

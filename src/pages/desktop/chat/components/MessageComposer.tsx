@@ -97,7 +97,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = React.memo(({
  value={messageInput}
  onChange={e => setMessageInput(e.target.value)}
  onKeyDown={onKeyDown}
- placeholder={`Message ${selectedRoomName}... (Type @chatr to ask AI)`}
+ placeholder={`Message ${selectedRoomName}... (Type @chatr to ask SI)`}
  className="flex-1 h-10 bg-transparent text-secondary px-2 focus:outline-none placeholder:text-white/30 text-white"
  />
  <div className="pr-1">
@@ -121,9 +121,9 @@ export const MessageComposer: React.FC<MessageComposerProps> = React.memo(({
  </button>
  <Popover>
  <PopoverTrigger asChild>
- <button disabled={!messageInput.trim()} className="p-1.5 rounded-md hover:bg-white/10 text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 disabled:opacity-50 outline-none" title="AI Features">
+ <button disabled={!messageInput.trim()} className="p-1.5 rounded-md hover:bg-white/10 text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 disabled:opacity-50 outline-none" title="SI Features">
  <Sparkles className="w-3.5 h-3.5" />
- <span className="text-[10px] font-bold tracking-wider uppercase">CHATR AI</span>
+ <span className="text-[10px] font-bold tracking-wider uppercase">CHATR SI</span>
  </button>
  </PopoverTrigger>
  <PopoverContent align="center" side="top" className="bg-[#111] border border-white/10 p-2 w-48 shadow-2xl rounded-2xl mb-2">
@@ -134,7 +134,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = React.memo(({
  </div>
  <div>
  <p className="text-label font-semibold text-white/90">Smart Replies</p>
- <p className="text-[9px] text-white/40">Get AI suggestions</p>
+ <p className="text-[9px] text-white/40">Get SI suggestions</p>
  </div>
  </button>
  <button onClick={onRewrite} disabled={isRewriting || !messageInput.trim()} className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-left group">

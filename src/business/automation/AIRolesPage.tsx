@@ -78,7 +78,7 @@ export const AIRoles = () => {
  allowed_actions: r.allowed_actions || [],
  })));
  } catch (e) {
- console.error('Error loading AI roles:', e);
+ console.error('Error loading SI roles:', e);
  } finally {
  setLoading(false);
  }
@@ -104,7 +104,7 @@ export const AIRoles = () => {
  created_by: user?.id,
  });
  if (error) throw error;
- toast({ title: 'AI Role created', description: `${newRole.name} is in draft mode.` });
+ toast({ title: 'SI Role created', description: `${newRole.name} is in draft mode.` });
  setShowCreate(false);
  setNewRole({ name: '', objective: '', escalation_rule: 'If confidence < 80% or user asks for a human', confidence_threshold: 80, system_prompt: '' });
  loadRoles();
@@ -138,9 +138,9 @@ export const AIRoles = () => {
  <div>
  <h1 className="text-display flex items-center gap-2">
  <Bot className="w-8 h-8 text-primary" />
- AI Team Roles
+ SI Team Roles
  </h1>
- <p className="text-muted-foreground mt-1">Configure and manage AI employees for your business.</p>
+ <p className="text-muted-foreground mt-1">Configure and manage SI employees for your business.</p>
  </div>
  <Button className="flex items-center gap-2" onClick={() => setShowCreate(true)}>
  <Plus className="w-4 h-4" />
@@ -155,8 +155,8 @@ export const AIRoles = () => {
  ) : roles.length === 0 ? (
  <div className="text-center py-16 text-muted-foreground">
  <Bot className="h-16 w-16 mx-auto mb-4 opacity-30" />
- <p className="text-section font-medium">No AI Roles configured</p>
- <p className="text-secondary mt-1">Create your first AI team member to start automating customer interactions</p>
+ <p className="text-section font-medium">No SI Roles configured</p>
+ <p className="text-secondary mt-1">Create your first SI team member to start automating customer interactions</p>
  <Button className="mt-4" onClick={() => setShowCreate(true)}>
  <Plus className="w-4 h-4 mr-2" />
  Create First Role
@@ -239,7 +239,7 @@ export const AIRoles = () => {
  <Dialog open={showCreate} onOpenChange={setShowCreate}>
  <DialogContent>
  <DialogHeader>
- <DialogTitle>Create AI Role</DialogTitle>
+ <DialogTitle>Create SI Role</DialogTitle>
  </DialogHeader>
  <div className="space-y-4 py-2">
  <div className="space-y-2">
@@ -253,7 +253,7 @@ export const AIRoles = () => {
  <div className="space-y-2">
  <Label>Objective *</Label>
  <Textarea
- placeholder="Describe what this AI role should do..."
+ placeholder="Describe what this SI role should do..."
  value={newRole.objective}
  onChange={e => setNewRole(p => ({ ...p, objective: e.target.value }))}
  rows={3}
@@ -262,7 +262,7 @@ export const AIRoles = () => {
  <div className="space-y-2">
  <Label>System Prompt</Label>
  <Textarea
- placeholder="Advanced: Provide a custom system prompt for this AI..."
+ placeholder="Advanced: Provide a custom system prompt for this SI..."
  value={newRole.system_prompt}
  onChange={e => setNewRole(p => ({ ...p, system_prompt: e.target.value }))}
  rows={3}

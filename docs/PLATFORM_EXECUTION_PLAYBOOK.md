@@ -105,7 +105,7 @@ Feature flags are required for:
 
 - New platform APIs.
 - New workflow execution paths.
-- New AI tools.
+- New SI tools.
 - Plugin installs.
 - Permission model changes.
 - Calling changes.
@@ -158,7 +158,7 @@ Required:
 
 - New UI code calls platform APIs or platform hooks.
 - New modules publish platform events.
-- New AI behavior uses the Tool Registry.
+- New SI behavior uses the Tool Registry.
 - New workflows use the Workflow Engine.
 - New sensitive actions emit audit logs.
 - New platform code includes tests proportional to risk.
@@ -182,7 +182,7 @@ Required test layers:
 - Workflow execution tests.
 - Event replay/idempotency tests.
 - Permission tests.
-- AI tool approval tests.
+- SI tool approval tests.
 - Calling smoke tests for UI migration boundaries.
 - End-to-end tests for Customer Zero flows.
 
@@ -195,7 +195,7 @@ Calling tests must verify:
 - Mute/unmute.
 - Hangup.
 - Reconnect.
-- Route guards around AI overlays.
+- Route guards around SI overlays.
 
 ## Release Process
 
@@ -233,7 +233,7 @@ Every platform action should include:
 - Outcome.
 - Error details when failed.
 
-AI and workflow actions must also include:
+SI and workflow actions must also include:
 
 - Agent ID.
 - Tool ID.
@@ -248,7 +248,7 @@ Security review is required for:
 
 - New API authentication flows.
 - New plugin permissions.
-- New AI tools.
+- New SI tools.
 - New payment actions.
 - New file access.
 - New calling behavior.

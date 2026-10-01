@@ -22,11 +22,11 @@ export const TalentXcelRecruiterProductivityPage = () => {
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'TalentXcel gives recruiters AI-powered tools to parse resumes, screen candidates on WhatsApp, and manage hiring pipelines — without the manual busywork.');
+      metaDescription.setAttribute('content', 'TalentXcel gives recruiters SI-powered tools to parse resumes, screen candidates on WhatsApp, and manage hiring pipelines — without the manual busywork.');
     } else {
       const newMeta = document.createElement('meta');
       newMeta.name = 'description';
-      newMeta.content = 'TalentXcel gives recruiters AI-powered tools to parse resumes, screen candidates on WhatsApp, and manage hiring pipelines — without the manual busywork.';
+      newMeta.content = 'TalentXcel gives recruiters SI-powered tools to parse resumes, screen candidates on WhatsApp, and manage hiring pipelines — without the manual busywork.';
       document.head.appendChild(newMeta);
     }
 
@@ -64,10 +64,10 @@ export const TalentXcelRecruiterProductivityPage = () => {
         },
         {
           "@type": "Question",
-          "name": "How do AI tools help recruiters screen candidates faster?",
+          "name": "How do SI tools help recruiters screen candidates faster?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "AI tools accelerate screening by automatically extracting structured data from unstructured resumes, standardizing applicant profiles, and running preliminary text or chat-based screening sequences. This reduces the manual effort of reading through dozens of uniquely formatted CVs to find basic qualifications."
+            "text": "SI tools accelerate screening by automatically extracting structured data from unstructured resumes, standardizing applicant profiles, and running preliminary text or chat-based screening sequences. This reduces the manual effort of reading through dozens of uniquely formatted CVs to find basic qualifications."
           }
         },
         {
@@ -80,7 +80,7 @@ export const TalentXcelRecruiterProductivityPage = () => {
         },
         {
           "@type": "Question",
-          "name": "Can small recruitment agencies afford AI productivity tools?",
+          "name": "Can small recruitment agencies afford SI productivity tools?",
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Yes. While enterprise legacy systems can be expensive, many modern platforms offer tiered or usage-based pricing models designed specifically to be accessible for small agencies and independent recruiters who need to maximize their efficiency."
@@ -91,7 +91,7 @@ export const TalentXcelRecruiterProductivityPage = () => {
           "name": "What does TalentXcel offer to improve recruiter productivity?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "TalentXcel focuses on eliminating manual administrative work. It provides an AI resume parser to standardize candidate data, automated WhatsApp screening to engage candidates where they are most responsive, and a streamlined pipeline tracker to manage the end-to-end process."
+            "text": "TalentXcel focuses on eliminating manual administrative work. It provides an SI resume parser to standardize candidate data, automated WhatsApp screening to engage candidates where they are most responsive, and a streamlined pipeline tracker to manage the end-to-end process."
           }
         }
       ]
@@ -137,20 +137,20 @@ export const TalentXcelRecruiterProductivityPage = () => {
       a: "Recruiter productivity tools are software applications designed to automate or streamline repetitive tasks in the hiring process. This includes parsing resumes, scheduling interviews, communicating with candidates, and managing pipelines, allowing recruiters to focus on candidate engagement and decision-making."
     },
     {
-      q: "How do AI tools help recruiters screen candidates faster?",
-      a: "AI tools accelerate screening by automatically extracting structured data from unstructured resumes, standardizing applicant profiles, and running preliminary text or chat-based screening sequences. This reduces the manual effort of reading through dozens of uniquely formatted CVs to find basic qualifications."
+      q: "How do SI tools help recruiters screen candidates faster?",
+      a: "SI tools accelerate screening by automatically extracting structured data from unstructured resumes, standardizing applicant profiles, and running preliminary text or chat-based screening sequences. This reduces the manual effort of reading through dozens of uniquely formatted CVs to find basic qualifications."
     },
     {
       q: "What is the biggest time drain for recruiters?",
       a: "The most significant time drains typically involve manual data entry (like copying details from a CV to an ATS), chasing candidates for initial responses or updates, and manually reading through completely unformatted or poorly structured resumes."
     },
     {
-      q: "Can small recruitment agencies afford AI productivity tools?",
+      q: "Can small recruitment agencies afford SI productivity tools?",
       a: "Yes. While enterprise legacy systems can be expensive, many modern platforms offer tiered or usage-based pricing models designed specifically to be accessible for small agencies and independent recruiters who need to maximize their efficiency."
     },
     {
       q: "What does TalentXcel offer to improve recruiter productivity?",
-      a: "TalentXcel focuses on eliminating manual administrative work. It provides an AI resume parser to standardize candidate data, automated WhatsApp screening to engage candidates where they are most responsive, and a streamlined pipeline tracker to manage the end-to-end process."
+      a: "TalentXcel focuses on eliminating manual administrative work. It provides an SI resume parser to standardize candidate data, automated WhatsApp screening to engage candidates where they are most responsive, and a streamlined pipeline tracker to manage the end-to-end process."
     }
   ];
 
@@ -225,7 +225,7 @@ export const TalentXcelRecruiterProductivityPage = () => {
           <h2 className="text-3xl font-bold text-white mb-10 text-center">The 5 Recruiter Productivity Tools That Make the Biggest Difference</h2>
           <div className="space-y-6 max-w-4xl mx-auto">
             {[
-              { title: "1. AI Resume Parser", desc: "Instantly extracts and standardizes candidate data from any format, making profiles searchable and scannable.", link: "/talentxcel/ai-resume-parser" },
+              { title: "1. SI Resume Parser", desc: "Instantly extracts and standardizes candidate data from any format, making profiles searchable and scannable.", link: "/talentxcel/ai-resume-parser" },
               { title: "2. WhatsApp Screening", desc: "Reaches candidates where they actually read messages, dramatically increasing response rates and speed.", link: "/chatr/whatsapp-candidate-screening" },
               { title: "3. Pipeline Tracker", desc: "A visual, kanban-style board that shows exactly where every candidate stands, preventing anyone from falling through the cracks." },
               { title: "4. Pre-screen Templates", desc: "Standardized question sets that can be sent automatically, ensuring you only spend phone time with qualified applicants.", link: "/talentxcel/automate-candidate-screening" },
@@ -256,7 +256,7 @@ export const TalentXcelRecruiterProductivityPage = () => {
             <div className="grid md:grid-cols-2 gap-10">
               <div>
                 <h4 className="text-lg font-bold text-indigo-400 mb-2">Automated Parsing</h4>
-                <p className="text-slate-300">We built our <Link to="/talentxcel/ai-resume-parser" className="underline hover:text-white">AI resume parser</Link> to handle the messiest PDFs and Word docs. Upload a batch, and TalentXcel structures the data immediately.</p>
+                <p className="text-slate-300">We built our <Link to="/talentxcel/ai-resume-parser" className="underline hover:text-white">SI resume parser</Link> to handle the messiest PDFs and Word docs. Upload a batch, and TalentXcel structures the data immediately.</p>
               </div>
               <div>
                 <h4 className="text-lg font-bold text-indigo-400 mb-2">Frictionless Communication</h4>

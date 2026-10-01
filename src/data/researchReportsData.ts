@@ -74,7 +74,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
     ],
     dataTable: [
       { metric: 'First-Touch Candidate Response Rate (Sub-2h)', value: '78.4% (95% CI: 76.1%-80.7%)', benchmark: '14.2% (Email Cohort)', insight: 'Candidates responded 5.5x faster on mobile messaging than traditional email application portals.' },
-      { metric: 'Median Time to Shortlist', value: '3.5 Hours (P50)', benchmark: '4.2 Days (Email)', insight: 'Automated AI resume parsing combined with WhatsApp pre-screening eliminates gatekeeping delay.' },
+      { metric: 'Median Time to Shortlist', value: '3.5 Hours (P50)', benchmark: '4.2 Days (Email)', insight: 'Automated SI resume parsing combined with WhatsApp pre-screening eliminates gatekeeping delay.' },
       { metric: 'Interview Attendance Rate', value: '84.6% (95% CI: 82.3%-86.9%)', benchmark: '52.1% (Email Cohort)', insight: 'Automated 24-hour and 2-hour WhatsApp reminders were associated with a 32.5 percentage point drop in interview no-shows.' },
       { metric: 'Candidate Qualification Accuracy', value: '92.3%', benchmark: '68.0% (Unscreened)', insight: 'Structured micro-questions extracted precise qualification signals compared to unformatted CVs.' }
     ],
@@ -110,7 +110,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
     keyFindings: [
       'Observational Conversion Multiplier: Inquiries acknowledged within 5 minutes converted at 38.2% (95% CI: 36.1%--40.3%), compared to 1.8% for inquiries delayed >60 minutes (21.2x higher observed conversion rate).',
       '41.2% of off-hours (evening and weekend) WhatsApp inquiries received no agent response until the next business day, leading to a 54.0% buyer drop-off.',
-      'Accounts utilizing AI auto-responders maintained a 98.9% acknowledgment rate in under 15 seconds.'
+      'Accounts utilizing SI auto-responders maintained a 98.9% acknowledgment rate in under 15 seconds.'
     ],
     dataTable: [
       { metric: 'Sub-5-Minute Response Observed Conversion', value: '38.2% (95% CI: 36.1%-40.3%)', benchmark: '1.8% (>60 min)', insight: 'Speed-to-lead is the single highest observed factor correlated with messaging conversion.' },
@@ -122,7 +122,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
   },
   {
     path: '/research/ai-resume-parser-accuracy-benchmark-2026',
-    title: 'AI Resume Parser Accuracy and Screening Velocity Benchmark',
+    title: 'SI Resume Parser Accuracy and Screening Velocity Benchmark',
     subtitle: 'Evaluating Field Extraction Precision across PDF, DOCX, and WhatsApp CV Submissions',
     description: 'Benchmarking skill extraction accuracy, work history parsing, and qualification verification across 50,000 candidate resumes.',
     keywords: 'ai resume parser accuracy benchmark, cv skill extraction precision, talentxcel parser study',
@@ -150,7 +150,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
       'Language Scope: Evaluation is currently restricted to English resume text.'
     ],
     keyFindings: [
-      'TalentXcel AI Parser v1.4 achieved a 96.4% precision rate (F1: 0.952) in extracting core technical skills from non-standard PDF formats on held-out test data.',
+      'TalentXcel SI Parser v1.4 achieved a 96.4% precision rate (F1: 0.952) in extracting core technical skills from non-standard PDF formats on held-out test data.',
       'Unstructured mobile photo CVs parsed via WhatsApp OCR achieved 89.1% field accuracy.',
       'Automated resume parsing operated at a median processing latency (P50) of 1.2 seconds per resume.'
     ],
@@ -171,7 +171,7 @@ export const RESEARCH_REPORTS: ResearchReportConfig[] = [
       { percentile: 'P90', latency: '2.4 Seconds' },
       { percentile: 'P95', latency: '3.1 Seconds' }
     ],
-    citationApa: 'Jahan, S., & TalentXcel Research. (2026). AI Resume Parser Accuracy and Screening Velocity Benchmark (Research ID: TALENTXCEL-RES-2026-003). TalentXcel Technical Reports.',
-    citationBibtex: '@article{jahan2026parser,\n  title={AI Resume Parser Accuracy and Screening Velocity Benchmark},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={TalentXcel Technical Reports},\n  year={2026},\n  note={Research ID: TALENTXCEL-RES-2026-003 (Pending Zenodo Deposit)},\n  url={https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026}\n}'
+    citationApa: 'Jahan, S., & TalentXcel Research. (2026). SI Resume Parser Accuracy and Screening Velocity Benchmark (Research ID: TALENTXCEL-RES-2026-003). TalentXcel Technical Reports.',
+    citationBibtex: '@article{jahan2026parser,\n  title={SI Resume Parser Accuracy and Screening Velocity Benchmark},\n  author={Jahan, Sanobar and TalentXcel Research Team},\n  journal={TalentXcel Technical Reports},\n  year={2026},\n  note={Research ID: TALENTXCEL-RES-2026-003 (Pending Zenodo Deposit)},\n  url={https://chatrchat.in/research/ai-resume-parser-accuracy-benchmark-2026}\n}'
   }
 ];

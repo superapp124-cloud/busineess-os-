@@ -32,7 +32,7 @@ export const LOCATION_USE_CASES: UseCaseDefinition[] = [
     title: 'Recruitment & Staffing Agencies',
     focus: 'candidate screening and resume parsing',
     h1Prefix: 'Recruitment & Staffing Agency Automation in',
-    summaryTemplate: (city) => `Recruitment firms in ${city} deploy CHATR OS to eliminate candidate drop-offs, parse multi-lingual resumes via AI, and screen candidates over WhatsApp with 94% response rates.`,
+    summaryTemplate: (city) => `Recruitment firms in ${city} deploy CHATR OS to eliminate candidate drop-offs, parse multi-lingual resumes via SI, and screen candidates over WhatsApp with 94% response rates.`,
     faqsTemplate: (city) => [
       { q: `How do recruitment agencies in ${city} use CHATR?`, a: `Staffing firms in ${city} connect their WhatsApp Business numbers to CHATR to automate resume parsing, pre-screening questions, and interview calendar bookings.` },
       { q: `Can CHATR parse candidate resumes in local languages in ${city}?`, a: `Yes. CHATR's parser supports 20+ languages, extracting skills, experience, and contact details with 98.4% accuracy.` },
@@ -71,7 +71,7 @@ export const LOCATION_USE_CASES: UseCaseDefinition[] = [
     summaryTemplate: (city) => `Capture, qualify, and book property site visits in ${city} within 60 seconds of inquiry on WhatsApp, 99acres, MagicBricks, and Facebook Ads.`,
     faqsTemplate: (city) => [
       { q: `How does CHATR capture real estate leads in ${city}?`, a: `CHATR unifies lead portals, website forms, and WhatsApp inquiries into a single real-time triage queue.` },
-      { q: `Can buyers schedule property site visits in ${city} directly?`, a: `Yes. The AI bot presents available slots and syncs directly with sales agent Google/Outlook calendars.` },
+      { q: `Can buyers schedule property site visits in ${city} directly?`, a: `Yes. The SI bot presents available slots and syncs directly with sales agent Google/Outlook calendars.` },
       { q: `How does CHATR prevent lead leakage in ${city}?`, a: `Unassigned lead alerts and automated escalation ensure zero leads remain unattended.` }
     ]
   },

@@ -95,7 +95,7 @@ export const HRLeaveManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Leave Management AI',
+    assistantName: 'Leave Management SI',
     skills: []
   },
   

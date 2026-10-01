@@ -1,16 +1,16 @@
 /**
  * CHATR OS — Auto-Generated Capability SDK
- * Capability: Workflow Automation (AI.WorkflowAutomation)
+ * Capability: Workflow Automation (SI.WorkflowAutomation)
  */
 
 import { ICapabilityManifest } from '../types';
 
 export const AIWorkflowAutomationSDK: ICapabilityManifest = {
-  id: 'AI.WorkflowAutomation',
+  id: 'SI.WorkflowAutomation',
   name: 'Workflow Automation',
   description: 'No-code automation builder with triggers, conditions, and actions across all installed capabilities.',
   department: 'Enterprise Platform',
-  category: 'AI & Automation',
+  category: 'SI & Automation',
   version: '1.5.0',
   maturity: 'L4',
   icon: '⚡',
@@ -29,7 +29,7 @@ export const AIWorkflowAutomationSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Workflow Automation AI',
+    assistantName: 'Workflow Automation SI',
     skills: []
   },
   

@@ -122,7 +122,7 @@ export const StartMyDayModal: React.FC<StartMyDayModalProps> = ({ isOpen, onClos
  <div className="flex items-center justify-center gap-2 mb-2">
  {modalTasks[currentStep].state === 'prepared_by_ai' && (
  <span className="flex items-center gap-1 text-label text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
- <Sparkles className="w-3 h-3" /> AI Prepared
+ <Sparkles className="w-3 h-3" /> SI Prepared
  </span>
  )}
  {modalTasks[currentStep].state === 'quick_win' && (

@@ -1,15 +1,15 @@
 'use strict';
 
 /**
- * CHATR AI Bootstrap Engine — electron/ollama.cjs
+ * CHATR SI Bootstrap Engine — electron/ollama.cjs
  *
- * Zero-user-intervention local AI setup.
+ * Zero-user-intervention local SI setup.
  * Handles: detection -> install -> model pull -> serve -> IPC -> local-only responses
  *
  * Non-technical user guarantee:
  *   - No terminal, no commands, no popups
  *   - Progress visible inside CHATR UI (not OS dialogs)
- *   - Fails closed when local AI is unavailable
+ *   - Fails closed when local SI is unavailable
  *   - Survives restarts, partial downloads, network drops
  */
 
@@ -39,7 +39,7 @@ const MODELS = [
   {
     name: 'llama3.2:3b',
     sizeGB: 2.0,
-    description: 'Fast general AI',
+    description: 'Fast general SI',
     priority: 2,
     useCases: ['smart_reply', 'summarize', 'intent']
   }
@@ -377,7 +377,7 @@ async function ensureModels() {
         log.error(`[Ollama] Failed to pull ${model.name}:`, err.message);
         // Non-fatal: continue to next model, then fail closed if none are ready.
         broadcast('ai:status', {
-          warning: `Could not download ${model.name}. Local AI will stay unavailable until a model is ready.`
+          warning: `Could not download ${model.name}. Local SI will stay unavailable until a model is ready.`
         });
       }
     } else {
@@ -415,7 +415,7 @@ async function bootstrap(mainWindow) {
       } catch {
         log.warn('[Ollama] No internet - local setup cannot continue');
         setPhase('error', {
-          message: 'No internet connection. Local AI setup will retry when Ollama/model files are available.'
+          message: 'No internet connection. Local SI setup will retry when Ollama/model files are available.'
         });
         return;
       }
@@ -431,7 +431,7 @@ async function bootstrap(mainWindow) {
 
     if (state.readyModels.length === 0) {
       setPhase('error', {
-        message: 'Local AI models unavailable. Cloud AI is disabled for privacy.'
+        message: 'Local SI models unavailable. Cloud SI is disabled for privacy.'
       });
       return;
     }
@@ -450,7 +450,7 @@ async function bootstrap(mainWindow) {
     } else {
       setPhase('error', {
         error: err.message,
-        message: 'Local AI could not start. Cloud AI is disabled for privacy.'
+        message: 'Local SI could not start. Cloud SI is disabled for privacy.'
       });
     }
   }
@@ -461,7 +461,7 @@ let currentAskController = null;
 
 function registerIpcHandlers() {
 
-  /** Check if local AI is ready */
+  /** Check if local SI is ready */
   ipcMain.handle('ai:status', async () => ({
     phase: state.phase,
     readyModels: state.readyModels,
@@ -475,9 +475,9 @@ function registerIpcHandlers() {
     if (state.phase !== 'ready' || state.readyModels.length === 0) {
       const warmingPhases = ['checking', 'downloading', 'installing', 'starting', 'pulling'];
       if (warmingPhases.includes(state.phase)) {
-        return { error: 'warming_up', message: `Chatr AI is still starting up (${state.phase}). Please wait 20–30 seconds and try again.` };
+        return { error: 'warming_up', message: `Chatr SI is still starting up (${state.phase}). Please wait 20–30 seconds and try again.` };
       }
-      return { error: 'local_unavailable', message: 'Local AI is not ready. Please check the AI status indicator in the top bar.' };
+      return { error: 'local_unavailable', message: 'Local SI is not ready. Please check the SI status indicator in the top bar.' };
     }
 
     const targetModel = model || state.readyModels[0];

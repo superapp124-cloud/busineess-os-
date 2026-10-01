@@ -247,7 +247,7 @@ ROWS = [
         "(MUST be absolute path, file must exist and be >= 100 MB). "
         "PARAMETER block: temperature 0.7, top_p 0.9, top_k 40, num_ctx 4096, repeat_penalty 1.1. "
         "SYSTEM block: capability-specific prompt — "
-        "General: 'You are the CHATR AI assistant. CHATR is an Intent-First Business Operating System...', "
+        "General: 'You are the CHATR SI Assistant. CHATR is an Intent-First Business Operating System...', "
         "Coding: 'You are the CHATR coding assistant...', "
         "Meera: 'You are Meera, a vibrant 22-year-old content creator from Delhi...'. "
         "Register: ollama create chatr:CAPABILITY-v2 -f Modelfile. "

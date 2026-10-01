@@ -43,7 +43,7 @@ ${doc.rawText.substring(0, 4000)}
       summary: `Successfully parsed resume for ${candidate?.name || 'Candidate'}.`,
       severity: 'info',
       confidence: 0.95,
-      explanation: 'Used AI extraction to structure the candidate resume.',
+      explanation: 'Used SI extraction to structure the candidate resume.',
       actions: [],
       widgets: ['DocumentPreviewWidget'],
       payload: { candidate, documentId: doc.id, documents }

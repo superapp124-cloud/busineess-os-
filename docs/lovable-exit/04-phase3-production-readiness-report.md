@@ -2,7 +2,7 @@
 
 **Branch:** `chore/lovable-exit` (head commit `0e6a48b9`)  
 **Base Commit (main):** `c87cec1a` (0 merge conflicts, 0 divergent commits)  
-**Total AI Functions Audited:** 64 functions (54 on CHATR AI Router, 3 dedicated audio, 1 dedicated realtime, 6 retired upstream)  
+**Total SI Functions Audited:** 64 functions (54 on CHATR SI Router, 3 dedicated audio, 1 dedicated realtime, 6 retired upstream)  
 **Regression Test Suite:** 212 / 212 tests passed (Batches 1–5)  
 **Active Code Lovable Dependencies:** 0
 

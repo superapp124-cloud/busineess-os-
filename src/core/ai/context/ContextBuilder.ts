@@ -1,5 +1,5 @@
 /**
- * CHATR Business OS — AI Context Builder Engine
+ * CHATR Business OS — SI Context Builder Engine
  *
  * Central context orchestrator that ranks, filters, and assembles grounded business context:
  *   User Intent ➔ Context Builder (BOS + KG + Calendar + Memory) ➔ Prompt Assembly ➔ Local LLM
@@ -67,7 +67,7 @@ class ContextBuilderEngine {
     const nodeSummary = graphNodes.map(n => `- Entity ${n.name} (${n.type})`).join('\n');
 
     const assembledPrompt = `
-You are CHATR Execution OS local AI running on-device.
+You are CHATR Execution OS local SI running on-device.
 Answer the user request using the grounded business context below.
 
 [USER INTENT]

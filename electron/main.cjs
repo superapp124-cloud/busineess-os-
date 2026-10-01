@@ -255,7 +255,7 @@ function ensureLocalRecordsDirs() {
   const root = path.join(app.getPath('documents'), 'CHATR Workspace');
   const transcripts = path.join(root, 'Transcripts');
   const recordings = path.join(root, 'Call Recordings');
-  const summaries = path.join(root, 'AI Summaries');
+  const summaries = path.join(root, 'SI Summaries');
   fs.mkdirSync(transcripts, { recursive: true });
   fs.mkdirSync(recordings, { recursive: true });
   fs.mkdirSync(summaries, { recursive: true });
@@ -1543,7 +1543,7 @@ JSON Output:
       // Plain-English error for non-technical users
       return {
         tool: 'error',
-        params: { message: "I'm having trouble connecting to your local AI engine. Let's make sure it's running!" }
+        params: { message: "I'm having trouble connecting to your local SI engine. Let's make sure it's running!" }
       };
     }
   }
@@ -1950,7 +1950,7 @@ function createWindow() {
           if (tray) {
             tray.displayBalloon({
               title: 'CHATR Desktop is running in the background',
-              content: 'CHATR stays active in your system tray so local AI and memory remain ready 24/7. Click the tray icon anytime to open.',
+              content: 'CHATR stays active in your system tray so local SI and memory remain ready 24/7. Click the tray icon anytime to open.',
               iconType: 'info'
             });
           }
@@ -2145,7 +2145,7 @@ app.whenReady().then(() => {
     }
   }, 3000);
 
-  // Stage 7 (4000ms): Utility Process Workers (AI, Search, Sync, Automation)
+  // Stage 7 (4000ms): Utility Process Workers (SI, Search, Sync, Automation)
   setTimeout(() => {
     perf.mark('workers-spawning');
     // Ensure the worker manager has the latest window reference before starting
@@ -2190,7 +2190,7 @@ app.whenReady().then(() => {
       const contextMenu = Menu.buildFromTemplate([
         { label: 'Open CHATR OS', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); } } },
         { label: 'Universal Inbox', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('navigate', '/inbox'); } } },
-        { label: 'AI Assistant (Ctrl+Space)', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('global-shortcut'); } } },
+        { label: 'SI Assistant (Ctrl+Space)', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('global-shortcut'); } } },
         { type: 'separator' },
         {
           label: 'Start CHATR OS on System Startup',
@@ -2250,8 +2250,8 @@ app.whenReady().then(() => {
           arguments: '--open-ai',
           iconPath: process.execPath,
           iconIndex: 0,
-          title: 'AI Assistant',
-          description: 'Launch CHATR AI Assistant'
+          title: 'SI Assistant',
+          description: 'Launch CHATR SI Assistant'
         }
       ]);
     } catch (e) {

@@ -48,7 +48,7 @@ export const AIExecutiveSummaryPanel: React.FC = () => {
             <Sparkles className="w-5 h-5 text-purple-400" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-white tracking-tight">AI Executive Summary Engine</h3>
+            <h3 className="text-base font-semibold text-white tracking-tight">SI Executive Summary Engine</h3>
             <p className="text-xs text-zinc-400">Enterprise Financial Intelligence • Grounded Real-Time Telemetry</p>
           </div>
         </div>

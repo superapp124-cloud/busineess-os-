@@ -12,7 +12,7 @@ import {
 
 // ─────────────────────────────────────────────────────────────
 // Stage 1: Receipt Parse
-// Uses: AI extractStructuredData primitive
+// Uses: SI extractStructuredData primitive
 // ─────────────────────────────────────────────────────────────
 const receiptParseStage = WorkflowSDK.createStage(
   'receipt_parse',
@@ -25,7 +25,7 @@ const receiptParseStage = WorkflowSDK.createStage(
     const rawText = ctx.state.receiptText || 'Swiggy Instamart receipt: ₹850.00 (Groceries, 2026-07-10)';
     const response = await provider.extractStructuredData<any>(rawText, 'Receipt');
     
-    // AI classify primitive for category
+    // SI classify primitive for category
     const categoryResponse = await provider.classify(rawText, ['TRAVEL', 'MEALS', 'SOFTWARE', 'OFFICE', 'MARKETING', 'OTHER']);
 
     ctx.artifacts.receipt = WorkflowSDK.createArtifact<ReceiptArtifact>('ReceiptArtifact', {

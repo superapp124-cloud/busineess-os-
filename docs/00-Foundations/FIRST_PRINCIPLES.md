@@ -14,14 +14,14 @@ Everything in the platform derives from these 14 primitives:
 3. **`Relationship`**: Dynamic, weighted edge connecting nodes in the Operating Graph.
 4. **`Event`**: Immutable evidence emitted by state transitions.
 5. **`Observation`**: Sensory telemetry input captured from the external environment.
-6. **`Decision`**: First-class choice object recording reason, evidence, AI trace, and outcome.
+6. **`Decision`**: First-class choice object recording reason, evidence, SI trace, and outcome.
 7. **`Goal`**: Runtime objective guiding autonomous execution planners.
 8. **`Capability`**: Executable unit transforming inputs to outputs with defined SLA.
 9. **`Policy`**: Immutable guardrail rule constraining state transitions and force impacts.
 10. **`Resource`**: Consumable system asset (Compute, Joules, Dollars, Time, Tokens).
 11. **`Memory`**: Multi-tiered organizational memory (Working, Short-Term, Long-Term, Institutional).
 12. **`Force`**: Measurable conservation vector ($F$) affected by state changes ($\Delta F$).
-13. **`Execution`**: Substrate runtime action performed by Humans, AI Agents, or Actuators.
+13. **`Execution`**: Substrate runtime action performed by Humans, SI Agents, or Actuators.
 14. **`Learning`**: Continuous feedback mechanism updating cognitive models and future behavior.
 
 ---

@@ -1,5 +1,5 @@
 // supabase/functions/ai-chat/index.ts
-// Multi-provider resilient AI chat endpoint powered by CHATR AI Router.
+// Multi-provider resilient SI chat endpoint powered by CHATR SI Router.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { completeChat } from '../_core/aiProvider.ts';

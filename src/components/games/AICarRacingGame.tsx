@@ -67,12 +67,12 @@ const AICarRacingGame: React.FC<AICarRacingGameProps> = ({ level, onComplete, on
  const moved = prev.map(o => ({ ...o, y: o.y + obstacleSpeed }))
  .filter(o => o.y < 100);
 
- // AI generates obstacles based on player behavior
+ // SI generates obstacles based on player behavior
  if (Math.random() < 0.03 + (level * 0.01)) {
  const aiLane = Math.floor(Math.random() * 3);
  moved.push({ id: Date.now(), lane: aiLane, y: 0 });
  
- // AI prediction
+ // SI prediction
  if (aiLane === playerLane) {
  setAiPrediction('⚠️ Obstacle ahead!');
  setTimeout(() => setAiPrediction(''), 1000);
@@ -157,9 +157,9 @@ const AICarRacingGame: React.FC<AICarRacingGameProps> = ({ level, onComplete, on
  className="text-center py-12"
  >
  <Car className="w-20 h-20 mx-auto text-cyan-400 mb-4" />
- <h2 className="text-page font-bold text-white mb-2">AI Car Racing</h2>
+ <h2 className="text-page font-bold text-white mb-2">SI Car Racing</h2>
  <p className="text-gray-400 mb-6">
- AI predicts your moves and places obstacles. Can you outsmart it?
+ SI predicts your moves and places obstacles. Can you outsmart it?
  </p>
  <Button onClick={startGame} className="bg-cyan-600 hover:bg-cyan-700">
  <Zap className="w-4 h-4 mr-2" /> Start Race

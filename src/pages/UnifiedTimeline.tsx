@@ -208,7 +208,7 @@ const EventCard: React.FC<{ event: CommunicationEvent }> = ({ event }) => {
  {event.content}
  </p>
 
- {/* AI metadata row */}
+ {/* SI metadata row */}
  <div className="flex items-center gap-2 flex-wrap">
  {isThreat && (
  <span className="flex items-center gap-1 text-label text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20">
@@ -514,7 +514,7 @@ export default function UnifiedTimeline() {
  </div>
  </div>
 
- {/* Right Sidebar: AI Assistant */}
+ {/* Right Sidebar: SI Assistant */}
  <AIAssistantSidebar firstName={firstName} />
  </div>
  );

@@ -14,7 +14,7 @@ export class MailSyncEngine {
   private static isSyncing = false;
 
   /**
-   * Orchestrates the multi-stage queue: Download -> Parse -> AI -> DB
+   * Orchestrates the multi-stage queue: Download -> Parse -> SI -> DB
    */
   static async syncAccount(accountId: string, providerId: string, adapter: SyncProviderAdapter) {
     if (this.isSyncing) {
@@ -50,7 +50,7 @@ export class MailSyncEngine {
         // 2. Parse Queue
         const parsedMessages = response.messages.map(adapter.parseMessage);
         
-        // 3. AI Queue
+        // 3. SI Queue
         // In a real app, this runs the ONNX model locally in chunks
         const intelligentMessages = IntelligenceEngine.processBatch(accountId, parsedMessages);
         

@@ -19,7 +19,7 @@ or execution hints.
 ## Decision
 
 We freeze a canonical `WorkflowGraph` ABI as the authoritative graph type for all consumers:
-Studio, AI Builder, Runtime, Publish, Templates, and Industry Packs.
+Studio, SI Builder, Runtime, Publish, Templates, and Industry Packs.
 
 Key decisions:
 

@@ -5,7 +5,7 @@ struct HomeView: View {
     @Binding var selectedTab: ChatrBottomNav.Tab
     
     let ecosystemItems = [
-        ("AI Assistant", "sparkles"),
+        ("SI Assistant", "sparkles"),
         ("Universal Search", "magnifyingglass"),
         ("Video Call", "video.fill"),
         ("Voice Call", "phone.fill"),

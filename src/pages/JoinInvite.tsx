@@ -125,7 +125,7 @@ const JoinInvite = () => {
               className="text-center"
             >
               <p className="text-sm text-muted-foreground mb-4">
-                Universal private messaging, unblocked WebRTC HD calling, and AI agents.
+                Universal private messaging, unblocked WebRTC HD calling, and SI agents.
               </p>
               
               <div className="bg-yellow-500/15 border border-yellow-500/30 rounded-xl p-3.5 mb-5">

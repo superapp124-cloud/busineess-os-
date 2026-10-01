@@ -30,10 +30,10 @@
 | ERP nodes |  |  | Yes | None found | Needed for finance/procurement/manufacturing. |
 | Payment nodes |  | Yes |  | Razorpay manifests | Not Studio nodes. |
 | File/document nodes |  | Yes |  | `document` type, document engine | No Studio runtime contract. |
-| AI builder | Yes |  |  | `handleAIGenerate` | Needs validation/version trace. |
-| AI action | Yes |  |  | `core.ai_agent` | Basic prompt execution only. |
+| SI builder | Yes |  |  | `handleAIGenerate` | Needs validation/version trace. |
+| SI action | Yes |  |  | `core.ai_agent` | Basic prompt execution only. |
 | Model selector |  |  | Yes | None in Studio | Missing tenant/user control. |
-| AI trace |  | Yes |  | `ai_traces` schema | Not written by Studio. |
+| SI trace |  | Yes |  | `ai_traces` schema | Not written by Studio. |
 | Workflow save | Yes |  |  | `handleSave` | Saves nodes only. |
 | Autosave |  | Yes |  | alternate builder | Missing in Studio route. |
 | Import |  |  | Yes | None found | Missing. |

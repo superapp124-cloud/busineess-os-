@@ -43,7 +43,7 @@ class CallSummaryEngine {
     // -----------------------------------------------------------------------
 
     /**
-     * Generates an AI-powered post-call summary via the Gemini API.
+     * Generates an SI-powered post-call summary via the Gemini API.
      * Falls back to a basic local summary if the API call fails or the key is absent.
      */
     suspend fun generateCallSummary(
@@ -97,7 +97,7 @@ class CallSummaryEngine {
         val notesSection = if (callNotes.isNotBlank()) "The user took the following notes during the call:\n\"$callNotes\"\n\nMake sure to incorporate these notes into the summary, key points, action items, and calendar events as ground truth. " else ""
 
         return """
-You are an AI call assistant. A phone call just ended with $callerLabel lasting $durationLabel.
+You are an SI call assistant. A phone call just ended with $callerLabel lasting $durationLabel.
 ${notesSection}
 Generate a structured call summary with:
 1. A one-sentence summary

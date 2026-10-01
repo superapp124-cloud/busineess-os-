@@ -31,7 +31,7 @@ app.get("/api/search/health", (_req, res) => {
 });
 
 app.listen(config.port, () => {
-  console.log(`Chatr AI pipeline active on port ${config.port}`);
+  console.log(`Chatr SI pipeline active on port ${config.port}`);
   
   // Start the background job processor
   startWorker();

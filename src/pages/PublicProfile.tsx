@@ -281,7 +281,7 @@ const PublicProfile = () => {
  </div>
  </div>
  {id.ai_clone_enabled && (
- <Badge variant="outline" className="text-[10px] text-orange-500">AI Clone</Badge>
+ <Badge variant="outline" className="text-[10px] text-orange-500">SI Clone</Badge>
  )}
  </CardContent>
  </Card>

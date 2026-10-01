@@ -29,7 +29,7 @@ export const mockDashboardData = {
     { id: '1', name: 'Q3 Marketing Campaign', progress: 72, color: 'bg-emerald-500', aiRisk: 'Low' },
     { id: '2', name: 'Product Redesign', progress: 45, color: 'bg-orange-500', aiRisk: 'Medium' },
     { id: '3', name: 'Mobile App Development', progress: 60, color: 'bg-blue-500', aiRisk: 'Low' },
-    { id: '4', name: 'AI Integration', progress: 30, color: 'bg-red-500', aiRisk: 'High' },
+    { id: '4', name: 'SI Integration', progress: 30, color: 'bg-red-500', aiRisk: 'High' },
   ],
   tasks: [
     { id: '1', title: 'Review Q3 Marketing Budget', priority: 'High', deadline: 'Due today' },

@@ -179,7 +179,7 @@ export const CommunicationMemoryDialog = ({ isOpen, onClose, onJumpToConversatio
  </div>
  <div>
  <h3 className="text-gray-900 font-medium mb-1">Your Personal Knowledge Graph</h3>
- <p className="text-secondary">Search across messages, images, documents, and voice notes instantly using semantic AI.</p>
+ <p className="text-secondary">Search across messages, images, documents, and voice notes instantly using semantic SI.</p>
  </div>
  </div>
  )}

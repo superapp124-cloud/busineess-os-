@@ -80,8 +80,8 @@ export const SDK_REGISTRY: Record<string, any> = {
   'Support.KnowledgeBase': SupportKnowledgeBaseSDK,
   'Communication.Announcements': CommunicationAnnouncementsSDK,
   'Communication.MeetingRooms': CommunicationMeetingRoomsSDK,
-  'AI.WorkflowAutomation': AIWorkflowAutomationSDK,
-  'AI.IntentEngine': AIIntentEngineSDK,
+  'SI.WorkflowAutomation': AIWorkflowAutomationSDK,
+  'SI.IntentEngine': AIIntentEngineSDK,
   'Platform.IdentityAccess': PlatformIdentityAccessSDK,
   'Platform.Analytics': PlatformAnalyticsSDK,
 };

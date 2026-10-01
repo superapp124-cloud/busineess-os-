@@ -24,8 +24,8 @@ export type PolicyRuleType =
   | 'approval_required'   // Require human approval before execution
   | 'allowlist'           // Only allow listed values (domains, tables, etc.)
   | 'denylist'            // Block listed values
-  | 'cost_budget'         // Limit AI cost per run
-  | 'token_budget'        // Limit AI tokens per run
+  | 'cost_budget'         // Limit SI cost per run
+  | 'token_budget'        // Limit SI tokens per run
   | 'data_classification' // Enforce data handling rules
   | 'time_restriction'    // Only allow execution in certain time windows
   | 'tenant_isolation';   // Enforce strict tenant data boundaries

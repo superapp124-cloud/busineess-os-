@@ -17,7 +17,7 @@ CHATR Platform
     Policy and Governance | Memory Manager | Capability Registry
     Connector Runtime | Audit and Telemetry
   Platform Services: identity, security, storage, search, messaging,
-    notifications, scheduling, secrets, AI routing
+    notifications, scheduling, secrets, SI routing
   Host Runtime: Electron, server, browser, mobile
   Infrastructure adapters: SQLite, Postgres, Supabase, object storage,
     Ollama, GPT, Claude, Gemini, Azure, AWS

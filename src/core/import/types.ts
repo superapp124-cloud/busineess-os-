@@ -16,7 +16,7 @@ export interface ValidationError {
 export interface ImportMapping {
   source_column: string;
   target_field: string;
-  confidence: number; // 0-1, 1 being exact match, < 1 being fuzzy/AI
+  confidence: number; // 0-1, 1 being exact match, < 1 being fuzzy/SI
   strategy: 'exact' | 'dictionary' | 'fuzzy' | 'ai';
 }
 

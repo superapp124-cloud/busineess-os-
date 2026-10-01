@@ -5,7 +5,7 @@ const targetLoad = `    if (data) {
       setConfig({
         enabled: data.ai_clone_enabled || false,
         personality: data.ai_clone_personality || '',
-        greeting: data.bio || "Hey! I'm currently away but my AI clone can help. What's up?",
+        greeting: data.bio || "Hey! I'm currently away but my SI clone can help. What's up?",
         allowJobInquiries: true,
         allowBusinessChats: true,
         allowNetworking: true,
@@ -22,7 +22,7 @@ const replaceLoad = `    if (data) {
       setConfig({
         enabled: data.ai_clone_enabled || false,
         personality: data.ai_clone_personality || '',
-        greeting: data.bio || "Hey! I'm currently away but my AI clone can help. What's up?",
+        greeting: data.bio || "Hey! I'm currently away but my SI clone can help. What's up?",
         allowJobInquiries: boundariesJson.allow_job_inquiries ?? true,
         allowBusinessChats: boundariesJson.allow_business ?? true,
         allowNetworking: boundariesJson.allow_networking ?? true,

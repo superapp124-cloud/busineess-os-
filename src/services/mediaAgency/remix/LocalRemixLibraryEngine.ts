@@ -186,8 +186,8 @@ export const MUSIC_STEMS_LIBRARY: MusicStemAsset[] = [
 export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   {
     id: 'ai_bench_01_dance',
-    name: '1. AI Model Viral Dance Reel (Benchmark 1)',
-    danceStyle: 'Viral AI Choreography & Expressive Motion',
+    name: '1. SI Model Viral Dance Reel (Benchmark 1)',
+    danceStyle: 'Viral SI Choreography & Expressive Motion',
     videoSrc: '/videos/dances/ai_bench_01.mp4',
     energyLevel: 'High',
     outfit: 'Trendy Indo-Western Outfit with Hair Physics',
@@ -197,8 +197,8 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_02_dance',
-    name: '2. AI Viral Rhythm Dancer (Benchmark 2)',
-    danceStyle: 'Fast AI Beat Sync & Hand Gestures',
+    name: '2. SI Viral Rhythm Dancer (Benchmark 2)',
+    danceStyle: 'Fast SI Beat Sync & Hand Gestures',
     videoSrc: '/videos/dances/ai_bench_02.mp4',
     energyLevel: 'Very High',
     outfit: 'Modern Designer Saree / Top with Shimmer',
@@ -208,7 +208,7 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_04_dance',
-    name: '3. AI Viral Reel Model Dancer (HD)',
+    name: '3. SI Viral Reel Model Dancer (HD)',
     danceStyle: 'Smooth Neural Hip & Shoulder Swirls',
     videoSrc: '/videos/dances/ai_bench_04.mp4',
     energyLevel: 'High',
@@ -219,8 +219,8 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_05_dance',
-    name: '4. AI Indian Classical Saree Dancer',
-    danceStyle: 'Authentic AI Saree Footwork & Mudras',
+    name: '4. SI Indian Classical Saree Dancer',
+    danceStyle: 'Authentic SI Saree Footwork & Mudras',
     videoSrc: '/videos/dances/ai_bench_05.mp4',
     energyLevel: 'High',
     outfit: 'Silk Royal Saree with Golden Zari Border',
@@ -230,7 +230,7 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_06_dance',
-    name: '5. AI Influencer Viral Stage Dance',
+    name: '5. SI Influencer Viral Stage Dance',
     danceStyle: 'Modern Trending TikTok Hook Steps',
     videoSrc: '/videos/dances/ai_bench_06.mp4',
     energyLevel: 'Very High',
@@ -241,8 +241,8 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_07_dance',
-    name: '6. Kling AI Realistic Motion Dancer',
-    danceStyle: 'High-Precision Kling AI Motion & Twirls',
+    name: '6. Kling SI Realistic Motion Dancer',
+    danceStyle: 'High-Precision Kling SI Motion & Twirls',
     videoSrc: '/videos/dances/ai_bench_07.mp4',
     energyLevel: 'High',
     outfit: 'Flowing Festive Anarkali with Velvet Dupatta',
@@ -252,7 +252,7 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_bench_08_dance',
-    name: '7. Luma Dream Machine AI Dancer',
+    name: '7. Luma Dream Machine SI Dancer',
     danceStyle: 'Dreamy Lyrical Contemporary Floorwork',
     videoSrc: '/videos/dances/ai_bench_08.mp4',
     energyLevel: 'High',
@@ -263,8 +263,8 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_dance_02_kling',
-    name: '8. Kling AI High-Energy Jump Dancer',
-    danceStyle: 'Explosive AI Jumps & Rhythm Kicks',
+    name: '8. Kling SI High-Energy Jump Dancer',
+    danceStyle: 'Explosive SI Jumps & Rhythm Kicks',
     videoSrc: '/videos/dances/ai_dance_02.mp4',
     energyLevel: 'Explosive',
     outfit: 'Futuristic Indo-Western Neon Robes',
@@ -274,19 +274,19 @@ export const DANCE_CHOREOGRAPHIES_LIBRARY: DanceChoreographyAsset[] = [
   },
   {
     id: 'ai_dance_07_anime',
-    name: '9. AI Classical 3D Anime Dancer',
-    danceStyle: 'AI Animated Classical Mudra Spins',
+    name: '9. SI Classical 3D Anime Dancer',
+    danceStyle: 'SI Animated Classical Mudra Spins',
     videoSrc: '/videos/dances/ai_dance_07.mp4',
     energyLevel: 'Medium',
     outfit: 'Embroidered Festive Anarkali & Ghungroo',
-    setting: 'AI Dreamscape Garden with Floating Petals',
+    setting: 'SI Dreamscape Garden with Floating Petals',
     cameraMovement: 'Hypnotic low-angle orbital slider tracking',
     tags: ['ai', 'classical', 'dream', 'garba', 'anarkali', 'fluid']
   },
   {
     id: 'ai_dance_09_neon',
-    name: '10. AI Neon Pop Star Stage Dancer',
-    danceStyle: 'AI Pop Star High-Tempo Choreography',
+    name: '10. SI Neon Pop Star Stage Dancer',
+    danceStyle: 'SI Pop Star High-Tempo Choreography',
     videoSrc: '/videos/dances/ai_dance_09.mp4',
     energyLevel: 'Explosive',
     outfit: 'Glowing Cyber Stage Jacket',

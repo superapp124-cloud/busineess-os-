@@ -1,7 +1,7 @@
 # Provider Guide
 
 ## Integrating New Providers
-All external integrations (Calendar, HRMS, CRM, ERP, AI) must expose the same stable interface. 
+All external integrations (Calendar, HRMS, CRM, ERP, SI) must expose the same stable interface. 
 Applications depend on the Workflow Platform, which depends on the Provider Adapter, which talks to the Vendor API.
 
 ## Provider Certification Scorecard (Gate 5)

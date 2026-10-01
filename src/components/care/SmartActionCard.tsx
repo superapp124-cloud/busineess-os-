@@ -103,7 +103,7 @@ export function SmartActionCard({ action, delay = 0 }: SmartActionCardProps) {
  {/* Content */}
  <div className="flex-1 px-4 py-3">
  <div className="flex items-center gap-2 mb-1">
- <h3 className="font-semibold text-secondary">{action.title}</h3>
+ <h3 className="font-semibold text-slate-900 font-bold">{action.title}</h3>
  {action.urgency !== 'low' && (
  <Badge className={`${urgency.color} text-[10px] py-0`}>
  {action.urgency === 'critical' ? '⚠️ Now' : action.urgency}

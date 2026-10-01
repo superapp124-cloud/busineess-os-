@@ -199,10 +199,10 @@ export const MediaDistributionControlCenter: React.FC = () => {
               <span className="text-slate-500 text-xs font-mono">chatrchat.in/media-distribution</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
-              <span>CHATR AI Media Agency</span>
+              <span>CHATR SI Media Agency</span>
             </h1>
             <p className="text-slate-400 text-sm">
-              DRY RUN #002 (AI / Work / India) • 5-Scene Visual Storyboards • HumanScore ≥ 85 • Publishing OFF
+              DRY RUN #002 (SI / Work / India) • 5-Scene Visual Storyboards • HumanScore ≥ 85 • Publishing OFF
             </p>
           </div>
 
@@ -342,7 +342,7 @@ export const MediaDistributionControlCenter: React.FC = () => {
             }`}
           >
             <UserCheck className="w-4 h-4 text-indigo-400" />
-            <span className="font-bold">🌟 AI Virtual Influencer Studio</span>
+            <span className="font-bold">🌟 SI Virtual Influencer Studio</span>
           </button>
           <button
             onClick={() => setSelectedTab('fusion_100')}
@@ -541,28 +541,28 @@ export const MediaDistributionControlCenter: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 0: CUSTOM AI VIRTUAL INFLUENCER STUDIO (TALK • WALK • PODCAST • SING • DANCE) */}
+        {/* TAB 0: CUSTOM SI VIRTUAL INFLUENCER STUDIO (TALK • WALK • PODCAST • SING • DANCE) */}
         {selectedTab === 'virtual_influencer' && (
           <div className="space-y-6">
             <VirtualInfluencerStudio />
           </div>
         )}
 
-        {/* TAB 0.1: 100 AI INDIAN SONGS × 100 AI DANCES VIRAL FUSION STUDIO */}
+        {/* TAB 0.1: 100 SI INDIAN SONGS × 100 SI DANCES VIRAL FUSION STUDIO */}
         {selectedTab === 'fusion_100' && (
           <div className="space-y-6">
             <IndianFusion100Studio />
           </div>
         )}
 
-        {/* TAB 0.1: LOCAL PROMPT SONG & AI DANCE REMIXER (15 MUSIC STEMS + 15 AI DANCES) */}
+        {/* TAB 0.1: LOCAL PROMPT SONG & SI DANCE REMIXER (15 MUSIC STEMS + 15 SI DANCES) */}
         {selectedTab === 'remix_studio' && (
           <div className="space-y-6">
             <LocalRemixStudio />
           </div>
         )}
 
-        {/* TAB 0.1: COMPLETE AI SONG WITH MUSIC & VOCALS STUDIO */}
+        {/* TAB 0.1: COMPLETE SI SONG WITH MUSIC & VOCALS STUDIO */}
         {selectedTab === 'full_song_studio' && (
           <div className="space-y-6">
             <FullSongMusicStudio />
@@ -604,7 +604,7 @@ export const MediaDistributionControlCenter: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 1: KLING / RUNWAY AI VIDEO STUDIO (GENERATIVE 9:16 REEL CREATION) */}
+        {/* TAB 1: KLING / RUNWAY SI VIDEO STUDIO (GENERATIVE 9:16 REEL CREATION) */}
         {selectedTab === 'kling_studio' && (
           <div className="space-y-6">
             <KlingAiVideoStudio />
@@ -806,13 +806,13 @@ export const MediaDistributionControlCenter: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              {/* Post 01: 5 Things AI Agents Can Do Beyond Chat */}
+              {/* Post 01: 5 Things SI Agents Can Do Beyond Chat */}
               <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-xs font-bold">
                     POST 01 • LIST CAROUSEL
                   </span>
-                  <h3 className="text-base font-black text-white">5 things AI agents can do beyond chat</h3>
+                  <h3 className="text-base font-black text-white">5 things SI agents can do beyond chat</h3>
                   
                   <div className="space-y-2 pt-2">
                     {['Research complex market data', 'Analyze operational bottlenecks', 'Plan multi-step workflows', 'Execute software actions', 'Learn from past telemetry'].map((item, i) => (
@@ -826,17 +826,17 @@ export const MediaDistributionControlCenter: React.FC = () => {
                   </div>
                 </div>
                 <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-500">
-                  SEO Topic: AI agents / autonomous AI
+                  SEO Topic: SI agents / autonomous SI
                 </div>
               </div>
 
-              {/* Post 02: Local AI vs Cloud AI Comparison Table */}
+              {/* Post 02: Local SI vs Cloud SI Comparison Table */}
               <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   <span className="px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 font-mono text-xs font-bold">
                     POST 02 • COMPARISON TABLE
                   </span>
-                  <h3 className="text-base font-black text-white">Local AI vs Cloud AI</h3>
+                  <h3 className="text-base font-black text-white">Local SI vs Cloud SI</h3>
                   
                   <div className="overflow-hidden rounded-xl border border-slate-800 text-xs font-mono">
                     <table className="w-full text-left">
@@ -868,24 +868,24 @@ export const MediaDistributionControlCenter: React.FC = () => {
                   </div>
                 </div>
                 <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-500">
-                  SEO Topic: Local AI vs Cloud LLM
+                  SEO Topic: Local SI vs Cloud LLM
                 </div>
               </div>
 
-              {/* Post 03: The New AI Workflow Diagram */}
+              {/* Post 03: The New SI Workflow Diagram */}
               <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold">
                     POST 03 • WORKFLOW DIAGRAM
                   </span>
-                  <h3 className="text-base font-black text-white">The new AI workflow</h3>
+                  <h3 className="text-base font-black text-white">The new SI workflow</h3>
                   
                   <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono space-y-1.5 text-center">
                     <div className="text-blue-400 font-bold">Human</div>
                     <div className="text-slate-600">↓</div>
                     <div className="text-slate-300">Goal</div>
                     <div className="text-slate-600">↓</div>
-                    <div className="text-purple-400 font-bold">AI Agent Fleet</div>
+                    <div className="text-purple-400 font-bold">SI Agent Fleet</div>
                     <div className="text-slate-600">↓</div>
                     <div className="text-slate-300">Research → Decision → Execution</div>
                     <div className="text-slate-600">↓</div>

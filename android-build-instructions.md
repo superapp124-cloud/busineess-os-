@@ -142,8 +142,8 @@ Chatr+ - Your Complete Communication & Wellness Platform
 • Community connections
 • Local business directory
 
-🤖 AI POWERED
-• AI assistants for productivity
+🤖 SI POWERED
+• SI assistants for productivity
 • Smart inbox organization
 • Intelligent search
 • Automated responses

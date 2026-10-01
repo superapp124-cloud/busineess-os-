@@ -15,7 +15,7 @@ Do NOT make breaking architectural changes or introduce new core abstractions to
 7. **Capability Manifests & Workspace Manifests** (Strict JSON schemas defining plugin behavior and declarative workspaces)
 
 ## Development Focus
-From this point forward, AI agents working on this repository MUST shift focus from infrastructure design to **production engineering and vertical slices**.
+From this point forward, SI agents working on this repository MUST shift focus from infrastructure design to **production engineering and vertical slices**.
 *   **Build capabilities, not infrastructure.** Reuse existing patterns.
 *   If a new capability (e.g. Food Delivery, Flights, Hotel Booking) requires infrastructure, **first** ask whether an existing widget or execution pattern can be extended.
 *   **Do not** add more layers preemptively. Let production experience drive the next architectural evolution.
@@ -35,9 +35,9 @@ All agents must adhere to the following Phase 5 subsystems:
 6. **Execution Ledger:** Immutable record of all execution data (Duration, Cost, Permissions, Files, Money Spent).
 7. **Capability-Based Policy Engine:** Configurable Risk-Based Approvals (Silent vs Confirm).
 8. **Knowledge Graph:** Tracks relationships (User -> Projects -> Capabilities -> Connectors -> Documents -> People).
-9. **AI Rule:** AI Never Directly Executes. LLM outputs `Intent` + `Constraints`. Workflow Engine builds DAG.
+9. **SI Rule:** SI Never Directly Executes. LLM outputs `Intent` + `Constraints`. Workflow Engine builds DAG.
 
-## CHATR Platform v0.9 RC — Kernel Freeze (Effective July 16, 2026)
+## CHATR Platform v0.9 RC ï¿½ Kernel Freeze (Effective July 16, 2026)
 
 **Platform Milestone P1 is COMPLETE.** The following ABIs are frozen. Any change requires ADR + TSC approval. See docs/adr/ADR-001-kernel-abi-freeze.md.
 
@@ -47,7 +47,7 @@ All agents must adhere to the following Phase 5 subsystems:
 - chatr.transaction.v0_9_rc
 - chatr.workflow_graph.v0_9_rc
 - chatr.provider_manifest.v0_9_rc
-- chatr.connector_interface (BaseConnector — discover/fetch/authenticate/checkout/track/health/capabilities/sla)
+- chatr.connector_interface (BaseConnector ï¿½ discover/fetch/authenticate/checkout/track/health/capabilities/sla)
 
 ### Agent Rules (Effective Immediately)
 1. **NO new kernel subsystems.** The execution pipeline is feature-complete.

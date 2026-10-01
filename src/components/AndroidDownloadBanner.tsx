@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, X, Smartphone, ShieldCheck } from 'lucide-react';
 import logo from '@/assets/chatr-icon-logo.png';
 
+import { Capacitor } from '@capacitor/core';
+
 const APP_ICON = '/store-assets/icon-512.png';
 
 export const AndroidDownloadBanner: React.FC = () => {
@@ -11,7 +13,13 @@ export const AndroidDownloadBanner: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Only show on Android devices
+    // NEVER show inside native mobile app
+    if (Capacitor.isNativePlatform() || (window as any).Capacitor?.isNativePlatform()) {
+      setVisible(false);
+      return;
+    }
+
+    // Only show on Android web browsers
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = ua.includes('android');
 

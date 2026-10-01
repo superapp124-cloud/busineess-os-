@@ -48,7 +48,7 @@ for cell in nb['cells']:
                 'tunnel = try_cloudflare(port=8000)\n',
                 'print("\\n" + "="*65)\n',
                 'print("🎉 CHATR UNIFIED GPU WORKER IS READY!")\n',
-                'print("👉 Copy this Worker URL to your Dell CHATR Studio & AI Hub:")\n',
+                'print("👉 Copy this Worker URL to your Dell CHATR Studio & SI Hub:")\n',
                 'print(f"   {tunnel.tunnel}")\n',
                 'print("="*65 + "\\n")\n'
             ]

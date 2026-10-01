@@ -18,7 +18,7 @@ This document is the authoritative index of all Architecture Decision Records (A
 | ADR-008 | Control Plane Naming — `enterprise-control-plane` → `control-plane` (not a runtime) | **Accepted** | 6 |
 | ADR-009 | RBAC over ACL — ACLs do not scale; Role → Permission → Resource → Action model adopted | **Accepted** | 6 |
 | ADR-010 | Observability API over Dashboard — Control Plane exposes a query API; dashboards are consumers | **Accepted** | 6 |
-| ADR-011 | AI remains optional — Intelligence services consumed via injected interfaces, never embedded | **Accepted** | 7 |
+| ADR-011 | SI remains optional — Intelligence services consumed via injected interfaces, never embedded | **Accepted** | 7 |
 | ADR-012 | Planner Contract Frozen — `plan()`, `validate()`, `explain()`, `estimate()` interfaces are stable | **Accepted** | 7 |
 | ADR-013 | Intelligence Package Isolation — `@chatr/intelligence` must never import from `@chatr/planner` or `ExecutionPlan` | **Accepted** | 7 |
 | ADR-014 | ReasoningRouter — Policy decides provider selection; Planner never selects a provider directly | **Accepted** | 7 |

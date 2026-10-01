@@ -130,7 +130,7 @@ class CallRecordStore private constructor(context: Context) :
         return arr
     }
 
-    /** Returns unsent viral-eligible calls (AI score >= threshold, viral not sent). */
+    /** Returns unsent viral-eligible calls (SI score >= threshold, viral not sent). */
     fun getPendingViralRecords(minScore: Double = 0.7): List<Map<String, Any>> {
         val results = mutableListOf<Map<String, Any>>()
         try {

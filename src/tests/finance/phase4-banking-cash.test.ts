@@ -135,9 +135,9 @@ test('BankMatching: Rule 3 Fee Deduction Match (e.g. ₹98,000 credit against �
 });
 
 // ══════════════════════════════════════════════════════════════════════
-// 3. AI RECONCILIATION WORKER (PROPOSAL MODE)
+// 3. SI RECONCILIATION WORKER (PROPOSAL MODE)
 // ══════════════════════════════════════════════════════════════════════
-console.log('--- 3. AI Reconciliation Worker in Proposal Mode ---');
+console.log('--- 3. SI Reconciliation Worker in Proposal Mode ---');
 
 test('ReconciliationWorker: recognizes invoice reference in narrative and proposes fee deduction resolution', () => {
   const bankTx = {

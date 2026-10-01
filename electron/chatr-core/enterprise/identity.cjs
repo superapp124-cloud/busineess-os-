@@ -1,6 +1,6 @@
 ﻿/**
  * Identity Service
- * Manages Principals (Humans, AI Agents, Service Accounts, MCP Servers, Devices, External Systems)
+ * Manages Principals (Humans, SI Agents, Service Accounts, MCP Servers, Devices, External Systems)
  */
 
 class IdentityService {

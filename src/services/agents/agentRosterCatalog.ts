@@ -1,7 +1,7 @@
 /**
- * CHATR 200 AUTONOMOUS AI AGENTS ROSTER CATALOG
+ * CHATR 200 AUTONOMOUS SI AGENTS ROSTER CATALOG
  * 
- * Complete registry of all 200 specialized AI workers organized across 7 Operational Squads.
+ * Complete registry of all 200 specialized SI workers organized across 7 Operational Squads.
  */
 
 export type AgentSquadType = 
@@ -100,7 +100,7 @@ export const SQUADS_CONFIG: Record<AgentSquadType, SquadSummary> = {
   SQUAD_7_SEO_INTEL: {
     id: 'SQUAD_7_SEO_INTEL',
     name: 'Squad 7: SEO & Knowledge Graph Intel',
-    description: 'Monitors GSC indexation yield, crawler latency, and AI crawler sync (llms.txt).',
+    description: 'Monitors GSC indexation yield, crawler latency, and SI crawler sync (llms.txt).',
     targetCount: 10,
     activeCount: 10,
     color: 'text-blue-400 border-blue-500/30 bg-blue-500/10'
@@ -472,15 +472,15 @@ export function generateCanonicalAgentRoster(): AutonomousAgentDefinition[] {
       id: `ag_s7_ai_crawler_${idNum}`,
       name: `LLMKnowledgeSync-${idNum}`,
       squad: 'SQUAD_7_SEO_INTEL',
-      role: 'AI Search & Perplexity/Claude Knowledge Sync',
-      description: 'Maintains freshness of llms.txt and tests ChatGPT/Perplexity AI search citations.',
+      role: 'SI Search & Perplexity/Claude Knowledge Sync',
+      description: 'Maintains freshness of llms.txt and tests ChatGPT/Perplexity SI search citations.',
       model: 'gemini-2.0-flash',
       tokenBudgetDaily: 300000,
       tokensUsedToday: 12000 + i * 300,
       tasksCompleted: 110 + i * 12,
       successRate: 100.0,
       status: 'RUNNING',
-      currentTaskSummary: `Testing Perplexity & Gemini AI search citations for 'TalentXcel ATS'`,
+      currentTaskSummary: `Testing Perplexity & Gemini SI search citations for 'TalentXcel ATS'`,
       capabilities: ['llms_txt_sync', 'perplexity_query_test', 'brand_citation_track']
     });
   }

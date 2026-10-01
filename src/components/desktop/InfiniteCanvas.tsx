@@ -51,7 +51,7 @@ const nodeHoverActions: Record<NodeType, { label: string; icon: React.ReactNode 
   task:      [{ label: 'Complete', icon: <CheckCircle className="w-3.5 h-3.5" /> }, { label: 'Comment', icon: <MessageCircle className="w-3.5 h-3.5" /> }],
   contract:  [{ label: 'View Legal', icon: <FileText className="w-3.5 h-3.5" /> }],
   chat:      [{ label: 'Open Chat', icon: <MessageCircle className="w-3.5 h-3.5" /> }],
-  ai:        [{ label: 'Ask AI', icon: <Sparkles className="w-3.5 h-3.5" /> }],
+  ai:        [{ label: 'Ask SI', icon: <Sparkles className="w-3.5 h-3.5" /> }],
 };
 
 const getNodeIcon = (type: NodeType, size = 'w-5 h-5') => {
@@ -83,7 +83,7 @@ const statusBadge = (status?: string) => {
     live: { label: 'Live', color: '#22c55e', pulse: true },
     recent: { label: 'Updated', color: '#0ea5e9', pulse: false },
     typing: { label: 'Typing…', color: '#6366f1', pulse: true },
-    summarizing: { label: 'AI Working…', color: '#a855f7', pulse: true },
+    summarizing: { label: 'SI Working…', color: '#a855f7', pulse: true },
     warning: { label: 'Alert', color: '#f43f5e', pulse: true },
   };
   const c = cfg[status];
@@ -294,7 +294,7 @@ export const InfiniteCanvas: React.FC = () => {
     try {
       const { generate } = await import('@/services/ai');
       const answer = await generate({
-        prompt: `You are the AI assistant for CHATR Business Canvas. Query: "${query}". Provide a concise 2-sentence workspace response.`
+        prompt: `You are the SI assistant for CHATR Business Canvas. Query: "${query}". Provide a concise 2-sentence workspace response.`
       });
 
       setAiAnswer({
@@ -549,16 +549,16 @@ export const InfiniteCanvas: React.FC = () => {
           </div>
         </div>
 
-        {/* ── RIGHT PANEL: Single Clean AI Assistant ── */}
+        {/* ── RIGHT PANEL: Single Clean SI Assistant ── */}
         <div className="flex-shrink-0 flex flex-col overflow-hidden" style={{ width: 300, background: '#0d0f1a', borderLeft: '1px solid #ffffff0d' }}>
           <div className="flex flex-col h-full overflow-hidden">
-            {/* AI Header */}
+            {/* SI Header */}
             <div className="px-4 pt-3.5 pb-3 border-b border-white/5">
               <div className="flex items-center gap-2 mb-2.5">
                 <div className="p-1 rounded-lg bg-purple-500/20 text-purple-400">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-white font-bold text-xs">AI Assistant</span>
+                <span className="text-white font-bold text-xs">SI Assistant</span>
                 <span className="ml-auto text-[9px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   Live
                 </span>
@@ -589,7 +589,7 @@ export const InfiniteCanvas: React.FC = () => {
                 <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/30">
                   <div className="flex items-center gap-2 mb-2">
                     <Brain className="w-3.5 h-3.5 text-purple-400" />
-                    <span className="text-purple-300 text-xs font-bold">AI Response</span>
+                    <span className="text-purple-300 text-xs font-bold">SI Response</span>
                     <button onClick={() => { setShowAIAnswer(false); setAiQuery(''); setAiAnswer(null); }} className="ml-auto text-slate-400 hover:text-white cursor-pointer">
                       <X className="w-3.5 h-3.5" />
                     </button>

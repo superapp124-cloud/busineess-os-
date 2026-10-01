@@ -249,15 +249,15 @@ export const VirtualInfluencerStudio: React.FC = () => {
     setStatusMessage(`Active Creator: ${inf.name} (${inf.handle})`);
   };
 
-  // Live AI Script Generation from Ollama
+  // Live SI Script Generation from Ollama
   const handleGenerateAiScript = async () => {
     setIsAiBrainGenerating(true);
-    setStatusMessage(`🧠 Calling AI Brain (${selectedInfluencer.name} persona)...`);
+    setStatusMessage(`🧠 Calling SI Brain (${selectedInfluencer.name} persona)...`);
 
     const promptTopic = customTopic.trim() || 'something viral and relatable about Delhi lifestyle, street food, or modern creator struggles';
     const systemPrompt = selectedInfluencer.id === 'meera_delhi'
       ? 'You are Meera, a 23-year-old popular virtual content creator from Saket, Delhi. Write a punchy 15-second viral Reel monologue in natural Hinglish (mix of Hindi and English slang: "yaar", "literally", "listen", "crazy"). Start with a strong hook. Keep it strictly under 3 sentences.'
-      : `You are ${selectedInfluencer.name} (${selectedInfluencer.handle}), an Indian AI influencer in ${selectedInfluencer.niche}. Write a punchy 15-second viral script for a ${currentMode} video. Keep it strictly under 3 sentences.`;
+      : `You are ${selectedInfluencer.name} (${selectedInfluencer.handle}), an Indian SI influencer in ${selectedInfluencer.niche}. Write a punchy 15-second viral script for a ${currentMode} video. Keep it strictly under 3 sentences.`;
 
     try {
       const modelTag = selectedInfluencer.id === 'meera_delhi' ? 'chatr:meera-latest' : 'chatr:general-latest';
@@ -747,17 +747,17 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   <Wand2 className="w-4 h-4 text-amber-400" />
                   <span>Direct {selectedInfluencer.name}'s Script & Speech:</span>
                 </h3>
-                <span className="text-xs font-mono text-emerald-400 font-bold">Live AI Persona Engine</span>
+                <span className="text-xs font-mono text-emerald-400 font-bold">Live SI Persona Engine</span>
               </div>
 
-              {/* AI Brain Prompt Input */}
+              {/* SI Brain Prompt Input */}
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleGenerateAiScript()}
-                  placeholder='Ask AI Brain to write script: e.g. "React to Delhi metro viral video" or "Sarojini bargaining hacks"...'
+                  placeholder='Ask SI Brain to write script: e.g. "React to Delhi metro viral video" or "Sarojini bargaining hacks"...'
                   className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
                 />
                 <button
@@ -766,7 +766,7 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   className="px-4 py-3 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 rounded-2xl text-xs font-bold font-mono transition flex items-center justify-center space-x-1.5 whitespace-nowrap shadow"
                 >
                   <Sparkles className={`w-3.5 h-3.5 ${isAiBrainGenerating ? 'animate-spin' : 'text-indigo-400'}`} />
-                  <span>{isAiBrainGenerating ? 'Writing...' : '🧠 AI Write Script'}</span>
+                  <span>{isAiBrainGenerating ? 'Writing...' : '🧠 SI Write Script'}</span>
                 </button>
               </div>
 
@@ -848,13 +848,13 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   {
                     title: '🎙️ 3-Minute 10-Creator Global Panel Show (All 10)',
                     mode: 'podcast' as InfluencerActivityMode,
-                    prompt: 'Full 3-Minute Master Roundtable: All 10 creators debate the real state of AI in India — from enterprise architecture and open source to spatial UX, quant finance, and cybersecurity.',
+                    prompt: 'Full 3-Minute Master Roundtable: All 10 creators debate the real state of SI in India — from enterprise architecture and open source to spatial UX, quant finance, and cybersecurity.',
                     video: '/videos/meera/master_network_3min_show.mp4'
                   },
                   {
                     title: '🚶‍♀️ Meera + Priya Market Walk (Collab)',
                     mode: 'walk' as InfluencerActivityMode,
-                    prompt: 'Meera Kapoor and Priya Sharma walking together through Lajpat Nagar market discussing enterprise AI and street food culture.',
+                    prompt: 'Meera Kapoor and Priya Sharma walking together through Lajpat Nagar market discussing enterprise SI and street food culture.',
                     video: '/videos/meera/meera_priya_market_walk.mp4'
                   },
                   {
@@ -878,7 +878,7 @@ export const VirtualInfluencerStudio: React.FC = () => {
                   {
                     title: '☕ South Delhi Startup & Cafe Gossip',
                     mode: 'podcast' as InfluencerActivityMode,
-                    prompt: 'Let us be completely honest for a second. Why does every single person sitting at a Saket cafe have the exact same AI startup pitch deck?',
+                    prompt: 'Let us be completely honest for a second. Why does every single person sitting at a Saket cafe have the exact same SI startup pitch deck?',
                     video: '/videos/meera/meera_podcast_4k.mp4'
                   },
                   {

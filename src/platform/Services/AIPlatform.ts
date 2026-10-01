@@ -25,7 +25,7 @@ class AIPlatformService implements IService {
 
   async chat(prompt: string): Promise<string> {
     const provider = this.providers.get(this.activeProvider);
-    if (!provider) throw new Error('No active AI provider');
+    if (!provider) throw new Error('No active SI provider');
     
     Logger.debug(`[AIPlatform] Routing chat to ${this.activeProvider}`);
     return provider.chat(prompt);

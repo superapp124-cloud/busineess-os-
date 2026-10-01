@@ -2,7 +2,7 @@
 
 ## Summary
 
-Security foundations exist in Supabase auth/RLS, secrets vault schema, Electron credential vault, privacy-first AI routing, and audit table design. The Workflow Studio route still has several enterprise security gaps: unsafe condition execution, generic database action exposure, arbitrary webhook URLs, unbound secrets, fragmented audit, and incomplete authorization around publish/run/node capabilities.
+Security foundations exist in Supabase auth/RLS, secrets vault schema, Electron credential vault, privacy-first SI routing, and audit table design. The Workflow Studio route still has several enterprise security gaps: unsafe condition execution, generic database action exposure, arbitrary webhook URLs, unbound secrets, fragmented audit, and incomplete authorization around publish/run/node capabilities.
 
 ## Authentication
 
@@ -67,13 +67,13 @@ Studio runtime does not write audit logs for:
 - node executed
 - workflow saved
 - workflow published
-- AI generated workflow
+- SI generated workflow
 - approval decisions
 - credential use
 
 ## Token Handling and API Keys
 
-AI provider keys are environment-based. Provider manifests define auth needs. Studio runtime lacks a credential abstraction for nodes.
+SI provider keys are environment-based. Provider manifests define auth needs. Studio runtime lacks a credential abstraction for nodes.
 
 ## CSRF
 

@@ -94,7 +94,7 @@ const AIBrowserView = () => {
  if (error) throw error;
  setAiSummary(data.summary || 'No summary available');
  } catch (error) {
- toast.error('Failed to generate AI summary');
+ toast.error('Failed to generate SI summary');
  setAiSummary('Summary unavailable');
  }
  };
@@ -181,13 +181,13 @@ const AIBrowserView = () => {
  </div>
  </div>
 
- {/* AI Assist Panel */}
+ {/* SI Assist Panel */}
  {showAiAssist && (
  <Card className="m-2 p-4 bg-gradient-to-br from-primary/5 via-background to-background border-primary/20">
  <div className="flex items-center justify-between mb-3">
  <div className="flex items-center gap-2">
  <Sparkles className="h-5 w-5 text-primary" />
- <span className="font-semibold text-primary">AI Summary</span>
+ <span className="font-semibold text-primary">SI Summary</span>
  </div>
  <Button
  size="icon"

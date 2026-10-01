@@ -18,7 +18,7 @@ class AuthorizationService {
         // Mock authorization logic:
         // In a real system, this would query RBAC/ABAC policies attached to the Organization Workspace.
         
-        // Simple mock rule: AI Agents can read/execute, but cannot 'approve' (Human only).
+        // Simple mock rule: SI Agents can read/execute, but cannot 'approve' (Human only).
         if (principal.type === 'AIAgent' && action === 'approve') {
             return false; 
         }

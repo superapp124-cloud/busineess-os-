@@ -8,7 +8,7 @@ export interface UseGeminiLiveOptions {
 }
 
 const DISABLED_MESSAGE =
-  'Cloud live audio AI is disabled. Use a local Ollama audio bridge before enabling live translation.';
+  'Cloud live audio SI is disabled. Use a local Ollama audio bridge before enabling live translation.';
 
 export const useGeminiLive = (_options: UseGeminiLiveOptions) => {
   const [error, setError] = useState<string | null>(null);

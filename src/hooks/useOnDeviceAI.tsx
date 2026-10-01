@@ -58,7 +58,7 @@ export const useOnDeviceAI = () => {
  isLoading: false,
  isModelLoaded: false,
  isAvailable: false,
- error: error instanceof Error ? error.message : 'On-device AI unavailable',
+ error: error instanceof Error ? error.message : 'On-device SI unavailable',
  }));
  }
  }, []);

@@ -52,7 +52,7 @@ export interface MigrationCertificate {
 
 export class UniversalFinancialImporter {
   /**
-   * AI-Assisted Automated Field Mapping
+   * SI-Assisted Automated Field Mapping
    */
   public static mapSourceColumnsToChatr(sourceColumns: string[]): FieldMappingRule[] {
     const rules: FieldMappingRule[] = [];

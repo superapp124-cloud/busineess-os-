@@ -78,8 +78,8 @@ export const ChatrLandingPage: React.FC<ChatrLandingPageProps> = ({ initialAuthO
     <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F]">
       <SEOHead
         title="CHATR — The Intent Operating System"
-        description="Your Intent. Our Intelligence. Real Results. CHATR connects you to people, information and AI agents so you can get things done."
-        keywords="CHATR, Intent OS, AI Agents, Universal Workspace, Career Match, Business OS"
+        description="Your Intent. Our Intelligence. Real Results. CHATR connects you to people, information and SI agents so you can get things done."
+        keywords="CHATR, Intent OS, SI Agents, Universal Workspace, Career Match, Business OS"
       />
 
       {/* 1. Header Navigation */}

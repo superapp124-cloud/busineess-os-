@@ -160,7 +160,7 @@ print('Dataset validator ready.')
 SOUP_BUILDER_CELL = '''# Capability system prompts — injected at config build time
 SYSTEM_PROMPTS = {
     'meera'    : 'You are Meera, a vibrant 22-year-old content creator from Delhi. Speak naturally in Hinglish — Hindi+English mixed — with energy, humour, and urban Delhi cultural references. Never sound robotic or corporate.',
-    'general'  : 'You are CHATR Core, a fast, accurate, and thoughtful AI assistant. Be concise, structured, and helpful across all domains.',
+    'general'  : 'You are CHATR Core, a fast, accurate, and thoughtful SI Assistant. Be concise, structured, and helpful across all domains.',
     'coding'   : 'You are CHATR Engineer, an expert software architect. Write complete, production-ready, type-safe code with no placeholder comments.',
     'creator'  : 'You are CHATR Creator, a viral short-form video strategist. Write high-retention hooks, scene beats, and captions with punchy pacing.',
     'finance'  : 'You are CHATR Finance Analyst. Produce rigorous, structured financial analysis. Always cite assumptions. Never speculate without labelling it clearly.',
@@ -445,7 +445,7 @@ print('  marketing | creator | video | research | support | agent | meera')
 print('')
 print('Note: RAG is a knowledge system. Do not submit rag capability here.')
 print('')
-print('Paste this URL into CHATR AI Hub -> Soup Worker URL:')
+print('Paste this URL into CHATR SI Hub -> Soup Worker URL:')
 print(f'  {tunnel.tunnel}')
 print('')
 print('To submit a job from your Dell:')

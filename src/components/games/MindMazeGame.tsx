@@ -81,7 +81,7 @@ export function MindMazeGame({ onBack }: MindMazeGameProps) {
  setAiGuess(guess);
  setGamePhase('result');
  } catch (err) {
- console.error('AI guess error:', err);
+ console.error('SI guess error:', err);
  setAiGuess('something mysterious');
  setGamePhase('result');
  } finally {
@@ -92,11 +92,11 @@ export function MindMazeGame({ onBack }: MindMazeGameProps) {
  const checkResult = (aiWon: boolean) => {
  if (aiWon) {
  setStreak(0);
- toast.error('The AI read your mind! 🧠');
+ toast.error('The SI read your mind! 🧠');
  } else {
  setStreak(prev => prev + 1);
  setCoins(prev => prev + 50 * level);
- toast.success(`+${50 * level} coins! You fooled the AI!`);
+ toast.success(`+${50 * level} coins! You fooled the SI!`);
  }
  resetGame();
  };
@@ -144,7 +144,7 @@ export function MindMazeGame({ onBack }: MindMazeGameProps) {
  <Brain className="h-5 w-5 text-indigo-400" />
  MindMaze
  </h1>
- <p className="text-label text-indigo-300/70">Can AI read your thoughts?</p>
+ <p className="text-label text-indigo-300/70">Can SI read your thoughts?</p>
  </div>
  </div>
  <div className="flex items-center gap-3">

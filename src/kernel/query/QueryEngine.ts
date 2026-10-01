@@ -32,7 +32,7 @@ export interface ListQueryRequest {
 /**
  * The Query Engine
  * 
- * The universal read layer. All clients (Business OS, Studio, AI, Mobile) 
+ * The universal read layer. All clients (Business OS, Studio, SI, Mobile) 
  * query state exclusively through this engine. It orchestrates semantics, 
  * permissions, projections, and time.
  */

@@ -20,7 +20,7 @@ serve(async (req) => {
 
     switch (action) {
       case 'parallel_you_challenge':
-        systemPrompt = `You are an AI playing a game where you mimic a user's personality. 
+        systemPrompt = `You are an SI playing a game where you mimic a user's personality. 
         User personality traits: ${JSON.stringify(data.personality || {})}
         Challenge type: ${data.challengeType}
         Generate a challenge response that matches this personality.
@@ -60,7 +60,7 @@ serve(async (req) => {
         break;
 
       case 'emotionsync_analyze':
-        systemPrompt = `You are an emotion analysis AI for the EmotionSync game.
+        systemPrompt = `You are an emotion analysis SI for the EmotionSync game.
         Target emotion: ${data.targetEmotion}
         Analyze the user's input and detect the emotion expressed.
         Return JSON: { 
@@ -120,7 +120,7 @@ serve(async (req) => {
         break;
 
       case 'avawars_battle':
-        systemPrompt = `Simulate an AI personality battle for AVA Wars.
+        systemPrompt = `Simulate an SI personality battle for AVA Wars.
         Player AVA traits: ${JSON.stringify(data.playerTraits || {})}
         Opponent AVA traits: ${JSON.stringify(data.opponentTraits || {})}
         Battle type: ${data.battleType}

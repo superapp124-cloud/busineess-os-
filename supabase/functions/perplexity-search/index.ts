@@ -52,10 +52,10 @@ Deno.serve(async (req) => {
     const duckResults = await searchDuckDuckGo(query, maxResults);
     console.log(`Got ${duckResults.length} DuckDuckGo results`);
 
-    // Step 2: Generate AI summary using Direct AI Router (Gemini / Groq)
-    console.log('Generating AI summary...');
+    // Step 2: Generate SI summary using Direct SI Router (Gemini / Groq)
+    console.log('Generating SI summary...');
     const aiSummary = await generateAISummary(query, duckResults);
-    console.log('AI summary generated');
+    console.log('SI summary generated');
 
     return new Response(
       JSON.stringify({
@@ -209,7 +209,7 @@ Provide a detailed, informative summary:`;
 
     return response.content || 'No summary available.';
   } catch (error) {
-    console.error('AI summary generation error:', error);
+    console.error('SI summary generation error:', error);
     return `Based on the search results, here's what we found about "${query}". The search returned ${searchResults.length} relevant results with detailed information.`;
   }
 }

@@ -757,8 +757,8 @@
 05-19 15:06:39.068 D/NetworkController.MobileSignalController(1)(0)( 1315): matchSimMcc mccMnc: 40410, mcc = 260
 05-19 15:06:39.070 D/NetworkController.MobileSignalController(1)(0)( 1315): matchCards mccMnc: 40410
 05-19 15:06:39.264 D/BoundBrokerSvc(24062): onUnbind: Intent { act=com.google.android.gms.safetynet.service.START pkg=com.google.android.gms }
-05-19 15:06:39.319 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [AI] Failed to deserialize notification item
-05-19 15:06:39.320 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [AI] Failed to deserialize notification item
+05-19 15:06:39.319 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [SI] Failed to deserialize notification item
+05-19 15:06:39.320 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [SI] Failed to deserialize notification item
 05-19 15:06:39.328 I/Finsky  (26686): [2] SCH: job service start with id 9691.
 05-19 15:06:39.356 I/Finsky  (26686): [7122] SCH: Scheduling phonesky job Id: 1-1337, CT: 1779172107314, Constraints: [{ L: 21544790, D: 64744790, C: CHARGING_NONE, I: IDLE_NONE, N: NET_ANY, B: BATTERY_ANY }]
 05-19 15:06:39.357 I/Finsky  (26686): [7122] SCH: Scheduling phonesky job Id: 12-1, CT: 1779183384371, Constraints: [{ L: 15000, D: 86400000, C: CHARGING_NONE, I: IDLE_NONE, N: NET_ANY, B: BATTERY_ANY }]
@@ -2916,7 +2916,7 @@
 05-19 15:08:04.986 E/GED     (  722): failed to open /proc/ged
 05-19 15:08:04.986 E/GED     (  722): [GE]vendor/mediatek/proprietary/hardware/gpu_ext/ged/lib/ged_ge.cpp:30cannot open ged_bridge, please check permission for /proc/ged
 05-19 15:08:04.986 E/GED     (  722): [GE]vendor/mediatek/proprietary/hardware/gpu_ext/ged/lib/ged_ge.cpp:78ged_bridge is not init
-05-19 15:08:04.986 W/MemProcWatermarkReader( 2580): [AI] Failed to open zoneinfo file
+05-19 15:08:04.986 W/MemProcWatermarkReader( 2580): [SI] Failed to open zoneinfo file
 05-19 15:08:04.987 V/SettingsProvider( 1147): packageValueForCallResult, name = android_id, value : Bundle[{_track_generation=android.util.MemoryIntArray@76, value=de11b2155d4856fe, _generation_index=2, _generation=229}]
 05-19 15:08:04.988 W/lacrima ( 2580): Start JavaAppDeathCrashDetector... X.00gp
 05-19 15:08:04.992 W/lacrima ( 2580): Sending pending reports
@@ -5700,8 +5700,8 @@
 05-19 15:08:23.115 E/GED     (  722): [GE]vendor/mediatek/proprietary/hardware/gpu_ext/ged/lib/ged_ge.cpp:30cannot open ged_bridge, please check permission for /proc/ged
 05-19 15:08:23.115 E/GED     (  722): [GE]vendor/mediatek/proprietary/hardware/gpu_ext/ged/lib/ged_ge.cpp:78ged_bridge is not init
 05-19 15:08:23.151 I/DGW     (24766): I[sendRequest:90] StreamGroupConnectivityAwareNetworkLayer[notifgateway] processing request with connection state: 1
-05-19 15:08:23.154 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [AI] Failed to deserialize notification item
-05-19 15:08:23.154 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [AI] Failed to deserialize notification item
+05-19 15:08:23.154 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [SI] Failed to deserialize notification item
+05-19 15:08:23.154 W/fbservices-stub:NotificationDeliveryStorePreferences(24766): [SI] Failed to deserialize notification item
 05-19 15:08:23.161 I/beanpodkeymaster(  466): Enter BeanpodKeymaster BeginOperation
 05-19 15:08:23.164 E/beanpodkeymaster(  466): Received 24 byte response
 05-19 15:08:23.164 I/beanpodkeymaster(  466): Exit BeanpodKeymaster BeginOperation

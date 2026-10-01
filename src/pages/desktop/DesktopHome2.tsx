@@ -95,7 +95,7 @@ export default function DesktopHome2() {
  haptics.medium();
  setFixing(true);
  
- // Simulate AI rapidly executing the pending items
+ // Simulate SI rapidly executing the pending items
  setTimeout(() => {
  if (briefing) {
  setBriefing({

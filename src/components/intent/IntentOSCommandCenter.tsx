@@ -693,7 +693,7 @@ const DEMO_WORKFLOWS: Record<string, IntentWorkflowData> = {
       },
       {
         provider: "Samsung Galaxy S24 Ultra 512GB (Amazon Deal)",
-        routeOrTitle: "Titanium Gray • Galaxy AI • 200MP Quad Camera",
+        routeOrTitle: "Titanium Gray • Galaxy SI • 200MP Quad Camera",
         subtext: "Includes ₹5,000 instant exchange bonus & 12 months no-cost EMI",
         priceOrValue: "₹1,29,999",
         url: "https://www.amazon.in/s?k=samsung+galaxy+s24+ultra",
@@ -1469,7 +1469,7 @@ function resolveWorkflowForQuery(query: string): IntentWorkflowData {
           priceOrValue: "₹4,215",
         },
         {
-          provider: "Air India AI-864",
+          provider: "Air India SI-864",
           routeOrTitle: `${routeCode} • Direct Non-Stop`,
           subtext: "08:00 AM - 10:15 AM • 2h 15m • Free Meal Included",
           priceOrValue: "₹4,890",
@@ -2099,7 +2099,7 @@ export const IntentOSCommandCenter: React.FC<{
             data: { searchResults }
         }]);
 
-        // Trigger Local Ollama AI Summary asynchronously (don't await)
+        // Trigger Local Ollama SI Summary asynchronously (don't await)
         const fetchOllamaSummary = async () => {
             try {
                 const ollamaUrl = (typeof globalThis !== 'undefined' && (globalThis as any).__CHATR_OLLAMA_URL__) || 'http://localhost:11434';
@@ -2128,7 +2128,7 @@ Do NOT include any XML tags, just the markdown text.`;
                     throw new Error(`Ollama generation failed: ${res.statusText}`);
                 }
             } catch (err) {
-                console.warn("Local Ollama offline. Falling back to Cloud AI.", err);
+                console.warn("Local Ollama offline. Falling back to Cloud SI.", err);
                 
                 if (cloudAiSummary) {
                     setAiSummary({ text: cloudAiSummary, sources: searchResults, images: cloudImages });
@@ -2401,7 +2401,7 @@ Do NOT include any XML tags, just the markdown text.`;
                   ? "bg-gradient-to-r from-slate-700 to-slate-800 text-white shadow"
                   : "text-slate-400 hover:text-slate-200"
               }`}
-              title="1. Browse: Exactly like Chrome. No AI. Just browsing."
+              title="1. Browse: Exactly like Chrome. No SI. Just browsing."
             >
               <Globe className="w-3.5 h-3.5" />
               <span className="hidden md:inline">1. Browse</span>
@@ -2647,7 +2647,7 @@ Do NOT include any XML tags, just the markdown text.`;
                 "Compare iPhone prices across India.",
                 "Plan a Japan trip.",
                 "Build a SaaS.",
-                "Research AI startups.",
+                "Research SI startups.",
               ].map((example, idx) => (
                 <div
                   key={idx}
@@ -2775,7 +2775,7 @@ return (
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            {/* --- COLUMN 1: AI SYNTHESIS (Left) --- */}
+            {/* --- COLUMN 1: SI SYNTHESIS (Left) --- */}
             <div className="lg:col-span-5 flex flex-col opacity-0 animate-[fadeIn_0.5s_ease-out_forwards] [animation-delay:100ms]">
               {aiSummary && (
                 <div className="rounded-[2rem] bg-white/[0.02] backdrop-blur-3xl border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden h-full flex flex-col">
@@ -3027,7 +3027,7 @@ return (
                         ));
                      }
                      
-                     // 2. Prefer dynamic AI Search Sources if available
+                     // 2. Prefer dynamic SI Search Sources if available
                      if (aiSummary?.sources && aiSummary.sources.length > 0) {
                         return aiSummary.sources.map((src: any, i: number) => {
                           const domain = src.domain || (src.url ? new URL(src.url).hostname.replace('www.', '') : 'Verified Source');

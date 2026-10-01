@@ -23,8 +23,8 @@ export class LegalRepository extends BaseRepository<ILegalContract> {
 
   // Capability specific methods
   async generateSummary(contractId: string): Promise<string> {
-    // In a real application, this would invoke an Edge Function / AI model
-    return "This is an AI-generated summary of the contract obligations and liabilities.";
+    // In a real application, this would invoke an Edge Function / SI model
+    return "This is an SI-generated summary of the contract obligations and liabilities.";
   }
 }
 

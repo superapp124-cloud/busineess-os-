@@ -142,12 +142,12 @@ export function ChatrWorldHealthHub() {
  </Card>
  </div>
 
- {/* AI Symptom Checker */}
+ {/* SI Symptom Checker */}
  <Card className="bg-gradient-to-br from-purple-500/5 to-pink-500/5 border-purple-500/20">
  <CardHeader>
  <CardTitle className="flex items-center gap-2">
  <Brain className="h-5 w-5 text-purple-500" />
- AI Symptom Checker
+ SI Symptom Checker
  </CardTitle>
  </CardHeader>
  <CardContent className="space-y-4">
@@ -185,7 +185,7 @@ export function ChatrWorldHealthHub() {
  <Brain className="h-5 w-5 text-purple-500" />
  </div>
  <div>
- <p className="font-medium mb-2">AI Health Assistant</p>
+ <p className="font-medium mb-2">SI Health Assistant</p>
  <p className="text-secondary text-muted-foreground whitespace-pre-wrap">{aiResponse}</p>
  </div>
  </div>

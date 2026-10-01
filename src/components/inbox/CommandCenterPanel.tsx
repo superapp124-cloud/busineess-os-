@@ -1,10 +1,10 @@
 /**
- * CommandCenterPanel — Smart Inbox AI Sidebar
+ * CommandCenterPanel — Smart Inbox SI Sidebar
  *
  * Mounts inside Smart Inbox as a right-side panel.
  * Features:
  * - Unified search across mail + messages + tasks + files
- * - AI triage: what needs attention NOW
+ * - SI triage: what needs attention NOW
  * - Quick action shortcuts
  * - Intent-aware suggestions from GlobalIntentProvider
  * - Today's summary stats
@@ -198,11 +198,11 @@ export const CommandCenterPanel: React.FC<CommandCenterPanelProps> = ({
  ))}
  </div>
 
- {/* AI Brief */}
+ {/* SI Brief */}
  <div className="p-2.5 rounded-xl bg-cyan-500/[0.06] border border-cyan-500/15">
  <div className="flex items-center gap-1.5 mb-1.5">
  <Sparkles className="w-3 h-3 text-cyan-400" />
- <span className="text-[9px] font-bold text-cyan-400 uppercase tracking-wider">AI Brief</span>
+ <span className="text-[9px] font-bold text-cyan-400 uppercase tracking-wider">SI Brief</span>
  </div>
  {aiLoading ? (
  <div className="flex items-center gap-2 text-[10px] text-white/30">
@@ -215,7 +215,7 @@ export const CommandCenterPanel: React.FC<CommandCenterPanelProps> = ({
  onClick={generateBrief}
  className="w-full py-1.5 text-[10px] text-cyan-400 font-semibold hover:text-cyan-300 transition-colors text-left"
  >
- Generate AI Daily Brief →
+ Generate SI Daily Brief →
  </button>
  )}
  </div>

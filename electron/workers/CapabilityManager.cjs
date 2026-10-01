@@ -7,7 +7,7 @@ const https = require('https');
 /**
  * CapabilityManager — The core of the Thin Kernel architecture.
  * 
- * Instead of bundling heavy AI models or domain-specific OS plugins into the
+ * Instead of bundling heavy SI models or domain-specific OS plugins into the
  * initial installer, the CapabilityManager downloads them on-demand.
  * 
  * Responsibilities:

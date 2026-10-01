@@ -83,7 +83,7 @@ Validate all operational subsystems against target prior to public cutover:
 - Auth login (phone OTP & Firebase bridge)
 - Direct & group chat messaging
 - Calls & WebRTC signaling
-- CHATR AI Router (212/212 contract tests)
+- CHATR SI Router (212/212 contract tests)
 - Whisper STT, TTS-1, Gemini multimodal STT, OpenAI Realtime WebRTC
 - Vector semantic search on existing memory
 

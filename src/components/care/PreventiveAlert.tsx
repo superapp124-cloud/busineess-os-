@@ -79,7 +79,7 @@ export function PreventiveAlert({ alerts, onDismiss }: PreventiveAlertProps) {
  <Activity className="h-5 w-5 text-primary" />
  </motion.div>
  <h3 className="font-semibold">Health Insights</h3>
- <Badge variant="secondary" className="text-[10px]">AI Powered</Badge>
+ <Badge variant="secondary" className="text-[10px]">SI Powered</Badge>
  </div>
 
  <AnimatePresence>

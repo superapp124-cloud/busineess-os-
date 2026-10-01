@@ -21,7 +21,7 @@ export interface FinanceOutput {
 
 export class FinanceProviderPlugin implements IProviderPlugin<FinanceInput, FinanceOutput> {
   public id = 'provider-finance-ledger-ai';
-  public name = 'Finance Ledger AI Provider';
+  public name = 'Finance Ledger SI Provider';
   public apiVersion: '1.0.0' = '1.0.0';
   public compatibleKernelVersion = '^3.0';
 

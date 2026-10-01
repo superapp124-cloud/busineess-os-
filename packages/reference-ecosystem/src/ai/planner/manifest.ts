@@ -7,7 +7,7 @@ export const manifest = new CapabilityBuilder()
   .minimumKernelVersion(1, 0, 0)
   .status('ENABLED')
   .addAction({
-    id: 'AI.Plan',
+    id: 'SI.Plan',
     name: 'Agent Orchestration Planner',
     description: 'Agent orchestration planning',
     inputSchema: { type: 'object', properties: { goal: { type: 'string' } } },

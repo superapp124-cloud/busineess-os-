@@ -120,7 +120,7 @@ export const SessionWorkspace: React.FC<SessionWorkspaceProps> = ({
  <div className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.1] flex items-center justify-center">
  <Bot className="w-4 h-4 text-emerald-400" />
  </div>
- <h3 className="font-semibold text-white/90">ChatrAI Assistant</h3>
+ <h3 className="font-semibold text-white/90">ChatrSI Assistant</h3>
  </div>
  
  {isListening ? (
@@ -270,7 +270,7 @@ const SalesAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }:
  ))}
  </div>
 
- {/* AI-Generated Suggested Topics */}
+ {/* SI-Generated Suggested Topics */}
  <div className="space-y-3">
  <div className="flex items-center justify-between">
  <h4 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">ChatrAI Suggested Topics</h4>
@@ -568,7 +568,7 @@ const ClinicAssistant = ({ remoteUserName, activeTab, setActiveTab, transcript }
  .then(({ data }) => setPatientData(data));
  }, [remoteUserName]);
 
- // AI-generated clinical next steps based on transcript
+ // SI-generated clinical next steps based on transcript
  const generateNextSteps = async () => {
  setLoadingSteps(true);
  try {
@@ -765,7 +765,7 @@ const GeneralAssistant = ({
  const [chatInput, setChatInput] = useState('');
  const transcriptEndRef = useRef<HTMLDivElement>(null);
 
- // AI hooks — both route through generate() in @/services/ai
+ // SI hooks — both route through generate() in @/services/ai
  const meetingTitle = remoteUserName ? `Call with ${remoteUserName}` : 'Meeting';
  const participantList = (participants || []).map((p: any) => ({
  name: typeof p === 'string' ? p : p.name || 'Participant',
@@ -891,7 +891,7 @@ const GeneralAssistant = ({
  ))}
  </div>
 
- {/* AI Suggested Questions — from useSuggestedQuestions via generate() */}
+ {/* SI Suggested Questions — from useSuggestedQuestions via generate() */}
  <div className="pt-2 space-y-2">
  <div className="flex items-center justify-between">
  <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5">
@@ -936,7 +936,7 @@ const GeneralAssistant = ({
  <div className="text-secondary text-white/80 p-2 whitespace-pre-line">
  {transcript || (
  downloadProgress !== null 
- ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>Warming up AI...</span>
+ ? <span className="text-white/30 italic flex items-center gap-2"><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>Warming up SI...</span>
  : <span className="text-white/30 italic">No transcript recorded yet... Start speaking!</span>
  )}
  </div>
@@ -965,10 +965,10 @@ const GeneralAssistant = ({
  {/* Tab 2: Summary */}
  {activeTab === 2 && (
  <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
- {/* AI Timeline */}
+ {/* SI Timeline */}
  <div className="space-y-1.5">
  <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5">
- <Activity className="w-3 h-3" /> AI Timeline
+ <Activity className="w-3 h-3" /> SI Timeline
  </h4>
  <div className="space-y-0">
  {AI_TIMELINE_EVENTS.map((event, i) => (
@@ -992,7 +992,7 @@ const GeneralAssistant = ({
  </div>
  <div>
  <div className="text-secondary font-medium text-white/90">Auto-Generate Summary</div>
- <div className="text-label text-white/40 mt-1">Generate a structured AI summary with decisions, actions, and key points.</div>
+ <div className="text-label text-white/40 mt-1">Generate a structured SI summary with decisions, actions, and key points.</div>
  </div>
  </div>
  {summary && (
@@ -1040,7 +1040,7 @@ const GeneralAssistant = ({
  <div className="p-8 rounded-xl border border-white/[0.06] bg-white/[0.02] border-dashed text-center">
  <CheckCircle2 className="w-6 h-6 text-white/20 mx-auto mb-2" />
  <p className="text-secondary text-white/40">No tasks created yet.</p>
- <p className="text-label text-white/25 mt-1">AI will auto-detect action items from transcript.</p>
+ <p className="text-label text-white/25 mt-1">SI will auto-detect action items from transcript.</p>
  </div>
  ) : (
  tasks.map((task, i) => (

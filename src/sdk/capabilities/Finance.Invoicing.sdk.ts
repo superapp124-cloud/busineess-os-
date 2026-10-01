@@ -90,7 +90,7 @@ export const FinanceInvoicingSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Invoicing AI',
+    assistantName: 'Invoicing SI',
     skills: []
   },
   

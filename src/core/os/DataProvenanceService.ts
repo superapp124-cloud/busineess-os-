@@ -4,7 +4,7 @@
  * Implements Executive 3-Tier Health Architecture:
  * 1. System Health (98.6%, ▲ +0.8% 7d — HEALTHY) — Platform infrastructure
  * 2. Business Health (84.2%, ▲ +1.4% 7d — NEEDS ATTENTION) — Commercial operations & predictive leverage
- * 3. AI Assistant Health (99.2%, ▲ +1.2% 7d — HEALTHY) — Recommendation acceptance & workflow automation
+ * 3. SI Assistant Health (99.2%, ▲ +1.2% 7d — HEALTHY) — Recommendation acceptance & workflow automation
  */
 
 export interface ProvenanceMetadata {
@@ -181,7 +181,7 @@ class DataProvenanceEngine {
     const systemComponents: HealthComponent[] = [
       { name: 'Database (Supabase Postgres)', weightPct: 25, scorePct: 99.2, trend7d: '+0.4%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Realtime WebSockets (Channels)', weightPct: 20, scorePct: 98.8, trend7d: '+0.6%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
-      { name: 'AI Executive Engine (ContextBuilder)', weightPct: 20, scorePct: 99.0, trend7d: '+1.2%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
+      { name: 'SI Executive Engine (ContextBuilder)', weightPct: 20, scorePct: 99.0, trend7d: '+1.2%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Kernel Runtime (kernelBus)', weightPct: 15, scorePct: 100.0, trend7d: '0.0%', trendCategory: 'STABLE', status: 'HEALTHY' },
       { name: 'Integrations & OAuth Bridge', weightPct: 10, scorePct: 96.5, trend7d: '+0.8%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Performance & Latency SLAs', weightPct: 10, scorePct: 97.4, trend7d: '+1.0%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
@@ -199,7 +199,7 @@ class DataProvenanceEngine {
     const aiComponents: HealthComponent[] = [
       { name: 'Recommendation Acceptance Rate', weightPct: 30, scorePct: 94.2, trend7d: '+1.5%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Workflow Automation Completion', weightPct: 25, scorePct: 98.5, trend7d: '+0.8%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
-      { name: 'AI Response Feedback Score', weightPct: 25, scorePct: 96.8, trend7d: '+1.1%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
+      { name: 'SI Response Feedback Score', weightPct: 25, scorePct: 96.8, trend7d: '+1.1%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Time Saved per User (Weekly)', weightPct: 10, scorePct: 99.0, trend7d: '+2.4%', trendCategory: 'IMPROVING', status: 'HEALTHY' },
       { name: 'Zero-Hallucination Rate', weightPct: 10, scorePct: 99.9, trend7d: '0.0%', trendCategory: 'STABLE', status: 'HEALTHY' },
     ];

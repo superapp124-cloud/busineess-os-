@@ -4,7 +4,7 @@
 
 CHATR Studio has a strong visual product direction and a wide set of platform building blocks, but the current `/desktop/studio` implementation is not yet an enterprise universal automation platform comparable to Salesforce Flow, Power Automate, Zapier, Make, n8n, ServiceNow Flow Designer, HubSpot Workflow, Monday Automation, or Zoho Flow.
 
-The main reason is not lack of ambition. The repository contains many serious pieces: React Flow UI, Supabase persistence, AI generation, workflow version schema, run/audit schema, approval schema, queue schema, policy schema, Electron execution runtime, credential vault, provider manifests, and capability registries. The problem is wiring and source-of-truth maturity. The visible Studio route uses a local, mostly sequential, in-memory workflow runtime and still relies heavily on static/demo data.
+The main reason is not lack of ambition. The repository contains many serious pieces: React Flow UI, Supabase persistence, SI generation, workflow version schema, run/audit schema, approval schema, queue schema, policy schema, Electron execution runtime, credential vault, provider manifests, and capability registries. The problem is wiring and source-of-truth maturity. The visible Studio route uses a local, mostly sequential, in-memory workflow runtime and still relies heavily on static/demo data.
 
 ## Overall Scores
 
@@ -13,7 +13,7 @@ The main reason is not lack of ambition. The repository contains many serious pi
 | Overall architecture | 52/100 |
 | Workflow engine maturity | 34/100 |
 | Enterprise readiness | 31/100 |
-| AI readiness | 58/100 |
+| SI readiness | 58/100 |
 | Multi-industry readiness | 38/100 |
 | Extensibility | 56/100 |
 | Scalability | 30/100 |
@@ -23,7 +23,7 @@ The main reason is not lack of ambition. The repository contains many serious pi
 
 ## Score Interpretation
 
-These scores measure readiness for enterprise deployment today. They should not be read as a judgment on the long-term Intent Operating System architecture. The repository contains architectural assets that reduce future redesign risk, including capability registries, provider manifest ABI work, Intent IR/specification documents, frozen ABI governance, Electron execution infrastructure, AI planning, and enterprise control-plane direction.
+These scores measure readiness for enterprise deployment today. They should not be read as a judgment on the long-term Intent Operating System architecture. The repository contains architectural assets that reduce future redesign risk, including capability registries, provider manifest ABI work, Intent IR/specification documents, frozen ABI governance, Electron execution infrastructure, SI planning, and enterprise control-plane direction.
 
 Those assets do not make the current `/desktop/studio` route production-ready, but they materially improve the path from prototype to platform if the next phase consolidates around them instead of adding more parallel workflow engines.
 
@@ -32,8 +32,8 @@ Those assets do not make the current `/desktop/studio` route production-ready, b
 - Studio route exists and builds successfully.
 - The UI already communicates a sophisticated enterprise automation concept.
 - React Flow is integrated.
-- AI workflow generation exists through AutomationOS.
-- Local AI-first routing is privacy-positive.
+- SI workflow generation exists through AutomationOS.
+- Local SI-first routing is privacy-positive.
 - Supabase migrations show strong intended platform design: versions, runs, audit, approvals, queue, secrets, policies, metrics.
 - Electron core has meaningful execution infrastructure, credential storage, provider discovery, and execution ledger.
 - Provider manifests show early connector marketplace thinking.
@@ -60,7 +60,7 @@ Those assets do not make the current `/desktop/studio` route production-ready, b
 
 | Question | Current factual answer |
 | --- | --- |
-| How is a workflow created? | Through `useBusinessWorkflows.createWorkflow()`, AI generation, or local node additions. |
+| How is a workflow created? | Through `useBusinessWorkflows.createWorkflow()`, SI generation, or local node additions. |
 | How is it edited? | Studio can add local nodes and show a generated canvas; robust edge editing is not wired in the Studio route. |
 | How is it saved? | `handleSave()` updates `business_workflows` with nodes only. |
 | How is it versioned? | Schema and manager exist, but Studio uses static version UI and does not call publish/version APIs. |
@@ -93,14 +93,14 @@ Those assets do not make the current `/desktop/studio` route production-ready, b
 
 This is the highest-priority architectural bottleneck. Today, execution is fragmented across WorkflowStudio local behavior, AutomationOS RuntimeAdapter, Supabase Edge Function, Electron runtime, `execution-graph`, and the alternate WorkflowBuilder path.
 
-Goal: one authoritative runtime used by Desktop, Web, Mobile, AI Builder, Test Run, Publish, templates, and future industry packs.
+Goal: one authoritative runtime used by Desktop, Web, Mobile, SI Builder, Test Run, Publish, templates, and future industry packs.
 
 Rules during this phase:
 
 - Do not add new node types.
 - Do not add industry-specific workflow behavior.
 - Do not create another execution engine.
-- Route Studio Test Run, AI-generated workflows, published workflows, and background execution through the same engine.
+- Route Studio Test Run, SI-generated workflows, published workflows, and background execution through the same engine.
 
 ### Phase B - Canonical Workflow Graph
 
@@ -115,7 +115,7 @@ Create one graph object used everywhere. The graph should own:
 - permissions
 - execution hints
 
-Once this exists, Studio, AI Builder, Runtime, Publish, Templates, and future industry packs must consume the same object. This phase includes fixing edge persistence because real branching cannot exist without durable edges.
+Once this exists, Studio, SI Builder, Runtime, Publish, Templates, and future industry packs must consume the same object. This phase includes fixing edge persistence because real branching cannot exist without durable edges.
 
 ### Phase C - Enterprise Lifecycle
 

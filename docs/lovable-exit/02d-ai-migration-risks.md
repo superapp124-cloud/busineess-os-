@@ -1,4 +1,4 @@
-# Phase 2A: AI Migration Risk Register & Mitigation Controls
+# Phase 2A: SI Migration Risk Register & Mitigation Controls
 
 ## 1. High-Priority Risk: Vector Embeddings & Dimensionality Mismatch
 
@@ -72,5 +72,5 @@ High concurrent traffic on Google Gemini could trigger quota limits (HTTP 429), 
 | Scenario | Rollback Action | Time to Recover |
 |---|---|---|
 | Single function failure after deployment | Re-deploy the previous function version via dashboard or CLI | < 2 minutes |
-| Provider outage (e.g. Google AI Studio down) | Dynamic failover handles automatically; alternatively, change `primaryProvider: "groq"` in router | 0 minutes (automatic) |
+| Provider outage (e.g. Google SI Studio down) | Dynamic failover handles automatically; alternatively, change `primaryProvider: "groq"` in router | 0 minutes (automatic) |
 | Systemic Edge Function regression | Revert to Git tag `pre-phase2-baseline` | < 5 minutes |

@@ -1,6 +1,6 @@
 /**
- * CHATR CORE — Direct AI Provider Router
- * Universal, resilient multi-provider router replacing Lovable AI Gateway across Supabase Edge Functions.
+ * CHATR CORE — Direct SI Provider Router
+ * Universal, resilient multi-provider router replacing Lovable SI Gateway across Supabase Edge Functions.
  * Direct Providers: Google Gemini, Groq Cloud, OpenRouter, OpenAI
  */
 
@@ -62,7 +62,7 @@ export interface ImageGenerationResult {
 }
 
 /**
- * Resolves configured environment keys for AI providers
+ * Resolves configured environment keys for SI providers
  */
 export function getProviderApiKey(provider: AIProviderName): string | null {
   switch (provider) {
@@ -122,7 +122,7 @@ function normalizeModelForProvider(model: string | undefined, provider: AIProvid
 }
 
 /**
- * Performs a direct fetch against an AI provider's OpenAI-compatible endpoint
+ * Performs a direct fetch against an SI provider's OpenAI-compatible endpoint
  */
 async function callProviderChat(
   provider: AIProviderName,
@@ -225,7 +225,7 @@ export async function completeChat(options: ChatCompletionOptions): Promise<Chat
   throw new PlatformError(
     503,
     "ai_providers_exhausted",
-    `All configured AI providers failed. Errors: ${JSON.stringify(errors)}`,
+    `All configured SI providers failed. Errors: ${JSON.stringify(errors)}`,
   );
 }
 
@@ -286,7 +286,7 @@ export async function streamChat(options: ChatCompletionOptions): Promise<Respon
     }
   }
 
-  throw new PlatformError(503, "stream_providers_exhausted", "All streaming AI providers failed");
+  throw new PlatformError(503, "stream_providers_exhausted", "All streaming SI providers failed");
 }
 
 /**

@@ -12,7 +12,7 @@ export class DocumentCapabilityRouter {
 
   async route(documents: UnifiedDocument[], intent?: string): Promise<CapabilityInsight> {
     // Determine which capability to run.
-    // In a real OS, we could use the AI Intent Router to map intent -> capability.
+    // In a real OS, we could use the SI Intent Router to map intent -> capability.
     
     let targetCapability: DocumentCapability | null = null;
 

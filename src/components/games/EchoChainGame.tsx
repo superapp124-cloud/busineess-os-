@@ -23,7 +23,7 @@ const EchoChainGame = ({ level, onComplete, onBack }: EchoChainGameProps) => {
 
  const storyStarters = [
  "Once upon a time in a digital world",
- "The AI woke up and realized",
+ "The SI woke up and realized",
  "In the year 3000, humans discovered",
  "A mysterious message appeared on every screen",
  "The last robot on Earth wondered"
@@ -55,7 +55,7 @@ const EchoChainGame = ({ level, onComplete, onBack }: EchoChainGameProps) => {
  setChainLength(newChain.length);
  setCurrentInput('');
 
- // Check coherence with AI
+ // Check coherence with SI
  try {
  const { data } = await supabase.functions.invoke('chatr-games-ai', {
  body: {
@@ -69,7 +69,7 @@ const EchoChainGame = ({ level, onComplete, onBack }: EchoChainGameProps) => {
  return;
  }
  } catch {
- // Continue without AI check
+ // Continue without SI check
  }
 
  // Simulate partner's turn

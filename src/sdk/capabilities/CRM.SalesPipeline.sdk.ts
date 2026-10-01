@@ -29,7 +29,7 @@ export const CRMSalesPipelineSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Sales Pipeline AI',
+    assistantName: 'Sales Pipeline SI',
     skills: []
   },
   

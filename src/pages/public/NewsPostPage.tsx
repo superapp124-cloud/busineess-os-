@@ -17,21 +17,21 @@ const NEWS_ARTICLES: NewsArticle[] = [
   {
     slug: 'chatr-communication-os-launch',
     title: 'CHATR Launches Communication OS: A Unified Inbox for WhatsApp, Email and Business Messaging',
-    metaDescription: 'CHATR has launched CHATR Communication OS, a unified business communication platform consolidating WhatsApp, email, and team messaging into one shared inbox with AI-assisted workflows.',
+    metaDescription: 'CHATR has launched CHATR Communication OS, a unified business communication platform consolidating WhatsApp, email, and team messaging into one shared inbox with SI-assisted workflows.',
     canonicalDomain: 'https://chatrchat.in',
     category: 'Product Launch',
     publishedAt: '2026-08-11',
     readingMinutes: 3,
     body: (
       <div className="prose prose-invert max-w-none space-y-5 text-slate-300 leading-relaxed">
-        <p>CHATR has launched CHATR Communication OS, a unified business communication platform that consolidates WhatsApp, email, and team messaging into a single shared inbox with AI-assisted workflows.</p>
+        <p>CHATR has launched CHATR Communication OS, a unified business communication platform that consolidates WhatsApp, email, and team messaging into a single shared inbox with SI-assisted workflows.</p>
         <p>The platform is designed for Indian SMEs, recruitment agencies, and business teams that currently manage customer and candidate communications across multiple separate applications.</p>
         <h2 className="text-white text-xl font-bold mt-8">Core Capabilities at Launch</h2>
         <ul className="list-disc list-inside space-y-2 text-slate-300">
           <li>Unified team inbox for WhatsApp Business, email, and connected channels</li>
           <li>Conversation assignment and ownership tracking across team members</li>
           <li>WhatsApp candidate screening workflows for recruitment agencies</li>
-          <li>AI-assisted message composition and response suggestions</li>
+          <li>SI-assisted message composition and response suggestions</li>
           <li>Cross-device access via web and mobile applications</li>
         </ul>
         <h2 className="text-white text-xl font-bold mt-8">Availability</h2>

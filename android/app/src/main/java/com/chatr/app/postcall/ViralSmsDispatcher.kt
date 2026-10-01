@@ -11,12 +11,12 @@ import kotlinx.coroutines.launch
 /**
  * ViralSmsDispatcher
  *
- * After a highly-rated call (AI score >= threshold), sends a smart referral SMS
+ * After a highly-rated call (SI score >= threshold), sends a smart referral SMS
  * to the caller's number inviting them to try Chatr+.
  *
  * Rules:
  *   - Only fires if the call lasted > MIN_DURATION_SEC
- *   - Only fires if AI quality score >= MIN_AI_SCORE
+ *   - Only fires if SI quality score >= MIN_AI_SCORE
  *   - Never sends to the same number twice (checked via CallRecordStore.viralSent)
  *   - Respects user's "viral referral" opt-in preference in SharedPreferences
  *
@@ -38,8 +38,8 @@ object ViralSmsDispatcher {
      * @param callId       Unique call identifier
      * @param callerNumber Caller's phone number
      * @param durationSec  Actual call duration in seconds
-     * @param aiScore      AI quality score (0.0 – 1.0)
-     * @param summaryText  AI-generated call summary (appended to message)
+     * @param aiScore      SI quality score (0.0 – 1.0)
+     * @param summaryText  SI-generated call summary (appended to message)
      */
     fun maybeDispatch(
         context: Context,
@@ -63,7 +63,7 @@ object ViralSmsDispatcher {
             return
         }
         if (aiScore < MIN_AI_SCORE) {
-            Log.d(TAG, "AI score too low ($aiScore < $MIN_AI_SCORE) — skipping viral")
+            Log.d(TAG, "SI score too low ($aiScore < $MIN_AI_SCORE) — skipping viral")
             return
         }
 
@@ -92,7 +92,7 @@ object ViralSmsDispatcher {
     }
 
     private fun buildReferralMessage(summaryText: String?): String {
-        val base = "Hey! We just had a great call. I'm using Chatr+ — it has AI call screening, " +
+        val base = "Hey! We just had a great call. I'm using Chatr+ — it has SI call screening, " +
                 "live translation & smart summaries. Try it free: https://chatr.app"
         return if (!summaryText.isNullOrBlank() && summaryText.length < 80) {
             "$base\n\nOur call: $summaryText"

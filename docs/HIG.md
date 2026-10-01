@@ -3,7 +3,7 @@
 ## Philosophy
 **CHATR understands before it asks.** 
 
-This is not a chat bot. It is not an AI assistant. It is a semantic operating system that seamlessly transforms unstructured thought into structured action. It never feels like you are issuing commands to a machine; it feels like the software natively comprehends your intent in real-time.
+This is not a chat bot. It is not an SI assistant. It is a semantic operating system that seamlessly transforms unstructured thought into structured action. It never feels like you are issuing commands to a machine; it feels like the software natively comprehends your intent in real-time.
 
 ## Interaction Grammar
 Every feature in CHATR must strictly adhere to the single universal interaction pipeline:
@@ -38,7 +38,7 @@ Once the Entity Graph resolves a concrete action, the Action Surface is revealed
 
 ## Strict Vocabulary
 Never expose the underlying architecture to the user. The UI is native.
-- **NEVER SAY**: "AI", "LLM", "Semantic", "Inference", "Pipeline", "I think you mean...", "Unable to parse intent."
+- **NEVER SAY**: "SI", "LLM", "Semantic", "Inference", "Pipeline", "I think you mean...", "Unable to parse intent."
 - **ALWAYS SAY**: "Meeting", "Tomorrow", "John", "I couldn't confidently identify the meeting. Choose one."
 
 ## Accessibility

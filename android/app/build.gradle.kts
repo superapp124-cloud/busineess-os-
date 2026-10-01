@@ -54,6 +54,10 @@ android {
         buildConfigField("String", "SUPABASE_URL", if (supabaseUrl.isNotEmpty()) "\"$supabaseUrl\"" else "\"https://cenxckpxaqborfqyexot.supabase.co\"")
         buildConfigField("String", "SUPABASE_KEY", if (supabaseKey.isNotEmpty()) "\"$supabaseKey\"" else "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbnhja3B4YXFib3JmcXlleG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzU1NzQsImV4cCI6MjA5ODU1MTU3NH0.rCmVgQbMVIzG0h5nmDniHZpJtK9VUfW1mGO40VY_MZE\"")
         buildConfigField("String", "SOCKET_URL", if (socketUrl.isNotEmpty()) "\"$socketUrl\"" else "\"http://192.168.31.37:3000\"")
+
+        ndk {
+            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
+        }
     }
 
     signingConfigs {
@@ -106,6 +110,10 @@ android {
         jniLibs {
             useLegacyPackaging = true
         }
+    }
+
+    androidResources {
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~:!*.mp4:!*.exe:!*.apk:!*.zip:!seo-cohort-manifest.json:!*.m4a:!*.wav:!ort-wasm-simd-threaded.jsep-*.wasm"
     }
 
     testOptions {

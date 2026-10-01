@@ -1,5 +1,5 @@
 /**
- * CHATR AI
+ * CHATR SI
  * Gemini-first on-device intelligence runtime for zero-cost private assistance.
  */
 
@@ -188,7 +188,7 @@ class DeviceGptService {
         provider: parsed.provider || (nativeGemini ? 'Android Gemini on-device runtime' : 'Android local fallback'),
       };
     } catch (error) {
-      console.debug('[CHATR AI] Native runtime failed, using web local pack:', error);
+      console.debug('[CHATR SI] Native runtime failed, using web local pack:', error);
       return null;
     }
   }
@@ -237,7 +237,7 @@ class DeviceGptService {
         provider: result.provider || 'Android Gemini on-device runtime',
       };
     } catch (error) {
-      console.debug('[CHATR AI] Capacitor Gemini route unavailable, using private fallback:', error);
+      console.debug('[CHATR SI] Capacitor Gemini route unavailable, using private fallback:', error);
       return null;
     }
   }
@@ -271,7 +271,7 @@ class DeviceGptService {
         provider: parsed.provider || 'Android Gemini on-device runtime',
       };
     } catch (error) {
-      console.debug('[CHATR AI] Gemini on-device bridge failed, using private local route:', error);
+      console.debug('[CHATR SI] Gemini on-device bridge failed, using private local route:', error);
       return null;
     }
   }
@@ -309,7 +309,7 @@ class DeviceGptService {
         provider: 'Browser built-in Gemini runtime',
       };
     } catch (error) {
-      console.debug('[CHATR AI] Browser Gemini Nano unavailable, using private local route:', error);
+      console.debug('[CHATR SI] Browser Gemini Nano unavailable, using private local route:', error);
       return null;
     }
   }
@@ -351,7 +351,7 @@ class DeviceGptService {
   private ambientOperatingResponse(query: string, intent: DetectedIntent, agents: AgentType[]): DeviceGptResult {
     const trimmed = query.trim();
     const heardLine = trimmed.length > 2 && !/^(ok|okay|yes|start|help|hi|hello|hey)$/i.test(trimmed)
-      ? `I heard: "${trimmed}". I do not need cloud AI to start helping with this.`
+      ? `I heard: "${trimmed}". I do not need cloud SI to start helping with this.`
       : 'I am active. I will stay quiet until something needs your attention.';
 
     const primaryAgent = agents[0] || intent.agents[0] || 'personal';
@@ -387,7 +387,7 @@ class DeviceGptService {
 
     return {
       answer: [
-        `CHATR AI scan: treat this as ${severity} until verified.`,
+        `CHATR SI scan: treat this as ${severity} until verified.`,
         '',
         `Risk score: ${risk.score}%`,
         risk.reasons.length ? `Why: ${risk.reasons.join('; ')}.` : 'Why: the message asks for private or time-sensitive action.',
@@ -413,7 +413,7 @@ class DeviceGptService {
 
     return {
       answer: [
-        'CHATR AI Call Copilot is ready.',
+        'CHATR SI Call Copilot is ready.',
         '',
         lastCall
           ? `Latest native call detected: ${lastCall}. I can turn it into key points, follow-ups, reminders, and a clean shareable summary.`
@@ -426,7 +426,7 @@ class DeviceGptService {
         '',
         'This runs in private local fallback mode unless the native Gemini route is available.',
       ].join('\n'),
-      sources: ['CHATR AI Call Copilot'],
+      sources: ['CHATR SI Call Copilot'],
       followUp: ['Summarize pasted transcript', 'Create follow-up tasks', 'Turn call into reminder'],
       confidence: 0.8,
       model: 'CHATR local call copilot',
@@ -459,7 +459,7 @@ class DeviceGptService {
     if (!hasEvidence) {
       return {
         answer: [
-          'CHATR AI recruiter scan needs evidence.',
+          'CHATR SI recruiter scan needs evidence.',
           '',
           'I cannot honestly score this recruiter yet because I only have the request, not the message or offer details.',
           '',
@@ -485,7 +485,7 @@ class DeviceGptService {
 
     return {
       answer: [
-        `CHATR AI recruiter scan: ${severity}.`,
+        `CHATR SI recruiter scan: ${severity}.`,
         '',
         `Risk signal: ${risk.score}%`,
         risk.reasons.length
@@ -513,7 +513,7 @@ class DeviceGptService {
 
     return {
       answer: [
-        'CHATR AI resume helper is ready on-device.',
+        'CHATR SI resume helper is ready on-device.',
         '',
         hasResumeText
           ? 'I can improve this into a sharper recruiter-facing summary.'
@@ -538,7 +538,7 @@ class DeviceGptService {
   private interviewPracticeResponse(query: string): DeviceGptResult {
     return {
       answer: [
-        'CHATR AI interview practice is ready.',
+        'CHATR SI interview practice is ready.',
         '',
         'We can run this voice-first:',
         '1. I ask one interview question at a time.',
@@ -562,7 +562,7 @@ class DeviceGptService {
   private jobDiscoveryResponse(query: string): DeviceGptResult {
     return {
       answer: [
-        'CHATR AI Jobs Engine is active.',
+        'CHATR SI Jobs Engine is active.',
         '',
         'Tell me your target role, city or remote preference, experience level, expected salary, and 3 strongest skills.',
         '',
@@ -589,7 +589,7 @@ class DeviceGptService {
       answer: [
         isUrgent
           ? 'This may be urgent. Call local emergency services now and contact a nearby family member.'
-          : 'CHATR AI Family Care is ready.',
+          : 'CHATR SI Family Care is ready.',
         '',
         'On-device care plan:',
         '1. Confirm the medicine name, dosage, and time.',
@@ -610,7 +610,7 @@ class DeviceGptService {
   private lifeAdminResponse(): DeviceGptResult {
     return {
       answer: [
-        'CHATR AI Life Assistant can manage this offline.',
+        'CHATR SI Life Assistant can manage this offline.',
         '',
         'Suggested next step:',
         '1. Confirm the bill, recharge, or subscription name.',
@@ -629,7 +629,7 @@ class DeviceGptService {
   private dailyPlanResponse(): DeviceGptResult {
     return {
       answer: [
-        'CHATR AI daily operating plan',
+        'CHATR SI daily operating plan',
         '',
         'Priority order for today:',
         '1. Protect: handle OTP, bank, suspicious caller, and fake recruiter warnings first.',
@@ -714,7 +714,7 @@ class DeviceGptService {
         isOffline: this.isOffline(),
         isNative: geminiOnDevice,
         privacy: parsed.privacy || 'on_device',
-        detail: parsed.detail || 'CHATR AI is available for private offline tasks.',
+        detail: parsed.detail || 'CHATR SI is available for private offline tasks.',
         capabilities: parsed.capabilities?.length ? parsed.capabilities : CAPABILITIES,
       };
     } catch {

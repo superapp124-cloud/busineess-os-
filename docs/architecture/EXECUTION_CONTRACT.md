@@ -53,7 +53,7 @@ The Kernel is considered stable when:
 *   Business innovation occurs through metadata rather than code.
 
 ### Core Engineering Principles
-1. **No Special Cases:** The Runtime MUST NOT become "smart" or contain domain heuristics or AI behavior.
+1. **No Special Cases:** The Runtime MUST NOT become "smart" or contain domain heuristics or SI behavior.
 2. **Metadata First, Code Last:** The decision hierarchy for future contributors:
     1. Can this be expressed in existing EDL?
     2. If not, SHOULD EDL evolve?
@@ -113,7 +113,7 @@ These guidelines naturally evolve based on production workloads and implementati
 *   **Aggregate replay:** `≤ 200 ms`
 
 ### Define Explainability
-Every AI and Runtime decision must be deterministic. An explanation must be traceable to a combination of:
+Every SI and Runtime decision must be deterministic. An explanation must be traceable to a combination of:
 *   `Events`
 *   `Policies`
 *   `Relationships`
@@ -145,7 +145,7 @@ After Phase 2 (Recruitment Migration), work is structured by platform phases, no
 > 3. The Capability Pack validates successfully.
 > 4. The Runtime executes it unchanged.
 > 5. Business OS renders it.
-> 6. AI understands it.
+> 6. SI understands it.
 > 7. The Conformance Suite passes.
 >
 > **No Runtime modifications. No new module. No new business logic.** This validates that CHATR OS is a platform for enterprise systems, not just another enterprise application.

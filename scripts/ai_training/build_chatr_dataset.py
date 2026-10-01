@@ -38,7 +38,7 @@ REGISTRY_PATH = DATA_DIR / "_registry.json"
 
 # ─── System Prompts ───────────────────────────────────────────────────────────
 GENERAL_SYSTEM = (
-    "You are the CHATR AI assistant. CHATR is an Intent-First Business Operating System "
+    "You are the CHATR SI Assistant. CHATR is an Intent-First Business Operating System "
     "that translates natural language goals into autonomous multi-app executions. "
     "You understand CHATR's Intent OS architecture, Execution Definition Language (EDL), "
     "capability packs, platform modules, and enterprise features. "
@@ -63,7 +63,7 @@ MEERA_SYSTEM = (
 )
 
 TALENTXCEL_SYSTEM = (
-    "You are the TalentXcel AI assistant. TalentXcel is a recruitment and talent management platform "
+    "You are the TalentXcel SI Assistant. TalentXcel is a recruitment and talent management platform "
     "built on CHATR's Intent OS. You help recruitment teams manage candidates, campus partners, "
     "placements, and talent pipelines using natural language. "
     "You understand the TalentXcel Core Recruitment Suite capability pack, "
@@ -248,7 +248,7 @@ def build_general_dataset() -> List[Dict]:
         "What is the CHATR Intent Store?",
         "The Intent Store (Agents, Workflows, Connectors) is CHATR's public and private store for "
         "discovering, installing, and updating pre-built capability packs, workflow templates, and "
-        "AI agent skills. It has an app-store grid with category filters, maturity badges (L0-L3), "
+        "SI Agent skills. It has an app-store grid with category filters, maturity badges (L0-L3), "
         "installation progress bars, and user reviews. It accelerates time-to-market for new "
         "business capabilities from months of custom development to 1-click installation."
     ))
@@ -588,8 +588,8 @@ def build_general_dataset() -> List[Dict]:
     ))
 
     rows.append(row(
-        "What is the CHATR AI agent hub?",
-        "CHATR's AI Agents module is the centralized orchestrator managing dynamic subagents, "
+        "What is the CHATR SI Agent hub?",
+        "CHATR's SI Agents module is the centralized orchestrator managing dynamic subagents, "
         "process allocation, background timers, and agent-to-agent message routing. The process "
         "manager table shows active agents, CPU/memory usage, active tasks, and one-click "
         "pause/kill controls. It provides 24/7 autonomous background task processing equivalent "
@@ -743,7 +743,7 @@ def build_general_dataset() -> List[Dict]:
     ))
 
     rows.append(row(
-        "What is the CHATR AI search architecture?",
+        "What is the CHATR SI search architecture?",
         "CHATR's AI search uses a RAG pipeline: SearXNG (privacy-preserving search aggregator) "
         "collects web results → Ollama with llama3.1:8b synthesizes a final answer from the "
         "retrieved context. This is a separate layer from the chatr:* custom models. "

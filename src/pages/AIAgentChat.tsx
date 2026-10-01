@@ -83,7 +83,7 @@ export default function AIAgentChat() {
  }
  } catch (error) {
  console.error('Error loading agent:', error);
- toast.error('Failed to load AI agent');
+ toast.error('Failed to load SI agent');
  navigate('/ai-agents');
  } finally {
  setLoading(false);
@@ -122,7 +122,7 @@ export default function AIAgentChat() {
  }
 
  try {
- // Call AI agent edge function
+ // Call SI agent edge function
  const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
  body: {
  agentId: agent.id,
@@ -133,7 +133,7 @@ export default function AIAgentChat() {
 
  if (error) throw error;
 
- // Add AI response to chat
+ // Add SI response to chat
  const aiMessage: Message = {
  id: `ai-${Date.now()}`,
  role: 'assistant',
@@ -144,7 +144,7 @@ export default function AIAgentChat() {
 
  } catch (error) {
  console.error('Error sending message:', error);
- toast.error('Failed to get AI response');
+ toast.error('Failed to get SI response');
  
  // Remove the user message on error
  setMessages(prev => prev.filter(m => m.id !== newUserMessage.id));
@@ -286,7 +286,7 @@ export default function AIAgentChat() {
  </div>
  {!agent.is_active && (
  <p className="text-label text-muted-foreground mt-2 text-center">
- This AI agent is currently inactive
+ This SI agent is currently inactive
  </p>
  )}
  </div>

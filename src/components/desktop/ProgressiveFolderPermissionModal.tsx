@@ -29,7 +29,7 @@ export const ProgressiveFolderPermissionModal: React.FC<FolderPermissionProps> =
         </div>
 
         <p className="text-sm text-slate-300 mb-4 leading-relaxed">
-          Allowing CHATR Desktop to read your <span className="font-semibold text-white">{folderName}</span> folder enables local AI indexing over your private files.
+          Allowing CHATR Desktop to read your <span className="font-semibold text-white">{folderName}</span> folder enables local SI indexing over your private files.
         </p>
 
         {/* Benefits */}

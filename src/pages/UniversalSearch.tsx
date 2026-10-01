@@ -92,7 +92,7 @@ const UniversalSearch = () => {
  const [jobListings, setJobListings] = useState<JobListing[]>([]);
  const [jobsLoading, setJobsLoading] = useState(false);
  
- // Local AI for instant responses
+ // Local SI for instant responses
  const { analyzeIntent, supportsWebGPU } = useLocalAI();
  const [instantAnswer, setInstantAnswer] = useState<string | null>(null);
  const [localSuggestions, setLocalSuggestions] = useState<string[]>([]);
@@ -102,7 +102,7 @@ const UniversalSearch = () => {
  const handleQueryChange = useCallback(async (value: string) => {
  setSearchQuery(value);
  
- // Instant local AI analysis (no network delay)
+ // Instant local SI analysis (no network delay)
  if (value.trim().length > 2) {
  const localResult = await analyzeIntent(value);
  setLocalSuggestions(localResult.suggestedQueries);
@@ -117,10 +117,10 @@ const UniversalSearch = () => {
  }
  }, [analyzeIntent]);
 
- // 🚀 Async AI answer fetch (runs after results display)
+ // 🚀 Async SI answer fetch (runs after results display)
  const fetchAiAnswerAsync = useCallback(async (query: string, results: any[], locationData: any) => {
  try {
- console.log('🤖 Fetching AI summary async...');
+ console.log('🤖 Fetching SI summary async...');
  const { data: aiData, error: aiError } = await supabase.functions.invoke('ai-answer', {
  body: {
  query,
@@ -137,10 +137,10 @@ const UniversalSearch = () => {
  });
 
  if (aiError) {
- console.error('AI answer error:', aiError);
- setAiSummaryError('AI summary unavailable');
+ console.error('SI answer error:', aiError);
+ setAiSummaryError('SI summary unavailable');
  } else if (aiData) {
- console.log('✅ AI summary received');
+ console.log('✅ SI summary received');
  setWebResults((prev: any) => ({
  ...prev,
  synthesis: aiData.text || null,
@@ -149,12 +149,12 @@ const UniversalSearch = () => {
  }));
  setAiIntent((prev: any) => ({
  ...prev,
- intent: aiData.text ? 'AI Summary Available' : prev?.intent
+ intent: aiData.text ? 'SI Summary Available' : prev?.intent
  }));
  }
  } catch (err) {
- console.error('AI fetch error:', err);
- setAiSummaryError('AI summary temporarily unavailable');
+ console.error('SI fetch error:', err);
+ setAiSummaryError('SI summary temporarily unavailable');
  } finally {
  setAiSummaryLoading(false);
  }
@@ -230,7 +230,7 @@ const UniversalSearch = () => {
  setLoading(false);
  setWebSearchLoading(false);
  
- // Also set AI intent for display
+ // Also set SI intent for display
  setAiIntent({
  intent: `Found ${jobs.length} job${jobs.length > 1 ? 's' : ''} matching your search`,
  suggestions: detectedJobIntent.suggestedFilters,
@@ -299,7 +299,7 @@ const UniversalSearch = () => {
  localStorage.setItem('chatr_session_id', sessionId);
  }
 
- // Call CHATR Universal Search (Google Custom Search + AI)
+ // Call CHATR Universal Search (Google Custom Search + SI)
  console.log('Calling universal-search function...');
  const { data: searchData, error: searchError } = await supabase.functions.invoke('universal-search', {
  body: { 
@@ -321,7 +321,7 @@ const UniversalSearch = () => {
  const searchTime = Date.now() - searchStartTime.current;
  console.log(`⚡ Search results received in ${searchTime}ms`);
 
- // Set web results immediately (AI will load async)
+ // Set web results immediately (SI will load async)
  const aiImages = searchData.aiAnswer?.images || [];
 
  setWebResults({
@@ -359,13 +359,13 @@ const UniversalSearch = () => {
  setLoading(false);
  setWebSearchLoading(false);
 
- // 🚀 ASYNC: Fetch AI answer separately (doesn't block results)
+ // 🚀 ASYNC: Fetch SI answer separately (doesn't block results)
  if (searchData.fetchAiSeparately && searchData.results?.length > 0) {
  setAiSummaryLoading(true);
  fetchAiAnswerAsync(query, searchData.results.slice(0, 6), searchData.location);
  }
 
- // AI intent
+ // SI intent
  setAiIntent({
  intent: `Searching for: "${query}"`,
  suggestions: [
@@ -516,7 +516,7 @@ const UniversalSearch = () => {
  <ArrowLeft className="w-5 h-5" />
  </Button>
  <div className="flex-1">
- <h1 className="text-section font-bold">Universal AI Search</h1>
+ <h1 className="text-section font-bold">Universal SI Search</h1>
  <p className="text-label text-muted-foreground">Ask Anything. Find Everything. Instantly.</p>
  </div>
  {/* Location indicator removed for cleaner UI */}
@@ -546,7 +546,7 @@ const UniversalSearch = () => {
  </Button>
  </div>
 
- {/* Instant Local AI Suggestions (appears while typing) */}
+ {/* Instant Local SI Suggestions (appears while typing) */}
  {localSuggestions.length > 0 && !loading && (
  <div className="mt-2 p-2 bg-muted/30 rounded-lg border border-border/50">
  <div className="flex flex-wrap gap-1.5">
@@ -570,7 +570,7 @@ const UniversalSearch = () => {
  </div>
  )}
 
- {/* Removed AI Intent Banner - was redundant */}
+ {/* Removed SI Intent Banner - was redundant */}
  </div>
  </div>
 
@@ -640,7 +640,7 @@ const UniversalSearch = () => {
  )}
  {visualResults.ai_recommendations && (
  <div>
- <p className="text-label mb-1">AI Recommendations:</p>
+ <p className="text-label mb-1">SI Recommendations:</p>
  <p className="text-label text-muted-foreground">{visualResults.ai_recommendations}</p>
  </div>
  )}
@@ -649,12 +649,12 @@ const UniversalSearch = () => {
  )}
 
 
- {/* Perplexity-Style AI Summary with Images */}
+ {/* Perplexity-Style SI Summary with Images */}
  {webResults && (
  <Card className="p-5 mb-6 bg-gradient-to-br from-primary/5 via-background to-background border-primary/20">
  <div className="flex items-center gap-2 mb-3">
  <Sparkles className="w-4 h-4 text-primary" />
- <span className="text-label text-primary uppercase tracking-wide">AI Answer</span>
+ <span className="text-label text-primary uppercase tracking-wide">SI Answer</span>
  </div>
 
  {webResults.synthesis ? (
@@ -669,7 +669,7 @@ const UniversalSearch = () => {
  <AISummaryContent content="" images={webResults.images} />
  )}
  <p className="text-secondary text-muted-foreground">
- AI summary is temporarily unavailable. Showing verified sources below.
+ SI summary is temporarily unavailable. Showing verified sources below.
  </p>
  </div>
  )}
@@ -691,7 +691,7 @@ const UniversalSearch = () => {
  <div className="flex flex-col items-center justify-center py-16">
  <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
  <p className="text-muted-foreground font-medium mb-1">Searching the web at lightning speed...</p>
- <p className="text-label text-muted-foreground">Powered by DuckDuckGo + AI</p>
+ <p className="text-label text-muted-foreground">Powered by DuckDuckGo + SI</p>
  </div>
  ) : results.length === 0 && searchQuery && !jobListings.length ? (
  <div className="text-center py-16">

@@ -18,7 +18,7 @@ export class CandidateSummaryCapability implements Capability<CandidateProfileIn
     id: 'capability-candidate-summary',
     version: '1.0.0',
     name: 'Candidate Profile Summary Capability',
-    description: 'Generates recruiter-ready candidate executive summaries using OpenRouter AI',
+    description: 'Generates recruiter-ready candidate executive summaries using OpenRouter SI',
     maturityLevel: 'L5',
     inputSchema: {},
     outputSchema: {},
@@ -39,7 +39,7 @@ export class CandidateSummaryCapability implements Capability<CandidateProfileIn
   ): Promise<ExecutionResult<{ candidateId: string; executiveSummary: string; recruiterNotes: string }>> {
     console.log(`[CandidateSummaryCapability] Processing candidate profile summary for: ${input.name} (${input.candidateId})`);
 
-    // 1. Dispatch AI Summarization to AIExecutor using OpenRouterProviderAdapter
+    // 1. Dispatch SI Summarization to AIExecutor using OpenRouterProviderAdapter
     const openrouterAdapter = new OpenRouterProviderAdapter();
     const aiResult = await AIExecutor.execute(ctx, openrouterAdapter, {
       capability: this.manifest.id,
@@ -58,7 +58,7 @@ export class CandidateSummaryCapability implements Capability<CandidateProfileIn
         recruiterNotes,
       },
       diagnostics: [
-        { severity: 'info', message: `Candidate summary generated via OpenRouter AI (${openrouterAdapter.name})` },
+        { severity: 'info', message: `Candidate summary generated via OpenRouter SI (${openrouterAdapter.name})` },
       ],
       metrics: {
         durationMs: aiResult.metrics.durationMs + 5,

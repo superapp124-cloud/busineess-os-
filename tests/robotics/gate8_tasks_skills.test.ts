@@ -183,7 +183,7 @@ describe('GATE 8: Household Task Engine & Skills (@chatr/robot-skills & @chatr/r
   });
 
   // ------------------------------------------------------------
-  // 9. Offline NLU Deterministic Rule Fallback (No Cloud AI / No Guessing)
+  // 9. Offline NLU Deterministic Rule Fallback (No Cloud SI / No Guessing)
   // ------------------------------------------------------------
   it('9. Deterministic Grammar — Rejects ungrammatical / unknown commands without guessing', () => {
     const unkTask = MultilingualNlu.parsePrompt('Blah blah gibberish xyz123');

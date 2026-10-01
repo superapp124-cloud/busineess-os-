@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 
 /**
- * useLocalAI - Renderer-side hook for local Ollama AI.
+ * useLocalAI - Renderer-side hook for local Ollama SI.
  *
  * Strict privacy mode: this hook only talks to the Electron Ollama IPC bridge.
- * It never falls back to Supabase or another cloud AI provider.
+ * It never falls back to Supabase or another cloud SI provider.
  */
 
 export type AIPhase =
@@ -56,7 +56,7 @@ function getErrorMessage(err: unknown): string {
     if (typeof value.message === 'string') return value.message;
     if (typeof value.error === 'string') return value.error;
   }
-  return 'Unknown local AI error';
+  return 'Unknown local SI error';
 }
 
 function unwrapAskResult(result: unknown): string {
@@ -79,7 +79,7 @@ export function useLocalAI() {
       setStatus({
         ...DEFAULT_STATUS,
         phase: 'error',
-        error: 'Local Ollama is available only in the desktop app. Cloud AI fallback is disabled.',
+        error: 'Local Ollama is available only in the desktop app. Cloud SI fallback is disabled.',
       });
       return;
     }
@@ -105,11 +105,11 @@ export function useLocalAI() {
     opts: AskOptions = {}
   ): Promise<string> => {
     if (!isElectron) {
-      throw new Error('Local Ollama is available only in the desktop app. Cloud AI fallback is disabled.');
+      throw new Error('Local Ollama is available only in the desktop app. Cloud SI fallback is disabled.');
     }
 
     if (status.phase !== 'ready' || status.readyModels.length === 0) {
-      throw new Error(`Local Ollama is not ready (${status.phase}). Cloud AI fallback is disabled.`);
+      throw new Error(`Local Ollama is not ready (${status.phase}). Cloud SI fallback is disabled.`);
     }
 
     const result = await window.electronAPI!.ai!.ask(prompt, {

@@ -1,7 +1,7 @@
 /**
  * CHATR Intelligence Engine – Action Executor
  * 
- * Handles execution of AI suggested actions (e.g., blocking, reporting, deep linking).
+ * Handles execution of SI suggested actions (e.g., blocking, reporting, deep linking).
  */
 
 import type { AISuggestedAction } from './schema';
@@ -11,7 +11,7 @@ import { intelligenceBus } from './eventBus';
 
 export class ActionExecutor {
   /**
-   * Executes an AI-suggested action and updates the event graph if necessary.
+   * Executes an SI-suggested action and updates the event graph if necessary.
    */
   async execute(action: AISuggestedAction): Promise<void> {
     console.info(`[ActionExecutor] Executing action: ${action.type}`, action);
@@ -116,7 +116,7 @@ export class ActionExecutor {
     // This is just a no-op fallback if called directly.
     const explanation = action.payload?.explanation as string | undefined;
     if (explanation) {
-      alert(`AI Reasoning: ${explanation}`);
+      alert(`SI Reasoning: ${explanation}`);
     }
   }
 }

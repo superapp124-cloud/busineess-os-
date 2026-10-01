@@ -129,7 +129,7 @@ class GsmDormantShipVerifier(
             GsmFeature.GSM_INTELLIGENCE,
         )
         private val aiOrAudioFeatures = setOf(
-            GsmFeature.AI,
+            GsmFeature.SI,
             GsmFeature.TRANSCRIPTION,
             GsmFeature.RECORDING,
         )

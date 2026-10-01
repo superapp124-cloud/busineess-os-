@@ -13,7 +13,7 @@ export const ResearchMediaKitPage: React.FC = () => {
 
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', 'Media & Journalist Data Room providing verified recruitment communication benchmarks, lead response latency data, and AI parser accuracy datasets for press coverage.');
+    metaDesc.setAttribute('content', 'Media & Journalist Data Room providing verified recruitment communication benchmarks, lead response latency data, and SI parser accuracy datasets for press coverage.');
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
@@ -196,9 +196,9 @@ export const ResearchMediaKitPage: React.FC = () => {
         {/* Contextual Product Section */}
         <section className="bg-indigo-950/20 border border-indigo-500/20 rounded-2xl p-5 space-y-3 text-xs text-slate-300">
           <p className="font-semibold text-white text-sm">About the platform behind this research</p>
-          <p>This benchmark data is derived from first-party telemetry collected across <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR AI</Link> deployments in Indian SME and recruitment agency environments. The AI systems measured include Message Triage, Candidate Screening, and Auto-Responder capabilities.</p>
+          <p>This benchmark data is derived from first-party telemetry collected across <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR SI</Link> deployments in Indian SME and recruitment agency environments. The SI systems measured include Message Triage, Candidate Screening, and Auto-Responder capabilities.</p>
           <div className="flex flex-wrap gap-3 pt-1">
-            <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">Explore CHATR AI Platform →</Link>
+            <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">Explore CHATR SI Platform →</Link>
             <Link to="/pricing" className="text-slate-400 hover:text-slate-200 font-semibold hover:underline">View Commercial Plans →</Link>
           </div>
         </section>

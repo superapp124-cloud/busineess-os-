@@ -1,4 +1,4 @@
--- Migration: Phase 2 — Advanced Agent Sessions (Local AI 6-Layer Memory)
+-- Migration: Phase 2 — Advanced Agent Sessions (Local SI 6-Layer Memory)
 -- Date: 2026-07-09
 
 CREATE TABLE IF NOT EXISTS public.agent_sessions (

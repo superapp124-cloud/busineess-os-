@@ -132,7 +132,7 @@ export const FullSongMusicStudio: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-bold text-white">Full AI Song Studio (Suno-Quality Masters)</h1>
+                <h1 className="text-xl font-bold text-white">Full SI Song Studio (Suno-Quality Masters)</h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 font-mono text-[10px] font-bold border border-pink-500/40">
                   REAL SINGING + REAL MUSIC 🎶
                 </span>
@@ -250,14 +250,14 @@ export const FullSongMusicStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Master Songs & Suno AI Generator (7 Columns) */}
+          {/* Right: Master Songs & Suno SI Generator (7 Columns) */}
           <div className="md:col-span-7 space-y-6">
             
             {/* 1. Master Songs Selector */}
             <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <Music className="w-4 h-4 text-pink-400" />
-                <span>1. Select Master AI Song (Real Vocals & Instruments):</span>
+                <span>1. Select Master SI Song (Real Vocals & Instruments):</span>
               </h3>
 
               <div className="space-y-3">
@@ -287,12 +287,12 @@ export const FullSongMusicStudio: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Suno AI Prompt Generator */}
+            {/* 2. Suno SI Prompt Generator */}
             <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                   <Sparkles className="w-4 h-4 text-yellow-400" />
-                  <span>2. Suno AI v4 Production Prompt:</span>
+                  <span>2. Suno SI v4 Production Prompt:</span>
                 </h3>
 
                 <button

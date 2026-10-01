@@ -57,7 +57,7 @@ class IntentPlannerService {
     if (parsed.secondaryActions.includes('summarize')) {
       steps.push({
         id: step3Id,
-        name: 'Generate AI Summary',
+        name: 'Generate SI Summary',
         capability: 'summarize',
         inputs: { maxLengthTokens: 200 },
         dependencies: [step2Id],

@@ -41,7 +41,7 @@ export const CERWorkSessionPane: React.FC<Props> = ({ missionContext, isProcessi
   }
 
   const audits = [...auditEntries, ...(missionContext.auditTrail || [])];
-  const reviewRequired = missionContext.actionRequired !== 'AI Completed';
+  const reviewRequired = missionContext.actionRequired !== 'SI Completed';
 
   return <div className="flex flex-col gap-4 pb-5">
     <section className="rounded-2xl bg-slate-950 text-white p-5 shadow-lg">

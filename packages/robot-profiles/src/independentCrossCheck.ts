@@ -271,7 +271,7 @@ export class IndependentEngineeringCrossCheck {
       {
         id: 'ASSUMP-COMP-001',
         subsystem: 'COMPUTE',
-        componentName: 'Onboard Edge AI + Real-time Motion Computer',
+        componentName: 'Onboard Edge SI + Real-time Motion Computer',
         parameterClaim: '45W nominal power consumption running local Ollama inference + 500Hz whole-body loop',
         sourceType: 'COTS_BENCHMARK',
         cotsReference: 'NVIDIA Jetson AGX Orin 64GB (30-50W) or Intel Core Ultra 7 155H + NPU',

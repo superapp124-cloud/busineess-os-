@@ -104,7 +104,7 @@ export const CRMOpportunityManagementSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Opportunity Management AI',
+    assistantName: 'Opportunity Management SI',
     skills: []
   },
   

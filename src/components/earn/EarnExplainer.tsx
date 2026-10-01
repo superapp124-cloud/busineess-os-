@@ -3,7 +3,7 @@ import { MousePointerClick, CheckCircle2, Wallet } from 'lucide-react';
 
 const STEPS = [
  { icon: MousePointerClick, title: 'Pick a mission', desc: 'Listen, snap, or rate. Takes <60s.' },
- { icon: CheckCircle2, title: 'Submit proof', desc: 'Auto-verified by AI in seconds.' },
+ { icon: CheckCircle2, title: 'Submit proof', desc: 'Auto-verified by SI in seconds.' },
  { icon: Wallet, title: 'Get paid', desc: 'Coins land instantly. Cash out via UPI.' },
 ];
 

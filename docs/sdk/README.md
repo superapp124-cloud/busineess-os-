@@ -9,10 +9,10 @@ If you are a third-party developer, this SDK gives you the tools to build, publi
 ## Architecture Overview
 
 The CHATR OS is built on a strict, decoupled architecture:
-1. **Intent & AI Planner**: Probabilistically determines what the user wants and generates a deterministic execution graph.
+1. **Intent & SI Planner**: Probabilistically determines what the user wants and generates a deterministic execution graph.
 2. **Intent Execution Model (IEM)**: The strictly typed graph (Nodes & Edges) that defines the workflow.
 3. **Execution Engine**: The deterministic runner that executes the IEM, maintains state, and handles compensation/retries.
-4. **Policy Engine**: Enforces Authorization, Execution boundaries, AI Governance, and Compliance rules.
+4. **Policy Engine**: Enforces Authorization, Execution boundaries, SI Governance, and Compliance rules.
 5. **Capability Runtime**: The environment where your Capability lives.
 6. **CQRS Event Mesh**: How your Capability talks to others (Commands, Events, Queries).
 7. **Knowledge Graph**: The unified abstraction layer over your independent databases.

@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.workflow_steps (
     step_order INTEGER NOT NULL,
     name TEXT NOT NULL,
     type TEXT NOT NULL, -- form, approval, ai_action, notification
-    config JSONB DEFAULT '{}'::jsonb, -- Schema for forms, prompts for AI, etc.
+    config JSONB DEFAULT '{}'::jsonb, -- Schema for forms, prompts for SI, etc.
     required_role TEXT DEFAULT 'admin',
     UNIQUE(template_id, step_order)
 );

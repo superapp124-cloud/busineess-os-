@@ -6,12 +6,12 @@ const PlatformSettingsView = ({ template }: { template: OSTemplate }) => (
  <div className="max-w-4xl mx-auto">
  <div className="mb-10">
  <h1 className="text-display font-extrabold text-white tracking-tight">Platform Settings</h1>
- <p className="text-secondary text-zinc-400 mt-2">Configure AI parameters, automation guardrails, and system preferences.</p>
+ <p className="text-secondary text-zinc-400 mt-2">Configure SI parameters, automation guardrails, and system preferences.</p>
  </div>
 
  <div className="space-y-10">
  <div>
- <h2 className="text-label font-bold text-zinc-500 uppercase tracking-widest mb-4">AI Engine Configuration</h2>
+ <h2 className="text-label font-bold text-zinc-500 uppercase tracking-widest mb-4">SI Engine Configuration</h2>
  <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 backdrop-blur-xl">
  <div className="flex items-center justify-between mb-6 border-b border-zinc-800/60 pb-6">
  <div>
@@ -39,7 +39,7 @@ const PlatformSettingsView = ({ template }: { template: OSTemplate }) => (
  <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 backdrop-blur-xl space-y-4">
  {[
  { label: 'Require human approval for payments over $500', enabled: true },
- { label: 'Allow AI to automatically email external clients', enabled: false },
+ { label: 'Allow SI to automatically email external clients', enabled: false },
  { label: 'Auto-provision employee accounts on onboarding', enabled: true },
  { label: 'Self-healing workflows on task failure', enabled: true },
  ].map((rule, i) => (

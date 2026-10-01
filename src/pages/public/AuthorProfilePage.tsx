@@ -209,7 +209,7 @@ export const AuthorProfilePage: React.FC = () => {
           {isFounder && (
             <p className="text-xs text-slate-500">
               Explore the platform Sanobar built:{' '}
-              <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR AI Platform</Link>
+              <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR SI Platform</Link>
               {' '}·{' '}
               <Link to="/pricing" className="text-slate-400 hover:text-slate-300 font-semibold hover:underline">Commercial Plans</Link>
             </p>

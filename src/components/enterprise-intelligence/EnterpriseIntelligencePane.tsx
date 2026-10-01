@@ -248,7 +248,7 @@ export const EnterpriseIntelligencePane: React.FC<Props> = ({ missionContext, is
                     { label: 'File Type', value: 'Document', icon: <Zap className="w-3 h-3 text-indigo-500" /> },
                     { label: 'Security', value: 'Verified', icon: <Shield className="w-3 h-3 text-emerald-500" /> },
                     { label: 'Risk Alert', value: reasoning?.risk.level === 'HIGH' ? 'High Risk' : 'None', icon: <Shield className="w-3 h-3 text-amber-500" /> },
-                    { label: 'AI Assistant', value: 'Ready', icon: <Brain className="w-3 h-3 text-violet-500" /> },
+                    { label: 'SI Assistant', value: 'Ready', icon: <Brain className="w-3 h-3 text-violet-500" /> },
                   ].map(kpi => (
                     <div key={kpi.label} className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                       <div className="flex items-center gap-1.5 mb-1">{kpi.icon}<span className="text-[9px] text-slate-400 uppercase tracking-wider font-bold">{kpi.label}</span></div>

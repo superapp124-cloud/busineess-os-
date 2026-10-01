@@ -7,7 +7,7 @@
  * - Layer C: Problem Ingestion (Customer pain points & operational bottlenecks)
  * - Layer D: Workflow Searches (Executable business pipelines)
  * - Layer E: Vertical Industry Hubs (Industry-specific solutions)
- * - Terminology Hubs: Proprietary Category Ownership (Intent OS, AI Business OS, etc.)
+ * - Terminology Hubs: Proprietary Category Ownership (Intent OS, SI Business OS, etc.)
  * - Tools Directory: 18 CHATR-native interactive web applications
  * - Research Reports: 8 First-party empirical benchmark reports
  */
@@ -46,9 +46,9 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
     title: 'CHATR — The Intent Operating System & Universal Communication Platform',
     h1: 'CHATR: The Intent Operating System',
     tagline: 'Stop managing disconnected apps. Start executing high-level business goals.',
-    description: 'CHATR is the universal Intent Operating System unifying multi-channel business messaging, enterprise WebRTC calling, caller identity, and autonomous AI execution into one runtime.',
-    keywords: 'CHATR, Intent Operating System, Business Communication OS, Universal Business Inbox, AI Business OS',
-    directAnswer: 'CHATR is an Intent Operating System (Intent OS) that replaces fragmented SaaS applications with an intent-driven execution pipeline. It unifies business messaging, VoIP calling, caller identity verification, and multi-agent AI execution so organizations execute complex workflows without manual app navigation.',
+    description: 'CHATR is the universal Intent Operating System unifying multi-channel business messaging, enterprise WebRTC calling, caller identity, and autonomous SI execution into one runtime.',
+    keywords: 'CHATR, Intent Operating System, Business Communication OS, Universal Business Inbox, SI Business OS',
+    directAnswer: 'CHATR is an Intent Operating System (Intent OS) that replaces fragmented SaaS applications with an intent-driven execution pipeline. It unifies business messaging, VoIP calling, caller identity verification, and multi-agent SI execution so organizations execute complex workflows without manual app navigation.',
     keyCapabilities: [
       'Universal Business Inbox unifying WhatsApp Business API, email, web chat, and team threads',
       'SmartSession calling infrastructure with low-latency WebRTC voice and video',
@@ -62,7 +62,7 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
       { label: 'Execution', value: '99.4%', context: 'Deterministic action success rate' }
     ],
     faqs: [
-      { q: 'What is CHATR?', a: 'CHATR is an Intent Operating System and Universal Communication Platform designed for modern teams, recruitment agencies, and enterprises to coordinate communication, calling, identity, and AI automation.' },
+      { q: 'What is CHATR?', a: 'CHATR is an Intent Operating System and Universal Communication Platform designed for modern teams, recruitment agencies, and enterprises to coordinate communication, calling, identity, and SI automation.' },
       { q: 'How does CHATR differ from a traditional CRM?', a: 'Traditional CRMs are static databases requiring manual rep data entry. CHATR operates inside real-time communication flows, automatically capturing data, screening leads, and executing workflows in place.' }
     ],
     relatedTools: [
@@ -84,15 +84,15 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
     title: 'CHATR Communication — Universal Inbox, Messaging & Team Collaboration',
     h1: 'CHATR Communication: Unified Business Messaging',
     tagline: 'Consolidate every customer and team thread into a single, collision-free operating queue.',
-    description: 'Transform multi-channel communication into synchronized operational momentum. Unify real-time business messaging, email, web chat, team threads, and external messaging connectors with automated AI triage.',
+    description: 'Transform multi-channel communication into synchronized operational momentum. Unify real-time business messaging, email, web chat, team threads, and external messaging connectors with automated SI triage.',
     keywords: 'CHATR Communication, Universal Business Inbox, Multi-Agent WhatsApp, Shared Team Inbox, Business Messaging Platform',
-    directAnswer: 'CHATR Communication is a universal communication substrate and real-time business messaging platform. It unifies enterprise communication streams—including email, WebRTC voice/video, website live chat, and external messaging connectors (such as WhatsApp Business API)—into a single collaborative thread queue equipped with collision detection, round-robin assignment, and automated AI lead triage.',
+    directAnswer: 'CHATR Communication is a universal communication substrate and real-time business messaging platform. It unifies enterprise communication streams—including email, WebRTC voice/video, website live chat, and external messaging connectors (such as WhatsApp Business API)—into a single collaborative thread queue equipped with collision detection, round-robin assignment, and automated SI lead triage.',
     keyCapabilities: [
       'Multi-Agent Single Number WhatsApp Business API routing',
       'Visual agent collision detection and live typing lockouts',
       'Internal thread commentary and private supervisory mentions',
       'Sub-5-minute lead auto-responder and automated SLA escalations',
-      '3-Bullet instant AI thread summaries during agent reassignment'
+      '3-Bullet instant SI thread summaries during agent reassignment'
     ],
     metrics: [
       { label: 'Response SLA', value: '<60s', context: 'Automated initial qualification' },
@@ -192,35 +192,35 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
     slug: 'chatr-ai',
     universe: 'ai',
     layer: 'authority',
-    title: 'CHATR AI — AI Canvas, Multi-Agent Swarms & Autonomous Assistants',
-    h1: 'CHATR AI: The Intelligence Engine for Operations',
-    tagline: 'Autonomous AI agents embedded directly into business communication and workflows.',
-    description: 'Supercharge your workforce with CHATR AI: multi-agent coordination swarms, AI Canvas for brainstorming and execution, long-term epistemic memory, and local on-device inference.',
-    keywords: 'CHATR AI, AI Business Agents, Multi-Agent Swarm, AI Canvas, Autonomous Workflow Execution',
-    directAnswer: 'CHATR AI is the cognitive operating layer of CHATR. Rather than functioning as a superficial conversational chatbot, CHATR AI orchestrates goal-conditioned agent swarms that parse customer requests, retrieve organizational memory, draft replies, and execute operational workflows under policy guardrails.',
+    title: 'CHATR SI — SI Canvas, Multi-Agent Swarms & Autonomous Assistants',
+    h1: 'CHATR SI: The Intelligence Engine for Operations',
+    tagline: 'Autonomous SI agents embedded directly into business communication and workflows.',
+    description: 'Supercharge your workforce with CHATR SI: multi-agent coordination swarms, SI Canvas for brainstorming and execution, long-term epistemic memory, and local on-device inference.',
+    keywords: 'CHATR SI, SI Business Agents, Multi-Agent Swarm, SI Canvas, Autonomous Workflow Execution',
+    directAnswer: 'CHATR SI is the cognitive operating layer of CHATR. Rather than functioning as a superficial conversational chatbot, CHATR SI orchestrates goal-conditioned agent swarms that parse customer requests, retrieve organizational memory, draft replies, and execute operational workflows under policy guardrails.',
     keyCapabilities: [
       'Multi-Agent Swarm orchestration across sales, support, and recruitment',
-      'Infinite AI Canvas for visual planning and workflow execution',
+      'Infinite SI Canvas for visual planning and workflow execution',
       'Epistemic memory engine retaining enterprise facts and customer relationship context',
       'Hybrid model execution: ultra-fast cloud Gemini Flash + private local on-device LLMs',
       'Automated candidate resume parsing and WhatsApp pre-screening questionnaires'
     ],
     metrics: [
-      { label: 'Parsing Precision', value: '98.4%', context: 'AI CV parsing benchmark' },
+      { label: 'Parsing Precision', value: '98.4%', context: 'SI CV parsing benchmark' },
       { label: 'Inference Latency', value: '<400ms', context: 'Fast-tier cloud token generation' },
       { label: 'Human Override', value: '<8.5%', context: 'Guarded autonomous action acceptance' }
     ],
     faqs: [
-      { q: 'Is our customer data used to train public AI models?', a: 'No. CHATR AI operates under strict tenant isolation protocols, and offers private on-device LLM execution for confidential data.' },
-      { q: 'Can CHATR AI take actions, or just write text?', a: 'CHATR AI compiles intents into executable workflow DAGs that trigger database updates, payment links, and booking confirmations.' }
+      { q: 'Is our customer data used to train public SI models?', a: 'No. CHATR SI operates under strict tenant isolation protocols, and offers private on-device LLM execution for confidential data.' },
+      { q: 'Can CHATR SI take actions, or just write text?', a: 'CHATR SI compiles intents into executable workflow DAGs that trigger database updates, payment links, and booking confirmations.' }
     ],
     relatedTools: [
       { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', iconName: 'Cpu', description: 'Turn natural language requests into structured execution DAGs.' },
-      { name: 'AI Agent Prompt Builder', path: '/tools/ai-agent-prompt-builder', iconName: 'Sparkles', description: 'Create guarded system prompts with role constraints.' }
+      { name: 'SI Agent Prompt Builder', path: '/tools/ai-agent-prompt-builder', iconName: 'Sparkles', description: 'Create guarded system prompts with role constraints.' }
     ],
     relatedPages: [
-      { title: 'AI Business Agents', path: '/business-ai-agents' },
-      { title: 'AI Communication Platform', path: '/ai-communication' },
+      { title: 'SI Business Agents', path: '/business-ai-agents' },
+      { title: 'SI Communication Platform', path: '/ai-communication' },
       { title: 'CHATR Intent OS', path: '/chatr-intent-os' }
     ]
   },
@@ -291,7 +291,7 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
       { name: 'VoIP Cost Calculator', path: '/tools/business-voip-cost-calculator', iconName: 'Calculator', description: 'Calculate total software stack cost reductions.' }
     ],
     relatedPages: [
-      { title: 'What is an AI Business OS?', path: '/what-is-an-ai-business-os' },
+      { title: 'What is an SI Business OS?', path: '/what-is-an-ai-business-os' },
       { title: 'CHATR Communication', path: '/chatr-communication' },
       { title: 'CHATR Ecosystem', path: '/chatr-ecosystem' }
     ]
@@ -306,7 +306,7 @@ export const AUTHORITY_PAGES: SemanticPageDefinition[] = [
     tagline: 'Expand capabilities infinitely with third-party connectors and autonomous agents.',
     description: 'Discover pre-built connectors, workflow templates, verified business agents, and lightweight mini-apps designed to extend the CHATR runtime.',
     keywords: 'CHATR Ecosystem, Intent Store, Connector Hub, Mini-App Runtime, Workflow Templates',
-    directAnswer: 'CHATR Ecosystem is the extensibility platform of CHATR, featuring a Connector Hub for external APIs (Shopify, Meta, Zoho, Google Workspace), an Intent Store for pre-built AI agent templates, and a lightweight mini-app sandbox.',
+    directAnswer: 'CHATR Ecosystem is the extensibility platform of CHATR, featuring a Connector Hub for external APIs (Shopify, Meta, Zoho, Google Workspace), an Intent Store for pre-built SI agent templates, and a lightweight mini-app sandbox.',
     keyCapabilities: [
       'Pre-built connectors for popular enterprise SaaS and database APIs',
       'Intent Store featuring validated agent templates for sales, HR, and ops',
@@ -393,7 +393,7 @@ export const TERMINOLOGY_PAGES: SemanticPageDefinition[] = [
       { label: 'Integration Time', value: 'Minutes', context: 'Standardized connector interface' }
     ],
     faqs: [
-      { q: 'How is an Intent OS different from an AI Chatbot?', a: 'A chatbot produces conversational text. An Intent Operating System compiles intents into verified, state-changing transactions across real-world business systems.' },
+      { q: 'How is an Intent OS different from an SI Chatbot?', a: 'A chatbot produces conversational text. An Intent Operating System compiles intents into verified, state-changing transactions across real-world business systems.' },
       { q: 'Does an Intent OS require replacing existing software?', a: 'No. An Intent OS integrates on top of existing APIs, databases, and communication channels, acting as a universal execution runtime.' }
     ],
     relatedTools: [
@@ -401,7 +401,7 @@ export const TERMINOLOGY_PAGES: SemanticPageDefinition[] = [
     ],
     relatedPages: [
       { title: 'CHATR Intent OS', path: '/chatr-intent-os' },
-      { title: 'What is an AI Business OS?', path: '/what-is-an-ai-business-os' }
+      { title: 'What is an SI Business OS?', path: '/what-is-an-ai-business-os' }
     ]
   },
   {
@@ -409,12 +409,12 @@ export const TERMINOLOGY_PAGES: SemanticPageDefinition[] = [
     slug: 'what-is-an-ai-business-os',
     universe: 'business-os',
     layer: 'terminology',
-    title: 'What is an AI Business OS? Architectural Overview | CHATR',
-    h1: 'What is an AI Business OS?',
+    title: 'What is an SI Business OS? Architectural Overview | CHATR',
+    h1: 'What is an SI Business OS?',
     tagline: 'Replacing fragmented SaaS software with a unified business intelligence substrate.',
-    description: 'Learn why traditional CRM, ERP, and ATS silos are being replaced by unified AI Business Operating Systems that operate on a shared real-time knowledge graph.',
-    keywords: 'What is an AI Business OS, Business Operating System Definition, Unified Enterprise Substrate, AI Business Platform',
-    directAnswer: 'An AI Business OS is an integrated enterprise computing platform that replaces siloed CRM, ERP, ATS, and team messaging applications with a single unified operating graph, continuous timeline, and decision intelligence engine that automates cross-functional workflows.',
+    description: 'Learn why traditional CRM, ERP, and ATS silos are being replaced by unified SI Business Operating Systems that operate on a shared real-time knowledge graph.',
+    keywords: 'What is an SI Business OS, Business Operating System Definition, Unified Enterprise Substrate, SI Business Platform',
+    directAnswer: 'An SI Business OS is an integrated enterprise computing platform that replaces siloed CRM, ERP, ATS, and team messaging applications with a single unified operating graph, continuous timeline, and decision intelligence engine that automates cross-functional workflows.',
     keyCapabilities: [
       'Single Level-0 substrate graph replacing disparate database tables',
       'Real-time semantic enterprise memory retaining context across customer journeys',
@@ -426,7 +426,7 @@ export const TERMINOLOGY_PAGES: SemanticPageDefinition[] = [
       { label: 'Cost Reduction', value: '60%', context: 'Consolidation of overlapping SaaS tools' }
     ],
     faqs: [
-      { q: 'Why do companies need an AI Business OS?', a: 'Because maintaining 8 disconnected applications leads to 40% lost leads, data silos, and hours of wasted employee time switching between tabs.' }
+      { q: 'Why do companies need an SI Business OS?', a: 'Because maintaining 8 disconnected applications leads to 40% lost leads, data silos, and hours of wasted employee time switching between tabs.' }
     ],
     relatedTools: [],
     relatedPages: [
@@ -681,13 +681,13 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
     title: 'Shopify WhatsApp & Business Messaging Integration | CHATR',
     h1: 'Shopify + CHATR: Automated eCommerce Messaging & Cart Recovery',
     tagline: 'Deliver instant order tracking, automated abandoned cart recovery, and live support over WhatsApp.',
-    description: 'Supercharge your Shopify storefront with CHATR. Automate order confirmations, shipping alerts, one-click WhatsApp reorders, and 24/7 AI shopping assistance.',
+    description: 'Supercharge your Shopify storefront with CHATR. Automate order confirmations, shipping alerts, one-click WhatsApp reorders, and 24/7 SI shopping assistance.',
     keywords: 'shopify whatsapp integration, shopify abandoned cart recovery whatsapp, shopify order tracking chat, chatr shopify connector',
     directAnswer: 'The CHATR Shopify Integration automatically synchronizes storefront orders, abandoned carts, and inventory alerts with the CHATR Universal Inbox and WhatsApp Business API, delivering instant transactional updates and recovering lost checkout revenue.',
     keyCapabilities: [
       'Automated abandoned cart WhatsApp recovery triggers with direct checkout links',
       'Real-time order confirmation, fulfillment tracking, and delivery notifications',
-      'AI shopping agent answering product FAQs and sizing questions in chat threads',
+      'SI shopping agent answering product FAQs and sizing questions in chat threads',
       'One-click click-to-pay links powered by integrated payment gateways'
     ],
     metrics: [
@@ -697,7 +697,7 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
     ],
     faqs: [
       { q: 'How long does it take to connect Shopify to CHATR?', a: 'Under 3 minutes. Authenticate your Shopify store via OAuth and configure your messaging templates.' },
-      { q: 'Can customers ask for order updates over WhatsApp?', a: 'Yes. The customer messages your official number, and CHATR AI instantly retrieves order and tracking status.' }
+      { q: 'Can customers ask for order updates over WhatsApp?', a: 'Yes. The customer messages your official number, and CHATR SI instantly retrieves order and tracking status.' }
     ],
     relatedTools: [
       { name: 'Communication Link Generator', path: '/tools/communication-link-generator', iconName: 'Link', description: 'Create click-to-chat links for your store.' }
@@ -717,7 +717,7 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
     tagline: 'Embed crystal-clear WebRTC voice calling and WhatsApp threads directly inside Salesforce CRM.',
     description: 'Integrate CHATR with Salesforce. Power 1-click browser calling, automated call transcription, SmartSession lead pre-warming, and bidirectional contact sync.',
     keywords: 'salesforce voip integration, salesforce webrtc dialer, salesforce whatsapp crm, chatr salesforce integration',
-    directAnswer: 'The CHATR Salesforce Integration embeds browser-native WebRTC calling and multi-channel messaging directly into Salesforce CRM, automatically logging call recordings, duration, AI summaries, and WhatsApp transcripts without manual data entry.',
+    directAnswer: 'The CHATR Salesforce Integration embeds browser-native WebRTC calling and multi-channel messaging directly into Salesforce CRM, automatically logging call recordings, duration, SI summaries, and WhatsApp transcripts without manual data entry.',
     keyCapabilities: [
       'Embedded Salesforce CTI softphone with click-to-call and call transfer',
       'SmartSession context pop displaying lead history before the phone even rings',
@@ -744,15 +744,15 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
     slug: 'hubspot',
     universe: 'ecosystem',
     layer: 'integration',
-    title: 'HubSpot WhatsApp & AI Lead Routing Integration | CHATR',
+    title: 'HubSpot WhatsApp & SI Lead Routing Integration | CHATR',
     h1: 'HubSpot + CHATR: Synchronized Messaging & Autonomous Lead Triage',
     tagline: 'Sync inbound customer conversations with HubSpot deals, contacts, and tickets.',
-    description: 'Connect CHATR to HubSpot CRM. Auto-create leads from inbound WhatsApp messages, run AI qualification workflows, and sync full conversation timelines.',
+    description: 'Connect CHATR to HubSpot CRM. Auto-create leads from inbound WhatsApp messages, run SI qualification workflows, and sync full conversation timelines.',
     keywords: 'hubspot whatsapp integration, hubspot crm messaging, hubspot ai lead routing, chatr hubspot connector',
     directAnswer: 'The CHATR HubSpot Integration bridges inbound WhatsApp, email, and WebRTC voice calls with HubSpot CRM, automatically creating contacts, logging timeline events, and triggering marketing workflows based on customer intent.',
     keyCapabilities: [
       'Instant HubSpot contact creation when a new customer messages on WhatsApp',
-      'AI qualification scoring prospects and routing hot deals to sales reps',
+      'SI qualification scoring prospects and routing hot deals to sales reps',
       'Full chronological conversation history visible in HubSpot contact timelines',
       'Automated HubSpot workflow triggers based on chat sentiment and keyword tags'
     ],
@@ -841,9 +841,9 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
     tagline: 'Seamlessly coordinate Google Calendar bookings, Gmail threads, and Meet video links inside CHATR.',
     description: 'Integrate Google Workspace with CHATR. Enable automated appointment scheduling over WhatsApp, two-way Gmail syncing, and instant Google Meet room dispatch.',
     keywords: 'google workspace integration, google calendar whatsapp booking, gmail universal inbox, chatr google integration',
-    directAnswer: 'The CHATR Google Workspace Integration connects Google Calendar, Gmail, and Google Meet directly into conversation queues, allowing users and autonomous AI agents to book meetings, verify availability, and sync email threads without leaving chat.',
+    directAnswer: 'The CHATR Google Workspace Integration connects Google Calendar, Gmail, and Google Meet directly into conversation queues, allowing users and autonomous SI agents to book meetings, verify availability, and sync email threads without leaving chat.',
     keyCapabilities: [
-      'Conversational appointment booking: AI agents propose and book Google Calendar slots',
+      'Conversational appointment booking: SI agents propose and book Google Calendar slots',
       'Automated Google Meet link generation attached to confirmed appointments',
       'Two-way Gmail thread synchronization inside customer chronological timelines',
       'Contact synchronization linking Google Contacts with enterprise identity'
@@ -936,7 +936,7 @@ export const INTEGRATION_PAGES: SemanticPageDefinition[] = [
       'Seamless PBX replacement: cut voice calling costs by up to 65% with WebRTC',
       'Automatic Zendesk ticket generation and status updates from customer messaging',
       'SmartSession context pop displaying recent ticket history on incoming voice calls',
-      'AI ticket summaries automatically drafted upon call termination'
+      'SI ticket summaries automatically drafted upon call termination'
     ],
     metrics: [
       { label: 'Telephony Savings', value: '62%', context: 'Reduced Zendesk Talk phone costs' },
@@ -967,9 +967,9 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     title: 'CHATR vs Twilio — Unified Intent OS vs Raw Telecom APIs Comparison',
     h1: 'CHATR vs Twilio: Complete Architecture & Cost Comparison',
     tagline: 'Why modern enterprises are choosing an Intent Operating System over DIY telecom building blocks.',
-    description: 'Compare CHATR and Twilio. Understand the difference between an all-in-one Intent Operating System with pre-built Universal Inbox, WebRTC calling, and AI agents versus raw API building blocks.',
+    description: 'Compare CHATR and Twilio. Understand the difference between an all-in-one Intent Operating System with pre-built Universal Inbox, WebRTC calling, and SI agents versus raw API building blocks.',
     keywords: 'chatr vs twilio, twilio alternative, twilio flex alternative, business voip comparison, webrtc platform',
-    directAnswer: 'While Twilio provides low-level developer APIs requiring expensive engineering teams and custom UI development, CHATR is a turnkey Intent Operating System that includes an enterprise Universal Inbox, WebRTC voice/video calling, caller identity, and autonomous AI agents out of the box with zero custom infrastructure code.',
+    directAnswer: 'While Twilio provides low-level developer APIs requiring expensive engineering teams and custom UI development, CHATR is a turnkey Intent Operating System that includes an enterprise Universal Inbox, WebRTC voice/video calling, caller identity, and autonomous SI agents out of the box with zero custom infrastructure code.',
     keyCapabilities: [
       'Turnkey operating interface vs building custom UI from raw APIs',
       'Integrated Universal Inbox supporting WhatsApp, email, and team queues',
@@ -1003,11 +1003,11 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     tagline: 'Eliminate unpredictable per-seat and per-resolution fees with a unified Intent Operating System.',
     description: 'Compare CHATR and Intercom. Learn why growing SMEs and recruitment firms switch to CHATR for transparent pricing, multi-agent WhatsApp, and autonomous workflow execution.',
     keywords: 'chatr vs intercom, intercom alternative, affordable intercom alternative, customer communication platform',
-    directAnswer: 'CHATR provides a full-stack Intent Operating System combining multi-channel messaging, WebRTC calling, and autonomous AI workflows with transparent pricing, avoiding Intercom’s steep per-seat fees and unpredictable automated AI resolution charges.',
+    directAnswer: 'CHATR provides a full-stack Intent Operating System combining multi-channel messaging, WebRTC calling, and autonomous SI workflows with transparent pricing, avoiding Intercom’s steep per-seat fees and unpredictable automated SI resolution charges.',
     keyCapabilities: [
       'Transparent enterprise pricing with zero penalty for conversation volume spikes',
       'Built-in WebRTC voice and video calling alongside live chat and WhatsApp',
-      'True intent execution: AI agents take verified database actions, not just answering FAQs',
+      'True intent execution: SI agents take verified database actions, not just answering FAQs',
       'Executive Chief of Staff dashboard tracking operational SLA and team velocity'
     ],
     metrics: [
@@ -1020,7 +1020,7 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     relatedTools: [],
     relatedPages: [
       { title: 'CHATR Communication', path: '/chatr-communication' },
-      { title: 'CHATR AI', path: '/chatr-ai' }
+      { title: 'CHATR SI', path: '/chatr-ai' }
     ]
   },
   {
@@ -1031,12 +1031,12 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     title: 'CHATR vs WATI — Full Intent OS vs Narrow WhatsApp Tool Comparison',
     h1: 'CHATR vs WATI: From Basic WhatsApp Tool to Complete Business OS',
     tagline: 'Why enterprises outgrow standalone WhatsApp tools and migrate to CHATR.',
-    description: 'Detailed comparison of CHATR and WATI. Discover how CHATR unifies WhatsApp with WebRTC voice calling, candidate screening, CRM graph, and AI intent automation.',
+    description: 'Detailed comparison of CHATR and WATI. Discover how CHATR unifies WhatsApp with WebRTC voice calling, candidate screening, CRM graph, and SI intent automation.',
     keywords: 'chatr vs wati, wati alternative, best whatsapp business platform, wati vs chatr comparison',
     directAnswer: 'While WATI focuses strictly on WhatsApp messaging, CHATR is an overarching Intent Operating System that unifies WhatsApp Business API with enterprise WebRTC voice calling, cryptographic caller identity, recruitment candidate screening, and financial ledgers.',
     keyCapabilities: [
       'Comprehensive communication suite: WhatsApp + Email + WebRTC Calling + Video',
-      'Autonomous AI Agent swarms executing complex multi-step workflows',
+      'Autonomous SI Agent swarms executing complex multi-step workflows',
       'Embedded ATS & Candidate Screening engine tailored for recruitment agencies',
       'Desktop command center (macOS, Windows) alongside web and native mobile apps'
     ],
@@ -1069,7 +1069,7 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     keyCapabilities: [
       'Bridges internal team threads directly with external customer WhatsApp and phone inquiries',
       'Intent Engine compiles conversational goals into verified task execution graphs',
-      'Sub-second WebRTC audio/video meetings with real-time AI transcription',
+      'Sub-second WebRTC audio/video meetings with real-time SI transcription',
       'Chief of Staff executive view displaying company velocity and financial health'
     ],
     metrics: [
@@ -1114,7 +1114,7 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     ],
     relatedPages: [
       { title: 'CHATR Business OS', path: '/chatr-business-os' },
-      { title: 'What is an AI Business OS?', path: '/what-is-an-ai-business-os' }
+      { title: 'What is an SI Business OS?', path: '/what-is-an-ai-business-os' }
     ]
   },
   {
@@ -1124,10 +1124,10 @@ export const COMPARISON_PAGES: SemanticPageDefinition[] = [
     layer: 'comparison',
     title: 'CHATR Robotics OS vs ROS 2 — Intent-to-Actuator vs Middleware Comparison',
     h1: 'CHATR Robotics OS vs ROS 2: The Next Generation of Robot Intelligence',
-    tagline: 'How CHATR integrates natural language intent, AI reasoning, and MuJoCo simulation on top of robotics hardware.',
+    tagline: 'How CHATR integrates natural language intent, SI reasoning, and MuJoCo simulation on top of robotics hardware.',
     description: 'Compare CHATR Robotics OS and ROS 2. Understand how CHATR elevates robotics software from low-level DDS pub-sub node middleware into a full intent-to-execution physical operating system.',
     keywords: 'chatr robotics os vs ros2, ros 2 alternative, modern robotics operating system, embodied ai vs ros2',
-    directAnswer: 'While ROS 2 is low-level communication middleware connecting sensor drivers and motor nodes, CHATR Robotics OS is an end-to-end embodied AI operating system that compiles natural language human intent directly into verified 29-DOF kinematics, MuJoCo physics simulation, and real-time hardware execution.',
+    directAnswer: 'While ROS 2 is low-level communication middleware connecting sensor drivers and motor nodes, CHATR Robotics OS is an end-to-end embodied SI operating system that compiles natural language human intent directly into verified 29-DOF kinematics, MuJoCo physics simulation, and real-time hardware execution.',
     keyCapabilities: [
       'Natural language intent parsing translating conversational voice into task DAGs',
       'Browser-based 3D digital twin cockpit and real-time MuJoCo simulation live at /robotos',
@@ -1207,7 +1207,7 @@ export const TELECOM_COUNTRY_PAGES: SemanticPageDefinition[] = [
       { label: 'Setup Time', value: '<24h', context: 'Enterprise deployment velocity' }
     ],
     faqs: [
-      { q: 'Does CHATR support Arabic language voice recognition and AI?', a: 'Yes. CHATR AI and voice engines transcribe and summarize Arabic and English conversations.' }
+      { q: 'Does CHATR support Arabic language voice recognition and SI?', a: 'Yes. CHATR SI and voice engines transcribe and summarize Arabic and English conversations.' }
     ],
     relatedTools: [
       { name: 'VoIP Cost Calculator', path: '/tools/business-voip-cost-calculator', iconName: 'Calculator', description: 'Estimate KSA telephony costs in SAR.' }
@@ -1225,7 +1225,7 @@ export const TELECOM_COUNTRY_PAGES: SemanticPageDefinition[] = [
     title: 'India Business Telephony & WhatsApp API Compliance — TRAI & DPDPA 2023 | CHATR',
     h1: 'India Business Telephony: TRAI & DPDPA 2023 Compliant Platform',
     tagline: 'Unified business messaging and WebRTC voice engineered for Indian regulatory standards.',
-    description: 'Ensure total compliance with TRAI OSP regulations, DND scrubbing, and the Digital Personal Data Protection Act 2023 (DPDPA). Deploy enterprise calling in Mumbai, Bengaluru, Delhi, and nationwide.',
+    description: 'Ensure total compliance with TRSI OSP regulations, DND scrubbing, and the Digital Personal Data Protection Act 2023 (DPDPA). Deploy enterprise calling in Mumbai, Bengaluru, Delhi, and nationwide.',
     keywords: 'india business telephony, trai voip regulations, dpdpa 2023 compliance, whatsapp business api india, dnd scrubbing',
     directAnswer: 'CHATR is engineered specifically for the Indian enterprise landscape, delivering TRAI-compliant WebRTC business calling, automated DND list scrubbing, official Meta WhatsApp Cloud API connectivity, and full data sovereignty under India’s Digital Personal Data Protection Act (DPDPA 2023).',
     keyCapabilities: [
@@ -1420,12 +1420,12 @@ export const WAVE2_TOOLS: SemanticPageDefinition[] = [
     slug: 'ai-agent-prompt-builder',
     universe: 'ai',
     layer: 'tool',
-    title: 'Free AI Agent System Prompt & Guardrails Builder | CHATR AI',
-    h1: 'AI Agent Prompt & System Instructions Builder',
+    title: 'Free SI Agent System Prompt & Guardrails Builder | CHATR SI',
+    h1: 'SI Agent Prompt & System Instructions Builder',
     tagline: 'Design robust, guarded system prompts and intent schemas for autonomous business agents.',
-    description: 'Free interactive AI prompt builder. Create production-ready system instructions, role constraints, tool-calling schemas, and safety boundaries for sales and support agents.',
-    keywords: 'ai agent prompt builder, system instructions generator, llm guardrails builder, ai intent schema generator, chatr ai tool',
-    directAnswer: 'The CHATR AI Agent Prompt Builder generates production-grade system prompts with strict role boundaries, few-shot examples, JSON-schema tool parameters, and anti-hallucination guardrails tailored for autonomous enterprise agents.',
+    description: 'Free interactive SI prompt builder. Create production-ready system instructions, role constraints, tool-calling schemas, and safety boundaries for sales and support agents.',
+    keywords: 'si agent prompt builder, system instructions generator, llm guardrails builder, ai intent schema generator, chatr ai tool',
+    directAnswer: 'The CHATR SI Agent Prompt Builder generates production-grade system prompts with strict role boundaries, few-shot examples, JSON-schema tool parameters, and anti-hallucination guardrails tailored for autonomous enterprise agents.',
     keyCapabilities: [
       'Pre-built industry roles: Lead Qualifier, Customer Support, Technical Recruiter, and Appointment Booker',
       'Configurable safety guardrails preventing prompt injection and unauthorized commitments',
@@ -1437,13 +1437,13 @@ export const WAVE2_TOOLS: SemanticPageDefinition[] = [
       { label: 'Export Formats', value: 'JSON + Markdown', context: 'Instant copy and paste' }
     ],
     faqs: [
-      { q: 'Can I use these system prompts inside CHATR AI Canvas?', a: 'Yes. Generated prompts can be directly pasted into CHATR Agent Swarms and Workflow Studio.' }
+      { q: 'Can I use these system prompts inside CHATR SI Canvas?', a: 'Yes. Generated prompts can be directly pasted into CHATR Agent Swarms and Workflow Studio.' }
     ],
     relatedTools: [
       { name: 'Intent-to-Workflow Generator', path: '/tools/intent-to-workflow-generator', iconName: 'Workflow', description: 'Compile prompts into execution DAGs.' }
     ],
     relatedPages: [
-      { title: 'CHATR AI', path: '/chatr-ai' },
+      { title: 'CHATR SI', path: '/chatr-ai' },
       { title: 'CHATR Intent OS', path: '/chatr-intent-os' }
     ]
   }

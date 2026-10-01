@@ -10,7 +10,7 @@ The purpose of Stage 9 is to validate the Provider Platform architecture against
 - **Success:** `CapabilityRegistry` computes provider compatibility purely via declarative requirements (e.g., `Capability Requires: [OAuth2, Webhook]` intersecting with `Provider Supports: [OAuth2, Webhook]`). No implicit or hardcoded mappings exist.
 
 ## 3. Strict Strategy Boundaries
-- **Success:** `ExecutionStrategy` determines *how* to execute (Local AI, MCP, Provider, Human). It never evaluates provider specifics.
+- **Success:** `ExecutionStrategy` determines *how* to execute (Local SI, MCP, Provider, Human). It never evaluates provider specifics.
 - **Success:** `ProviderStrategy` determines *which* provider and connection to route to. It never evaluates Kernel intent or alternative execution mediums.
 
 ## 4. ExecutionOutcome Common Envelope
@@ -25,4 +25,4 @@ The purpose of Stage 9 is to validate the Provider Platform architecture against
 - **Success:** Zero provider-specific models, SDK types, or external API payloads leak across the adapter boundary into the Kernel or Strategy layers.
 
 ## 7. Mixed Execution Chains
-- **Success:** Integration tests successfully orchestrate a mixed chain (e.g., `Local AI -> Human Approval -> Provider -> Webhook Verification -> Stewardship`) seamlessly, without requiring any modifications to Kernel primitives.
+- **Success:** Integration tests successfully orchestrate a mixed chain (e.g., `Local SI -> Human Approval -> Provider -> Webhook Verification -> Stewardship`) seamlessly, without requiring any modifications to Kernel primitives.

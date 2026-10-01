@@ -1,6 +1,6 @@
 /**
  * CHATR BRAIN - Main Orchestrator
- * Unifies all AI agent systems into a single processing pipeline
+ * Unifies all SI agent systems into a single processing pipeline
  */
 
 import { AgentType, ActionType, DetectedIntent } from './types';

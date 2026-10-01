@@ -268,7 +268,7 @@ Would you like me to help you find a mental health professional in your area?`,
           );
         }
 
-        // Regular supportive chat via direct AI router
+        // Regular supportive chat via direct SI router
         let response = "I'm here to listen and support you. Would you like to tell me more about what you're going through?";
         try {
           const aiResult = await completeChat({
@@ -299,7 +299,7 @@ Always be warm, non-judgmental, and supportive. If someone seems in crisis, urge
             response = aiResult.content;
           }
         } catch (e) {
-          console.warn('Mental health AI notice:', e);
+          console.warn('Mental health SI notice:', e);
         }
 
         return new Response(

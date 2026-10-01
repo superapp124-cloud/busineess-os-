@@ -5,7 +5,7 @@ import { generate } from '@/services/ai';
 export class LocalAIProvider implements IProvider {
   manifest: ProviderManifest = {
     providerId: 'local-ai',
-    name: 'Local AI Generator',
+    name: 'Local SI Generator',
     version: '1.0.0',
     vendor: 'CHATR',
     capabilities: ['chatr.ai.generate'],

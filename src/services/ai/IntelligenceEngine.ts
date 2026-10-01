@@ -8,7 +8,7 @@ import { ActionEngine } from './ActionEngine';
 export class IntelligenceEngine {
   /**
    * Processes an array of raw emails locally on the device.
-   * Runs heuristics (or an ONNX model) to enrich them with AI intelligence
+   * Runs heuristics (or an ONNX model) to enrich them with SI intelligence
    * before they are stored in the local SQLite database.
    */
   static processBatch(accountId: string, messages: EmailMessage[]): StoredMessage[] {

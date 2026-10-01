@@ -95,7 +95,7 @@ export default function CapabilityInspector() {
               {/* Metrics */}
               <div className="col-span-3 grid grid-cols-4 gap-4">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-                  <div className="text-sm text-gray-500 mb-1">AI Calls</div>
+                  <div className="text-sm text-gray-500 mb-1">SI Calls</div>
                   <div className="text-2xl font-semibold">{selectedStatus?.metrics.aiCalls || 0}</div>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
@@ -136,11 +136,11 @@ export default function CapabilityInspector() {
                 </div>
               </div>
 
-              {/* AI Tools */}
+              {/* SI Tools */}
               <div className="col-span-2 bg-gray-900 border border-gray-800 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <LucideBrain className="text-purple-400" size={18} />
-                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Semantic AI Tools</h3>
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Semantic SI Tools</h3>
                 </div>
                 
                 {selectedManifest.tools && selectedManifest.tools.length > 0 ? (
@@ -162,7 +162,7 @@ export default function CapabilityInspector() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600">No AI tools registered.</div>
+                  <div className="text-sm text-gray-600">No SI tools registered.</div>
                 )}
               </div>
             </div>

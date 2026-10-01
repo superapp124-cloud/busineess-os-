@@ -6,15 +6,15 @@ const DOMAIN = 'https://www.chatrchat.in';
 const PUBLIC_SEO_PAGES = [
   {
     path: '/chatr/ai',
-    title: 'CHATR AI -- Intelligent Business Messaging & Workflow Automation',
-    description: 'Discover CHATR AI: the intelligent communication layer for WhatsApp, email, and candidate screening. Automate message triage, thread summaries, lead capture, and voice agents.',
-    keywords: 'CHATR AI, AI Business Messaging, AI Intent Triage, WhatsApp AI Agent',
+    title: 'CHATR SI -- Intelligent Business Messaging & Workflow Automation',
+    description: 'Discover CHATR SI: the intelligent communication layer for WhatsApp, email, and candidate screening. Automate message triage, thread summaries, lead capture, and voice agents.',
+    keywords: 'CHATR SI, AI Business Messaging, AI Intent Triage, WhatsApp SI Agent',
     canonical: DOMAIN + '/chatr/ai',
     schemas: [
       {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: 'CHATR AI',
+        name: 'CHATR SI',
         applicationCategory: 'CommunicationApplication',
         url: DOMAIN + '/chatr/ai'
       }
@@ -945,7 +945,7 @@ PUBLIC_SEO_PAGES.push({
         price: '0',
         priceCurrency: 'USD'
       },
-      description: 'Download CHATR+ for Android. Carrier-grade WebRTC HD calling, private messaging without Meta surveillance, TelecomManager lockscreen integration, and autonomous AI agents. Direct APK install without Google Play Store.',
+      description: 'Download CHATR+ for Android. Carrier-grade WebRTC HD calling, private messaging without Meta surveillance, TelecomManager lockscreen integration, and autonomous SI Agents. Direct APK install without Google Play Store.',
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: '4.9',

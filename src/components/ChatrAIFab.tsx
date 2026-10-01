@@ -15,48 +15,48 @@ interface AIMenuOption {
   actionId?: string;
 }
 
-// Context-aware AI menu configurations for Desktop Platform
+// Context-aware SI menu configurations for Desktop Platform
 const PAGE_AI_MENUS: Record<string, AIMenuOption[]> = {
   '/desktop/chat': [
-    { label: 'Conversation AI', description: 'Detect intents & summarize chat', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/desktop/chat', actionId: 'open-intelligence-panel', color: 'bg-violet-600' },
+    { label: 'Conversation SI', description: 'Detect intents & summarize chat', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/desktop/chat', actionId: 'open-intelligence-panel', color: 'bg-violet-600' },
     { label: 'Intelligence Panel', description: 'See extracted people, dates, intents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/intelligence', color: 'bg-indigo-600' },
-    { label: 'AI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
+    { label: 'SI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
   ],
   '/desktop/calls': [
     { label: 'Meeting Copilot', description: 'Live notes, decisions, action items', icon: <Mic className="w-5 h-5 text-white" />, route: '/desktop/calls', color: 'bg-blue-600' },
-    { label: 'Pre-Call Brief', description: 'AI summary before your next call', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/calls', color: 'bg-indigo-600' },
+    { label: 'Pre-Call Brief', description: 'SI summary before your next call', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/calls', color: 'bg-indigo-600' },
     { label: 'Schedule Meeting', description: 'Book time with participants', icon: <Calendar className="w-5 h-5 text-white" />, route: '/desktop/calendar', color: 'bg-teal-600' },
   ],
   '/desktop/contacts': [
-    { label: 'Relationship AI', description: 'Full history with key contacts', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/chat', color: 'bg-emerald-600' },
+    { label: 'Relationship SI', description: 'Full history with key contacts', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/chat', color: 'bg-emerald-600' },
     { label: 'Find Contact', description: 'Search across all people', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/chat', color: 'bg-cyan-600' },
     { label: 'Action Agents', description: 'Run reusable work agents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/ai-agents', color: 'bg-pink-600' },
   ],
   '/desktop/canvas': [
-    { label: 'Knowledge AI', description: 'Connect people, docs, meetings', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/canvas', color: 'bg-purple-600' },
+    { label: 'Knowledge SI', description: 'Connect people, docs, meetings', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/canvas', color: 'bg-purple-600' },
     { label: 'Search Knowledge', description: 'Find anything across your work', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/canvas', color: 'bg-violet-600' },
-    { label: 'AI Browser', description: 'Research with AI', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
+    { label: 'SI Browser', description: 'Research with SI', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-blue-600' },
   ],
   '/desktop/smart-inbox': [
     { label: 'Command Center', description: 'Search across all channels', icon: <Search className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', actionId: 'command-center', color: 'bg-cyan-600' },
-    { label: 'AI Triage', description: 'What needs your attention now', icon: <Sparkles className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', actionId: 'ai-triage', color: 'bg-indigo-600' },
-    { label: 'Summarize Inbox', description: 'AI summary of unread messages', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', actionId: 'summarize-inbox', color: 'bg-violet-600' },
+    { label: 'SI Triage', description: 'What needs your attention now', icon: <Sparkles className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', actionId: 'ai-triage', color: 'bg-indigo-600' },
+    { label: 'Summarize Inbox', description: 'SI summary of unread messages', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/smart-inbox', actionId: 'summarize-inbox', color: 'bg-violet-600' },
   ],
   '/desktop/workspace': [
-    { label: 'Workspace AI', description: 'Set up and manage workspaces', icon: <LayoutDashboard className="w-5 h-5 text-white" />, route: '/desktop/workspace', color: 'bg-orange-600' },
+    { label: 'Workspace SI', description: 'Set up and manage workspaces', icon: <LayoutDashboard className="w-5 h-5 text-white" />, route: '/desktop/workspace', color: 'bg-orange-600' },
     { label: 'Create Workspace', description: 'Sales, HR, Healthcare, and more', icon: <Briefcase className="w-5 h-5 text-white" />, route: '/desktop/intent-store', color: 'bg-amber-600' },
     { label: 'Action Agents', description: 'Automate workspace tasks', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/ai-agents', color: 'bg-pink-600' },
   ],
   '/desktop/recruitment': [
-    { label: 'Recruitment AI', description: 'Track candidates, schedule interviews', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-pink-600' },
-    { label: 'Screen Candidate', description: 'AI-powered resume analysis', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-rose-600' },
+    { label: 'Recruitment SI', description: 'Track candidates, schedule interviews', icon: <Users className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-pink-600' },
+    { label: 'Screen Candidate', description: 'SI-powered resume analysis', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-rose-600' },
     { label: 'Schedule Interview', description: 'Book interview slots automatically', icon: <Calendar className="w-5 h-5 text-white" />, route: '/desktop/recruitment', color: 'bg-indigo-600' },
   ],
 };
 
 const DEFAULT_AI_MENU: AIMenuOption[] = [
   { label: 'ChatrAI', description: 'Ask, summarize, plan, detect risk', icon: <MessageSquare className="w-5 h-5 text-white" />, route: '/desktop/chat', actionId: 'open-intelligence-panel', color: 'bg-blue-500' },
-  { label: 'AI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-purple-500' },
+  { label: 'SI Browser', description: 'Search and verify with context', icon: <Globe className="w-5 h-5 text-white" />, route: '/ai-browser-home', color: 'bg-purple-500' },
   { label: 'Action Agents', description: 'Run reusable work agents', icon: <BrainCircuit className="w-5 h-5 text-white" />, route: '/desktop/ai-agents', color: 'bg-pink-500' },
 ];
 
@@ -67,7 +67,7 @@ export const ChatrAIFab = () => {
   const location = useLocation();
 
   const { pageContext } = useCHATROS();
-  const contextLabel = pageContext?.aiLabel || 'CHATR AI';
+  const contextLabel = pageContext?.aiLabel || 'CHATR SI';
   const contextEmoji = pageContext?.aiEmoji || '⚡';
 
   const orbStates = [

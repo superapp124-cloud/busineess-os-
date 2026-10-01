@@ -19,7 +19,7 @@ export interface Edge {
  * 
  * The brain of the CHATR Workspace.
  * Transforms raw operating system and messaging observations into a structured,
- * semantic relationship graph that AI Agents can query to understand the user's
+ * semantic relationship graph that SI Agents can query to understand the user's
  * current business context.
  * 
  * "Every conversation should have the potential to become a completed business workflow."

@@ -20,7 +20,7 @@ export const SuperAdminLayout: React.FC = () => {
 
   const navItems = [
     { label: 'Executive Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
-    { label: '🤖 200 AI Agents Command', path: '/admin/agents', icon: Bot },
+    { label: '🤖 200 SI Agents Command', path: '/admin/agents', icon: Bot },
     { label: 'User Directory', path: '/admin/users', icon: Users },
     { label: 'Businesses & B2B2C', path: '/admin/businesses', icon: Building2 },
     { label: 'Growth & Telemetry', path: '/admin/growth', icon: TrendingUp },

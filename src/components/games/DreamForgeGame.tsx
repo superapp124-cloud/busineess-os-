@@ -37,7 +37,7 @@ export function DreamForgeGame({ onBack }: DreamForgeGameProps) {
 
  setPhase('generating');
 
- // Simulate AI generation
+ // Simulate SI generation
  setTimeout(() => {
  const sky = dreamElements[0].options[Math.floor(Math.random() * 4)];
  const ground = dreamElements[1].options[Math.floor(Math.random() * 4)];

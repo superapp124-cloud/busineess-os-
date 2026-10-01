@@ -180,7 +180,7 @@ export class RealContentEngine {
   }
 
   private static buildPrompt(topic: string, audience: string, niche: string): string {
-    return `You are the Lead Viral Content Strategist for an autonomous AI Media Agency.
+    return `You are the Lead Viral Content Strategist for an autonomous SI Media Agency.
 Generate exactly 20 distinct, high-retention 9:16 short-form video variants for:
 Topic: "${topic}"
 Target Audience: "${audience}"

@@ -14,7 +14,7 @@ export const AICopilot: React.FC = () => {
  setMessages(prev => [...prev, { role: 'user', content: query }]);
  setQuery('');
 
- // Simulate AI response/action
+ // Simulate SI response/action
  setTimeout(() => {
  setMessages(prev => [
  ...prev, 

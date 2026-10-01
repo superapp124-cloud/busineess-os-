@@ -8,7 +8,7 @@ The purpose of Stage 11 is to build the Enterprise Control Plane and formalize t
 - **Success:** Resources are immutable by version.
 
 ## 2. Principal and Authorization Separation
-- **Success:** Every action is initiated by a `Principal` (Human, AI Agent, Service Account, MCP Server). Identity manages authentication; Principal manages authorization.
+- **Success:** Every action is initiated by a `Principal` (Human, SI Agent, Service Account, MCP Server). Identity manages authentication; Principal manages authorization.
 - **Success:** Authorization is centralized and entirely independent of execution logic.
 
 ## 3. Governance Decisions and Audit Purity

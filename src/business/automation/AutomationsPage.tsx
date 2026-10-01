@@ -89,7 +89,7 @@ export default function Automations() {
  <Workflow className="w-8 h-8 text-emerald-500" />
  Automations
  </h1>
- <p className="text-gray-500 mt-1">Design powerful, multi-channel workflows driven by AI.</p>
+ <p className="text-gray-500 mt-1">Design powerful, multi-channel workflows driven by SI.</p>
  </div>
  <Button onClick={handleCreateNew} className="bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-2">
  <Plus className="w-4 h-4" />

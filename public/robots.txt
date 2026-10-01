@@ -4,7 +4,7 @@
 # Architecture: Fully pre-rendered static HTML pages across 10 Supreme Pillars & 17 Segmented Sitemaps
 
 # ============================================================
-# GOOGLE — Primary Search & Gemini AI Overviews
+# GOOGLE — Primary Search & Gemini SI Overviews
 # ============================================================
 
 User-agent: Googlebot
@@ -58,7 +58,7 @@ Disallow: /admin/
 Disallow: /auth
 
 # ============================================================
-# ANTHROPIC — Claude AI Web Search & Citation
+# ANTHROPIC — Claude SI Web Search & Citation
 # ============================================================
 
 User-agent: ClaudeBot
@@ -80,7 +80,7 @@ Disallow: /admin/
 Disallow: /auth
 
 # ============================================================
-# PERPLEXITY AI — Real-Time Web Retrieval & Citation
+# PERPLEXITY SI — Real-Time Web Retrieval & Citation
 # ============================================================
 
 User-agent: PerplexityBot
@@ -96,7 +96,7 @@ Disallow: /admin/
 Disallow: /auth
 
 # ============================================================
-# MICROSOFT — Bing, Copilot, Azure AI Search
+# MICROSOFT — Bing, Copilot, Azure SI Search
 # ============================================================
 
 User-agent: Bingbot
@@ -112,7 +112,7 @@ Disallow: /admin/
 Disallow: /auth
 
 # ============================================================
-# META — Meta AI, Llama, Facebook AI Research
+# META — Meta SI, Llama, Facebook SI Research
 # ============================================================
 
 User-agent: meta-externalagent
@@ -127,7 +127,7 @@ Disallow: /desktop/
 Disallow: /admin/
 
 # ============================================================
-# APPLE — Applebot, Siri, Apple AI
+# APPLE — Applebot, Siri, Apple SI
 # ============================================================
 
 User-agent: Applebot
@@ -143,7 +143,7 @@ Disallow: /admin/
 Disallow: /auth
 
 # ============================================================
-# OTHER AI RESEARCH & RAG CRAWLERS
+# OTHER SI RESEARCH & RAG CRAWLERS
 # ============================================================
 
 User-agent: YouBot
@@ -231,5 +231,5 @@ Sitemap: https://www.chatrchat.in/sitemaps/sitemap-robotics.xml
 Sitemap: https://www.chatrchat.in/sitemaps/sitemap-products.xml
 Sitemap: https://www.chatrchat.in/sitemaps/sitemap-tools.xml
 
-# llms.txt — AI Agent Documentation Index
+# llms.txt — SI Agent Documentation Index
 # https://www.chatrchat.in/llms.txt

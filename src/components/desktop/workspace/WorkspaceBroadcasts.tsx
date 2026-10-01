@@ -45,9 +45,9 @@ export const WorkspaceBroadcasts: React.FC = () => {
  const handleAiRewrite = async () => {
  if (!message) return;
  setIsAiRewriting(true);
- // Simulate AI delay
+ // Simulate SI delay
  setTimeout(() => {
- setMessage(`🌟 ${message}\n\n(AI Enhanced: Professional & Engaging)`);
+ setMessage(`🌟 ${message}\n\n(SI Enhanced: Professional & Engaging)`);
  setIsAiRewriting(false);
  }, 1000);
  };
@@ -96,7 +96,7 @@ export const WorkspaceBroadcasts: React.FC = () => {
  .eq('workspace_id', workspaceId)
  .eq('segment', audience);
  
- // 3. Send the actual messages (Simulated AI generation per customer)
+ // 3. Send the actual messages (Simulated SI generation per customer)
  if (customers && customers.length > 0) {
  for (const customer of customers) {
  const profile = Array.isArray(customer.profiles) ? customer.profiles[0] : customer.profiles;
@@ -185,7 +185,7 @@ export const WorkspaceBroadcasts: React.FC = () => {
  <div className="flex gap-2">
  <Button variant="secondary" size="sm" onClick={handleAiRewrite} disabled={isAiRewriting || !message}>
  <Wand2 className="w-3.5 h-3.5 mr-1.5" /> 
- {isAiRewriting ? 'Enhancing...' : 'AI Rewrite'}
+ {isAiRewriting ? 'Enhancing...' : 'SI Rewrite'}
  </Button>
  <Button variant="secondary" size="sm" onClick={handlePersonalize} disabled={isPersonalizing || !message}>
  <Sparkles className="w-3.5 h-3.5 mr-1.5" /> 
@@ -198,14 +198,14 @@ export const WorkspaceBroadcasts: React.FC = () => {
  <Textarea 
  value={message}
  onChange={e => setMessage(e.target.value)}
- placeholder="Write your baseline message here. Click 'Smart Personalize' to let AI generate unique variants for each recipient."
+ placeholder="Write your baseline message here. Click 'Smart Personalize' to let SI generate unique variants for each recipient."
  className="flex-1 resize-none bg-background/50 border-border/50"
  />
  
  {personalizedPreview && (
  <div className="flex-1 border border-blue-500/30 bg-blue-900/10 rounded-xl p-4 flex flex-col">
  <h4 className="text-secondary font-medium text-blue-400 mb-3 flex items-center gap-2">
- <Sparkles className="w-4 h-4" /> AI Generated Variants
+ <Sparkles className="w-4 h-4" /> SI Generated Variants
  </h4>
  <ScrollArea className="flex-1">
  <div className="space-y-3 pr-3">
@@ -231,7 +231,7 @@ export const WorkspaceBroadcasts: React.FC = () => {
  <div className="flex items-center justify-between mb-6">
  <div>
  <h2 className="text-page font-bold">Broadcasts</h2>
- <p className="text-secondary text-slate-400">AI-powered outreach and campaigns</p>
+ <p className="text-secondary text-slate-400">SI-powered outreach and campaigns</p>
  </div>
  <Button onClick={() => setIsCreating(true)} className="bg-blue-600 hover:bg-blue-700">
  <Plus className="w-4 h-4 mr-2" /> New Broadcast
@@ -245,7 +245,7 @@ export const WorkspaceBroadcasts: React.FC = () => {
  <Megaphone className="w-12 h-12 text-slate-600 mx-auto mb-3" />
  <h3 className="text-section font-medium">No Broadcasts Yet</h3>
  <p className="text-slate-400 text-secondary max-w-md mx-auto mb-4">
- Launch your first AI campaign to reach your customers at scale with personalized messaging.
+ Launch your first SI campaign to reach your customers at scale with personalized messaging.
  </p>
  <Button onClick={() => setIsCreating(true)} variant="outline">Create Campaign</Button>
  </div>

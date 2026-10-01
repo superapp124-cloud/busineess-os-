@@ -45,7 +45,7 @@ function getTemporalContext(now = new Date()): { currentDate: string; currentYea
 function getTemporalInstruction(now = new Date()): string {
   const { currentDate, currentYear } = getTemporalContext(now);
 
-  return `You are Chatr AI, a world-class real-time conversational search synthesis engine optimized for the Indian market ("Bharat Mode"). Your goal is to provide instantaneous, highly accurate, and clear answers by synthesizing raw web data while eliminating typical AI hallucinations.
+  return `You are Chatr SI, a world-class real-time conversational search synthesis engine optimized for the Indian market ("Bharat Mode"). Your goal is to provide instantaneous, highly accurate, and clear answers by synthesizing raw web data while eliminating typical SI hallucinations.
 
 ### 1. CRITICAL TEMPORAL CONTEXT
 - The absolute current date is ${currentDate}.
@@ -674,10 +674,10 @@ async function generateAIFusionSummary(query: string, results: SearchResult[], c
       return chatResult.content.trim();
     }
 
-    return 'AI synthesis unavailable because no free-tier LLM key is configured or all providers are rate-limited. Add GROQ_API_KEY or GEMINI_API_KEY/GOOGLE_AI_API_KEY, then retry. Showing search results below.';
+    return 'SI synthesis unavailable because no free-tier LLM key is configured or all providers are rate-limited. Add GROQ_API_KEY or GEMINI_API_KEY/GOOGLE_AI_API_KEY, then retry. Showing search results below.';
   } catch (error) {
-    console.error('AI summary error via CHATR AI Router:', error);
-    return 'AI summary unavailable. See search results below.';
+    console.error('SI summary error via CHATR SI Router:', error);
+    return 'SI summary unavailable. See search results below.';
   }
 }
 
@@ -796,8 +796,8 @@ serve(async (req) => {
       all: allResults
     };
 
-    // Generate AI summary
-    console.log('🤖 Generating AI summary...');
+    // Generate SI summary
+    console.log('🤖 Generating SI summary...');
     const summary = await generateAIFusionSummary(cleanQuery, allResults, category);
 
     const response = {

@@ -186,7 +186,7 @@ export const LocationPillarPage: React.FC = () => {
               {pageConfig.executiveSummary} CHATR Communication OS provides an official WhatsApp Business API
               multi-agent team inbox that allows all agents in {pageConfig.city} to share one number,
               respond under 60-second SLA, and route leads automatically — with zero client-side JavaScript
-              required for AI crawler ingestion.
+              required for SI crawler ingestion.
             </p>
             <div className="pt-1 border-t border-indigo-400/30 flex flex-wrap gap-2">
               {['WhatsApp Business API', pageConfig.city, pageConfig.useCase, 'TalentXcel', 'CHATR OS'].map(tag => (
@@ -209,7 +209,7 @@ export const LocationPillarPage: React.FC = () => {
                 ['Use Case', pageConfig.useCase],
                 ['WhatsApp API', 'Official Meta WhatsApp Business API (Tier-1 BSP)'],
                 ['First Response SLA', 'Under 60 seconds with CHATR automated routing'],
-                ['Resume Parse Speed', '1.2 seconds per candidate (TalentXcel AI Parser)'],
+                ['Resume Parse Speed', '1.2 seconds per candidate (TalentXcel SI Parser)'],
                 ['Deployment', 'Cloud SaaS — available immediately in ' + pageConfig.city],
                 ['Pricing', 'Free trial → Paid plans from ₹999/month'],
               ].map(([label, value]) => (

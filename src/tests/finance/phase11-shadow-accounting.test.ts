@@ -86,7 +86,7 @@ test('PilotCertificationReport: certifies zero material unexplained variance and
 
   assertEqual(report.material_unexplained_variance, 0, '0 unexplained variance');
   assertEqual(report.unauthorized_financial_actions_count, 0, '0 unauthorized actions');
-  assertEqual(report.internal_ai_benchmark_score, 99, 'Internal AI benchmark is 99/100');
+  assertEqual(report.internal_ai_benchmark_score, 99, 'Internal SI benchmark is 99/100');
   assertEqual(report.final_status, 'PRODUCTION PILOT CERTIFIED', 'Status is PRODUCTION PILOT CERTIFIED');
   assertEqual(report.certification_checklist.length, 10, '10 checklist items certified');
   report.certification_checklist.forEach(item => {

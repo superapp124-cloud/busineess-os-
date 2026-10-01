@@ -87,7 +87,7 @@ export const HREmployeeDirectorySDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Employee Directory AI',
+    assistantName: 'Employee Directory SI',
     skills: []
   },
   

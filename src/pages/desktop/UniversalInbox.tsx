@@ -235,12 +235,12 @@ export const UniversalInbox: React.FC = () => {
   const [workflowMessage, setWorkflowMessage] = useState<Message | null>(null);
   const [isRawHeaderOpen, setIsRawHeaderOpen] = useState(false);
 
-  // AI Executive Copilot & Interactive Composer State
+  // SI Executive Copilot & Interactive Composer State
   const [replyText, setReplyText] = useState('');
   const [isDraftingAi, setIsDraftingAi] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
 
-  // Generate AI Response Drafts
+  // Generate SI Response Drafts
   const handleGenerateAiDraft = (type: 'accept' | 'request_info' | 'decline' | 'custom') => {
     if (!selectedMessage) return;
     setIsDraftingAi(true);
@@ -253,11 +253,11 @@ export const UniversalInbox: React.FC = () => {
       } else if (type === 'decline') {
         draft = `Hi ${selectedMessage.sender.split(' ')[0]},\n\nThank you for your message. Unfortunately, I won't be able to accommodate this request at this time. I will keep you posted if anything changes.\n\nBest regards,\nArjun`;
       } else {
-        draft = `Hi ${selectedMessage.sender.split(' ')[0]},\n\nRegarding "${selectedMessage.subject}": AI Executive Summary has processed your request and queued action items. Let me know if you would like me to summarize the key points.\n\nBest regards,\nArjun`;
+        draft = `Hi ${selectedMessage.sender.split(' ')[0]},\n\nRegarding "${selectedMessage.subject}": SI Executive Summary has processed your request and queued action items. Let me know if you would like me to summarize the key points.\n\nBest regards,\nArjun`;
       }
       setReplyText(draft);
       setIsDraftingAi(false);
-      toast.success('✨ AI Draft Generated!');
+      toast.success('✨ SI Draft Generated!');
     }, 600);
   };
 
@@ -290,7 +290,7 @@ export const UniversalInbox: React.FC = () => {
     }
   };
 
-  // AI Executive Attention Query State
+  // SI Executive Attention Query State
   const [isAiAttentionModalOpen, setIsAiAttentionModalOpen] = useState(false);
   const [isGeneratingAiSummary, setIsGeneratingAiSummary] = useState(false);
   
@@ -558,7 +558,7 @@ export const UniversalInbox: React.FC = () => {
 
   const selectedMessage = messages.find(m => m.id === selectedMessageId) || (messages.length > 0 ? messages[0] : null);
 
-  // Trigger AI Executive Attention Query: "What meetings and emails need my attention today?"
+  // Trigger SI Executive Attention Query: "What meetings and emails need my attention today?"
   const handleRunAiAttentionQuery = () => {
     setIsAiAttentionModalOpen(true);
     setIsGeneratingAiSummary(true);
@@ -752,7 +752,7 @@ export const UniversalInbox: React.FC = () => {
             <span className="bg-teal-500/20 text-teal-300 px-1.5 py-0.2 rounded text-[10px] font-mono">100+</span>
           </button>
 
-          {/* 🤖 Ask AI Executive Trigger Button */}
+          {/* 🤖 Ask SI Executive Trigger Button */}
           <button 
             onClick={handleRunAiAttentionQuery}
             className="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2 px-3 flex items-center gap-2 text-xs text-violet-200 font-medium transition-all shadow-sm cursor-pointer group"
@@ -832,7 +832,7 @@ export const UniversalInbox: React.FC = () => {
             </button>
 
             <div className="hidden lg:flex items-center gap-3 text-[11px] bg-black/40 px-3 py-1 rounded-full border border-white/10 text-zinc-300 font-mono">
-              <span className="flex items-center gap-1 text-emerald-400 font-semibold"><CheckCircle size={12} /> AI Runtime ✓</span>
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold"><CheckCircle size={12} /> SI Runtime ✓</span>
               <span className="text-white/20">•</span>
               <span className="flex items-center gap-1 text-emerald-400 font-semibold"><Activity size={12} /> Sync ✓</span>
               <span className="text-white/20">•</span>
@@ -981,7 +981,7 @@ export const UniversalInbox: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Right Panel (Thread Detail & AI Copilot & Interactive Composer) ── */}
+      {/* ── Right Panel (Thread Detail & SI Copilot & Interactive Composer) ── */}
       <div className="w-[480px] bg-zinc-900/95 border-l border-white/10 flex flex-col h-full shrink-0 backdrop-blur-2xl z-10 overflow-y-auto">
         {selectedMessage ? (
           <div className="p-5 flex flex-col gap-5">
@@ -1093,7 +1093,7 @@ export const UniversalInbox: React.FC = () => {
               </div>
             </div>
 
-            {/* 🤖 Smart AI Summary & Copilot Section */}
+            {/* 🤖 Smart SI Summary & Copilot Section */}
             <div className="bg-gradient-to-b from-violet-950/40 via-zinc-900/60 to-black/60 border border-violet-500/30 rounded-2xl p-4 space-y-3 shadow-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1101,7 +1101,7 @@ export const UniversalInbox: React.FC = () => {
                   <span className="font-extrabold text-xs text-white">Smart Summary</span>
                 </div>
                 <span className="text-[9px] font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full">
-                  AI Context
+                  SI Context
                 </span>
               </div>
 
@@ -1242,7 +1242,7 @@ export const UniversalInbox: React.FC = () => {
                   className="text-[11px] font-bold text-violet-300 hover:text-white bg-violet-600/30 hover:bg-violet-600/50 border border-violet-500/40 px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1"
                 >
                   {isDraftingAi ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} className="text-amber-400" />}
-                  <span>Draft with AI</span>
+                  <span>Draft with SI</span>
                 </button>
               </div>
 
@@ -1250,7 +1250,7 @@ export const UniversalInbox: React.FC = () => {
                 ref={composerRef}
                 value={replyText}
                 onChange={e => setReplyText(e.target.value)}
-                placeholder={`Type your reply or click "Draft with AI" to generate a response...`}
+                placeholder={`Type your reply or click "Draft with SI" to generate a response...`}
                 rows={5}
                 className="w-full bg-transparent border-none text-xs text-white placeholder:text-zinc-500 focus:outline-none resize-none leading-relaxed"
               />
@@ -1473,7 +1473,7 @@ export const UniversalInbox: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="font-bold text-base text-white">Guided CHATR OS Setup</h2>
-                  <p className="text-xs text-zinc-400">Step {wizardStep === 'email' ? '1' : wizardStep === 'authorize' ? '2' : wizardStep === 'indexing' ? '3' : '4'} of 4: Provider Detection & AI Briefing</p>
+                  <p className="text-xs text-zinc-400">Step {wizardStep === 'email' ? '1' : wizardStep === 'authorize' ? '2' : wizardStep === 'indexing' ? '3' : '4'} of 4: Provider Detection & SI Briefing</p>
                 </div>
               </div>
               <button onClick={() => setIsWizardModalOpen(false)} className="p-1 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white cursor-pointer">
@@ -1568,7 +1568,7 @@ export const UniversalInbox: React.FC = () => {
                 <div className="bg-gradient-to-br from-violet-950/40 via-indigo-950/20 to-black p-4 rounded-2xl border border-violet-500/30 space-y-3">
                   <div className="flex items-center justify-between border-b border-white/10 pb-2">
                     <span className="font-bold text-white flex items-center gap-1.5">
-                      <Brain size={16} className="text-violet-400" /> AI Executive Attention Briefing
+                      <Brain size={16} className="text-violet-400" /> SI Executive Attention Briefing
                     </span>
                   </div>
 
@@ -1579,7 +1579,7 @@ export const UniversalInbox: React.FC = () => {
                   <div className="bg-black/50 p-3 rounded-xl border border-white/10 space-y-1 font-mono text-zinc-300">
                     <div>• 🚨 High Priority Emails: 0 pending bottlenecks</div>
                     <div>• 📅 Today's Meetings: Product & Architecture Sync (16:00 PM)</div>
-                    <div>• ⚡ AI Recommendation: Review pending compliance filings</div>
+                    <div>• ⚡ SI Recommendation: Review pending compliance filings</div>
                   </div>
                 </div>
 
@@ -1596,7 +1596,7 @@ export const UniversalInbox: React.FC = () => {
         </div>
       )}
 
-      {/* ── Modal 3: 🤖 AI Executive Attention Query Modal ──────────────── */}
+      {/* ── Modal 3: 🤖 SI Executive Attention Query Modal ──────────────── */}
       {isAiAttentionModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-150">
           <div className="w-[580px] bg-zinc-900 border border-white/15 rounded-3xl shadow-2xl p-6 space-y-5">
@@ -1606,7 +1606,7 @@ export const UniversalInbox: React.FC = () => {
                   <Brain size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-base text-white">CHATR Executive AI Copilot</h2>
+                  <h2 className="font-bold text-base text-white">CHATR Executive SI Copilot</h2>
                   <p className="text-xs text-violet-300 font-mono">Querying Universal Context Graph...</p>
                 </div>
               </div>
@@ -1674,7 +1674,7 @@ export const UniversalInbox: React.FC = () => {
                     <button 
                       onClick={() => {
                         setIsAiAttentionModalOpen(false);
-                        toast.success('Tasks updated from AI summary.');
+                        toast.success('Tasks updated from SI summary.');
                       }}
                       className="px-3 py-1 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-lg text-xs transition-all cursor-pointer shadow-md"
                     >
@@ -1709,13 +1709,13 @@ export const UniversalInbox: React.FC = () => {
               <CommandItem 
                 icon={<Grid size={16} className="text-teal-400" />} 
                 title="🔌 CHATR Directory Marketplace (100+)" 
-                subtitle="Browse connectors, AI agents, mini apps, and automation packs" 
+                subtitle="Browse connectors, SI agents, mini apps, and automation packs" 
                 onClick={() => { setIsCommandPaletteOpen(false); setIsDirectoryModalOpen(true); }}
               />
               <CommandItem 
                 icon={<Brain size={16} className="text-violet-400" />} 
                 title="🤖 What meetings & emails need my attention today?" 
-                subtitle="Run AI Executive Context Briefing across indexed messages & calendar" 
+                subtitle="Run SI Executive Context Briefing across indexed messages & calendar" 
                 onClick={() => { setIsCommandPaletteOpen(false); handleRunAiAttentionQuery(); }}
               />
               <CommandItem 

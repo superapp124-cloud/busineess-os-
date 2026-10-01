@@ -15,7 +15,7 @@ export interface CapabilityQuery {
 }
 
 export class CapabilityRegistry {
-  // --- AI Model Provider Registry (Static singleton used by ExecutionEngine) ---
+  // --- SI Model Provider Registry (Static singleton used by ExecutionEngine) ---
   private static manifests: Map<string, CapabilityManifest> = new Map();
 
   public static registerManifest(manifest: CapabilityManifest): void {

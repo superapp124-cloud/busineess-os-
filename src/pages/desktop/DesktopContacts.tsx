@@ -544,7 +544,7 @@ Return 2 short paragraphs with context, open action items, and any follow-up sug
  aiSummary
  ) : (
  <p className="text-muted-foreground italic">
- Generate an AI summary to get a quick digest of your recent interactions, open action items, and context with {contact.display_name}.
+ Generate an SI summary to get a quick digest of your recent interactions, open action items, and context with {contact.display_name}.
  </p>
  )}
  </div>

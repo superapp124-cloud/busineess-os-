@@ -11,7 +11,7 @@ export interface ExecutionStep {
   agentId: string; // The agent responsible for this step
   result?: any;
   error?: string;
-  explanation?: string; // Why did the AI choose to do this?
+  explanation?: string; // Why did the SI choose to do this?
   requiresApproval: boolean;
 }
 
@@ -234,7 +234,7 @@ export class AIExecutionEngine {
       timeSavedMinutes: Math.floor(Math.random() * 60) + 10,
       timestamp: new Date().toISOString()
     });
-    console.log(`[AI Execution Engine] Learned from plan ${plan.id}. Enterprise memory updated.`);
+    console.log(`[SI Execution Engine] Learned from plan ${plan.id}. Enterprise memory updated.`);
   }
 }
 

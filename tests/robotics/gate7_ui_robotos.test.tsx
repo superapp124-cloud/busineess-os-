@@ -35,7 +35,7 @@ describe('GATE 7 & 8 UI: Live /robotOs Interface, Tasks & Skills Connectivity', 
     });
 
     await waitFor(() => {
-      expect(screen.getByText(/Operational AI Explainer:/i)).toBeDefined();
+      expect(screen.getByText(/Operational SI Explainer:/i)).toBeDefined();
       expect(screen.getByText(/LANG: HI/i)).toBeDefined();
       expect(screen.getByText(/INTENT: FETCH_OBJECT/i)).toBeDefined();
       expect(screen.getByText(/STATUS: VALID_AND_EXECUTABLE/i)).toBeDefined();

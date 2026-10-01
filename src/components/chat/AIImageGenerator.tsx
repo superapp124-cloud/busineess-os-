@@ -77,7 +77,7 @@ export const AIImageGenerator = ({ open, onClose, onSend }: AIImageGeneratorProp
  <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/20">
  <Sparkles className="h-4 w-4 text-amber-500" />
  </div>
- Generate AI Image
+ Generate SI Image
  </DialogTitle>
  </DialogHeader>
  <div className="space-y-4">

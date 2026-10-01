@@ -25,7 +25,7 @@ export const useAIPhotoEnhancement = () => {
  const [lastResult, setLastResult] = useState<EnhancementResult | null>(null);
 
  const enhancementDescriptions: Record<EnhancementType, string> = {
- auto: 'AI automatically enhances your photo',
+ auto: 'SI automatically enhances your photo',
  portrait: 'Optimizes skin tones and facial features',
  landscape: 'Enhances colors and details in scenery',
  hdr: 'Increases dynamic range for better highlights/shadows',
@@ -178,7 +178,7 @@ export const useAIPhotoEnhancement = () => {
  try {
  setProgress(10);
 
- // Try server-side AI enhancement first
+ // Try server-side SI enhancement first
  try {
  const { data, error } = await supabase.functions.invoke('ai-photo-enhance', {
  body: { imageUrl, type },

@@ -285,7 +285,7 @@ export const WorkspaceMore: React.FC = () => {
 
  const shortcuts = [
  { icon: Settings, label: 'Desktop Settings', desc: 'Theme, notifications, keyboard shortcuts', action: () => navigate('/desktop/settings') },
- { icon: Zap, label: 'AI Intelligence', desc: 'View AI summaries, insights and memory', action: () => navigate('/desktop/intelligence') },
+ { icon: Zap, label: 'SI Intelligence', desc: 'View SI summaries, insights and memory', action: () => navigate('/desktop/intelligence') },
  { icon: MessageCircle, label: 'Open Chat', desc: 'Switch to full chat view', action: () => navigate('/desktop/chat') },
  { icon: Briefcase, label: 'Calls', desc: 'Call history and new call', action: () => navigate('/desktop/calls') },
  ];

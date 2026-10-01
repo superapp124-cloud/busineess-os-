@@ -8,7 +8,7 @@ export const UI_COPY = {
   navigation: {
     home: "Home",
     messages: "Messages",
-    ai: "AI",
+    ai: "SI",
     business: "Business",
     me: "Me",
     customers: "Customers",
@@ -43,7 +43,7 @@ export const UI_COPY = {
       findCustomers: "Find new customers",
       manageWhatsapp: "Manage WhatsApp messages",
       automateTasks: "Automate repetitive work",
-      useAi: "Use AI to help me",
+      useAi: "Use SI to help me",
       connectTools: "Connect my existing tools",
     },
   },
@@ -70,7 +70,7 @@ export const UI_COPY = {
     openingLogin: "Opening sign-in page in your browser...",
   },
   ai: {
-    assistantName: "CHATR AI Assistant",
+    assistantName: "CHATR SI Assistant",
     placeholder: "Ask CHATR anything...",
     workingState: "I'm working on it...",
     findingOptions: "Finding the best options...",
@@ -80,9 +80,9 @@ export const UI_COPY = {
     doneMessageSent: "Done — your message has been sent.",
     needMoreInfo: "I need a little more information.",
     serviceUnavailable: "That service isn't responding right now.",
-    agentsTitle: "AI Assistants",
-    agentsSubtitle: "Choose an AI assistant to help with your work.",
-    capabilitiesTitle: "What your AI assistant can do",
+    agentsTitle: "SI Assistants",
+    agentsSubtitle: "Choose an SI assistant to help with your work.",
+    capabilitiesTitle: "What your SI assistant can do",
   },
   errors: {
     genericTitle: "Something went wrong",
@@ -113,7 +113,7 @@ export const UI_COPY = {
     myAccount: "My Account",
     business: "Business",
     messaging: "Messaging",
-    aiPreferences: "AI Preferences",
+    aiPreferences: "SI Preferences",
     privacySecurity: "Privacy & Security",
     connections: "Connections",
   }

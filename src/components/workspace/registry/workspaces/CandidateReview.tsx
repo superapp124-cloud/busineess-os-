@@ -223,13 +223,13 @@ export const createCandidateReviewWorkspace = (item: WorkspaceItem): BusinessWor
       const fileSignalMatches = resumeFileSignals.filter(k => uri.includes(k)).length;
       const hasNamePattern = !hasDigitsOrHexHash && /^[a-z]{3,}\s+[a-z]{3,}/i.test(uri) && !uri.includes('agreement') && !uri.includes('contract');
       
-      // ── AI Classification takes priority ──
+      // ── SI Classification takes priority ──
       const aiResult = (testItem as any).__classification__;
       if (aiResult?.domainIntelligence === 'talent') {
         return {
           workspaceId: 'candidate-review',
           confidence: aiResult.confidence,
-          reasoning: [`AI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
+          reasoning: [`SI classified as ${aiResult.documentTypeLabel} (${Math.round(aiResult.confidence * 100)}%)`],
         };
       }
 

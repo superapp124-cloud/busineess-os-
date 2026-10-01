@@ -56,7 +56,7 @@ export class PeopleDomainService {
       currentStatus: 'DEPLOYED',
       historyTimeline: [
         { timestamp: '2025-11-10T10:00:00Z', stage: 'Candidate Applied', details: 'Sourced via Referral for Senior Java Role' },
-        { timestamp: '2025-11-15T14:00:00Z', stage: 'Interview Cleared', details: 'AI Technical Score: 94%' },
+        { timestamp: '2025-11-15T14:00:00Z', stage: 'Interview Cleared', details: 'SI Technical Score: 94%' },
         { timestamp: '2025-12-01T09:00:00Z', stage: 'Offer Accepted & Joined', details: 'Joined as Senior Consultant' },
         { timestamp: '2026-02-01T09:00:00Z', stage: 'Deployed to TCS', details: 'Deployed under Java Team Apollo', associatedEntityId: 'tcs-org-001' }
       ],

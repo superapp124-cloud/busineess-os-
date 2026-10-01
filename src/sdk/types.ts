@@ -167,7 +167,7 @@ export interface IReportDeclaration {
   description?: string;
 }
 
-// ─── AI Skills ────────────────────────────────────────────────────────────────
+// ─── SI Skills ────────────────────────────────────────────────────────────────
 
 export interface IAISkill {
   id: string;

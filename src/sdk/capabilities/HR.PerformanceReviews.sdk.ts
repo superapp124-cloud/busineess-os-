@@ -29,7 +29,7 @@ export const HRPerformanceReviewsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Performance Reviews AI',
+    assistantName: 'Performance Reviews SI',
     skills: []
   },
   

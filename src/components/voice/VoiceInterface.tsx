@@ -85,5 +85,5 @@ export const VoiceInterface = ({ onSpeakingChange, onTranscriptUpdate }: VoiceIn
  console.log('[VoiceInterface] Conversation ended');
  };
 
- return null; // Hidden by default - can be accessed via AI Features menu
+ return null; // Hidden by default - can be accessed via SI Features menu
 };

@@ -5,7 +5,7 @@
  * - Sticky header with contrast background
  * - Sorting & filtering per column
  * - Bulk selection & action toolbar
- * - AI row summarizer
+ * - SI row summarizer
  * - Keyboard navigation (Up/Down arrows, Enter, Space)
  * - Motion-enhanced micro-interactions (120ms hover, 80ms click)
  */
@@ -146,7 +146,7 @@ export function UniversalDataTable<T>({
     const selectedRows = sortedData.filter((r) => selectedIds.has(keyExtractor(r)));
     const targetCount = selectedRows.length > 0 ? selectedRows.length : sortedData.length;
     setAiSummary(
-      `AI Summary of ${targetCount} items: Verified high execution velocity, 0 bottlenecks detected, and 100% compliance with OS intent policies.`
+      `SI Summary of ${targetCount} items: Verified high execution velocity, 0 bottlenecks detected, and 100% compliance with OS intent policies.`
     );
   };
 
@@ -176,13 +176,13 @@ export function UniversalDataTable<T>({
             />
           </div>
 
-          {/* AI Summary Button */}
+          {/* SI Summary Button */}
           {enableAISummary && (
             <button
               onClick={handleGenerateAISummary}
               className="px-3 py-1.5 bg-[#6D5DF6]/10 border border-[#6D5DF6]/30 hover:bg-[#6D5DF6]/20 text-[#6D5DF6] text-xs font-semibold rounded-[10px] flex items-center gap-1.5 transition-all shrink-0"
             >
-              <Sparkles className="h-3.5 w-3.5" /> AI Summary
+              <Sparkles className="h-3.5 w-3.5" /> SI Summary
             </button>
           )}
         </div>
@@ -209,7 +209,7 @@ export function UniversalDataTable<T>({
         </div>
       )}
 
-      {/* AI Summary Banner */}
+      {/* SI Summary Banner */}
       {aiSummary && (
         <div className="bg-[#10141e] border-b border-purple-500/30 p-3 px-4 text-xs text-purple-300 flex items-center justify-between animate-in fade-in duration-120">
           <span className="flex items-center gap-2">

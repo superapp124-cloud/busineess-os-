@@ -59,7 +59,7 @@ export class ShadowAccountingPilot {
         focus_area: 'Match bank transactions, verify AR aging, audit vendor AP, and allocate ASC 606 revenue obligations.',
         status: 'COMPLETED',
         criteria_evaluated: [
-          { name: 'Bank Statement Auto-Match Rate', passed: true, evidence: '98.4% automated matching (1.6% resolved via AI proposal HITL)' },
+          { name: 'Bank Statement Auto-Match Rate', passed: true, evidence: '98.4% automated matching (1.6% resolved via SI proposal HITL)' },
           { name: 'AR/AP Control Reconciliation', passed: true, evidence: 'Subledger AR matches GL Account 1110 with ₹0.00 variance' },
           { name: 'ASC 606 Contract Schedules', passed: true, evidence: '12 enterprise SaaS contracts allocated and straight-line scheduled' },
         ],

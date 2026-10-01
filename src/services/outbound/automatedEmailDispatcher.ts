@@ -34,11 +34,11 @@ export const OUTBOUND_EMAIL_PERSONAS: EmailOutboundTemplate[] = [
         
         <p>I noticed ${lead.companyName} is actively placing candidates in <strong>${lead.city}</strong>.</p>
         
-        <p>We built a 100% free <strong>AI ATS Resume Grader & Pre-Screening Tool</strong> specifically for recruitment and staffing teams:</p>
+        <p>We built a 100% free <strong>SI ATS Resume Grader & Pre-Screening Tool</strong> specifically for recruitment and staffing teams:</p>
         
         <p style="margin: 24px 0;">
           <a href="https://www.chatrchat.in/tools/resume-grader" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
-            👉 Try Free AI Resume Grader &rarr;
+            👉 Try Free SI Resume Grader &rarr;
           </a>
         </p>
         

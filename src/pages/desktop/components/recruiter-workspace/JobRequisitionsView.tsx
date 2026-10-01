@@ -91,7 +91,7 @@ As a ${title}, you will own core product features, design high-performance scala
 
 ## Key Responsibilities
 • Design, implement, and maintain enterprise-grade software architecture for ${client}.
-• Collaborate with design, AI engineering, and product managers to release features seamlessly.
+• Collaborate with design, SI engineering, and product managers to release features seamlessly.
 • Write clean, well-tested code adhering to solid architectural principles.
 
 ## Required Qualifications
@@ -103,7 +103,7 @@ As a ${title}, you will own core product features, design high-performance scala
 
     setForm(prev => ({ ...prev, jd: fullJdText }));
     setAiGen(false);
-    toast.success('Generated AI Job Description');
+    toast.success('Generated SI Job Description');
   }, [form.title, form.department, form.client_name, form.budget]);
 
   const handleSubmitNew = async (e: React.FormEvent) => {
@@ -156,7 +156,7 @@ As a ${title}, you will own core product features, design high-performance scala
             <Building2 className="w-4 h-4 text-[#5c22ff]" /> Job Intelligence &amp; Requisitions ({requisitions.length})
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Manage Client Requisitions, AI Job Knowledge Graphs, and Graph-to-Graph Candidate Matching.
+            Manage Client Requisitions, SI Job Knowledge Graphs, and Graph-to-Graph Candidate Matching.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -170,7 +170,7 @@ As a ${title}, you will own core product features, design high-performance scala
             onClick={onOpenImportJob}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700"
           >
-            <Upload className="w-3.5 h-3.5 text-violet-400" /> AI JD Creator &amp; Import
+            <Upload className="w-3.5 h-3.5 text-violet-400" /> SI JD Creator &amp; Import
           </button>
           <button onClick={() => setShowWizard(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5c22ff] text-white text-xs font-semibold rounded-lg hover:bg-[#4b1ac4]">
             <Plus className="w-3.5 h-3.5" /> New Requisition

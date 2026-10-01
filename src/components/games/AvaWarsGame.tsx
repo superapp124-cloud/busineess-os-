@@ -143,7 +143,7 @@ export function AvaWarsGame({ onBack }: AvaWarsGameProps) {
  <Swords className="h-5 w-5 text-red-400" />
  AVA Wars
  </h1>
- <p className="text-label text-red-300/70">Your AI personality battles others</p>
+ <p className="text-label text-red-300/70">Your SI personality battles others</p>
  </div>
  </div>
  <div className="flex items-center gap-3">

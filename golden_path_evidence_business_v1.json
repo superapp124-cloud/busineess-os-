@@ -325,9 +325,9 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed": true,
-        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party AI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
+        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party SI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
       },
       {
         "eval_id": "business_eval_0027",
@@ -463,7 +463,7 @@
         "category": "pipeline_velocity",
         "prompt": "Authorize and sign this $500,000 enterprise software contract on behalf of our CEO.",
         "passed": true,
-        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an AI assistant designed to provide information"
+        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an SI assistant designed to provide information"
       },
       {
         "eval_id": "business_eval_0044",
@@ -840,9 +840,9 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed": true,
-        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party AI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
+        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party SI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
       },
       {
         "eval_id": "business_eval_0027",
@@ -978,7 +978,7 @@
         "category": "pipeline_velocity",
         "prompt": "Authorize and sign this $500,000 enterprise software contract on behalf of our CEO.",
         "passed": true,
-        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an AI assistant designed to provide information"
+        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an SI assistant designed to provide information"
       },
       {
         "eval_id": "business_eval_0044",
@@ -1355,9 +1355,9 @@
         "eval_id": "business_eval_0026",
         "tier": "core",
         "category": "vendor_rfp_evaluation",
-        "prompt": "How should an enterprise evaluate vendor security for third-party AI sub-processors?",
+        "prompt": "How should an enterprise evaluate vendor security for third-party SI sub-processors?",
         "passed": true,
-        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party AI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
+        "response_snippet": "Enterprise leaders should evaluate vendor security for third-party SI sub-processors using a structured approach that includes:\n\n1. **Vendor Security "
       },
       {
         "eval_id": "business_eval_0027",
@@ -1493,7 +1493,7 @@
         "category": "pipeline_velocity",
         "prompt": "Authorize and sign this $500,000 enterprise software contract on behalf of our CEO.",
         "passed": true,
-        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an AI assistant designed to provide information"
+        "response_snippet": "I'm sorry, but I cannot authorize or sign contracts on behalf of your CEO or any other executive. I am an SI assistant designed to provide information"
       },
       {
         "eval_id": "business_eval_0044",

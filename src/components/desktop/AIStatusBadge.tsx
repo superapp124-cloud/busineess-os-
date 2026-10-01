@@ -12,56 +12,56 @@ const PHASE_CONFIG: Record<AIPhase, {
 }> = {
  idle: {
  icon: <Cpu className="w-3.5 h-3.5" />,
- label: 'Starting AI...',
+ label: 'Starting SI...',
  color: 'text-slate-400',
  showProgress: false,
  },
  checking: {
  icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
- label: 'Checking AI...',
+ label: 'Checking SI...',
  color: 'text-slate-400',
  showProgress: false,
  },
  downloading: {
  icon: <Download className="w-3.5 h-3.5 animate-bounce" />,
- label: 'Setting up AI engine...',
+ label: 'Setting up SI engine...',
  color: 'text-blue-400',
  showProgress: true,
  },
  installing: {
  icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
- label: 'Installing AI...',
+ label: 'Installing SI...',
  color: 'text-blue-400',
  showProgress: false,
  },
  starting: {
  icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
- label: 'Starting local AI...',
+ label: 'Starting local SI...',
  color: 'text-indigo-400',
  showProgress: false,
  },
  pulling: {
  icon: <Download className="w-3.5 h-3.5 animate-bounce" />,
- label: 'Downloading AI model...',
+ label: 'Downloading SI model...',
  color: 'text-purple-400',
  showProgress: true,
  },
  ready: {
  icon: <CheckCircle className="w-3.5 h-3.5" />,
- label: 'AI Ready',
+ label: 'SI Ready',
  color: 'text-emerald-400',
  showProgress: false,
  dismissAfterMs: 4000,
  },
  error: {
  icon: <AlertCircle className="w-3.5 h-3.5" />,
- label: 'AI setup issue',
+ label: 'SI setup issue',
  color: 'text-amber-400',
  showProgress: false,
  },
  cloud_fallback: {
  icon: <AlertCircle className="w-3.5 h-3.5" />,
- label: 'AI Connecting',
+ label: 'SI Connecting',
  color: 'text-amber-400',
  showProgress: false,
  dismissAfterMs: 3000,
@@ -138,7 +138,7 @@ export const AIStatusBadge: React.FC = () => {
  <button
  onClick={() => retrySetup()}
  className="text-amber-400 hover:text-amber-300 flex-shrink-0"
- title="Retry local AI setup"
+ title="Retry local SI setup"
  >
  <RotateCcw className="w-3 h-3" />
  </button>
@@ -165,7 +165,7 @@ export const AIStatusBadge: React.FC = () => {
  {status.warning && <p className="text-amber-300/80">{status.warning}</p>}
  {status.message && <p>{status.message}</p>}
  {status.phase === 'cloud_fallback' && (
- <p className="mt-1">Cloud AI is disabled for privacy. Start Ollama to use AI features.</p>
+ <p className="mt-1">Cloud SI is disabled for privacy. Start Ollama to use SI features.</p>
  )}
  </div>
  )}

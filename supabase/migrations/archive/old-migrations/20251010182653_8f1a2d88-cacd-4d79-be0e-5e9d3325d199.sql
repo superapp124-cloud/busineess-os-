@@ -1,4 +1,4 @@
--- Circle AI Matching: Connect users with similar emotions
+-- Circle SI Matching: Connect users with similar emotions
 CREATE TABLE IF NOT EXISTS emotion_circles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS room_participants (
   UNIQUE(room_id, user_id)
 );
 
--- Viral AI Moments: Shareable snippets
+-- Viral SI Moments: Shareable snippets
 CREATE TABLE IF NOT EXISTS ai_moments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -93,7 +93,7 @@ CREATE POLICY "Users can view room participants"
     )
   );
 
-CREATE POLICY "Users can manage their AI moments"
+CREATE POLICY "Users can manage their SI moments"
   ON ai_moments FOR ALL
   USING (auth.uid() = user_id);
 

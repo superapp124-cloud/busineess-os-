@@ -1,6 +1,6 @@
 /**
  * Contract Provider Plugin for CHATR Intent OS
- * Legal AI provider extracting clauses, signatories, liability terms, and renewal dates.
+ * Legal SI provider extracting clauses, signatories, liability terms, and renewal dates.
  */
 
 import { IDocumentProviderPlugin, DocumentInput, DocumentOutput } from './DocumentProviderPlugin';
@@ -8,7 +8,7 @@ import { CapabilityManifest } from '../../models/capability/CapabilityManifest';
 
 export class ContractProviderPlugin implements IDocumentProviderPlugin {
   public id = 'provider-contract-legal-ai';
-  public name = 'Contract Legal AI Provider';
+  public name = 'Contract Legal SI Provider';
 
   public manifest: CapabilityManifest = {
     id: this.id,

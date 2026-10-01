@@ -105,7 +105,7 @@ export class EvidenceRegistry {
       metricValue: '7/7 passing tests',
     });
 
-    // Section 3: AI Quality
+    // Section 3: SI Quality
     this.addEvidence('sec_3_ai_quality', {
       id: 'ev_003',
       type: 'UnitTest',

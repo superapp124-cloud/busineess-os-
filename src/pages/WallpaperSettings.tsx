@@ -54,7 +54,7 @@ export default function WallpaperSettings() {
  handleSelect(id);
  setIsGenerating(false);
  setPrompt('');
- toast.success('AI Wallpaper successfully generated!');
+ toast.success('SI Wallpaper successfully generated!');
  }, 1500);
  };
 
@@ -102,7 +102,7 @@ export default function WallpaperSettings() {
  </div>
  <h3 className="font-bold text-primary mb-2 flex items-center gap-2">
  <Sparkles className="w-4 h-4" />
- AI Generator
+ SI Generator
  </h3>
  <p className="text-secondary text-muted-foreground mb-4 relative z-10">Generate beautiful abstract wallpapers using advanced on-device style generation.</p>
  <div className="flex flex-col gap-3 relative z-10">
@@ -119,7 +119,7 @@ export default function WallpaperSettings() {
  disabled={isGenerating || !prompt.trim()}
  className="w-full rounded-xl font-bold bg-primary hover:bg-primary/90 text-white h-11"
  >
- {isGenerating ? 'Generating...' : 'Generate AI Wallpaper'}
+ {isGenerating ? 'Generating...' : 'Generate SI Wallpaper'}
  </Button>
  </div>
  </div>

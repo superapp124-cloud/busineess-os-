@@ -4,7 +4,7 @@
  * Scores and ranks candidate script & hook variants before committing
  * video rendering and distribution resources.
  * 
- * Formula: Score = 0.40*(AI Judge) + 0.35*(Genome Win Rate) + 0.25*(Novelty)
+ * Formula: Score = 0.40*(SI Judge) + 0.35*(Genome Win Rate) + 0.25*(Novelty)
  */
 
 import { HookGenomeStore, HookGenomeEntry } from './HookGenomeStore';
@@ -45,7 +45,7 @@ export class CandidateRanker {
     const winningGenomes = HookGenomeStore.getWinningPatterns(niche);
 
     return rawVariants.map((raw, idx) => {
-      // 1. AI Judge Score (Heuristics: hook brevity, curiosity gap, clarity)
+      // 1. SI Judge Score (Heuristics: hook brevity, curiosity gap, clarity)
       const wordsInHook = raw.hookText.split(' ').length;
       const lengthPenalty = wordsInHook > 16 ? 20 : (wordsInHook < 4 ? 15 : 0);
       const curiosityBonus = /secret|mistake|why|stop|never|tested|math/i.test(raw.hookText) ? 25 : 10;

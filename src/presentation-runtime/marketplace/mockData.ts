@@ -138,7 +138,7 @@ export const MOCK_INDUSTRIES: Industry[] = [
   {
     id: 'ind-recruitment',
     name: 'Recruitment & Talent',
-    description: 'Build a complete ATS & HR Platform with AI Matching.',
+    description: 'Build a complete ATS & HR Platform with SI Matching.',
     icon: '👥',
     templates: ['tpl-recruitment-suite'],
     packCount: 16

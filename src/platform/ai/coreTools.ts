@@ -74,7 +74,7 @@ export const coreChatrAITools: ChatrAIToolDefinition[] = [
   },
   {
     id: 'browser.search',
-    name: 'AI Browser Search',
+    name: 'SI Browser Search',
     description: 'Search the web through approved browser/search tools.',
     version: '1.0.0',
     category: 'browser',

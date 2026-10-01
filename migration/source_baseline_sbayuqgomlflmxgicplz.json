@@ -13422,7 +13422,7 @@
           ],
           "permissive": true,
           "with_check": "(auth.uid() = user_id)",
-          "policy_name": "Users can create their own AI agents"
+          "policy_name": "Users can create their own SI Agents"
         },
         {
           "cmd": "DELETE",
@@ -13432,7 +13432,7 @@
           ],
           "permissive": true,
           "with_check": null,
-          "policy_name": "Users can delete their own AI agents"
+          "policy_name": "Users can delete their own SI Agents"
         },
         {
           "cmd": "UPDATE",
@@ -13442,7 +13442,7 @@
           ],
           "permissive": true,
           "with_check": null,
-          "policy_name": "Users can update their own AI agents"
+          "policy_name": "Users can update their own SI Agents"
         },
         {
           "cmd": "SELECT",
@@ -13452,7 +13452,7 @@
           ],
           "permissive": true,
           "with_check": null,
-          "policy_name": "Users can view their own AI agents"
+          "policy_name": "Users can view their own SI Agents"
         }
       ],
       "triggers": [],

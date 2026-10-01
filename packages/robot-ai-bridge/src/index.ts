@@ -1,5 +1,5 @@
 /**
- * @chatr/robot-ai-bridge — Multi-Lingual AI Bridge & Task Decomposition Engine
+ * @chatr/robot-ai-bridge — Multi-Lingual SI Bridge & Task Decomposition Engine
  */
 
 export * from './types';

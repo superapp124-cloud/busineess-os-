@@ -71,7 +71,7 @@ const NAV_SHORTCUTS: Omit<GlobalSearchResult, 'id'>[] = [
   { type: 'navigation', title: 'Marketplace', subtitle: 'Browse capability packs', group: 'Navigation', canonicalUrl: '/desktop/business-os/marketplace' },
   { type: 'navigation', title: 'Knowledge Fabric', subtitle: 'Enterprise knowledge base', group: 'Navigation', canonicalUrl: '/desktop/business-os/knowledge' },
   { type: 'navigation', title: 'Organization', subtitle: 'Team & org structure', group: 'Navigation', canonicalUrl: '/desktop/business-os/organization' },
-  { type: 'navigation', title: 'System Health', subtitle: 'AI runtime status', group: 'Navigation', canonicalUrl: '/desktop/business-os/ai_runtime' },
+  { type: 'navigation', title: 'System Health', subtitle: 'SI runtime status', group: 'Navigation', canonicalUrl: '/desktop/business-os/ai_runtime' },
   { type: 'navigation', title: 'Identity & Access', subtitle: 'Roles and permissions', group: 'Navigation', canonicalUrl: '/desktop/business-os/identity' },
 ];
 

@@ -26,7 +26,7 @@ export class ResourceManagerEngineImpl implements IEngine {
     this._status = 'booting';
     this.kernel = api;
     
-    // Subscribe to AI Inference events
+    // Subscribe to SI Inference events
     this.kernel.events.subscribe('AI_INFERENCE_START', this.handleInferenceStart.bind(this));
     this.kernel.events.subscribe('AI_INFERENCE_COMPLETE', this.handleInferenceComplete.bind(this));
     

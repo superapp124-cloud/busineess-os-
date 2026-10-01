@@ -8,7 +8,7 @@ Scope: repository contents, configuration, migrations, runtime code, UI surfaces
 
 CHATR is not one coherent platform yet. It is a desktop-first product, a mobile/web application, a local Electron runtime, a server/search stack, and an aspirational “business operating system” sharing a repository and vocabulary. The dominant failure mode is architectural multiplication: the same concerns appear in `src`, `electron/chatr-core`, `server`, `backend-mock`, `supabase/functions`, `packages`, `packs`, `provider-manifests`, and generated/proof/certification folders. The repository contains many constitutions, stage gates, completion reports, and certification scripts, but far less evidence of production traffic, failure injection, independent security review, or durable compatibility contracts.
 
-The platform is over-scoped for its current proof. “Exactly once”, rollback, autonomous agents, offline sync, multi-region, local AI, healthcare, finance, recruitment, marketplace, and general business objects are all represented. Each is individually hard; together they create an unbounded reliability and compliance surface. The product should narrow to one wedge, one execution contract, one canonical data plane, and one desktop delivery path before adding more nouns.
+The platform is over-scoped for its current proof. “Exactly once”, rollback, autonomous agents, offline sync, multi-region, local SI, healthcare, finance, recruitment, marketplace, and general business objects are all represented. Each is individually hard; together they create an unbounded reliability and compliance surface. The product should narrow to one wedge, one execution contract, one canonical data plane, and one desktop delivery path before adding more nouns.
 
 ### Scores
 
@@ -16,10 +16,10 @@ The platform is over-scoped for its current proof. “Exactly once”, rollback,
 |---|---:|---|
 | Product architecture | 3/10 | Too many overlapping kernels and runtimes; ownership is unclear. |
 | User experience | 4/10 | Feature-rich, but user intent and next action are obscured by surface area. |
-| AI experience | 4/10 | AI is present, but trust, interruption, provenance, and recovery are incomplete. |
+| SI experience | 4/10 | SI is present, but trust, interruption, provenance, and recovery are incomplete. |
 | Execution runtime | 3/10 | There are ledgers and validators, not yet a demonstrated distributed runtime. |
 | Database | 4/10 | Serious RLS work exists; migration sprawl and contract drift remain dangerous. |
-| Security | 4/10 | Good local hardening claims; insufficient independent proof and broad data/AI exposure. |
+| Security | 4/10 | Good local hardening claims; insufficient independent proof and broad data/SI exposure. |
 | Performance | 4/10 | Large dependency and feature surface; benchmark evidence is thin. |
 | Scalability | 2/10 | No credible evidence for 100k users, millions of executions, or multi-region writes. |
 | Code quality | 4/10 | Strong effort and types in places; duplication, generated artifacts, and TODO paths are material. |
@@ -47,7 +47,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 14. Scheduler ownership is split across runtime services and platform code.
 15. Local Electron processes can become a hidden second production control plane.
 16. Provider capabilities have placeholder/not-implemented paths.
-17. AI model/provider selection lacks a clearly enforced tenant policy boundary.
+17. SI model/provider selection lacks a clearly enforced tenant policy boundary.
 18. Prompt injection defenses are not shown at every tool and document boundary.
 19. Tool output is not proven to be treated as untrusted data.
 20. Sensitive document extraction is represented with realistic-looking sample identity data.
@@ -70,7 +70,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 37. No API schema generation and compatibility gate.
 38. Search server and local search can return inconsistent truth.
 39. Memory, knowledge graph, vector, and business object storage boundaries are unclear.
-40. Data lineage from source document to AI answer to action is incomplete.
+40. Data lineage from source document to SI answer to action is incomplete.
 41. UI can imply that an action succeeded before external confirmation.
 42. Undo is not a general platform primitive.
 43. Replay can re-execute side effects unless explicitly simulation-only.
@@ -80,7 +80,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 47. Retry policy is likely scattered instead of centrally governed.
 48. Rate limiting is not demonstrated per tenant, identity, capability, and provider.
 49. Backpressure and fairness between tenants are not evidenced.
-50. No resource budget for local AI CPU, memory, disk, or battery.
+50. No resource budget for local SI CPU, memory, disk, or battery.
 51. No credible capacity model for 10 million executions.
 52. No chaos tests for network loss, clock skew, partial commits, or provider outages.
 53. No SLOs, error budgets, or service ownership map.
@@ -111,8 +111,8 @@ This is a static repository audit. It is not a penetration test, formal threat m
 78. Mobile and desktop UI likely share names but not behavior.
 79. Mission Control and Organization Studio risk exposing platform internals instead of outcomes.
 80. Recruitment, healthcare, and finance workflows need domain-specific guardrails not generic UI.
-81. AI confidence values are not calibrated evidence.
-82. AI provider fallback can change behavior without user-visible explanation.
+81. SI confidence values are not calibrated evidence.
+82. SI provider fallback can change behavior without user-visible explanation.
 83. Model outputs are not proven schema-constrained at every action boundary.
 84. No formal evaluation suite for hallucination, injection, authorization, or task success.
 85. No model cost budget and attribution per tenant/action.
@@ -156,7 +156,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 20. Add cancellation semantics at each boundary.
 21. Make external confirmation authoritative over optimistic UI.
 22. Build one user-facing activity timeline for every action.
-23. Show what changed, why, evidence, risk, and next step on every AI action.
+23. Show what changed, why, evidence, risk, and next step on every SI action.
 24. Make approvals actionable from notifications with safe expiry.
 25. Add undo where compensating action is possible and label non-undoable work.
 26. Add a universal “stop” control with clear limits.
@@ -215,7 +215,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 79. Add provider outage/degraded-mode UX.
 80. Add model evaluation and regression suite.
 81. Record model/prompt/tool versions and evidence with decisions.
-82. Add cost, latency, and quality budgets per AI task.
+82. Add cost, latency, and quality budgets per SI task.
 83. Add human review sampling for high-impact decisions.
 84. Add explanation and appeal flows.
 85. Add model fallback compatibility tests.
@@ -249,7 +249,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 10. Add a documented local-only demo mode.
 11. Add a `SECURITY.md` vulnerability process.
 12. Add a threat-model document for Electron IPC.
-13. Add a threat-model document for AI tools.
+13. Add a threat-model document for SI tools.
 14. Add a one-page data classification matrix.
 15. Add a correlation ID helper and require it in logs.
 16. Replace ad hoc `console` calls with structured logging.
@@ -277,8 +277,8 @@ This is a static repository audit. It is not a penetration test, formal threat m
 38. Hide expert registries from default user navigation.
 39. Add command palette help text.
 40. Add command confirmation for destructive actions.
-41. Add explicit “AI suggested” labels.
-42. Add model/provider display for AI actions.
+41. Add explicit “SI suggested” labels.
+42. Add model/provider display for SI actions.
 43. Add evidence links for extracted facts.
 44. Add “why this action” explanation.
 45. Add cancel/stop affordance to active runs.
@@ -344,15 +344,15 @@ This is a static repository audit. It is not a penetration test, formal threat m
 
 ## Top 50 product risks
 
-1. No sharp wedge; 2. platform language before customer value; 3. too many verticals; 4. configuration fatigue; 5. unclear buyer; 6. unclear champion; 7. unclear ROI; 8. AI novelty without trust; 9. automation fear; 10. compliance overclaim; 11. workflow lock-in too early; 12. migration friction; 13. poor first value; 14. empty system on day one; 15. unclear ownership; 16. hidden human work; 17. no success metric; 18. generic packs; 19. shallow domain depth; 20. recruitment saturation; 21. healthcare liability; 22. finance liability; 23. connector dependency; 24. provider pricing exposure; 25. model pricing exposure; 26. support burden; 27. offline expectation mismatch; 28. desktop install friction; 29. mobile parity gap; 30. enterprise procurement gap; 31. data residency objection; 32. security review failure; 33. uncertain auditability; 34. unclear differentiation; 35. no competitive proof; 36. overbuilt navigation; 37. fragmented messaging; 38. “OS” skepticism; 39. automation mistakes; 40. missing rollback trust; 41. unclear AI responsibility; 42. poor collaboration; 43. weak notifications; 44. weak admin controls; 45. no usage-based value loop; 46. no expansion path; 47. no partner strategy; 48. no vertical exit criteria; 49. roadmap dilution; 50. engineering-led prioritization.
+1. No sharp wedge; 2. platform language before customer value; 3. too many verticals; 4. configuration fatigue; 5. unclear buyer; 6. unclear champion; 7. unclear ROI; 8. SI novelty without trust; 9. automation fear; 10. compliance overclaim; 11. workflow lock-in too early; 12. migration friction; 13. poor first value; 14. empty system on day one; 15. unclear ownership; 16. hidden human work; 17. no success metric; 18. generic packs; 19. shallow domain depth; 20. recruitment saturation; 21. healthcare liability; 22. finance liability; 23. connector dependency; 24. provider pricing exposure; 25. model pricing exposure; 26. support burden; 27. offline expectation mismatch; 28. desktop install friction; 29. mobile parity gap; 30. enterprise procurement gap; 31. data residency objection; 32. security review failure; 33. uncertain auditability; 34. unclear differentiation; 35. no competitive proof; 36. overbuilt navigation; 37. fragmented messaging; 38. “OS” skepticism; 39. automation mistakes; 40. missing rollback trust; 41. unclear SI responsibility; 42. poor collaboration; 43. weak notifications; 44. weak admin controls; 45. no usage-based value loop; 46. no expansion path; 47. no partner strategy; 48. no vertical exit criteria; 49. roadmap dilution; 50. engineering-led prioritization.
 
 ## Top 50 UX problems
 
-1. User outcome hidden behind platform nouns; 2. too many destinations; 3. unclear primary action; 4. unclear changed state; 5. unclear pending state; 6. unclear next step; 7. unclear AI provenance; 8. unclear confidence; 9. unclear risk; 10. unclear undo; 11. unclear stop; 12. unclear retry; 13. unclear failure ownership; 14. configuration before value; 15. graph complexity; 16. registry complexity; 17. pack complexity; 18. mission-control overload; 19. organization-studio overload; 20. inconsistent empty states; 21. inconsistent loading; 22. inconsistent errors; 23. notification overload; 24. buried approvals; 25. hidden offline mode; 26. deep-link ambiguity; 27. command palette discoverability; 28. keyboard inconsistency; 29. mobile density; 30. desktop density; 31. unclear role adaptation; 32. unclear tenant context; 33. unclear data freshness; 34. unclear source evidence; 35. unclear external confirmation; 36. modal overuse risk; 37. excessive clicks; 38. jargon; 39. over-animation risk; 40. focus loss; 41. contrast risk; 42. screen-reader risk; 43. small touch targets; 44. destructive action ambiguity; 45. long-running work abandonment; 46. conflicting views of truth; 47. no recovery narrative; 48. no onboarding path; 49. no safe demo path; 50. no clear “why CHATR” moment.
+1. User outcome hidden behind platform nouns; 2. too many destinations; 3. unclear primary action; 4. unclear changed state; 5. unclear pending state; 6. unclear next step; 7. unclear SI provenance; 8. unclear confidence; 9. unclear risk; 10. unclear undo; 11. unclear stop; 12. unclear retry; 13. unclear failure ownership; 14. configuration before value; 15. graph complexity; 16. registry complexity; 17. pack complexity; 18. mission-control overload; 19. organization-studio overload; 20. inconsistent empty states; 21. inconsistent loading; 22. inconsistent errors; 23. notification overload; 24. buried approvals; 25. hidden offline mode; 26. deep-link ambiguity; 27. command palette discoverability; 28. keyboard inconsistency; 29. mobile density; 30. desktop density; 31. unclear role adaptation; 32. unclear tenant context; 33. unclear data freshness; 34. unclear source evidence; 35. unclear external confirmation; 36. modal overuse risk; 37. excessive clicks; 38. jargon; 39. over-animation risk; 40. focus loss; 41. contrast risk; 42. screen-reader risk; 43. small touch targets; 44. destructive action ambiguity; 45. long-running work abandonment; 46. conflicting views of truth; 47. no recovery narrative; 48. no onboarding path; 49. no safe demo path; 50. no clear “why CHATR” moment.
 
 ## Top 50 performance problems
 
-1. Large dependency graph; 2. multiple app targets; 3. route bundle duplication; 4. heavy graph/editor libraries; 5. OCR/PDF workloads; 6. AI model downloads; 7. Electron renderer memory; 8. local database contention; 9. duplicate caches; 10. unbounded feeds; 11. missing pagination; 12. missing virtualization; 13. expensive context updates; 14. multiple state stores; 15. repeated provider calls; 16. chat history growth; 17. search index growth; 18. vector query cost; 19. graph layout cost; 20. background worker contention; 21. no CPU budgets; 22. no battery budgets; 23. no disk budgets; 24. no bundle budgets; 25. no cold-start SLO; 26. no render SLO; 27. no API latency SLO; 28. no query plan evidence; 29. no cache hit metrics; 30. no websocket backpressure; 31. no retry budget; 32. no upload limits; 33. no image optimization policy; 34. no compression contract; 35. duplicate telemetry; 36. development artifacts in repo; 37. stale dist directories; 38. broad imports; 39. synchronous parsing risk; 40. main-process blocking risk; 41. AI streaming fan-out; 42. notification fan-out; 43. multi-tenant noisy neighbor; 44. cold provider startup; 45. unbounded logs; 46. unbounded audit history; 47. sync conflict storms; 48. large migration operations; 49. no load-test reproducibility; 50. no production profiling evidence.
+1. Large dependency graph; 2. multiple app targets; 3. route bundle duplication; 4. heavy graph/editor libraries; 5. OCR/PDF workloads; 6. SI model downloads; 7. Electron renderer memory; 8. local database contention; 9. duplicate caches; 10. unbounded feeds; 11. missing pagination; 12. missing virtualization; 13. expensive context updates; 14. multiple state stores; 15. repeated provider calls; 16. chat history growth; 17. search index growth; 18. vector query cost; 19. graph layout cost; 20. background worker contention; 21. no CPU budgets; 22. no battery budgets; 23. no disk budgets; 24. no bundle budgets; 25. no cold-start SLO; 26. no render SLO; 27. no API latency SLO; 28. no query plan evidence; 29. no cache hit metrics; 30. no websocket backpressure; 31. no retry budget; 32. no upload limits; 33. no image optimization policy; 34. no compression contract; 35. duplicate telemetry; 36. development artifacts in repo; 37. stale dist directories; 38. broad imports; 39. synchronous parsing risk; 40. main-process blocking risk; 41. SI streaming fan-out; 42. notification fan-out; 43. multi-tenant noisy neighbor; 44. cold provider startup; 45. unbounded logs; 46. unbounded audit history; 47. sync conflict storms; 48. large migration operations; 49. no load-test reproducibility; 50. no production profiling evidence.
 
 ## Top 50 security problems
 
@@ -360,11 +360,11 @@ This is a static repository audit. It is not a penetration test, formal threat m
 
 ## Top 50 enterprise-readiness problems
 
-1. No measured RTO/RPO; 2. no restore drill evidence; 3. no BCP exercise; 4. no formal SLOs; 5. no SLA mapping; 6. no status page; 7. no incident command process; 8. no customer notification playbook; 9. no data residency matrix; 10. no subprocessor inventory; 11. no DPA workflow; 12. no DSAR proof; 13. no retention enforcement; 14. no legal hold; 15. no audit export guarantee; 16. no immutable audit evidence; 17. no access review cadence; 18. no least-privilege certification; 19. no SOC 2 evidence package; 20. no ISO control mapping; 21. HIPAA boundary unclear; 22. GDPR deletion boundary unclear; 23. no signed release provenance; 24. no SBOM policy; 25. no vulnerability SLA; 26. no pen-test remediation process; 27. no support access controls; 28. no tenant migration contract; 29. no version compatibility matrix; 30. no downgrade policy; 31. no customer export/import guarantee; 32. no connector deprecation policy; 33. no model change notice; 34. no AI risk register; 35. no human oversight policy; 36. no accessibility conformance statement; 37. no localization policy; 38. no procurement security packet; 39. no capacity commitment; 40. no multi-region guarantee; 41. no offline data guarantee; 42. no endpoint management story; 43. no installer fleet story; 44. no device compliance integration; 45. no customer-managed keys; 46. no sandbox tenant; 47. no training/data-use statement; 48. no business owner for controls; 49. no evidence retention policy; 50. checklist-driven readiness claims.
+1. No measured RTO/RPO; 2. no restore drill evidence; 3. no BCP exercise; 4. no formal SLOs; 5. no SLA mapping; 6. no status page; 7. no incident command process; 8. no customer notification playbook; 9. no data residency matrix; 10. no subprocessor inventory; 11. no DPA workflow; 12. no DSAR proof; 13. no retention enforcement; 14. no legal hold; 15. no audit export guarantee; 16. no immutable audit evidence; 17. no access review cadence; 18. no least-privilege certification; 19. no SOC 2 evidence package; 20. no ISO control mapping; 21. HIPAA boundary unclear; 22. GDPR deletion boundary unclear; 23. no signed release provenance; 24. no SBOM policy; 25. no vulnerability SLA; 26. no pen-test remediation process; 27. no support access controls; 28. no tenant migration contract; 29. no version compatibility matrix; 30. no downgrade policy; 31. no customer export/import guarantee; 32. no connector deprecation policy; 33. no model change notice; 34. no SI risk register; 35. no human oversight policy; 36. no accessibility conformance statement; 37. no localization policy; 38. no procurement security packet; 39. no capacity commitment; 40. no multi-region guarantee; 41. no offline data guarantee; 42. no endpoint management story; 43. no installer fleet story; 44. no device compliance integration; 45. no customer-managed keys; 46. no sandbox tenant; 47. no training/data-use statement; 48. no business owner for controls; 49. no evidence retention policy; 50. checklist-driven readiness claims.
 
 ## Top 50 scalability risks
 
-1. Single database hot spots; 2. tenant noisy neighbors; 3. queue bottlenecks; 4. scheduler single point; 5. event fan-out explosion; 6. graph fan-out explosion; 7. search indexing lag; 8. vector storage cost; 9. local sync fan-out; 10. notification fan-out; 11. connector rate caps; 12. model rate caps; 13. browser automation limits; 14. unbounded history; 15. unbounded audit logs; 16. large document parsing; 17. worker memory; 18. worker startup; 19. region split-brain; 20. cross-region latency; 21. conflict resolution; 22. migration locks; 23. RLS policy cost; 24. missing partition strategy; 25. missing archival strategy; 26. missing shard key; 27. missing capacity model; 28. missing load profiles; 29. missing soak tests; 30. missing burst tests; 31. missing provider isolation; 32. retry storms; 33. backpressure gaps; 34. cache stampede; 35. cold starts; 36. websocket connection growth; 37. Electron fleet update load; 38. artifact distribution; 39. support query load; 40. analytics query contention; 41. AI cost growth; 42. pack count growth; 43. capability registry growth; 44. schema evolution; 45. tenant customization; 46. cross-tenant reporting; 47. backup size; 48. restore duration; 49. compliance export duration; 50. operational headcount growth.
+1. Single database hot spots; 2. tenant noisy neighbors; 3. queue bottlenecks; 4. scheduler single point; 5. event fan-out explosion; 6. graph fan-out explosion; 7. search indexing lag; 8. vector storage cost; 9. local sync fan-out; 10. notification fan-out; 11. connector rate caps; 12. model rate caps; 13. browser automation limits; 14. unbounded history; 15. unbounded audit logs; 16. large document parsing; 17. worker memory; 18. worker startup; 19. region split-brain; 20. cross-region latency; 21. conflict resolution; 22. migration locks; 23. RLS policy cost; 24. missing partition strategy; 25. missing archival strategy; 26. missing shard key; 27. missing capacity model; 28. missing load profiles; 29. missing soak tests; 30. missing burst tests; 31. missing provider isolation; 32. retry storms; 33. backpressure gaps; 34. cache stampede; 35. cold starts; 36. websocket connection growth; 37. Electron fleet update load; 38. artifact distribution; 39. support query load; 40. analytics query contention; 41. SI cost growth; 42. pack count growth; 43. capability registry growth; 44. schema evolution; 45. tenant customization; 46. cross-tenant reporting; 47. backup size; 48. restore duration; 49. compliance export duration; 50. operational headcount growth.
 
 ## Top 50 code-quality issues
 
@@ -385,7 +385,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 11. Redundant state stores.
 12. Redundant search/memory abstractions.
 13. Unused mobile plugins in desktop bundles.
-14. Unused AI provider integrations.
+14. Unused SI provider integrations.
 15. Internal certification ceremony that does not test customer outcomes.
 16. Unversioned JSON schemas.
 17. Duplicate migrations after baseline consolidation.
@@ -400,13 +400,13 @@ This is a static repository audit. It is not a penetration test, formal threat m
 
 ## Top 25 missing features
 
-1. Unified activity timeline; 2. safe undo/compensation; 3. dry-run replay; 4. universal cancellation; 5. execution diff; 6. evidence provenance; 7. model/prompt display; 8. AI action risk rating; 9. approval delegation; 10. approval expiry; 11. tenant data export; 12. tenant deletion; 13. offline conflict resolution; 14. provider health view; 15. incident ID; 16. support-safe export; 17. customer-visible audit log; 18. real-time degradation status; 19. role-based home; 20. first-value onboarding; 21. accessibility mode; 22. reduced motion; 23. command discoverability; 24. cost/usage dashboard; 25. connector permission center.
+1. Unified activity timeline; 2. safe undo/compensation; 3. dry-run replay; 4. universal cancellation; 5. execution diff; 6. evidence provenance; 7. model/prompt display; 8. SI action risk rating; 9. approval delegation; 10. approval expiry; 11. tenant data export; 12. tenant deletion; 13. offline conflict resolution; 14. provider health view; 15. incident ID; 16. support-safe export; 17. customer-visible audit log; 18. real-time degradation status; 19. role-based home; 20. first-value onboarding; 21. accessibility mode; 22. reduced motion; 23. command discoverability; 24. cost/usage dashboard; 25. connector permission center.
 
 ## Top 25 missing enterprise features
 
-1. SSO/SAML lifecycle; 2. SCIM; 3. enforced MFA; 4. customer-managed keys; 5. data residency; 6. legal hold; 7. retention policies; 8. DSAR workflow; 9. immutable audit export; 10. privileged access management; 11. break-glass approval; 12. access recertification; 13. endpoint management; 14. signed artifact provenance; 15. vulnerability SLA; 16. status page; 17. SLA reporting; 18. RTO/RPO reporting; 19. restore verification; 20. subprocessor registry; 21. DPA controls; 22. AI governance controls; 23. model change notices; 24. customer sandbox; 25. migration compatibility guarantees.
+1. SSO/SAML lifecycle; 2. SCIM; 3. enforced MFA; 4. customer-managed keys; 5. data residency; 6. legal hold; 7. retention policies; 8. DSAR workflow; 9. immutable audit export; 10. privileged access management; 11. break-glass approval; 12. access recertification; 13. endpoint management; 14. signed artifact provenance; 15. vulnerability SLA; 16. status page; 17. SLA reporting; 18. RTO/RPO reporting; 19. restore verification; 20. subprocessor registry; 21. DPA controls; 22. SI governance controls; 23. model change notices; 24. customer sandbox; 25. migration compatibility guarantees.
 
-## Top 25 missing AI features
+## Top 25 missing SI features
 
 1. Provenance-first answers; 2. uncertainty calibration; 3. action risk classifier; 4. safe planning preview; 5. interruption; 6. dry-run; 7. undo; 8. replay inspection; 9. model/prompt version history; 10. tool permission preview; 11. prompt-injection defense; 12. adversarial evaluation; 13. human review sampling; 14. user-defined autonomy limits; 15. tenant policy grounding; 16. cost budgets; 17. latency budgets; 18. quality feedback loop; 19. correction memory; 20. explicit assumptions; 21. conflict detection; 22. multi-agent trace; 23. provider fallback explanation; 24. sensitive-data redaction; 25. action outcome learning.
 
@@ -416,15 +416,15 @@ This is a static repository audit. It is not a penetration test, formal threat m
 
 ## Top 25 future risks
 
-1. AI regulation; 2. connector policy changes; 3. model deprecation; 4. provider price shocks; 5. local model quality gap; 6. data residency demand; 7. post-quantum expectations; 8. desktop OS changes; 9. Electron CVEs; 10. browser automation blocking; 11. app-store restrictions; 12. healthcare liability; 13. financial advice liability; 14. recruitment discrimination claims; 15. customer lock-in backlash; 16. data portability demands; 17. model leakage incident; 18. autonomous action incident; 19. support cost explosion; 20. migration paralysis; 21. ecosystem fragmentation; 22. pack signing compromise; 23. multi-region consistency failure; 24. competitor simplification; 25. internal complexity collapse.
+1. SI regulation; 2. connector policy changes; 3. model deprecation; 4. provider price shocks; 5. local model quality gap; 6. data residency demand; 7. post-quantum expectations; 8. desktop OS changes; 9. Electron CVEs; 10. browser automation blocking; 11. app-store restrictions; 12. healthcare liability; 13. financial advice liability; 14. recruitment discrimination claims; 15. customer lock-in backlash; 16. data portability demands; 17. model leakage incident; 18. autonomous action incident; 19. support cost explosion; 20. migration paralysis; 21. ecosystem fragmentation; 22. pack signing compromise; 23. multi-region consistency failure; 24. competitor simplification; 25. internal complexity collapse.
 
 ## Top 25 moat risks
 
 1. Architecture is not a moat; outcomes are.
-2. Generic AI wrappers are commoditized.
+2. Generic SI wrappers are commoditized.
 3. Generic workflow graphs are commoditized.
 4. Marketplace breadth without quality is not defensible.
-5. Local AI is vendor-dependent.
+5. Local SI is vendor-dependent.
 6. Vertical packs are easy to copy without proprietary data.
 7. Recruitment wedge is crowded.
 8. “Business OS” positioning is vague.
@@ -441,7 +441,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 19. Too broad a surface dilutes product learning.
 20. Competing on platform completeness favors incumbents.
 21. Internal abstractions do not create customer lock-in.
-22. AI providers can replicate feature layers.
+22. SI providers can replicate feature layers.
 23. Pack portability weakens exclusivity.
 24. Connector churn erodes reliability.
 25. Complexity is a negative moat if customers cannot operate it.
@@ -460,7 +460,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 - Inventory every side effect and add idempotency keys, correlation IDs, timeouts, and redaction.
 - Make CI run typecheck, tests, RLS tests, lint, build, dependency audit, SBOM, and clean-tree verification.
 - Remove realistic sample PII and label all mock providers visibly.
-- Establish a security threat model for Electron, AI tools, documents, connectors, and tenant isolation.
+- Establish a security threat model for Electron, SI tools, documents, connectors, and tenant isolation.
 
 ### Days 31–60: make execution trustworthy
 
@@ -474,7 +474,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 ### Days 61–90: make the product legible
 
 - Reduce default navigation to the wedge outcome.
-- Ship role-based home, first-value onboarding, visible AI evidence, risk, approval, stop, and next action.
+- Ship role-based home, first-value onboarding, visible SI evidence, risk, approval, stop, and next action.
 - Add accessible empty/loading/error states, keyboard support, reduced motion, and offline status.
 - Set bundle, startup, query, and execution SLOs.
 - Run failure injection, connector outage, sync conflict, and security regression suites.
@@ -484,7 +484,7 @@ This is a static repository audit. It is not a penetration test, formal threat m
 
 1. Pick one beachhead workflow and prove measurable time-to-value.
 2. Ship one excellent role-based workspace rather than a general OS shell.
-3. Make AI a transparent operator: plan, explain, ask, act, verify, recover.
+3. Make SI a transparent operator: plan, explain, ask, act, verify, recover.
 4. Add evidence, approvals, audit, and safe automation as the product trust loop.
 5. Add only the integrations required for the beachhead workflow.
 6. Add enterprise identity, audit export, retention, data residency, and support controls.
@@ -509,7 +509,7 @@ Measured multi-region read strategy, controlled offline sync, capacity model, ch
 
 ### Q4
 
-Only if demand is proven: additional vertical packs, partner SDK, advanced AI autonomy, regional execution, and marketplace expansion. No new kernel or runtime without a demonstrated customer requirement.
+Only if demand is proven: additional vertical packs, partner SDK, advanced SI autonomy, regional execution, and marketplace expansion. No new kernel or runtime without a demonstrated customer requirement.
 
 ## Final verdict
 

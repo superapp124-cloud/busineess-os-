@@ -1,6 +1,6 @@
 ﻿/**
- * CHATR Financial AI Benchmark & Quantitative Scorecard (Phase 10)
- * Evaluates the AI CFO and specialized finance workers across 6 critical dimensions (100-point scale):
+ * CHATR Financial SI Benchmark & Quantitative Scorecard (Phase 10)
+ * Evaluates the SI CFO and specialized finance workers across 6 critical dimensions (100-point scale):
  * 1. Financial Factual Accuracy (20 pts)
  * 2. Evidence Traceability & Lineage (20 pts)
  * 3. Calculation & Invariant Precision (20 pts)
@@ -29,7 +29,7 @@ export interface AIBenchmarkScorecard {
 
 export class FinancialAIBenchmark {
   /**
-   * Executes the quantitative 100-point Financial AI evaluation
+   * Executes the quantitative 100-point Financial SI evaluation
    */
   public static evaluateFinanceAI(): AIBenchmarkScorecard {
     const dimensions: BenchmarkDimensionScore[] = [
@@ -116,7 +116,7 @@ export class FinancialAIBenchmark {
       percentage,
       grade: percentage >= 95 ? 'A+' : percentage >= 85 ? 'A' : percentage >= 75 ? 'B' : 'FAIL',
       dimensions,
-      summary: `Financial AI Benchmark Score: ${totalScore}/100 (${percentage}% Grade ${percentage >= 95 ? 'A+' : 'A'}). Passes all factual, calculation, safety, and evidence standards.`,
+      summary: `Financial SI Benchmark Score: ${totalScore}/100 (${percentage}% Grade ${percentage >= 95 ? 'A+' : 'A'}). Passes all factual, calculation, safety, and evidence standards.`,
     };
   }
 }

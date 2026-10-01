@@ -1,4 +1,4 @@
-// Universal Search Engine - Multi-source AI-powered search
+// Universal Search Engine - Multi-source SI-powered search
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { completeChat } from '../_core/aiProvider.ts';
 
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 2: AI Intent Understanding via direct AI router
+    // Step 2: SI Intent Understanding via direct SI router
     let aiIntent: any = null;
 
     try {
@@ -105,7 +105,7 @@ Respond in JSON format:
         };
       }
     } catch (e) {
-      console.warn('AI intent detection fallback notice:', e);
+      console.warn('SI intent detection fallback notice:', e);
       aiIntent = {
         intent: 'general search',
         category: 'general',

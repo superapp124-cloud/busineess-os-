@@ -731,9 +731,9 @@ export class SimpleWebRTCCall {
     if (!enabled && this.outboundAudioWatchdog) {
       clearInterval(this.outboundAudioWatchdog);
       this.outboundAudioWatchdog = null;
-      console.log('🛑 [WebRTC] Audio watchdog disabled by AI Interceptor');
+      console.log('🛑 [WebRTC] Audio watchdog disabled by SI Interceptor');
     } else if (enabled && !this.outboundAudioWatchdog) {
-      console.log('🟢 [WebRTC] Audio watchdog re-enabled by AI Interceptor');
+      console.log('🟢 [WebRTC] Audio watchdog re-enabled by SI Interceptor');
       this.startOutboundAudioWatchdog();
     }
   }
@@ -747,7 +747,7 @@ export class SimpleWebRTCCall {
 
     try {
       if (aiTrack) {
-        console.log(`🎙️ [WebRTC] Swapping outbound audio to AI Track via full renegotiation`);
+        console.log(`🎙️ [WebRTC] Swapping outbound audio to SI Track via full renegotiation`);
         this.setAudioWatchdogEnabled(false);
         
         for (const sender of senders) {
@@ -755,16 +755,16 @@ export class SimpleWebRTCCall {
             // FORCE full renegotiation instead of replaceTrack to bypass Chromium WebAudio track bugs
             this.pc.removeTrack(sender);
             this.pc.addTrack(aiTrack, this.localStream!);
-            console.log(`[WebRTC-Debug] Removed original track, added AI track.`);
+            console.log(`[WebRTC-Debug] Removed original track, added SI track.`);
             
             if (this.callState === 'connected') {
-              console.log(`[WebRTC-Debug] Triggering renegotiation offer for AI track...`);
+              console.log(`[WebRTC-Debug] Triggering renegotiation offer for SI track...`);
               const offer = await this.pc.createOffer();
-              const localOffer = await this.setAndReturnLocalDescription(offer, 'AI track injection');
+              const localOffer = await this.setAndReturnLocalDescription(offer, 'SI track injection');
               this.emitSocketSignal({ type: 'offer', data: localOffer, from: this.userId });
             }
           } catch (err) {
-            console.error('⚠️ [WebRTC] Failed to inject AI track via renegotiation', err);
+            console.error('⚠️ [WebRTC] Failed to inject SI track via renegotiation', err);
           }
         }
       } else {
@@ -790,7 +790,7 @@ export class SimpleWebRTCCall {
         }
       }
     } catch (e) {
-      console.warn('❌ [WebRTC] Failed to set AI audio track:', e);
+      console.warn('❌ [WebRTC] Failed to set SI audio track:', e);
     }
   }
 

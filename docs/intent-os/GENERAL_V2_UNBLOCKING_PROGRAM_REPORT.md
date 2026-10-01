@@ -16,7 +16,7 @@
 
 This report documents the rigorous, independent empirical execution of the **21-Gate Final Unblocking Program** for candidate model `chatr:general-v2`.
 
-In accordance with strict CHATR AI Governance standards:
+In accordance with strict CHATR SI Governance standards:
 > **The goal is not to force the model into PRODUCTION. The goal is to determine with independent empirical evidence whether it deserves to be there.**
 
 Every gate has been subjected to empirical testing, mathematical verification, red-team attacks, and architectural forensics. All unmeasured marketing claims (such as "99.9% FP16 fidelity") have been formally purged. The smoke evaluation benchmark has been expanded from 10 items to a **124-item held-out benchmark** across 15 categories with **zero train/eval prompt overlap**. Real multi-app staging workflows were executed through the actual CHATR runtime with verifiable event traces.
@@ -132,7 +132,7 @@ The vanilla base model failed 100% of the hallucination resistance and TalentXce
 To determine whether the model's behavior is etched into neural weights or merely prompted, the benchmark was evaluated under three prompt conditions:
 - **Condition A**: No system prompt (Empty string `""`)
 - **Condition B**: Minimal neutral system prompt (`"You are a helpful assistant."`)
-- **Condition C**: Production CHATR system prompt (`"You are the CHATR AI assistant. CHATR is an Intent-First Business Operating System..."`)
+- **Condition C**: Production CHATR system prompt (`"You are the CHATR SI assistant. CHATR is an Intent-First Business Operating System..."`)
 
 ### Behavioral Attribution Mapping
 
@@ -498,4 +498,4 @@ python scripts/ai_training/adapter_registry.py transition general v2.0.0 PRODUCT
 
 ---
 
-*Report certified by CHATR AI Governance, ML Infrastructure & Red Team Audit Group.*
+*Report certified by CHATR SI Governance, ML Infrastructure & Red Team Audit Group.*

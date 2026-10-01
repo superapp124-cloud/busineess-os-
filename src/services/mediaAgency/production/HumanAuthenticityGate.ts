@@ -2,7 +2,7 @@
  * CHATR Media Agency — Human Content Authenticity Gate
  * 
  * Hard production gate enforcing human-sounding, culturally relevant,
- * non-robotic scripts. Rejects AI clichés, robotic cadence, and synthetic tropes.
+ * non-robotic scripts. Rejects SI clichés, robotic cadence, and synthetic tropes.
  * 
  * Target: HumanScore >= 85 to PASS.
  */
@@ -49,7 +49,7 @@ export class HumanAuthenticityGate {
     const combinedText = `${hook} ${script}`.toLowerCase();
     const detectedCliches: string[] = [];
 
-    // 1. Check for banned AI clichés
+    // 1. Check for banned SI clichés
     this.BANNED_AI_CLICHES.forEach(cliche => {
       if (combinedText.includes(cliche)) {
         detectedCliches.push(cliche);
@@ -84,7 +84,7 @@ export class HumanAuthenticityGate {
 
     const critiqueFeedback: string[] = [];
     if (detectedCliches.length > 0) {
-      critiqueFeedback.push(`Detected AI clichés: "${detectedCliches.join('", "')}". Rewrite with natural human language.`);
+      critiqueFeedback.push(`Detected SI clichés: "${detectedCliches.join('", "')}". Rewrite with natural human language.`);
     }
     if (!hasVariedCadence) {
       critiqueFeedback.push('Cadence is too uniform. Vary sentence lengths to create natural vocal rhythm.');
@@ -93,7 +93,7 @@ export class HumanAuthenticityGate {
       critiqueFeedback.push('Add specific tools, numbers, or real-world operational details.');
     }
     if (passedGate) {
-      critiqueFeedback.push('Natural conversational rhythm verified. Zero AI tropes detected. Pass.');
+      critiqueFeedback.push('Natural conversational rhythm verified. Zero SI tropes detected. Pass.');
     }
 
     return {

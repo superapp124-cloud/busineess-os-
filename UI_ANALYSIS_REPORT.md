@@ -32,7 +32,7 @@
 - ✅ Media lightbox viewer
 - ✅ Message forwarding
 - ✅ Disappearing messages
-- ✅ AI smart replies
+- ✅ SI smart replies
 
 ### 4. **Calling Features** ⭐⭐⭐⭐
 - ✅ WebRTC voice calls
@@ -116,11 +116,11 @@ Critical alerts: z-[600]
 - **Fix**: Migrate all sensitive data
 
 #### D. Speech Recognition ❌
-- **Status**: Hook created, basic voice AI exists
+- **Status**: Hook created, basic voice SI exists
 - **Location**: `src/hooks/native/useSpeechRecognition.tsx`
 - **Current**: `useVoiceAI.tsx` uses WebKit (web-only)
 - **Missing**:
-  - No native speech in AI Assistant
+  - No native speech in SI Assistant
   - No voice search
   - No voice commands
 - **Fix**: Replace web API with native hook

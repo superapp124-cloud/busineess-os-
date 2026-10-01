@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+// CHATR Health OS
+import { useHealthOS } from '@/hooks/useHealthOS';
+import { HealthStatusBanner } from '@/components/health/HealthStatusBanner';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,19 +55,52 @@ interface CarePath {
 
 export default function CareAccess() {
  const navigate = useNavigate();
+  // CHATR Health OS — get computed health state to show in Care dashboard
+  const { healthState, healthStateLabel, healthScore, healthStateConfidence, domainStates, dataSufficiency } = useHealthOS();
+
  const [searchParams] = useSearchParams();
  const initialTab = searchParams.get('tab') || 'home';
  
- const [loading, setLoading] = useState(true);
+ const [loading, setLoading] = useState(false);
  const [userId, setUserId] = useState<string | null>(null);
  const [userName, setUserName] = useState('');
  const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
- const [carePaths, setCarePaths] = useState<CarePath[]>([]);
- const [smartActions, setSmartActions] = useState<any[]>([]);
+ const [carePaths, setCarePaths] = useState<CarePath[]>([
+    {
+      id: 'wellness',
+      name: 'General Wellness & Health Score',
+      type: 'cardiac',
+      status: 'stable',
+      progress: 85,
+      lastAction: 'Health check completed',
+      nextAction: 'Hydration and vitals check',
+      dueDate: 'Today 5:00 PM'
+    }
+  ]);
+ const [smartActions, setSmartActions] = useState<any[]>([
+    {
+      id: 'call_doctor',
+      type: 'call_doctor',
+      title: 'Consult Top Doctor',
+      description: 'Connect with verified specialist within 60s',
+      urgency: 'medium',
+      context: 'Instant video or audio call',
+      action: () => navigate('/teleconsultation')
+    },
+    {
+      id: 'refill',
+      type: 'refill',
+      title: 'Medicines & Essentials',
+      description: 'Order prescription medicines with flat 20% discount',
+      urgency: 'low',
+      context: 'Delivered in 15 mins',
+      action: () => navigate('/care/medicines')
+    }
+  ]);
  const [alerts, setAlerts] = useState<any[]>([]);
  const [activeTab, setActiveTab] = useState(initialTab);
- const [providerStats, setProviderStats] = useState({ total: 0, cities: 0, specialties: 0 });
+ const [providerStats, setProviderStats] = useState({ total: 500, cities: 10, specialties: 47 });
 
  useEffect(() => {
  loadData();
@@ -337,7 +374,7 @@ export default function CareAccess() {
  familyMembers={familyMembers}
  selectedMember={selectedMember}
  onSelectMember={setSelectedMember}
- healthScore={85}
+ healthScore={healthScore ?? 85}
  unreadAlerts={alerts.length}
  />
 
@@ -357,6 +394,10 @@ export default function CareAccess() {
  <Heart className="h-4 w-4 mr-1" />
  My Care
  </TabsTrigger>
+            <TabsTrigger value="hub" onClick={() => navigate('/health')} className="flex-1 text-primary font-medium">
+              <Activity className="h-4 w-4 mr-1 text-primary" />
+              Health Hub
+            </TabsTrigger>
  </TabsList>
 
  {/* Home Tab */}

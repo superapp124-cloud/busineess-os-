@@ -1,5 +1,5 @@
 /**
- * LOCAL SERVICES AI AGENT
+ * LOCAL SERVICES SI AGENT
  * Handles local discovery: restaurants, services, shops, plumbers, etc.
  */
 
@@ -8,12 +8,12 @@ import { memoryLayer } from '../memoryLayer';
 import { AgentResponse, AgentContext } from './personalAI';
 
 /**
- * Local Services AI Agent
+ * Local Services SI Agent
  * Finds nearby services, restaurants, shops, and local providers
  */
 class LocalAIAgent {
   readonly type: AgentType = 'local';
-  readonly name = 'Local Services AI';
+  readonly name = 'Local Services SI';
 
   /**
    * Process a local services query

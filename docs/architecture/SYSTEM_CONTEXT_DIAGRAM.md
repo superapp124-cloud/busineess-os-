@@ -89,7 +89,7 @@ This document captures every bounded context, its responsibility, and all depend
      ▼
 ┌────────────────────────────────────────────────────────────────┐
 │         @chatr/reference-ecosystem  (Capabilities)             │
-│  Foundation · Business · Integration · AI · Enterprise         │
+│  Foundation · Business · Integration · SI · Enterprise         │
 └────────────────────────────────────────────────────────────────┘
 ```
 

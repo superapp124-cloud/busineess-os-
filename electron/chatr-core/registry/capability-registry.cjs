@@ -2,7 +2,7 @@
 
 /**
  * CHATR Kernel - Capability Registry
- * Maps high-level intent actions to specific AI requirement profiles.
+ * Maps high-level intent actions to specific SI requirement profiles.
  */
 
 const fs = require('fs');

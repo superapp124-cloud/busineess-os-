@@ -21,7 +21,7 @@ export const ChatrUniversalInboxPage = () => {
 
   useEffect(() => {
     // Pure DOM Head Management
-    document.title = 'Universal AI Inbox for Business — CHATR | Unified Message Management';
+    document.title = 'Universal SI Inbox for Business — CHATR | Unified Message Management';
     
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
@@ -29,7 +29,7 @@ export const ChatrUniversalInboxPage = () => {
       metaDescription.setAttribute('name', 'description');
       document.head.appendChild(metaDescription);
     }
-    metaDescription.setAttribute('content', 'CHATR gives your business a single AI-powered inbox for WhatsApp, email, CRM notes, and team chats. Stop switching tabs, start managing conversations intelligently.');
+    metaDescription.setAttribute('content', 'CHATR gives your business a single SI-powered inbox for WhatsApp, email, CRM notes, and team chats. Stop switching tabs, start managing conversations intelligently.');
     
     let linkCanonical = document.querySelector('link[rel="canonical"]');
     if (!linkCanonical) {
@@ -64,7 +64,7 @@ export const ChatrUniversalInboxPage = () => {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "CHATR Universal Inbox",
-    "description": "CHATR gives your business a single AI-powered inbox for WhatsApp, email, CRM notes, and team chats. Stop switching tabs, start managing conversations intelligently.",
+    "description": "CHATR gives your business a single SI-powered inbox for WhatsApp, email, CRM notes, and team chats. Stop switching tabs, start managing conversations intelligently.",
     "url": "https://chatr.chat/chatr/universal-inbox-ai",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "All"
@@ -84,10 +84,10 @@ export const ChatrUniversalInboxPage = () => {
       },
       {
         "@type": "Question",
-        "name": "How does CHATR AI handle multiple messaging channels?",
+        "name": "How does CHATR SI handle multiple messaging channels?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "CHATR connects to your existing communication channels via API and funnels them into one stream. The built-in AI triages incoming messages, assigns them to the correct team member, and can even draft suggested replies based on conversation context."
+          "text": "CHATR connects to your existing communication channels via API and funnels them into one stream. The built-in SI triages incoming messages, assigns them to the correct team member, and can even draft suggested replies based on conversation context."
         }
       },
       {
@@ -111,7 +111,7 @@ export const ChatrUniversalInboxPage = () => {
         "name": "How is CHATR different from a regular email client?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "While a regular email client is limited to email protocols, CHATR handles multi-modal communication (text, WhatsApp, CRM notes). Furthermore, it incorporates AI to summarize threads and automate routing, making it a complete Business OS rather than just an email reader."
+          "text": "While a regular email client is limited to email protocols, CHATR handles multi-modal communication (text, WhatsApp, CRM notes). Furthermore, it incorporates SI to summarize threads and automate routing, making it a complete Business OS rather than just an email reader."
         }
       }
     ]
@@ -123,8 +123,8 @@ export const ChatrUniversalInboxPage = () => {
       a: "A universal inbox consolidates messages from various channels—like email, WhatsApp, SMS, and live chat—into a single interface. This prevents context switching and ensures no customer query is lost across different apps."
     },
     {
-      q: "How does CHATR AI handle multiple messaging channels?",
-      a: "CHATR connects to your existing communication channels via API and funnels them into one stream. The built-in AI triages incoming messages, assigns them to the correct team member, and can even draft suggested replies based on conversation context."
+      q: "How does CHATR SI handle multiple messaging channels?",
+      a: "CHATR connects to your existing communication channels via API and funnels them into one stream. The built-in SI triages incoming messages, assigns them to the correct team member, and can even draft suggested replies based on conversation context."
     },
     {
       q: "Can my team use CHATR as a shared inbox?",
@@ -136,7 +136,7 @@ export const ChatrUniversalInboxPage = () => {
     },
     {
       q: "How is CHATR different from a regular email client?",
-      a: "While a regular email client is limited to email protocols, CHATR handles multi-modal communication (text, WhatsApp, CRM notes). Furthermore, it incorporates AI to summarize threads and automate routing, making it a complete Business OS rather than just an email reader."
+      a: "While a regular email client is limited to email protocols, CHATR handles multi-modal communication (text, WhatsApp, CRM notes). Furthermore, it incorporates SI to summarize threads and automate routing, making it a complete Business OS rather than just an email reader."
     }
   ];
 
@@ -175,12 +175,12 @@ export const ChatrUniversalInboxPage = () => {
           </div>
           
           <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-8 max-w-4xl mx-auto leading-[1.1]">
-            Universal AI Inbox for Business <br className="hidden md:block"/>
+            Universal SI Inbox for Business <br className="hidden md:block"/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">All Your Messages in One Place</span>
           </h1>
           
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Stop switching between WhatsApp, email, and CRM notes. CHATR gives your business a single AI-powered inbox to manage conversations intelligently, triage requests, and collaborate as a team.
+            Stop switching between WhatsApp, email, and CRM notes. CHATR gives your business a single SI-powered inbox to manage conversations intelligently, triage requests, and collaborate as a team.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -252,9 +252,9 @@ export const ChatrUniversalInboxPage = () => {
               <div className="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/20">
                 <Bot className="w-7 h-7 text-cyan-400" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">2. AI Triage</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">2. SI Triage</h3>
               <p className="text-slate-400 leading-relaxed">
-                Not all messages are equal. CHATR's built-in AI automatically tags conversations by intent (e.g., support, sales, billing), drafts contextual replies, and surfaces urgent issues to the top of the queue.
+                Not all messages are equal. CHATR's built-in SI automatically tags conversations by intent (e.g., support, sales, billing), drafts contextual replies, and surfaces urgent issues to the top of the queue.
               </p>
             </div>
 
@@ -294,7 +294,7 @@ export const ChatrUniversalInboxPage = () => {
                 <tr>
                   <td className="p-6 font-medium text-white">Prioritization</td>
                   <td className="p-6 text-slate-400">Chronological (newest first)</td>
-                  <td className="p-6 bg-indigo-900/5 border-l border-indigo-500/20 text-white flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5"/> AI intent-based triage</td>
+                  <td className="p-6 bg-indigo-900/5 border-l border-indigo-500/20 text-white flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5"/> SI intent-based triage</td>
                 </tr>
                 <tr>
                   <td className="p-6 font-medium text-white">Internal Communication</td>
@@ -304,7 +304,7 @@ export const ChatrUniversalInboxPage = () => {
                 <tr>
                   <td className="p-6 font-medium text-white">Drafting Responses</td>
                   <td className="p-6 text-slate-400">Manual typing or basic templates</td>
-                  <td className="p-6 bg-indigo-900/5 border-l border-indigo-500/20 text-white flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5"/> AI suggested replies based on context</td>
+                  <td className="p-6 bg-indigo-900/5 border-l border-indigo-500/20 text-white flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5"/> SI suggested replies based on context</td>
                 </tr>
               </tbody>
             </table>

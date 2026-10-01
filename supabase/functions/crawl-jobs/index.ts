@@ -265,7 +265,7 @@ Deno.serve(async (req) => {
     const searchData = await searchResponse.json();
     console.log(`📄 Found ${searchData.data?.length || 0} search results`);
 
-    // Extract jobs from search results using AI
+    // Extract jobs from search results using SI
     const rawJobs: RawJob[] = [];
     
     for (const result of searchData.data || []) {

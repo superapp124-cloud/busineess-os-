@@ -3,7 +3,7 @@
  *
  * Renders the full chronological history of a workflow.
  * Subscribes directly to workflowTimeline (reactive, no polling).
- * Acts as the "audit log" — shows every step the AI took.
+ * Acts as the "audit log" — shows every step the SI took.
  */
 
 import { useState, useEffect } from 'react';

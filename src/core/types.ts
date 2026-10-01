@@ -379,7 +379,7 @@ export interface MissionExecutionContext {
   lifecycleState: MissionState;
   
   // Explicit Human Support
-  actionRequired: 'AI Completed' | 'AI Recommended' | 'Human Approval Required' | 'Human Action Required' | 'External Dependency' | 'Manual Triage';
+  actionRequired: 'SI Completed' | 'SI Recommended' | 'Human Approval Required' | 'Human Action Required' | 'External Dependency' | 'Manual Triage';
   
   // Mission Graph
   missionGraph: MissionNode[];

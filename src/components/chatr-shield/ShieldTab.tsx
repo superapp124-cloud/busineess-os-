@@ -184,7 +184,7 @@ const ShieldTab: React.FC<ShieldTabProps> = ({ onThemeChange, currentTheme }) =>
  { num: 1, name: 'L1: On-Device Intelligence', desc: 'Instant local cache & blacklists', time: '~1ms', active: true, icon: Zap },
  { num: 2, name: 'L2: Collective Trust', desc: 'Crowdsourced spam signatures', time: '~12ms', active: true, icon: Users },
  { num: 3, name: 'L3: Network Forensics', desc: 'VoIP, age & carrier metadata', time: '~45ms', active: true, icon: Globe },
- { num: 4, name: 'L4: AI Enrichment', desc: 'Async Gemini enrichment — processes post-call, cached for future lookups', time: 'QUEUED', active: false, icon: Shield },
+ { num: 4, name: 'L4: SI Enrichment', desc: 'Async Gemini enrichment — processes post-call, cached for future lookups', time: 'QUEUED', active: false, icon: Shield },
  { num: 5, name: 'L5: Voice Biometrics', desc: 'Deepfake & synthetic voice detection — not yet implemented', time: 'ROADMAP', active: false, icon: BarChart3 },
  ].map(({ num, name, desc, time, active, icon: Icon }) => (
  <div key={num} className="p-4 flex items-start gap-4 hover:bg-white/5 transition-colors">

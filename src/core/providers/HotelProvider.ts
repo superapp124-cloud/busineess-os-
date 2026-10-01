@@ -20,7 +20,7 @@ export class HotelProviderStub implements IProvider {
   async search(query: any): Promise<any[]> {
     console.log(`[HotelProvider] Searching for:`, query);
 
-    // STRICT PRODUCTION RULE: No AI generation for reality.
+    // STRICT PRODUCTION RULE: No SI generation for reality.
     // In production without an API key, return a deterministic stub that matches the Booking.com API schema.
     return [
       {

@@ -4,7 +4,7 @@
  * Provides:
  * - Workspace templates (Sales, HR, Healthcare, Engineering, Legal, Finance)
  * - Active workspace modules
- * - AI workspace builder via natural language
+ * - SI workspace builder via natural language
  * - Task summary from GlobalIntentProvider
  * - Upcoming calendar events from OSScheduler
  */
@@ -147,7 +147,7 @@ export const WorkspaceOSPanel: React.FC<WorkspaceOSPanelProps> = ({
  view === v ? 'bg-white/10 text-white/80' : 'text-white/25 hover:text-white/50'
  )}
  >
- {v === 'builder' ? 'AI Build' : 'Templates'}
+ {v === 'builder' ? 'SI Build' : 'Templates'}
  </button>
  ))}
  </div>
@@ -157,13 +157,13 @@ export const WorkspaceOSPanel: React.FC<WorkspaceOSPanelProps> = ({
  <ScrollArea className="flex-1">
  <div className="p-3 space-y-3">
 
- {/* AI BUILDER */}
+ {/* SI BUILDER */}
  {view === 'builder' && (
  <>
  <div className="p-3 rounded-xl bg-orange-500/[0.07] border border-orange-500/20">
  <div className="flex items-center gap-2 mb-2">
  <Sparkles className="w-3.5 h-3.5 text-orange-400" />
- <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">AI Workspace Builder</span>
+ <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">SI Workspace Builder</span>
  </div>
  <p className="text-[10px] text-white/50 mb-2">Describe your workflow and I'll set it up</p>
  <textarea
@@ -186,7 +186,7 @@ export const WorkspaceOSPanel: React.FC<WorkspaceOSPanelProps> = ({
  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06]">
  <div className="flex items-center gap-2 mb-2">
  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
- <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">AI Plan Ready</span>
+ <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">SI Plan Ready</span>
  </div>
  <p className="text-[11px] text-white/60 leading-relaxed">{aiPlan}</p>
  <button

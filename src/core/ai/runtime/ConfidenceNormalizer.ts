@@ -3,7 +3,7 @@ import { IAIProviderResponse } from './RuntimeInterfaces';
 export class ConfidenceNormalizer {
   
   /**
-   * Ensures every AI response adheres to the strict Enterprise format,
+   * Ensures every SI response adheres to the strict Enterprise format,
    * injecting defaults for models that don't output confidence or reasoning natively.
    */
   static normalize<T>(rawPayload: any, metadata: { modelUsed: string, latencyMs: number }): IAIProviderResponse<T> {

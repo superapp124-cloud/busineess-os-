@@ -251,7 +251,7 @@
     "hasTodo": false,
     "hasZustand": false,
     "hasContext": false,
-    "aiStatus": "Partial AI",
+    "aiStatus": "Partial SI",
     "backendStatus": "Backend Connected",
     "workingPercent": 70
   },
@@ -651,7 +651,7 @@
     "hasTodo": false,
     "hasZustand": false,
     "hasContext": false,
-    "aiStatus": "Partial AI",
+    "aiStatus": "Partial SI",
     "backendStatus": "Partially Connected",
     "workingPercent": 30
   },

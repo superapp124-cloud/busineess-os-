@@ -31,7 +31,7 @@ export const KnowledgeBrainPanel: React.FC<KnowledgeBrainPanelProps> = ({ onNode
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-            <span className="text-[11px] font-black uppercase tracking-wider text-white">AI Reasoning Engine</span>
+            <span className="text-[11px] font-black uppercase tracking-wider text-white">SI Reasoning Engine</span>
           </div>
           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active</span>
         </div>
@@ -42,7 +42,7 @@ export const KnowledgeBrainPanel: React.FC<KnowledgeBrainPanelProps> = ({ onNode
           <input
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search AI memory & reasoning..."
+            placeholder="Search SI memory & reasoning..."
             className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-7 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
           />
         </div>
@@ -78,11 +78,11 @@ export const KnowledgeBrainPanel: React.FC<KnowledgeBrainPanelProps> = ({ onNode
             </div>
           </div>
 
-          {/* AI Observations Panel */}
+          {/* SI Observations Panel */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1">
-                <Lightbulb className="w-3 h-3 text-purple-400" /> AI Observations
+                <Lightbulb className="w-3 h-3 text-purple-400" /> SI Observations
               </span>
               <span className="text-[9px] text-purple-400 font-mono">Live Sync</span>
             </div>

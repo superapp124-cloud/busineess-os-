@@ -8,19 +8,19 @@ If an implementation violates these laws, it is not a valid CHATR OS Kernel.
 
 ## Part 1: The 11 Kernel Laws
 
-These laws are absolute invariants. They govern all state, execution, and AI reasoning within the platform.
+These laws are absolute invariants. They govern all state, execution, and SI reasoning within the platform.
 
 1. **Law 1: Everything Has Identity.** Every Actor, Living Object, Process, Policy, Knowledge node, and Goal must possess a globally unique identifier (UUID/URN) and a distinct type.
-2. **Law 2: Nothing becomes true inside the Enterprise Kernel without an Event.** Drafts, simulations, and AI hypotheses can exist, but they do not become enterprise truth until committed via an immutable `Event`.
+2. **Law 2: Nothing becomes true inside the Enterprise Kernel without an Event.** Drafts, simulations, and SI hypotheses can exist, but they do not become enterprise truth until committed via an immutable `Event`.
 3. **Law 3: Everything Has History.** Because of Law 2, the complete lifecycle and state evolution of every primitive can be perfectly reconstructed at any point in time.
 4. **Law 4: Everything Can Be Related.** Any two primitives can be connected via a typed `Relationship`. The Enterprise Graph is universal; there are no isolated tables.
-5. **Law 5: AI Never Owns Truth.** The Intelligence Engine cannot assert facts, evaluate permissions, or store data. It strictly acts as a reasoning, generation, and explanation layer over Kernel-provided determinism.
+5. **Law 5: SI Never Owns Truth.** The Intelligence Engine cannot assert facts, evaluate permissions, or store data. It strictly acts as a reasoning, generation, and explanation layer over Kernel-provided determinism.
 6. **Law 6: Truth Is Deterministic.** Questions concerning state, metrics, and relationships must be answered via the Knowledge/Object graph, not via probabilistic LLM generation.
-7. **Law 7: Knowledge May Be Uncertain.** Unstructured `Knowledge` (documents, notes, AI summaries) is probabilistic. The Kernel isolates this uncertainty from deterministic `Living Objects` and `Events`. The AI reasons over both, but only deterministic truth changes enterprise state.
+7. **Law 7: Knowledge May Be Uncertain.** Unstructured `Knowledge` (documents, notes, SI summaries) is probabilistic. The Kernel isolates this uncertainty from deterministic `Living Objects` and `Events`. The SI reasons over both, but only deterministic truth changes enterprise state.
 8. **Law 8: Views Never Own Data.** Dashboards, forms, and reports are read-only projections. They cannot contain business logic or intrinsic state.
 9. **Law 9: Business Logic Never Belongs in UI.** All execution paths, workflows, and policies must be defined in the `Process Engine` or `Policy Engine`, capable of running headlessly.
 10. **Law 10: Metadata Is Executable.** The Enterprise Definition Language (EDL) is not just configuration; it is the exact code that the Universal Runtime executes.
-11. **Law 11: Everything Is Explainable.** Every state, recommendation, permission decision, workflow execution, and AI response must be traceable back to deterministic evidence. The Kernel never produces an answer that cannot be explained via its causal chain.
+11. **Law 11: Everything Is Explainable.** Every state, recommendation, permission decision, workflow execution, and SI response must be traceable back to deterministic evidence. The Kernel never produces an answer that cannot be explained via its causal chain.
 
 ---
 
@@ -29,7 +29,7 @@ These laws are absolute invariants. They govern all state, execution, and AI rea
 Any engine managing a Core Primitive MUST guarantee the following capabilities:
 
 ### 1. Universal Observability & Addressability
-- **Addressability:** Everything must have a canonical address (e.g., `urn:chatr:actor:employee:123`, `urn:chatr:policy:expense-limit`) allowing universal referencing by APIs, deep links, and AI.
+- **Addressability:** Everything must have a canonical address (e.g., `urn:chatr:actor:employee:123`, `urn:chatr:policy:expense-limit`) allowing universal referencing by APIs, deep links, and SI.
 - **Observability:** Every primitive must expose its `Current State`, `Health`, `Version`, `Last Updated`, and `Event Position`.
 
 ### 2. Living Objects & Actors (The Nodes)

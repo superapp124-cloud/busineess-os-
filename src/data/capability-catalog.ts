@@ -92,7 +92,7 @@ const CATALOG: ICapabilityManifest[] = [
   },
   {
     id: 'Executive.OKRGoals', name: 'OKR & Goals',
-    description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and AI-powered outcome predictions.',
+    description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and SI-powered outcome predictions.',
     department: 'Executive Office', category: 'Executive & Strategy', version: '1.8.0', maturity: 'L5', icon: '🎯', rating: 4.8, installs: 19400,
     verbs: ['set', 'align', 'track', 'check-in', 'grade'], nouns: ['okr', 'objective', 'key result', 'initiative'],
     permissions: ['executive.okr.create', 'executive.okr.read'], eventsProduced: ['OKRCreated', 'CheckInLogged', 'GoalAchieved'],
@@ -101,7 +101,7 @@ const CATALOG: ICapabilityManifest[] = [
       { key: 'okr_cycle', label: 'OKR Cycle', type: 'select', defaultValue: 'Quarterly', options: ['Monthly', 'Quarterly', 'Annually'], group: 'Schedule' },
       { key: 'grading_scale', label: 'Grading Scale', type: 'select', defaultValue: '0-1.0', options: ['0-1.0', '0-100%', 'RAG', 'Stars'], group: 'Scoring' },
       { key: 'cascade_levels', label: 'Cascade Levels', type: 'number', defaultValue: 3, group: 'Hierarchy' },
-      { key: 'ai_predictions', label: 'AI Outcome Predictions', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'ai_predictions', label: 'SI Outcome Predictions', type: 'boolean', defaultValue: true, group: 'SI' },
       { key: 'checkin_frequency', label: 'Check-in Frequency', type: 'select', defaultValue: 'Weekly', options: ['Daily', 'Weekly', 'Bi-weekly'], group: 'Cadence' },
     ],
     objectSchemas: [
@@ -220,7 +220,7 @@ const CATALOG: ICapabilityManifest[] = [
   // ─── CRM & SALES ────────────────────────────────────────────────────────────
   {
     id: 'CRM.LeadManagement', name: 'Lead Management',
-    description: 'Capture, score, and qualify leads from all channels with AI lead scoring, routing rules, and conversion analytics.',
+    description: 'Capture, score, and qualify leads from all channels with SI lead scoring, routing rules, and conversion analytics.',
     department: 'Sales', category: 'CRM & Sales', version: '2.4.0', maturity: 'L5', icon: '🎣', rating: 4.8, installs: 24600,
     verbs: ['capture', 'score', 'qualify', 'assign'], nouns: ['lead', 'prospect', 'score', 'source'],
     permissions: ['crm.leads.create', 'crm.leads.read'], eventsProduced: ['LeadCreated', 'LeadQualified'],
@@ -379,7 +379,7 @@ const CATALOG: ICapabilityManifest[] = [
     tags: ['ats', 'recruitment', 'hiring', 'candidates'],
     configSchema: [
       { key: 'careers_page_url', label: 'Careers Page URL', type: 'url', defaultValue: '', group: 'Branding' },
-      { key: 'auto_screen_resumes', label: 'AI Resume Screening', type: 'boolean', defaultValue: true, group: 'AI' },
+      { key: 'auto_screen_resumes', label: 'SI Resume Screening', type: 'boolean', defaultValue: true, group: 'SI' },
     ],
     objectSchemas: [
       {
@@ -713,7 +713,7 @@ const CATALOG: ICapabilityManifest[] = [
   },
   {
     id: 'Support.KnowledgeBase', name: 'Knowledge Base',
-    description: 'Self-service knowledge base with AI-powered search, article analytics, and agent-assist recommendations.',
+    description: 'Self-service knowledge base with SI-powered search, article analytics, and agent-assist recommendations.',
     department: 'Customer Support', category: 'Customer Support', version: '1.6.0', maturity: 'L4', icon: '📚', rating: 4.6, installs: 18200,
     verbs: ['write', 'publish', 'search', 'analyze'], nouns: ['article', 'category', 'search', 'feedback'],
     permissions: ['support.kb.publish'], eventsProduced: ['ArticlePublished', 'ArticleSearched'],
@@ -766,11 +766,11 @@ const CATALOG: ICapabilityManifest[] = [
     ]
   },
 
-  // ─── AI & AUTOMATION ────────────────────────────────────────────────────────
+  // ─── SI & AUTOMATION ────────────────────────────────────────────────────────
   {
-    id: 'AI.WorkflowAutomation', name: 'Workflow Automation',
+    id: 'SI.WorkflowAutomation', name: 'Workflow Automation',
     description: 'No-code automation builder with triggers, conditions, and actions across all installed capabilities.',
-    department: 'Enterprise Platform', category: 'AI & Automation', version: '1.5.0', maturity: 'L4', icon: '⚡', rating: 4.8, installs: 19800,
+    department: 'Enterprise Platform', category: 'SI & Automation', version: '1.5.0', maturity: 'L4', icon: '⚡', rating: 4.8, installs: 19800,
     verbs: ['trigger', 'condition', 'action', 'automate'], nouns: ['workflow', 'trigger', 'automation', 'action'],
     permissions: ['platform.automations.manage'], eventsProduced: ['AutomationTriggered', 'AutomationCompleted'],
     tags: ['automation', 'workflow', 'no-code', 'triggers'],
@@ -778,9 +778,9 @@ const CATALOG: ICapabilityManifest[] = [
     objectSchemas: []
   },
   {
-    id: 'AI.IntentEngine', name: 'Intent Engine',
+    id: 'SI.IntentEngine', name: 'Intent Engine',
     description: 'Natural language understanding engine that powers CHATR\'s universal command bar and intent resolution.',
-    department: 'Enterprise Platform', category: 'AI & Automation', version: '3.0.0', maturity: 'L5', icon: '🧠', rating: 4.9, installs: 42100,
+    department: 'Enterprise Platform', category: 'SI & Automation', version: '3.0.0', maturity: 'L5', icon: '🧠', rating: 4.9, installs: 42100,
     verbs: ['resolve', 'classify', 'route', 'learn'], nouns: ['intent', 'entity', 'confidence', 'action'],
     permissions: ['platform.intent.read'], eventsProduced: ['IntentResolved'],
     tags: ['ai', 'nlp', 'intent', 'kernel'],

@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * CHATR Kernel - AI Runtime
- * The Immutable Execution Pipeline for all AI operations.
+ * CHATR Kernel - SI Runtime
+ * The Immutable Execution Pipeline for all SI operations.
  * 
  * Pipeline: Capability -> Policy -> Recommendation -> Selection -> Provider -> Model
  */
@@ -19,7 +19,7 @@ class AIRuntime {
   }
 
   /**
-   * Execute an AI Request.
+   * Execute an SI Request.
    * @param {object} request AIRequest { capability, prompt, context, privacy, ... }
    */
   async execute(request) {
@@ -34,7 +34,7 @@ class AIRuntime {
 
     if (!selection.winner) {
       bus.publish('AI_POLICY_BLOCKED', { request, error: selection.error });
-      throw new Error(`AI Request blocked or failed: ${selection.error}`);
+      throw new Error(`SI Request blocked or failed: ${selection.error}`);
     }
 
     const winner = selection.winner;

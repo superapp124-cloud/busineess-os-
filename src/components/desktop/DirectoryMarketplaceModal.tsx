@@ -17,7 +17,7 @@ import { PermissionManager } from '@/core/connector/permissions';
 import type { ConnectorDefinition } from '@/core/connector/types';
 
 type PillarType = 'connectors' | 'agents' | 'apps' | 'automations' | 'knowledge';
-type CategoryFilter = 'All' | 'Communication' | 'Professional' | 'Social' | 'Cloud Storage' | 'Business' | 'Developer' | 'Finance' | 'AI' | 'Health' | 'Education';
+type CategoryFilter = 'All' | 'Communication' | 'Professional' | 'Social' | 'Cloud Storage' | 'Business' | 'Developer' | 'Finance' | 'SI' | 'Health' | 'Education';
 
 export interface MarketplaceItem {
   id: string;
@@ -62,12 +62,12 @@ const DYNAMIC_CONNECTOR_ITEMS: MarketplaceItem[] = CONNECTOR_CATALOG.map((c) => 
 });
 
 const STATIC_NON_CONNECTOR_ITEMS: MarketplaceItem[] = [
-  // 🤖 AI AGENTS
+  // 🤖 SI AGENTS
   {
     id: 'agent-recruiter',
     pillar: 'agents',
-    name: 'AI Candidate Sourcing Agent',
-    category: 'AI',
+    name: 'SI Candidate Sourcing Agent',
+    category: 'SI',
     rating: 4.95,
     reviewsCount: 3200,
     iconBg: '#8B5CF6',
@@ -82,7 +82,7 @@ const STATIC_NON_CONNECTOR_ITEMS: MarketplaceItem[] = [
     id: 'agent-sales',
     pillar: 'agents',
     name: 'Sales Intelligence Copilot',
-    category: 'AI',
+    category: 'SI',
     rating: 4.85,
     reviewsCount: 2100,
     iconBg: '#F59E0B',
@@ -317,7 +317,7 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
                   100+ Live Connectors
                 </span>
               </h1>
-              <p className="text-xs text-zinc-400">Discover connectors, AI agents, mini apps, automations, and knowledge packs.</p>
+              <p className="text-xs text-zinc-400">Discover connectors, SI agents, mini apps, automations, and knowledge packs.</p>
             </div>
           </div>
 
@@ -381,7 +381,7 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
               active={activePillar === 'agents'} 
               onClick={() => setActivePillar('agents')} 
               icon={<Brain size={18} className="text-violet-400" />} 
-              label="🤖 AI Agents" 
+              label="🤖 SI Agents" 
               subtitle="Recruiter, Sales, Finance" 
             />
             <PillarNavItem 
@@ -403,7 +403,7 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
               onClick={() => setActivePillar('knowledge')} 
               icon={<BookOpen size={18} className="text-teal-400" />} 
               label="📚 Knowledge Packs" 
-              subtitle="HIPAA, Tax, Legal AI" 
+              subtitle="HIPAA, Tax, Legal SI" 
             />
 
             <div className="pt-6 px-3 space-y-2">
@@ -436,7 +436,7 @@ export const DirectoryMarketplaceModal: React.FC<Props> = ({ isOpen, onClose, on
 
               {/* Category Filters */}
               <div className="flex items-center gap-1 overflow-x-auto pb-1 max-w-full text-xs">
-                {(['All', 'Communication', 'Professional', 'Social', 'Cloud Storage', 'Business', 'Developer', 'Finance', 'AI', 'Health'] as CategoryFilter[]).map(cat => (
+                {(['All', 'Communication', 'Professional', 'Social', 'Cloud Storage', 'Business', 'Developer', 'Finance', 'SI', 'Health'] as CategoryFilter[]).map(cat => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}

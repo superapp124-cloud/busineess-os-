@@ -32,13 +32,13 @@ Everything in CHATR reduces to these six concepts. Nothing else is fundamental.
 2. **Suggestions before automation:** Trust is earned. Never surprise users.
 3. **One Tap Rule:** The most common action should require one confirmation.
 4. **Progressive Intelligence:** The system becomes more certain over time. Never suddenly "acts smart."
-5. **Silent Intelligence:** No AI branding. No typing animations. No "thinking..." Only completed work.
+5. **Silent Intelligence:** No SI branding. No typing animations. No "thinking..." Only completed work.
 
 ## Six Engineering Non-Negotiables
 1. **Privacy:** User data belongs to the user.
 2. **Local First:** Everything possible runs locally.
 3. **Offline First:** The product should degrade gracefully without internet.
-4. **Deterministic First:** Rules before AI. Resolvers before LLM. LLM only when necessary.
+4. **Deterministic First:** Rules before SI. Resolvers before LLM. LLM only when necessary.
 5. **Observable:** Every commitment can be replayed.
 6. **Reversible:** Every destructive action supports undo whenever feasible.
 
@@ -56,12 +56,12 @@ Everything in CHATR reduces to these six concepts. Nothing else is fundamental.
 `Human` → `Conversation` → `Understanding Service` → `Intent` → `Commitment Planner` → `Commitment` → `Commitment Runtime` → `Capability` → `Provider` → `Reality Engine` → `Learning Engine`
 
 ### The Commitment Planner
-The Planner is not an AI. It is a deterministic routing service that decides:
+The Planner is not an SI. It is a deterministic routing service that decides:
 - Which capability? Which provider? Is confirmation required? Can this execute offline?
 
 ### The Understanding Service
 Understanding is an OS service, not an LLM. It must be layered to preserve privacy and speed:
-`Conversation` → `Deterministic Rules` → `Knowledge Resolver` → `Time Resolver` → `Contact Resolver` → `Semantic Resolver` → `AI Provider (only if required)` → `Intent`
+`Conversation` → `Deterministic Rules` → `Knowledge Resolver` → `Time Resolver` → `Contact Resolver` → `Semantic Resolver` → `SI Provider (only if required)` → `Intent`
 
 ## Universal Commitment Lifecycle
 No exceptions.

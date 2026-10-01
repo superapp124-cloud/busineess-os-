@@ -20,7 +20,7 @@ if (startIndex !== -1 && endIndex !== -1) {
                         Disappearing Messages
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setShowAIFeatures(true)}>
-                        AI features
+                        SI features
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

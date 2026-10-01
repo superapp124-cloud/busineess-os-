@@ -28,7 +28,7 @@ interface Props {
 
 const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome }) => {
   const [messages, setMessages] = useState([
-    { id: '1', sender: 'ai', text: 'Hello! I am your CHATR AI Assistant. How can I help you summarize a document, draft an email, or automate a task today?' }
+    { id: '1', sender: 'ai', text: 'Hello! I am your CHATR SI Assistant. How can I help you summarize a document, draft an email, or automate a task today?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -42,7 +42,7 @@ const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome 
     setIsTyping(true);
 
     setTimeout(() => {
-      let aiText = "I'm analyzing your request. CHATR AI Document Intelligence can extract key clauses, verify invoice data against ERP, or generate automated summary reports for your files.";
+      let aiText = "I'm analyzing your request. CHATR SI Document Intelligence can extract key clauses, verify invoice data against ERP, or generate automated summary reports for your files.";
       const q = query.toLowerCase();
       if (q.includes('summary') || q.includes('document') || q.includes('charles')) {
         aiText = "Based on CHARLES HOPKINS.docx: This candidate is a Senior Platform Engineer with 8.3 years of experience. ATS Score is 92/100 (Exceeds L5 Hiring Threshold). Compensation expectation is within approved band.";
@@ -71,13 +71,13 @@ const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome 
           <div className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-indigo-600" />
             <div>
-              <h2 className="text-sm font-bold text-slate-900">CHATR AI Assistant</h2>
+              <h2 className="text-sm font-bold text-slate-900">CHATR SI Assistant</h2>
               <p className="text-[11px] text-slate-500">Ask questions about your documents, tasks, or workflows</p>
             </div>
           </div>
         </div>
         <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> AI Active
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> SI Active
         </span>
       </div>
 
@@ -97,7 +97,7 @@ const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome 
           <div className="flex justify-start">
             <div className="bg-white border border-slate-200 p-3 rounded-2xl text-xs text-slate-400 flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
-              <span>CHATR AI is thinking...</span>
+              <span>CHATR SI is working...</span>
             </div>
           </div>
         )}
@@ -109,7 +109,7 @@ const AIChatWorkspace: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome 
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
-          placeholder="Ask AI anything about your files, tasks, or contracts..."
+          placeholder="Ask SI anything about your files, tasks, or contracts..."
           className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
         />
         <button
@@ -325,7 +325,7 @@ export const DomainWorkspaceRouter: React.FC<Props> = ({
     );
   }
 
-  // 2. Interactive AI Chat & Conversations (`chat`)
+  // 2. Interactive SI Chat & Conversations (`chat`)
   if (activeDomain === 'chat') {
     return <AIChatWorkspace onBackToHome={() => onNavigate('home')} />;
   }
@@ -345,7 +345,7 @@ export const DomainWorkspaceRouter: React.FC<Props> = ({
     return <EnterpriseEvaluationDashboard />;
   }
 
-  // 6. CHATR Universal Business Runtime & AI Agents Hub (`agents` or `ai`)
+  // 6. CHATR Universal Business Runtime & SI Agents Hub (`agents` or `ai`)
   if (activeDomain === 'agents' || activeDomain === 'ai') {
     return <AIAgentsHub />;
   }

@@ -14,8 +14,8 @@ export class GrowthCapability implements Capability<GrowthContentInput, { conten
   public manifest: CapabilityManifest = {
     id: 'capability-growth-content',
     version: '1.0.0',
-    name: 'Growth OS AI Content Engine Capability',
-    description: 'Generates marketing campaigns, LinkedIn posts, job ads, and SEO keywords via OpenRouter AI',
+    name: 'Growth OS SI Content Engine Capability',
+    description: 'Generates marketing campaigns, LinkedIn posts, job ads, and SEO keywords via OpenRouter SI',
     maturityLevel: 'L5',
     inputSchema: {},
     outputSchema: {},
@@ -34,7 +34,7 @@ export class GrowthCapability implements Capability<GrowthContentInput, { conten
     ctx: ExecutionContext,
     input: GrowthContentInput
   ): Promise<ExecutionResult<{ content: string; keywords: string[]; estimatedReach: number }>> {
-    console.log(`[GrowthCapability] Generating AI Content for topic '${input.topic}' (Type: ${input.contentType})`);
+    console.log(`[GrowthCapability] Generating SI Content for topic '${input.topic}' (Type: ${input.contentType})`);
 
     const adapter = new OpenRouterProviderAdapter();
     const aiResult = await AIExecutor.execute(ctx, adapter, {
@@ -42,7 +42,7 @@ export class GrowthCapability implements Capability<GrowthContentInput, { conten
       prompt: `Generate a high-converting ${input.contentType} for ${input.topic} targeting ${input.targetAudience || 'tech leaders'}`,
     });
 
-    const generatedContent = `🚀 Exciting Hiring Update: ${input.topic}!\n\nWe are expanding our engineering team in Bangalore. Looking for senior Java & AI engineers.\n\nApply now via CHATR Recruitment OS. #Hiring #TechJobs #CHATR`;
+    const generatedContent = `🚀 Exciting Hiring Update: ${input.topic}!\n\nWe are expanding our engineering team in Bangalore. Looking for senior Java & SI engineers.\n\nApply now via CHATR Recruitment OS. #Hiring #TechJobs #CHATR`;
 
     return {
       executionId: ctx.executionId,
@@ -53,7 +53,7 @@ export class GrowthCapability implements Capability<GrowthContentInput, { conten
         estimatedReach: 2450,
       },
       diagnostics: [
-        { severity: 'info', message: `Growth content generated via OpenRouter AI (${adapter.name})` },
+        { severity: 'info', message: `Growth content generated via OpenRouter SI (${adapter.name})` },
       ],
       metrics: {
         durationMs: aiResult.metrics.durationMs + 3,

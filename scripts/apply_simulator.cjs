@@ -24,7 +24,7 @@ export default function ProUpgrade() {
 
   const features = [
     {
-      title: 'Proactive AI Agent',
+      title: 'Proactive SI Agent',
       description: 'Your autonomous assistant that reads PDFs, drafts proposals, and prepares email replies in the background.',
       icon: <BrainCircuit className="w-6 h-6 text-purple-500" />,
       color: isDark ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-100 border-purple-200'

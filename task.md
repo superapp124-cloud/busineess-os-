@@ -2,7 +2,7 @@
 
 - [x] Transform "Calls" to "Sessions" in UI (DesktopLayout)
 - [x] Create Premium Sessions Dashboard (`DesktopCalls.tsx`) with 8 Goal cards
-- [x] Build AI Workspace Panels (`SessionWorkspace.tsx`) with interactive tabs (Sales, Recruitment, Clinic, General)
+- [x] Build SI Workspace Panels (`SessionWorkspace.tsx`) with interactive tabs (Sales, Recruitment, Clinic, General)
 - [x] Stage 1.3: Realtime UI binding (Event ordering guaranteed by CQRS)
 - [x] Stage 1.4: End-to-End Execution Traces (Intent -> Capability -> Provider -> Event)
 - [x] Stage 1.5: Provider Upgrades (Live testbed APIs instead of mocks)

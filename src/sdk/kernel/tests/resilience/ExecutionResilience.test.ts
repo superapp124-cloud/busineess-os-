@@ -4,7 +4,7 @@ import { IWorkflowState } from '../../execution/WorkflowState';
 /**
  * Platform Validation: Execution Resilience Scenarios
  * These scenarios validate the engine's ability to handle edge cases, 
- * timeouts, and invalid AI-generated models without catastrophic failure.
+ * timeouts, and invalid SI-generated models without catastrophic failure.
  */
 
 describe('Execution Resilience Tests', () => {
@@ -49,7 +49,7 @@ describe('Execution Resilience Tests', () => {
 
   it('Scenario F: Planner generates invalid IEM', async () => {
     /**
-     * AI Planner spits out an invalid Intent Execution Model graph.
+     * SI Planner spits out an invalid Intent Execution Model graph.
      * Engine validation layer catches it before execution.
      * State is marked 'Rejected'.
      * Planner is notified via EventMesh.

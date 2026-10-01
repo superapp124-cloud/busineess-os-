@@ -90,13 +90,13 @@ export const LensDetailsModal: React.FC<LensDetailsModalProps> = ({ lensType, on
         };
       case 'Automation':
         return {
-          title: 'Automation & AI Substrate Lens',
+          title: 'Automation & SI Substrate Lens',
           badge: '🤖 Automated Runtimes',
           icon: <Zap className="w-6 h-6 text-cyan-400" />,
           summary: 'Autonomous Agents, Execution Runtimes, & Triggers',
           nodes: [
             { name: 'Active Automation Substrate', status: '142 Running', impact: 'Sub-ms Execution' },
-            { name: 'AI Decision Copilot Engine', status: 'ACTIVE', impact: '94% Precision' },
+            { name: 'SI Decision Copilot Engine', status: 'ACTIVE', impact: '94% Precision' },
             { name: 'Autonomous Task Scheduler', status: 'HEALTHY', impact: 'Zero Interruption' }
           ]
         };

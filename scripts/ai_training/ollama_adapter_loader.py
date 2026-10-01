@@ -1,5 +1,5 @@
 """
-CHATR AI Training Infrastructure
+CHATR SI Training Infrastructure
 scripts/ai_training/ollama_adapter_loader.py
 
 Bridges Soup-trained model artifacts (GGUF or GGUF LoRA adapters) with Ollama Modelfiles.
@@ -36,7 +36,7 @@ DEFAULT_BASE_MODEL = "qwen2.5:7b-instruct"
 # Canonical CHATR capability system prompts
 CAPABILITY_SYSTEM_PROMPTS = {
     "general": (
-        "You are the CHATR AI assistant. CHATR is an Intent-First Business Operating System "
+        "You are the CHATR SI Assistant. CHATR is an Intent-First Business Operating System "
         "that translates natural language goals into autonomous multi-app executions. "
         "You are the Universal Communication Platform for modern enterprises. "
         "You understand CHATR's Intent OS architecture, Execution Definition Language (EDL), "

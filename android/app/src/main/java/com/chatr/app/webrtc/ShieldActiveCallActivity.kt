@@ -1,7 +1,13 @@
 package com.chatr.app.webrtc
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
+import android.telecom.CallAudioState
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,6 +19,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.chatr.app.R
 import com.chatr.app.services.ChatrConnectionService
+import com.chatr.app.services.ChatrInCallService
 import com.chatr.app.services.ChatrVoipCallRegistry
 import android.media.AudioManager
 import android.os.SystemClock
@@ -43,6 +50,10 @@ class ShieldActiveCallActivity : AppCompatActivity(),
     ShieldMoreBottomSheet.MoreSheetListener,
     ShieldSettingsBottomSheet.SettingsSheetListener {
 
+    companion object {
+        private const val TAG = "ShieldActiveCallActivity"
+    }
+
     private lateinit var webrtcClient: NativeWebRTCClient
     private lateinit var signalingClient: NativeSignalingClient
 
@@ -50,6 +61,20 @@ class ShieldActiveCallActivity : AppCompatActivity(),
     private var isSpeakerOn = true
     private var isVideoOn = false
     private var callId: String = ""
+
+    private val isGsmCall: Boolean
+        get() = intent.getStringExtra("call_type") == "gsm"
+
+    private val gsmCallReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.getStringExtra("action")
+            val state = intent?.getStringExtra("state")
+            if (action == "end" || state == "DISCONNECTED") {
+                Log.i(TAG, "GSM call disconnected, ending active call screen")
+                finish()
+            }
+        }
+    }
 
     private var durationChronometer: Chronometer? = null
     
@@ -76,10 +101,25 @@ class ShieldActiveCallActivity : AppCompatActivity(),
         setupVideoViews()
         setupAutoHide()
 
-        initWebRTC()
-        
-        if (intent.getStringExtra("call_type") == "video") {
-            toggleVideo()
+        if (isGsmCall) {
+            val filter = IntentFilter().apply {
+                addAction("com.chatr.app.CALL_ACTION")
+                addAction("com.chatr.app.GSM_CALL_EVENT")
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(gsmCallReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                @Suppress("DEPRECATION")
+                registerReceiver(gsmCallReceiver, filter)
+            }
+            findViewById<View>(R.id.btnVideo)?.visibility = View.GONE
+            findViewById<View>(R.id.btnFlipCamera)?.visibility = View.GONE
+            localVideoView?.visibility = View.GONE
+        } else {
+            initWebRTC()
+            if (intent.getStringExtra("call_type") == "video") {
+                toggleVideo()
+            }
         }
     }
 
@@ -485,7 +525,11 @@ class ShieldActiveCallActivity : AppCompatActivity(),
 
     private fun toggleMute() {
         isMuted = !isMuted
-        webrtcClient.toggleAudio(!isMuted)
+        if (isGsmCall) {
+            ChatrInCallService.setMuted(isMuted)
+        } else {
+            webrtcClient.toggleAudio(!isMuted)
+        }
         val btnMute = findViewById<View>(R.id.btnMute)
         val frameLayout = (btnMute as ViewGroup).getChildAt(0) as FrameLayout
         frameLayout.backgroundTintList = getColorStateList(if (isMuted) R.color.shield_text_primary else R.color.shield_glass_bg)
@@ -494,6 +538,7 @@ class ShieldActiveCallActivity : AppCompatActivity(),
     }
 
     private fun toggleVideo() {
+        if (isGsmCall) return
         isVideoOn = !isVideoOn
         webrtcClient.toggleVideo(isVideoOn)
         
@@ -522,8 +567,13 @@ class ShieldActiveCallActivity : AppCompatActivity(),
 
     private fun toggleSpeaker() {
         isSpeakerOn = !isSpeakerOn
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
-        audioManager.isSpeakerphoneOn = isSpeakerOn
+        if (isGsmCall) {
+            val route = if (isSpeakerOn) CallAudioState.ROUTE_SPEAKER else CallAudioState.ROUTE_EARPIECE
+            ChatrInCallService.setAudioRoute(route)
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            audioManager.isSpeakerphoneOn = isSpeakerOn
+        }
         
         val btnSpeaker = findViewById<View>(R.id.btnSpeaker)
         val frameLayout = (btnSpeaker as ViewGroup).getChildAt(0) as FrameLayout
@@ -686,7 +736,13 @@ class ShieldActiveCallActivity : AppCompatActivity(),
                 layoutParams = p
                 setOnClickListener {
                     dtmfDisplay.append(key)
-                    webrtcClient.sendDtmf(key)
+                    if (isGsmCall) {
+                        if (key.isNotEmpty()) {
+                            ChatrInCallService.playDtmfTone(key[0])
+                        }
+                    } else {
+                        webrtcClient.sendDtmf(key)
+                    }
                 }
             }
             grid.addView(btn)
@@ -710,6 +766,11 @@ class ShieldActiveCallActivity : AppCompatActivity(),
     }
 
     private fun endCall() {
+        if (isGsmCall) {
+            ChatrInCallService.disconnectCall()
+            finish()
+            return
+        }
         ChatrConnectionService.getConnection(callId)?.endCall()
         webrtcClient.endCall()
         localVideoView?.release()
@@ -722,6 +783,9 @@ class ShieldActiveCallActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        if (isGsmCall) {
+            try { unregisterReceiver(gsmCallReceiver) } catch (_: Exception) {}
+        }
         try {
             localVideoView?.release()
             remoteVideoViews.values.forEach { it.release() }

@@ -59,7 +59,7 @@ export const SpatialSafetyPanel: React.FC<SpatialSafetyPanelProps> = ({
             STATE: {masterSafetyState}
           </span>
         </div>
-        <span className="text-[10px] font-mono text-emerald-400">DETERMINISTIC GATING (BELOW AI LAYER)</span>
+        <span className="text-[10px] font-mono text-emerald-400">DETERMINISTIC GATING (BELOW SI LAYER)</span>
       </div>
 
       <div className="grid grid-cols-4 gap-2">

@@ -18,7 +18,7 @@ test.describe('CHATR Desktop App Platform — E2E Workflow Verification', () => 
     await page.goto('http://localhost:8086/#/desktop/recruitment');
 
     // Verify TOS header
-    await expect(page.locator('h1', { hasText: 'CHATR AI Talent Operating System' })).toBeVisible();
+    await expect(page.locator('h1', { hasText: 'CHATR SI Talent Operating System' })).toBeVisible();
 
     // Verify Kanban stage columns exist
     await expect(page.locator('text=Applied')).toBeVisible();

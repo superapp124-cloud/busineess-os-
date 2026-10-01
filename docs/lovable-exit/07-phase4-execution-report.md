@@ -80,7 +80,7 @@ To switch application runtimes to `nuuuqazaoaozgblmvkzn`:
      VITE_SUPABASE_ANON_KEY=[TARGET_ANON_KEY]
      VITE_SUPABASE_PUBLISHABLE_KEY=[TARGET_ANON_KEY]
      ```
-   - Build client and verify smoke flows (Auth, Realtime, Messaging, AI Router).
+   - Build client and verify smoke flows (Auth, Realtime, Messaging, SI Router).
 
 3. **Update `chatr.chat` (`chatr4661-cell/chatr`):**
    - Apply matching URL and anon key to client config and Android native `strings.xml`.

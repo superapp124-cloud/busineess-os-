@@ -51,7 +51,7 @@ export const MeetingStatusRibbon: React.FC<MeetingStatusRibbonProps> = ({
  },
  {
  icon: Bot,
- label: 'AI Transcript',
+ label: 'SI Transcript',
  value: 'Listening',
  color: 'text-emerald-400',
  bg: 'bg-emerald-500/10',

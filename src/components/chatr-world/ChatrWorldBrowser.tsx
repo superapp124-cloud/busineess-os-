@@ -36,7 +36,7 @@ export function ChatrWorldBrowser() {
 
  if (searchError) throw searchError;
 
- // Then get AI analysis
+ // Then get SI analysis
  const { data: aiData, error: aiError } = await supabase.functions.invoke('chatr-world-ai', {
  body: {
  type: 'summary',
@@ -72,9 +72,9 @@ export function ChatrWorldBrowser() {
  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 mb-4">
  <Globe className="h-8 w-8 text-white" />
  </div>
- <h2 className="text-page font-bold mb-2">Chatr AI Browser</h2>
+ <h2 className="text-page font-bold mb-2">Chatr SI Browser</h2>
  <p className="text-muted-foreground max-w-md mx-auto">
- Browse the web with AI assistance. Ask questions and get intelligent summaries.
+ Browse the web with SI assistance. Ask questions and get intelligent summaries.
  </p>
  </CardContent>
  </Card>
@@ -84,7 +84,7 @@ export function ChatrWorldBrowser() {
  <CardHeader className="border-b py-3">
  <CardTitle className="text-section flex items-center gap-2">
  <Bot className="h-5 w-5 text-primary" />
- AI-Powered Search
+ SI-Powered Search
  </CardTitle>
  </CardHeader>
 
@@ -94,9 +94,9 @@ export function ChatrWorldBrowser() {
  <div className="space-y-4">
  <Sparkles className="h-12 w-12 mx-auto text-muted-foreground/50" />
  <div>
- <p className="font-medium mb-1">Start browsing with AI</p>
+ <p className="font-medium mb-1">Start browsing with SI</p>
  <p className="text-secondary text-muted-foreground">
- Ask anything and get AI-powered answers with sources
+ Ask anything and get SI-powered answers with sources
  </p>
  </div>
  <div className="flex flex-wrap gap-2 justify-center">

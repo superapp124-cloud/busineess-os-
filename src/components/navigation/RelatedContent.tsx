@@ -24,7 +24,7 @@ const RELATED_CONTENT: Record<string, RelatedItem[]> = {
  { title: 'Health Passport', description: 'Your medical records', path: '/health-passport' },
  ],
  '/jobs': [
- { title: 'AI Browser', description: 'Search for more opportunities', path: '/ai-browser' },
+ { title: 'SI Browser', description: 'Search for more opportunities', path: '/ai-browser' },
  { title: 'Chatr Points', description: 'Earn rewards for applications', path: '/points' },
  { title: 'Communities', description: 'Join professional networks', path: '/communities' },
  { title: 'Tutors', description: 'Upskill for better jobs', path: '/tutors' },
@@ -42,10 +42,10 @@ const RELATED_CONTENT: Record<string, RelatedItem[]> = {
  { title: 'Expert Sessions', description: 'Learn from professionals', path: '/expert-sessions' },
  ],
  '/ai-agents': [
- { title: 'AI Assistant', description: 'Your personal AI helper', path: '/ai-assistant' },
- { title: 'AI Browser', description: 'Smart web search', path: '/ai-browser' },
- { title: 'Chatr Games', description: 'AI-powered games', path: '/chatr-games' },
- { title: 'Developer Portal', description: 'Build with AI', path: '/developer-portal' },
+ { title: 'SI Assistant', description: 'Your personal SI helper', path: '/ai-assistant' },
+ { title: 'SI Browser', description: 'Smart web search', path: '/ai-browser' },
+ { title: 'Chatr Games', description: 'SI-powered games', path: '/chatr-games' },
+ { title: 'Developer Portal', description: 'Build with SI', path: '/developer-portal' },
  ],
  '/settings': [
  { title: 'Privacy', description: 'Manage your privacy', path: '/privacy' },
@@ -63,7 +63,7 @@ const RELATED_CONTENT: Record<string, RelatedItem[]> = {
  { title: 'Chatr Points', description: 'Earn while you play', path: '/points' },
  { title: 'Rewards', description: 'Redeem gaming rewards', path: '/rewards' },
  { title: 'Communities', description: 'Join gaming groups', path: '/communities' },
- { title: 'AI Agents', description: 'Challenge AI opponents', path: '/ai-agents' },
+ { title: 'SI Agents', description: 'Challenge SI opponents', path: '/ai-agents' },
  ],
 };
 

@@ -60,7 +60,7 @@ export const CANONICAL_FOUNDER_IDENTITY = {
   linkedinUrl: 'https://www.linkedin.com/in/sanobarjahan12/',
   redditUrl: 'https://www.reddit.com/user/SanobarJahan/',
   facebookUrl: 'https://www.facebook.com/profile.php?id=61592903802484',
-  positioning: 'Founder at CHATR | Business Communication OS | AI, HR & Hiring | 20+ Years in HR, Recruitment & Training',
+  positioning: 'Founder at CHATR | Business Communication OS | SI, HR & Hiring | 20+ Years in HR, Recruitment & Training',
   purpose: 'Primary founder authority/profile for CHATR.'
 };
 
@@ -68,7 +68,7 @@ export const CANONICAL_COMPANY_IDENTITY = {
   brandName: 'CHATR',
   canonicalUrl: 'https://www.chatrchat.in/',
   youtubeUrl: 'https://www.youtube.com/@chatr_chat',
-  positioning: 'Business Communication OS connecting conversations, AI and work.'
+  positioning: 'Business Communication OS connecting conversations, SI and work.'
 };
 
 export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
@@ -83,7 +83,7 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     brand: 'CHATR',
     status: 'ACTIVE',
     purpose: 'Primary founder authority/profile for CHATR.',
-    profile_positioning: 'Founder at CHATR | Business Communication OS | AI, HR & Hiring | 20+ Years in HR, Recruitment & Training',
+    profile_positioning: 'Founder at CHATR | Business Communication OS | SI, HR & Hiring | 20+ Years in HR, Recruitment & Training',
     current_state: 'Active founder profile representing CHATR. Primary founder authority node on LinkedIn.',
     verification_status: 'PUBLIC_URL_CONFIRMED',
     last_verified_at: '2026-08-12',
@@ -99,7 +99,7 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     owner: 'Sanobar Jahan',
     brand: 'CHATR',
     status: 'ACTIVE',
-    purpose: 'Founder-led discussion, entrepreneurship, business communication, AI, HR, recruitment, training and CHATR thought leadership.',
+    purpose: 'Founder-led discussion, entrepreneurship, business communication, SI, HR, recruitment, training and CHATR thought leadership.',
     profile_positioning: 'Founder @ CHATR | Business Communication OS',
     current_state: 'Profile created & customized. Founder photo & banner added. Profile description added. CHATR social links added. Initial genuine contribution/comment published in r/Entrepreneurs.',
     notes: 'Do NOT treat as advertising-only channel. Content must remain human, conversational and community-appropriate.',
@@ -118,7 +118,7 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     brand: 'CHATR',
     status: 'ACTIVE',
     purpose: 'Company social presence, visual discovery, and product highlights.',
-    profile_positioning: 'CHATR — Business Communication OS (WhatsApp + CRM + AI Agents + Hiring)',
+    profile_positioning: 'CHATR — Business Communication OS (WhatsApp + CRM + SI Agents + Hiring)',
     current_state: 'Active company handle. Connected to CHATR brand graph.',
     verification_status: 'PUBLIC_URL_CONFIRMED',
     last_verified_at: '2026-08-12',
@@ -134,8 +134,8 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     owner: 'CHATR',
     brand: 'CHATR',
     status: 'ACTIVE',
-    purpose: 'Company updates, industry commentary, and AI business communication announcements.',
-    profile_positioning: 'CHATR — Business Communication OS connecting conversations, AI and work.',
+    purpose: 'Company updates, industry commentary, and SI business communication announcements.',
+    profile_positioning: 'CHATR — Business Communication OS connecting conversations, SI and work.',
     current_state: 'Active handle representing CHATR on X.',
     verification_status: 'PUBLIC_URL_CONFIRMED',
     last_verified_at: '2026-08-12',
@@ -152,7 +152,7 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     brand: 'CHATR',
     status: 'BLOCKED',
     purpose: 'Official CHATR organizational entity on LinkedIn.',
-    profile_positioning: 'Business Communication OS connecting conversations, AI and work.',
+    profile_positioning: 'Business Communication OS connecting conversations, SI and work.',
     notes: 'LinkedIn currently reports: "You don\'t have enough connections to create a LinkedIn Page." Next step: Build genuine connections on Sanobar Jahan\'s LinkedIn profile and then retry Company Page creation. Do NOT create duplicate founder accounts to bypass.',
     verification_status: 'BLOCKED_CREATION',
     last_verified_at: '2026-08-12',
@@ -218,7 +218,7 @@ export const PUBLIC_ACCOUNT_REGISTRY: PublicAccountEntry[] = [
     brand: 'CHATR',
     status: 'ACTIVE',
     purpose: 'Official CHATR company page on Facebook.',
-    profile_positioning: 'CHATR — Business Communication OS (WhatsApp + CRM + AI Agents + Hiring)',
+    profile_positioning: 'CHATR — Business Communication OS (WhatsApp + CRM + SI Agents + Hiring)',
     current_state: 'Active Facebook Page representing CHATR company entity.',
     verification_status: 'PUBLIC_URL_CONFIRMED',
     last_verified_at: '2026-08-12',

@@ -1,6 +1,6 @@
 ﻿/**
  * CHATR Financial Safety & Hallucination Resistance Evaluator (Phase 7)
- * Tests AI responses against deceptive financial traps and un-approved execution requests.
+ * Tests SI responses against deceptive financial traps and un-approved execution requests.
  */
 
 export interface SafetyEvaluationResult {
@@ -45,7 +45,7 @@ export class FinancialSafetyEvaluator {
    */
   public static evaluateUnauthorizedWriteOffRequest(requestedAmount: number): SafetyEvaluationResult {
     const isBlocked = true; // Always strictly blocked from direct execution
-    const reasoning = `Unauthorized Action Blocked: A bad debt write-off of ₹${requestedAmount.toLocaleString()} is a high-risk accounting transaction. The AI cannot autonomously post write-offs. A formal Bad Debt Write-Off Proposal has been created in the Control Plane and queued for CFO human approval.`;
+    const reasoning = `Unauthorized Action Blocked: A bad debt write-off of ₹${requestedAmount.toLocaleString()} is a high-risk accounting transaction. The SI cannot autonomously post write-offs. A formal Bad Debt Write-Off Proposal has been created in the Control Plane and queued for CFO human approval.`;
 
     return {
       passed: true,

@@ -154,9 +154,9 @@ test('RevenueEngine: generates balanced journal releasing Deferred Revenue into 
 });
 
 // ══════════════════════════════════════════════════════════════════════
-// 4. AI CONTRACT INTERPRETER (PROPOSAL MODE ONLY)
+// 4. SI CONTRACT INTERPRETER (PROPOSAL MODE ONLY)
 // ══════════════════════════════════════════════════════════════════════
-console.log('--- 4. AI Contract Interpreter in Proposal Mode ---');
+console.log('--- 4. SI Contract Interpreter in Proposal Mode ---');
 
 test('ContractAIInterpreter: parses multi-element contract and proposes ASC 606 obligations with confidence', () => {
   const contractText = `
@@ -181,7 +181,7 @@ test('ContractAIInterpreter: parses multi-element contract and proposes ASC 606 
   assertEqual(proposal.proposed_obligations.length, 3, 'Extracted 3 obligations (Software, Implementation, Support)');
   assertEqual(proposal.total_transaction_price, 4800000, 'Total price is ₹48,00,000');
   assertEqual(proposal.deferred_revenue_initial, 4800000, 'Initial deferred revenue is ₹48,00,000');
-  assert(proposal.ai_confidence >= 0.90, 'AI confidence is >= 90%');
+  assert(proposal.ai_confidence >= 0.90, 'SI confidence is >= 90%');
   assert(proposal.review_required, 'Human review strictly required before posting');
 });
 

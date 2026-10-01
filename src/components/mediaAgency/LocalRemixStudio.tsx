@@ -163,13 +163,13 @@ export const LocalRemixStudio: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-bold text-white">Custom Local Song & AI Dance Studio</h1>
+                <h1 className="text-xl font-bold text-white">Custom Local Song & SI Dance Studio</h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-mono text-[10px] font-bold border border-purple-500/40">
                   FULL LOCAL CUSTOMIZATION 🎛️
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                15 Reference Stems + 15 AI Dances • Custom Lyrics • Voice Model & Fader Controls
+                15 Reference Stems + 15 SI Dances • Custom Lyrics • Voice Model & Fader Controls
               </p>
             </div>
           </div>
@@ -418,12 +418,12 @@ export const LocalRemixStudio: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. 15 AI Dance Choreographies Library */}
+            {/* 3. 15 SI Dance Choreographies Library */}
             <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-3xl space-y-3 shadow-xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                   <Film className="w-4 h-4 text-emerald-400" />
-                  <span>3. Pick from 15 AI Dance Choreographies:</span>
+                  <span>3. Pick from 15 SI Dance Choreographies:</span>
                 </h3>
                 <span className="text-[10px] font-mono text-emerald-400 font-bold">{selectedDance.danceStyle}</span>
               </div>

@@ -3,7 +3,7 @@ package ai.chatr.gsm.core
 enum class GsmFeature {
     GSM_INTELLIGENCE,
     SHIELD,
-    AI,
+    SI,
     CALL_SCREENING,
     SMART_DIALER,
     TRANSCRIPTION,
@@ -23,7 +23,7 @@ object StaticGsmFeatureFlagProvider : GsmFeatureFlagProvider {
         return when (feature) {
             GsmFeature.GSM_INTELLIGENCE -> GsmIntelligenceFlags.enabled
             GsmFeature.SHIELD -> GsmIntelligenceFlags.shieldEnabled
-            GsmFeature.AI -> GsmIntelligenceFlags.aiEnabled
+            GsmFeature.SI -> GsmIntelligenceFlags.aiEnabled
             GsmFeature.CALL_SCREENING -> GsmIntelligenceFlags.callScreeningEnabled
             GsmFeature.SMART_DIALER -> GsmIntelligenceFlags.smartDialerEnabled
             GsmFeature.TRANSCRIPTION -> GsmIntelligenceFlags.transcriptionEnabled

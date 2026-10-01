@@ -2,7 +2,7 @@
  * CHATR 100% VIRAL SOCIAL MEDIA CONTENT & REEL ENGINE
  * 
  * Generates viral visual storyboards, Instagram Reels/Shorts scripts, LinkedIn thought leadership,
- * Twitter/X threads, and Reddit community posts focused on On-Device Ollama AI, Desktop Privacy,
+ * Twitter/X threads, and Reddit community posts focused on On-Device Ollama SI, Desktop Privacy,
  * and the Free ATS Resume Grader.
  */
 
@@ -52,7 +52,7 @@ export const VIRAL_REEL_SCRIPTS: ReelScriptItem[] = [
   {
     id: 'reel_001_ollama',
     title: 'Stop Paying $20/mo for ChatGPT Plus — Run Ollama Locally in CHATR Desktop',
-    hook: 'You are literally throwing away $240 a year on AI subscriptions.',
+    hook: 'You are literally throwing away $240 a year on SI subscriptions.',
     category: 'LOCAL_OLLAMA_AI',
     durationSeconds: 35,
     audioRecommendation: 'Trending Synthwave / Tech Fast Beat',
@@ -60,12 +60,12 @@ export const VIRAL_REEL_SCRIPTS: ReelScriptItem[] = [
       {
         timestamp: '0:00 - 0:04',
         visualAction: 'Screen recording showing ChatGPT $20/month billing subscription page, then slamming laptop shut or red X.',
-        onScreenText: 'STOP PAYING $20/MO FOR AI ❌',
+        onScreenText: 'STOP PAYING $20/MO FOR SI ❌',
         voiceover: 'You are literally throwing away $240 every year on ChatGPT and Claude subscriptions.'
       },
       {
         timestamp: '0:05 - 0:12',
-        visualAction: 'Open CHATR Desktop app -> Toggle On-Device Ollama AI dropdown -> Select Llama 3.3 / DeepSeek.',
+        visualAction: 'Open CHATR Desktop app -> Toggle On-Device Ollama SI dropdown -> Select Llama 3.3 / DeepSeek.',
         onScreenText: '100% Free & Unlimited on your Laptop 💻',
         voiceover: 'With CHATR Desktop, you can run Llama 3 and DeepSeek locally on your own machine for zero dollars.'
       },
@@ -108,8 +108,8 @@ export const VIRAL_REEL_SCRIPTS: ReelScriptItem[] = [
       {
         timestamp: '0:16 - 0:28',
         visualAction: 'Open chatrchat.in/tools/resume-grader on mobile/desktop -> Drag & drop resume -> Instant 88/100 score + bullet point rewrites.',
-        onScreenText: 'Instant Free ATS Score & AI Fixer 🎯',
-        voiceover: 'We built an instant AI ATS Grader that scans your formatting, keyword density, and bullet points in 4 seconds.'
+        onScreenText: 'Instant Free ATS Score & SI Fixer 🎯',
+        voiceover: 'We built an instant SI ATS Grader that scans your formatting, keyword density, and bullet points in 4 seconds.'
       },
       {
         timestamp: '0:29 - 0:40',
@@ -137,9 +137,9 @@ export const VIRAL_REEL_SCRIPTS: ReelScriptItem[] = [
       },
       {
         timestamp: '0:06 - 0:18',
-        visualAction: 'CHATR Multi-Agent Team Inbox on screen -> AI agent asking 3 qualification questions automatically in Arabic/English -> Generating candidate score in 15 seconds.',
-        onScreenText: 'AI Pre-Screens & Scores Candidates in 15s ⚡',
-        voiceover: 'With CHATR WhatsApp AI, candidates text in, the AI asks your mandatory screening questions, parses their CV, and schedules interviews automatically.'
+        visualAction: 'CHATR Multi-Agent Team Inbox on screen -> SI agent asking 3 qualification questions automatically in Arabic/English -> Generating candidate score in 15 seconds.',
+        onScreenText: 'SI Pre-Screens & Scores Candidates in 15s ⚡',
+        voiceover: 'With CHATR WhatsApp SI, candidates text in, the SI asks your mandatory screening questions, parses their CV, and schedules interviews automatically.'
       },
       {
         timestamp: '0:19 - 0:30',
@@ -157,10 +157,10 @@ export const VIRAL_REEL_SCRIPTS: ReelScriptItem[] = [
 export const VIRAL_LINKEDIN_POSTS: LinkedInPostItem[] = [
   {
     id: 'li_001_cloud_vs_local',
-    title: 'The Hidden Cloud AI Tax: Why Local AI (Ollama) is Winning Desktop OS',
+    title: 'The Hidden Cloud SI Tax: Why Local SI (Ollama) is Winning Desktop OS',
     category: 'Founders & CTOs',
-    hookLine: 'Most companies are spending $500 to $2,000 every month on AI token subscriptions that should cost $0.',
-    content: `Most companies are spending $500 to $2,000 every month on cloud AI token subscriptions that should cost $0.
+    hookLine: 'Most companies are spending $500 to $2,000 every month on SI token subscriptions that should cost $0.',
+    content: `Most companies are spending $500 to $2,000 every month on cloud SI token subscriptions that should cost $0.
 
 Here is the dirty secret of enterprise SaaS:
 90% of business tasks—drafting contracts, parsing candidate resumes, summarizing threads, and triaging lead inquiries—do not need a 400-billion parameter cloud model that phones home to a remote server.
@@ -173,10 +173,10 @@ They can run locally on your laptop using Ollama (Llama 3.3, Mistral, or DeepSee
 
 That is why we built CHATR as a native Electron Desktop Business OS. You get 200 specialized autonomous agent workflows backed by on-device local intelligence.
 
-If your team is looking to cut AI SaaS sprawl and protect sensitive customer data:
+If your team is looking to cut SI SaaS sprawl and protect sensitive customer data:
 👉 Explore CHATR Desktop: https://www.chatrchat.in
 
-What is your take: Will on-device local AI replace 80% of cloud SaaS endpoints by 2027?`,
+What is your take: Will on-device local SI replace 80% of cloud SaaS endpoints by 2027?`,
     hashtags: ['#LocalAI', '#Ollama', '#OpenSource', '#CTO', '#EnterpriseSoftware', '#ArtificialIntelligence']
   },
   {
@@ -197,7 +197,7 @@ If a job description asks for "PostgreSQL" and your CV only says "Relational Dat
 3️⃣ Lack of Quantifiable Impact Metrics:
 Resumes with "Managed a sales team" score 40% lower than "Managed a 12-person sales team delivering ₹4.2 Cr in quarterly revenue".
 
-We made our AI ATS Resume Grader 100% free and open for both job seekers and recruiters:
+We made our SI ATS Resume Grader 100% free and open for both job seekers and recruiters:
 👉 Test your CV compatibility score in 4 seconds: https://www.chatrchat.in/tools/resume-grader
 
 No signup, no credit card required.
@@ -213,7 +213,7 @@ export const VIRAL_TWITTER_THREADS: TwitterThreadItem[] = [
     id: 'tw_001_desktop_ai',
     title: 'How to replace 5 monthly SaaS subscriptions with 1 local desktop app [Thread 🧵]',
     tweets: [
-      `How to replace 5 expensive monthly SaaS subscriptions with 1 free desktop app powered by local Ollama AI: 🧵👇`,
+      `How to replace 5 expensive monthly SaaS subscriptions with 1 free desktop app powered by local Ollama SI: 🧵👇`,
       `1/ The SaaS Subscription Trap:
 - ChatGPT Plus: $20/mo
 - WhatsApp Team Inbox: $49/mo
@@ -223,7 +223,7 @@ export const VIRAL_TWITTER_THREADS: TwitterThreadItem[] = [
 Total: $207/month ($2,484/year).
 
 Here is how CHATR Desktop does all of it on your local machine for $0:`,
-      `2/ On-Device Ollama AI:
+      `2/ On-Device Ollama SI:
 CHATR runs Llama 3 and DeepSeek directly on your GPU/CPU.
 - 0 cloud API costs
 - Works completely offline on flights
@@ -232,7 +232,7 @@ CHATR runs Llama 3 and DeepSeek directly on your GPU/CPU.
 Upload any CV -> Instant formatting, keyword match, and bullet point rewrite suggestions.
 Test it live with zero signup: https://www.chatrchat.in/tools/resume-grader`,
       `4/ Multi-Agent 24/7 Autonomous Squads:
-200 AI workers handle lead discovery, customer triage, and ledger reconciliation on your schedule.
+200 SI workers handle lead discovery, customer triage, and ledger reconciliation on your schedule.
 
 Download the free Desktop OS for Windows & Mac:
 👉 https://www.chatrchat.in
@@ -254,7 +254,7 @@ export const VIRAL_REDDIT_POSTS: RedditCommunityPost[] = [
 
 Like many here, I was tired of SaaS apps charging $50+/month for thin wrappers around cloud APIs while slurping private customer data.
 
-We built CHATR as a native Electron Desktop app designed around on-device local AI:
+We built CHATR as a native Electron Desktop app designed around on-device local SI:
 - Plugs directly into your local Ollama instance (Llama 3.3, Mistral, DeepSeek)
 - 100% offline execution — zero telemetry on your local documents
 - Integrated Multi-Agent engine (lead triage, resume parsing, double-entry financial ledger)

@@ -72,7 +72,7 @@ export const ProductionValidationReport: React.FC = () => {
   const selectedMeta = selectedWidgetId ? dataProvenanceService.getProvenance(selectedWidgetId) : null;
 
   const routeList: RouteValidationItem[] = [
-    { route: '/desktop/home', name: 'AI Chief of Staff Home', level: 'L5', realData: true, realtimeSync: true, e2eWorkflow: true, latencyMs: 28, status: 'VERIFIED' },
+    { route: '/desktop/home', name: 'SI Chief of Staff Home', level: 'L5', realData: true, realtimeSync: true, e2eWorkflow: true, latencyMs: 28, status: 'VERIFIED' },
     { route: '/desktop/smart-inbox', name: 'Smart Inbox', level: 'L5', realData: true, realtimeSync: true, e2eWorkflow: true, latencyMs: 34, status: 'VERIFIED' },
     { route: '/desktop/chat', name: 'Chat & Realtime DMs', level: 'L5', realData: true, realtimeSync: true, e2eWorkflow: true, latencyMs: 22, status: 'VERIFIED' },
     { route: '/desktop/calls', name: 'WebRTC Calls & Meetings', level: 'L5', realData: true, realtimeSync: true, e2eWorkflow: true, latencyMs: 42, status: 'VERIFIED' },
@@ -180,11 +180,11 @@ export const ProductionValidationReport: React.FC = () => {
             )}
           </div>
 
-          {/* Card 3: AI Assistant Health */}
+          {/* Card 3: SI Assistant Health */}
           <div className="bg-[#181B23] border border-[#6D5DF6]/40 rounded-[20px] p-5 space-y-3 shadow-level-1 relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#6D5DF6]">
-                <Bot className="h-4 w-4" /> AI Assistant Health
+                <Bot className="h-4 w-4" /> SI Assistant Health
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] text-[11px] font-bold">
                 Healthy
@@ -302,11 +302,11 @@ export const ProductionValidationReport: React.FC = () => {
             </div>
           </div>
 
-          {/* AI Assistant Health Breakdown */}
+          {/* SI Assistant Health Breakdown */}
           <div className="bg-[#181B23] border border-white/10 rounded-[16px] p-4 space-y-3 shadow-level-1">
             <h3 className="font-bold text-xs text-white flex items-center justify-between uppercase tracking-wider">
               <span className="flex items-center gap-1.5">
-                <Bot className="h-3.5 w-3.5 text-[#6D5DF6]" /> AI Assistant Health
+                <Bot className="h-3.5 w-3.5 text-[#6D5DF6]" /> SI Assistant Health
               </span>
               <span className="text-xs font-mono text-[#6D5DF6] font-bold">{tripleHealth.aiHealthPct}%</span>
             </h3>

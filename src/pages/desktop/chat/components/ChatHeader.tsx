@@ -18,7 +18,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = React.memo(({
  onStartCall,
  onSearch
 }) => {
- const isAI = selectedRoom.name === 'CHATR AI' || selectedRoom.name === 'AI Assistant' || selectedRoom.id === 'chatr-ai-room';
+ const isAI = selectedRoom.name === 'CHATR SI' || selectedRoom.name === 'SI Assistant' || selectedRoom.id === 'chatr-ai-room';
  const avatarUrl = isAI ? '/chatr-ai-logo.jpg' : getAvatarUrl(selectedRoom.name, selectedRoom.avatarUrl);
 
  return (
@@ -39,7 +39,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = React.memo(({
  {selectedRoom.name}
  </h2>
  <div className="flex items-center gap-1.5 mt-0.5">
- {selectedRoom.type === 'dm' && selectedRoom.name !== 'AI Assistant' ? (
+ {selectedRoom.type === 'dm' && selectedRoom.name !== 'SI Assistant' ? (
  <>
  <div className="relative w-2 h-2 rounded-full mt-0.5">
  <PresenceIndicator status={(selectedRoom.otherUserPresence || 'offline') as any} />

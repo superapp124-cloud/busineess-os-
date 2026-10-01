@@ -93,7 +93,7 @@ export const CRMQuotationsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Quotations AI',
+    assistantName: 'Quotations SI',
     skills: []
   },
   

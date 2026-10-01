@@ -102,7 +102,7 @@ class ClosedLoopScenarioTest {
 
         val callerPhone = "+919876543210"
         val dialogueTurns = listOf(
-            DialogueTurn(DialogueSpeaker.CHATR, "Hi, this is Chatr AI answering. Who is calling?"),
+            DialogueTurn(DialogueSpeaker.CHATR, "Hi, this is Chatr SI answering. Who is calling?"),
             DialogueTurn(DialogueSpeaker.CALLER, "I am from DHL Express. Your package has arrived."),
             DialogueTurn(DialogueSpeaker.CHATR, "Please leave it with the security desk at flat 402."),
             DialogueTurn(DialogueSpeaker.CALLER, "Package left with security guard.")

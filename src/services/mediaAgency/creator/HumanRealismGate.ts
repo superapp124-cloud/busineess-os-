@@ -11,7 +11,7 @@
  *   - Static single shot
  *   - Identity drift (face mismatch)
  *   - Audio/video desync > 500ms
- *   - Banned AI phrases in script
+ *   - Banned SI phrases in script
  *   - Repeated backgrounds
  *   - No character motion
  */
@@ -90,7 +90,7 @@ const BANNED_PHRASES = [
   "Here's why",
   "Let me tell you",
   "Did you know",
-  "AI is transforming",
+  "SI is transforming",
   "The future is here",
   "Game-changing",
   "Revolutionary",
@@ -182,12 +182,12 @@ export async function runHumanRealismGate(
     warningReasons.push('Background motion not measured — verify manually');
   }
 
-  // CHECK 6: Banned AI phrases in script
+  // CHECK 6: Banned SI phrases in script
   const foundPhrases = BANNED_PHRASES.filter(p =>
     scriptText.toLowerCase().includes(p.toLowerCase())
   );
   const scriptOk = foundPhrases.length === 0;
-  checks.push({ name: 'Script naturalness (no AI clichés)', passed: scriptOk, measured: true, value: `${foundPhrases.length} banned phrases found`, note: foundPhrases.length > 0 ? `Found: ${foundPhrases.join(', ')}` : undefined });
+  checks.push({ name: 'Script naturalness (no SI clichés)', passed: scriptOk, measured: true, value: `${foundPhrases.length} banned phrases found`, note: foundPhrases.length > 0 ? `Found: ${foundPhrases.join(', ')}` : undefined });
   if (!scriptOk) failReasons.push(`Unnatural script — found banned phrases: ${foundPhrases.join(', ')}`);
 
   // FINAL VERDICT

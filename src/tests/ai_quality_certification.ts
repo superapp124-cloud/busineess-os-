@@ -1,5 +1,5 @@
 /**
- * AI Quality Certification — Gate A2 (v1.1A)
+ * SI Quality Certification — Gate A2 (v1.1A)
  *
  * Separated into:
  *   DETERMINISTIC — automated pass/fail against measurable criteria
@@ -211,7 +211,7 @@ export async function runAIQualityCertification(useOllama = true): Promise<{
     }
   }
 
-  console.log(`\n[Gate A2] AI Quality Certification — Provider: ${provider.name}`);
+  console.log(`\n[Gate A2] SI Quality Certification — Provider: ${provider.name}`);
   const deterministicResults = await runDeterministicTests(provider);
   const subjectiveResults = await runSubjectiveTests(provider);
   const allResults = [...deterministicResults, ...subjectiveResults];

@@ -26,6 +26,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.chatr.app.R
 import com.chatr.app.services.ChatrConnectionService
+import com.chatr.app.services.ChatrInCallService
 import com.chatr.app.services.ChatrNotificationCoordinator
 import com.chatr.app.services.ChatrVoipCallRegistry
 import kotlinx.coroutines.CoroutineScope
@@ -181,8 +182,63 @@ class ShieldIncomingCallActivity : ComponentActivity() {
             initialView?.text = displayName.firstOrNull { it.isLetterOrDigit() }?.uppercaseChar()?.toString() ?: "C"
         }
 
+        // Caller Intelligence Card (Image 2 Screen 3)
+        val titleView = findViewById<TextView>(R.id.intelligenceTitle)
+        val detailView = findViewById<TextView>(R.id.intelligenceDetail)
+        if (callerName.isNotBlank() && callerName != "Unknown caller") {
+            titleView?.text = "Likely a contact"
+            detailView?.text = "Chatr Verified Peer • $callerName"
+        } else {
+            titleView?.text = "Unknown caller"
+            detailView?.text = "Chatr Shield is investigating • Zero spam reports"
+        }
+
         findViewById<View>(R.id.btnAnswer)?.setOnClickListener { answerCall() }
         findViewById<View>(R.id.btnDecline)?.setOnClickListener { rejectCall() }
+
+        // 3 Triage Action Buttons (Image 2 Screen 3)
+        findViewById<View>(R.id.btnAiScreen)?.setOnClickListener { handleAiScreen() }
+        findViewById<View>(R.id.btnRemind)?.setOnClickListener { handleRemind() }
+        findViewById<View>(R.id.btnMessage)?.setOnClickListener { handleMessage() }
+    }
+
+    private fun handleAiScreen() {
+        Log.i(TAG, "User selected SI Screen for call: $callId (type=$callType)")
+        stopRinging()
+        
+        findViewById<TextView>(R.id.intelligenceTitle)?.text = "CHATR SI Answering..."
+        findViewById<TextView>(R.id.intelligenceDetail)?.text = "Screening caller intent on behalf of Arshid..."
+        findViewById<View>(R.id.quickTriageBar)?.visibility = View.GONE
+        findViewById<View>(R.id.btnAnswer)?.visibility = View.GONE
+        
+        // Broadcast SI Screen action
+        sendBroadcast(Intent("com.chatr.app.CALL_ACTION").apply {
+            putExtra("call_id", callId)
+            putExtra("action", "ai_screen")
+        })
+        
+        if (callType == "gsm") {
+            ChatrInCallService.answerCall()
+        } else {
+            // Launch SI speech loop and notification
+            ChatrNotificationCoordinator.cancelIncomingCallNotification(this, callId)
+            ChatrConnectionService.answerConnection(callId)
+        }
+    }
+
+    private fun handleRemind() {
+        Log.i(TAG, "User chose Remind for call: $callId")
+        rejectCall()
+    }
+
+    private fun handleMessage() {
+        Log.i(TAG, "User chose Message for call: $callId")
+        rejectCall()
+        val smsIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$callerPhone")).apply {
+            putExtra("sms_body", "Can't talk right now. What's up?")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        try { startActivity(smsIntent) } catch (e: Exception) { Log.e(TAG, "SMS intent failed", e) }
     }
 
     private fun formatCallerPhone(phone: String): String {
@@ -248,26 +304,50 @@ class ShieldIncomingCallActivity : ComponentActivity() {
         timeoutJob = scope.launch {
             delay(CALL_TIMEOUT_MS)
             Log.i(TAG, "Incoming call timed out - marking missed")
-            ChatrConnectionService.missConnection(callId)
+            if (callType == "gsm") {
+                ChatrInCallService.disconnectCall()
+            } else {
+                ChatrConnectionService.missConnection(callId)
+            }
             finishIncomingUi("missed call")
         }
     }
 
     private fun answerCall() {
-        Log.i(TAG, "Answering call via Telecom: $callId")
+        Log.i(TAG, "Answering call: $callId (type=$callType)")
         ChatrNotificationCoordinator.cancelIncomingCallNotification(this, callId)
         
-        // Let Telecom Connection handle launching ShieldActiveCallActivity
-        ChatrConnectionService.answerConnection(callId)
-        
-        finishIncomingUi("answer button")
+        if (callType == "gsm") {
+            stopRinging()
+            ChatrInCallService.answerCall()
+            val activeIntent = Intent(this, ShieldActiveCallActivity::class.java).apply {
+                putExtra("call_id", callId)
+                putExtra("caller_phone", callerPhone)
+                putExtra("caller_name", callerName)
+                putExtra("call_type", "gsm")
+                putExtra("is_outgoing", false)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            startActivity(activeIntent)
+            finishIncomingUi("answer gsm button")
+        } else {
+            // Let Telecom Connection handle launching ShieldActiveCallActivity
+            ChatrConnectionService.answerConnection(callId)
+            finishIncomingUi("answer button")
+        }
     }
 
     private fun rejectCall() {
-        Log.i(TAG, "Rejecting call via Telecom: $callId")
+        Log.i(TAG, "Rejecting call: $callId (type=$callType)")
         ChatrNotificationCoordinator.cancelIncomingCallNotification(this, callId)
-        ChatrConnectionService.rejectConnection(callId)
-        finishIncomingUi("reject button")
+        if (callType == "gsm") {
+            stopRinging()
+            ChatrInCallService.disconnectCall()
+            finishIncomingUi("reject gsm button")
+        } else {
+            ChatrConnectionService.rejectConnection(callId)
+            finishIncomingUi("reject button")
+        }
     }
 
     private fun finishIncomingUi(reason: String) {

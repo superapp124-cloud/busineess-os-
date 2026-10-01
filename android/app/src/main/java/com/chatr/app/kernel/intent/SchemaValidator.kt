@@ -3,7 +3,7 @@ package com.chatr.app.kernel.intent
 import android.util.Log
 
 /**
- * Result of validating an AI model's proposed intent against deterministic kernel schemas.
+ * Result of validating an SI model's proposed intent against deterministic kernel schemas.
  */
 sealed class SchemaValidationResult {
     data class Valid(val validatedIntent: KernelIntent) : SchemaValidationResult()
@@ -11,12 +11,12 @@ sealed class SchemaValidationResult {
 }
 
 /**
- * SchemaValidator — Deterministic schema boundary enforcement for AI model outputs.
+ * SchemaValidator — Deterministic schema boundary enforcement for SI model outputs.
  *
  * HARDENING INVARIANT (Rule 3):
  * Natural language interpretation by LLMs is non-deterministic, but the resulting [KernelIntent]
  * must be strictly validated against the sealed [IntentAction] schema registry.
- * An AI model can NEVER fabricate actions (e.g. "delete_all_messages") or execute tools with
+ * An SI model can NEVER fabricate actions (e.g. "delete_all_messages") or execute tools with
  * malformed parameters. Invalid outputs are intercepted and converted to [IntentResult.Failed].
  */
 object SchemaValidator {

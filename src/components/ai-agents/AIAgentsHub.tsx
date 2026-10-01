@@ -96,7 +96,7 @@ export const AIAgentsHub: React.FC = () => {
   const workforceTasks: WorkforceTask[] = [
     {
       id: 'task_1',
-      workerName: 'Priya Sharma (Clinical AI)',
+      workerName: 'Priya Sharma (Clinical SI)',
       packDomain: 'Healthcare',
       taskTitle: 'Evaluating Metformin + Contrast Dye Drug Risk for Patient #9912',
       state: 'Working Now',
@@ -106,7 +106,7 @@ export const AIAgentsHub: React.FC = () => {
     },
     {
       id: 'task_2',
-      workerName: 'Sarah Mitchell (Recruitment AI)',
+      workerName: 'Sarah Mitchell (Recruitment SI)',
       packDomain: 'Recruitment',
       taskTitle: 'Parsing & Shortlisting 14 Resumes for Senior L5 Engineer',
       state: 'Working Now',
@@ -116,7 +116,7 @@ export const AIAgentsHub: React.FC = () => {
     },
     {
       id: 'task_3',
-      workerName: 'David Chen (Finance AI)',
+      workerName: 'David Chen (Finance SI)',
       packDomain: 'Finance',
       taskTitle: 'Reconciling SAP PO 3-Way Match for Supplier Invoice INV-28491',
       state: 'Researching',
@@ -126,7 +126,7 @@ export const AIAgentsHub: React.FC = () => {
     },
     {
       id: 'task_4',
-      workerName: 'Michael Rodriguez (Legal AI)',
+      workerName: 'Michael Rodriguez (Legal SI)',
       packDomain: 'Legal',
       taskTitle: 'Audit Liability Cap Clause §7.3 in Service Agreement',
       state: 'Waiting',
@@ -136,7 +136,7 @@ export const AIAgentsHub: React.FC = () => {
     },
     {
       id: 'task_5',
-      workerName: 'Operations Specialist AI',
+      workerName: 'Operations Specialist SI',
       packDomain: 'Manufacturing',
       taskTitle: 'SCADA IoT Telemetry Anomaly Detection — Turbine #4',
       state: 'Completed',
@@ -146,7 +146,7 @@ export const AIAgentsHub: React.FC = () => {
     },
     {
       id: 'task_6',
-      workerName: 'SaaS Expansion AI',
+      workerName: 'SaaS Expansion SI',
       packDomain: 'SaaS',
       taskTitle: 'Escalated Enterprise Deal Renewal — ABC Ltd ($1.2M Contract)',
       state: 'Escalated',
@@ -166,7 +166,7 @@ export const AIAgentsHub: React.FC = () => {
 
     setTimeout(() => {
       setExecutingCommand(false);
-      setExecutionLog(`Universal Execution Flow Completed: Intent parsed ("${commandInput}") ➔ AI Plan Generated ➔ Capability Registry Invoked ➔ Executed under ${activePack} Configuration Pack.`);
+      setExecutionLog(`Universal Execution Flow Completed: Intent parsed ("${commandInput}") ➔ SI Plan Generated ➔ Capability Registry Invoked ➔ Executed under ${activePack} Configuration Pack.`);
       setCommandInput('');
     }, 800);
   };
@@ -259,12 +259,12 @@ export const AIAgentsHub: React.FC = () => {
         )}
       </div>
 
-      {/* 4. INVISIBLE AI WORKFORCE PANEL (Operational State) */}
+      {/* 4. INVISIBLE SI WORKFORCE PANEL (Operational State) */}
       <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-violet-400" />
-            <h2 className="text-base font-bold text-white">Invisible AI Workforce Status</h2>
+            <h2 className="text-base font-bold text-white">Invisible SI Workforce Status</h2>
           </div>
           <span className="text-xs text-slate-400 font-mono">
             {digitalWorkers.length} Registered Workers · Active Context: {activePack} Pack
@@ -367,12 +367,12 @@ export const AIAgentsHub: React.FC = () => {
           </div>
         </div>
 
-        {/* 17 AI Capabilities & 880 Skills Library */}
+        {/* 17 SI Capabilities & 880 Skills Library */}
         <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Cpu className="w-5 h-5 text-indigo-400" />
-              <h2 className="text-base font-bold text-white">17 AI Capabilities & 880 Templates</h2>
+              <h2 className="text-base font-bold text-white">17 SI Capabilities & 880 Templates</h2>
             </div>
             <span className="text-xs text-indigo-300 font-mono font-bold">17 Core Capabilities</span>
           </div>

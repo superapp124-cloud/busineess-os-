@@ -66,7 +66,7 @@ serve(async (req) => {
         if (!insertError && inserted) {
           processedCount++;
           try {
-            // Generate strictly 768-dim embedding via text-embedding-004 in CHATR AI Router
+            // Generate strictly 768-dim embedding via text-embedding-004 in CHATR SI Router
             const embeddingResult = await generateEmbedding({
               input: msg.content,
               model: "text-embedding-004",

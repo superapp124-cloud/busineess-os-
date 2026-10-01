@@ -18,7 +18,7 @@ import com.chatr.app.services.ChatrInCallService
  *
  * The Tool Registry dispatches to:
  *   - Android Telecom / InCallService (answer, hangup, takeover, dial)
- *   - AIScreeningService (multi-turn AI receptionist)
+ *   - AIScreeningService (multi-turn SI receptionist)
  *   - SMS / Messaging
  *   - Memory & Personal Storage
  */
@@ -37,7 +37,7 @@ class ToolRegistry(private val context: Context) {
             ToolDefinition(
                 toolId = "phone.screen_incoming",
                 displayName = "Screen Incoming GSM Call",
-                description = "Answers the call and activates the multi-turn AI receptionist",
+                description = "Answers the call and activates the multi-turn SI receptionist",
                 requiredPermission = "android.permission.ANSWER_PHONE_CALLS",
                 riskTier = RiskTier.LOW,
                 reversible = true,
@@ -93,7 +93,7 @@ class ToolRegistry(private val context: Context) {
             ToolDefinition(
                 toolId = "phone.takeover",
                 displayName = "Take Over Screened Call",
-                description = "Stops AI screening and transitions the active call to the human user",
+                description = "Stops SI screening and transitions the active call to the human user",
                 requiredPermission = null,
                 riskTier = RiskTier.LOW,
                 reversible = true,

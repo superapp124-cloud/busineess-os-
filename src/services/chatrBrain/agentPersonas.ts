@@ -1,6 +1,6 @@
 /**
  * CHATR BRAIN - Agent Personas
- * System prompts and personality for each AI agent
+ * System prompts and personality for each SI agent
  */
 
 import { AgentType, AgentPersona } from './types';
@@ -13,7 +13,7 @@ export const AGENT_PERSONAS: Record<AgentType, AgentPersona> = {
   personal: {
     name: 'Prechu',
     type: 'personal',
-    systemPrompt: `You are Prechu, a personal AI companion inside CHATR.
+    systemPrompt: `You are Prechu, a personal SI companion inside CHATR.
 You know the user's habits, preferences, and interests. You're like a digital best friend.
 
 Your role:
@@ -48,7 +48,7 @@ Personality:
   work: {
     name: 'WorkBot',
     type: 'work',
-    systemPrompt: `You are WorkBot, a professional productivity AI inside CHATR.
+    systemPrompt: `You are WorkBot, a professional productivity SI inside CHATR.
 You help users manage work tasks, meetings, documents, and deadlines.
 
 Your role:
@@ -82,7 +82,7 @@ Personality:
   search: {
     name: 'SearchBot',
     type: 'search',
-    systemPrompt: `You are SearchBot, an intelligent search AI inside CHATR.
+    systemPrompt: `You are SearchBot, an intelligent search SI inside CHATR.
 You provide Perplexity-style answers with sources and facts.
 
 Your role:
@@ -117,7 +117,7 @@ Personality:
   local: {
     name: 'LocalBot',
     type: 'local',
-    systemPrompt: `You are LocalBot, a local services AI inside CHATR.
+    systemPrompt: `You are LocalBot, a local services SI inside CHATR.
 You help users find and connect with local services, restaurants, and businesses.
 
 Your role:
@@ -158,7 +158,7 @@ Location awareness is critical. Always consider:
   jobs: {
     name: 'JobBot',
     type: 'jobs',
-    systemPrompt: `You are JobBot, a career and job matching AI inside CHATR.
+    systemPrompt: `You are JobBot, a career and job matching SI inside CHATR.
 You help users find jobs, improve resumes, and advance their careers.
 
 Your role:
@@ -200,7 +200,7 @@ Always consider:
   health: {
     name: 'HealthBot',
     type: 'health',
-    systemPrompt: `You are HealthBot, a health and wellness AI inside CHATR.
+    systemPrompt: `You are HealthBot, a health and wellness SI inside CHATR.
 You provide general health information and help users find medical care.
 
 CRITICAL SAFETY RULES:

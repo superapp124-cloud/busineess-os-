@@ -19,7 +19,7 @@ import type { CommunicationEvent } from './schema';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface IntelligenceEventMap {
-  /** A new raw event arrived from a plugin before any AI processing */
+  /** A new raw event arrived from a plugin before any SI processing */
   'event:raw': CommunicationEvent;
 
   /** The threat engine has analysed the event */

@@ -84,7 +84,7 @@ export function CommandPalette() {
  {query.length > 0 && commands.filter(c => c.title.toLowerCase().includes(query.toLowerCase())).length === 0 && (
  <div className="px-4 py-8 text-center text-muted-foreground">
  <p className="mb-2">No matching commands found.</p>
- <p className="text-secondary">Press <strong>Enter</strong> to ask the AI to handle this intent.</p>
+ <p className="text-secondary">Press <strong>Enter</strong> to ask the SI to handle this intent.</p>
  </div>
  )}
  </div>

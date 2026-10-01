@@ -122,14 +122,14 @@ serve(async (req) => {
     let aiScreening: { intent?: string; confidence?: number; summary?: string } | null = null;
     let fallbackToTier2 = false;
 
-    // Advanced screening via CHATR AI Router for unknown / borderline callers
+    // Advanced screening via CHATR SI Router for unknown / borderline callers
     if (!isBlocked && spamCount <= 3 && (riskLevel === "medium" || riskLevel === "high")) {
       try {
         const chatResult = await completeChat({
           messages: [
             {
               role: "system",
-              content: 'You are a call screening AI. Analyze the caller data and provide a brief intent classification. Respond in JSON format: {"intent": "personal|business|sales|fraud|unknown", "confidence": 0-100, "summary": "brief description"}',
+              content: 'You are a call screening SI. Analyze the caller data and provide a brief intent classification. Respond in JSON format: {"intent": "personal|business|sales|fraud|unknown", "confidence": 0-100, "summary": "brief description"}',
             },
             {
               role: "user",
@@ -164,7 +164,7 @@ serve(async (req) => {
           fallbackToTier2 = true;
         }
       } catch (routerErr) {
-        console.warn("[screen-incoming-call] AI screening unavailable, using local rules fallback:", routerErr);
+        console.warn("[screen-incoming-call] SI screening unavailable, using local rules fallback:", routerErr);
         fallbackToTier2 = true;
       }
     } else if (riskLevel === "medium" || riskLevel === "high") {

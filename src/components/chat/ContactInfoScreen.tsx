@@ -100,7 +100,7 @@ export const ContactInfoScreen: React.FC<ContactInfoScreenProps> = ({
  }
  setSummaryOpen(true);
  setSummaryText(null);
- const loadingId = toast.loading('Generating AI summary...');
+ const loadingId = toast.loading('Generating SI summary...');
  
  // Fetch actual messages from conversation
  const { data: messages } = await supabase
@@ -186,7 +186,7 @@ export const ContactInfoScreen: React.FC<ContactInfoScreenProps> = ({
  const translationTools = [
  { icon: Languages, label: 'Translate Chat', onClick: () => toast.info('Select language in message menu') },
  { icon: FileDown, label: 'Export Chat', onClick: handleExportChat },
- { icon: Sparkles, label: 'AI Summary', onClick: handleAISummary },
+ { icon: Sparkles, label: 'SI Summary', onClick: handleAISummary },
  ];
 
  const themes = [
@@ -424,13 +424,13 @@ export const ContactInfoScreen: React.FC<ContactInfoScreenProps> = ({
  </div>
  </div>
 
- {/* AI Summary Dialog */}
+ {/* SI Summary Dialog */}
  <Dialog open={summaryOpen} onOpenChange={setSummaryOpen}>
  <DialogContent className="sm:max-w-md">
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2 text-body">
  <Sparkles className="w-4 h-4 text-primary" />
- AI Summary
+ SI Summary
  </DialogTitle>
  </DialogHeader>
  <div className="py-3">

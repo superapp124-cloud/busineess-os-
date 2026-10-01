@@ -75,9 +75,9 @@ export const AdaptiveEnterpriseLenses: React.FC<{
     },
     {
       id: 'Automation',
-      name: 'Automation & AI Lens',
+      name: 'Automation & SI Lens',
       badge: '🤖 Automated Substrate',
-      description: 'Autonomous workflows, AI agents, execution runtimes, and triggers.',
+      description: 'Autonomous workflows, SI agents, execution runtimes, and triggers.',
       icon: <Zap className="w-6 h-6 text-cyan-400" />,
       metrics: '142 Automations Running',
       color: 'from-cyan-500/10 to-cyan-500/5 border-cyan-500/20'

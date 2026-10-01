@@ -8,7 +8,7 @@ export interface VisualIntelligenceResponse {
 
 /**
  * Resizes an image file and converts it to a base64 string
- * suitable for sending to the AI vision model.
+ * suitable for sending to the SI vision model.
  */
 export async function imageToBase64Compressed(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ export async function analyzeImage(imageSource: File | string, prompt: string): 
     }
     
     if (!data?.success) {
-      return { success: false, error: data?.error || 'Unknown error from AI model' };
+      return { success: false, error: data?.error || 'Unknown error from SI model' };
     }
     
     return { success: true, text: data.text };

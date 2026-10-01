@@ -220,7 +220,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  <>
  <div className="h-14 shrink-0 flex items-center justify-between px-2 border-b border-white/[0.04]">
  <div className="flex items-center gap-1">
- <button onClick={() => setRightPaneTab('copilot')} className={cn("p-2 rounded-xl transition-colors", rightPaneTab === 'copilot' ? "bg-white/10 text-violet-400" : "text-white/40 hover:text-white hover:bg-white/5")} title="chatrAI"><img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-4 h-4 rounded-full object-cover shrink-0" /></button>
+ <button onClick={() => setRightPaneTab('copilot')} className={cn("p-2 rounded-xl transition-colors", rightPaneTab === 'copilot' ? "bg-white/10 text-violet-400" : "text-white/40 hover:text-white hover:bg-white/5")} title="chatrSI"><img src="/chatr-ai-logo.jpg" alt="chatrSI" className="w-4 h-4 rounded-full object-cover shrink-0" /></button>
  <button onClick={() => setRightPaneTab('tasks')} className={cn("p-2 rounded-xl transition-colors", rightPaneTab === 'tasks' ? "bg-white/10 text-emerald-400" : "text-white/40 hover:text-white hover:bg-white/5")} title="Tasks"><CheckCheck className="w-4 h-4" /></button>
  <button onClick={() => setRightPaneTab('decisions')} className={cn("p-2 rounded-xl transition-colors", rightPaneTab === 'decisions' ? "bg-white/10 text-blue-400" : "text-white/40 hover:text-white hover:bg-white/5")} title="Decisions"><Zap className="w-4 h-4" /></button>
  <button onClick={() => setRightPaneTab('notes')} className={cn("p-2 rounded-xl transition-colors", rightPaneTab === 'notes' ? "bg-white/10 text-amber-400" : "text-white/40 hover:text-white hover:bg-white/5")} title="Notes"><FileText className="w-4 h-4" /></button>
@@ -243,8 +243,8 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  {copilotMessages.length === 0 && (
   <div className="flex flex-col gap-3">
   <div className="p-3 rounded-xl bg-violet-600/10 border border-violet-500/20 text-[11px] text-white/60 leading-relaxed">
-  <span className="text-violet-300 font-bold flex items-center gap-1.5"><img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-4 h-4 rounded-md object-cover" /> chatrAI</span><br/>
-  I'm your chatrAI assistant for this conversation. I've automatically analyzed the context.
+  <span className="text-violet-300 font-bold flex items-center gap-1.5"><img src="/chatr-ai-logo.jpg" alt="chatrSI" className="w-4 h-4 rounded-md object-cover" /> chatrSI</span><br/>
+  I'm your chatrSI Assistant for this conversation. I've automatically analyzed the context.
   </div>
 
   {/* ── Context Engine: Live Context ─────────────────────────────────────── */}
@@ -341,7 +341,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  {copilotLoading && (
  <div className="flex justify-start">
  <div className="px-3 py-2 rounded-xl bg-zinc-800/80 border border-white/[0.06] text-violet-400 text-[11px]">
- <span className="animate-pulse">CHATR AI is thinking…</span>
+ <span className="animate-pulse">CHATR SI is working…</span>
  </div>
  </div>
  )}
@@ -384,7 +384,7 @@ export const RightPane: React.FC<RightPaneProps> = React.memo(({
  value={copilotInput}
  onChange={e => setCopilotInput(e.target.value)}
  onKeyDown={e => e.key === 'Enter' && onCopilotSend()}
- placeholder="Ask CHATR AI…"
+ placeholder="Ask CHATR SI…"
  className="flex-1 bg-zinc-900 border border-white/[0.08] rounded-xl px-3 py-2 text-[11px] text-white placeholder:text-white/30 focus:outline-none focus:border-violet-500/50"
  />
  <button

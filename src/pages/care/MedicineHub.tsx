@@ -132,12 +132,12 @@ const MedicineHub = () => {
  gradient: 'from-blue-500 to-indigo-600'
  },
  { 
- title: 'AI Prescription Scanner', 
+ title: 'SI Prescription Scanner', 
  description: 'Scan & auto-detect medicines',
  icon: FileText, 
  route: '/care/medicines/prescriptions',
  gradient: 'from-violet-500 to-purple-600',
- badge: 'AI Powered'
+ badge: 'SI Powered'
  },
  { 
  title: 'Track Vitals', 
@@ -180,14 +180,14 @@ const MedicineHub = () => {
  ];
 
  return (
- <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background pb-24">
+ <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background pb-32">
  {/* Hero Header */}
  <MedicineHeroHeader
  title={`Hey ${userName} 👋`}
  subtitle="Your health companion is ready"
  gradient="primary"
  showBack={true}
- backPath="/care"
+ backPath="/health"
  >
  {/* Streak & Coins Summary */}
  <Card className="bg-white/15 backdrop-blur-xl border-white/20 shadow-2xl">

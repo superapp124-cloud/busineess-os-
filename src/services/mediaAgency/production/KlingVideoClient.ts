@@ -1,7 +1,7 @@
 /**
- * CHATR Media Agency — Kling AI Generative Video Client
+ * CHATR Media Agency — Kling SI Generative Video Client
  * 
- * Directly interfaces with Kling AI (Kuaishou) Text-to-Video & Image-to-Video API
+ * Directly interfaces with Kling SI (Kuaishou) Text-to-Video & Image-to-Video API
  * to generate photorealistic Indian short-form video reels (9:16 vertical format).
  */
 
@@ -59,7 +59,7 @@ export class KlingVideoClient {
   }
 
   /**
-   * Creates a Text-to-Video generation task on Kling AI
+   * Creates a Text-to-Video generation task on Kling SI
    */
   public static async submitTextToVideo(
     request: KlingVideoTaskRequest,

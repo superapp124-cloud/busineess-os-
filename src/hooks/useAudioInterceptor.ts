@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const LOCAL_AUDIO_TRANSLATION_UNAVAILABLE =
-  'Local-only live translation is not available yet. Cloud audio AI is disabled for privacy.';
+  'Local-only live translation is not available yet. Cloud audio SI is disabled for privacy.';
 
 export const useAudioInterceptor = (
   isEnabled: boolean,
@@ -23,7 +23,7 @@ export const useAudioInterceptor = (
     }
 
     console.info(
-      `[AI Audio] ${fromLanguage} to ${toLanguage} translation blocked: cloud audio AI is disabled.`
+      `[SI Audio] ${fromLanguage} to ${toLanguage} translation blocked: cloud audio SI is disabled.`
     );
     setError(LOCAL_AUDIO_TRANSLATION_UNAVAILABLE);
   }, [fromLanguage, isEnabled, localStream, toLanguage]);

@@ -264,7 +264,7 @@ ${client} is seeking qualified candidates for ${role} positions in ${loc}. The s
 
 4. SELECTION SLA & RECRUITMENT TIMELINE
 --------------------------------------------------------------------
-• Round 1: AI Dossier & Skill Qualification (24 Hrs)
+• Round 1: SI Dossier & Skill Qualification (24 Hrs)
 • Round 2: Technical Panel Assessment (48 Hrs)
 • Round 3: Offer Package & Onboarding Confirmation (24 Hrs)
 

@@ -7,7 +7,7 @@ const IdentityAccessView = () => {
     { id: '1', name: 'Sarah Chen', email: 'sarah.chen@talentxcel.com', role: 'Domain Superintendent', dept: 'All', access: ['Recruitment', 'Core CRM', 'Client Portal'] },
     { id: '2', name: 'Marcus Johnson', email: 'marcus.j@talentxcel.com', role: 'HR Manager', dept: 'HR', access: ['Recruitment', 'Core HR'] },
     { id: '3', name: 'Elena Rodriguez', email: 'elena.r@talentxcel.com', role: 'Sales Lead', dept: 'Sales', access: ['Core CRM'] },
-    { id: '4', name: 'AI Engine', email: 'ai-autonomous@system.internal', role: 'System Autonomous', dept: 'System', access: ['All Packages'] }
+    { id: '4', name: 'SI Engine', email: 'ai-autonomous@system.internal', role: 'System Autonomous', dept: 'System', access: ['All Packages'] }
   ]);
 
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
@@ -38,8 +38,8 @@ const IdentityAccessView = () => {
   };
 
   const handleDeleteUser = (id: string, name: string) => {
-    if (name === 'AI Engine') {
-      toast.error('System Autonomous AI Engine cannot be deleted.');
+    if (name === 'SI Engine') {
+      toast.error('System Autonomous SI Engine cannot be deleted.');
       return;
     }
     setUsers(prev => prev.filter(u => u.id !== id));
@@ -136,7 +136,7 @@ const IdentityAccessView = () => {
         <div className="flex items-end justify-between">
           <div>
             <h1 className="text-display font-extrabold text-white tracking-tight">Identity & Access</h1>
-            <p className="text-zinc-400 mt-2 text-section">Manage RBAC policies, user accounts, and AI execution permissions.</p>
+            <p className="text-zinc-400 mt-2 text-section">Manage RBAC policies, user accounts, and SI execution permissions.</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -180,7 +180,7 @@ const IdentityAccessView = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${u.name === 'AI Engine' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-zinc-800 text-zinc-300'}`}>
+                    <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${u.name === 'SI Engine' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-zinc-800 text-zinc-300'}`}>
                       {u.role}
                     </span>
                   </td>
@@ -199,7 +199,7 @@ const IdentityAccessView = () => {
                       <button onClick={() => toast.info(`Settings for ${u.name}`)} className="p-1.5 text-zinc-400 hover:text-white transition-colors" title="User Settings">
                         <Settings size={15} />
                       </button>
-                      {u.name !== 'AI Engine' && (
+                      {u.name !== 'SI Engine' && (
                         <button
                           onClick={() => handleDeleteUser(u.id, u.name)}
                           className="p-1.5 text-rose-500 hover:text-rose-400 transition-colors cursor-pointer"
@@ -404,7 +404,7 @@ const WORKSPACE_SECTIONS: Record<string, { label: string; icon: string; emptyTit
  { label: 'Templates', icon: '📝', emptyTitle: 'No templates created', emptyDesc: 'Create reusable templates to save time on recurring communications.', actions: ['+ New Template'] },
  { label: 'Analytics', icon: '📊', emptyTitle: 'No communication data yet', emptyDesc: 'Engagement analytics will populate as you communicate.', actions: [] },
  ],
- 'AI & Automation': [
+ 'SI & Automation': [
  { label: 'Active', icon: '🤖', emptyTitle: 'No automations active', emptyDesc: 'Deploy your first automation to start saving time.', actions: ['+ New Automation'] },
  { label: 'Runs', icon: '▶️', emptyTitle: 'No runs yet', emptyDesc: 'Automation execution history will appear here.', actions: [] },
  { label: 'Templates', icon: '📋', emptyTitle: 'No templates', emptyDesc: 'Pre-built automation templates will help you get started faster.', actions: ['+ Browse Templates'] },
@@ -459,7 +459,7 @@ const MODULE_TO_PACKAGE_MAP: Record<string, string> = {
 
  // Operations
  'task_mgmt': 'Operations.ProjectManagement',
- 'process_builder': 'AI.WorkflowAutomation',
+ 'process_builder': 'SI.WorkflowAutomation',
  'capacity_plan': 'Operations.ProjectManagement',
 
  // Finance

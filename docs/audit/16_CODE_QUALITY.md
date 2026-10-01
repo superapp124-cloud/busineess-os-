@@ -2,7 +2,7 @@
 
 ## Summary
 
-The repository builds successfully with `npm run build`, but the Workflow Studio implementation has high maintainability risk. The main Studio route is a large component that mixes UI, static data, workflow business logic, serialization, local runtime orchestration, telemetry, AI generation, publish actions, and analytics.
+The repository builds successfully with `npm run build`, but the Workflow Studio implementation has high maintainability risk. The main Studio route is a large component that mixes UI, static data, workflow business logic, serialization, local runtime orchestration, telemetry, SI generation, publish actions, and analytics.
 
 ## Build Result
 
@@ -110,7 +110,7 @@ Console logs are common in runtime/platform code:
 
 - `CommandBus` logs every received command.
 - Compiler logs generated graphs and errors.
-- AI provider logs reasoning/fallback.
+- SI provider logs reasoning/fallback.
 - Self-healing logs failures and retries.
 - Studio logs compiled plans on publish/export.
 

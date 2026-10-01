@@ -13,29 +13,29 @@ interface BusinessLandingPageProps {
 const PAGE_METADATA = {
   'business-os': {
     title: 'CHATR Business OS — All-in-One Enterprise Operating System',
-    description: 'Unify communication, CRM, workforce management, and automated workflows into one AI-native Business OS for growing enterprises.',
+    description: 'Unify communication, CRM, workforce management, and automated workflows into one SI-native Business OS for growing enterprises.',
     h1: 'The All-in-One Business OS for Enterprise Operations',
     canonical: 'https://chatrchat.in/business-os',
     schemaType: 'WebApplication'
   },
   'ai-business-os': {
-    title: 'AI Business OS — Autonomous Enterprise Automation | CHATR',
-    description: 'Streamline team collaboration, customer operations, and intelligent agent workflows with CHATR AI Business OS.',
-    h1: 'AI-Native Business OS for Autonomous Enterprise Growth',
+    title: 'SI Business OS — Autonomous Enterprise Automation | CHATR',
+    description: 'Streamline team collaboration, customer operations, and intelligent agent workflows with CHATR SI Business OS.',
+    h1: 'SI-Native Business OS for Autonomous Enterprise Growth',
     canonical: 'https://chatrchat.in/ai-business-os',
     schemaType: 'WebApplication'
   },
   'ai-revenue-operations': {
-    title: 'AI Revenue Operations & Enterprise CRM | CHATR Business OS',
-    description: 'Unify sales pipelines, lead attribution, customer support, and recurring revenue metrics with AI Revenue Operations on CHATR.',
-    h1: 'AI Revenue Operations & Pipeline Automation',
+    title: 'SI Revenue Operations & Enterprise CRM | CHATR Business OS',
+    description: 'Unify sales pipelines, lead attribution, customer support, and recurring revenue metrics with SI Revenue Operations on CHATR.',
+    h1: 'SI Revenue Operations & Pipeline Automation',
     canonical: 'https://chatrchat.in/ai-revenue-operations',
     schemaType: 'WebApplication'
   },
   'ai-agents-for-business': {
-    title: 'AI Agents for Business — Multi-Agent Workflow Automation | CHATR',
-    description: 'Deploy specialized AI agents for customer support, candidate screening, CRM data entry, and business intelligence on CHATR.',
-    h1: 'Specialized AI Agents for Enterprise Workflows',
+    title: 'SI Agents for Business — Multi-Agent Workflow Automation | CHATR',
+    description: 'Deploy specialized SI agents for customer support, candidate screening, CRM data entry, and business intelligence on CHATR.',
+    h1: 'Specialized SI Agents for Enterprise Workflows',
     canonical: 'https://chatrchat.in/ai-agents-for-business',
     schemaType: 'WebApplication'
   },
@@ -139,7 +139,7 @@ export const BusinessLandingPage: React.FC<BusinessLandingPageProps> = ({ pageTy
           <div className="flex items-center space-x-4 text-xs font-mono">
             <Link to="/business-os" className="text-slate-300 hover:text-white transition-colors">Business OS</Link>
             <Link to="/ai-revenue-operations" className="text-slate-300 hover:text-white transition-colors">RevOps</Link>
-            <Link to="/ai-agents-for-business" className="text-slate-300 hover:text-white transition-colors">AI Agents</Link>
+            <Link to="/ai-agents-for-business" className="text-slate-300 hover:text-white transition-colors">SI Agents</Link>
             <Link to="/auth" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all">
               Launch Workspace
             </Link>
@@ -184,9 +184,9 @@ export const BusinessLandingPage: React.FC<BusinessLandingPageProps> = ({ pageTy
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 font-mono">
           <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
             <Bot className="w-6 h-6 text-indigo-400" />
-            <h3 className="text-base font-bold text-white font-sans">AI Agent Workflows</h3>
+            <h3 className="text-base font-bold text-white font-sans">SI Agent Workflows</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              Automate customer operations, lead qualification, and internal queries with specialized AI agents.
+              Automate customer operations, lead qualification, and internal queries with specialized SI agents.
             </p>
           </div>
 
@@ -215,13 +215,13 @@ export const BusinessLandingPage: React.FC<BusinessLandingPageProps> = ({ pageTy
               Business OS
             </Link>
             <Link to="/ai-business-os" className="px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 rounded-lg transition-colors">
-              AI Business OS
+              SI Business OS
             </Link>
             <Link to="/ai-revenue-operations" className="px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 rounded-lg transition-colors">
-              AI RevOps
+              SI RevOps
             </Link>
             <Link to="/ai-agents-for-business" className="px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 rounded-lg transition-colors">
-              AI Business Agents
+              SI Business Agents
             </Link>
             <Link to="/business-automation" className="px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 rounded-lg transition-colors">
               Business Automation

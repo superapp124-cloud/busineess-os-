@@ -3,8 +3,8 @@
     "identity": {
       "id": "mock.streaming.ai",
       "version": "1.0.0",
-      "displayName": "Mock Streaming AI Provider",
-      "description": "Streaming AI chat provider.",
+      "displayName": "Mock Streaming SI Provider",
+      "description": "Streaming SI chat provider.",
       "author": "CHATR",
       "license": "MIT"
     },

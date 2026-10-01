@@ -178,7 +178,7 @@ Each app has custom configuration:
 5. **Offline Mode** - Progressive Web App features
 6. **App SDK** - For native mini-app development
 7. **Cross-Device Sync** - Session sync across devices
-8. **App Recommendations** - AI-powered suggestions
+8. **App Recommendations** - SI-powered suggestions
 
 ## Vision
 

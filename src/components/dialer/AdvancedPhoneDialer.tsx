@@ -198,7 +198,7 @@ const inferLocation = (phone: string, profile?: ProfileMatch | null) => {
 
 const riskCopy = {
  safe: {
- title: "AI Insights",
+ title: "SI Insights",
  poweredClass: "bg-violet-50 text-violet-700",
  iconClass: "bg-violet-100 text-violet-700",
  heroClass: "from-violet-500 via-violet-300 to-white",
@@ -206,7 +206,7 @@ const riskCopy = {
  primary: "text-emerald-700",
  },
  suspicious: {
- title: "AI Alert",
+ title: "SI Alert",
  poweredClass: "bg-amber-50 text-amber-700",
  iconClass: "bg-amber-100 text-amber-700",
  heroClass: "from-amber-300 via-rose-100 to-white",
@@ -214,7 +214,7 @@ const riskCopy = {
  primary: "text-amber-700",
  },
  spam: {
- title: "AI Alert",
+ title: "SI Alert",
  poweredClass: "bg-rose-50 text-rose-700",
  iconClass: "bg-rose-100 text-rose-700",
  heroClass: "from-rose-400 via-rose-100 to-white",
@@ -709,7 +709,7 @@ export function AdvancedPhoneDialer({ onCall, onChat }: AdvancedPhoneDialerProps
  )}
  >
  <ShieldCheck className="h-4 w-4" />
- <span>{protectionReady ? "AI Caller Intelligence Active" : "Finish Native Caller ID Setup"}</span>
+ <span>{protectionReady ? "SI Caller Intelligence Active" : "Finish Native Caller ID Setup"}</span>
  </button>
 
  <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
@@ -794,7 +794,7 @@ export function AdvancedPhoneDialer({ onCall, onChat }: AdvancedPhoneDialerProps
  className="fixed bottom-24 right-5 z-50 flex h-16 w-16 flex-col items-center justify-center rounded-full bg-violet-700 text-white shadow-xl shadow-violet-700/30 active:scale-95"
  >
  <Sparkles className="h-5 w-5" />
- <span className="mt-0.5 text-[10px] font-semibold">Ask AI</span>
+ <span className="mt-0.5 text-[10px] font-semibold">Ask SI</span>
  </button>
 
  {/* Fixed DialPad at bottom */}
@@ -918,7 +918,7 @@ function DeviceGptPanel({ identity }: { identity: CallerIdentity }) {
  </span>
  <div className="min-w-0">
  <div className="flex flex-wrap items-center gap-2">
- <h3 className="text-body font-semibold text-slate-950">CHATR AI</h3>
+ <h3 className="text-body font-semibold text-slate-950">CHATR SI</h3>
  <Badge className={cn(
  "rounded-lg border-0 px-2.5 py-1 text-[11px] font-semibold",
  isSpam ? "bg-rose-600 text-white" : isSuspicious ? "bg-amber-600 text-white" : "bg-emerald-600 text-white"
@@ -1176,7 +1176,7 @@ function Section({
  </div>
  {showPowered && (
  <Badge className={cn("shrink-0 rounded-lg border-0 px-2.5 py-1 text-[11px] font-semibold", badgeClass)}>
- Powered by Chatr AI
+ Powered by Chatr SI
  </Badge>
  )}
  </div>

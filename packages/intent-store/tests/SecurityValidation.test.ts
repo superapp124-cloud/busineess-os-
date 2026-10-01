@@ -87,7 +87,7 @@ export async function runSecurityValidationTests() {
 
   // 4. Policy Bypass — low-confidence plan must not reach Kernel
   {
-    console.log('Test 4: AI Safety — Low Confidence Plan Blocked');
+    console.log('Test 4: SI Safety — Low Confidence Plan Blocked');
     const result = await mockPlanner.validateSafety(0.35, 0.80);
     console.assert(!result.safe, 'Low confidence plan must be blocked');
     console.assert(result.requiresHumanReview, 'Must flag requiresHumanReview');

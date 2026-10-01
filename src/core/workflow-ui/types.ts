@@ -27,7 +27,7 @@ export type WidgetType =
   | 'form'               // Dynamic field-driven form
   | 'action'             // Suggestion chips / quick action buttons
   | 'timeline'           // Chronological event list
-  | 'execution_console'  // AI execution transparency panel (latency, provider, mode)
+  | 'execution_console'  // SI execution transparency panel (latency, provider, mode)
   | 'meeting_tracking';  // Live tracking for meeting RSVPs
 
 // ─── Widget Lifecycle State Machine ──────────────────────────────────────────
@@ -68,10 +68,10 @@ export type WorkflowLifecycle =
 // ─── Workflow UI Event Types ──────────────────────────────────────────────────
 
 /**
- * The only events the AI/planner is allowed to emit.
+ * The only events the SI/planner is allowed to emit.
  * These are plain JSON events — never React components.
  *
- * Rule: AI → JSON Event → WorkflowUIRuntime → WidgetRegistry → React
+ * Rule: SI → JSON Event → WorkflowUIRuntime → WidgetRegistry → React
  */
 export type WorkflowUIEventType =
   | 'WIDGET_CREATED'        // Push new widget into session
@@ -463,7 +463,7 @@ export interface ActionItem {
   label: string;
   icon?: string;
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  /** If set, tapping sends this text as a new message to the AI */
+  /** If set, tapping sends this text as a new message to the SI */
   prompt?: string;
 }
 
@@ -499,7 +499,7 @@ export interface ExecutionPhase {
 
 export interface ExecutionConsoleWidgetPayload {
   phases: ExecutionPhase[];
-  /** Which AI mode is active */
+  /** Which SI mode is active */
   aiMode: 'local' | 'cloud' | 'hybrid';
   /** Whether the console is expanded or collapsed */
   expanded?: boolean;

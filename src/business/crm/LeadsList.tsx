@@ -194,7 +194,7 @@ export function LeadsList({ businessId, filter, searchQuery, onLeadCreated }: Le
   className="h-7 text-xs gap-1 border-indigo-500/40 text-indigo-400 hover:bg-indigo-950/40"
   >
   <Sparkles className="h-3 w-3" />
-  {activeDossierLeadId === lead.id ? 'Hide AI Dossier' : 'AI Dossier'}
+  {activeDossierLeadId === lead.id ? 'Hide SI Dossier' : 'SI Dossier'}
   </Button>
   <Badge variant={getPriorityVariant(lead.priority)} className="text-label">
   {lead.priority}

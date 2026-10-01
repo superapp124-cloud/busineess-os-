@@ -38,7 +38,7 @@ If client desktop apps lose cloud connectivity:
 | Severity Level | Definition | RTO Target | Notification SLA | Action Required |
 |---|---|:---:|:---:|---|
 | **SEV-1 (Critical)** | Complete desktop application or database outage affecting >10% tenants | `< 15 mins` | `< 5 mins` | Initiate immediate PITR restore & failover to secondary cloud region |
-| **SEV-2 (High)** | Degradation in AI intent resolution or execution engine queue slowdown | `< 1 hour` | `< 15 mins` | Scale background worker processes & flush stale cache queues |
+| **SEV-2 (High)** | Degradation in SI intent resolution or execution engine queue slowdown | `< 1 hour` | `< 15 mins` | Scale background worker processes & flush stale cache queues |
 | **SEV-3 (Moderate)** | Non-blocking UI glitch or delayed analytics report export | `< 24 hours` | `< 2 hours` | Patch issue in next release cycle |
 
 ---

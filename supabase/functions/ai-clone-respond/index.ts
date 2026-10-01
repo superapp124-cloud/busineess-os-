@@ -35,7 +35,7 @@ serve(async (req) => {
       .single();
 
     if (idError || !identity) {
-      return new Response(JSON.stringify({ error: "AI clone not found or not active" }), {
+      return new Response(JSON.stringify({ error: "SI clone not found or not active" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -51,12 +51,12 @@ serve(async (req) => {
 
     const userTone = recentMessages?.map(m => m.content).join("\n") || "";
 
-    // Build the AI prompt
+    // Build the SI prompt
     const personality = identity.ai_clone_personality || "friendly and helpful";
     const boundaries = identity.ai_clone_boundaries || {};
     const ownerName = identity.profiles?.username || identity.handle;
 
-    const systemPrompt = `You are the AI clone of ${ownerName} on CHATR messaging platform.
+    const systemPrompt = `You are the SI clone of ${ownerName} on CHATR messaging platform.
 
 PERSONALITY: ${personality}
 
@@ -70,7 +70,7 @@ TONE REFERENCE (based on ${ownerName}'s actual messages):
 ${userTone.slice(0, 1000)}
 
 RULES:
-1. Reply as if you ARE ${ownerName}, not an AI
+1. Reply as if you ARE ${ownerName}, not an SI
 2. Keep the tone natural and conversational
 3. If asked something outside boundaries, politely say "${ownerName} will get back to you personally"
 4. Never reveal sensitive info (phone, address, passwords)
@@ -99,7 +99,7 @@ RULES:
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("AI clone error:", error);
+    console.error("SI clone error:", error);
     return new Response(JSON.stringify({ error: error.message || "Internal error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

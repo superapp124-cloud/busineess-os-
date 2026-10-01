@@ -25,7 +25,7 @@ $$\begin{aligned}
 | **1** | `CORE_REQUIRED` | **10** | Core foundation, initial schema, user sync triggers, core messaging patches |
 | **2** | `AUTH` | **6** | Device trust, WebAuthn challenges, identity providers, device hardware binding |
 | **3** | `COMMUNICATION` | **4** | Conversation participants, calls & WebRTC signaling, message columns |
-| **4** | `AI` | **3** | AI sessions, AI memory, agent execution queue |
+| **4** | `SI` | **3** | SI sessions, SI memory, agent execution queue |
 | **5** | `ADMIN_SECURITY` | **1** | Super Admin Allowlist (`9910678611`, `9717845477`) & `is_super_admin()` helper |
 | **6** | `NOTIFICATIONS` | **1** | In-app notifications, notification preferences, calendar events |
 | **7** | `STORAGE` | **0** | Merged into Core Foundation Part 3 (`chat_attachments` private bucket) |
@@ -77,8 +77,8 @@ $$\begin{aligned}
 | **15** | `public.device_challenges` | WebAuthn crypto challenges | 5 files | **Deployed** (RLS protected) |
 | **16** | `public.identity_providers` | OAuth & phone provider bindings | 6 files | **Deployed** (RLS protected) |
 | **17** | `public.storage_metadata` | Private storage object metadata | 4 files | **Deployed** (RLS protected) |
-| **18** | `public.ai_memory` | 768-dim user AI semantic memory | 5 files | **Deployed** (RLS protected) |
-| **19** | `public.ai_sessions` | AI agent chat & assistant session threads | 8 files | **Deployed** (RLS protected) |
+| **18** | `public.ai_memory` | 768-dim user SI semantic memory | 5 files | **Deployed** (RLS protected) |
+| **19** | `public.ai_sessions` | SI agent chat & assistant session threads | 8 files | **Deployed** (RLS protected) |
 | **20** | `public.super_admin_allowlist` | Hardcoded Super Admin allowlist (`9910678611`, `9717845477`) | 14 files | **Pending Deployment** (Migration ready) |
 
 ---

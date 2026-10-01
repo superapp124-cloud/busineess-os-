@@ -172,7 +172,7 @@ create table if not exists public.meeting_participants (
 alter table public.meeting_participants enable row level security;
 
 -- ==============================================================================
--- 4. AI & INTELLIGENCE
+-- 4. SI & INTELLIGENCE
 -- ==============================================================================
 
 create table if not exists public.ai_sessions (
@@ -184,7 +184,7 @@ create table if not exists public.ai_sessions (
   created_at timestamp with time zone default now()
 );
 alter table public.ai_sessions enable row level security;
-create policy "Users manage own AI sessions" on public.ai_sessions for all using (user_id = auth.uid());
+create policy "Users manage own SI sessions" on public.ai_sessions for all using (user_id = auth.uid());
 
 create table if not exists public.ai_memory (
   id uuid default gen_random_uuid() primary key,

@@ -6,7 +6,7 @@ export type CapabilityCategory =
   | 'Finance'
   | 'Automation'
   | 'Monitoring'
-  | 'AI';
+  | 'SI';
 
 export interface Capability {
   id: string;

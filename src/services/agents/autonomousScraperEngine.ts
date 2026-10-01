@@ -268,7 +268,7 @@ export function generateRealPitch(lead: {
   city: string;
 }): string {
   if (lead.vertical.toLowerCase().includes('recruitment') || lead.vertical.toLowerCase().includes('staffing') || lead.vertical.toLowerCase().includes('hiring')) {
-    return `Hi ${lead.contactName || 'Team'}, noticed ${lead.companyName} is leading recruitment in ${lead.city}. We built a 100% free AI ATS Resume Grader & WhatsApp Screening tool: https://www.chatrchat.in/tools/resume-grader — zero signup required. Would love your team's feedback!`;
+    return `Hi ${lead.contactName || 'Team'}, noticed ${lead.companyName} is leading recruitment in ${lead.city}. We built a 100% free SI ATS Resume Grader & WhatsApp Screening tool: https://www.chatrchat.in/tools/resume-grader — zero signup required. Would love your team's feedback!`;
   }
   if (lead.vertical.toLowerCase().includes('health') || lead.vertical.toLowerCase().includes('clinic') || lead.vertical.toLowerCase().includes('doctor')) {
     return `Hi ${lead.companyName} Team (${lead.city}), we built a free WhatsApp Patient Appointment Link & QR Generator for clinics: https://www.chatrchat.in/tools/whatsapp-link-generator — free with zero setup. Hope it streamlines your appointments!`;

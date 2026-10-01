@@ -62,7 +62,7 @@ export const AIStickerPicker = ({
  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
  const file = e.target.files?.[0];
  if (file) {
- // Convert to base64 for AI processing
+ // Convert to base64 for SI processing
  const reader = new FileReader();
  reader.onloadend = () => {
  const base64 = reader.result as string;
@@ -83,7 +83,7 @@ export const AIStickerPicker = ({
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2">
  <Sparkles className="w-5 h-5" />
- AI Stickers
+ SI Stickers
  </DialogTitle>
  </DialogHeader>
 

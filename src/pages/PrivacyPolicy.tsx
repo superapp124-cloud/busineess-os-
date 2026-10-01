@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
  <li>Account Information: Phone number, username, profile photo</li>
  <li>Messages and Content: Messages, photos, videos, voice notes</li>
- <li>Call Logs and Caller ID Data: Incoming phone numbers, call durations, and contact names (via READ_CALL_LOG permission) used strictly for real-time spam analysis, trust scoring, and our AI scam screening engine.</li>
+ <li>Call Logs and Caller ID Data: Incoming phone numbers, call durations, and contact names (via READ_CALL_LOG permission) used strictly for real-time spam analysis, trust scoring, and our SI scam screening engine.</li>
  <li>Health Data: Wellness tracking, mood logs, health metrics (with consent)</li>
  <li>Device Information: Device type, operating system, IP address</li>
  <li>Usage Data: App interactions, features used, performance data</li>

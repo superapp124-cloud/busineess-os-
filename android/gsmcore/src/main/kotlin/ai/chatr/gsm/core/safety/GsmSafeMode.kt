@@ -198,7 +198,7 @@ class GsmSafeMode(
             GsmFeature.SHIELD,
             GsmFeature.CALL_SCREENING,
             GsmFeature.SMART_DIALER,
-            GsmFeature.AI,
+            GsmFeature.SI,
             GsmFeature.TRANSCRIPTION,
             GsmFeature.OVERLAY,
             GsmFeature.RECORDING,

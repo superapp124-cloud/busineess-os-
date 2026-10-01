@@ -113,7 +113,7 @@ export default function SmartPushPreferences() {
  </div>
  <div>
  <p className="text-secondary font-medium">Smart push enabled</p>
- <p className="text-label text-muted-foreground">AI-picked tips, deals & earnings</p>
+ <p className="text-label text-muted-foreground">SI-picked tips, deals & earnings</p>
  </div>
  </div>
  <Switch

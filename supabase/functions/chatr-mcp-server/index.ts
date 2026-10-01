@@ -529,12 +529,12 @@ function createMcpServer(auth: AuthResult) {
   });
 
   // ═══════════════════════════════════════════════════════
-  // BRAIN / AI TOOLS
+  // BRAIN / SI TOOLS
   // ═══════════════════════════════════════════════════════
 
   mcpServer.tool({
     name: "brain_query",
-    description: "Query the CHATR Brain AI system. Routes to specialized agents (health, jobs, local, work, personal, search).",
+    description: "Query the CHATR Brain SI system. Routes to specialized agents (health, jobs, local, work, personal, search).",
     inputSchema: {
       type: "object",
       properties: {

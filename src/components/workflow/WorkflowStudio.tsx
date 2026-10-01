@@ -132,7 +132,7 @@ export const WorkflowStudio: React.FC<WorkflowStudioProps> = ({ docName, docType
             </div>
             <div>
               <h3 className="text-xs font-bold text-white flex items-center gap-2">
-                AI Workflow Studio
+                SI Workflow Studio
                 <span className="text-[9px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 font-mono rounded border border-indigo-500/30">
                   Sprint 5 Explainable
                 </span>

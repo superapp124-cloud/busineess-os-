@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // AIClassifier — CHATR Intelligence Platform v1.1
 //
-// Replaces all static keyword/extension routing with a real AI classification
+// Replaces all static keyword/extension routing with a real SI classification
 // pipeline. Uses Gemini to reason over multi-signal document context and
 // return a structured classification result with confidence scores.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -166,7 +166,7 @@ export async function classifyDocument(
 
   const rawText = await extractTextFromFile(file);
 
-  const prompt = `You are a document and business context classifier for CHATR, an AI-first Intent Operating System.
+  const prompt = `You are a document and business context classifier for CHATR, an SI-first Intent Operating System.
 
 Analyze the following document signals and determine the classification.
 
@@ -236,7 +236,7 @@ Determine the following with high accuracy. Return ONLY valid JSON:
 
     return result;
   } catch (err) {
-    console.error('[AIClassifier] Live AI Classification error, utilizing local pattern classifier:', err);
+    console.error('[AIClassifier] Live SI Classification error, utilizing local pattern classifier:', err);
     return buildFallbackClassification(filename, rawText);
   }
 }
@@ -276,7 +276,7 @@ function checkExactDocumentPatterns(filename: string): ClassificationResult | nu
       suggestedActions: [
         'Share Report with Dr. Smita Sharma',
         'Add Test Results to Health Timeline',
-        'Ask AI to Analyze Microscopic Findings',
+        'Ask SI to Analyze Microscopic Findings',
         'Download Clinical Summary PDF'
       ],
       summary: 'Laboratory investigation report from Max Super Speciality Hospital for Mrs. Shamshad Jahan (70Y/F). Urine routine analysis shows normal pH (5.5) and negative protein/glucose.',
@@ -370,8 +370,8 @@ function buildFallbackClassification(filename: string, rawText: string): Classif
         { label: 'Filename', value: filename, type: 'keyword' },
         { label: 'Status', value: 'Indexed & Analyzed', type: 'keyword' },
       ],
-      suggestedActions: ['Summarize Document', 'Ask AI Questions', 'Extract Key Insights'],
-      summary: `Document "${filename}" is indexed in CHATR Workspace. Use the AI Chat on the right to analyze contents.`,
+      suggestedActions: ['Summarize Document', 'Ask SI Questions', 'Extract Key Insights'],
+      summary: `Document "${filename}" is indexed in CHATR Workspace. Use the SI Chat on the right to analyze contents.`,
       reasoning: 'Fallback classification applied.',
       rawText,
     };
@@ -387,8 +387,8 @@ function buildFallbackClassification(filename: string, rawText: string): Classif
     confidence: 0.70,
     alternatives: [],
     keyEntities: [],
-    suggestedActions: ['Review Document', 'Ask AI Questions'],
-    summary: `"${filename}" is opened in CHATR. Select actions or query the AI Assistant.`,
+    suggestedActions: ['Review Document', 'Ask SI Questions'],
+    summary: `"${filename}" is opened in CHATR. Select actions or query the SI Assistant.`,
     reasoning: 'General fallback.',
     rawText,
   };

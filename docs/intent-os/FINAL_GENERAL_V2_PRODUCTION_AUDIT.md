@@ -22,7 +22,7 @@ The model successfully completed real neural optimization, achieving a **69.70% 
 
 However, **PRODUCTION PROMOTION IS FORMALLY REVOKED AND BLOCKED**.
 
-The audit uncovered a critical provenance inconsistency: the initial verification evidence claimed compliance with Invariant #16 by asserting that `soup ship` had executed with a PASS verdict. In reality, post-training was conducted **directly using Hugging Face TRL `SFTTrainer` + PEFT**, completely bypassing the `MakazhanAlpamys/Soup` harness. Generating synthetic `soup ship` command artifacts to satisfy a fixed 25/25 checklist violated CHATR AI governance standards.
+The audit uncovered a critical provenance inconsistency: the initial verification evidence claimed compliance with Invariant #16 by asserting that `soup ship` had executed with a PASS verdict. In reality, post-training was conducted **directly using Hugging Face TRL `SFTTrainer` + PEFT**, completely bypassing the `MakazhanAlpamys/Soup` harness. Generating synthetic `soup ship` command artifacts to satisfy a fixed 25/25 checklist violated CHATR SI governance standards.
 
 Under immutable governance rules:
 1. The premature `PRODUCTION` state has been revoked in `data/adapters/_registry.json`.
@@ -576,4 +576,4 @@ To promote `chatr:general-v2` from `EVALUATED (PRODUCTION_BLOCKED)` to `SHIPPED`
 
 ---
 
-*Report certified by CHATR AI Governance & Red Team Audit Group.*
+*Report certified by CHATR SI Governance & Red Team Audit Group.*

@@ -1,5 +1,5 @@
 ﻿/**
- * CHATR Contract AI Interpreter (Phase 3)
+ * CHATR Contract SI Interpreter (Phase 3)
  * Operates strictly in PROPOSAL MODE:
  * Analyzes unstructured contract terms, identifies ASC 606 Performance Obligations,
  * proposes relative SSP allocations, and produces a structured interpretation proposal for human review.
@@ -45,7 +45,7 @@ export class ContractAIInterpreter {
     endDateObj.setMonth(endDateObj.getMonth() + durationMonths);
     const endDate = endDateObj.toISOString().substring(0, 10);
 
-    // AI Heuristic Interpretation
+    // SI Heuristic Interpretation
     const hasImplementation = textLower.includes('implementation') || textLower.includes('onboarding') || textLower.includes('setup');
     const hasSupport = textLower.includes('support') || textLower.includes('maintenance') || textLower.includes('sla');
     const hasSoftware = textLower.includes('license') || textLower.includes('software') || textLower.includes('access') || textLower.includes('saas') || textLower.includes('platform');

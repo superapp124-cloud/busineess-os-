@@ -27,7 +27,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
   const selectedRoom = rooms.find(r => r.id === selectedId);
 
   const uniqueDms = React.useMemo(() => {
-    const rawDms = rooms.filter(r => r.type === 'dm' && r.name !== 'AI Assistant' && r.name !== 'CHATR AI' && r.id !== 'chatr-ai-room');
+    const rawDms = rooms.filter(r => r.type === 'dm' && r.name !== 'SI Assistant' && r.name !== 'CHATR SI' && r.id !== 'chatr-ai-room');
     const seenNames = new Set<string>();
     const seenIds = new Set<string>();
     const result: Room[] = [];
@@ -82,15 +82,15 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = React.mem
             </div>
             <div className="space-y-0.5">
               <button onClick={() => {
-                const aiRoom = rooms.find(r => r.name === 'CHATR AI' || r.id === 'chatr-ai-room');
+                const aiRoom = rooms.find(r => r.name === 'CHATR SI' || r.id === 'chatr-ai-room');
                 setSelectedId(aiRoom ? aiRoom.id : 'chatr-ai-room');
               }} className={cn(
                 'w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition-colors group',
-                (selectedRoom?.name === 'CHATR AI' || selectedId === 'chatr-ai-room') ? 'bg-violet-600/20 text-violet-300 font-semibold' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
+                (selectedRoom?.name === 'CHATR SI' || selectedId === 'chatr-ai-room') ? 'bg-violet-600/20 text-violet-300 font-semibold' : 'hover:bg-white/[0.04] text-white/70 hover:text-white/90'
               )}>
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-5 h-5 rounded-md object-cover shrink-0 shadow-sm" />
-                  <span className="text-[13px] truncate font-bold text-white">chatrAI</span>
+                  <img src="/chatr-ai-logo.jpg" alt="chatrSI" className="w-5 h-5 rounded-md object-cover shrink-0 shadow-sm" />
+                  <span className="text-[13px] truncate font-bold text-white">chatrSI</span>
                 </div>
               </button>
             </div>

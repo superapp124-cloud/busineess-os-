@@ -54,7 +54,7 @@ interface MockAdapter {
 }
 
 // ============================================================
-// AI HUB PAGE
+// SI HUB PAGE
 // ============================================================
 
 export const AIHub: React.FC = () => {
@@ -265,7 +265,7 @@ export const AIHub: React.FC = () => {
         <div className="space-y-1">
           <div className="flex items-center space-x-2.5 flex-wrap">
             <span className="text-2xl">🧠</span>
-            <h1 className="text-xl font-bold text-white">CHATR AI Training Hub</h1>
+            <h1 className="text-xl font-bold text-white">CHATR SI Training Hub</h1>
             <span className="px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/40">
               SOUP v0.73.3 (PINNED)
             </span>

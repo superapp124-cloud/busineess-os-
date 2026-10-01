@@ -83,7 +83,7 @@ export const ExecutiveDecisionTrackerSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Decision Tracker AI',
+    assistantName: 'Decision Tracker SI',
     skills: []
   },
   

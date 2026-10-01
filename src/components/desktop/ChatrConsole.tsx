@@ -18,7 +18,7 @@ const zeroStateContext = [
 export const ChatrConsole: React.FC = () => {
  const [isOpen, setIsOpen] = useState(false);
  const [query, setQuery] = useState('');
- const [activeMode, setActiveMode] = useState<'Universal' | 'Communication' | 'Action' | 'AI'>('Universal');
+ const [activeMode, setActiveMode] = useState<'Universal' | 'Communication' | 'Action' | 'SI'>('Universal');
  const [activePlan, setActivePlan] = useState<ExecutionPlan | null>(null);
  const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ export const ChatrConsole: React.FC = () => {
  if (q.startsWith('prepare') || q.startsWith('draft')) {
  setActiveMode('Action');
  } else if (q.startsWith('summarize') || q.startsWith('ai')) {
- setActiveMode('AI');
+ setActiveMode('SI');
  } else if (q.includes('john') || q.includes('sarah')) {
  setActiveMode('Communication');
  } else {

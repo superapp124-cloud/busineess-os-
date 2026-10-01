@@ -2,7 +2,7 @@
  * WorkflowGraph ABI — v1.0.0 — FROZEN
  *
  * This is the canonical workflow graph contract.
- * All consumers (Studio, AI Builder, Runtime, Publish, Templates, Industry Packs)
+ * All consumers (Studio, SI Builder, Runtime, Publish, Templates, Industry Packs)
  * must use this type. Do NOT extend or modify without a formal ADR revision.
  *
  * ADR: docs/ADR/ADR-006-workflow-graph-abi.md

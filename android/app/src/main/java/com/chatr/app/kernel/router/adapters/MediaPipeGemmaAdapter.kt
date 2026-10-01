@@ -82,7 +82,7 @@ class MediaPipeGemmaAdapter(
         history: List<DialogueTurn>
     ): DialogueAction {
         val instance = gemma ?: return DialogueAction.EndScreening
-        val prompt = "Caller: \"$callerUtterance\". As AI receptionist, reply in 1 short sentence:"
+        val prompt = "Caller: \"$callerUtterance\". As SI receptionist, reply in 1 short sentence:"
         val reply = instance.generate(prompt).trim()
         return DialogueAction.Speak(reply)
     }

@@ -2,8 +2,8 @@
 // Runs every 30 minutes via pg_cron and generates proactive FCM-backed
 // notifications for each active user across 4 categories:
 //   1. Missed calls / unread messages reminders
-//   2. AI lifestyle nudges (steps, water, calories, sleep) — uses sensor
-//      data when present, otherwise generic time-aware AI prompt
+//   2. SI lifestyle nudges (steps, water, calories, sleep) — uses sensor
+//      data when present, otherwise generic time-aware SI prompt
 //   3. Earning opportunities (fresh micro-tasks, referral bonuses)
 //   4. Calendar / appointment reminders (~30 min before start)
 //
@@ -249,7 +249,7 @@ async function craftAINudge(
       return { title: String(parsed.title).slice(0, 60), body: String(parsed.body).slice(0, 140) };
     }
   } catch (e) {
-    console.warn("AI nudge fallback:", e);
+    console.warn("SI nudge fallback:", e);
   }
   return null;
 }

@@ -18,7 +18,7 @@ Traditional job boards rely on expensive paid search arbitrage (Google Ads) or t
 
 ```
                                   GOOGLE SEARCH ECOSYSTEM
-                     (AI Overviews, Standard Web Search, Job Rich Snippets)
+                     (SI Overviews, Standard Web Search, Job Rich Snippets)
                                              │
                                              ▼
                      ┌─────────────────────────────────────────────────┐
@@ -42,7 +42,7 @@ Traditional job boards rely on expensive paid search arbitrage (Google Ads) or t
                      ┌─────────────────────────────────────────────────┐
                      │       PRODUCT UTILITY & FRICTIONLESS ACTIVATION │
                      │  • Instant ATS Score & Missing Keyword Extractor│
-                     │  • AI Mock Interview Rubric & Feedback         │
+                     │  • SI Mock Interview Rubric & Feedback         │
                      │  • One-Click Application with Verified Profile  │
                      └───────────────────────┬─────────────────────────┘
                                              │
@@ -114,7 +114,7 @@ TALENTXCEL ROOT (talentxcel.in)
 ├── /interview                                    [Interview Prep Hub]
 │   ├── /interview/{role}                         e.g. /interview/product-manager
 │   ├── /interview/{role}/{company}               e.g. /interview/software-engineer/amazon
-│   └── /interview-simulator                      [AI Live Voice/Text Evaluation Engine]
+│   └── /interview-simulator                      [SI Live Voice/Text Evaluation Engine]
 │
 ├── /skills                                       [Atomic Skill Knowledge Graph]
 │   ├── /skills/{skill}                           e.g. /skills/sql
@@ -911,7 +911,7 @@ export class AtsAnalyzer {
 }
 ```
 
-### 5.2 Funnel 2: Interactive AI Mock Interview & Evaluation Engine (`/interview/{role}`)
+### 5.2 Funnel 2: Interactive SI Mock Interview & Evaluation Engine (`/interview/{role}`)
 
 Search Intent: `"data analyst interview questions"`, `"software engineer behavioral interview"`, `"mock interview ai"`
 
@@ -1394,7 +1394,7 @@ Because job searching is inherently episodic, standard referral invites ("invite
 LOOP A: ATS Scorecard Sharing
 Upload Resume ──► Instant Score 78/100 ──► Generate Public Card ──► "Beat my ATS Score" ──► Peer scans resume
 
-LOOP B: AI Mock Interview Scorecard
+LOOP B: SI Mock Interview Scorecard
 Complete 5-Question Simulation ──► Get 92% Technical Rubric ──► Share LinkedIn/WhatsApp Badge ──► Peer takes assessment
 
 LOOP C: Verified Candidate Talent Profile
@@ -1457,7 +1457,7 @@ PHASE 1: Foundation (Months 1–6) | 0 ──► 100K Monthly Organic Users
 
 PHASE 2: Search Graph Scaling (Months 7–12) | 100K ──► 1M Monthly Organic Users
   • Expand Career Intent Graph: Role × Location × Experience matrix (5,000 validated nodes).
-  • Launch AI Mock Interview Simulator (/interview/{role}).
+  • Launch SI Mock Interview Simulator (/interview/{role}).
   • Launch Salary Intelligence Benchmark charts with wage percentile schema.
   • Launch Public Candidate Profiles (/p/@handle) with candidate opt-in consent.
 

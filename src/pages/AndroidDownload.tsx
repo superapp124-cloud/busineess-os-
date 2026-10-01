@@ -160,7 +160,7 @@ export const AndroidDownload: React.FC = () => {
       "price": "0",
       "priceCurrency": "USD"
     },
-    "description": "Download CHATR+ for Android. Carrier-grade WebRTC HD calling, private messaging without Meta surveillance, TelecomManager lockscreen integration, and autonomous AI agents. Direct APK install without Google Play Store.",
+    "description": "Download CHATR+ for Android. Carrier-grade WebRTC HD calling, private messaging without Meta surveillance, TelecomManager lockscreen integration, and autonomous SI agents. Direct APK install without Google Play Store.",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
@@ -437,8 +437,8 @@ export const AndroidDownload: React.FC = () => {
                   <td className="p-4 text-slate-400">Tied to Google Play Store</td>
                 </tr>
                 <tr>
-                  <td className="p-4 font-semibold text-white">Autonomous AI Agents</td>
-                  <td className="p-4 text-emerald-300 font-medium">Built-in AI triage, assistants & workflows</td>
+                  <td className="p-4 font-semibold text-white">Autonomous SI Agents</td>
+                  <td className="p-4 text-emerald-300 font-medium">Built-in SI triage, assistants & workflows</td>
                   <td className="p-4 text-slate-400">No integrated autonomous agents</td>
                 </tr>
               </tbody>
@@ -667,7 +667,7 @@ export const AndroidDownload: React.FC = () => {
               },
               {
                 q: 'Can I use CHATR+ on Android alongside WhatsApp?',
-                a: 'Yes. CHATR+ runs completely independently on your phone. You can keep WhatsApp installed while using CHATR+ for private encrypted chats, HD voice/video calls, and autonomous AI agents.'
+                a: 'Yes. CHATR+ runs completely independently on your phone. You can keep WhatsApp installed while using CHATR+ for private encrypted chats, HD voice/video calls, and autonomous SI agents.'
               },
               {
                 q: 'How will I get updates if not through Google Play Store?',

@@ -1,10 +1,10 @@
 'use strict';
 
 /**
- * CHATR AI Runtime — LocalRuntimeOrchestrator
+ * CHATR SI Runtime — LocalRuntimeOrchestrator
  * 
  * Headless background service orchestrating:
- * - AI Provider Lifecycle (via ILocalAiEngineProvider abstraction)
+ * - SI Provider Lifecycle (via ILocalAiEngineProvider abstraction)
  * - Loopback HTTP Health Server on 127.0.0.1:3717 for Web-to-Desktop detection
  * - State Machine (idle -> checking -> preparing -> ready -> error)
  * - IPC Bridge for CHATR Desktop UI
@@ -29,7 +29,7 @@ class LocalRuntimeOrchestrator {
 
     this.state = {
       phase: 'idle',           // idle | checking | preparing | ready | error
-      currentStep: '',         // e.g. "Installing AI Engine", "Optimizing models"
+      currentStep: '',         // e.g. "Installing SI Engine", "Optimizing models"
       progress: 0,             // 0 - 100
       readyModels: [],
       error: null,
@@ -98,8 +98,8 @@ class LocalRuntimeOrchestrator {
   /**
    * Bootstrap local runtime:
    * 1. Start loopback health check server.
-   * 2. Initialize active AI engine provider.
-   * 3. Download/start daemon if user authorized local AI.
+   * 2. Initialize active SI engine provider.
+   * 3. Download/start daemon if user authorized local SI.
    */
   async bootstrap(mainWindow = null) {
     if (mainWindow) this.mainWindow = mainWindow;
@@ -114,7 +114,7 @@ class LocalRuntimeOrchestrator {
         log.info('[LocalRuntimeOrchestrator] Provider binary not found. Awaiting user preparation consent.');
         this.updateState({
           phase: 'idle',
-          currentStep: 'Local AI available to prepare',
+          currentStep: 'Local SI available to prepare',
           progress: 0
         });
         return;
@@ -143,7 +143,7 @@ class LocalRuntimeOrchestrator {
       const readyModels = await this.provider.listReadyModels();
       this.updateState({
         phase: 'ready',
-        currentStep: 'Private AI Workspace Ready',
+        currentStep: 'Private SI Workspace Ready',
         progress: 100,
         readyModels,
         error: null
@@ -154,7 +154,7 @@ class LocalRuntimeOrchestrator {
       log.error('[LocalRuntimeOrchestrator] Bootstrap failed:', err.message);
       this.updateState({
         phase: 'error',
-        currentStep: 'Failed to start AI service',
+        currentStep: 'Failed to start SI service',
         error: err.message
       });
     }
@@ -163,7 +163,7 @@ class LocalRuntimeOrchestrator {
   /** Explicit user-triggered installation / preparation */
   async prepareRuntime() {
     log.info('[LocalRuntimeOrchestrator] User requested runtime preparation...');
-    this.updateState({ phase: 'preparing', currentStep: 'Installing AI Engine...', progress: 10 });
+    this.updateState({ phase: 'preparing', currentStep: 'Installing SI Engine...', progress: 10 });
 
     try {
       await this.provider.install((pct) => {
@@ -185,7 +185,7 @@ class LocalRuntimeOrchestrator {
       const readyModels = await this.provider.listReadyModels();
       this.updateState({
         phase: 'ready',
-        currentStep: 'Private AI Workspace Ready',
+        currentStep: 'Private SI Workspace Ready',
         progress: 100,
         readyModels
       });

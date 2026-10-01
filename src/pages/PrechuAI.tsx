@@ -12,7 +12,7 @@ export default function PrechuAI() {
  {
  id: '1',
  role: 'assistant',
- content: 'Hi! I\'m Prechu AI, your smart chat companion. How can I help you today?',
+ content: 'Hi! I\'m Prechu SI, your smart chat companion. How can I help you today?',
  },
  ]);
  const [input, setInput] = useState('');
@@ -117,7 +117,7 @@ export default function PrechuAI() {
  <ArrowLeft className="w-5 h-5" />
  </button>
  <div className="flex-1 text-center">
- <h1 className="text-workspace font-bold">Prechu AI</h1>
+ <h1 className="text-workspace font-bold">Prechu SI</h1>
  <p className="text-secondary opacity-90">Your smart chat companion</p>
  </div>
  <div className="w-10"></div>

@@ -36,8 +36,8 @@ export const BenchManagementView = memo(({ candidates = [], onSelectCandidate }:
   const availableCount = consultants.filter(c => c.status === 'Available').length;
 
   const handleRunAiMatcher = () => {
-    setConsultants(prev => prev.map((c, i) => i === 0 ? { ...c, status: 'Billable', target_client: 'Microsoft Cloud Squad (AI Matched)' } : c));
-    toast.success('AI Redeployment Engine matched Aasim Syed to Microsoft Cloud Squad! Status updated to Billable.');
+    setConsultants(prev => prev.map((c, i) => i === 0 ? { ...c, status: 'Billable', target_client: 'Microsoft Cloud Squad (SI Matched)' } : c));
+    toast.success('SI Redeployment Engine matched Aasim Syed to Microsoft Cloud Squad! Status updated to Billable.');
   };
 
   const handleCreateConsultant = (e: React.FormEvent) => {
@@ -84,7 +84,7 @@ export const BenchManagementView = memo(({ candidates = [], onSelectCandidate }:
             className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold hover:bg-cyan-500 transition-all shadow-lg shadow-cyan-600/20"
           >
             <Sparkles className="w-4 h-4" />
-            <span>AI Auto-Redeploy Matcher</span>
+            <span>SI Auto-Redeploy Matcher</span>
           </button>
         </div>
       </div>

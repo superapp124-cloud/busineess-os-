@@ -44,7 +44,7 @@ export class UglyDataStressTester {
         expected_handling: 'PROPOSED_FOR_APPROVAL',
         passed: true,
         ledger_balanced: true,
-        notes: 'AI Recon Worker matched amount and customer account with 92% confidence and queued proposal for human confirmation.',
+        notes: 'SI Recon Worker matched amount and customer account with 92% confidence and queued proposal for human confirmation.',
       },
       {
         scenario_name: 'Partial Payment with Intermediary Bank Wire Fee',

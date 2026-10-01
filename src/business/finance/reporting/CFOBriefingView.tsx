@@ -116,7 +116,7 @@ export function CFOBriefingView({ finOrganizationId, legalEntityId, periodId }: 
 
   return (
     <div className="space-y-4">
-      {/* Top AI Briefing Card */}
+      {/* Top SI Briefing Card */}
       <Card className="p-4 bg-gradient-to-r from-amber-500/10 via-background to-background border-amber-200/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

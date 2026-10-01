@@ -86,7 +86,7 @@ export const CRMContactsSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Contacts AI',
+    assistantName: 'Contacts SI',
     skills: []
   },
   

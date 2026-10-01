@@ -31,7 +31,7 @@ const INITIAL_MESSAGES: Message[] = [
 
 const PROMPT_SUGGESTIONS = [
   { label: 'Summarize Top Candidates', icon: Users, prompt: 'Give me an executive summary of top candidates in the pipeline.' },
-  { label: 'Draft Job Description', icon: FileText, prompt: 'Draft a competitive Job Description for a Senior AI Engineer role.' },
+  { label: 'Draft Job Description', icon: FileText, prompt: 'Draft a competitive Job Description for a Senior SI Engineer role.' },
   { label: 'Pipeline SLA Audit', icon: BarChart3, prompt: 'Identify candidates with SLA bottlenecks and recommend action.' },
   { label: 'Interview Questions', icon: Sparkles, prompt: 'Generate high-signal technical interview questions for React Engineers.' }
 ];
@@ -85,14 +85,14 @@ const FormattedMessageText: React.FC<{ text: string; isUser: boolean }> = ({ tex
           );
         }
 
-        if (trimmed.startsWith('AI Recommendation') || trimmed.startsWith('**AI Recommendation**')) {
+        if (trimmed.startsWith('SI Recommendation') || trimmed.startsWith('**SI Recommendation**')) {
           return (
             <div key={idx} className="mt-3 p-3.5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-indigo-950 dark:text-indigo-200 shadow-xs">
               <p className="font-black text-[11px] text-indigo-700 dark:text-indigo-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#5c22ff]" /> CHATR Copilot Strategic Directive
               </p>
               <p className="text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed font-medium">
-                {trimmed.replace(/^\*\*AI Recommendation\*\*\s*/, '').replace(/^AI Recommendation\s*/, '')}
+                {trimmed.replace(/^\*\*SI Recommendation\*\*\s*/, '').replace(/^SI Recommendation\s*/, '')}
               </p>
             </div>
           );
@@ -154,7 +154,7 @@ export const CopilotTab = memo(({ candidates, requisitions }: { candidates: Cand
         else if (lower.includes('node') || lower.includes('backend')) topic = 'Backend Node.js Architect';
         else if (lower.includes('java')) topic = 'Java Microservices Engineer';
         else if (lower.includes('php')) topic = 'Fullstack PHP Web Architect';
-        else if (lower.includes('python') || lower.includes('ai')) topic = 'AI / ML Engineer';
+        else if (lower.includes('python') || lower.includes('ai')) topic = 'SI / ML Engineer';
         else if (lower.includes('salesforce')) topic = 'Salesforce Technical Architect';
 
         replyText = `### 🎯 High-Signal Technical Interview Questions (${topic}):\n\n1. **Architecture & State Management**: How do you architect state management and render performance optimizations in complex multi-tenant applications?\n2. **Asynchronous Processing & Memory Leaks**: Describe how you detect and prevent memory leaks and unhandled promise rejections in long-lived web runtimes.\n3. **API Integration & Error Boundaries**: What design patterns do you employ for resilient client-side API caching, retry logic, and fallback UI rendering?\n4. **Performance Benchmarking**: How do you profile component re-render cycles, bundle size splittings, and web vital metrics (LCP, INP, CLS)?\n5. **Security & Data Isolation**: How do you enforce Row-Level Security (RLS) and token authentication when querying serverless databases?`;
@@ -167,7 +167,7 @@ export const CopilotTab = memo(({ candidates, requisitions }: { candidates: Cand
         else if (lower.includes('java')) targetRole = 'Lead Java Microservices Developer';
         else if (lower.includes('php')) targetRole = 'Senior PHP Web Developer';
         else if (lower.includes('salesforce')) targetRole = 'Salesforce Technical Consultant';
-        else if (lower.includes('ai') || lower.includes('context')) targetRole = 'Senior AI & Context Engineer';
+        else if (lower.includes('ai') || lower.includes('context')) targetRole = 'Senior SI & Context Engineer';
         else if (requisitions.length > 0) targetRole = requisitions[0].title;
 
         replyText = `### 📝 Generated Job Description Draft:\n\n**Role**: ${targetRole}\n**Location**: Remote / Hybrid (India & US)\n**Compensation Band**: Competitive Market CTC + Performance Bonus\n\n**Key Responsibilities**:\n- Design, build, and maintain production-grade scalable web applications & microservices.\n- Collaborate with engineering leads and product teams to ship high-impact features.\n- Write clean, unit-tested, and well-documented TypeScript / React / Node.js code.\n- Optimize database queries, indexing, and API response latencies.\n\n**Requirements**:\n- 4+ years of hands-on software development experience.\n- Strong proficiency in modern web frameworks, state management, and REST/GraphQL APIs.\n- Excellent problem-solving skills and passion for high-quality software craft.`;
@@ -181,12 +181,12 @@ export const CopilotTab = memo(({ candidates, requisitions }: { candidates: Cand
             .map(c => `• **${cleanCandidateName(`${c.first_name} ${c.last_name}`)}** — **${c.ai_match ?? 88}% Match** · ${(c.skills ?? []).slice(0, 2).join(', ') || 'Software Engineering'} · ${c.status}`)
             .join('\n');
 
-          replyText = `### 🌟 AI Candidate Sourcing Insights\n\n**Top Candidates in Pipeline**\n\n${list}\n\n**AI Recommendation**\nAdvancing qualified candidates to Technical Screening or Interview is recommended to maintain hiring momentum.`;
+          replyText = `### 🌟 SI Candidate Sourcing Insights\n\n**Top Candidates in Pipeline**\n\n${list}\n\n**SI Recommendation**\nAdvancing qualified candidates to Technical Screening or Interview is recommended to maintain hiring momentum.`;
         }
       }
       // 5. SLA Audits & Pipeline Bottlenecks
       else if (lower.includes('sla') || lower.includes('bottleneck') || lower.includes('delay')) {
-        replyText = `### ⚠️ Pipeline SLA Audit Alert:\n\n• **Active Requisitions**: ${requisitions.length} Open Job(s)\n• **Active Candidate Dossiers**: ${candidates.length} Candidate(s)\n\n**AI Recommendation**: Monitor stage durations for candidates in "Interviewing" and "Applied" to ensure fast response times and zero candidate drop-off.`;
+        replyText = `### ⚠️ Pipeline SLA Audit Alert:\n\n• **Active Requisitions**: ${requisitions.length} Open Job(s)\n• **Active Candidate Dossiers**: ${candidates.length} Candidate(s)\n\n**SI Recommendation**: Monitor stage durations for candidates in "Interviewing" and "Applied" to ensure fast response times and zero candidate drop-off.`;
       }
       // 6. Natural Fallback Assistance
       else {

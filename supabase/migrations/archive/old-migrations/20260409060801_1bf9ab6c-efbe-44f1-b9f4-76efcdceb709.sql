@@ -271,9 +271,9 @@ BEGIN
     VALUES (NEW.id, NEW.primary_handle, 'private', COALESCE(NEW.username, NEW.primary_handle) || ' (Private)', 'private', 'private')
     ON CONFLICT (handle, suffix) DO NOTHING;
 
-    -- Create AI clone identity
+    -- Create SI clone identity
     INSERT INTO public.user_identities (user_id, handle, suffix, display_name, identity_type, visibility)
-    VALUES (NEW.id, NEW.primary_handle, 'ai', COALESCE(NEW.username, NEW.primary_handle) || ' AI', 'ai_clone', 'public')
+    VALUES (NEW.id, NEW.primary_handle, 'ai', COALESCE(NEW.username, NEW.primary_handle) || ' SI', 'ai_clone', 'public')
     ON CONFLICT (handle, suffix) DO NOTHING;
   END IF;
   RETURN NEW;

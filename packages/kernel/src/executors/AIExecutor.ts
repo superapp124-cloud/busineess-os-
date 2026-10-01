@@ -8,7 +8,7 @@ export class AIExecutor {
     provider: ProviderAdapter,
     input: any
   ): Promise<ExecutionResult> {
-    console.log(`[AIExecutor] Dispatching execution to AI Provider: ${provider.name} (${provider.id})`);
+    console.log(`[AIExecutor] Dispatching execution to SI Provider: ${provider.name} (${provider.id})`);
     return await provider.execute(ctx, input);
   }
 }

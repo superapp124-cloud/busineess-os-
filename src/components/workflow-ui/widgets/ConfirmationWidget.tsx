@@ -1,7 +1,7 @@
 /**
  * ConfirmationWidget — Pre-action summary before the user commits.
  *
- * Shows what the AI understood, what will happen, and lets the user
+ * Shows what the SI understood, what will happen, and lets the user
  * confirm or abort. Lifecycle: WAITING_USER → EXECUTING (on confirm).
  */
 

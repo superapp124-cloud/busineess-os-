@@ -1,3 +1,4 @@
+import { HealthBottomNav } from '@/components/health/HealthBottomNav';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -220,7 +221,7 @@ const HealthPassport = () => {
  }
 
  return (
- <div className="min-h-screen bg-background">
+ <div className="min-h-screen bg-background pb-32">
  {/* Header */}
  <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-6">
  <div className="max-w-4xl mx-auto">
@@ -228,7 +229,7 @@ const HealthPassport = () => {
  <Button
  variant="ghost"
  size="icon"
- onClick={() => navigate('/')}
+ onClick={() => navigate('/health')}
  className="text-white hover:bg-white/20"
  >
  <ArrowLeft className="h-5 w-5" />
@@ -974,7 +975,8 @@ const HealthPassport = () => {
  onOpenChange={setGoalDialogOpen}
  onSuccess={loadUserData}
  />
- </div>
+   <HealthBottomNav />
+    </div>
  );
 };
 

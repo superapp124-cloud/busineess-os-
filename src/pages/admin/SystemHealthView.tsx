@@ -6,7 +6,7 @@ import {
 
 interface ServiceHealth {
   name: string;
-  category: 'CORE' | 'DATABASE' | 'MESSAGING' | 'AI' | 'BACKGROUND';
+  category: 'CORE' | 'DATABASE' | 'MESSAGING' | 'SI' | 'BACKGROUND';
   status: 'HEALTHY' | 'DEGRADED' | 'DOWN';
   responseTimeMs: number;
   lastCheck: string;
@@ -19,7 +19,7 @@ export const SystemHealthView: React.FC = () => {
     { name: 'Supabase PostgreSQL DB & Connection Pooler', category: 'DATABASE', status: 'HEALTHY', responseTimeMs: 42, lastCheck: '5s ago' },
     { name: 'Supabase Auth & PKCE Token Vault', category: 'CORE', status: 'HEALTHY', responseTimeMs: 35, lastCheck: '8s ago' },
     { name: 'Official Meta WhatsApp Business Cloud API', category: 'MESSAGING', status: 'HEALTHY', responseTimeMs: 120, lastCheck: '12s ago' },
-    { name: 'TalentXcel AI Parser v3.4 (Gemini / Claude Engine)', category: 'AI', status: 'HEALTHY', responseTimeMs: 480, lastCheck: '15s ago' },
+    { name: 'TalentXcel SI Parser v3.4 (Gemini / Claude Engine)', category: 'SI', status: 'HEALTHY', responseTimeMs: 480, lastCheck: '15s ago' },
     { name: 'Programmatic SSG Pre-rendering Engine', category: 'BACKGROUND', status: 'HEALTHY', responseTimeMs: 0, lastCheck: 'CI/CD Pass' },
     { name: 'Cron SLA Heartbeat & Lead Auto-Triage Worker', category: 'BACKGROUND', status: 'HEALTHY', responseTimeMs: 65, lastCheck: '30s ago' },
     { name: 'Multi-Engine Telemetry Ingestion Pipeline', category: 'CORE', status: 'HEALTHY', responseTimeMs: 18, lastCheck: '4s ago' }
@@ -31,7 +31,7 @@ export const SystemHealthView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
           <h1 className="text-2xl font-extrabold text-white">Production System Health & Subsystems</h1>
-          <p className="text-xs text-slate-400">Live monitoring across Core Frontend, Supabase Database, Meta WhatsApp API, and AI engines</p>
+          <p className="text-xs text-slate-400">Live monitoring across Core Frontend, Supabase Database, Meta WhatsApp API, and SI engines</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">

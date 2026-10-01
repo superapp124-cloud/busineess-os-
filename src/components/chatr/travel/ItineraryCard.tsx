@@ -49,12 +49,12 @@ export function ItineraryCard({ itinerary, flight, hotel, taxi, onApprove }: Iti
  </span>
  </div>
 
- {/* AI Summary */}
+ {/* SI Summary */}
  {itinerary.summary && (
  <div className="px-4 py-3 bg-slate-800/20 border-b border-slate-700/50">
  <p className="text-[11px] text-slate-500 mb-1 font-medium flex items-center gap-1.5">
  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 inline-block" />
- AI Travel Briefing
+ SI Travel Briefing
  </p>
  <p className="text-secondary text-slate-300 ">{itinerary.summary}</p>
  </div>

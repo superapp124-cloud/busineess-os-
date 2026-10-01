@@ -40,7 +40,7 @@ const AICandyCrushGame: React.FC<AICandyCrushGameProps> = ({ level, onComplete, 
  for (let y = 0; y < GRID_SIZE; y++) {
  const row: CandyCell[] = [];
  for (let x = 0; x < GRID_SIZE; x++) {
- // AI ensures no initial matches but creates strategic setups
+ // SI ensures no initial matches but creates strategic setups
  let type = CANDIES[Math.floor(Math.random() * CANDIES.length)];
  
  // Prevent initial matches
@@ -142,7 +142,7 @@ const AICandyCrushGame: React.FC<AICandyCrushGameProps> = ({ level, onComplete, 
  
  if (matches.length >= 5) {
  toast.success(`🎉 MEGA COMBO x${combo + 1}! +${points}`);
- setAiHint('🤖 AI impressed by your move!');
+ setAiHint('🤖 SI impressed by your move!');
  } else if (matches.length >= 4) {
  toast.success(`✨ Great match! +${points}`);
  }
@@ -195,7 +195,7 @@ const AICandyCrushGame: React.FC<AICandyCrushGameProps> = ({ level, onComplete, 
  if (column.length > 0) {
  newGrid[y][x].type = column.shift()!;
  } else {
- // AI generates strategic new candies
+ // SI generates strategic new candies
  newGrid[y][x].type = CANDIES[Math.floor(Math.random() * CANDIES.length)];
  }
  }
@@ -223,10 +223,10 @@ const AICandyCrushGame: React.FC<AICandyCrushGameProps> = ({ level, onComplete, 
  }
  }, [movesLeft, gameState, score, onComplete]);
 
- // AI hint generator
+ // SI hint generator
  useEffect(() => {
  if (gameState === 'playing' && movesLeft <= 5 && score < targetScore) {
- setAiHint('🤖 AI suggests looking for L-shaped matches!');
+ setAiHint('🤖 SI suggests looking for L-shaped matches!');
  }
  }, [movesLeft, score, targetScore, gameState]);
 
@@ -281,9 +281,9 @@ const AICandyCrushGame: React.FC<AICandyCrushGameProps> = ({ level, onComplete, 
  </motion.span>
  ))}
  </div>
- <h2 className="text-page font-bold text-white mb-2">AI Candy Crush</h2>
+ <h2 className="text-page font-bold text-white mb-2">SI Candy Crush</h2>
  <p className="text-gray-400 mb-6">
- AI creates challenging patterns! Match 3+ candies to score.
+ SI creates challenging patterns! Match 3+ candies to score.
  </p>
  <Button onClick={startGame} className="bg-pink-600 hover:bg-pink-700">
  <Sparkles className="w-4 h-4 mr-2" /> Start Game

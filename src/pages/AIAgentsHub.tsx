@@ -21,7 +21,7 @@ type IntegrationCategory =
   | 'Analytics & BI' | 'Search & SEO' | 'Social & Publishing'
   | 'Recruitment & Jobs' | 'CRM & Sales' | 'Communication'
   | 'Payments & Finance' | 'Calendar & Meetings' | 'Storage & Docs'
-  | 'AI Providers' | 'Developer & Automation' | 'Public Intelligence';
+  | 'SI Providers' | 'Developer & Automation' | 'Public Intelligence';
 
 interface PreviewApp {
   id?: string;
@@ -50,10 +50,10 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     recommended: true,
     badge: '115 templates included',
     description: 'Clinics, labs, patient management, appointment scheduler',
-    apps: ['Patient Records', 'Appointment AI', 'Lab Sync', 'Billing'],
+    apps: ['Patient Records', 'Appointment SI', 'Lab Sync', 'Billing'],
     previewStack: [
       { id: 'appointment', name: 'Patient Appointment Scheduler', detail: 'Automated slot booking & doctor sync', icon: Activity },
-      { id: 'triage', name: 'AI Medical Triage Bot', detail: 'Symptom scoring & emergency routing', icon: Sparkles },
+      { id: 'triage', name: 'SI Medical Triage Bot', detail: 'Symptom scoring & emergency routing', icon: Sparkles },
       { id: 'ehr', name: 'Patient Records & EHR', detail: 'HIPAA compliant medical histories', icon: FileText },
       { id: 'lab', name: 'Lab Test Dispatch', detail: 'Instant results notifications via WhatsApp', icon: Zap }
     ],
@@ -66,10 +66,10 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     recommended: true,
     badge: '145 templates included',
     description: 'IT staffing, talent matching, campus hiring, ATS automation',
-    apps: ['AI Recruiter', 'Candidate CRM', 'Interview Scheduler', 'Job Distribution'],
+    apps: ['SI Recruiter', 'Candidate CRM', 'Interview Scheduler', 'Job Distribution'],
     previewStack: [
       { id: 'crm', name: 'Candidate CRM', detail: 'System of record for candidates & jobs', icon: Users },
-      { id: 'screener', name: 'Resume Screener AI', detail: 'AI-assisted parsing & scoring', icon: Sparkles },
+      { id: 'screener', name: 'Resume Screener SI', detail: 'SI-assisted parsing & scoring', icon: Sparkles },
       { id: 'scheduler', name: 'Interview Scheduler', detail: 'Calendar & candidate slot matching', icon: Activity },
       { id: 'distro', name: 'Job Distribution', detail: 'Multi-board & social publishing', icon: Globe },
       { id: 'analytics', name: 'Analytics & BI', detail: 'Placement metrics & revenue pipeline', icon: BarChart3 }
@@ -85,10 +85,10 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     description: 'Software product, subscriptions, lead scoring, growth pipeline',
     apps: ['Lead Scoring', 'Subscriptions', 'User Analytics', 'Support Bot'],
     previewStack: [
-      { id: 'scoring', name: 'Lead Scoring Engine', detail: 'AI lead qualification & routing', icon: Target },
+      { id: 'scoring', name: 'Lead Scoring Engine', detail: 'SI lead qualification & routing', icon: Target },
       { id: 'billing', name: 'Stripe Subscription Sync', detail: 'MRR & subscription billing', icon: DollarSign },
       { id: 'analytics', name: 'Product Analytics', detail: 'Funnel & retention tracking', icon: BarChart3 },
-      { id: 'support', name: 'Support AI Bot', detail: 'Automated customer onboarding', icon: MessageSquare }
+      { id: 'support', name: 'Support SI Bot', detail: 'Automated customer onboarding', icon: MessageSquare }
     ],
     estTime: '2 min setup'
   },
@@ -101,7 +101,7 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     apps: ['Client CRM', 'Contract Reviewer', 'Invoice Manager', 'Time Tracker'],
     previewStack: [
       { id: 'crm', name: 'Client CRM', detail: 'Enterprise account management', icon: Building2 },
-      { id: 'legal', name: 'Legal Contract Reviewer', detail: 'AI risk & compliance scanner', icon: ShieldCheck },
+      { id: 'legal', name: 'Legal Contract Reviewer', detail: 'SI risk & compliance scanner', icon: ShieldCheck },
       { id: 'invoice', name: 'Invoice Automation', detail: 'Milestone billing & PDF generation', icon: FileText }
     ],
     estTime: '3 min setup'
@@ -112,9 +112,9 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     icon: <ShoppingBag className="w-5 h-5 text-emerald-500" />,
     badge: '80 templates included',
     description: 'Online store, products, fulfillment, customer support',
-    apps: ['Order Sync', 'Customer Care Bot', 'Inventory AI', 'Review Engine'],
+    apps: ['Order Sync', 'Customer Care Bot', 'Inventory SI', 'Review Engine'],
     previewStack: [
-      { id: 'support', name: 'Customer Care Bot', detail: '24/7 AI chat & order tracking', icon: MessageSquare },
+      { id: 'support', name: 'Customer Care Bot', detail: '24/7 SI chat & order tracking', icon: MessageSquare },
       { id: 'payments', name: 'Razorpay / Stripe Payments', detail: 'Instant checkout & payouts', icon: DollarSign },
       { id: 'reviews', name: 'Review & Feedback Engine', detail: 'Automated post-purchase survey', icon: Star }
     ],
@@ -126,10 +126,10 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     icon: <GraduationCap className="w-5 h-5 text-purple-500" />,
     badge: '110 templates included',
     description: 'Courses, LMS, student placement, campus recruitment',
-    apps: ['Student Portal', 'Placement AI', 'LMS Sync', 'Fees Manager'],
+    apps: ['Student Portal', 'Placement SI', 'LMS Sync', 'Fees Manager'],
     previewStack: [
-      { id: 'placement', name: 'Campus Placement Portal', detail: 'AI talent matching & hiring events', icon: GraduationCap },
-      { id: 'alerts', name: 'Student Communication AI', detail: 'Multichannel updates & alerts', icon: Mail }
+      { id: 'placement', name: 'Campus Placement Portal', detail: 'SI talent matching & hiring events', icon: GraduationCap },
+      { id: 'alerts', name: 'Student Communication SI', detail: 'Multichannel updates & alerts', icon: Mail }
     ],
     estTime: '3 min setup'
   },
@@ -152,7 +152,7 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     icon: <UtensilsCrossed className="w-5 h-5 text-orange-500" />,
     badge: '60 templates included',
     description: 'Dine-in, delivery, menus, customer reviews, order bot',
-    apps: ['Order Bot', 'Menu AI', 'Review Engine', 'Inventory'],
+    apps: ['Order Bot', 'Menu SI', 'Review Engine', 'Inventory'],
     previewStack: [
       { id: 'order', name: 'WhatsApp Order Bot', detail: 'Digital menu & order capture', icon: UtensilsCrossed },
       { id: 'reviews', name: 'Review Collector', detail: 'Google Maps review growth', icon: Star }
@@ -165,7 +165,7 @@ const BUSINESS_TYPES: RichBusinessType[] = [
     icon: <Factory className="w-5 h-5 text-blue-500" />,
     badge: '90 templates included',
     description: 'Production, supply chain, B2B sales, vendor management',
-    apps: ['Vendor Portal', 'B2B CRM', 'Supply Chain AI', 'Orders'],
+    apps: ['Vendor Portal', 'B2B CRM', 'Supply Chain SI', 'Orders'],
     previewStack: [
       { id: 'b2b', name: 'B2B Sales CRM', detail: 'Quote generation & deal tracking', icon: Factory },
       { id: 'vendor', name: 'Vendor Portal', detail: 'PO tracking & delivery updates', icon: Building2 }
@@ -235,7 +235,7 @@ export default function AIAgentsHub() {
     return BUSINESS_TYPES.find(b => b.id === selectedBusiness || b.id === urlDomain) || BUSINESS_TYPES[0];
   }, [selectedBusiness, urlDomain]);
 
-  const stepLabels = ['Discover', 'Workspace', 'AI Workforce', 'Connect', 'Launch'];
+  const stepLabels = ['Discover', 'Workspace', 'SI Workforce', 'Connect', 'Launch'];
   const stepIdx = step === 'business_type' ? 0 : step === 'goals' ? 1 : step === 'ai_recommendation' ? 2 : step === 'marketplace' ? 3 : 4;
 
   const handleFinishSetup = () => {
@@ -313,19 +313,19 @@ export default function AIAgentsHub() {
               <div className="text-center space-y-2 max-w-3xl mx-auto">
                 <h2 className="text-3xl font-black tracking-tight">Welcome to CHATR Business OS</h2>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  We'll configure your workspace, AI workforce, integrations, and automations in under 5 minutes.
+                  We'll configure your workspace, SI workforce, integrations, and automations in under 5 minutes.
                 </p>
               </div>
 
-              {/* Business AI Assistant Greeting */}
+              {/* Business SI Assistant Greeting */}
               <div className="p-4 rounded-2xl border flex items-center gap-3.5 shadow-lg bg-card border-border">
                 <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-primary/30 shadow-md">
-                  <img src="/chatr-ai-logo.jpg" alt="CHATR AI" className="w-full h-full object-cover" />
+                  <img src="/chatr-ai-logo.jpg" alt="CHATR SI" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 text-xs">
-                  <p className="font-bold text-primary uppercase text-[10px] tracking-wider mb-0.5">Meet your Business AI Guide</p>
+                  <p className="font-bold text-primary uppercase text-[10px] tracking-wider mb-0.5">Meet your Business SI Guide</p>
                   <p className="text-foreground">
-                    "I'm going to configure your company. Select your domain below, and I'll assemble the best capabilities, apps, and AI agents for your business."
+                    "I'm going to configure your company. Select your domain below, and I'll assemble the best capabilities, apps, and SI agents for your business."
                   </p>
                 </div>
               </div>
@@ -484,14 +484,14 @@ export default function AIAgentsHub() {
             </motion.div>
           )}
 
-          {/* ══ STEP 3: AI RECOMMENDATION ══ */}
+          {/* ══ STEP 3: SI RECOMMENDATION ══ */}
           {step === 'ai_recommendation' && (
             <motion.div key="s3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-5 max-w-4xl mx-auto">
               <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-primary" />
                   <div>
-                    <span className="text-[10px] font-bold text-primary uppercase tracking-wider">CHATR Business OS AI</span>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-wider">CHATR Business OS SI</span>
                     <h3 className="text-base font-bold">Recommended Capability Stack</h3>
                   </div>
                 </div>
@@ -522,7 +522,7 @@ export default function AIAgentsHub() {
                 <div className="space-y-2">
                   <h2 className="text-2xl font-black">Your Business OS is Assembled!</h2>
                   <p className="text-xs text-muted-foreground max-w-md mx-auto">
-                    {selectedBizObj.label} capabilities, AI agents, and integrations are installed and active.
+                    {selectedBizObj.label} capabilities, SI agents, and integrations are installed and active.
                   </p>
                 </div>
 
@@ -542,7 +542,7 @@ export default function AIAgentsHub() {
           {step === 'done' && (
             <motion.div key="sdone" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-6 max-w-4xl mx-auto">
               
-              {/* 1. CALM AI CONVERSATIONAL NARRATION BANNER */}
+              {/* 1. CALM SI CONVERSATIONAL NARRATION BANNER */}
               <div className="p-7 rounded-3xl border bg-gradient-to-br from-violet-950/30 via-card to-card border-violet-500/20 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -550,7 +550,7 @@ export default function AIAgentsHub() {
                     <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Operating Normally</span>
                     <span className="text-xs text-muted-foreground">· Pack: {selectedBizObj.label}</span>
                   </div>
-                  <span className="text-xs font-mono text-muted-foreground">AI Handled 142 Tasks Overnight</span>
+                  <span className="text-xs font-mono text-muted-foreground">SI Handled 142 Tasks Overnight</span>
                 </div>
 
                 <div>
@@ -562,7 +562,7 @@ export default function AIAgentsHub() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-primary shrink-0" />
-                      <span>AI completed automated background checks and context updates.</span>
+                      <span>SI completed automated background checks and context updates.</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-amber-400 shrink-0" />
@@ -811,7 +811,7 @@ export default function AIAgentsHub() {
           </div>
         )}
 
-        {/* 2. AI Medical Triage Bot Drawer */}
+        {/* 2. SI Medical Triage Bot Drawer */}
         {activeModal === 'triage' && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-card border border-border rounded-3xl p-6 space-y-5 shadow-2xl">
@@ -821,7 +821,7 @@ export default function AIAgentsHub() {
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold">AI Medical Symptom Triage Bot</h3>
+                    <h3 className="text-base font-bold">SI Medical Symptom Triage Bot</h3>
                     <p className="text-xs text-muted-foreground">Symptom scoring & emergency care routing</p>
                   </div>
                 </div>
@@ -868,7 +868,7 @@ export default function AIAgentsHub() {
                   }}
                   className="px-6 py-2.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20"
                 >
-                  Run AI Symptom Triage
+                  Run SI Symptom Triage
                 </button>
               </div>
             </motion.div>

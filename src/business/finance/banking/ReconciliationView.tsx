@@ -39,7 +39,7 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
 
     setMatches(mData || []);
 
-    // 3. Fetch Open Invoices for AI Worker Context — scoped to this organization
+    // 3. Fetch Open Invoices for SI Worker Context — scoped to this organization
     const { data: invs } = await supabase
       .from('fin_invoices')
       .select('id, invoice_number, amount_due, customer:fin_customers(name)')
@@ -73,7 +73,7 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
           </div>
           <div>
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              AI Reconciliation Worker (Proposal Mode)
+              SI Reconciliation Worker (Proposal Mode)
             </h2>
             <p className="text-xs text-muted-foreground">
               Automated invoice matching, fee difference detection, and zero-loss ledger settlement proposals.
@@ -86,7 +86,7 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
         </Button>
       </div>
 
-      {/* Exception Queue with AI Proposals */}
+      {/* Exception Queue with SI Proposals */}
       <Card>
         <CardHeader className="py-2.5 px-4 border-b">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -102,7 +102,7 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
             const tx = exc.bank_transaction;
             if (!tx) return null;
 
-            // Generate AI Resolution Proposal on the fly
+            // Generate SI Resolution Proposal on the fly
             const proposal = ReconciliationWorker.proposeResolution(
               {
                 id: tx.id,
@@ -129,12 +129,12 @@ export function ReconciliationView({ finOrganizationId }: ReconciliationViewProp
                   </span>
                 </div>
 
-                {/* AI Proposal Card */}
+                {/* SI Proposal Card */}
                 <div className="p-2.5 bg-blue-50/70 border border-blue-200 rounded-md space-y-1.5">
                   <div className="flex items-center justify-between text-blue-900">
                     <span className="font-semibold flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-blue-600" />
-                      AI Interpretation Proposal ({Math.round(proposal.ai_confidence * 100)}% Confidence)
+                      SI Interpretation Proposal ({Math.round(proposal.ai_confidence * 100)}% Confidence)
                     </span>
                     <Badge className="text-[9px] bg-blue-100 text-blue-800 border-blue-200">
                       {proposal.proposed_action.replace(/_/g, ' ')}

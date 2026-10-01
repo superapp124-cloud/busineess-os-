@@ -29,7 +29,7 @@ export const FinanceBudgetingSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'Budgeting AI',
+    assistantName: 'Budgeting SI',
     skills: []
   },
   

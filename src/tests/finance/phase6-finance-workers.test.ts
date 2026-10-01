@@ -1,6 +1,6 @@
 ﻿/**
  * CHATR Financial Intelligence & Accounting Core
- * Phase 6: AI Finance Workers & Orchestration Comprehensive Test Suite
+ * Phase 6: SI Finance Workers & Orchestration Comprehensive Test Suite
  */
 
 import { CFOOrchestrator } from '../../business/finance/ai/CFOOrchestrator';
@@ -36,7 +36,7 @@ function assertEqual<T>(actual: T, expected: T, message: string) {
   }
 }
 
-console.log('\n🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...\n');
+console.log('\n🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...\n');
 
 // ══════════════════════════════════════════════════════════════════════
 // 1. WORKER HIERARCHY & 3-MODE SAFETY GUARDRAILS
@@ -45,7 +45,7 @@ console.log('--- 1. Worker Fleet Hierarchy & Mode Safety ---');
 
 test('CFOOrchestrator: initializes specialized worker fleet with strict mode assignments', () => {
   const fleet = CFOOrchestrator.getWorkerFleetStatus();
-  assertEqual(fleet.length, 7, '7 specialized AI workers active');
+  assertEqual(fleet.length, 7, '7 specialized SI workers active');
 
   // Verify all workers are in safe OBSERVE or PROPOSE modes (none in unconstrained autonomous execute)
   fleet.forEach(w => {
@@ -103,7 +103,7 @@ test('FinanceAnalystWorker: explains gross margin decline by traversing P&L down
     currentMarginPct: 41.8,
     totalRevenue: 62100000,
     opexBreakdown: [
-      { category: 'Cloud Infrastructure', deltaAmount: 1450000, primaryVendor: 'AWS Cloud', reason: 'GPU cluster expansion for enterprise AI models' },
+      { category: 'Cloud Infrastructure', deltaAmount: 1450000, primaryVendor: 'AWS Cloud', reason: 'GPU cluster expansion for enterprise SI models' },
       { category: 'Support SLA', deltaAmount: 320000, primaryVendor: 'Zendesk', reason: 'Tier-1 seats addition' },
     ],
   });
@@ -139,5 +139,5 @@ console.log(`\n📊 Phase 6 Test Summary: ${passed}/${total} passed (${Math.roun
 if (passed !== total) {
   process.exit(1);
 } else {
-  console.log('✨ All Phase 6 AI Finance Workers & Orchestration tests passed!\n');
+  console.log('✨ All Phase 6 SI Finance Workers & Orchestration tests passed!\n');
 }

@@ -18,7 +18,7 @@ async function runCompositionConformance() {
     const packDef = manifestSchema.definitions.SolutionPack;
     const categoryEnum = packDef.properties.category.enum;
     assert.ok(categoryEnum.includes('Industry'), "Must support Industry Packs");
-    assert.ok(categoryEnum.includes('AI'), "Must support AI Packs");
+    assert.ok(categoryEnum.includes('SI'), "Must support SI Packs");
     assert.ok(categoryEnum.includes('Marketplace'), "Must support Marketplace Packs");
     console.log("✅ Conformance Pass: Solution Pack Manifest enforces the 8 universal Pack Archetypes.");
 

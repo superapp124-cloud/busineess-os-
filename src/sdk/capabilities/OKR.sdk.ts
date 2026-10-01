@@ -2,7 +2,7 @@
  * CHATR OS — OKR & Goals Capability SDK
  *
  * Implements the 15 enterprise features for the OKR runtime:
- * Universal Forms, Detail, Dashboards, Relationships, AI, Timeline,
+ * Universal Forms, Detail, Dashboards, Relationships, SI, Timeline,
  * Search, Workflows, Permissions, Automation, and Seed Data.
  */
 
@@ -12,7 +12,7 @@ export const OKRSDK: ICapabilityManifest = {
   // ─── Identity ───────────────────────────────────────────────────────────────
   id: 'Executive.OKRGoals',
   name: 'OKR & Goals',
-  description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and AI-powered outcome predictions.',
+  description: 'Company-wide OKR management with cascading goals, check-in cadences, progress tracking, and SI-powered outcome predictions.',
   department: 'Executive',
   category: 'Executive & Strategy',
   version: '1.8.0',
@@ -132,13 +132,13 @@ export const OKRSDK: ICapabilityManifest = {
     { id: 'kr-completion', label: 'Key Result Completion', icon: '📉', type: 'pie', object: 'KeyResult', groupBy: 'Status', metric: 'count' },
   ],
 
-  // ─── AI Skills ──────────────────────────────────────────────────────────────
+  // ─── SI Skills ──────────────────────────────────────────────────────────────
   ai: {
-    assistantName: 'Strategy AI',
+    assistantName: 'Strategy SI',
     skills: [
       { id: 'summarize', label: 'Summarize Objective', description: 'Summary of goal and all key results', intent: 'summarize', object: 'Objective', scope: 'record', outputType: 'text', promptTemplate: 'Summarize the progress and blockers for Objective: {{Title}}.' },
       { id: 'find-blockers', label: 'Identify Blockers', description: 'Analyze check-ins for hidden risks', intent: 'analyze', object: 'Objective', scope: 'record', outputType: 'text', promptTemplate: 'Analyze all Key Results and Check-ins for {{Title}}. What are the main blockers?' },
-      { id: 'suggest-kr', label: 'Suggest Key Results', description: 'AI generated key results', intent: 'suggest', object: 'Objective', scope: 'record', outputType: 'text', promptTemplate: 'Suggest 3 measurable Key Results for the Objective: {{Title}} in the {{Department}} department.' },
+      { id: 'suggest-kr', label: 'Suggest Key Results', description: 'SI generated key results', intent: 'suggest', object: 'Objective', scope: 'record', outputType: 'text', promptTemplate: 'Suggest 3 measurable Key Results for the Objective: {{Title}} in the {{Department}} department.' },
       { id: 'predict', label: 'Predict Completion', description: 'Forecast if goal will be met on time', intent: 'predict', object: 'Objective', scope: 'record', outputType: 'text', promptTemplate: 'Based on current progress ({{Progress}}%) and Target Date ({{TargetDate}}), predict the likelihood of completing {{Title}} on time.' },
     ],
   },

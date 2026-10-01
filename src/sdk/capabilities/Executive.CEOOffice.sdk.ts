@@ -83,7 +83,7 @@ export const ExecutiveCEOOfficeSDK: ICapabilityManifest = {
   dashboards: [],
   reports: [],
   ai: {
-    assistantName: 'CEO Office AI',
+    assistantName: 'CEO Office SI',
     skills: []
   },
   agents: [

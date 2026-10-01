@@ -15,7 +15,7 @@
 - Implements `Delivery Queue`, `Batch Writer`, `Subscriber Manager`, and `Dead Letter Queue (DLQ)`.
 - Follows the principle: "Subscribers receive events immediately; Persistence happens independently in the background."
 
-## 4. AI Runtime
+## 4. SI Runtime
 - Implements a generic `Provider Adapter` pattern.
 - Caches responses via an LRU cache.
 - Defaults to BYOAI/Local execution (Ollama) and degrades gracefully if no network provider is available.

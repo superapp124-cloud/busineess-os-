@@ -12,4 +12,4 @@
 | **Workflow** | Rigid, app-specific hardcoded logic | Dynamic `Mission` DAGs & Capability Contracts |
 | **Integration** | Brittle API stitching and custom ETL code | Shared real-time operating graph with sub-ms pub/sub |
 | **Memory & Context** | Application-local data stores | Unified semantic enterprise brain (`Memory`) |
-| **AI Integration** | Superficial prompt wrappers & chat UI widgets | Embedded execution, policy guardrails, & decision engine |
+| **SI Integration** | Superficial prompt wrappers & chat UI widgets | Embedded execution, policy guardrails, & decision engine |

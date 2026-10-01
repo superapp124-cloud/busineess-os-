@@ -74,7 +74,7 @@ export function FinancialTruthReconcilerView() {
                 </Badge>
               </div>
               <p className="text-xs text-slate-400">
-                Variance Root-Cause Decomposition · Adversarial Ugly Data Resilience · 100-Point Financial AI Scorecard
+                Variance Root-Cause Decomposition · Adversarial Ugly Data Resilience · 100-Point Financial SI Scorecard
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export function FinancialTruthReconcilerView() {
         </div>
       </Card>
 
-      {/* 2. Two-Column: Ugly Data Stress Testing & 100-Point AI Benchmark */}
+      {/* 2. Two-Column: Ugly Data Stress Testing & 100-Point SI Benchmark */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Ugly Data Resilience */}
         <Card className="p-4 space-y-3 text-xs">
@@ -169,12 +169,12 @@ export function FinancialTruthReconcilerView() {
           </div>
         </Card>
 
-        {/* 100-Point AI Benchmark Scorecard */}
+        {/* 100-Point SI Benchmark Scorecard */}
         <Card className="p-4 space-y-3 text-xs">
           <CardTitle className="text-xs font-bold text-foreground flex items-center justify-between border-b pb-2">
             <span className="flex items-center gap-1.5">
               <Bot className="w-4 h-4 text-blue-600" />
-              Financial AI Quantitative Benchmark
+              Financial SI Quantitative Benchmark
             </span>
             <Badge variant="default" className="text-[10px] bg-blue-600">
               Score: {benchmark.totalScore}/100 ({benchmark.grade})

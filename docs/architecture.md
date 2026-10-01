@@ -1,7 +1,7 @@
 # CHATR Architecture
 
 ## Core Vision
-CHATR is an AI-first, privacy-first collaboration platform. It unifies messaging, video calls, enterprise storage, and autonomous agents under a single scalable foundation.
+CHATR is an SI-first, privacy-first collaboration platform. It unifies messaging, video calls, enterprise storage, and autonomous agents under a single scalable foundation.
 
 ## Strict Layering
 To guarantee modularity, we enforce the following separation of concerns:
@@ -14,10 +14,10 @@ To guarantee modularity, we enforce the following separation of concerns:
 
 > **CRITICAL**: The UI must *never* communicate directly with Ollama, Supabase Storage directly (bypassing signed URLs), or internal database logic.
 
-## AI Orchestration
-AI is not a side feature; the **Conversation API** is the AI Operating System for CHATR.
+## SI Orchestration
+SI is not a side feature; the **Conversation API** is the SI Operating System for CHATR.
 It orchestrates:
-- Streaming AI responses via Server-Sent Events (SSE).
+- Streaming SI responses via Server-Sent Events (SSE).
 - Dynamic Context Building (Memory, Summaries, Workspace Context).
 - Abstracted `IAIProvider` execution (Ollama, OpenAI, Enterprise).
 - Tool execution orchestration (Calendar, File Search).

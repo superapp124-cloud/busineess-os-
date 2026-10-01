@@ -61,7 +61,7 @@ export const VisualIntelligenceScanner = ({
 
  const handleShare = () => {
  if (result && onShareToChat) {
- onShareToChat(`*AI Vision Analysis:*\n\n${result}`);
+ onShareToChat(`*SI Vision Analysis:*\n\n${result}`);
  onClose();
  }
  };

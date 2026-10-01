@@ -49,7 +49,7 @@ const services = [
  { icon: LayoutGrid, label: 'Status', route: '/status', group: 'communication', color: 'text-violet-600', bg: 'bg-violet-500/10' },
  { icon: ShieldCheck, label: 'Caller ID', route: '/caller-id', group: 'communication', color: 'text-red-600', bg: 'bg-red-500/10' },
  { icon: Zap, label: 'Automations', route: '/automations', group: 'communication', color: 'text-blue-600', bg: 'bg-blue-500/10' },
- { icon: Sparkles, label: 'AI Assistant', route: '/ai-assistant', group: 'all', color: 'text-violet-600', bg: 'bg-violet-500/10' },
+ { icon: Sparkles, label: 'SI Assistant', route: '/ai-assistant', group: 'all', color: 'text-violet-600', bg: 'bg-violet-500/10' },
  { icon: Store, label: 'Services', route: '/marketplace', group: 'work', color: 'text-orange-600', bg: 'bg-orange-500/10' },
  { icon: BriefcaseBusiness, label: 'Jobs', route: '/jobs', group: 'work', color: 'text-blue-600', bg: 'bg-blue-500/10' },
  { icon: Users, label: 'Community', route: '/community', group: 'communication', color: 'text-teal-700', bg: 'bg-teal-500/10' },
@@ -184,7 +184,7 @@ export default function More() {
  All Chatr Tools
  </h1>
  <p className="mt-1 text-secondary font-medium text-slate-500">
- AI, services, care, and community in one place.
+ SI, services, care, and community in one place.
  </p>
  </div>
 

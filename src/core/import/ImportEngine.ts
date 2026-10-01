@@ -36,7 +36,7 @@ export class ImportEngine {
 
     await connector.parseStream(file, async (rawRecords: any[]) => {
       if (isFirstChunk && rawRecords.length > 0) {
-        // AI Mapping phase on headers
+        // SI Mapping phase on headers
         const headers = Object.keys(rawRecords[0]);
         job.mappings = await this.mappingEngine.generateMappings(headers, targetSchemaFields);
         isFirstChunk = false;

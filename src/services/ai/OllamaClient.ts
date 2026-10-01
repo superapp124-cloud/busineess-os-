@@ -1,5 +1,5 @@
 /**
- * CHATR AI Training Infrastructure
+ * CHATR SI Training Infrastructure
  * src/services/ai/OllamaClient.ts
  *
  * TypeScript client for the local Ollama inference runtime.

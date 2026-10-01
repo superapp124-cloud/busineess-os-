@@ -27,6 +27,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <!-- AUDIO & VIDEO -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -70,7 +74,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:usesCleartextTraffic="false"
+        android:usesCleartextTraffic="true"
         android:largeHeap="true"
         android:hardwareAccelerated="true"
         tools:targetApi="35">
@@ -84,7 +88,7 @@
             android:exported="true" />
 
         <!-- ============================================================ -->
-        <!-- CHATR AI DIALER â€” Supabase endpoint for native overlay lookup -->
+        <!-- CHATR SI DIALER â€” Supabase endpoint for native overlay lookup -->
         <!-- Replace values with your actual Supabase project details      -->
         <!-- ============================================================ -->
         <meta-data android:name="supabase_url"
@@ -113,6 +117,7 @@
         <!-- ============================================================ -->
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:exported="true"
             android:launchMode="singleTask"
@@ -129,6 +134,22 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="chatr" />
                 <data android:scheme="https" android:host="chatr.app" />
+            </intent-filter>
+
+            <!-- Default Dialer / Outgoing Call Intents -->
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
             </intent-filter>
         </activity>
 
@@ -219,7 +240,7 @@
         <!-- ============================================================ -->
         <activity
             android:name=".webrtc.ShieldIncomingCallActivity"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:taskAffinity=""
@@ -236,7 +257,7 @@
         <!-- ============================================================ -->
         <activity
             android:name=".webrtc.ShieldActiveCallActivity"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.IncomingCall"
             android:showOnLockScreen="true"
@@ -246,7 +267,7 @@
 
         <activity
             android:name=".webrtc.ShieldOutgoingCallActivity"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.IncomingCall"
             android:showOnLockScreen="true"
@@ -386,7 +407,7 @@
             android:exported="true">
             <meta-data
                 android:name="android.telecom.IN_CALL_SERVICE_UI"
-                android:value="false" />
+                android:value="true" />
             <intent-filter>
                 <action android:name="android.telecom.InCallService" />
             </intent-filter>

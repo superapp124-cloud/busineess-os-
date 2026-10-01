@@ -52,7 +52,7 @@ const PRODUCTION_MANIFEST: RuntimeManifest = {
     diagnostics_dashboard: false,
     voice_copilot:      false,
     healthcare_module:  false,
-    ai_agent_runtime:   false,
+    si_agent_runtime:   false,
     distributed_events: false,
   },
   telemetryEnabled: false,
@@ -65,7 +65,7 @@ const DEVELOPER_MANIFEST: RuntimeManifest = {
   featureFlags: {
     ...PRODUCTION_MANIFEST.featureFlags,
     diagnostics_dashboard: true,
-    ai_agent_runtime:      true,
+    si_agent_runtime:      true,
     distributed_events:    false, // still off, needs WebSocket server
     voice_copilot:         true,
   },
@@ -92,7 +92,7 @@ const ENTERPRISE_MANIFEST: RuntimeManifest = {
   featureFlags: {
     ...PRODUCTION_MANIFEST.featureFlags,
     healthcare_module:   true,
-    ai_agent_runtime:    true,
+    si_agent_runtime:    true,
     distributed_events:  true,
     diagnostics_dashboard: true,
   },
@@ -121,7 +121,7 @@ const GUEST_MANIFEST: RuntimeManifest = {
     diagnostics_dashboard: false,
     voice_copilot:      false,
     healthcare_module:  false,
-    ai_agent_runtime:   false,
+    si_agent_runtime:   false,
     distributed_events: false,
   },
   telemetryEnabled: false,

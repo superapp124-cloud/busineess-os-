@@ -139,7 +139,7 @@ export default function Privacy() {
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-emerald-600 font-bold">✓</span>
-              <span>Cloud AI is optional</span>
+              <span>Cloud SI is optional</span>
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-emerald-600 font-bold">✓</span>

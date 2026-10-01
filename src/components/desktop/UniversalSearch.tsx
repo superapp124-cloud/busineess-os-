@@ -33,11 +33,11 @@ export const UniversalSearch = () => {
  setIsSearching(true);
  setResults(null);
  try {
- const prompt = `You are the Universal AI Search for CHATR. The user is searching for: "${query}". 
+ const prompt = `You are the Universal SI Search for CHATR. The user is searching for: "${query}". 
 Synthesize a highly concise summary of what they are looking for.
 Format your output EXACTLY as a JSON object:
 {
- "summary": "AI summary of the answer",
+ "summary": "SI summary of the answer",
  "messages": [{"sender": "Sanobar", "text": "Related message snippet", "room": "General"}],
  "files": [{"name": "document.pdf", "type": "pdf"}]
 }`;
@@ -50,7 +50,7 @@ Format your output EXACTLY as a JSON object:
  setResults({ summary: res, messages: [], files: [] });
  }
  } catch (e) {
- setResults({ summary: 'Search failed to reach AI backend.', messages: [], files: [] });
+ setResults({ summary: 'Search failed to reach SI backend.', messages: [], files: [] });
  } finally {
  setIsSearching(false);
  }
@@ -67,7 +67,7 @@ Format your output EXACTLY as a JSON object:
  autoFocus
  value={query}
  onChange={(e) => setQuery(e.target.value)}
- placeholder="Ask AI or search anything... (e.g., 'What did Sanobar say?')"
+ placeholder="Ask SI or search anything... (e.g., 'What did Sanobar say?')"
  className="flex-1 bg-transparent text-white text-body placeholder:text-white/30 focus:outline-none"
  />
  {isSearching && <Loader2 className="w-5 h-5 text-violet-400 animate-spin absolute right-12" />}
@@ -87,7 +87,7 @@ Format your output EXACTLY as a JSON object:
  {results?.summary && (
  <div className="p-4 rounded-xl bg-violet-600/10 border border-violet-500/20 text-secondary text-white/80 ">
  <div className="flex items-center gap-2 mb-2 text-violet-300 font-bold text-label uppercase tracking-wider">
- <Sparkles className="w-3.5 h-3.5" /> AI Synthesis
+ <Sparkles className="w-3.5 h-3.5" /> SI Synthesis
  </div>
  {results.summary}
  </div>

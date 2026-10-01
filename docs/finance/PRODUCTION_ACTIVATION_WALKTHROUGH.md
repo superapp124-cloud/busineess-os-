@@ -9,27 +9,27 @@
 ## 1. Executive Summary
 
 CHATR Finance OS has transitioned from an internal accounting engine into an **operational production environment ready for live enterprise data onboarding**:
-$$\textbf{External ERP / Bank / Excel} \longrightarrow \textbf{Universal Import Wizard} \longrightarrow \textbf{AI Field Mapping} \longrightarrow \textbf{Invariant Validation} \longrightarrow \textbf{Migration Certificate}$$
+$$\textbf{External ERP / Bank / Excel} \longrightarrow \textbf{Universal Import Wizard} \longrightarrow \textbf{SI Field Mapping} \longrightarrow \textbf{Invariant Validation} \longrightarrow \textbf{Migration Certificate}$$
 
 ### Core Production Capabilities Activated:
 1. **Universal Financial Import Wizard**:
    - Step 1: Accounting source selection (Tally, Zoho Books, QuickBooks Online, NetSuite, SAP, Bank Statement CSV, Excel/CSV Opening TB).
    - Step 2: File ingestion & batch bundle upload.
-   - Step 3: AI automated column mapping (`Party Name` $\rightarrow$ `counterparty_name`, `GST` $\rightarrow$ `tax_amount`, `Invoice No` $\rightarrow$ `document_number`).
+   - Step 3: SI automated column mapping (`Party Name` $\rightarrow$ `counterparty_name`, `GST` $\rightarrow$ `tax_amount`, `Invoice No` $\rightarrow$ `document_number`).
    - Step 4: Pre-import invariant validation (Debits vs Credits balance check).
    - Step 5: Live migration execution & legal migration certificate generation.
 2. **Production Security & RBAC Guard**:
    - 8 Strict Financial Roles (`OWNER`, `CFO`, `FINANCE_MANAGER`, `ACCOUNTANT`, `AP_CLERK`, `AR_CLERK`, `AUDITOR`, `VIEWER`).
    - Enforced separation of duties: Accountants can draft proposals; only Finance Managers can post to GL; write-offs & period reopening require CFO; bank account changes require **mandatory dual approval** (CFO + Owner).
 3. **Live System Health & Observability Cockpit**:
-   - Continuous telemetry monitoring across Financial Event Mesh (99.99% ingestion, 18ms p99 latency), Double-Entry GL Invariant, Subledger Controls, Bank Reconciliation (98.7%), ASC 606 Rev Rec, and 7/7 AI Worker Fleet.
+   - Continuous telemetry monitoring across Financial Event Mesh (99.99% ingestion, 18ms p99 latency), Double-Entry GL Invariant, Subledger Controls, Bank Reconciliation (98.7%), ASC 606 Rev Rec, and 7/7 SI Worker Fleet.
 
 ---
 
 ## 2. Implemented Components
 
 ### 2.1 Universal Financial Importer ([`UniversalFinancialImporter.ts`](file:///c:/Users/Arshid.Wani/chatrchat/src/business/finance/importer/UniversalFinancialImporter.ts))
-Handles AI column mapping, dataset validation, and migration certificate compilation.
+Handles SI column mapping, dataset validation, and migration certificate compilation.
 
 ---
 
@@ -88,7 +88,7 @@ node --import tsx src/tests/finance/production-activation.test.ts
 🧪 Running CHATR Finance Phase 5.5 (Adversarial & Certification) Test Suite...
   ✅ PASS: 6/6 tests passed (100%)
 
-🧪 Running CHATR Finance Phase 6 (AI Finance Workers & Orchestration) Test Suite...
+🧪 Running CHATR Finance Phase 6 (SI Finance Workers & Orchestration) Test Suite...
   ✅ PASS: 4/4 tests passed (100%)
 
 🧪 Running CHATR Finance Phase 7 (Golden Ledger & Financial Trust) Test Suite...
@@ -108,7 +108,7 @@ node --import tsx src/tests/finance/production-activation.test.ts
 
 🧪 Running CHATR Finance Production Activation Test Suite...
 --- 1. Universal Financial Data Importer ---
-  ✅ PASS: UniversalFinancialImporter: AI automatically maps legacy column names to CHATR fields
+  ✅ PASS: UniversalFinancialImporter: SI automatically maps legacy column names to CHATR fields
   ✅ PASS: UniversalFinancialImporter: validates balanced dataset and generates legal migration certificate
 --- 2. Production Security & RBAC Guard ---
   ✅ PASS: FinanceRBACGuard: enforces role boundaries and approval gates across all 8 roles
