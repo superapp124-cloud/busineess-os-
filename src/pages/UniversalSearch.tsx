@@ -36,7 +36,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AISummaryContent } from '@/components/ai/AISummaryContent';
 import { useLocalAI } from '@/hooks/useLocalAI';
 import { detectJobIntent, JobIntent } from '@/services/intentEngine/jobIntentDetector';
+import { parseOmnibarQuery, OmnibarTask } from '@/services/intentEngine/omnibarIntentParser';
 import { JobActionCards, JobListing } from '@/components/jobs/JobActionCards';
+import { ActionEngineDock } from '@/components/search/ActionEngineDock';
 import { crawlJobs } from '@/lib/api/jobCrawler';
 
 interface SearchResult {
@@ -184,7 +186,20 @@ const UniversalSearch = () => {
  try {
  const { data: { user } } = await supabase.auth.getUser();
  
- // 🔥 INTENT ENGINE: Check if this is a job search
+ 	// 🚀 OMNIBAR INTENT PARSER: Check domain tasks (Real Estate, Transit, Services, Healthcare)
+	const detectedTask = parseOmnibarQuery(fullQuery);
+	if (detectedTask && detectedTask.category !== 'jobs' && detectedTask.evidenceItems.length > 0) {
+		setOmnibarTask(detectedTask);
+		setLoading(false);
+		setWebSearchLoading(false);
+		setAiIntent({
+			intent: detectedTask.headline,
+			suggestions: detectedTask.suggestedFilters,
+		});
+		return;
+	}
+
+	
  const detectedJobIntent = detectJobIntent(fullQuery);
  
  if (detectedJobIntent.isJobSearch && detectedJobIntent.confidence > 0.3) {
@@ -676,7 +691,15 @@ const UniversalSearch = () => {
  </Card>
  )}
 
- {/* 🔥 JOB ACTION CARDS - Show when job intent detected */}
+ 	{/* 🚀 ACTION ENGINE DOCK - Structured Domain Tasks */}
+	{omnibarTask && omnibarTask.category !== 'jobs' && omnibarTask.evidenceItems.length > 0 && (
+		<ActionEngineDock 
+			task={omnibarTask} 
+			onFilterClick={(filter) => performSearch(searchQuery + " " + filter)}
+		/>
+	)}
+
+	{/* 🔥 JOB ACTION CARDS - Show when job intent detected */}
  {jobIntent?.isJobSearch && jobListings.length > 0 && (
  <JobActionCards
  jobs={jobListings}
@@ -687,19 +710,19 @@ const UniversalSearch = () => {
  />
  )}
 
- {loading && results.length === 0 && !jobListings.length ? (
+ {loading && results.length === 0 && (!jobListings.length && !omnibarTask) ? (
  <div className="flex flex-col items-center justify-center py-16">
  <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
  <p className="text-muted-foreground font-medium mb-1">Searching the web at lightning speed...</p>
  <p className="text-label text-muted-foreground">Powered by DuckDuckGo + SI</p>
  </div>
- ) : results.length === 0 && searchQuery && !jobListings.length ? (
+ ) : results.length === 0 && searchQuery && (!jobListings.length && !omnibarTask) ? (
  <div className="text-center py-16">
  <Search className="w-20 h-20 mx-auto text-muted-foreground/30 mb-4" />
  <p className="text-section font-medium mb-2">No results found</p>
  <p className="text-muted-foreground mb-4">Try different keywords</p>
  </div>
- ) : results.length > 0 && !jobListings.length ? (
+ ) : results.length > 0 && (!jobListings.length && !omnibarTask) ? (
  <div className="space-y-3">
  {/* Map placeholder */}
  {location && (
