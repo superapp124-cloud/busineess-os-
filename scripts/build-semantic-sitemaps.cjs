@@ -55,6 +55,8 @@ console.log('[SITEMAP ENGINE] Building 15 Semantic Sitemaps...');
 // 1. Core Platform Pages
 const coreUrls = [
   createUrlXml(DOMAIN + '/', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/whatsapp-team-inbox', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/wati-alternative', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/call', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/download/android', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/download/samsung', '0.9', 'weekly'),
@@ -232,48 +234,34 @@ fs.writeFileSync(path.join(sitemapsDir, 'sitemap-blog.xml'), wrapUrlset(blogUrls
 const { CITIES } = require('./citiesData.cjs');
 const { LOCATION_USE_CASES, slugify } = require('./renderLocationHtml.cjs');
 
-const topIndianKeywords = [
+// Tier-1 Commercial Metros & Hubs (Curated to prioritize high-intent commercial crawl budget)
+const TIER1_INDIAN_METROS = [
   'mumbai', 'delhi', 'bengaluru', 'bangalore', 'hyderabad', 'chennai', 'kolkata', 'pune',
-  'ahmedabad', 'surat', 'jaipur', 'lucknow', 'kanpur', 'nagpur', 'indore', 'thane', 'bhopal',
-  'visakhapatnam', 'patna', 'vadodara', 'ghaziabad', 'ludhiana', 'agra', 'nashik', 'faridabad',
-  'meerut', 'rajkot', 'kalyan', 'vasai', 'varanasi', 'srinagar', 'aurangabad', 'dhanbad',
-  'amritsar', 'navi mumbai', 'allahabad', 'ranchi', 'howrah', 'coimbatore', 'jabalpur', 'gwalior',
-  'vijayawada', 'jodhpur', 'madurai', 'raipur', 'kota', 'chandigarh', 'guwahati', 'solapur',
-  'hubli', 'dharwad', 'bareilly', 'moradabad', 'mysore', 'gurgaon', 'aligarh', 'jalandhar',
-  'tiruchirappalli', 'bhubaneswar', 'salem', 'mira', 'bhayandar', 'thiruvananthapuram', 'bhiwandi',
-  'saharanpur', 'gorakhpur', 'guntur', 'bikaner', 'amravati', 'noida', 'jamshedpur', 'bhilai',
-  'cuttack', 'firozabad', 'kochi', 'nellore', 'bhavnagar', 'dehradun', 'durgapur', 'asansol',
-  'rourkela', 'nanded', 'kolhapur', 'ajmer', 'akola', 'gulbarga', 'jamnagar', 'ujjain', 'loni',
-  'siliguri', 'jhansi', 'ulhasnagar', 'jammu', 'sangli', 'mangalore', 'erode', 'belgaum',
-  'ambattur', 'tirunelveli', 'malegaon', 'gaya', 'jalgaon', 'udaipur', 'maheshtala', 'panipat',
-  'jodhpur', 'raipur', 'allahabad', 'prayagraj', 'jabalpur', 'gwalior', 'vijayawada', 'madurai'
+  'ahmedabad', 'gurugram', 'gurgaon', 'noida'
 ];
 
-const globalCountries = ['uae', 'saudi arabia', 'qatar', 'oman', 'kuwait', 'bahrain', 'singapore', 'united kingdom', 'united states', 'canada', 'australia', 'germany', 'france', 'netherlands', 'ireland', 'japan'];
+const TIER1_GLOBAL_HUBS = [
+  'dubai', 'london', 'singapore', 'riyadh', 'new york', 'san francisco'
+];
 
-const canaries = ['kasungu', 'erdenet', 'nicosia', 'hawassa', 'buraidah', 'cayenne', 'belize city bz', 'georgetown gy'];
-
-const PRERENDER_CITIES = CITIES.filter(([city, state]) => {
+const SITEMAP_CITIES = CITIES.filter(([city, state]) => {
   const c = city.toLowerCase();
   const s = (state || '').toLowerCase();
-  if (canaries.some(can => c.includes(can))) return true;
-  if (globalCountries.some(gc => s.includes(gc))) return true;
-  if (topIndianKeywords.some(tik => c.includes(tik) || s.includes(tik))) return true;
-  return false;
+  return TIER1_INDIAN_METROS.some(m => c.includes(m)) || TIER1_GLOBAL_HUBS.some(g => c.includes(g) || s.includes(g));
 });
 
 const indiaUrls = [];
 const globalUrls = [];
 const locationHubUrls = [createUrlXml(DOMAIN + '/locations', '0.9', 'weekly')];
 
-PRERENDER_CITIES.forEach(([cityName, stateName]) => {
+SITEMAP_CITIES.forEach(([cityName, stateName]) => {
   const citySlug = slugify(cityName);
   const s = (stateName || '').toLowerCase();
-  const isGlobal = globalCountries.some(gc => s.includes(gc)) || canaries.some(can => cityName.toLowerCase().includes(can));
+  const isGlobal = TIER1_GLOBAL_HUBS.some(g => cityName.toLowerCase().includes(g) || s.includes(g));
 
   locationHubUrls.push(createUrlXml(DOMAIN + '/locations/' + citySlug, '0.8', 'weekly'));
 
-  LOCATION_USE_CASES.forEach(uc => {
+  LOCATION_USE_CASES.slice(0, 4).forEach(uc => {
     const locUrl = createUrlXml(DOMAIN + '/location/' + uc.slug + '-' + citySlug, '0.7', 'monthly');
     if (isGlobal) {
       globalUrls.push(locUrl);
@@ -332,4 +320,4 @@ fs.writeFileSync(path.join(publicDir, 'sitemap_index.xml'), sitemapIndexXml, 'ut
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapIndexXml, 'utf8');
 
 console.log(`[SITEMAP ENGINE] Generated sitemap_index.xml referencing ${childSitemaps.length} segmented sub-sitemaps.`);
-console.log(`[SITEMAP ENGINE] Locations aligned: ${PRERENDER_CITIES.length} cities -> ${locationHubUrls.length} hubs, ${indiaUrls.length} India use cases, ${globalUrls.length} Global use cases.`);
+console.log(`[SITEMAP ENGINE] Locations aligned: ${SITEMAP_CITIES.length} cities -> ${locationHubUrls.length} hubs, ${indiaUrls.length} India use cases, ${globalUrls.length} Global use cases.`);

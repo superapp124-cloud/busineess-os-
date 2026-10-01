@@ -15,6 +15,12 @@ import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.util.Log
 import com.chatr.app.nativecalls.NativeCallSyncWorker
+import com.chatr.app.kernel.agents.MorningBriefAgent
+import com.chatr.app.kernel.db.ChatrKernelDatabase
+import com.chatr.app.kernel.entity.EntityEngine
+import com.chatr.app.kernel.memory.PersonalMemoryEngine
+import com.chatr.app.kernel.tools.ToolRegistry
+import com.chatr.app.kernel.workflow.PostCallWorkflowEngine
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.HiltAndroidApp
@@ -57,20 +63,29 @@ class ChatrApplication : Application() {
     lateinit var phoneAccountHandle: PhoneAccountHandle
         private set
 
+    /** Application-level Milestone 4 engine instances */
+    lateinit var postCallWorkflowEngine: PostCallWorkflowEngine
+        private set
+    lateinit var morningBriefAgent: MorningBriefAgent
+        private set
+
     override fun onCreate() {
         super.onCreate()
         instance = this
-        
+
         Log.i(TAG, "🚀 CHATR+ Application starting...")
 
         // Initialize Firebase
         initializeFirebase()
-        
+
         // Create notification channels (MUST be done before any notification)
         createNotificationChannels()
-        
+
         // Register with TelecomManager for GSM-like call handling
         registerPhoneAccount()
+
+        // Initialize Milestone 4: CHATR OS Agent Layer
+        initKernelAgents()
 
         scheduleDeferredStartupWork()
 
@@ -78,6 +93,35 @@ class ChatrApplication : Application() {
         WebRTCFactoryManager.initialize(this)
 
         Log.i(TAG, "✅ CHATR+ Application initialized successfully")
+    }
+
+    /**
+     * Initializes the kernel's Milestone 4 engine graph:
+     * PersonalMemoryEngine → EntityEngine → ToolRegistry → PostCallWorkflowEngine → MorningBriefAgent
+     */
+    private fun initKernelAgents() {
+        try {
+            val db = ChatrKernelDatabase.get(this)
+            val memoryEngine = PersonalMemoryEngine(db.memoryDao(), EntityEngine(db.entityDao()))
+            val entityEngine = EntityEngine(db.entityDao())
+            val toolRegistry = ToolRegistry(this)
+
+            postCallWorkflowEngine = PostCallWorkflowEngine(
+                context = this,
+                memoryEngine = memoryEngine,
+                entityEngine = entityEngine,
+                toolRegistry = toolRegistry
+            )
+
+            morningBriefAgent = MorningBriefAgent(this, memoryEngine)
+
+            // Schedule morning brief if not already scheduled
+            MorningBriefAgent.scheduleDaily(this)
+
+            Log.i(TAG, "✅ Kernel agents initialized (PostCallWorkflow, MorningBrief)")
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Failed to initialize kernel agents: ${e.message}", e)
+        }
     }
 
     private fun scheduleDeferredStartupWork() {

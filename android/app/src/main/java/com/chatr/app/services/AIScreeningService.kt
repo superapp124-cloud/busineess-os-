@@ -361,16 +361,37 @@ class AIScreeningService : Service() {
         }
 
         // 3. Launch PostCallSummaryActivity
+        val postCallTraceId = java.util.UUID.randomUUID().toString()
         try {
             com.chatr.app.PostCallSummaryActivity.start(
                 applicationContext,
                 phoneNumber,
                 summary,
                 keyPoints,
-                actionItems
+                actionItems,
+                traceId = postCallTraceId
             )
         } catch (e: Exception) {
             Log.e(TAG, "Failed to launch PostCallSummaryActivity", e)
+        }
+
+        // 4. Kick off autonomous post-call workflow (memory writes, entity graph, proactive chips)
+        try {
+            val app = applicationContext as? com.chatr.app.ChatrApplication
+            val engine = runCatching { app?.postCallWorkflowEngine }.getOrNull()
+            if (app != null && engine != null) {
+                val screenedResult = com.chatr.app.kernel.workflow.ScreenedCallResult(
+                    traceId = postCallTraceId,
+                    phoneNumber = phoneNumber,
+                    callerMessage = summary,
+                    keyPoints = keyPoints.toList(),
+                    extractedCommitments = actionItems.filter { it != "Dismiss" }
+                )
+                engine.runPostCallPipeline(screenedResult)
+                Log.i(TAG, "Post-call workflow pipeline started for $phoneNumber")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start post-call workflow: ${e.message}", e)
         }
 
         stopSelf()

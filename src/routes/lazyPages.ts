@@ -149,6 +149,9 @@ export const CommunitySpace = lazy(() => import('@/pages/CommunitySpace'));
 // Health & Wellness
 export const HealthHub = lazy(() => import('@/pages/HealthHub'));
 export const DeviceCenter = lazy(() => import('@/pages/health/DeviceCenter'));
+export const HealthyFoodScreen = lazy(() => import('@/pages/health/HealthyFoodScreen'));
+export const FoodProfileScreen = lazy(() => import('@/pages/health/FoodProfileScreen'));
+export const MealPlanScreen = lazy(() => import('@/pages/health/MealPlanScreen'));
 export const CareAccess = lazy(() => import('@/pages/CareAccess'));
 export const WellnessTracking = lazy(() => import('@/pages/WellnessTracking'));
 export const HealthPassport = lazy(() => import('@/pages/HealthPassport'));

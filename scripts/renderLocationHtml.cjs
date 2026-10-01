@@ -13,10 +13,10 @@ const LOCATION_USE_CASES = [
     title: 'Recruitment & Staffing Agencies',
     focus: 'candidate screening and resume parsing',
     h1Prefix: 'Recruitment & Staffing Agency Automation in',
-    summary: (city) => `Recruitment firms in ${city} deploy CHATR OS to eliminate candidate drop-offs, parse multi-lingual resumes via AI, and screen candidates over WhatsApp with 94% response rates.`,
+    summary: (city) => `Recruitment firms in ${city} deploy CHATR OS to eliminate candidate drop-offs, parse multi-lingual resumes, and automate candidate pre-screening over WhatsApp.`,
     faqs: (city) => [
       { q: `How do recruitment agencies in ${city} use CHATR?`, a: `Staffing firms in ${city} connect their WhatsApp Business numbers to CHATR to automate resume parsing, pre-screening questions, and interview calendar bookings.` },
-      { q: `Can CHATR parse candidate resumes in local languages in ${city}?`, a: `Yes. CHATR's parser supports 20+ languages, extracting skills, experience, and contact details with 98.4% accuracy.` },
+      { q: `Can CHATR parse candidate resumes in local languages in ${city}?`, a: `Yes. CHATR's parser supports 20+ languages, extracting skills, experience, and contact details directly into your candidate pipeline.` },
       { q: `Does CHATR integrate with existing ATS systems in ${city}?`, a: `Yes. CHATR integrates with major ATS platforms including Zoho Recruit, Bullhorn, Greenhouse, and proprietary databases via REST APIs.` }
     ]
   },
@@ -39,7 +39,7 @@ const LOCATION_USE_CASES = [
     h1Prefix: 'Automated Hiring & Candidate Screening in',
     summary: (city) => `Cut time-to-hire from weeks to hours in ${city}. Automate candidate qualification, instant WhatsApp slot booking, and interview reminder sequences.`,
     faqs: (city) => [
-      { q: `How does automated hiring reduce ghosting in ${city}?`, a: `By reaching applicants within 2 minutes of applying on WhatsApp, CHATR increases interview attendance by 68%.` },
+      { q: `How does automated hiring reduce ghosting in ${city}?`, a: `By engaging applicants immediately upon application and sending automated WhatsApp reminders, CHATR ensures candidates attend their scheduled interviews.` },
       { q: `What screening tests can be administered in ${city}?`, a: `You can configure custom skill assessments, language checks, shift availability, and document uploads over WhatsApp.` },
       { q: `Can recruiters in ${city} set response time SLAs?`, a: `Yes. Supervisors receive real-time alerts when candidate inquiries remain unhandled past your threshold.` }
     ]

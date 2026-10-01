@@ -53,6 +53,72 @@ const PUBLIC_SEO_PAGES = [
     ]
   },
   {
+    path: '/whatsapp-team-inbox',
+    title: 'WhatsApp Team Inbox — Shared Multi-Agent Inbox for Businesses | CHATR',
+    description: 'Connect multiple team members to one official WhatsApp Business number. Round-robin lead routing, collision protection, and automated SI intent triage starting at ₹999/mo.',
+    keywords: 'whatsapp team inbox, shared whatsapp inbox, multi agent whatsapp, multiple users one whatsapp number, whatsapp crm',
+    canonical: DOMAIN + '/whatsapp-team-inbox',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'CHATR WhatsApp Shared Team Inbox',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, Windows, macOS, Android, iOS',
+        offers: {
+          '@type': 'Offer',
+          price: '999',
+          priceCurrency: 'INR'
+        },
+        description: 'Multi-agent shared team inbox for official WhatsApp Business API with automated lead assignment and SI response assistance.'
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
+          { '@type': 'ListItem', position: 2, name: 'Solutions', item: DOMAIN + '/solutions' },
+          { '@type': 'ListItem', position: 3, name: 'WhatsApp Team Inbox', item: DOMAIN + '/whatsapp-team-inbox' }
+        ]
+      }
+    ]
+  },
+  {
+    path: '/wati-alternative',
+    title: 'WATI Alternative — WhatsApp API, Shared Team Inbox & Calling | CHATR',
+    description: 'Compare CHATR and WATI for business messaging. Discover transparent pricing starting at ₹999/mo, multi-agent shared team inboxes, and built-in browser HD voice calling.',
+    keywords: 'wati alternative, wati competitors, wati vs chatr, whatsapp api pricing india, shared team inbox alternative',
+    canonical: DOMAIN + '/wati-alternative',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'WATI Alternative: CHATR Communication OS',
+        description: 'Factual capability and pricing comparison between WATI and CHATR for WhatsApp business communication.',
+        url: DOMAIN + '/wati-alternative',
+        mainEntity: {
+          '@type': 'SoftwareApplication',
+          name: 'CHATR Communication OS',
+          applicationCategory: 'BusinessApplication',
+          offers: {
+            '@type': 'Offer',
+            price: '999',
+            priceCurrency: 'INR'
+          }
+        }
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
+          { '@type': 'ListItem', position: 2, name: 'Comparisons', item: DOMAIN + '/comparison' },
+          { '@type': 'ListItem', position: 3, name: 'WATI Alternative', item: DOMAIN + '/wati-alternative' }
+        ]
+      }
+    ]
+  },
+  {
     path: '/call',
     title: '📞 Join Free HD Voice & Video Call — CHATR+',
     description: 'Click to answer directly in your browser. 100% free, end-to-end encrypted WebRTC audio and video. Zero app download, zero registration required.',

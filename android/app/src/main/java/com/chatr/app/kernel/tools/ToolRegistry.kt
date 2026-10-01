@@ -1,13 +1,18 @@
-﻿package com.chatr.app.kernel.tools
+package com.chatr.app.kernel.tools
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.CalendarContract
+import android.telephony.SmsManager
 import android.util.Log
 import com.chatr.app.kernel.intent.IntentAction
 import com.chatr.app.kernel.trust.TrustDecision
 import com.chatr.app.services.AIScreeningService
 import com.chatr.app.services.ChatrInCallService
+import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 /**
  * ToolRegistry — The single deterministic execution point for all authorized CHATR actions.
@@ -141,6 +146,121 @@ class ToolRegistry(private val context: Context) {
                 ToolResult(traceId = traceId, toolId = "memory.search", success = true)
             }
         )
+
+        // ── 3. Calendar Tool ──────────────────────────────────────────────
+
+        register(
+            ToolDefinition(
+                toolId = "calendar.create_event",
+                displayName = "Create Calendar Event",
+                description = "Inserts a new event into the user's primary Google Calendar",
+                requiredPermission = "android.permission.WRITE_CALENDAR",
+                riskTier = RiskTier.MEDIUM,
+                reversible = true,
+                parameterSchema = mapOf(
+                    "title" to ToolParameterType.STRING,
+                    "description" to ToolParameterType.STRING,
+                    "durationMinutes" to ToolParameterType.INTEGER,
+                    "startOffsetHours" to ToolParameterType.INTEGER
+                )
+            ) { traceId, params ->
+                val title = params["title"] as? String ?: "CHATR Follow-up"
+                val description = params["description"] as? String ?: ""
+                val durationMinutes = (params["durationMinutes"] as? Long ?: 30L)
+                val startOffsetHours = (params["startOffsetHours"] as? Long ?: 24L)
+
+                val startMs = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(startOffsetHours)
+                val endMs   = startMs + TimeUnit.MINUTES.toMillis(durationMinutes)
+
+                val values = ContentValues().apply {
+                    put(CalendarContract.Events.DTSTART,       startMs)
+                    put(CalendarContract.Events.DTEND,         endMs)
+                    put(CalendarContract.Events.TITLE,         title)
+                    put(CalendarContract.Events.DESCRIPTION,   description)
+                    put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
+                    put(CalendarContract.Events.CALENDAR_ID,   1L) // primary calendar
+                }
+
+                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+                val eventId = uri?.lastPathSegment?.toLongOrNull()
+                Log.i(TAG, "calendar.create_event: eventId=$eventId | traceId=$traceId")
+
+                ToolResult(
+                    traceId = traceId,
+                    toolId = "calendar.create_event",
+                    success = eventId != null,
+                    output = mapOf("eventId" to (eventId ?: -1L), "uri" to (uri?.toString() ?: "")),
+                    errorMessage = if (eventId == null) "Failed to insert calendar event" else null
+                )
+            }
+        )
+
+        // ── 4. SMS Tool ───────────────────────────────────────────────────
+
+        register(
+            ToolDefinition(
+                toolId = "sms.send",
+                displayName = "Send SMS",
+                description = "Sends a short acknowledgement SMS to the caller",
+                requiredPermission = "android.permission.SEND_SMS",
+                riskTier = RiskTier.MEDIUM,
+                reversible = false,
+                parameterSchema = mapOf(
+                    "phoneNumber" to ToolParameterType.PHONE_NUMBER,
+                    "body" to ToolParameterType.STRING
+                )
+            ) { traceId, params ->
+                val phoneNumber = params["phoneNumber"] as? String ?: ""
+                val body = params["body"] as? String ?: ""
+                var success = false
+                var errorMsg: String? = null
+
+                try {
+                    @Suppress("DEPRECATION")
+                    val smsManager: SmsManager = SmsManager.getDefault()
+                    val parts = smsManager.divideMessage(body)
+                    smsManager.sendMultipartTextMessage(phoneNumber, null, parts, null, null)
+                    success = true
+                    Log.i(TAG, "sms.send: sent ${parts.size}-part SMS to $phoneNumber | traceId=$traceId")
+                } catch (e: Exception) {
+                    errorMsg = "SMS send failed: ${e.message}"
+                    Log.e(TAG, "sms.send failed: ${e.message}", e)
+                }
+
+                ToolResult(
+                    traceId = traceId,
+                    toolId = "sms.send",
+                    success = success,
+                    errorMessage = errorMsg
+                )
+            }
+        )
+
+        // ── 5. Commitment Write Tool ──────────────────────────────────────
+
+        register(
+            ToolDefinition(
+                toolId = "memory.write_commitment",
+                displayName = "Write Commitment to Memory",
+                description = "Persists an explicit commitment to the encrypted on-device personal memory graph",
+                requiredPermission = null,
+                riskTier = RiskTier.LOW,
+                reversible = false,
+                parameterSchema = mapOf("description" to ToolParameterType.STRING)
+            ) { traceId, params ->
+                val description = params["description"] as? String ?: ""
+                // The actual Room write happens in PersonalMemoryEngine.createCommitment()
+                // which is called directly by PostCallWorkflowEngine.
+                // This tool stub confirms tool availability to the Trust Kernel.
+                Log.i(TAG, "memory.write_commitment: confirmed | traceId=$traceId | desc='${description.take(60)}'")
+                ToolResult(
+                    traceId = traceId,
+                    toolId = "memory.write_commitment",
+                    success = description.isNotBlank(),
+                    output = mapOf("description" to description)
+                )
+            }
+        )
     }
 
     fun register(tool: ToolDefinition) {
@@ -150,12 +270,15 @@ class ToolRegistry(private val context: Context) {
     fun findById(toolId: String): ToolDefinition? = tools[toolId]
 
     fun findForAction(action: IntentAction): ToolDefinition? = when (action) {
-        IntentAction.CALL_SCREEN_INCOMING -> findById("phone.screen_incoming")
-        IntentAction.CALL_ANSWER          -> findById("phone.answer")
-        IntentAction.CALL_END             -> findById("phone.end")
-        IntentAction.CALL_TAKEOVER_FROM_AI -> findById("phone.takeover")
-        IntentAction.CALL_PLACE_OUTGOING  -> findById("phone.place_call")
-        IntentAction.MEMORY_SEARCH        -> findById("memory.search")
+        IntentAction.CALL_SCREEN_INCOMING    -> findById("phone.screen_incoming")
+        IntentAction.CALL_ANSWER             -> findById("phone.answer")
+        IntentAction.CALL_END                -> findById("phone.end")
+        IntentAction.CALL_TAKEOVER_FROM_AI   -> findById("phone.takeover")
+        IntentAction.CALL_PLACE_OUTGOING     -> findById("phone.place_call")
+        IntentAction.MEMORY_SEARCH           -> findById("memory.search")
+        IntentAction.MEMORY_WRITE_COMMITMENT -> findById("memory.write_commitment")
+        IntentAction.CALENDAR_CREATE_EVENT   -> findById("calendar.create_event")
+        IntentAction.SMS_SEND                -> findById("sms.send")
         else -> null
     }
 

@@ -25,13 +25,12 @@ export const EVIDENCE_GRAPH: EvidenceFindingNode[] = [
     reportTitle: 'India Recruitment Communication Benchmark Report 2026',
     reportPath: '/research/india-recruitment-communication-benchmark-2026',
     findingIndex: 1,
-    claimText: 'Candidates receiving initial WhatsApp outreach responded within 2 hours at a rate of 78.4% (95% CI: 76.1%-80.7%), compared to 14.2% in the email comparison cohort.',
+    claimText: 'Candidates receiving prompt WhatsApp outreach demonstrate substantially faster response velocity compared to traditional email cohorts.',
     claimType: 'OBSERVATIONAL',
     causalClaimPermitted: false,
     evidenceStrength: 'HIGH',
-    sampleSize: 'N = 142,500 Candidate Threads',
-    confidenceInterval: '95% CI: 76.1% - 80.7%, p < 0.001',
-    doiStatus: 'Pending Zenodo Deposit',
+    sampleSize: 'Recruitment Telemetry Cohort',
+    doiStatus: 'CHATR Technical Whitepaper',
     lastVerified: '2026-08-11'
   },
   {
@@ -40,13 +39,12 @@ export const EVIDENCE_GRAPH: EvidenceFindingNode[] = [
     reportTitle: 'India Recruitment Communication Benchmark Report 2026',
     reportPath: '/research/india-recruitment-communication-benchmark-2026',
     findingIndex: 2,
-    claimText: 'Candidate drop-off reached 62.0% when initial screening responses exceeded 24 hours from application submission.',
+    claimText: 'Candidate drop-off accelerates significantly when initial recruiter screening responses are delayed past 24 hours.',
     claimType: 'OBSERVATIONAL',
     causalClaimPermitted: false,
     evidenceStrength: 'HIGH',
-    sampleSize: 'N = 142,500 Candidate Threads',
-    confidenceInterval: '95% CI: 76.1% - 80.7%',
-    doiStatus: 'Pending Zenodo Deposit',
+    sampleSize: 'Recruitment Telemetry Cohort',
+    doiStatus: 'CHATR Technical Whitepaper',
     lastVerified: '2026-08-11'
   },
   {
@@ -55,13 +53,12 @@ export const EVIDENCE_GRAPH: EvidenceFindingNode[] = [
     reportTitle: 'WhatsApp Lead Response Time and Loss Audit 2026',
     reportPath: '/research/whatsapp-lead-response-time-audit-2026',
     findingIndex: 1,
-    claimText: 'Inquiries acknowledged within 5 minutes converted at 38.2% (95% CI: 36.1%-40.3%), compared to 1.8% for inquiries delayed >60 minutes (21.2x higher observed conversion rate).',
+    claimText: 'Inquiries acknowledged within 5 minutes preserve maximum customer purchase intent before prospects seek competitor alternatives.',
     claimType: 'OBSERVATIONAL',
     causalClaimPermitted: false,
     evidenceStrength: 'HIGH',
-    sampleSize: 'N = 65,000 Inbound Lead Threads',
-    confidenceInterval: '95% CI: 36.1% - 40.3%, p < 0.001',
-    doiStatus: 'Pending Zenodo Deposit',
+    sampleSize: 'SME Commercial Inbox Cohort',
+    doiStatus: 'CHATR Technical Whitepaper',
     lastVerified: '2026-08-11'
   },
   {
@@ -70,13 +67,12 @@ export const EVIDENCE_GRAPH: EvidenceFindingNode[] = [
     reportTitle: 'SI Resume Parser Accuracy and Screening Velocity Benchmark',
     reportPath: '/research/ai-resume-parser-accuracy-benchmark-2026',
     findingIndex: 1,
-    claimText: 'TalentXcel SI Parser v1.4 achieved a 96.4% precision rate (F1: 0.952) in extracting core technical skills from non-standard PDF formats on held-out test data (N=7,500).',
+    claimText: 'TalentXcel SI Parser accurately extracts structured contact details, skills, and work history from multi-lingual PDF and document formats.',
     claimType: 'BENCHMARK',
     causalClaimPermitted: true,
     evidenceStrength: 'HIGH',
-    sampleSize: 'N = 50,000 Candidate Resumes',
-    confidenceInterval: '95% CI: 95.2% - 97.6%',
-    doiStatus: 'Pending Zenodo Deposit',
+    sampleSize: 'Evaluation Dataset',
+    doiStatus: 'CHATR Technical Whitepaper',
     lastVerified: '2026-08-11'
   }
 ];

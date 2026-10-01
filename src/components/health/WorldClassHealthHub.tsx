@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useHealthOS } from '@/hooks/useHealthOS';
 import { SEOHead } from '@/components/SEOHead';
+import { HealthyFoodCard } from './food/HealthyFoodCard';
 import { cn } from '@/lib/utils';
 
 export default function WorldClassHealthHub() {
@@ -305,6 +306,11 @@ export default function WorldClassHealthHub() {
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
           </div>
+        </div>
+
+        {/* ── Healthy Food Section (Phase 3A) ───────────────── */}
+        <div className="pt-1">
+          <HealthyFoodCard />
         </div>
 
         {/* ── Deep Clinical Services Disclosure ─────────────── */}

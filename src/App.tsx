@@ -120,6 +120,8 @@ const AuthorProfilePage = React.lazy(() => import("./pages/public/AuthorProfileP
 const CompanyInfoPage = React.lazy(() => import("./pages/public/CompanyInfoPage").then(m => ({ default: m.CompanyInfoPage })));
 const ChatrAIPage = React.lazy(() => import("./pages/public/ChatrAIPage").then(m => ({ default: m.ChatrAIPage })));
 const PricingPage = React.lazy(() => import("./pages/public/PricingPage").then(m => ({ default: m.PricingPage })));
+const WhatsAppTeamInboxPage = React.lazy(() => import("./pages/public/WhatsAppTeamInboxPage").then(m => ({ default: m.WhatsAppTeamInboxPage })));
+const WatiAlternativePage = React.lazy(() => import("./pages/public/WatiAlternativePage").then(m => ({ default: m.WatiAlternativePage })));
 
 // Phase B Expansion Engine (25 High-Authority Product/Problem/Workflow/Industry/Comparison Pages)
 const ExpansionPillarPage = React.lazy(() => import("./pages/public/ExpansionPillarPage").then(m => ({ default: m.ExpansionPillarPage })));
@@ -1099,6 +1101,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   {/* chatrchat.in Core Business OS Landing Pages */}
   <Route path="/chatr/ai" element={<LazyRoute component={ChatrAIPage} />} />
   <Route path="/pricing" element={<LazyRoute component={PricingPage} />} />
+  <Route path="/whatsapp-team-inbox" element={<LazyRoute component={WhatsAppTeamInboxPage} />} />
+  <Route path="/wati-alternative" element={<LazyRoute component={WatiAlternativePage} />} />
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />
   <Route path="/ai-business-os" element={<LazyRoute component={AIBusinessOSLanding} />} />
   <Route path="/ai-revenue-operations" element={<LazyRoute component={AIRevenueOperationsLanding} />} />
@@ -1120,6 +1124,9 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  {/* Consolidated Hub Routes */}
  <Route path="/health" element={<LazyRoute component={LazyPages.HealthHub} />} />
  <Route path="/health/devices" element={<LazyRoute component={LazyPages.DeviceCenter} />} />
+ <Route path="/health/food" element={<LazyRoute component={LazyPages.HealthyFoodScreen} />} />
+ <Route path="/health/food/profile" element={<LazyRoute component={LazyPages.FoodProfileScreen} />} />
+ <Route path="/health/food/plan" element={<LazyRoute component={LazyPages.MealPlanScreen} />} />
 
  <Route path="/community" element={<LazyRoute component={LazyPages.CommunitySpace} />} />
  
