@@ -163,7 +163,7 @@ const Home = memo(() => {
         background: 'radial-gradient(circle at 50% 0%, #16172B 0%, #0B0E14 50%, #07090E 100%)'
       }}
     >
-      <SEOHead title="Home | Chatr+" description="Your intelligent communication operating system" />
+      <SEOHead title="CHATR — Your Personal SI" description="A personal Super Intelligence layer that understands your context, remembers what matters, communicates naturally and helps you get things done." />
 
       <div className="mx-auto max-w-[540px] w-full space-y-4 px-4 pt-3.5 pb-28">
 

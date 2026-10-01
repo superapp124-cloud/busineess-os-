@@ -1,4 +1,4 @@
-﻿package com.chatr.app.services
+package com.chatr.app.services
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -156,7 +156,7 @@ class AIScreeningService : Service() {
         val greeting = when (screeningMode) {
             "MODE_DELIVERY_GUIDE" -> "Hello bhaiya, Arshid sir busy hain. Aap main gate par aake security ko bata dijiye, flat number 402 hai."
             "MODE_AI_BOUNCER" -> "Namaskar. Arshid ji currently busy hain. Kya aap loan ya credit card ke silsile mein call kar rahe hain?"
-            else -> "Hi, I am Chatr SI screening this call for Arshid. Who is calling and what is the purpose of your call?"
+            else -> "Hello, this is CHATR, Arshid's personal assistant. Arshid isn't available right now. May I know who is calling and the purpose of the call?"
         }
 
         speakUtterance(greeting)
@@ -327,6 +327,52 @@ class AIScreeningService : Service() {
         val fullTranscript = dialogueHistory.joinToString("\n") { "${it.speaker}: ${it.text}" }
         Log.i(TAG, "Screening finished. Full transcript:\n$fullTranscript")
         broadcastResult(phoneNumber, fullTranscript)
+
+        // 1. Terminate call via Telecom layer
+        try {
+            ChatrInCallService.disconnectCall()
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to disconnect call via ChatrInCallService: ${e.message}")
+        }
+
+        // 2. Synthesize structured summary & extract key points
+        val callerUtterances = dialogueHistory
+            .filter { it.speaker == DialogueSpeaker.CALLER }
+            .map { it.text }
+
+        val summary = if (callerUtterances.isNotEmpty()) {
+            "Caller said: \"${callerUtterances.joinToString(" • ")}\""
+        } else {
+            "Screened by CHATR SI. No speech recorded from caller."
+        }
+
+        val keyPoints = ArrayList<String>()
+        val actionItems = ArrayList<String>()
+
+        if (callerUtterances.isNotEmpty()) {
+            keyPoints.add("Caller: ${callerUtterances.firstOrNull()?.take(60) ?: "Unknown"}")
+            keyPoints.add("Recorded during SI screening")
+            actionItems.add("Call Back")
+            actionItems.add("Send SMS")
+            actionItems.add("Block / Report")
+        } else {
+            keyPoints.add("No message left")
+            actionItems.add("Dismiss")
+        }
+
+        // 3. Launch PostCallSummaryActivity
+        try {
+            com.chatr.app.PostCallSummaryActivity.start(
+                applicationContext,
+                phoneNumber,
+                summary,
+                keyPoints,
+                actionItems
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to launch PostCallSummaryActivity", e)
+        }
+
         stopSelf()
     }
 

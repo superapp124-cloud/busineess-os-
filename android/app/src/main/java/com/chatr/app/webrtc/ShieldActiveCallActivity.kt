@@ -18,9 +18,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.chatr.app.R
+import com.chatr.app.services.AIScreeningService
 import com.chatr.app.services.ChatrConnectionService
 import com.chatr.app.services.ChatrInCallService
 import com.chatr.app.services.ChatrVoipCallRegistry
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.media.AudioManager
 import android.os.SystemClock
 import android.widget.Chronometer
@@ -76,6 +78,25 @@ class ShieldActiveCallActivity : AppCompatActivity(),
         }
     }
 
+    private var isAiScreening: Boolean = false
+
+    private val screeningReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (action == AIScreeningService.ACTION_SCREENING_TURN) {
+                val speaker = intent.getStringExtra(AIScreeningService.EXTRA_TURN_SPEAKER) ?: "CHATR"
+                val turnText = intent.getStringExtra(AIScreeningService.EXTRA_TURN_TEXT) ?: ""
+                runOnUiThread {
+                    val prefix = if (speaker == "CALLER") "👤 Caller: " else "🤖 SI: "
+                    findViewById<TextView>(R.id.callDurationText)?.text = "$prefix$turnText"
+                }
+            } else if (action == AIScreeningService.ACTION_SCREENING_RESULT) {
+                Log.i(TAG, "Screening finished, closing active call screen")
+                finish()
+            }
+        }
+    }
+
     private var durationChronometer: Chronometer? = null
     
     // For Video Calls
@@ -115,6 +136,27 @@ class ShieldActiveCallActivity : AppCompatActivity(),
             findViewById<View>(R.id.btnVideo)?.visibility = View.GONE
             findViewById<View>(R.id.btnFlipCamera)?.visibility = View.GONE
             localVideoView?.visibility = View.GONE
+
+            isAiScreening = intent.getBooleanExtra("is_ai_screening", false) || ChatrInCallService.isAiScreeningActive
+            if (isAiScreening) {
+                findViewById<TextView>(R.id.callerNameText)?.text = "🤖 CHATR SI Screening..."
+                findViewById<TextView>(R.id.callDurationText)?.text = "SI Receptionist answering on your behalf..."
+
+                findViewById<View>(R.id.btnAddParticipant)?.setOnClickListener {
+                    ChatrInCallService.takeOverScreenedCall(this@ShieldActiveCallActivity)
+                    isAiScreening = false
+                    val callerName = intent.getStringExtra("caller_name") ?: "Active Call"
+                    findViewById<TextView>(R.id.callerNameText)?.text = callerName
+                    findViewById<TextView>(R.id.callDurationText)?.text = "00:00"
+                    Toast.makeText(this@ShieldActiveCallActivity, "You took over the call from CHATR SI", Toast.LENGTH_SHORT).show()
+                }
+
+                val screeningFilter = IntentFilter().apply {
+                    addAction(AIScreeningService.ACTION_SCREENING_TURN)
+                    addAction(AIScreeningService.ACTION_SCREENING_RESULT)
+                }
+                LocalBroadcastManager.getInstance(this).registerReceiver(screeningReceiver, screeningFilter)
+            }
         } else {
             initWebRTC()
             if (intent.getStringExtra("call_type") == "video") {
@@ -785,6 +827,7 @@ class ShieldActiveCallActivity : AppCompatActivity(),
         super.onDestroy()
         if (isGsmCall) {
             try { unregisterReceiver(gsmCallReceiver) } catch (_: Exception) {}
+            try { LocalBroadcastManager.getInstance(this).unregisterReceiver(screeningReceiver) } catch (_: Exception) {}
         }
         try {
             localVideoView?.release()

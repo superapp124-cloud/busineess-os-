@@ -84,6 +84,34 @@ class ChatrConnectionService : ConnectionService() {
                 )
             }
         }
+
+        /**
+         * Puts all active VoIP connections on hold when a carrier GSM call becomes active.
+         */
+        fun holdAllConnections(reason: String = "gsm_call_active") {
+            Log.i(TAG, "holdAllConnections called ($reason) across ${activeConnections.size} active connections")
+            activeConnections.values.forEach { connection ->
+                try {
+                    connection.onHold()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to hold connection ${connection.callId}: ${e.message}")
+                }
+            }
+        }
+
+        /**
+         * Resumes (unholds) VoIP connections previously placed on hold.
+         */
+        fun unholdAllConnections(reason: String = "gsm_call_ended") {
+            Log.i(TAG, "unholdAllConnections called ($reason) across ${activeConnections.size} active connections")
+            activeConnections.values.forEach { connection ->
+                try {
+                    connection.onUnhold()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to unhold connection ${connection.callId}: ${e.message}")
+                }
+            }
+        }
     }
 
     override fun onCreateOutgoingConnection(
@@ -273,6 +301,16 @@ class ChatrConnection(
         // doing so races with the Telecom audio router on OEM builds
         // (Xiaomi MIUI, Samsung OneUI) and causes near-silent audio.
 
+        // Call Concurrency: If a GSM call is active, put it on hold so VoIP gets audio focus
+        try {
+            if (ChatrInCallService.hasActiveCalls()) {
+                Log.i(TAG, "VoIP answered: holding active GSM call for concurrency")
+                ChatrInCallService.holdCall()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Notice: could not hold GSM call: ${e.message}")
+        }
+
         setActive()
         audioBridge?.onAudioFocusGranted()
 
@@ -298,6 +336,16 @@ class ChatrConnection(
         Log.i(TAG, "onAnswer(video=$videoState): $callId")
         // Audio mode is managed by Telecom via onCallAudioStateChanged.
         // DO NOT set AudioManager.mode or isSpeakerphoneOn here.
+
+        // Call Concurrency: If a GSM call is active, put it on hold so VoIP gets audio focus
+        try {
+            if (ChatrInCallService.hasActiveCalls()) {
+                Log.i(TAG, "VoIP answered: holding active GSM call for concurrency")
+                ChatrInCallService.holdCall()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Notice: could not hold GSM call: ${e.message}")
+        }
 
         setActive()
         audioBridge?.onAudioFocusGranted()

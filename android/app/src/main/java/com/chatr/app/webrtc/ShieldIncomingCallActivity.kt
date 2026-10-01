@@ -25,10 +25,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.chatr.app.R
+import com.chatr.app.services.AIScreeningService
 import com.chatr.app.services.ChatrConnectionService
 import com.chatr.app.services.ChatrInCallService
 import com.chatr.app.services.ChatrNotificationCoordinator
 import com.chatr.app.services.ChatrVoipCallRegistry
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,6 +65,8 @@ class ShieldIncomingCallActivity : ComponentActivity() {
     private var incomingUiFinishStarted = false
     private val scope = CoroutineScope(Dispatchers.Main)
 
+    private var isScreeningActive = false
+
     private val callActionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent == null) return
@@ -75,6 +79,24 @@ class ShieldIncomingCallActivity : ComponentActivity() {
         }
     }
 
+    private val screeningTurnReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (action == AIScreeningService.ACTION_SCREENING_TURN) {
+                val speaker = intent.getStringExtra(AIScreeningService.EXTRA_TURN_SPEAKER) ?: "CHATR"
+                val turnText = intent.getStringExtra(AIScreeningService.EXTRA_TURN_TEXT) ?: ""
+                runOnUiThread {
+                    findViewById<TextView>(R.id.intelligenceTitle)?.text = 
+                        if (speaker == "CALLER") "👤 Caller is speaking..." else "🤖 CHATR SI is speaking..."
+                    findViewById<TextView>(R.id.intelligenceDetail)?.text = turnText
+                }
+            } else if (action == AIScreeningService.ACTION_SCREENING_RESULT) {
+                Log.i(TAG, "Screening result received, finishing incoming UI")
+                finishIncomingUi("screening completed")
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "ShieldIncomingCallActivity onCreate")
@@ -82,6 +104,13 @@ class ShieldIncomingCallActivity : ComponentActivity() {
         setupFullscreenOverLockscreen()
         extractCallData()
         registerCallReceiver()
+
+        val screeningFilter = IntentFilter().apply {
+            addAction(AIScreeningService.ACTION_SCREENING_TURN)
+            addAction(AIScreeningService.ACTION_SCREENING_RESULT)
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(screeningTurnReceiver, screeningFilter)
+
         setContentView(R.layout.activity_shield_incoming_call)
         setupUI()
         startRinging()
@@ -205,6 +234,8 @@ class ShieldIncomingCallActivity : ComponentActivity() {
     private fun handleAiScreen() {
         Log.i(TAG, "User selected SI Screen for call: $callId (type=$callType)")
         stopRinging()
+        timeoutJob?.cancel()
+        isScreeningActive = true
         
         findViewById<TextView>(R.id.intelligenceTitle)?.text = "CHATR SI Answering..."
         findViewById<TextView>(R.id.intelligenceDetail)?.text = "Screening caller intent on behalf of Arshid..."
@@ -218,11 +249,12 @@ class ShieldIncomingCallActivity : ComponentActivity() {
         })
         
         if (callType == "gsm") {
-            ChatrInCallService.answerCall()
+            ChatrInCallService.screenCallWithAi(this, "MODE_DEFAULT")
         } else {
             // Launch SI speech loop and notification
             ChatrNotificationCoordinator.cancelIncomingCallNotification(this, callId)
             ChatrConnectionService.answerConnection(callId)
+            AIScreeningService.start(this, callerPhone, "MODE_DEFAULT")
         }
     }
 
@@ -340,6 +372,10 @@ class ShieldIncomingCallActivity : ComponentActivity() {
     private fun rejectCall() {
         Log.i(TAG, "Rejecting call: $callId (type=$callType)")
         ChatrNotificationCoordinator.cancelIncomingCallNotification(this, callId)
+        if (isScreeningActive) {
+            isScreeningActive = false
+            AIScreeningService.stop(this)
+        }
         if (callType == "gsm") {
             stopRinging()
             ChatrInCallService.disconnectCall()
@@ -368,6 +404,7 @@ class ShieldIncomingCallActivity : ComponentActivity() {
         stopRinging()
         timeoutJob?.cancel()
         try { unregisterReceiver(callActionReceiver) } catch (_: Exception) {}
+        try { LocalBroadcastManager.getInstance(this).unregisterReceiver(screeningTurnReceiver) } catch (_: Exception) {}
         super.onDestroy()
     }
 

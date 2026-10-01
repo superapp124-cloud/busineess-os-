@@ -46,8 +46,14 @@ class ChatrInCallService : InCallService() {
 
         private val activeCallsMap = ConcurrentHashMap<String, Call>()
 
+        @Volatile
+        var isAiScreeningActive: Boolean = false
+
         fun getServiceInstance(): ChatrInCallService? = serviceInstance
         fun getActiveCall(): Call? = activeCallInstance
+
+        fun hasActiveCalls(): Boolean =
+            activeCallInstance != null || activeCallsMap.isNotEmpty()
 
         fun isCallRinging(): Boolean =
             activeCallInstance?.state == Call.STATE_RINGING
@@ -56,12 +62,50 @@ class ChatrInCallService : InCallService() {
             activeCallInstance?.state == Call.STATE_ACTIVE
 
         /**
+         * Answers the active call programmatically and initiates automated SI Receptionist screening.
+         */
+        fun screenCallWithAi(context: Context, mode: String = "MODE_DEFAULT"): Boolean {
+            val call = activeCallInstance ?: run {
+                Log.w(TAG, "Cannot screenCallWithAi: No active call")
+                return false
+            }
+            isAiScreeningActive = true
+            val number = serviceInstance?.extractNumber(call) ?: ""
+            val answered = answerCall()
+            if (answered) {
+                AIScreeningService.start(context, number, mode)
+                Log.i(TAG, "screenCallWithAi started for $number (mode=$mode)")
+            }
+            return answered
+        }
+
+        /**
+         * Stops automated SI Receptionist screening and transitions the call to human user Arshid.
+         */
+        fun takeOverScreenedCall(context: Context) {
+            isAiScreeningActive = false
+            AIScreeningService.stop(context)
+            setMuted(false)
+            setAudioRoute(CallAudioState.ROUTE_EARPIECE)
+            Log.i(TAG, "takeOverScreenedCall: User took over call from SI Receptionist")
+        }
+
+        /**
          * Answers the active call programmatically.
          */
         fun answerCall(videoState: Int = 0): Boolean {
             val call = activeCallInstance ?: run {
                 Log.w(TAG, "Cannot answerCall: No active GSM call")
                 return false
+            }
+            // Call Concurrency: Put active VoIP connections on hold so carrier call gets audio focus
+            try {
+                if (ChatrConnectionService.hasActiveConnections()) {
+                    Log.i(TAG, "GSM call answered: holding active VoIP connections for audio concurrency")
+                    ChatrConnectionService.holdAllConnections("gsm_call_answered")
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Notice: Failed to hold VoIP connections: ${e.message}")
             }
             return try {
                 call.answer(videoState)
@@ -298,6 +342,24 @@ class ChatrInCallService : InCallService() {
         val number = extractNumber(call)
         Log.i(TAG, "📞 Call removed: id=$callId number=$number")
 
+        if (isAiScreeningActive) {
+            isAiScreeningActive = false
+            AIScreeningService.stop(this)
+        }
+
+        if (activeCallsMap.isEmpty()) {
+            activeCallInstance = null
+            // Call Concurrency: Resume held VoIP connections if all GSM calls are finished
+            try {
+                if (ChatrConnectionService.hasActiveConnections()) {
+                    Log.i(TAG, "All GSM calls ended: resuming held VoIP connections")
+                    ChatrConnectionService.unholdAllConnections("gsm_call_ended")
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Notice: Failed to resume VoIP connections: ${e.message}")
+            }
+        }
+
         getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             .remove(KEY_ACTIVE_CALL_ID)
             .putString(KEY_CALL_STATE, "DISCONNECTED")
@@ -357,6 +419,7 @@ class ChatrInCallService : InCallService() {
             putExtra("caller_name", resolvedName)
             putExtra("call_type", "gsm")
             putExtra("is_outgoing", isOutgoing)
+            putExtra("is_ai_screening", isAiScreeningActive)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_SINGLE_TOP or
                     Intent.FLAG_ACTIVITY_CLEAR_TOP
