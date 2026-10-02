@@ -55,6 +55,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
               </button>
             </div>
 
+            <p className="text-[11px] text-[#53605C] italic mt-1">
+              ✓ Free · ✓ No email needed · ✓ Setup in 30 seconds
+            </p>
+
             {/* Trust Checklist */}
             <div className="pt-4 border-t border-[#DDE3DF]/60 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-[#53605C]">
               <div className="flex items-center gap-1.5">
@@ -73,6 +77,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
                 <span>Built for real life</span>
               </div>
+            </div>
+
+            {/* Live Social Proof */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex -space-x-2">
+                {(['#164E3F','#2E6B59','#00BDB1','#53605C','#111817'] as const).map((c, i) => (
+                  <div key={i} style={{backgroundColor: c}} className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">
+                    {(['AK','RV','SM','JO','PL'] as const)[i]}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-[#53605C]">
+                <span className="font-bold text-[#111817]">Join 10,000+ early members</span> across 50+ countries
+              </p>
             </div>
 
           </div>

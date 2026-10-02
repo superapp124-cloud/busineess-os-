@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Youtube } from 'lucide-react';
+import { ShareInviteCard } from './ShareInviteCard';
 
 interface LandingCTAProps {
   onOpenAuth: () => void;
@@ -65,6 +66,11 @@ export const LandingCTA: React.FC<LandingCTAProps> = ({ onOpenAuth }) => {
             </a>
           </div>
 
+        </div>
+
+        {/* Viral Share / Invite Widget */}
+        <div className="mt-8 flex justify-center">
+          <ShareInviteCard compact />
         </div>
 
         {/* Footer Sub-bar */}

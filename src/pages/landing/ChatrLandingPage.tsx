@@ -6,6 +6,7 @@ import { LandingHeader } from '@/components/landing/LandingHeader';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { AudienceStrip } from '@/components/landing/AudienceStrip';
 import { FeatureGrid } from '@/components/landing/FeatureGrid';
+import { AppDownloadStrip } from '@/components/landing/AppDownloadStrip';
 import { LandingCTA } from '@/components/landing/LandingCTA';
 import { AuthModal } from '@/components/landing/AuthModal';
 import { VideoModal } from '@/components/landing/VideoModal';
@@ -65,6 +66,14 @@ export const ChatrLandingPage: React.FC<ChatrLandingPageProps> = ({ initialAuthO
     };
   }, [navigate, location]);
 
+  // Track referral code
+  useEffect(() => {
+    const ref = queryParams.get('ref');
+    if (ref) {
+      localStorage.setItem('chatr_referral', ref);
+    }
+  }, []);
+
   const handleNavigateWorkspace = useCallback(() => {
     navigate('/desktop/home');
   }, [navigate]);
@@ -105,6 +114,9 @@ export const ChatrLandingPage: React.FC<ChatrLandingPageProps> = ({ initialAuthO
             setAuthModalOpen(true);
           }}
         />
+
+        {/* App Download / Platform Strip */}
+        <AppDownloadStrip onOpenAuth={() => setAuthModalOpen(true)} />
 
         {/* 5. Bottom Call-To-Action Banner & Footer */}
         <LandingCTA
