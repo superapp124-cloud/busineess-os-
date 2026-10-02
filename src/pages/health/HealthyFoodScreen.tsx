@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Sparkles, SlidersHorizontal, Calendar,
   Sun, Utensils, Coffee, Moon, ChevronRight, Droplets,
-  Shuffle, CheckCircle2, Circle, Flame, Zap, ArrowRight,
-  TrendingDown, Heart, Info, Send
+  Shuffle, CheckCircle2, Zap
 } from 'lucide-react';
 import { SEOHead } from '@/components/SEOHead';
 import {
@@ -14,7 +13,10 @@ import {
 import { NutritionSIAssistant } from '@/services/health/food/NutritionSIAssistant';
 import { FoodProfileModal } from '@/components/health/food/FoodProfileModal';
 import { FoodDetailModal } from '@/components/health/food/FoodDetailModal';
+import { WellnessCoachCard } from '@/components/health/wellness/WellnessCoachCard';
+import { WellnessCoachService } from '@/services/health/wellness/WellnessCoachService';
 import { cn } from '@/lib/utils';
+
 
 // Helper for food emojis
 function getMealEmoji(name: string, type: string): string {
@@ -65,6 +67,15 @@ export default function HealthyFoodScreen() {
   useEffect(() => {
     setMealPlan(NutritionEngine.getTodaysMealPlan(profile));
   }, [profile]);
+
+  // Auto-schedule wellness notifications on first visit
+  useEffect(() => {
+    const prefs = WellnessCoachService.loadPrefs();
+    if (prefs.enabled) {
+      WellnessCoachService.scheduleAll(prefs).catch(() => {});
+    }
+  }, []);
+
 
   const handleDietChange = (diet: DietPreference) => {
     const updated = { ...profile, dietPreference: diet };
@@ -599,6 +610,15 @@ export default function HealthyFoodScreen() {
           <div className="p-3 rounded-xl bg-black/30 border border-white/10 text-[13px] text-slate-200 leading-relaxed font-medium">
             {activeTip}
           </div>
+        </div>
+
+        {/* ── Wellness Coach Notification Settings ────────── */}
+        <div className="space-y-3 pt-1">
+          <h2 className="text-[19px] font-black text-white px-0.5">🔔 Wellness Coach</h2>
+          <p className="text-[13px] text-slate-400 px-0.5 -mt-1">
+            Daily reminders to eat, hydrate, walk &amp; sleep — personalized for your lifestyle.
+          </p>
+          <WellnessCoachCard />
         </div>
 
       </div>

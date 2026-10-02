@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Brand teal gradient -->
+    <linearGradient id="chatrTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D2CE" />
+      <stop offset="100%" stop-color="#00A89F" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Speech Bubble Rounded Badge -->
+  <path d="M 120 48
+           L 392 48
+           A 72 72 0 0 1 464 120
+           L 464 360
+           A 72 72 0 0 1 392 432
+           L 140 432
+           L 64 480
+           L 76 416
+           A 72 72 0 0 1 48 360
+           L 48 120
+           A 72 72 0 0 1 120 48
+           Z"
+        fill="url(#chatrTealGrad)" />
+  <!-- Inner White Speech Bubble -->
+  <path d="M 200 152
+           L 312 152
+           A 56 56 0 0 1 368 208
+           L 368 280
+           A 56 56 0 0 1 312 336
+           L 216 336
+           L 168 368
+           L 176 328
+           A 56 56 0 0 1 144 280
+           L 144 208
+           A 56 56 0 0 1 200 152
+           Z"
+        fill="#FFFFFF" />
+</svg>

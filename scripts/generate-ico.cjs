@@ -42,8 +42,21 @@ function createValidIco(pngPath, icoPath) {
   console.log(`[Icon] Successfully generated valid Windows ICO file: ${icoPath} (${icoBuffer.length} bytes)`);
 }
 
-// Use the HIGH-RES CHATR logo (chatr-icon-logo.png in /public) as the source.
-// Fall back chain: public/chatr-icon-logo.png → src/assets/chatr-icon-logo.png → public/favicon.png
+const { execSync } = require('child_process');
+
+// Prefer Python build-icons.py which produces official multi-resolution ICOs with embedded 16..256 frames
+try {
+  const pyScript = path.join(__dirname, 'build-icons.py');
+  if (fs.existsSync(pyScript)) {
+    console.log('[Icon] Running scripts/build-icons.py for full multi-resolution icon bundle...');
+    execSync(`python "${pyScript}"`, { stdio: 'inherit' });
+    console.log('[Icon] Successfully refreshed all icon assets via build-icons.py.');
+    process.exit(0);
+  }
+} catch (pyErr) {
+  console.warn('[Icon] Python icon generation failed or python unavailable, falling back to pure JS ICO generator:', pyErr.message);
+}
+
 const candidates = [
   path.join(__dirname, '../public/chatr-icon-logo.png'),
   path.join(__dirname, '../src/assets/chatr-icon-logo.png'),

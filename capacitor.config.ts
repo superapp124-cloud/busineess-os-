@@ -22,7 +22,7 @@ const config: CapacitorConfig = {
   plugins: {
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'alert'],
-      iconColor: '#6200ee',
+      iconColor: '#00BDB1',
       sound: 'notification.mp3'
     },
 

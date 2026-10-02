@@ -1668,7 +1668,15 @@ function createWindow() {
   
   const state = getWindowState();
 
-  const appIconPath = path.join(__dirname, '../public/chatr-icon-logo.png');
+  const candidateAppIconPaths = [
+    path.join(__dirname, '../public/icon.ico'),
+    path.join(__dirname, '../public/chatr-icon-logo.png'),
+    path.join(process.resourcesPath, 'public/icon.ico'),
+    path.join(process.resourcesPath, 'public/chatr-icon-logo.png'),
+    path.join(process.resourcesPath, 'app.asar/public/icon.ico'),
+    path.join(process.resourcesPath, 'app.asar/public/chatr-icon-logo.png')
+  ];
+  const appIconPath = candidateAppIconPaths.find(p => fs.existsSync(p)) || path.join(__dirname, '../public/chatr-icon-logo.png');
 
   mainWindow = new BrowserWindow({
     darkTheme: true,

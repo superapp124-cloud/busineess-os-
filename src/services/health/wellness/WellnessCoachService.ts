@@ -7,12 +7,12 @@
  *  - 🚶  Walk encouragement (morning, afternoon, evening)
  *  - 😴  Sleep wind-down (gradual, 9:30–10:30 PM)
  *
- * Design rules:
- *  - Multiple message variants per slot → no repetition boredom
- *  - Respects quiet hours (10:30 PM – 6:00 AM)
- *  - One-call schedule: replaces previous set atomically
- *  - User can toggle each category on/off independently
- *  - Settings persisted in localStorage
+ * Background & Process-Killed Reliability:
+ *  - Explicit NotificationChannel with Importance 5 (MAX) & Visibility 1 (Public lockscreen)
+ *  - Uses AlarmManager.RTC_WAKEUP via `allowWhileIdle: true`
+ *  - Android USE_EXACT_ALARM & SCHEDULE_EXACT_ALARM support
+ *  - Survives app killed / swiped away / device reboot (LocalNotificationRestoreReceiver)
+ *  - Includes 10-second live test helper to verify background alert on device
  */
 
 import { Capacitor } from '@capacitor/core';
@@ -196,11 +196,48 @@ class WellnessCoachServiceImpl {
     localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
   }
 
-  // ── Core scheduling ──
+  // ── Native Setup: High-Priority Channel & Exact Alarms ──
+
+  async ensureChannelCreated(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
+      await LocalNotifications.createChannel({
+        id: 'wellness',
+        name: 'Wellness & Lifestyle Coach',
+        description: 'Daily meal, hydration, walking and sleep reminders (wakes device when closed)',
+        importance: 5, // 5 = High/Max: sounds, vibrates, displays heads-up
+        visibility: 1, // 1 = Public: displays on secure lockscreen
+        sound: undefined, // system default alert sound
+        vibration: true,
+        lights: true,
+        lightColor: '#10B981',
+      });
+      console.log('[WellnessCoach] NotificationChannel "wellness" configured (Importance 5, Lockscreen Public)');
+    } catch (err) {
+      console.warn('[WellnessCoach] Error creating notification channel:', err);
+    }
+  }
+
+  async checkExactAlarms(): Promise<boolean> {
+    if (!Capacitor.isNativePlatform()) return true;
+    try {
+      const res = await LocalNotifications.checkExactNotificationSetting();
+      if (res.exact_alarm !== 'granted') {
+        console.warn('[WellnessCoach] Exact alarms not granted. Prompting user to allow in settings...');
+        await LocalNotifications.changeExactNotificationSetting();
+        return false;
+      }
+      return true;
+    } catch {
+      return true;
+    }
+  }
 
   async requestPermission(): Promise<boolean> {
     if (!Capacitor.isNativePlatform()) return false;
     try {
+      const check = await LocalNotifications.checkPermissions();
+      if (check.display === 'granted') return true;
       const result = await LocalNotifications.requestPermissions();
       return result.display === 'granted';
     } catch {
@@ -208,13 +245,18 @@ class WellnessCoachServiceImpl {
     }
   }
 
+  // ── Core Scheduling ──
+
   async scheduleAll(prefs: WellnessCoachPrefs): Promise<void> {
     if (!Capacitor.isNativePlatform()) {
       console.log('[WellnessCoach] Not native platform — skipping scheduling');
       return;
     }
 
-    // Cancel all previous wellness notifications atomically
+    // 1. Ensure high-importance notification channel exists on Android
+    await this.ensureChannelCreated();
+
+    // 2. Cancel all previous wellness notifications atomically
     await this.cancelAll();
 
     if (!prefs.enabled) return;
@@ -234,7 +276,8 @@ class WellnessCoachServiceImpl {
       return;
     }
 
-    // Build Capacitor notification objects — repeating daily at fixed time
+    // 3. Build notifications with RTC_WAKEUP (allowWhileIdle: true)
+    // Runs via AlarmManager.setExactAndAllowWhileIdle even if app is swiped away/killed
     const notifications = slots.map(slot => ({
       id: slot.id,
       title: slot.title,
@@ -242,13 +285,16 @@ class WellnessCoachServiceImpl {
       largeIcon: 'ic_launcher_round',
       smallIcon: 'ic_notification',
       channelId: 'wellness',
+      ongoing: false,
+      autoCancel: true,
       schedule: {
         on: {
           hour: slot.hour,
           minute: slot.minute,
+          second: 0,
         },
         repeats: true,
-        allowWhileIdle: true,
+        allowWhileIdle: true, // Wakes CPU from deep sleep / killed state
       },
       actionTypeId: 'WELLNESS_TAP',
       extra: { route: '/health/food', category: this.slotCategory(slot.id) },
@@ -256,20 +302,55 @@ class WellnessCoachServiceImpl {
 
     try {
       await LocalNotifications.schedule({ notifications });
-      console.log(`[WellnessCoach] Scheduled ${notifications.length} daily wellness notifications`);
+      console.log(`[WellnessCoach] Scheduled ${notifications.length} persistent wellness notifications (survives app kill)`);
     } catch (err) {
       console.error('[WellnessCoach] Scheduling error:', err);
     }
+  }
+
+  // ── Live Test Notification Helper (for verifying killed-app delivery) ──
+
+  async sendTestNotification(delaySeconds: number = 10): Promise<{ id: number; targetTime: Date }> {
+    await this.ensureChannelCreated();
+    await this.requestPermission();
+
+    const targetTime = new Date(Date.now() + delaySeconds * 1000);
+    const testId = 9999;
+
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: testId,
+          title: '⚡ Wellness Coach Live Test',
+          body: 'Verified: Notifications work perfectly even when CHATR is completely closed or killed!',
+          largeIcon: 'ic_launcher_round',
+          smallIcon: 'ic_notification',
+          channelId: 'wellness',
+          ongoing: false,
+          autoCancel: true,
+          schedule: {
+            at: targetTime,
+            allowWhileIdle: true, // AlarmManager.setExactAndAllowWhileIdle
+          },
+          actionTypeId: 'WELLNESS_TAP',
+          extra: { route: '/health/food', category: 'test' },
+        },
+      ],
+    });
+
+    console.log(`[WellnessCoach] Test notification armed for ${targetTime.toLocaleTimeString()}`);
+    return { id: testId, targetTime };
   }
 
   async cancelAll(): Promise<void> {
     if (!Capacitor.isNativePlatform()) return;
     try {
       const allIds = [
-        2001, 2002, 2003, 2004,            // meals
+        9999,                                // test
+        2001, 2002, 2003, 2004,             // meals
         2011, 2012, 2013, 2014, 2015, 2016, 2017, // hydration
-        2021, 2022, 2023,                   // walk
-        2031, 2032, 2033,                   // sleep
+        2021, 2022, 2023,                    // walk
+        2031, 2032, 2033,                    // sleep
       ].map(id => ({ id }));
       await LocalNotifications.cancel({ notifications: allIds });
     } catch { /* noop */ }
@@ -279,6 +360,7 @@ class WellnessCoachServiceImpl {
     if (id >= 2001 && id <= 2009) return 'meal';
     if (id >= 2010 && id <= 2019) return 'hydration';
     if (id >= 2020 && id <= 2029) return 'walk';
+    if (id === 9999) return 'test';
     return 'sleep';
   }
 

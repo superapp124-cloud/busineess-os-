@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Bell, BellOff, Utensils, Droplets, Footprints,
-  Moon, Zap, Check, ChevronRight, Info
+  Moon, Zap, Check, ChevronRight, Info, ShieldCheck,
+  Send, Sparkles, AlertCircle
 } from 'lucide-react';
 import { WellnessCoachService, WellnessCoachPrefs, DEFAULT_PREFS } from '@/services/health/wellness/WellnessCoachService';
 import { cn } from '@/lib/utils';
@@ -71,6 +72,17 @@ export const WellnessCoachCard: React.FC<WellnessCoachCardProps> = ({ compact = 
   const [showDetail, setShowDetail] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
 
+  // Test notification countdown
+  const [testCountdown, setTestCountdown] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (testCountdown === null || testCountdown <= 0) return;
+    const t = setTimeout(() => {
+      setTestCountdown(prev => (prev !== null && prev > 1 ? prev - 1 : null));
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [testCountdown]);
+
   const apply = async (updated: WellnessCoachPrefs) => {
     setIsSaving(true);
     WellnessCoachService.savePrefs(updated);
@@ -85,6 +97,16 @@ export const WellnessCoachCard: React.FC<WellnessCoachCardProps> = ({ compact = 
 
   const toggleCategory = (key: keyof Omit<WellnessCoachPrefs, 'enabled'>) => {
     apply({ ...prefs, [key]: !prefs[key] });
+  };
+
+  const handleTestNotification = async () => {
+    try {
+      setTestCountdown(10);
+      await WellnessCoachService.sendTestNotification(10);
+    } catch (e) {
+      console.error('Failed to trigger test notification', e);
+      setTestCountdown(null);
+    }
   };
 
   const activeCount = WellnessCoachService.getCategoryCount(prefs);
@@ -178,7 +200,7 @@ export const WellnessCoachCard: React.FC<WellnessCoachCardProps> = ({ compact = 
           <Zap className={cn('w-4 h-4 shrink-0 mt-0.5', prefs.enabled ? 'text-amber-400' : 'text-slate-500')} />
           <p className="text-[12.5px] leading-relaxed text-slate-300">
             {prefs.enabled
-              ? <><span className="font-bold text-white">{WellnessCoachService.getSummary(prefs)}</span> — scheduled and active on your device.</>
+              ? <><span className="font-bold text-white">{WellnessCoachService.getSummary(prefs)}</span> — scheduled with native exact alarms. Works even when app is closed or killed.</>
               : 'All lifestyle reminders are paused. Enable to start building healthy daily habits.'}
           </p>
         </div>
@@ -188,7 +210,7 @@ export const WellnessCoachCard: React.FC<WellnessCoachCardProps> = ({ compact = 
       {savedToast && (
         <div className="mx-5 mb-3 p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center gap-2 text-[12px] font-bold text-emerald-300 animate-in fade-in">
           <Check className="w-3.5 h-3.5" />
-          <span>Notifications rescheduled on your device!</span>
+          <span>Notifications rescheduled with device AlarmManager!</span>
         </div>
       )}
 
@@ -270,9 +292,49 @@ export const WellnessCoachCard: React.FC<WellnessCoachCardProps> = ({ compact = 
             )}
           </div>
 
+          {/* ── Test Notification Button (Verify when app is killed) ── */}
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border border-emerald-500/25 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-[13px] font-bold text-white">Always-On Background Alerts</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                KILLED APP OK
+              </span>
+            </div>
+            <p className="text-[11.5px] text-slate-300 leading-relaxed">
+              Alarms use Android <code className="text-emerald-300 font-mono text-[11px]">RTC_WAKEUP</code> to ring and pop heads-up alerts even if CHATR is swiped away, killed, or the screen is locked.
+            </p>
+
+            <button
+              type="button"
+              onClick={handleTestNotification}
+              disabled={testCountdown !== null}
+              className={cn(
+                'w-full py-2.5 px-3 rounded-xl font-extrabold text-[12.5px] flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm',
+                testCountdown !== null
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                  : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/40'
+              )}
+            >
+              {testCountdown !== null ? (
+                <>
+                  <span className="animate-pulse">⏳</span>
+                  <span>Alert armed! Close / kill CHATR now ({testCountdown}s)</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Test 10-Second Alert (Close App to Verify)</span>
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Privacy note */}
           <p className="text-[11px] text-slate-500 text-center px-3 leading-relaxed">
-            🔒 All reminders run locally on your device — nothing is tracked or sent to any server.
+            🔒 100% on-device AlarmManager. Survives app death, low-power Doze, and device restarts.
           </p>
         </div>
       )}

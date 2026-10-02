@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Shield, Sparkles, Smartphone, CreditCard, Settings, 
-  ChevronRight, LogOut, Lock, Bell, User, Edit3
+  ChevronRight, LogOut, Lock, Bell, User, Edit3, Heart
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SEOHead } from '@/components/SEOHead';
 import { PrivacyExplanationModal } from '@/components/ai/PrivacyExplanationModal';
+import { ProfileEditDialog } from '@/components/ProfileEditDialog';
 
 export default function ModernProfileSettingsView() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchProfile = () => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return;
       supabase
@@ -24,11 +26,22 @@ export default function ModernProfileSettingsView() {
         .maybeSingle()
         .then(({ data }) => setProfile(data));
     });
+  };
+
+  useEffect(() => {
+    fetchProfile();
   }, []);
 
   const displayName = profile?.full_name || profile?.username || 'Arshid Hussain Wani';
 
   const menuItems = [
+    {
+      id: 'health-profile',
+      label: 'Health & Wellness Profile',
+      icon: Heart,
+      color: 'text-rose-400',
+      action: () => navigate('/health/food/profile'),
+    },
     {
       id: 'privacy',
       label: 'Your Data & Privacy',
@@ -86,7 +99,7 @@ export default function ModernProfileSettingsView() {
 
         {/* ── User Profile Card ────────────────────────────── */}
         <div 
-          onClick={() => navigate('/settings/profile')}
+          onClick={() => setIsEditDialogOpen(true)}
           className="rounded-[24px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl shadow-lg shadow-black/20 flex items-center justify-between gap-4 cursor-pointer hover:border-white/15 active:scale-[0.99] transition-all"
         >
           <div className="flex items-center gap-3.5 min-w-0">
@@ -101,7 +114,7 @@ export default function ModernProfileSettingsView() {
                 {displayName}
               </h2>
               <p className="text-[13px] text-slate-400 mt-0.5">
-                View profile
+                View & Edit profile
               </p>
             </div>
           </div>
@@ -151,6 +164,13 @@ export default function ModernProfileSettingsView() {
         onClose={() => setPrivacyModalOpen(false)}
         title="Your Data & Privacy"
         actionSummary="CHATR operates with zero cloud egress for your personal communications and biometric baselines."
+      />
+
+      <ProfileEditDialog
+        profile={profile}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onProfileUpdated={fetchProfile}
       />
     </div>
   );
