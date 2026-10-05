@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Mic, Send, Sparkles, Phone, MessageSquare, Calendar, Mail,
+  Mic, Send, Sparkles, PenLine, Phone, MessageSquare, Calendar, Mail,
   FileText, Globe, BookOpen, Users, CheckSquare, Camera, Brain,
   Clock, ChevronRight, X, Loader2, ArrowLeft, Settings, Bell,
   Zap, Shield, RefreshCw, Bot, Search, Cpu
@@ -392,11 +392,11 @@ export const AIAssistant = () => {
             <ArrowLeft size={20} className="text-slate-600" />
           </button>
           <div className="flex items-center gap-2 flex-1">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
-              <img src={chatAiRobot} alt="chatSI" className="w-6 h-6 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00A884] via-[#00C29F] to-[#06D6A0] flex items-center justify-center shadow-sm">
+              <Sparkles size={16} className="text-white fill-white/20" />
             </div>
             <div>
-              <p className="text-[14px] font-bold text-slate-900">chatSI</p>
+              <p className="text-[15px] font-bold text-slate-900">SI Assistant</p>
               <button
                 type="button"
                 onClick={() => setIsDiagOpen(true)}
@@ -434,7 +434,7 @@ export const AIAssistant = () => {
                   </div>
                 )}
                 <div className={`max-w-[82%] ${msg.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5'
+                  ? 'bg-[#0B3E36] text-white rounded-2xl rounded-tr-sm px-4 py-2.5'
                   : 'bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl rounded-tl-sm px-4 py-3'
                 }`}>
                   {msg.role === 'assistant'
@@ -485,7 +485,7 @@ export const AIAssistant = () => {
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="p-1.5 rounded-full bg-blue-600 text-white disabled:opacity-40"
+              className="p-1.5 rounded-full bg-[#0B3E36] text-white disabled:opacity-40"
             >
               {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
             </button>
@@ -498,200 +498,177 @@ export const AIAssistant = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 pt-12 pb-3 bg-white">
-        <div>
-          <p className="text-[11px] text-slate-400 font-medium tracking-wide uppercase">Personal SI</p>
-          <h1 className="text-[22px] font-extrabold text-slate-900 tracking-tight">chatSI</h1>
+      {/* Official Top Bar matching brand mockup */}
+      <div className="px-4 pt-12 pb-2 bg-white border-b border-slate-100">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-1.5 -ml-1 rounded-full hover:bg-slate-100 transition-colors text-slate-700"
+              aria-label="Back"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#00A884] to-[#00C29F] flex items-center justify-center shadow-sm">
+              <Sparkles size={14} className="text-white fill-white/20" />
+            </div>
+            <h1 className="text-[18px] font-bold text-slate-900 tracking-tight">SI Assistant</h1>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setIsDiagOpen(true)}
+              className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition text-slate-500 hover:text-slate-800"
+              title="Local SI Diagnostic"
+            >
+              <Cpu size={16} />
+            </button>
+            <button
+              onClick={() => setIsDiagOpen(true)}
+              className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+              title="Settings"
+            >
+              <Settings size={16} />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsDiagOpen(true)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition cursor-pointer hover:opacity-85 ${
-              ollamaStatus === 'connected' ? 'bg-emerald-50 text-emerald-600' : 
-              ollamaStatus === 'cloud_bridge' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-400'
-            }`}
-            title="Open Local SI Developer Diagnostic HUD"
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${
-              ollamaStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 
-              ollamaStatus === 'cloud_bridge' ? 'bg-amber-400' : 'bg-slate-300 animate-pulse'
-            }`} />
-            {ollamaStatus === 'connected' ? 'Private SI' : ollamaStatus === 'cloud_bridge' ? 'Cloud' : '...'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsDiagOpen(true)}
-            className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition text-slate-500 hover:text-slate-800"
-            title="Local SI Diagnostic"
-          >
-            <Cpu size={16} />
-          </button>
-          <button className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-            <Settings size={16} className="text-slate-500" />
-          </button>
+
+        {/* Filter Pills matching brand mockup */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2">
+          {['Chat', 'Summarise', 'Translate', 'Compose'].map((tab, idx) => (
+            <button
+              key={tab}
+              onClick={() => {
+                if (tab === 'Chat') setIsChatOpen(true);
+                else {
+                  setInput(`${tab} for me`);
+                  setIsChatOpen(true);
+                  handleQuery(`${tab} for me`);
+                }
+              }}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-95 ${
+                idx === 0
+                  ? 'bg-[#0B3E36] text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
 
-      <ScrollArea className="flex-1 pb-24">
-        <div className="px-4 space-y-5 pt-3">
+      <ScrollArea className="flex-1 pb-28">
+        <div className="px-4 space-y-4 pt-4">
 
-          {/* Hero greeting + input */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-md shadow-blue-200">
-                <img src={chatAiRobot} alt="chatSI" className="w-9 h-9 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="text-white text-xl font-bold">SI</div>'; }} />
-              </div>
-              <div>
-                <p className="text-[13px] text-slate-400">{greeting},</p>
-                <p className="text-[18px] font-bold text-slate-900">{firstName}</p>
-                <p className="text-[13px] text-slate-500">How can I help you?</p>
+          {/* Glowing Aura Hero matching brand mockup */}
+          <div className="relative flex flex-col items-center justify-center py-4 text-center">
+            <div className="relative mb-2 flex items-center justify-center">
+              <div className="absolute w-24 h-24 rounded-full bg-[#00C29F]/20 blur-xl pointer-events-none" />
+              <div className="relative w-16 h-16 rounded-full bg-gradient-to-b from-cyan-50 to-blue-50 border border-cyan-100 flex items-center justify-center shadow-inner">
+                <Sparkles className="w-8 h-8 text-[#00A884] fill-[#00C29F]/30" />
               </div>
             </div>
-
-            {/* Main input */}
-            <form onSubmit={handleSubmit}>
-              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-3 mb-3">
-                <Search size={16} className="text-slate-400 flex-shrink-0" />
-                <input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  placeholder="Ask anything, or tell me what you need…"
-                  className="flex-1 bg-transparent text-[14px] text-slate-900 placeholder-slate-400 outline-none"
-                />
-                {input && (
-                  <button type="submit" className="p-1.5 rounded-full bg-blue-600 text-white">
-                    <Send size={14} />
-                  </button>
-                )}
-              </div>
-              {/* Action pills */}
-              <div className="flex gap-2 flex-wrap">
-                {[
-                  { icon: Mic, label: 'Voice', action: handleVoiceToggle, active: isListening },
-                  { icon: Send, label: 'Type', action: () => { inputRef.current?.focus(); }, active: false },
-                  { icon: Camera, label: 'See', action: () => toast({ title: 'Camera SI', description: 'Point camera at anything to understand it' }), active: false },
-                  { icon: Sparkles, label: 'SI Mode', action: () => setIsChatOpen(true), active: false }
-                ].map(pill => (
-                  <button
-                    key={pill.label}
-                    type="button"
-                    onClick={pill.action}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${
-                      pill.active
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <pill.icon size={13} />
-                    {pill.label}
-                  </button>
-                ))}
-              </div>
-            </form>
-          </div>
-
-          {/* Positioning tagline */}
-          <div className="px-1">
-            <p className="text-[12px] text-slate-400 text-center leading-relaxed">
-              One SI that understands you, remembers what matters, and gets things done.<br/>
-              <span className="text-blue-500 font-semibold">Talk · Ask · Plan · Act</span>
+            <h2 className="text-[22px] font-extrabold text-slate-900 tracking-tight">
+              Hi! <span className="text-[#00A884]">I'm your SI.</span>
+            </h2>
+            <p className="text-[13px] text-slate-500 max-w-[280px] mt-1 leading-snug">
+              I can help you with your conversations, calls, translations and more.
             </p>
           </div>
 
-          {/* Capabilities grid */}
-          <div>
-            <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-3">Capabilities</p>
-            <div className="grid grid-cols-3 gap-2">
-              {capabilities.map(cap => (
-                <button
-                  key={cap.label}
-                  onClick={() => handleQuery(cap.query)}
-                  className={`${cap.color} border rounded-2xl p-3 text-left transition-all active:scale-95`}
-                >
-                  <div className={`w-7 h-7 rounded-lg ${cap.iconBg} flex items-center justify-center mb-2`}>
-                    <cap.icon size={14} />
-                  </div>
-                  <p className="text-[12px] font-bold leading-tight">{cap.label}</p>
-                  <p className="text-[10px] opacity-60 mt-0.5 leading-tight">{cap.items.slice(0, 2).join(' · ')}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Working for you */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Working for you</p>
-              <span className="text-[11px] text-blue-500 font-medium">{proactiveItems.length} active</span>
-            </div>
-            <div className="space-y-2">
-              {proactiveItems.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => handleQuery(item.query)}
-                  className="w-full bg-white border border-slate-100 rounded-2xl px-4 py-3 flex items-center gap-3 text-left shadow-sm active:scale-[0.98] transition-all"
-                >
-                  <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center flex-shrink-0`}>
-                    <item.icon size={16} className={item.iconColor} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-slate-900 truncate">{item.title}</p>
-                    <p className="text-[11px] text-slate-400 truncate">{item.subtitle}</p>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className={`text-[11px] font-semibold ${item.actionColor}`}>{item.action}</span>
-                    <ChevronRight size={12} className="text-slate-300" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent Intelligence */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Recent Intelligence</p>
-              <button onClick={() => setIsChatOpen(true)} className="text-[11px] text-blue-500 font-medium">See all</button>
-            </div>
-            <div className="space-y-2">
-              {recentIntelligence.map(item => (
-                <div
-                  key={item.id}
-                  className="bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-xl ${item.iconBg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                      <item.icon size={14} className={item.iconColor} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-slate-900">{item.title}</p>
-                      <div className="flex flex-wrap gap-1.5 mt-1.5">
-                        {item.steps.map((step, si) => (
-                          <span key={si} className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">
-                            {step}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-slate-300 flex-shrink-0 mt-1">{item.time}</span>
-                  </div>
+          {/* 5 Official Feature Cards from Brand Mockup */}
+          <div className="space-y-2.5">
+            {[
+              {
+                title: 'Summarise this chat',
+                desc: 'Get key points from long conversations',
+                icon: FileText,
+                iconBg: 'bg-blue-100 text-blue-600',
+                query: 'Summarise my latest conversation'
+              },
+              {
+                title: 'Draft a reply',
+                desc: 'Write a response in your tone',
+                icon: PenLine,
+                iconBg: 'bg-indigo-100 text-indigo-600',
+                query: 'Draft a reply in my tone'
+              },
+              {
+                title: 'Translate messages',
+                desc: 'Translate between languages',
+                icon: Bot,
+                iconBg: 'bg-purple-100 text-purple-600',
+                query: 'Translate a message for me'
+              },
+              {
+                title: 'Find information',
+                desc: 'Get helpful information',
+                icon: Search,
+                iconBg: 'bg-sky-100 text-sky-600',
+                query: 'Find helpful information from my notes'
+              },
+              {
+                title: 'Answer routine messages',
+                desc: 'Let me handle simple replies for you',
+                icon: MessageSquare,
+                iconBg: 'bg-fuchsia-100 text-fuchsia-600',
+                query: 'Handle routine replies for me'
+              }
+            ].map(feat => (
+              <button
+                key={feat.title}
+                onClick={() => {
+                  setInput(feat.query);
+                  setIsChatOpen(true);
+                  handleQuery(feat.query);
+                }}
+                className="w-full bg-white border border-slate-100 rounded-2xl p-3.5 flex items-center gap-3 text-left shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:scale-[0.98] transition-all hover:border-slate-200"
+              >
+                <div className={`w-10 h-10 rounded-xl ${feat.iconBg} flex items-center justify-center flex-shrink-0`}>
+                  <feat.icon className="w-5 h-5" />
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold text-slate-900 truncate">{feat.title}</p>
+                  <p className="text-[12px] text-slate-500 truncate">{feat.desc}</p>
+                </div>
+              </button>
+            ))}
           </div>
 
-          {/* Bottom banner */}
-          <div className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-4 text-white mb-2">
-            <p className="text-[13px] font-bold">Private by design.</p>
-            <p className="text-[13px] font-bold">Powerful by intelligence.</p>
-            <p className="text-[11px] text-blue-200 mt-1">Your data stays on your device. SI reasoning happens locally.</p>
-            <div className="flex items-center gap-1.5 mt-2">
-              <Shield size={12} className="text-blue-300" />
-              <span className="text-[11px] text-blue-200">
-                {ollamaStatus === 'connected' ? `Powered by ${ollamaModel}` : 'Cloud-assisted mode'}
-              </span>
+          {/* Bottom input row matching brand mockup */}
+          <div className="pt-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="w-10 h-10 rounded-full bg-[#0B3E36] text-white flex items-center justify-center shadow-md active:scale-95 transition-all flex-shrink-0"
+                aria-label="SI Chat"
+              >
+                <Sparkles className="w-5 h-5 fill-white/20" />
+              </button>
+              <form onSubmit={handleSubmit} className="flex-1">
+                <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-4 py-2.5 shadow-sm">
+                  <input
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    placeholder="Ask me anything..."
+                    className="flex-1 bg-transparent text-[14px] text-slate-900 placeholder-slate-400 outline-none"
+                  />
+                  {input && (
+                    <button type="submit" className="p-1 rounded-full bg-[#0B3E36] text-white">
+                      <Send size={14} />
+                    </button>
+                  )}
+                </div>
+              </form>
+              <button
+                type="button"
+                onClick={handleVoiceToggle}
+                className={`w-10 h-10 rounded-full ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-[#0B3E36] text-white'} flex items-center justify-center shadow-md active:scale-95 transition-all flex-shrink-0`}
+                aria-label="Voice"
+              >
+                <Mic className="w-5 h-5" />
+              </button>
             </div>
           </div>
 

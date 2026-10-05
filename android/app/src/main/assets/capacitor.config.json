@@ -14,7 +14,7 @@
 				"sound",
 				"alert"
 			],
-			"iconColor": "#6200ee",
+			"iconColor": "#00BDB1",
 			"sound": "notification.mp3"
 		},
 		"SplashScreen": {

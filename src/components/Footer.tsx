@@ -8,24 +8,34 @@ export const Footer = () => {
       <div className="max-w-6xl mx-auto px-4 space-y-8">
         {/* Core Product & Solution Links Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 text-xs">
-          {/* Column 1: Solutions */}
+          {/* Column 1: Core Solutions */}
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Solutions</h3>
             <ul className="space-y-2">
               <li><Link to="/whatsapp-team-inbox" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">WhatsApp Team Inbox</Link></li>
+              <li><Link to="/call" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">Free Web Browser Calling</Link></li>
+              <li><Link to="/solutions/ecommerce-order-tracking" className="text-slate-300 hover:text-indigo-300 transition-colors">E-Commerce Order Tracking</Link></li>
+              <li><Link to="/solutions/hotel-guest-messaging" className="text-slate-300 hover:text-indigo-300 transition-colors">Hotel Guest Messaging</Link></li>
               <li><Link to="/wati-alternative" className="text-indigo-300 font-semibold hover:text-indigo-200 transition-colors">WATI Alternative</Link></li>
               <li><Link to="/aisensy-alternative" className="text-indigo-300 font-semibold hover:text-indigo-200 transition-colors">AiSensy Alternative</Link></li>
-              <li><Link to="/tools/whatsapp-link-generator" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">Free WhatsApp Link Generator</Link></li>
               <li><Link to="/chatr/whatsapp-business-api" className="hover:text-indigo-400 transition-colors">WhatsApp Business API</Link></li>
-              <li><Link to="/chatr/ai" className="hover:text-indigo-400 transition-colors">CHATR SI Platform</Link></li>
-              <li><Link to="/chatr/universal-inbox-ai" className="hover:text-indigo-400 transition-colors">Universal SI Inbox</Link></li>
-              <li><Link to="/chatr/whatsapp-candidate-screening" className="hover:text-indigo-400 transition-colors">WhatsApp Candidate Screening</Link></li>
-              <li><Link to="/talentxcel/ai-resume-parser" className="hover:text-indigo-400 transition-colors">SI Resume Parser</Link></li>
-              <li><Link to="/talentxcel/ats-resume-builder" className="hover:text-indigo-400 transition-colors">ATS Resume Builder</Link></li>
             </ul>
           </div>
 
-          {/* Column 2: Workflows */}
+          {/* Column 2: Free Growth Tools */}
+          <div className="space-y-3">
+            <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Free Tools</h3>
+            <ul className="space-y-2">
+              <li><Link to="/tools/whatsapp-link-generator" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">WhatsApp Link Generator</Link></li>
+              <li><Link to="/tools/resume-grader" className="text-slate-300 hover:text-emerald-300 transition-colors">AI Resume Grader & Match</Link></li>
+              <li><Link to="/tools/meta-ad-cost-calculator" className="text-slate-300 hover:text-emerald-300 transition-colors">Meta Ad Cost Calculator</Link></li>
+              <li><Link to="/tools/call-quality-checker" className="text-slate-300 hover:text-emerald-300 transition-colors">Call Quality Checker</Link></li>
+              <li><Link to="/tools/business-voip-cost-calculator" className="hover:text-indigo-400 transition-colors">VoIP Cost Calculator</Link></li>
+              <li><Link to="/tools/contact-qr-generator" className="hover:text-indigo-400 transition-colors">Contact QR Generator</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Workflows & Automations */}
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Workflows</h3>
             <ul className="space-y-2">
@@ -37,23 +47,11 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Industries */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Industries</h3>
-            <ul className="space-y-2">
-              <li><Link to="/industries/recruitment-agencies" className="hover:text-indigo-400 transition-colors">Recruitment & Staffing</Link></li>
-              <li><Link to="/industries/real-estate-messaging" className="hover:text-indigo-400 transition-colors">Real Estate Agencies</Link></li>
-              <li><Link to="/industries/healthcare-patient-messaging" className="hover:text-indigo-400 transition-colors">Healthcare & Clinics</Link></li>
-              <li><Link to="/industries/ecommerce-customer-support" className="hover:text-indigo-400 transition-colors">E-Commerce & D2C</Link></li>
-              <li><Link to="/industries/education-student-admissions" className="hover:text-indigo-400 transition-colors">Education & Academies</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 4: Key Locations (Internal Discovery Links) */}
+          {/* Column 4: Key Locations */}
           <div className="space-y-3">
             <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px] flex items-center gap-1">
               <MapPin className="w-3 h-3 text-emerald-400" />
-              <span>Location Hubs</span>
+              <span>Global Metros</span>
             </h3>
             <ul className="space-y-2">
               <li><Link to="/locations/mumbai" className="hover:text-indigo-400 transition-colors">Mumbai Hub</Link></li>
@@ -61,7 +59,6 @@ export const Footer = () => {
               <li><Link to="/locations/bangalore" className="hover:text-indigo-400 transition-colors">Bangalore Hub</Link></li>
               <li><Link to="/locations/dubai" className="hover:text-indigo-400 transition-colors">Dubai Hub</Link></li>
               <li><Link to="/locations/london" className="hover:text-indigo-400 transition-colors">London Hub</Link></li>
-              <li><Link to="/locations" className="text-emerald-400 font-semibold hover:underline">All 1,758 Cities →</Link></li>
             </ul>
           </div>
 
@@ -71,10 +68,10 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li><Link to="/download/android" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors flex items-center gap-1"><span>Download for Android</span> <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded border border-emerald-500/30">APK</span></Link></li>
               <li><Link to="/pricing" className="text-indigo-300 font-semibold hover:text-indigo-400 transition-colors">Commercial Pricing</Link></li>
+              <li><Link to="/security" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">Security & Privacy</Link></li>
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">About CHATR</Link></li>
               <li><Link to="/authors" className="hover:text-indigo-400 transition-colors">Authors & Experts</Link></li>
               <li><Link to="/editorial-policy" className="hover:text-indigo-400 transition-colors">Editorial Policy</Link></li>
-              <li><Link to="/research/india-recruitment-communication-benchmark-2026" className="hover:text-indigo-400 transition-colors">Recruitment Benchmark</Link></li>
               <li><Link to="/company-info" className="hover:text-indigo-400 transition-colors">Company Information</Link></li>
             </ul>
           </div>
@@ -94,7 +91,7 @@ export const Footer = () => {
           <div className="flex flex-wrap items-center justify-center gap-3 text-slate-400 text-xs">
             <Link to="/about" className="hover:text-indigo-400 hover:underline">About</Link>
             <span>•</span>
-            <Link to="/locations" className="hover:text-indigo-400 hover:underline font-semibold text-indigo-300">Locations Directory</Link>
+            <Link to="/security" className="hover:text-indigo-400 hover:underline text-emerald-400 font-medium">Security</Link>
             <span>•</span>
             <Link to="/terms" className="hover:text-indigo-400 hover:underline">Terms</Link>
             <span>•</span>

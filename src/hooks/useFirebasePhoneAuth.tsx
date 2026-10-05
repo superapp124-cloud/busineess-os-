@@ -532,8 +532,15 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
     try {
       localStorage.setItem('sb-nuuuqazaoaozgblmvkzn-auth-token', JSON.stringify(localUserSession));
       localStorage.setItem('sb-auth-token', JSON.stringify(localUserSession));
+      try { sessionStorage.removeItem('chatr_explicit_signout'); } catch {}
+      await supabase.auth.setSession({
+        access_token: validJwt,
+        refresh_token: localUserSession.refresh_token,
+      });
       console.log('✅ [Auth Exchange] Local authenticated session established for phone:', canonicalE164);
-    } catch {}
+    } catch (e) {
+      console.warn('[Auth Exchange] local setSession warning:', e);
+    }
     return true;
   };
 

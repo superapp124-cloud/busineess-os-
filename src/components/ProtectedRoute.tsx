@@ -25,17 +25,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           if (session) {
             setIsAuthenticated(true);
           } else {
-            // Clear only obsolete project tokens from old backend migrations
-            try {
-              localStorage.removeItem('sb-sbayuqgomlflmxgicplz-auth-token');
-              localStorage.removeItem('sb-cenxckpxaqborfqyexot-auth-token');
-            } catch {}
-            setIsAuthenticated(false);
+            const hasLocalAuth = Object.keys(localStorage).some(k => 
+              (k.startsWith('sb-') && k.endsWith('-auth-token') && localStorage.getItem(k)) ||
+              k === 'chatr_auth_user' || k === 'sb-auth-token'
+            );
+            setIsAuthenticated(hasLocalAuth);
           }
         }
       } catch {
         if (isMounted) {
-          setIsAuthenticated(false);
+          const hasLocalAuth = Object.keys(localStorage).some(k => 
+            (k.startsWith('sb-') && k.endsWith('-auth-token') && localStorage.getItem(k)) ||
+            k === 'chatr_auth_user' || k === 'sb-auth-token'
+          );
+          setIsAuthenticated(hasLocalAuth);
         }
       }
     };
@@ -46,8 +49,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         setIsAuthenticated(true);
-      } else if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
+      } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
+      } else if (event === 'INITIAL_SESSION' && !session) {
+        const hasLocalAuth = Object.keys(localStorage).some(k => 
+          (k.startsWith('sb-') && k.endsWith('-auth-token') && localStorage.getItem(k)) ||
+          k === 'chatr_auth_user' || k === 'sb-auth-token'
+        );
+        if (!hasLocalAuth) {
+          setIsAuthenticated(false);
+        }
       }
     });
 

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -88,13 +89,14 @@ interface PlatformUser {
 }
 
 export const VirtualizedConversationList = ({ userId, onConversationSelect }: VirtualizedConversationListProps) => {
+  const navigate = useNavigate();
  const [conversations, setConversations] = useState<Conversation[]>([]);
  const [contacts, setContacts] = useState<Contact[]>([]);
  const [platformUsers, setPlatformUsers] = useState<PlatformUser[]>([]);
  const [isLoading, setIsLoading] = useState(true);
  const [saveContactTarget, setSaveContactTarget] = useState<any>(null);
  const [searchQuery, setSearchQuery] = useState('');
- const [filterTab, setFilterTab] = useState<'all' | 'personal' | 'work' | 'finance' | 'otp' | 'shopping' | 'unread' | 'groups' | 'archived'>('all');
+ const [filterTab, setFilterTab] = useState<'all' | 'chats' | 'personal' | 'work' | 'finance' | 'otp' | 'shopping' | 'unread' | 'groups' | 'archived'>('all');
  const [startingChat, setStartingChat] = useState<string | null>(null);
  const [searchingPlatform, setSearchingPlatform] = useState(false);
  const [showMemory, setShowMemory] = useState(false);
@@ -467,7 +469,8 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  if (conv.is_archived && filterTab !== 'archived') return false;
  
  if (filterTab === 'unread') return (conv.unread_count || 0) > 0;
- if (filterTab === 'groups') return conv.is_group;
+ if (filterTab === 'chats') return !conv.is_group;
+      if (filterTab === 'groups') return conv.is_group;
  
  if (['personal', 'work', 'finance', 'otp', 'shopping'].includes(filterTab)) {
  return conv.category === filterTab;
@@ -574,24 +577,42 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  return (
  <div className="flex flex-col h-full min-h-0">
  {/* Filter Tabs */}
- <div className="flex items-center overflow-x-auto scrollbar-hide bg-[#0B0E14] border-b border-white/[0.06] px-3 py-2 space-x-2">
- {['all', 'personal', 'work', 'finance', 'otp', 'shopping', 'unread', 'groups', 'archived'].map((tab) => (
- <button
- key={tab}
- onClick={() => setFilterTab(tab as any)}
- className={`flex-shrink-0 h-[32px] mt-[4px] mb-[4px] px-[12px] text-[13px] capitalize rounded-full transition-colors ${
- filterTab === tab
- ? 'font-[600] text-[#FFFFFF] bg-[#6C63FF]'
- : 'font-[500] text-[#6B7280] bg-[#F3F4F6] hover:bg-[#E5E7EB]'
- }`}
- >
- {tab}
- </button>
- ))}
- </div>
+ <div className="flex items-center overflow-x-auto scrollbar-hide bg-white dark:bg-[#0B0E14] border-b border-slate-100 dark:border-white/[0.06] px-4 py-2.5 gap-2">
+        {[
+          { id: 'all', label: 'All' },
+          { id: 'chats', label: 'Chats' },
+          { id: 'calls_nav', label: 'Calls', isNav: true, path: '/calls' },
+          { id: 'communities_nav', label: 'Communities', isNav: true, path: '/communities' },
+          { id: 'unread', label: 'Unread' },
+          { id: 'groups', label: 'Groups' },
+          { id: 'personal', label: 'Personal' },
+          { id: 'work', label: 'Work' },
+        ].map((tab) => {
+          const isSelected = filterTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                if (tab.isNav) {
+                  navigate(tab.path);
+                } else {
+                  setFilterTab(tab.id as any);
+                }
+              }}
+              className={`flex-shrink-0 h-[30px] px-4 text-[13px] font-medium rounded-full transition-all active:scale-95 ${
+                isSelected
+                  ? 'bg-[#0B3E36] text-white shadow-sm font-semibold'
+                  : 'bg-[#F1F5F9] dark:bg-white/[0.08] text-[#475569] dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
- {/* Clean pill search bar */}
- <div className="sticky top-0 z-10 bg-[#0B0E14] px-3 py-2">
+      {/* Clean pill search bar */}
+ <div className="sticky top-0 z-10 bg-white dark:bg-[#0B0E14] px-3 py-2 border-b border-slate-100 dark:border-transparent">
  <div className="relative w-full">
  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
  <Search className="w-[18px] h-[18px] text-slate-400" />
@@ -602,7 +623,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  placeholder="Search messages..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full h-11 pl-11 pr-[80px] bg-white/[0.05] border border-white/[0.08] text-white placeholder:text-slate-400 rounded-full focus-visible:ring-1 focus-visible:ring-indigo-500/50"
+ className="w-full h-11 pl-11 pr-[80px] bg-slate-100 dark:bg-white/[0.05] border border-transparent dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 rounded-full focus-visible:ring-1 focus-visible:ring-[#00A884]/50"
  />
  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
  {searchQuery && (
@@ -800,7 +821,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  // Deterministic color
  let hash = 0;
  for (let i = 0; i < displayName.length; i++) hash = displayName.charCodeAt(i) + ((hash << 5) - hash);
- const colors = ['bg-[#6C63FF]', 'bg-[#00BFA5]', 'bg-[#F59E0B]'];
+ const colors = ['bg-[#00A884]', 'bg-[#00BFA5]', 'bg-[#F59E0B]'];
  const avatarBg = colors[Math.abs(hash) % colors.length];
 
  // Timestamp logic
@@ -901,7 +922,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  </div>
  {/* Unread Badge overrides */}
  {(conv.unread_count || 0) > 0 ? (
- <div className="bg-[#6C63FF] text-white text-[11px] font-[600] px-[6px] py-[2px] rounded-full min-w-[20px] text-center shrink-0">
+ <div className="bg-[#00A884] text-white text-[11px] font-[600] px-[6px] py-[2px] rounded-full min-w-[20px] text-center shrink-0">
  {(conv.unread_count || 0) > 99 ? '99+' : conv.unread_count}
  </div>
  ) : isUnknown ? (
@@ -936,7 +957,7 @@ export const VirtualizedConversationList = ({ userId, onConversationSelect }: Vi
  }}
  >
  <Button 
- className="w-[56px] h-[56px] rounded-full bg-[#6C63FF] hover:bg-[#4A44CC] shadow-lg flex items-center justify-center text-white"
+ className="w-[56px] h-[56px] rounded-full bg-[#00A884] hover:bg-[#064E3B] shadow-lg shadow-emerald-900/20 flex items-center justify-center text-white"
  >
  <MessageCircle className="w-[24px] h-[24px]" />
  </Button>

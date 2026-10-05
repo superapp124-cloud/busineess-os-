@@ -688,8 +688,8 @@ const MessageBubbleComponent = ({
  isLongPressing ? 'scale-95 opacity-70' : ''
  } ${
  isOwn
- ? 'rounded-[18px] rounded-tr-[4px] bg-[#6C63FF] text-white'
- : 'rounded-[18px] rounded-tl-[4px] bg-[#FFFFFF] border-[0.5px] border-[#EEEEF4] text-[#1A1A2E]'
+                  ? 'rounded-[18px] rounded-tr-[4px] bg-[#D9FDD3] dark:bg-[#005C4B] text-[#111827] dark:text-[#E9EDEF]'
+                  : 'rounded-[18px] rounded-tl-[4px] bg-[#FFFFFF] dark:bg-[#202C33] border-[0.5px] border-[#EEEEF4] dark:border-white/[0.06] text-[#1A1A2E] dark:text-[#E9EDEF]'
  }`}
  >
  <p className="text-[15px] leading-[1.4] whitespace-pre-wrap break-words">

@@ -86,9 +86,9 @@ export const ChatrLandingPage: React.FC<ChatrLandingPageProps> = ({ initialAuthO
   return (
     <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F]">
       <SEOHead
-        title="CHATR — The Intent Operating System"
-        description="Your Intent. Our Intelligence. Real Results. CHATR connects you to people, information and SI agents so you can get things done."
-        keywords="CHATR, Intent OS, SI Agents, Universal Workspace, Career Match, Business OS"
+        title="CHATR — Team Chat, Customer Calls & AI Automation"
+        description="One simple place for your team to chat, call customers, manage leads and automate work. Free browser calling, team inbox, and smart automation."
+        keywords="CHATR, team chat, customer calls, whatsapp team inbox, shared inbox, business messaging, free browser calling"
       />
 
       {/* 1. Header Navigation */}

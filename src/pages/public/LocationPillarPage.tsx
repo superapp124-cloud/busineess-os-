@@ -165,6 +165,47 @@ export const LocationPillarPage: React.FC = () => {
             <span className="text-slate-600">•</span>
             <span className="text-slate-400">{pageConfig.stateRegion}</span>
           </div>
+
+          {/* Contextual Intent Bridge to Global Solution Hub */}
+          {pageConfig.useCaseSlug.includes('ecommerce') && (
+            <div className="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div>
+                <span className="font-bold text-emerald-300">Looking for automated WhatsApp Order Tracking & Delivery Alerts?</span>
+                <p className="text-slate-300 text-[11px] mt-0.5">Explore our dedicated e-commerce shipping workflow, Shopify & WooCommerce integrations.</p>
+              </div>
+              <Link to="/solutions/ecommerce-order-tracking" className="shrink-0 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg transition-colors flex items-center justify-center gap-1 w-full sm:w-auto">
+                <span>Order Tracking Solution</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
+
+          {pageConfig.useCaseSlug.includes('hospitality') && (
+            <div className="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div>
+                <span className="font-bold text-emerald-300">Looking for Hotel Guest Messaging & Front Desk Chat on WhatsApp?</span>
+                <p className="text-slate-300 text-[11px] mt-0.5">Discover our shared front-desk inbox, room service automation, and review reminders.</p>
+              </div>
+              <Link to="/solutions/hotel-guest-messaging" className="shrink-0 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg transition-colors flex items-center justify-center gap-1 w-full sm:w-auto">
+                <span>Hotel Solution Hub</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
+
+          {pageConfig.useCaseSlug.includes('recruitment') && (
+            <div className="bg-indigo-950/60 border border-indigo-500/40 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div>
+                <span className="font-bold text-indigo-300">Automate Candidate Screening & Test Resumes Free</span>
+                <p className="text-slate-300 text-[11px] mt-0.5">Grade resumes instantly or connect WhatsApp candidate screening workflows.</p>
+              </div>
+              <Link to="/tools/resume-grader" className="shrink-0 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-400 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-1 w-full sm:w-auto">
+                <span>Free Resume Grader</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
+
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{pageConfig.h1}</h1>
 
           {/* Executive Summary */}

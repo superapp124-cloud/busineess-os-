@@ -124,7 +124,7 @@ export default function More() {
  );
 
  return (
- <main className="min-h-[100dvh] overflow-y-auto bg-[#F2F2F7] pb-28 text-slate-950">
+ <main className="min-h-[100dvh] overflow-y-auto bg-[#F2F2F7] pb-44 text-slate-950">
  <SEOHead title="Chatr+ | More" description="Explore all Chatr tools" />
  
  {/* Unified Header */}

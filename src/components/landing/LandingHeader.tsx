@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Menu, X, ArrowRight, Sparkles, Compass, Briefcase, LayoutDashboard, Youtube, ExternalLink } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, Sparkles, Compass, Briefcase, LayoutDashboard, Youtube, ExternalLink, Phone, MessageSquare, Wrench } from 'lucide-react';
 
 interface LandingHeaderProps {
   onOpenAuth: () => void;
@@ -56,19 +56,39 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <button 
-              onClick={() => handleNavClick('features')}
               className="flex items-center gap-1 text-[#111817] hover:text-[#164E3F] transition-colors py-2"
             >
               <span>Product</span>
               <ChevronDown className="w-3.5 h-3.5 opacity-60" />
             </button>
             {activeDropdown === 'product' && (
-              <div className="absolute top-full left-0 w-64 bg-white rounded-2xl shadow-lg border border-[#DDE3DF] p-3 space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="absolute top-full left-0 w-72 bg-white rounded-2xl shadow-xl border border-[#DDE3DF] p-3 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                <a 
+                  href="/whatsapp-team-inbox"
+                  className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors block"
+                >
+                  <MessageSquare className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold text-[#111817]">WhatsApp Team Inbox</div>
+                    <div className="text-[11px] text-[#53605C]">Shared inbox for team chat & leads</div>
+                  </div>
+                </a>
+                <a 
+                  href="/call"
+                  className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors block"
+                >
+                  <Phone className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold text-[#111817]">Free Browser Web Calling</div>
+                    <div className="text-[11px] text-[#53605C]">Instant HD voice & video, no downloads</div>
+                  </div>
+                </a>
+                <div className="pt-1 border-t border-slate-100 mt-1"></div>
                 <button 
                   onClick={() => handleNavClick('features')}
                   className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors"
                 >
-                  <Sparkles className="w-4 h-4 text-[#164E3F] mt-0.5" />
+                  <Sparkles className="w-4 h-4 text-[#164E3F] mt-0.5 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-[#111817]">Autonomous Intent Engine</div>
                     <div className="text-[11px] text-[#53605C]">Turn intent into coordinated action</div>
@@ -78,7 +98,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                   onClick={() => handleNavClick('features')}
                   className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors"
                 >
-                  <LayoutDashboard className="w-4 h-4 text-[#164E3F] mt-0.5" />
+                  <LayoutDashboard className="w-4 h-4 text-[#164E3F] mt-0.5 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-[#111817]">Universal Workspace</div>
                     <div className="text-[11px] text-[#53605C]">Chat, search & tools in one place</div>
@@ -178,34 +198,38 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
               <ChevronDown className="w-3.5 h-3.5 opacity-60" />
             </button>
             {activeDropdown === 'resources' && (
-              <div className="absolute top-full right-0 w-64 bg-white rounded-2xl shadow-lg border border-[#DDE3DF] p-3 space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="absolute top-full right-0 w-72 bg-white rounded-2xl shadow-xl border border-[#DDE3DF] p-3 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
                 <a 
-                  href="https://www.youtube.com/@chatrindia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors group"
+                  href="/tools/whatsapp-link-generator"
+                  className="w-full text-left p-2 rounded-xl hover:bg-[#F8F8F5] flex items-center justify-between text-xs font-semibold text-[#111817] transition-colors block"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
-                    <Youtube className="w-4 h-4 fill-current" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-[#111817] group-hover:text-red-600 flex items-center gap-1">
-                      <span>YouTube Channel</span>
-                      <ExternalLink className="w-3 h-3 opacity-60" />
-                    </div>
-                    <div className="text-[11px] text-[#53605C]">@chatrindia demos & guides</div>
-                  </div>
+                  <span>WhatsApp Link Generator</span>
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Free</span>
                 </a>
-                <button 
-                  onClick={() => handleNavClick('features')}
-                  className="w-full text-left p-2.5 rounded-xl hover:bg-[#F8F8F5] flex items-start gap-3 transition-colors"
+                <a 
+                  href="/tools/resume-grader"
+                  className="w-full text-left p-2 rounded-xl hover:bg-[#F8F8F5] flex items-center justify-between text-xs font-semibold text-[#111817] transition-colors block"
                 >
-                  <Sparkles className="w-4 h-4 text-[#164E3F] mt-0.5 ml-1.5 mr-1" />
-                  <div>
-                    <div className="text-xs font-semibold text-[#111817]">Feature Walkthroughs</div>
-                    <div className="text-[11px] text-[#53605C]">Autonomous intelligence in depth</div>
-                  </div>
-                </button>
+                  <span>AI Resume Grader & Match</span>
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Free</span>
+                </a>
+                <a 
+                  href="/tools/meta-ad-cost-calculator"
+                  className="w-full text-left p-2 rounded-xl hover:bg-[#F8F8F5] flex items-center justify-between text-xs font-semibold text-[#111817] transition-colors block"
+                >
+                  <span>Meta Ad Cost Calculator</span>
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Free</span>
+                </a>
+                <div className="pt-1 border-t border-slate-100 my-1"></div>
+                <a 
+                  href="https://www.youtube.com/@chatrindia" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-full text-left p-2 rounded-xl hover:bg-[#F8F8F5] flex items-center gap-2 text-xs font-semibold text-red-600 transition-colors block"
+                >
+                  <Youtube className="w-3.5 h-3.5 fill-current" />
+                  <span>YouTube Demos (@chatrindia)</span>
+                </a>
               </div>
             )}
           </div>
@@ -264,8 +288,23 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#F8F8F5] border-b border-[#DDE3DF] px-6 py-5 space-y-4 animate-in slide-in-from-top duration-200">
           <nav className="flex flex-col space-y-3 text-base font-medium text-[#111817]">
-            <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#111817]">Product</button>
-            <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#53605C]">SI Agents</button>
+            <a href="/whatsapp-team-inbox" className="py-1 text-emerald-700 font-semibold flex items-center justify-between">
+              <span>WhatsApp Team Inbox</span>
+              <span className="text-xs text-slate-500">Solution</span>
+            </a>
+            <a href="/call" className="py-1 text-emerald-700 font-semibold flex items-center justify-between">
+              <span>Free Browser Web Calling</span>
+              <span className="text-xs text-slate-500">Free Call</span>
+            </a>
+            <a href="/tools/whatsapp-link-generator" className="py-1 text-slate-800 flex items-center justify-between">
+              <span>WhatsApp Link Generator</span>
+              <span className="text-xs text-emerald-600 font-bold">Free</span>
+            </a>
+            <a href="/tools/resume-grader" className="py-1 text-slate-800 flex items-center justify-between">
+              <span>AI Resume Grader</span>
+              <span className="text-xs text-emerald-600 font-bold">Free</span>
+            </a>
+            <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#53605C]">Features</button>
             <button onClick={() => handleNavClick('audiences')} className="text-left py-1 text-[#53605C]">Use Cases</button>
             <button onClick={() => handleNavClick('pricing')} className="text-left py-1 text-[#53605C]">Pricing</button>
             <a 

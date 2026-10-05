@@ -19,19 +19,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
               <span className="w-6 h-[1.5px] bg-[#164E3F]" />
-              <span>THE INTENT OPERATING SYSTEM</span>
+              <span>TEAM CHAT • CUSTOMER CALLS • AUTOMATION</span>
             </div>
 
             {/* Giant Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111817] leading-[1.08]">
-              Your Intent.<br />
-              Our Intelligence.<br />
-              <span className="text-[#164E3F] drop-shadow-sm">Real Results.</span>
+              Bring your team,<br />
+              conversations & calls<br />
+              <span className="text-[#164E3F] drop-shadow-sm">into one place.</span>
             </h1>
 
             {/* Supporting Copy */}
             <p className="text-base sm:text-lg text-[#53605C] leading-relaxed max-w-xl">
-              CHATR connects you to people, information and SI agents so you can get things done — faster, smarter and in one place.
+              One simple app for your team to chat, call customers for free from the browser, manage leads, and automate daily work.
             </p>
 
             {/* CTAs */}
@@ -40,7 +40,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
                 onClick={onOpenAuth}
                 className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] cursor-pointer"
               >
-                <span>Get Started</span>
+                <span>Get Started Free</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -56,26 +56,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
             </div>
 
             <p className="text-[11px] text-[#53605C] italic mt-1">
-              ✓ Free · ✓ No email needed · ✓ Setup in 30 seconds
+              ✓ Free · ✓ No credit card · ✓ Setup in 30 seconds
             </p>
 
             {/* Trust Checklist */}
             <div className="pt-4 border-t border-[#DDE3DF]/60 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-[#53605C]">
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
-                <span>Private by design</span>
+                <span>Private & Secure</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
-                <span>SI-native</span>
+                <span>Free Browser Calls</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
-                <span>All-in-one</span>
+                <span>Shared Team Inbox</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
-                <span>Built for real life</span>
+                <span>Smart Automation</span>
               </div>
             </div>
 

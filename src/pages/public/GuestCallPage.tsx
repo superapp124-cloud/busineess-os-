@@ -4,7 +4,7 @@ import {
   Phone, PhoneOff, Mic, MicOff, Video, VideoOff, 
   Copy, Share2, ShieldCheck, Download, QrCode, 
   Sparkles, Check, ArrowRight, Smartphone, Users,
-  Volume2, Radio, ExternalLink, Shield
+  Volume2, Radio, ExternalLink, Shield, Loader2
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,6 +84,25 @@ export const GuestCallPage: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    ViralTelemetry.trackGrowth({
+      eventType: 'signup_click',
+      category: 'acquisition',
+      landingPage: window.location.pathname,
+      metadata: { source: 'guest_call_claim_link' }
+    });
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth` },
+      });
+    } catch {
+      setGoogleLoading(false);
+    }
+  };
 
   // Capture PWA beforeinstallprompt on mobile browsers
   useEffect(() => {
@@ -434,7 +453,7 @@ export const GuestCallPage: React.FC = () => {
   };
 
   const shareViaWhatsApp = () => {
-    const text = encodeURIComponent(`Join my secure WebRTC call on CHATR+: ${fullCallUrl}`);
+    const text = encodeURIComponent(`Join my free call on CHATR: ${fullCallUrl}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
@@ -447,9 +466,9 @@ export const GuestCallPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col justify-between selection:bg-emerald-500/30">
       <SEOHead
-        title="Join WebRTC HD Call — CHATR+ Instant Calling"
-        description="Instant browser-based WebRTC voice and video call. No download required. Crystal-clear 128 kbps OPUS audio, end-to-end encrypted peer-to-peer connection."
-        canonicalUrl={fullCallUrl}
+        title="Free Online Calling — Instant Voice & Video in Browser | CHATR"
+        description="Make free voice and video calls directly from your web browser. No apps, downloads, or sign-ups required. Just share a link and start talking instantly with crystal-clear HD audio."
+        canonicalUrl="https://www.chatrchat.in/call"
       />
 
       {/* STICKY TOP PROMOTIONAL BANNER: THE VIRAL ACQUISITION ENGINE */}
@@ -460,12 +479,12 @@ export const GuestCallPage: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="font-bold text-white tracking-wide">CHATR+ WebRTC</span>
-            <span className="text-slate-400 hidden sm:inline">• 128 kbps OPUS • Sub-40ms HD Voice</span>
+            <span className="font-bold text-white tracking-wide">CHATR Free Web Calling</span>
+            <span className="text-slate-400 hidden sm:inline">• Crystal-Clear HD Sound • Worldwide Access</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-slate-300 hidden md:inline">Want lockscreen ringing & zero browser limits?</span>
+            <span className="text-slate-300 hidden md:inline">Want lockscreen ringing on your phone?</span>
             <a
               href="/download/Chatr-Plus.apk"
               download="Chatr-Plus.apk"
@@ -487,9 +506,9 @@ export const GuestCallPage: React.FC = () => {
               <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
                 <Radio className="w-8 h-8 animate-pulse" />
               </div>
-              <h1 className="text-2xl font-black text-white">Join WebRTC Call</h1>
+              <h1 className="text-2xl font-black text-white">Join Free Call</h1>
               <p className="text-xs text-slate-400">
-                Room: <span className="font-mono text-emerald-400">{roomId}</span> • Peer-to-Peer Encrypted
+                Room: <span className="font-mono text-emerald-400">{roomId}</span> • Private & Secure
               </p>
             </div>
 
@@ -528,10 +547,10 @@ export const GuestCallPage: React.FC = () => {
             <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
               <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-400 font-medium">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Zero signup required • Works directly in browser</span>
+                <span>Zero signup required • Works directly in your browser</span>
               </div>
               <p className="text-[11px] text-slate-500">
-                Expatriates & Global Users: Operates unblocked over standard TLS (Port 443)
+                Works reliably across all mobile and desktop devices worldwide
               </p>
             </div>
           </div>
@@ -687,6 +706,39 @@ export const GuestCallPage: React.FC = () => {
               <p className="text-xs text-slate-400 font-mono">
                 Duration: {formatDuration(callDuration)} • OPUS 128 kbps HD Audio
               </p>
+            </div>
+
+            {/* 1-TAP GOOGLE REGISTRATION: Claim Your Permanent Calling Link */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 border border-indigo-500/40 space-y-3 text-left">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Claim Your Permanent Call Link</span>
+                </div>
+                <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-extrabold px-2 py-0.5 rounded-full border border-indigo-500/30">
+                  Free Forever
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Want your own personal link like <span className="text-white font-mono font-semibold">chatrchat.in/call/your-name</span> that friends or clients can click to call you anytime? Sign up with 1 tap:
+              </p>
+              <button
+                onClick={handleGoogleSignIn}
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-[#111817] font-extrabold text-xs shadow-lg transition-all cursor-pointer disabled:opacity-60"
+              >
+                {googleLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true">
+                    <path d="M17.64 9.2045C17.64 8.5663 17.5827 7.9527 17.4764 7.3636H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8196H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4"/>
+                    <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8196L12.0477 13.5614C11.2418 14.1014 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853"/>
+                    <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.5936 3.68182 9C3.68182 8.4064 3.78409 7.83 3.96409 7.29V4.9582H0.957275C0.347727 6.1732 0 7.5477 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
+                    <path d="M9 3.5796C10.3214 3.5796 11.5077 4.0341 12.4405 4.9259L15.0218 2.3446C13.4632 0.8918 11.4259 0 9 0C5.48182 0 2.43818 2.0168 0.957275 4.9582L3.96409 7.29C4.67182 5.1627 6.65591 3.5796 9 3.5796Z" fill="#EA4335"/>
+                  </svg>
+                )}
+                <span>Claim My Link with Google (1-Tap)</span>
+              </button>
             </div>
 
             {/* VIRAL SHARE HOOK: Share Free HD Calling with 3 Friends */}

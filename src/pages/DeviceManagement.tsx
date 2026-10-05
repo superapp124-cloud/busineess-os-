@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Smartphone, Monitor, Tablet, Trash2, RefreshCw } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Trash2, RefreshCw, ArrowLeft } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface DeviceSession {
@@ -18,6 +19,7 @@ interface DeviceSession {
 }
 
 const DeviceManagement = () => {
+ const navigate = useNavigate();
  const [devices, setDevices] = useState<DeviceSession[]>([]);
  const [loading, setLoading] = useState(true);
  const [deviceToDelete, setDeviceToDelete] = useState<string | null>(null);
@@ -105,15 +107,20 @@ const DeviceManagement = () => {
  }
 
  return (
- <div className="container max-w-4xl mx-auto p-6">
+ <div className="container max-w-4xl mx-auto p-4 md:p-6 pt-12 md:pt-6">
  <Card>
  <CardHeader>
  <div className="flex items-center justify-between">
+ <div className="flex items-center gap-3">
+ <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full shrink-0">
+ <ArrowLeft className="w-5 h-5" />
+ </Button>
  <div>
  <CardTitle>Device Management</CardTitle>
  <CardDescription>
  Manage your trusted devices and security sessions
  </CardDescription>
+ </div>
  </div>
  <Button variant="outline" size="sm" onClick={loadDevices}>
  <RefreshCw className="w-4 h-4 mr-2" />

@@ -54,15 +54,15 @@ const PUBLIC_SEO_PAGES = [
   },
   {
     path: '/whatsapp-team-inbox',
-    title: 'WhatsApp Team Inbox — Shared Multi-Agent Inbox for Businesses | CHATR',
-    description: 'Connect multiple team members to one official WhatsApp Business number. Round-robin lead routing, collision protection, and automated SI intent triage starting at ₹999/mo.',
-    keywords: 'whatsapp team inbox, shared whatsapp inbox, multi agent whatsapp, multiple users one whatsapp number, whatsapp crm',
+    title: 'WhatsApp Team Inbox — One Number for Your Entire Team | CHATR',
+    description: 'Connect multiple team members to one official WhatsApp number. Shared team inbox, automated lead routing, and instant customer replies starting at ₹999/mo.',
+    keywords: 'whatsapp team inbox, shared whatsapp inbox, multi agent whatsapp, multiple users one whatsapp number, team messaging',
     canonical: DOMAIN + '/whatsapp-team-inbox',
     schemas: [
       {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: 'CHATR WhatsApp Shared Team Inbox',
+        name: 'CHATR Shared Team Inbox',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web, Windows, macOS, Android, iOS',
         offers: {
@@ -70,7 +70,7 @@ const PUBLIC_SEO_PAGES = [
           price: '999',
           priceCurrency: 'INR'
         },
-        description: 'Multi-agent shared team inbox for official WhatsApp Business API with automated lead assignment and SI response assistance.'
+        description: 'Multi-agent shared team inbox for customer messaging, automated lead assignment, and team collaboration.'
       },
       {
         '@context': 'https://schema.org',
@@ -84,10 +84,44 @@ const PUBLIC_SEO_PAGES = [
     ]
   },
   {
+    path: '/solutions/hotel-guest-messaging',
+    title: 'WhatsApp for Hotels — Front Desk Team Inbox & Guest Messaging | CHATR',
+    description: 'Let hotel guests message on WhatsApp for room service, early check-in, and concierge inquiries. Front desk, housekeeping, and reservations reply together in one shared inbox.',
+    keywords: 'whatsapp hotel, whatsapp hotel messaging, hotel guest messaging, hotel front desk whatsapp, hotel concierge whatsapp, guest communication platform',
+    canonical: DOMAIN + '/solutions/hotel-guest-messaging',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'CHATR Hotel Guest Messaging',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, Windows, macOS, Android, iOS',
+        description: 'Multi-agent WhatsApp team inbox for hotel guest communication and concierge messaging.'
+      }
+    ]
+  },
+  {
+    path: '/solutions/ecommerce-order-tracking',
+    title: 'WhatsApp Order Tracking for E-Commerce — Automated Delivery Updates | CHATR',
+    description: 'Send live WhatsApp order confirmations and tracking alerts to buyers automatically. Slash support tickets by 70%, reduce return-to-origin, and delight customers.',
+    keywords: 'whatsapp order tracking, whatsapp delivery tracking, whatsapp order updates, ecommerce order notification whatsapp, wismo support automation',
+    canonical: DOMAIN + '/solutions/ecommerce-order-tracking',
+    schemas: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'CHATR WhatsApp Order Tracking',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, Windows, macOS, Android, iOS',
+        description: 'Automated WhatsApp shipping notifications and order tracking for e-commerce stores.'
+      }
+    ]
+  },
+  {
     path: '/wati-alternative',
-    title: 'WATI Alternative — WhatsApp API, Shared Team Inbox & Calling | CHATR',
-    description: 'Compare CHATR and WATI for business messaging. Discover transparent pricing starting at ₹999/mo, multi-agent shared team inboxes, and built-in browser HD voice calling.',
-    keywords: 'wati alternative, wati competitors, wati vs chatr, whatsapp api pricing india, shared team inbox alternative',
+    title: 'WATI Alternative — Shared Team Inbox & Customer Calling | CHATR',
+    description: 'Compare CHATR and WATI. Save up to 70% with transparent pricing from ₹999/mo, multi-agent shared inboxes, and free browser customer calls without complicated setup.',
+    keywords: 'wati alternative, wati competitors, wati vs chatr, whatsapp business pricing, shared team inbox alternative',
     canonical: DOMAIN + '/wati-alternative',
     schemas: [
       {
@@ -155,9 +189,9 @@ const PUBLIC_SEO_PAGES = [
   },
   {
     path: '/call',
-    title: '📞 Join Free HD Voice & Video Call — CHATR+',
-    description: 'Click to answer directly in your browser. 100% free, end-to-end encrypted WebRTC audio and video. Zero app download, zero registration required.',
-    keywords: 'free web call, free hd voice call, browser video call, no download call, webrtc instant call, chatr call',
+    title: '📞 Free Instant Browser Calls — CHATR',
+    description: 'Make free voice and video calls directly from your browser. Zero software to download, zero VPN needed, zero setup required. Connect with anyone worldwide.',
+    keywords: 'free browser call, free phone call online, instant video call, no download call, web calling, chatr call',
     canonical: DOMAIN + '/call',
     ogType: 'website',
     ogImage: 'https://www.chatrchat.in/assets/chatrplus-og-banner.png',
@@ -165,7 +199,7 @@ const PUBLIC_SEO_PAGES = [
       {
         '@context': 'https://schema.org',
         '@type': 'CommunicationApplication',
-        name: 'CHATR+ Free WebRTC HD Calling',
+        name: 'CHATR Free Browser Calling',
         applicationCategory: 'CommunicationApplication',
         operatingSystem: 'Web, Android, iOS',
         offers: {
@@ -173,7 +207,7 @@ const PUBLIC_SEO_PAGES = [
           price: '0',
           priceCurrency: 'USD'
         },
-        description: 'Instant zero-download browser HD voice and video calls powered by CHATR+.'
+        description: 'Instant free browser voice and video calls with no software installation required.'
       }
     ]
   },
@@ -1683,9 +1717,9 @@ function prerender() {
     let customHtml = baseHtml;
 
     // Head tags
-    customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${page.title}</title>`);
-    customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${page.title}">`);
-    customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${page.description}">`);
+    customHtml = customHtml.replace(/<title>.*?<\/title>/gs, `<title>${page.title}</title>`);
+    customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/gi, `<meta name="title" content="${page.title}">`);
+    customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/gi, `<meta name="description" content="${page.description}">`);
     if (page.keywords) {
       customHtml = customHtml.replace(/<meta\s+name="keywords"\s+content=".*?"\s*\/?>/i, `<meta name="keywords" content="${page.keywords}">`);
     }
@@ -1765,13 +1799,13 @@ function prerender() {
     const description = `Deploy CHATR OS and TalentXcel in ${city}, ${state}. Access 10 specialized industry solutions including WhatsApp Business API, candidate screening, real estate lead management, and healthcare patient messaging.`;
 
     let customHtml = baseHtml;
-    customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${title}</title>`);
-    customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${title}">`);
-    customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${description}">`);
-    customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${canonical}">`);
-    customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${title}">`);
-    customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${description}">`);
-    customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/i, `<meta property="og:url" content="${canonical}">`);
+    customHtml = customHtml.replace(/<title>.*?<\/title>/gs, `<title>${title}</title>`);
+    customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/gi, `<meta name="title" content="${title}">`);
+    customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/gi, `<meta name="description" content="${description}">`);
+    customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonical}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${title}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${description}">`);
+    customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonical}">`);
 
     if (!customHtml.includes('name="robots"')) {
       customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);
@@ -1811,13 +1845,13 @@ function prerender() {
       const h1 = `${uc.h1Prefix} ${city}`;
 
       let customHtml = baseHtml;
-      customHtml = customHtml.replace(/<title>.*?<\/title>/s, `<title>${title}</title>`);
-      customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/i, `<meta name="title" content="${title}">`);
-      customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/i, `<meta name="description" content="${description}">`);
-      customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/i, `<link rel="canonical" href="${canonical}">`);
-      customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/i, `<meta property="og:title" content="${title}">`);
-      customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/i, `<meta property="og:description" content="${description}">`);
-      customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/i, `<meta property="og:url" content="${canonical}">`);
+      customHtml = customHtml.replace(/<title>.*?<\/title>/gs, `<title>${title}</title>`);
+      customHtml = customHtml.replace(/<meta\s+name="title"\s+content=".*?"\s*\/?>/gi, `<meta name="title" content="${title}">`);
+      customHtml = customHtml.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/gi, `<meta name="description" content="${description}">`);
+      customHtml = customHtml.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonical}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${title}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${description}">`);
+      customHtml = customHtml.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonical}">`);
 
       if (!customHtml.includes('name="robots"')) {
         customHtml = customHtml.replace('</head>', `  <meta name="robots" content="index, follow">\n</head>`);

@@ -128,6 +128,7 @@ export const ConnectedAccounts = lazy(() => import('@/pages/ConnectedAccounts'))
 export const Stories = lazy(() => import('@/pages/Stories'));
 export const StatusComposer = lazy(() => import('@/pages/StatusComposer'));
 export const More = lazy(() => import('@/pages/More'));
+export const UnifiedTimeline = lazy(() => import('@/pages/UnifiedTimeline'));
 export const GeoDiscovery = lazy(() => import('@/pages/GeoDiscovery'));
 export const CallHistory = lazy(() => import('@/pages/CallHistory'));
 export const StandaloneDialer = lazy(() => import('@/pages/StandaloneDialer'));

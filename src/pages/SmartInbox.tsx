@@ -4,7 +4,7 @@ import {
   Bot, Search, Database, Network, Cloud, ChevronRight, Activity, 
   FolderGit2, CalendarClock, Zap, CheckCircle2, FileText, BrainCircuit,
   MessageSquare, User, Linkedin, Facebook, Building, Layout, Box, Sparkles,
-  X, AlertCircle, ArrowRight, ShieldCheck
+  X, AlertCircle, ArrowRight, ArrowLeft, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { kernelClient } from '@/core/ipc/KernelClient';
@@ -304,6 +304,13 @@ export default function SmartInbox() {
         {/* ── 1. Compact Header & Omni-Search Row ─────────────────── */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border rounded-2xl p-5 shadow-lg transition-colors duration-500" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-3.5">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-xl border border-white/10 hover:bg-white/10 transition-colors shrink-0 text-slate-300 hover:text-white"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="w-10 h-10 rounded-xl overflow-hidden border shadow-md shrink-0 transition-colors" style={{ borderColor: 'hsl(var(--border))' }}>
               <img src="/chatr-ai-logo.jpg" alt="chatrAI" className="w-full h-full object-cover" />
             </div>

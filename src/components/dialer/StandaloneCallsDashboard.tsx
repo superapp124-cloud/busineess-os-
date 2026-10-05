@@ -303,7 +303,7 @@ export const StandaloneCallsDashboard = ({
             </button>
 
             <div 
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/profile')}
               className="relative cursor-pointer active:scale-95 transition-transform"
             >
               <Avatar className="h-10 w-10 border border-white/10 ring-2 ring-purple-500/30">

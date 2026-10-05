@@ -205,6 +205,9 @@ const ResumeGraderTool = React.lazy(() => import('./pages/public/tools/ResumeGra
 const WhatsAppLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/WhatsAppLinkGeneratorTool'));
 const SlaCalculatorTool = React.lazy(() => import('./pages/public/tools/SlaCalculatorTool'));
 const AcquisitionDashboard = React.lazy(() => import('./pages/desktop/AcquisitionDashboard'));
+const HotelGuestMessagingPage = React.lazy(() => import('./pages/public/solutions/HotelGuestMessagingPage'));
+const EcommerceOrderTrackingPage = React.lazy(() => import('./pages/public/solutions/EcommerceOrderTrackingPage'));
+import { trackPageVisit } from '@/services/acquisitionTelemetry';
 
 // CHATR Search Universe & Semantic Authority Engine (2026-09-07)
 const AuthorityPage = React.lazy(() => import('./pages/public/authority/AuthorityPage'));
@@ -312,7 +315,7 @@ const SubdomainRedirect = () => {
     });
   }, [navigate, platform]);
 
-  if (!redirected) return <PageLoader message="Loading CHATR Intent OS..." />;
+  if (!redirected) return <PageLoader message="Loading CHATR..." />;
 
   // Web unauthenticated visitor: render ChatrLandingPage directly at /
   return <LazyRoute component={LazyPages.ChatrLandingPage} />;
@@ -393,6 +396,10 @@ const NativeStartupRouteGate = ({ children }: { children: React.ReactNode }) => 
   const location = useLocation();
   const navigate = useNavigate();
   const [isReady, setIsReady] = React.useState(false);
+
+  React.useEffect(() => {
+    trackPageVisit(location.pathname);
+  }, [location.pathname]);
 
   React.useEffect(() => {
     // Sanitizer for concatenated URLs like /desktop/calls#/desktop/workspace-ide
@@ -1103,6 +1110,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/chatr/ai" element={<LazyRoute component={ChatrAIPage} />} />
   <Route path="/pricing" element={<LazyRoute component={PricingPage} />} />
   <Route path="/whatsapp-team-inbox" element={<LazyRoute component={WhatsAppTeamInboxPage} />} />
+  <Route path="/solutions/hotel-guest-messaging" element={<LazyRoute component={HotelGuestMessagingPage} />} />
+  <Route path="/solutions/ecommerce-order-tracking" element={<LazyRoute component={EcommerceOrderTrackingPage} />} />
   <Route path="/wati-alternative" element={<LazyRoute component={WatiAlternativePage} />} />
   <Route path="/aisensy-alternative" element={<LazyRoute component={AisensyAlternativePage} />} />
   <Route path="/business-os" element={<LazyRoute component={BusinessOSLanding} />} />
@@ -1152,6 +1161,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/profile" element={<LazyRoute component={LazyPages.Profile} />} />
  <Route path="/calls/*" element={<Suspense fallback={<PageLoader />}><DeferredStandaloneCallsApp /></Suspense>} />
  <Route path="/more" element={<LazyRoute component={LazyPages.More} />} />
+ <Route path="/timeline" element={<LazyRoute component={LazyPages.UnifiedTimeline} />} />
  <Route path="/explore" element={<LazyRoute component={LazyPages.ChatrWorld} />} />
  <Route path="/status" element={<LazyRoute component={LazyPages.Stories} />} />
  <Route path="/stories" element={<LazyRoute component={LazyPages.Stories} />} />
@@ -1237,8 +1247,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/local-deals" element={<LazyRoute component={LazyPages.LocalDeals} />} />
  
  {/* Earning / Micro-Tasks Routes */}
- <Route path="/earn" element={<ProtectedLazyRoute component={LazyPages.Earn} />} />
- <Route path="/earn/history" element={<ProtectedLazyRoute component={LazyPages.EarnHistory} />} />
+ <Route path="/earn" element={<LazyRoute component={LazyPages.Earn} />} />
+ <Route path="/earn/history" element={<LazyRoute component={LazyPages.EarnHistory} />} />
  
  {/* Business / Dhandha Routes */}
  <Route path="/dhandha" element={<ProtectedLazyRoute component={LazyPages.Dhandha} />} />
@@ -1389,11 +1399,11 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/fame-cam" element={<ProtectedLazyRoute component={LazyPages.FameCam} />} />
  <Route path="/fame-leaderboard" element={<ProtectedLazyRoute component={LazyPages.FameLeaderboard} />} />
  <Route path="/mini-apps" element={<LazyRoute component={LazyPages.MiniAppsStore} />} />
- <Route path="/identity" element={<ProtectedLazyRoute component={LazyPages.Identity} />} />
+ <Route path="/identity" element={<LazyRoute component={LazyPages.Identity} />} />
  <Route path="/discover" element={<LazyRoute component={LazyPages.Discover} />} />
  <Route path="/u/:handle" element={<LazyRoute component={LazyPages.PublicProfile} />} />
- <Route path="/ai-clone-settings" element={<ProtectedLazyRoute component={LazyPages.AICloneSettings} />} />
- <Route path="/caller-id" element={<ProtectedLazyRoute component={LazyPages.CallerIdHub} />} />
+ <Route path="/ai-clone-settings" element={<LazyRoute component={LazyPages.AICloneSettings} />} />
+ <Route path="/caller-id" element={<LazyRoute component={LazyPages.CallerIdHub} />} />
  <Route path="/:handle" element={<LazyRoute component={LazyPages.PublicProfile} />} />
  <Route path="*" element={<LazyRoute component={LazyPages.NotFound} />} />
  </Route>

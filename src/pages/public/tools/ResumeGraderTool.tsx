@@ -4,6 +4,7 @@ import {
   FileText, Upload, Sparkles, CheckCircle2, AlertTriangle, ArrowRight, 
   RotateCcw, ShieldCheck, Zap, Award, ChevronRight, Download, Check
 } from 'lucide-react';
+import { SEOHead } from '@/components/SEOHead';
 import { trackAcquisitionEvent, initializeAttribution } from '../../../services/acquisitionTelemetry';
 
 interface AnalysisResult {
@@ -120,6 +121,11 @@ export const ResumeGraderTool: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500 selection:text-white">
+      <SEOHead
+        title="Free Resume Grader & Review — Instant ATS Feedback | CHATR"
+        description="Check your resume score against ATS screening algorithms for free. Get instant feedback on impact metrics, action verbs, and keywords to land more interviews."
+        canonicalUrl="https://www.chatrchat.in/tools/resume-grader"
+      />
       {/* Header Navigation */}
       <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
         <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">

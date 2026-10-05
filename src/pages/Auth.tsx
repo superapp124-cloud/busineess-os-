@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +13,7 @@ import chatrIconLogo from '@/assets/chatr-icon-logo.png';
 import chatrOfficialLogo from '@/assets/chatr-official-logo.png';
 import { Capacitor } from '@capacitor/core';
 import { usePlatform } from '@/App';
+import { trackAcquisitionEvent } from '@/services/acquisitionTelemetry';
 
 const Auth = () => {
   const { toast } = useToast();
@@ -67,6 +68,9 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         setUserId(session.user.id);
+        if (event === 'SIGNED_IN') {
+          trackAcquisitionEvent({ event: 'signup_completed', metadata: { authEvent: event } });
+        }
         const stateFrom = (location.state as any)?.from?.pathname ||
           (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
