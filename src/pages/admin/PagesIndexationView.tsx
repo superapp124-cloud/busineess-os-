@@ -57,6 +57,7 @@ export const PagesIndexationView: React.FC = () => {
     list.push({ url: `${DOMAIN}/tools/resume-grader`, path: '/tools/resume-grader', cohort: 'Growth Tools', type: 'ATS Resume Grader' });
     list.push({ url: `${DOMAIN}/tools/whatsapp-link-generator`, path: '/tools/whatsapp-link-generator', cohort: 'Growth Tools', type: 'WhatsApp Link Gen' });
     list.push({ url: `${DOMAIN}/tools/sla-calculator`, path: '/tools/sla-calculator', cohort: 'Growth Tools', type: 'SLA Calculator' });
+    list.push({ url: `${DOMAIN}/tools/meta-ad-cost-calculator`, path: '/tools/meta-ad-cost-calculator', cohort: 'Growth Tools', type: 'Meta Ad Cost Calculator' });
 
     if (searchCity.trim().length > 0) {
       // Hub URL

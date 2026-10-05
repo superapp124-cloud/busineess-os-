@@ -91,6 +91,7 @@ export function detectIndustry(pathname: string = ''): string {
   if (path.includes('health') || path.includes('clinic')) return 'Healthcare';
   if (path.includes('logistics') || path.includes('delivery')) return 'Logistics & Courier';
   if (path.includes('calling') || path.includes('voip') || path.includes('call')) return 'Communication & Calling';
+  if (path.includes('meta') || path.includes('ad-cost')) return 'Digital Marketing & Ads';
   return 'SME & General Business';
 }
 
@@ -383,6 +384,7 @@ export function computeExecutiveDashboardData(events: AcquisitionEventPayload[])
     if (p.includes('whatsapp-team-inbox')) return 'WhatsApp Team Inbox Page';
     if (p.includes('whatsapp-link-generator')) return 'Free WhatsApp Link Generator';
     if (p.includes('resume-grader')) return 'Free Resume Grader Utility';
+    if (p.includes('meta-ad-cost-calculator')) return 'Meta Ad Cost Calculator Tool';
     if (p.includes('sla-calculator')) return 'Response SLA Calculator Tool';
     if (p.startsWith('/call')) return 'Free Browser Web Calling Room';
     if (p.startsWith('/join')) return 'Team Workspace Invite Landing';

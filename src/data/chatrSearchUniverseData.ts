@@ -1446,6 +1446,40 @@ export const WAVE2_TOOLS: SemanticPageDefinition[] = [
       { title: 'CHATR SI', path: '/chatr-ai' },
       { title: 'CHATR Intent OS', path: '/chatr-intent-os' }
     ]
+  },
+  {
+    path: '/tools/meta-ad-cost-calculator',
+    slug: 'meta-ad-cost-calculator',
+    universe: 'business-os',
+    layer: 'tool',
+    title: 'Free Meta Ad Cost Calculator (Facebook & Instagram) — Estimate CPC, CPM & ROAS | CHATR',
+    h1: 'Meta Ad Cost & ROAS Calculator',
+    tagline: 'Calculate Facebook & Instagram advertising budget, CPC, CPM, expected CPL, and ROAS with 2026 industry benchmarks.',
+    description: 'Free Meta ad cost calculator. Model Facebook & Instagram ad spend, traffic, conversion rates, and ROAS. Discover how Click-to-WhatsApp ads cut CPL by up to 52%.',
+    keywords: 'meta ad cost calculator, facebook ad cost calculator, instagram ads roas calculator, cpc calculator meta, facebook ads cost estimator, cost per lead calculator facebook, chatr tools',
+    directAnswer: 'The CHATR Meta Ad Cost Calculator models Facebook and Instagram advertising budgets across 8 industry verticals, calculating projected impressions, CPC, CPM, leads or e-commerce purchases, and net ROAS, while contrasting traditional landing page attrition with high-converting Click-to-WhatsApp funnels.',
+    keyCapabilities: [
+      'Multi-currency modeling across INR (₹), USD ($), AED, GBP (£), and EUR (€)',
+      'Industry benchmark calibrations for E-Commerce, B2B SaaS, Real Estate, Healthcare, and Coaching',
+      'Full-funnel calculation from ad impressions and clicks to qualified deals and gross margin',
+      'Comparative yield modeling showing Click-to-WhatsApp conversion uplift vs traditional web forms'
+    ],
+    metrics: [
+      { label: 'CPL Reduction', value: '45-55%', context: 'With WhatsApp instant triage' },
+      { label: 'Response SLA', value: '<60s', context: 'Automated CHATR lead routing' }
+    ],
+    faqs: [
+      { q: 'How does Meta calculate advertising costs on Facebook and Instagram?', a: 'Meta uses an automated ad auction system that scores bids, estimated action rates, and ad relevance to determine dynamic CPC and CPM pricing.' },
+      { q: 'Why do Click-to-WhatsApp ads convert higher than website forms?', a: 'Direct Click-to-WhatsApp ads eliminate mobile loading latency and form friction, connecting prospects directly to automated sub-60-second triage.' }
+    ],
+    relatedTools: [
+      { name: 'WhatsApp Link Generator', path: '/tools/whatsapp-link-generator', iconName: 'MessageSquare', description: 'Create click-to-chat links.' },
+      { name: 'Response SLA Calculator', path: '/tools/sla-calculator', iconName: 'Clock', description: 'Model response time revenue loss.' }
+    ],
+    relatedPages: [
+      { title: 'CHATR Business OS', path: '/chatr-business-os' },
+      { title: 'WhatsApp Team Inbox', path: '/whatsapp-team-inbox' }
+    ]
   }
 ];
 

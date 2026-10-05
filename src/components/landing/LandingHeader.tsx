@@ -304,6 +304,10 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
               <span>AI Resume Grader</span>
               <span className="text-xs text-emerald-600 font-bold">Free</span>
             </a>
+            <a href="/tools/meta-ad-cost-calculator" className="py-1 text-slate-800 flex items-center justify-between">
+              <span>Meta Ad Cost Calculator</span>
+              <span className="text-xs text-emerald-600 font-bold">Free</span>
+            </a>
             <button onClick={() => handleNavClick('features')} className="text-left py-1 text-[#53605C]">Features</button>
             <button onClick={() => handleNavClick('audiences')} className="text-left py-1 text-[#53605C]">Use Cases</button>
             <button onClick={() => handleNavClick('pricing')} className="text-left py-1 text-[#53605C]">Pricing</button>

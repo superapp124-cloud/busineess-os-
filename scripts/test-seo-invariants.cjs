@@ -180,6 +180,7 @@ const semanticTestUrls = [
   '/tools/business-voip-cost-calculator',
   '/tools/intent-to-workflow-generator',
   '/tools/sla-calculator',
+  '/tools/meta-ad-cost-calculator',
   '/tools/call-quality-checker',
   '/tools/ai-agent-prompt-builder',
   '/integrations',

@@ -51,39 +51,45 @@ async function main() {
   }
   console.log('✅ Access token obtained');
 
-  const siteUrl = encodeURIComponent('sc-domain:chatrchat.in');
+  const properties = ['sc-domain:chatrchat.in', 'https://www.chatrchat.in/'];
   
-  // Sitemaps to submit/re-trigger
+  // Master index and key sub-sitemaps to submit/re-trigger
   const sitemapsToSubmit = [
     'https://www.chatrchat.in/sitemap_index.xml',
-    'https://www.chatrchat.in/sitemaps/sitemap-india-metros.xml',
-    'https://www.chatrchat.in/sitemaps/sitemap-global-hubs.xml',
-    'https://www.chatrchat.in/sitemaps/sitemap-core.xml',
-    'https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-products.xml',
     'https://www.chatrchat.in/sitemaps/sitemap-tools.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-comparisons.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-core.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-workflows.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-problems.xml',
+    'https://www.chatrchat.in/sitemaps/sitemap-calling.xml',
   ];
 
-  for (const sitemapUrl of sitemapsToSubmit) {
-    const feedpath = encodeURIComponent(sitemapUrl);
-    const submitUrl = `https://www.googleapis.com/webmasters/v3/sites/${siteUrl}/sitemaps/${feedpath}`;
-    
-    const res = await fetch(submitUrl, {
-      method: 'PUT',
+  for (const prop of properties) {
+    const encodedSite = encodeURIComponent(prop);
+    console.log(`\n=== Submitting to [${prop}] ===`);
+    for (const sitemapUrl of sitemapsToSubmit) {
+      const feedpath = encodeURIComponent(sitemapUrl);
+      const submitUrl = `https://www.googleapis.com/webmasters/v3/sites/${encodedSite}/sitemaps/${feedpath}`;
+      
+      const res = await fetch(submitUrl, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+
+      console.log(`  ${sitemapUrl} -> HTTP ${res.status} ${res.status === 204 || res.status === 200 ? 'SUCCESS' : 'FAILED'}`);
+    }
+
+    // Fetch list of sitemaps in this property
+    const listRes = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodedSite}/sitemaps`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
-
-    console.log(`Submitted ${sitemapUrl} -> HTTP ${res.status} ${res.status === 204 || res.status === 200 ? 'SUCCESS' : 'FAILED'}`);
-  }
-
-  // Fetch list of all sitemaps in GSC
-  const listRes = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${siteUrl}/sitemaps`, {
-    headers: { Authorization: `Bearer ${access_token}` },
-  });
-  const listData = await listRes.json();
-  console.log('\n--- Current GSC Sitemaps ---');
-  for (const s of listData.sitemap || []) {
-    const contents = s.contents?.map(c => `${c.type}: ${c.submitted}`).join(', ') || 'processing';
-    console.log(`Path: ${s.path}\n  LastSubmitted: ${s.lastSubmitted}\n  LastDownloaded: ${s.lastDownloaded}\n  Contents: ${contents}\n  Warnings: ${s.warnings || 0} | Errors: ${s.errors || 0}\n`);
+    const listData = await listRes.json();
+    console.log(`\n--- Sitemaps currently in [${prop}] ---`);
+    for (const s of listData.sitemap || []) {
+      const contents = s.contents?.map(c => `${c.type}: ${c.submitted}`).join(', ') || 'processing';
+      console.log(`  ${s.path} (Downloaded: ${s.lastDownloaded || 'pending'}, Contents: ${contents})`);
+    }
   }
 }
 

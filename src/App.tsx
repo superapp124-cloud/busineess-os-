@@ -204,6 +204,7 @@ const SharedCandidateScorecard = React.lazy(() => import('./pages/public/SharedC
 const ResumeGraderTool = React.lazy(() => import('./pages/public/tools/ResumeGraderTool'));
 const WhatsAppLinkGeneratorTool = React.lazy(() => import('./pages/public/tools/WhatsAppLinkGeneratorTool'));
 const SlaCalculatorTool = React.lazy(() => import('./pages/public/tools/SlaCalculatorTool'));
+const MetaAdCostCalculatorTool = React.lazy(() => import('./pages/public/tools/MetaAdCostCalculatorTool'));
 const AcquisitionDashboard = React.lazy(() => import('./pages/desktop/AcquisitionDashboard'));
 const HotelGuestMessagingPage = React.lazy(() => import('./pages/public/solutions/HotelGuestMessagingPage'));
 const EcommerceOrderTrackingPage = React.lazy(() => import('./pages/public/solutions/EcommerceOrderTrackingPage'));
@@ -1024,6 +1025,11 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/tools/wa-link" element={<LazyRoute component={WhatsAppLinkGeneratorTool} />} />
   <Route path="/tools/sla-calculator" element={<LazyRoute component={SlaCalculatorTool} />} />
   <Route path="/tools/sla" element={<LazyRoute component={SlaCalculatorTool} />} />
+  <Route path="/tools/meta-ad-cost-calculator" element={<LazyRoute component={MetaAdCostCalculatorTool} />} />
+  <Route path="/tools/meta-ads-calculator" element={<LazyRoute component={MetaAdCostCalculatorTool} />} />
+  <Route path="/tools/facebook-ad-cost-calculator" element={<LazyRoute component={MetaAdCostCalculatorTool} />} />
+  <Route path="/tools/fb-ad-calculator" element={<LazyRoute component={MetaAdCostCalculatorTool} />} />
+  <Route path="/tools/ad-cost-calculator" element={<LazyRoute component={MetaAdCostCalculatorTool} />} />
   
   {/* CHATR-Native Interactive Web Tools */}
   <Route path="/tools/communication-link-generator" element={<LazyRoute component={ChatrLinkGeneratorTool} />} />
