@@ -1,227 +1,518 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Loader2, CheckCircle2, ArrowRight, Package, Truck, MessageSquare, Clock, ShieldCheck, ShoppingBag, Zap } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  ArrowRight, Check, Package, Truck, MessageSquare, Clock, 
+  ShieldCheck, ShoppingBag, Zap, Star, Sparkles, CheckCircle2
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { Footer } from '@/components/Footer';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // /solutions/ecommerce-order-tracking
 //
-// This page captures the live GSC query "whatsapp order tracking" which was
-// previously landing on /location/ecommerce-customer-support-port-louis (Mauritius).
-// This is the canonical solution hub for e-commerce and retail stores.
+// Canonical solution hub for e-commerce, D2C brands & retail stores.
+// Completely consistent with CHATR Design System (Image 3) & Zero Jargon.
 // ─────────────────────────────────────────────────────────────────────────────
+
+const STORE_TYPES = [
+  'Shopify Stores',
+  'WooCommerce Brands',
+  'D2C Lifestyle & Fashion',
+  'Instagram Retailers',
+  'Electronics & Gadgets',
+  'Omnichannel Sellers'
+];
 
 const BENEFITS = [
   {
     icon: Package,
     title: 'Instant WhatsApp Order Confirmation',
-    desc: 'The moment a customer places an order on Shopify, WooCommerce, or your store, they receive a clear WhatsApp receipt with item details.',
+    desc: 'The moment a buyer checks out on Shopify, WooCommerce, or your custom store, they automatically receive a clear WhatsApp receipt with item details, amount, and order ID.',
   },
   {
     icon: Truck,
-    title: 'Live Tracking Links in WhatsApp',
-    desc: 'Send automated shipping updates when orders are dispatched, in transit, or out for delivery with one-tap courier tracking links.',
+    title: 'Live courier tracking links in WhatsApp',
+    desc: 'Send automated shipping alerts when orders are dispatched, in transit, or out for delivery with one-tap live courier tracking (Bluedart, Delhivery, FedEx, DHL, DTDC, and more).',
   },
   {
     icon: Clock,
-    title: 'Cut "Where Is My Order?" Support by 70%',
-    desc: 'Customers know exactly where their parcel is. Less repetitive support tickets, happier buyers, and fewer delivery disputes.',
+    title: 'Slash "Where is my order?" support by 70%',
+    desc: 'Buyers stay proactively informed at every step of shipping. Dramatically reduce repetitive WISMO support tickets, customer anxiety, and delivery disputes.',
   },
   {
     icon: MessageSquare,
-    title: 'One Shared Inbox for Customer Inquiries',
-    desc: 'When a buyer replies to a tracking message with delivery instructions or address changes, your whole support team can reply together.',
+    title: 'One shared inbox for questions & address changes',
+    desc: 'When a customer replies to a tracking message with delivery instructions or a gate code, your entire customer support team sees it and replies together without delays.',
   },
   {
     icon: Zap,
-    title: 'Automated Delivery Alerts & Reviews',
-    desc: 'Automatically verify successful deliveries and send a polite review request or repeat purchase discount 24 hours later.',
+    title: 'Automated delivery alerts & repeat purchase prompts',
+    desc: 'Automatically verify successful deliveries and send a polite review request or repeat purchase discount code 24 hours later to build lifetime customer value.',
   },
   {
     icon: ShieldCheck,
-    title: 'High Open Rates vs. Buried Emails',
-    desc: 'Emails get stuck in spam or go unread. WhatsApp delivery updates have a 98% open rate and get read in under 3 minutes.',
+    title: '98% open rates vs. lost emails and spam folders',
+    desc: 'Transactional emails often get buried in promotional tabs or spam folders. WhatsApp delivery alerts boast a 98% open rate and are read within 3 minutes of arrival.',
   },
 ];
 
 const STEPS = [
-  { step: '1', label: 'Connect your store or WhatsApp number', detail: 'Works with Shopify, WooCommerce, or custom orders in 3 minutes.' },
-  { step: '2', label: 'Turn on automated order tracking messages', detail: 'Choose ready-made templates for order placed, dispatched, and delivered.' },
-  { step: '3', label: 'Customers get real-time tracking on WhatsApp', detail: 'They click once to see delivery status from your courier partner.' },
-  { step: '4', label: 'Handle questions in one simple inbox', detail: 'Address change? Delay? Your team replies from a single dashboard.' },
+  { 
+    step: '1', 
+    label: 'Connect your store or WhatsApp number', 
+    detail: 'Integrate Shopify, WooCommerce, or upload orders via CSV in under 3 minutes.' 
+  },
+  { 
+    step: '2', 
+    label: 'Activate automated tracking alerts', 
+    detail: 'Turn on ready-made message templates for Order Placed, Shipped, and Out for Delivery.' 
+  },
+  { 
+    step: '3', 
+    label: 'Customers receive real-time alerts in WhatsApp', 
+    detail: 'Buyers tap one button to view live courier status without entering passwords or order numbers.' 
+  },
+  { 
+    step: '4', 
+    label: 'Support team replies from one shared screen', 
+    detail: 'Handle buyer questions, delivery notes, and return requests in a collaborative team inbox.' 
+  },
+];
+
+const FAQS = [
+  { 
+    q: 'Which e-commerce platforms connect with CHATR?', 
+    a: 'CHATR easily connects with Shopify, WooCommerce, Magento, custom APIs, and spreadsheet CSV uploads for seamless fulfillment workflows.' 
+  },
+  { 
+    q: 'Can customers reply directly to the WhatsApp tracking alert?', 
+    a: 'Yes! Unlike one-way SMS or unmonitored automated emails, when a customer replies to request a change of delivery address or time, your support team sees the message in CHATR and can reply immediately.' 
+  },
+  { 
+    q: 'Does this help reduce Cash on Delivery (COD) returns and cancellations?', 
+    a: 'Yes. Online brands experience up to a 28% reduction in Return to Origin (RTO) because buyers confirm their delivery addresses and know the exact arrival date.' 
+  },
+  { 
+    q: 'Do I need developer skills or technical experience to set this up?', 
+    a: 'No technical or coding knowledge is needed. Everything is configured with simple point-and-click settings directly in your web browser.' 
+  },
+  { 
+    q: 'Can we send automated review requests after delivery?', 
+    a: 'Yes. You can trigger an automatic WhatsApp message 24 hours after a confirmed delivery asking for a product rating, Google review, or photo review.' 
+  },
 ];
 
 export const EcommerceOrderTrackingPage: React.FC = () => {
-  const [googleLoading, setGoogleLoading] = useState(false);
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleGoogleSignIn = async () => {
-    setGoogleLoading(true);
-    try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth` },
-      });
-    } catch {
-      setGoogleLoading(false);
-    }
-  };
+  // Check auth session
+  useEffect(() => {
+    let isMounted = true;
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (isMounted && session?.user) {
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        console.warn('[EcommercePage] Session check error:', err);
+      }
+    };
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-[#111827]">
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
       <SEOHead
         title="WhatsApp Order Tracking for E-Commerce & Retail | CHATR"
         description="Send automated WhatsApp shipping and delivery tracking updates to your buyers. Reduce support tickets, prevent return-to-origin, and build repeat sales."
         canonicalUrl="https://www.chatrchat.in/solutions/ecommerce-order-tracking"
       />
-      {/* ── Nav ── */}
-      <header className="border-b border-slate-100 sticky top-0 z-40 bg-white/95 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link to="/" className="font-black text-xl text-[#164E3F] tracking-tight">CHATR</Link>
-          <div className="flex items-center gap-3">
-            <Link to="/auth" className="text-xs font-medium text-slate-600 hover:text-[#164E3F]">Sign in</Link>
-            <button
-              onClick={handleGoogleSignIn}
-              disabled={googleLoading}
-              className="px-4 py-2 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-60 flex items-center gap-2"
-            >
-              {googleLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-              Get started free
-            </button>
-          </div>
-        </div>
-      </header>
 
-      {/* ── Hero ── */}
-      <section className="max-w-4xl mx-auto px-4 py-16 text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
-          <ShoppingBag className="w-3.5 h-3.5" />
-          WhatsApp Order Tracking for E-Commerce
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#111827] leading-tight">
-          Send live order tracking to customers on<br className="hidden sm:block" />
-          <span className="text-[#164E3F]"> WhatsApp automatically</span>
-        </h1>
-        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Keep your buyers updated with automated WhatsApp tracking alerts from checkout to doorstep. 
-          Slash support questions, prevent return-to-origin, and build loyal repeat customers.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-          <button
-            onClick={handleGoogleSignIn}
-            disabled={googleLoading}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-white border border-slate-200 text-[#111827] font-bold text-sm shadow-md hover:shadow-lg hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-60"
-          >
-            {googleLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                <path d="M17.64 9.2045C17.64 8.5663 17.5827 7.9527 17.4764 7.3636H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8196H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4"/>
-                <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8196L12.0477 13.5614C11.2418 14.1014 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853"/>
-                <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.5936 3.68182 9C3.68182 8.4064 3.78409 7.83 3.96409 7.29V4.9582H0.957275C0.347727 6.1732 0 7.5477 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
-                <path d="M9 3.5796C10.3214 3.5796 11.5077 4.0341 12.4405 4.9259L15.0218 2.3446C13.4632 0.8918 11.4259 0 9 0C5.48182 0 2.43818 2.0168 0.957275 4.9582L3.96409 7.29C4.67182 5.1627 6.65591 3.5796 9 3.5796Z" fill="#EA4335"/>
-              </svg>
-            )}
-            Start sending tracking alerts free
-          </button>
-          <Link to="/auth" className="text-sm text-slate-500 hover:text-[#164E3F] font-medium">
-            Sign up with phone instead →
-          </Link>
-        </div>
-        <p className="text-xs text-slate-400">Works with Shopify, WooCommerce, Indian & Global Couriers · No credit card needed</p>
-      </section>
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
 
-      {/* ── Benefits Grid ── */}
-      <section className="bg-slate-50 py-16">
-        <div className="max-w-4xl mx-auto px-4 space-y-10">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
-              Why WhatsApp is the #1 channel for order tracking
-            </h2>
-            <p className="text-slate-500 text-sm max-w-xl mx-auto">
-              Emails get lost in spam and SMS gets ignored. WhatsApp is where your customers actually read and respond to messages.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {BENEFITS.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-2">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-[#164E3F]" />
+      <main className="flex-1">
+        {/* ── 1. Hero Section (Two-Column Editorial Composition matching Image 3) ── */}
+        <section className="relative overflow-hidden pt-10 sm:pt-14 pb-16 lg:pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+              
+              {/* LEFT COLUMN: Editorial Value Proposition */}
+              <div className="lg:col-span-6 space-y-7 z-10">
+                {/* Eyebrow */}
+                <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+                  <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+                  <span>WHATSAPP FOR E-COMMERCE & RETAIL</span>
                 </div>
-                <h3 className="font-bold text-[#111827] text-sm">{title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+
+                {/* Giant Headline */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111817] leading-[1.08]">
+                  Send live order tracking on WhatsApp —<br />
+                  <span className="text-[#164E3F] drop-shadow-sm">automatically.</span>
+                </h1>
+
+                {/* Supporting Copy */}
+                <p className="text-base sm:text-lg text-[#53605C] leading-relaxed max-w-xl">
+                  Keep buyers updated with automated WhatsApp tracking alerts from checkout to doorstep. 
+                  Slash repetitive support questions by 70%, prevent return-to-origin, and build loyal repeat customers.
+                </p>
+
+                {/* CTAs */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <button
+                    onClick={() => setAuthModalOpen(true)}
+                    className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] cursor-pointer"
+                  >
+                    <span>Get Started Free</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => setAuthModalOpen(true)}
+                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-[#F8F8F5] text-[#111817] border border-[#DDE3DF] text-sm sm:text-base font-medium shadow-sm hover:border-[#164E3F]/40 transition-all cursor-pointer"
+                  >
+                    <MessageSquare className="w-4 h-4 text-[#164E3F]" />
+                    <span>Explore Demo Inbox</span>
+                  </button>
+                </div>
+
+                <p className="text-[11px] text-[#53605C] italic mt-1">
+                  ✓ Free to start · ✓ No credit card · ✓ Setup in 30 seconds
+                </p>
+
+                {/* Trust Checklist */}
+                <div className="pt-4 border-t border-[#DDE3DF]/60 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-[#53605C]">
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
+                    <span>Automated Shipping Alerts</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
+                    <span>Live Courier Links</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
+                    <span>Shared Support Inbox</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#164E3F] stroke-[2.5]" />
+                    <span>98% Read Rate</span>
+                  </div>
+                </div>
+
+                {/* Live Social Proof */}
+                <div className="flex items-center gap-3 pt-2">
+                  <div className="flex -space-x-2">
+                    {(['#164E3F', '#2E6B59', '#00BDB1', '#53605C', '#111817'] as const).map((c, i) => (
+                      <div key={i} style={{ backgroundColor: c }} className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">
+                        {(['UT', 'BK', 'AM', 'ZD', 'SN'] as const)[i]}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[#53605C]">
+                    <span className="font-bold text-[#111817]">Trusted by 1,200+ brands & online stores</span> worldwide
+                  </p>
+                </div>
               </div>
-            ))}
+
+              {/* RIGHT COLUMN: Editorial Workspace Composition Preview Card */}
+              <div className="lg:col-span-6 relative">
+                <div className="relative mx-auto max-w-lg lg:max-w-none">
+                  {/* Subtle decorative glow */}
+                  <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-100/50 to-teal-100/40 rounded-3xl blur-xl opacity-70 pointer-events-none" />
+
+                  {/* Surface Card */}
+                  <div className="relative bg-white rounded-3xl border border-[#DDE3DF] shadow-xl overflow-hidden">
+                    {/* Store Header */}
+                    <div className="px-5 py-4 bg-[#F8F8F5] border-b border-[#DDE3DF] flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-[#164E3F] text-white flex items-center justify-center font-bold text-xs">
+                          UT
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-[#111817] flex items-center gap-1.5">
+                            <span>Urban Threads Official</span>
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          </div>
+                          <div className="text-[11px] text-[#53605C]">Order #64821 • Verified WhatsApp</div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] bg-[#E8F0EB] text-[#164E3F] font-bold px-2.5 py-1 rounded-full border border-[#164E3F]/20">
+                        Out for Delivery 🚚
+                      </span>
+                    </div>
+
+                    {/* Chat Feed */}
+                    <div className="p-5 space-y-4 bg-white min-h-[300px]">
+                      {/* Automated WhatsApp Dispatch Notification */}
+                      <div className="flex items-start gap-2.5 max-w-[90%] ml-auto flex-row-reverse">
+                        <div className="w-7 h-7 rounded-full bg-[#164E3F] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                          UT
+                        </div>
+                        <div className="bg-[#164E3F] text-white rounded-2xl rounded-tr-sm p-4 text-xs space-y-2 shadow-sm">
+                          <p className="font-semibold text-emerald-200 text-[11px]">📦 Order Dispatched — On the Way!</p>
+                          <p>Hi Ananya! Your order #64821 (Classic Linen Jacket, Navy / M) is out for delivery with Bluedart today.</p>
+                          <div className="bg-[#0f382d] rounded-xl p-2.5 text-[11px] space-y-1">
+                            <p className="text-emerald-100 font-medium">Tracking ID: BD-84920412</p>
+                            <p className="text-emerald-300">Estimated Arrival: Today, before 4:30 PM</p>
+                          </div>
+                          <span className="text-[10px] text-emerald-200/80 block text-right">08:30 AM · Delivered</span>
+                        </div>
+                      </div>
+
+                      {/* Customer Reply */}
+                      <div className="flex items-start gap-2.5 max-w-[85%]">
+                        <div className="w-7 h-7 rounded-full bg-stone-200 text-[#111817] text-[10px] font-bold flex items-center justify-center shrink-0">
+                          AK
+                        </div>
+                        <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-2xl rounded-tl-sm p-3.5 text-xs text-[#111817] space-y-1 shadow-2xs">
+                          <p className="font-semibold text-[11px] text-[#53605C]">Ananya Kapoor</p>
+                          <p>Super fast! Can the delivery executive leave it at the security reception desk if I am not home?</p>
+                          <span className="text-[10px] text-[#53605C] block text-right">09:02 AM</span>
+                        </div>
+                      </div>
+
+                      {/* System Routing Pill */}
+                      <div className="flex justify-center">
+                        <span className="text-[10px] font-medium text-[#53605C] bg-[#F8F8F5] px-3 py-1 rounded-full border border-[#DDE3DF]">
+                          ⚡ Courier Instruction Auto-Synced
+                        </span>
+                      </div>
+
+                      {/* Support Team Response */}
+                      <div className="flex items-start gap-2.5 max-w-[90%] ml-auto flex-row-reverse">
+                        <div className="w-7 h-7 rounded-full bg-[#164E3F] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                          UT
+                        </div>
+                        <div className="bg-[#164E3F] text-white rounded-2xl rounded-tr-sm p-3.5 text-xs space-y-1 shadow-sm">
+                          <p className="font-semibold text-[11px] text-emerald-200">Kavita (Customer Support)</p>
+                          <p>Noted Ananya! We have tagged your delivery note with Bluedart: "Deliver to Building Reception Gate". Have a wonderful day!</p>
+                          <span className="text-[10px] text-emerald-200/80 block text-right">09:04 AM · Delivered</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick E-Commerce Action Strip */}
+                    <div className="p-3 bg-[#F8F8F5] border-t border-[#DDE3DF] flex items-center gap-2 overflow-x-auto text-[11px]">
+                      <span className="text-[#53605C] font-semibold text-[10px] uppercase tracking-wider shrink-0">1-Tap Macros:</span>
+                      <button className="px-2.5 py-1 rounded-full bg-white border border-[#DDE3DF] text-[#111817] hover:border-[#164E3F] transition-colors shrink-0">
+                        📦 Live Courier Status
+                      </button>
+                      <button className="px-2.5 py-1 rounded-full bg-white border border-[#DDE3DF] text-[#111817] hover:border-[#164E3F] transition-colors shrink-0">
+                        🔄 Confirm Delivery Address
+                      </button>
+                      <button className="px-2.5 py-1 rounded-full bg-white border border-[#DDE3DF] text-[#111817] hover:border-[#164E3F] transition-colors shrink-0">
+                        ⭐ Send Review Request
+                      </button>
+                    </div>
+
+                    {/* Bottom Metric Strip */}
+                    <div className="px-5 py-3 bg-white border-t border-[#DDE3DF] flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 text-emerald-700 font-semibold">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>Return to Origin (RTO): Reduced by 28%</span>
+                      </div>
+                      <span className="text-[#53605C] text-[11px]">98.4% Delivery Open Rate</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Steps ── */}
-      <section className="max-w-4xl mx-auto px-4 py-16 space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Get running in 4 quick steps</h2>
-          <p className="text-slate-500 text-sm">Everything connects in minutes — no technical knowledge required.</p>
-        </div>
-        <div className="space-y-4">
-          {STEPS.map(({ step, label, detail }) => (
-            <div key={step} className="flex items-start gap-4 bg-slate-50 rounded-2xl p-5 border border-slate-100">
-              <div className="w-9 h-9 rounded-full bg-[#164E3F] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
-                {step}
+        {/* ── 2. Store Types Strip ── */}
+        <section className="py-6 border-y border-[#DDE3DF] bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-semibold text-[#53605C]">
+              <span className="text-[11px] uppercase tracking-widest text-[#164E3F] font-bold">
+                INTEGRATES WITH:
+              </span>
+              {STORE_TYPES.map((type) => (
+                <div key={type} className="flex items-center gap-2 text-[#111817]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#164E3F]" />
+                  <span>{type}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 3. Six Core Capabilities Grid ── */}
+        <section className="py-16 sm:py-24 bg-[#F8F8F5]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-3">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+                <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+                <span>DESIGNED FOR RETAIL & E-COMMERCE</span>
+                <span className="w-6 h-[1.5px] bg-[#164E3F]" />
               </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111817]">
+                Everything you need to automate post-purchase communication
+              </h2>
+              <p className="text-sm sm:text-base text-[#53605C]">
+                Turn shipping notifications into a brand-building experience that slashes support tickets and drives repeat sales.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {BENEFITS.map(({ icon: Icon, title, desc }) => (
+                <div 
+                  key={title} 
+                  className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-7 shadow-sm hover:border-[#164E3F]/40 hover:shadow-md transition-all space-y-3"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#E8F0EB] text-[#164E3F] flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 stroke-[2.2]" />
+                  </div>
+                  <h3 className="font-bold text-[#111817] text-base">{title}</h3>
+                  <p className="text-xs sm:text-sm text-[#53605C] leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. Set Up Steps ── */}
+        <section className="py-16 sm:py-24 bg-white border-t border-[#DDE3DF]">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div className="text-center space-y-3 max-w-xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111817]">
+                Get running in 4 quick steps
+              </h2>
+              <p className="text-sm sm:text-base text-[#53605C]">
+                Connect your e-commerce platform and start sending automated WhatsApp delivery updates in minutes.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {STEPS.map(({ step, label, detail }) => (
+                <div 
+                  key={step} 
+                  className="flex items-start gap-4 bg-[#F8F8F5] rounded-2xl p-6 border border-[#DDE3DF] shadow-2xs hover:border-[#164E3F]/30 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-[#164E3F] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
+                    {step}
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-sm sm:text-base text-[#111817]">{label}</h3>
+                    <p className="text-xs sm:text-sm text-[#53605C] leading-relaxed">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 5. Frequently Asked Questions ── */}
+        <section className="py-16 sm:py-24 bg-[#F8F8F5] border-t border-[#DDE3DF]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-bold tracking-tight text-[#111817]">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-sm text-[#53605C]">
+                Common questions from e-commerce brands and retailers.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {FAQS.map(({ q, a }) => (
+                <div 
+                  key={q} 
+                  className="bg-white rounded-2xl p-6 border border-[#DDE3DF] shadow-sm space-y-2 hover:border-[#164E3F]/30 transition-all"
+                >
+                  <h3 className="font-bold text-sm sm:text-base text-[#111817]">{q}</h3>
+                  <p className="text-xs sm:text-sm text-[#53605C] leading-relaxed">{a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 6. Bottom Banner Call To Action (Signature Image 3 Styling) ── */}
+        <section className="relative overflow-hidden py-16 sm:py-20 border-t border-[#DDE3DF] bg-[#F8F8F5]">
+          {/* Subtle Decorative Leaves */}
+          <div className="absolute -bottom-10 -left-10 w-44 h-44 opacity-20 pointer-events-none select-none text-[#164E3F]">
+            <svg viewBox="0 0 200 200" fill="currentColor">
+              <path d="M45,150 C70,90 120,40 180,20 C160,80 120,130 50,150 Z" />
+              <path d="M20,170 C40,110 90,70 150,50 C130,100 90,140 25,170 Z" opacity="0.6" />
+            </svg>
+          </div>
+          <div className="absolute -bottom-10 -right-10 w-44 h-44 opacity-20 pointer-events-none select-none text-[#164E3F] transform scale-x-[-1]">
+            <svg viewBox="0 0 200 200" fill="currentColor">
+              <path d="M45,150 C70,90 120,40 180,20 C160,80 120,130 50,150 Z" />
+              <path d="M20,170 C40,110 90,70 150,50 C130,100 90,140 25,170 Z" opacity="0.6" />
+            </svg>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-10 px-6 sm:px-12 rounded-3xl bg-white border border-[#DDE3DF] shadow-sm">
+              <div className="text-center md:text-left space-y-2">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#111817]">
+                  Ready to automate WhatsApp order updates?
+                </h3>
+                <p className="text-xs sm:text-sm text-[#53605C]">
+                  Delight your customers with live shipping alerts. Free to start, no credit card required.
+                </p>
+              </div>
+
               <div>
-                <p className="font-bold text-sm text-[#111827]">{label}</p>
-                <p className="text-xs text-slate-500">{detail}</p>
+                <button
+                  onClick={() => setAuthModalOpen(true)}
+                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-sm hover:shadow transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <span>Get Started Free</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto shrink-0 mt-0.5" />
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </section>
+      </main>
 
-      {/* ── FAQ ── */}
-      <section className="bg-slate-50 py-16">
-        <div className="max-w-3xl mx-auto px-4 space-y-6">
-          <h2 className="text-2xl font-extrabold text-center text-[#111827]">Frequently Asked Questions</h2>
-          {[
-            { q: 'Which e-commerce platforms work with CHATR?', a: 'CHATR connects with Shopify, WooCommerce, Magento, custom e-commerce APIs, or simple CSV upload for order fulfillment.' },
-            { q: 'Can customers reply to the tracking message?', a: 'Yes! Unlike one-way SMS, when a customer replies to ask about delivery times or change their address, your team sees the message in CHATR and can reply right away.' },
-            { q: 'Does this help reduce Cash on Delivery (COD) cancellations?', a: 'Yes. Stores see an average 25% reduction in Return to Origin (RTO) because buyers confirm their delivery address and are aware of the exact delivery date.' },
-            { q: 'Do I need special developer skills to set this up?', a: 'No. Everything is configured through simple point-and-click settings in your browser.' },
-            { q: 'Can I send review requests after delivery?', a: 'Yes. You can trigger an automatic WhatsApp message 24 hours after the delivery confirmation asking for a review or rating.' },
-          ].map(({ q, a }) => (
-            <div key={q} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <p className="font-bold text-sm text-[#111827] mb-2">{q}</p>
-              <p className="text-xs text-slate-500 leading-relaxed">{a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── Canonical Platform Footer ── */}
+      <Footer />
 
-      {/* ── Bottom CTA ── */}
-      <section className="max-w-4xl mx-auto px-4 py-16 text-center space-y-5">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
-          Ready to automate WhatsApp order updates?
-        </h2>
-        <p className="text-slate-500 text-sm max-w-lg mx-auto">
-          Delight your customers with instant delivery alerts. Free to start, no credit card required.
-        </p>
-        <button
-          onClick={handleGoogleSignIn}
-          disabled={googleLoading}
-          className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#164E3F] hover:bg-[#2E6B59] text-white font-bold text-sm transition-all cursor-pointer disabled:opacity-60 shadow-lg shadow-emerald-900/20"
-        >
-          {googleLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-          Start Free with Google <ArrowRight className="w-4 h-4" />
-        </button>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-slate-100 py-6 text-center text-xs text-slate-400">
-        <Link to="/" className="font-bold text-[#164E3F] mr-4">CHATR</Link>
-        <Link to="/solutions/hotel-guest-messaging" className="hover:underline mr-4">Hotel Messaging</Link>
-        <Link to="/whatsapp-team-inbox" className="hover:underline mr-4">Team Inbox</Link>
-        <Link to="/tools/whatsapp-link-generator" className="hover:underline">Free WhatsApp Link Generator</Link>
-      </footer>
+      {/* ── Pure Phone OTP Auth Modal Overlay (No Google Login) ── */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };
