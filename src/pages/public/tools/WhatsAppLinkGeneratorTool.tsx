@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   MessageSquare, Copy, Check, QrCode, Download, ArrowRight, 
-  Sparkles, Zap, ShieldCheck, ExternalLink, RefreshCw, Loader2
+  Sparkles, Zap, ShieldCheck, ExternalLink, RefreshCw, Loader2,
+  Users, Share2, CheckCircle2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { trackAcquisitionEvent, initializeAttribution } from '../../../services/acquisitionTelemetry';
+import { AuthModal } from '@/components/landing/AuthModal';
 
 export const WhatsAppLinkGeneratorTool: React.FC = () => {
   const [businessName, setBusinessName] = useState('');
@@ -14,6 +17,10 @@ export const WhatsAppLinkGeneratorTool: React.FC = () => {
   const [message, setMessage] = useState('Hi, I would like to inquire about your services.');
   const [copied, setCopied] = useState(false);
   const [generatedLink, setGeneratedLink] = useState('');
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isLinkSaved, setIsLinkSaved] = useState(() => {
+    try { return !!localStorage.getItem('chatr_saved_whatsapp_link'); } catch { return false; }
+  });
 
   useEffect(() => {
     initializeAttribution();
@@ -233,36 +240,109 @@ export const WhatsAppLinkGeneratorTool: React.FC = () => {
         </div>
 
 
-        {/* ── 1-Tap Registration Card ── */}
-        <div className="bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-900 border border-indigo-500/25 rounded-2xl p-6 sm:p-8 text-center space-y-5">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Free — No Credit Card</span>
+        {/* ── EXP-003: 1-Tap Team Inbox Save & Member Invitation ── */}
+        <div className="bg-gradient-to-br from-slate-900 via-indigo-950/70 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+
+          {isLinkSaved ? (
+            <div className="space-y-4 animate-in fade-in duration-300">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Link Saved to Your CHATR Inbox</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
+                Your Shared WhatsApp Inbox is Ready
+              </h3>
+              <p className="text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                Now invite your teammates so customer messages go to one central place. No one misses an incoming inquiry.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <Link
+                  to="/inbox"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+                >
+                  <span>Open Shared Inbox</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(
+                    `Hey team, I've set up our shared customer WhatsApp link on CHATR. Join our team inbox here: https://www.chatrchat.in/`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    trackAcquisitionEvent({
+                      event: 'share_clicked',
+                      tool: 'whatsapp-link-generator',
+                      metadata: { action: 'invite_team_whatsapp' }
+                    });
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold text-xs transition-all"
+                >
+                  <Share2 className="w-4 h-4 text-emerald-400" />
+                  <span>Invite Teammates via WhatsApp</span>
+                </a>
+              </div>
             </div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
-              Save this link. Let your whole team reply.
-            </h3>
-            <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-              When you sign up free, you can save your WhatsApp links, share them with your team, 
-              and reply to all your customers from one place — without switching tabs.
-            </p>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Free Shared Team Inbox • No Card Needed</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
+                Save this link. Let your whole team reply.
+              </h3>
+              <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                Save this link so you and your team can manage customer replies together in one shared inbox — without passing around a single physical phone.
+              </p>
 
-          {/* CHATR CTA */}
-          <Link
-            to="/auth"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white font-bold text-sm transition-all shadow-md cursor-pointer mx-auto"
-          >
-            <span>Get Started Free</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+              <div className="pt-2">
+                <button
+                  onClick={() => {
+                    trackAcquisitionEvent({
+                      event: 'signup_started',
+                      tool: 'whatsapp-link-generator',
+                      metadata: { hasLink: Boolean(generatedLink), businessName }
+                    });
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-sm transition-all shadow-xl shadow-emerald-500/25 cursor-pointer mx-auto"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Save Link & Setup Team Inbox (Phone)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
 
-          <p className="text-[11px] text-slate-400">
-            ✓ Free forever · ✓ Setup in 30 seconds · ✓ No credit card needed
-          </p>
+              <p className="text-[11px] text-slate-400">
+                ✓ 1-Tap OTP login · ✓ Keep all customer chats organized · ✓ 100% Free
+              </p>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Auth Modal for Phone OTP (EXP-003) */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={() => {
+          setAuthModalOpen(false);
+          setIsLinkSaved(true);
+          try {
+            localStorage.setItem('chatr_saved_whatsapp_link', generatedLink || 'active');
+          } catch {}
+          trackAcquisitionEvent({
+            event: 'signup_completed',
+            tool: 'whatsapp-link-generator',
+            metadata: { businessName, countryCode, hasLink: Boolean(generatedLink) }
+          });
+          toast.success('Link saved! Your team inbox is now active.');
+        }}
+      />
     </div>
   );
 };

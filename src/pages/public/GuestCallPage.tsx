@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { SEOHead } from '@/components/SEOHead';
 import { ViralTelemetry } from '@/services/viralTelemetry';
 import { ServerAbuseGuard } from '@/services/serverAbuseGuard';
+import { AuthModal } from '@/components/landing/AuthModal';
 
 const FALLBACK_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
@@ -84,6 +85,14 @@ export const GuestCallPage: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  
+  // Post-Call Permanent Link Claiming Engine (Experiment 001 & 002)
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [customHandle, setCustomHandle] = useState('');
+  const [claimedHandle, setClaimedHandle] = useState<string | null>(() => {
+    try { return localStorage.getItem('chatr_permanent_call_handle'); } catch { return null; }
+  });
+  const [copiedClaimLink, setCopiedClaimLink] = useState(false);
 
   // Capture PWA beforeinstallprompt on mobile browsers
   useEffect(() => {
@@ -423,6 +432,18 @@ export const GuestCallPage: React.FC = () => {
         type: 'post_call_cta_viewed',
         roomSessionId
       });
+      ViralTelemetry.trackGrowth({
+        eventType: 'call_completed',
+        category: 'calling',
+        landingPage: window.location.pathname,
+        metadata: { durationSec: callDuration, role: isCaller ? 'caller' : 'receiver' }
+      });
+      ViralTelemetry.trackGrowth({
+        eventType: 'claim_prompt_shown',
+        category: 'acquisition',
+        landingPage: window.location.pathname,
+        metadata: { role: isCaller ? 'caller' : 'receiver' }
+      });
     }
   };
 
@@ -689,28 +710,100 @@ export const GuestCallPage: React.FC = () => {
               </p>
             </div>
 
-            {/* 1-TAP GOOGLE REGISTRATION: Claim Your Permanent Calling Link */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 border border-indigo-500/40 space-y-3 text-left">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>Claim Your Permanent Call Link</span>
+            {/* EXPERIMENT 001 & 002: INLINE PERMANENT CALL LINK CLAIM (CALLER & RECEIVER) */}
+            {claimedHandle ? (
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/80 via-slate-900 to-slate-950 border border-emerald-500/40 space-y-3 text-left animate-in fade-in duration-300">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span>Your Permanent Call Link is Active</span>
+                  </div>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    Live Link
+                  </span>
                 </div>
-                <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-extrabold px-2 py-0.5 rounded-full border border-indigo-500/30">
-                  Free Forever
-                </span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Anyone can click this link to call you directly in their browser for free. Never generate temporary links again:
+                </p>
+                <div className="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                  <span className="text-xs font-mono text-emerald-300 flex-1 truncate select-all">
+                    https://www.chatrchat.in/call/{claimedHandle}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://www.chatrchat.in/call/${claimedHandle}`);
+                      setCopiedClaimLink(true);
+                      setTimeout(() => setCopiedClaimLink(false), 2500);
+                      ViralTelemetry.trackGrowth({
+                        eventType: 'link_shared',
+                        category: 'viral',
+                        metadata: { method: 'clipboard_copy', handle: claimedHandle }
+                      });
+                      toast.success('Call link copied to clipboard!');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-colors shrink-0"
+                  >
+                    {copiedClaimLink ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+                <button
+                  onClick={() => {
+                    const shareUrl = `https://www.chatrchat.in/call/${claimedHandle}`;
+                    const text = encodeURIComponent(`📞 Call me anytime for free on CHATR (no app download needed): ${shareUrl}`);
+                    window.open(`https://wa.me/?text=${text}`, '_blank');
+                    ViralTelemetry.trackGrowth({
+                      eventType: 'link_shared',
+                      category: 'viral',
+                      metadata: { method: 'whatsapp_share', handle: claimedHandle }
+                    });
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>Share My Calling Link on WhatsApp</span>
+                </button>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Want your own personal link like <span className="text-white font-mono font-semibold">chatrchat.in/call/your-name</span> that friends or clients can click to call you anytime?
-              </p>
-              <Link
-                to="/auth"
-                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-[#164E3F] hover:bg-[#2E6B59] text-white font-extrabold text-xs shadow-lg transition-all cursor-pointer"
-              >
-                <span>Claim My Free Call Link</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+            ) : (
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 border border-indigo-500/40 space-y-3 text-left">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Keep Your Personal Calling Link</span>
+                  </div>
+                  <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-extrabold px-2 py-0.5 rounded-full border border-indigo-500/30">
+                    Free Forever
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Never create a temporary link again. Claim your free personal link like <span className="text-white font-mono font-semibold">chatrchat.in/call/your-name</span> so friends, clients or candidates can call you anytime:
+                </p>
+                <div className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs">
+                  <span className="text-slate-500 font-mono text-[11px] shrink-0">chatrchat.in/call/</span>
+                  <input
+                    type="text"
+                    placeholder="your-name"
+                    value={customHandle}
+                    onChange={(e) => setCustomHandle(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                    className="bg-transparent flex-1 text-white font-mono placeholder:text-slate-600 focus:outline-none text-xs"
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    ViralTelemetry.trackGrowth({
+                      eventType: 'claim_started',
+                      category: 'acquisition',
+                      landingPage: window.location.pathname,
+                      metadata: { handle: customHandle, role: isCaller ? 'caller' : 'receiver' }
+                    });
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-[#164E3F] hover:bg-[#2E6B59] text-white font-extrabold text-xs shadow-lg transition-all cursor-pointer"
+                >
+                  <span>Claim My Calling Link (with Phone)</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
 
             {/* VIRAL SHARE HOOK: Share Free HD Calling with 3 Friends */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-950 border border-emerald-500/40 space-y-3 text-left">
@@ -823,6 +916,26 @@ export const GuestCallPage: React.FC = () => {
           </Link>
         </div>
       </footer>
+
+      {/* AUTH MODAL FOR PHONE OTP CLAIM (EXPERIMENT 001 & 002) */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={() => {
+          setAuthModalOpen(false);
+          const handleToSave = customHandle.trim() || `call-${Date.now().toString().slice(-4)}`;
+          try {
+            localStorage.setItem('chatr_permanent_call_handle', handleToSave);
+          } catch {}
+          setClaimedHandle(handleToSave);
+          ViralTelemetry.trackGrowth({
+            eventType: 'permanent_link_created',
+            category: 'acquisition',
+            metadata: { handle: handleToSave, role: isCaller ? 'caller' : 'receiver' }
+          });
+          toast.success('Your permanent calling link is ready!');
+        }}
+      />
     </div>
   );
 };

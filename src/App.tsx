@@ -94,6 +94,7 @@ const ExecutionInspectPage = React.lazy(() => import("./pages/desktop/ExecutionI
 
 // Executive & Product Suite Dashboards
 const ExecutiveHomeLanding = React.lazy(() => import("./components/ExecutiveHomeLanding").then(m => ({ default: m.ExecutiveHomeLanding })));
+const GrowthControlRoomPage = React.lazy(() => import("./pages/public/GrowthControlRoomPage").then(m => ({ default: m.GrowthControlRoomPage })));
 const GrowthOSDashboard = React.lazy(() => import("./components/GrowthOSDashboard").then(m => ({ default: m.GrowthOSDashboard })));
 const RevenueOSDashboard = React.lazy(() => import("./components/RevenueOSDashboard").then(m => ({ default: m.RevenueOSDashboard })));
 const CustomerSuccessOSDashboard = React.lazy(() => import("./components/CustomerSuccessOSDashboard").then(m => ({ default: m.CustomerSuccessOSDashboard })));
@@ -843,7 +844,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
     <Route path="agents" element={<LazyRoute component={AutonomousAgentsWarRoom} />} />
     <Route path="users" element={<LazyRoute component={UserManagementView} />} />
     <Route path="businesses" element={<LazyRoute component={BusinessManagementView} />} />
-    <Route path="growth" element={<LazyRoute component={AcquisitionDashboard} />} />
+    <Route path="growth" element={<LazyRoute component={GrowthControlRoomPage} />} />
     <Route path="seo" element={<LazyRoute component={SeoControlView} />} />
     <Route path="pages" element={<LazyRoute component={PagesIndexationView} />} />
     <Route path="sitemaps" element={<LazyRoute component={SitemapsView} />} />
@@ -914,7 +915,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
 
   {/* CHATR Product OS Clean Top-Level Routes */}
   <Route path="/executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
-  <Route path="/growth" element={<LazyRoute component={GrowthOSDashboard} />} />
+  <Route path="/growth" element={<LazyRoute component={GrowthControlRoomPage} />} />
   <Route path="/knowledge" element={<LazyRoute component={ExecutiveAICopilotDashboard} />} />
   <Route path="/revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
@@ -1092,7 +1093,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/what-is-a-universal-business-inbox" element={<LazyRoute component={TerminologyPage} />} />
   <Route path="/what-is-a-robotics-operating-system" element={<LazyRoute component={TerminologyPage} />} />
 
-  <Route path="/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
+  {/* desktop acquisition dashboard */}
   <Route path="/desktop/growth" element={<ProtectedLazyRoute component={AcquisitionDashboard} />} />
 
   {/* talentxcel.in SEO Cluster — SI Resume & Candidate Screening (Cycle 1) */}
@@ -1263,8 +1264,8 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/chatr-points" element={<LazyRoute component={LazyPages.ChatrPoints} />} />
  <Route path="/reward-shop" element={<LazyRoute component={LazyPages.RewardShop} />} />
  <Route path="/stealth-mode" element={<ProtectedLazyRoute component={LazyPages.StealthMode} />} />
- <Route path="/growth" element={<LazyRoute component={LazyPages.ChatrGrowth} />} />
- <Route path="/chatr-growth" element={<LazyRoute component={LazyPages.ChatrGrowth} />} />
+ {/* public /growth route mapped to GrowthControlRoomPage above */}
+ <Route path="/chatr-growth" element={<LazyRoute component={GrowthControlRoomPage} />} />
  <Route path="/chatr-wallet" element={<LazyRoute component={LazyPages.ChatrWallet} />} />
  <Route path="/chatr-plus-subscribe" element={<LazyRoute component={LazyPages.ChatrPlusSubscribe} />} />
  <Route path="/ambassador-program" element={<LazyRoute component={LazyPages.AmbassadorProgram} />} />
