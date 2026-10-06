@@ -1,62 +1,105 @@
-import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Tag, BookOpen, Building2, GraduationCap, Award, HeartHandshake, Lightbulb, Users, Globe } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { 
+  ArrowLeft, Tag, BookOpen, Building2, GraduationCap, Award, 
+  Lightbulb, Users, Globe, ExternalLink, ShieldCheck 
+} from 'lucide-react';
 import { AUTHORS } from '@/data/authorsData';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { SEOHead } from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 
 export const AuthorProfilePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const author = slug ? AUTHORS[slug] : undefined;
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!author) return;
-    const pageTitle = author.slug === 'sanobar-jahan'
-      ? `${author.name} — Founder, TalentXcel & CHATR | HR & Education Strategist`
-      : `${author.name} — ${author.role} | CHATR Communication OS`;
-    document.title = pageTitle;
-    
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', author.bio);
-    
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', `https://www.chatrchat.in/authors/${author.slug}`);
+    window.scrollTo(0, 0);
 
-    const schema = document.createElement('script');
-    schema.id = 'author-profile-schema';
-    schema.type = 'application/ld+json';
-    schema.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': author.slug === 'sanobar-jahan' ? 'Person' : 'Organization',
-      name: author.name,
-      jobTitle: author.role,
-      worksFor: [
-        { '@type': 'Organization', name: 'TalentXcel', url: 'https://talentxcel.in' },
-        { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://www.chatrchat.in' }
-      ],
-      alumniOf: author.slug === 'sanobar-jahan' ? [
-        { '@type': 'EducationalOrganization', name: 'Jamia Hamdard' }
-      ] : undefined,
-      hasCredential: author.credentials || [],
-      sameAs: [
-        author.linkedinUrl,
-        author.facebookUrl,
-        (author as any).redditUrl
-      ].filter(Boolean),
-      description: author.bio,
-      url: `https://www.chatrchat.in/authors/${author.slug}`,
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
     });
-    if (!document.getElementById('author-profile-schema')) document.head.appendChild(schema);
-    return () => { const s = document.getElementById('author-profile-schema'); if (s) s.remove(); };
+
+    if (author) {
+      const pageTitle = author.slug === 'sanobar-jahan'
+        ? `${author.name} — Founder, TalentXcel & CHATR | HR & Education Strategist`
+        : `${author.name} — ${author.role} | CHATR Communication OS`;
+      document.title = pageTitle;
+
+      const schema = document.createElement('script');
+      schema.id = 'author-profile-schema';
+      schema.type = 'application/ld+json';
+      schema.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': author.slug === 'sanobar-jahan' ? 'Person' : 'Organization',
+        name: author.name,
+        jobTitle: author.role,
+        worksFor: [
+          { '@type': 'Organization', name: 'TalentXcel', url: 'https://talentxcel.in' },
+          { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://www.chatrchat.in' }
+        ],
+        alumniOf: author.slug === 'sanobar-jahan' ? [
+          { '@type': 'EducationalOrganization', name: 'Jamia Hamdard' }
+        ] : undefined,
+        hasCredential: author.credentials || [],
+        sameAs: [
+          author.linkedinUrl,
+          author.facebookUrl,
+          (author as any).redditUrl
+        ].filter(Boolean),
+        description: author.bio,
+        url: `https://www.chatrchat.in/authors/${author.slug}`,
+      });
+      if (!document.getElementById('author-profile-schema')) document.head.appendChild(schema);
+    }
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+      const s = document.getElementById('author-profile-schema');
+      if (s) s.remove();
+    };
   }, [author]);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   if (!author) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-slate-400">Author profile not found.</p>
-          <Link to="/authors" className="text-indigo-400 hover:underline font-semibold">Back to Authors</Link>
+      <div className="min-h-screen bg-[#F8F8F5] text-[#111817] flex flex-col justify-between">
+        <LandingHeader
+          onOpenAuth={() => setAuthModalOpen(true)}
+          isAuthenticated={isAuthenticated}
+          onNavigateWorkspace={handleNavigateWorkspace}
+        />
+        <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+          <p className="text-[#53605C]">Author profile not found.</p>
+          <Link to="/authors" className="text-[#164E3F] hover:underline font-semibold text-sm">
+            ← Back to Authors Directory
+          </Link>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -64,91 +107,109 @@ export const AuthorProfilePage: React.FC = () => {
   const isFounder = author.slug === 'sanobar-jahan';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/authors" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
-            <ArrowLeft className="w-4 h-4" /> All Authors & Teams
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title={isFounder ? `${author.name} — Founder, TalentXcel & CHATR` : `${author.name} — ${author.role}`}
+        description={author.bio}
+        canonicalUrl={`https://www.chatrchat.in/authors/${author.slug}`}
+      />
+
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14 space-y-10">
+        {/* Navigation Breadcrumb / Back Link */}
+        <div className="flex items-center justify-between text-xs text-[#53605C]">
+          <Link to="/authors" className="inline-flex items-center gap-1.5 text-[#53605C] hover:text-[#164E3F] transition-colors font-medium">
+            <ArrowLeft className="w-4 h-4" />
+            <span>All Authors & Teams</span>
           </Link>
-          <Link to="/editorial-policy" className="text-xs text-slate-400 hover:text-white transition-colors font-semibold">
+          <Link to="/editorial-policy" className="hover:text-[#164E3F] transition-colors font-semibold">
             Editorial Policy
           </Link>
         </div>
-      </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-12 space-y-12">
-        {/* Executive Profile Header */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-8 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-indigo-400 p-0.5 shrink-0 shadow-xl shadow-indigo-500/20 overflow-hidden">
+        {/* Executive Profile Card */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-10 space-y-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+            <div className="w-24 h-24 rounded-2xl bg-[#E8F0EB] border border-[#164E3F]/20 flex items-center justify-center text-[#164E3F] font-bold text-3xl shrink-0 overflow-hidden shadow-sm">
               {author.avatarUrl ? (
-                <img src={author.avatarUrl} alt={author.name} className="w-full h-full rounded-[14px] object-cover object-top" />
+                <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover object-top" />
               ) : (
-                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-indigo-300 font-bold text-3xl">
-                  {author.name.charAt(0)}
-                </div>
+                <span>{author.name.charAt(0)}</span>
               )}
             </div>
-            <div className="space-y-1.5">
+
+            <div className="space-y-2">
               {isFounder ? (
                 <>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] text-xs font-semibold">
                     <Award className="w-3.5 h-3.5" />
                     <span>20+ Years HR, Talent & Education Leader</span>
                   </span>
-                  <h1 className="text-3xl font-extrabold text-white">{author.name}</h1>
-                  <p className="text-sm text-indigo-400 font-semibold">{author.role}</p>
-                  <p className="text-xs text-slate-400 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                    <span className="text-slate-300 font-semibold">Founder of TalentXcel & CHATR</span>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111817] tracking-tight">{author.name}</h1>
+                  <p className="text-sm font-semibold text-[#164E3F]">{author.role}</p>
+                  <p className="text-xs text-[#53605C] flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#164E3F]" />
+                    <span>Founder of TalentXcel & CHATR</span>
                   </p>
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
                     {author.linkedinUrl && (
-                      <a href={author.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-blue-600/30 transition-colors">
-                        <Globe className="w-3 h-3" /> LinkedIn Profile
+                      <a
+                        href={author.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs bg-[#FAFBF9] hover:bg-white text-[#164E3F] border border-[#DDE3DF] px-3 py-1 rounded-full font-semibold transition-colors"
+                      >
+                        <Globe className="w-3 h-3" /> LinkedIn
                       </a>
                     )}
                     {author.facebookUrl && (
-                      <a href={author.facebookUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-indigo-600/30 transition-colors">
-                        <Globe className="w-3 h-3" /> Facebook Profile
-                      </a>
-                    )}
-                    {(author as any).redditUrl && (
-                      <a href={(author as any).redditUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-orange-600/20 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-md font-semibold hover:bg-orange-600/30 transition-colors">
-                        <Globe className="w-3 h-3" /> Reddit Profile
+                      <a
+                        href={author.facebookUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs bg-[#FAFBF9] hover:bg-white text-[#164E3F] border border-[#DDE3DF] px-3 py-1 rounded-full font-semibold transition-colors"
+                      >
+                        <Globe className="w-3 h-3" /> Facebook
                       </a>
                     )}
                   </div>
                 </>
               ) : (
                 <>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] text-xs font-semibold">
                     <Users className="w-3.5 h-3.5" />
                     <span>Core Product & Engineering Group</span>
                   </span>
-                  <h1 className="text-3xl font-extrabold text-white">{author.name}</h1>
-                  <p className="text-sm text-indigo-400 font-semibold">{author.role}</p>
-                  <p className="text-xs text-slate-400 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                    <span className="text-slate-300 font-semibold">Led by Founder Sanobar Jahan & Engineering Leadership</span>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111817] tracking-tight">{author.name}</h1>
+                  <p className="text-sm font-semibold text-[#164E3F]">{author.role}</p>
+                  <p className="text-xs text-[#53605C] flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#164E3F]" />
+                    <span>Led by Founder Sanobar Jahan & Engineering Leadership</span>
                   </p>
                 </>
               )}
             </div>
           </div>
 
-          <p className="text-slate-300 text-sm leading-relaxed border-t border-slate-800 pt-6">
+          <p className="text-[#53605C] text-sm md:text-base leading-relaxed border-t border-[#DDE3DF] pt-6">
             {author.bio}
           </p>
 
-          {/* Organizations Worked With (Individual Founder Only) */}
+          {/* Organizations Worked With */}
           {isFounder && author.organizationsWorkedWith && (
-            <div className="space-y-2 border-t border-slate-800 pt-6">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Professional Experience & Organizations</span>
+            <div className="space-y-3 border-t border-[#DDE3DF] pt-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#111817]">
+                Professional Experience & Organizations
+              </span>
               <div className="flex flex-wrap gap-2 pt-1">
                 {author.organizationsWorkedWith.map((org, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 text-xs bg-slate-950 text-slate-300 border border-slate-800 px-3.5 py-1.5 rounded-lg font-semibold">
-                    <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                  <span key={i} className="inline-flex items-center gap-1.5 text-xs bg-[#FAFBF9] text-[#111817] border border-[#DDE3DF] px-3.5 py-1.5 rounded-full font-medium">
+                    <Building2 className="w-3.5 h-3.5 text-[#164E3F]" />
                     {org}
                   </span>
                 ))}
@@ -156,14 +217,16 @@ export const AuthorProfilePage: React.FC = () => {
             </div>
           )}
 
-          {/* Academic Background (Individual Founder Only) */}
+          {/* Academic Background */}
           {isFounder && author.credentials && (
-            <div className="space-y-2 border-t border-slate-800 pt-6">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Academic Qualifications & Degrees</span>
-              <div className="grid md:grid-cols-2 gap-2.5 pt-1">
+            <div className="space-y-3 border-t border-[#DDE3DF] pt-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#111817]">
+                Academic Qualifications & Degrees
+              </span>
+              <div className="grid sm:grid-cols-2 gap-3 pt-1">
                 {author.credentials.map((cred, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs bg-slate-950 text-indigo-200 border border-indigo-500/20 px-3 py-2 rounded-lg">
-                    <GraduationCap className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <div key={i} className="flex items-center gap-2.5 text-xs bg-[#FAFBF9] text-[#111817] border border-[#DDE3DF] px-3.5 py-2.5 rounded-xl font-medium">
+                    <GraduationCap className="w-4 h-4 text-[#164E3F] shrink-0" />
                     <span>{cred}</span>
                   </div>
                 ))}
@@ -171,12 +234,14 @@ export const AuthorProfilePage: React.FC = () => {
             </div>
           )}
 
-          {/* Expertise Areas */}
-          <div className="space-y-2 border-t border-slate-800 pt-6">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Core Expertise & Focus Areas</span>
+          {/* Core Expertise */}
+          <div className="space-y-3 border-t border-[#DDE3DF] pt-6">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#111817]">
+              Core Expertise & Focus Areas
+            </span>
             <div className="flex flex-wrap gap-2 pt-1">
               {author.expertise.map((exp, i) => (
-                <span key={i} className="text-xs bg-indigo-950/60 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg font-medium">
+                <span key={i} className="text-xs bg-[#E8F0EB] text-[#164E3F] border border-[#164E3F]/20 px-3 py-1 rounded-full font-semibold">
                   {exp}
                 </span>
               ))}
@@ -184,16 +249,16 @@ export const AuthorProfilePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Founder Leadership Principles (Individual Founder Only) */}
+        {/* Founder Leadership Principles */}
         {isFounder && author.leadershipPrinciples && (
-          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center gap-2 font-bold text-lg text-white">
-              <Lightbulb className="w-5 h-5 text-indigo-400" />
+          <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-lg text-[#111817]">
+              <Lightbulb className="w-5 h-5 text-[#164E3F]" />
               <h2>Leadership & Engineering Philosophy</h2>
             </div>
             <div className="space-y-3">
               {author.leadershipPrinciples.map((principle, i) => (
-                <div key={i} className="bg-slate-950 border border-slate-800/80 p-4 rounded-xl text-xs text-slate-300 leading-relaxed font-medium">
+                <div key={i} className="bg-[#FAFBF9] border border-[#DDE3DF] p-4 rounded-xl text-xs sm:text-sm text-[#53605C] leading-relaxed">
                   {principle}
                 </div>
               ))}
@@ -201,21 +266,29 @@ export const AuthorProfilePage: React.FC = () => {
           </section>
         )}
 
-        {/* Back Link */}
-        <div className="text-center pt-4 space-y-2">
-          <Link to="/authors" className="inline-flex items-center gap-2 text-xs text-indigo-400 hover:underline font-semibold">
+        {/* Footer Back Link & Platform Discovery */}
+        <div className="text-center pt-2 space-y-3">
+          <Link to="/authors" className="inline-flex items-center gap-2 text-xs text-[#164E3F] font-semibold hover:underline">
             ← Explore All CHATR Authors & Research Contributors
           </Link>
           {isFounder && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#83918C]">
               Explore the platform Sanobar built:{' '}
-              <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR SI Platform</Link>
+              <Link to="/pricing" className="text-[#164E3F] font-semibold hover:underline">Commercial Plans</Link>
               {' '}·{' '}
-              <Link to="/pricing" className="text-slate-400 hover:text-slate-300 font-semibold hover:underline">Commercial Plans</Link>
+              <Link to="/whatsapp-team-inbox" className="text-[#164E3F] font-semibold hover:underline">WhatsApp Team Inbox</Link>
             </p>
           )}
         </div>
       </main>
+
+      <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

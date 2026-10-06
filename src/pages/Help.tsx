@@ -1,21 +1,56 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, MessageCircle, Heart, Users, Shield, Zap } from 'lucide-react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Search, MessageCircle, Heart, Users, Shield, Zap, ChevronDown, ArrowRight } from 'lucide-react';
 import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Help() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [openFaq, setOpenFaq] = useState<string | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   const categories = [
-    { icon: MessageCircle, title: 'Chat & Messaging', color: 'text-green-500' },
-    { icon: Heart, title: 'Health & Wellness', color: 'text-red-500' },
-    { icon: Users, title: 'Communities', color: 'text-purple-500' },
-    { icon: Shield, title: 'Privacy & Security', color: 'text-blue-500' },
-    { icon: Zap, title: 'Features & Tools', color: 'text-yellow-500' }
+    { icon: MessageCircle, title: 'Chat & Messaging' },
+    { icon: Users, title: 'Team Workspaces' },
+    { icon: Shield, title: 'Privacy & Security' },
+    { icon: Zap, title: 'Features & Tools' }
   ];
 
   const faqs = [
@@ -23,168 +58,156 @@ export default function Help() {
       category: 'Getting Started',
       questions: [
         {
-          q: 'How do I create an account?',
-          a: 'Click on "Get Started" or "Sign Up", enter your phone number or email, verify with OTP, and complete your workspace setup.'
+          q: 'How do I create a workspace account?',
+          a: 'Click on "Get Started", enter your mobile phone number, verify with OTP, and choose your team workspace name.'
         },
         {
-          q: 'Is CHATR Communication OS free to start?',
-          a: 'Yes! You can start using CHATR Communication OS for team messaging and business workflows.'
+          q: 'Is CHATR free to start?',
+          a: 'Yes! CHATR offers a generous free tier for WebRTC browser calls, link sharing, and basic team messaging.'
         },
         {
-          q: 'What devices can I use CHATR on?',
-          a: 'CHATR works on Android, iOS, Windows, macOS, and web browsers.'
+          q: 'What platforms are supported?',
+          a: 'CHATR works across modern browsers (Chrome, Edge, Safari, Firefox), Windows, macOS, and Android (via direct APK).'
         }
       ]
     },
     {
-      category: 'Chat & Messaging',
+      category: 'Messaging & Calling',
       questions: [
         {
-          q: 'How do I start a conversation?',
-          a: 'Go to the Chat tab, tap the "+" button, select a contact or search for users, and start messaging!'
+          q: 'How does free web browser calling work?',
+          a: 'Visit chatrchat.in/call to start an instant private room, share the link with any participant, and talk directly via encrypted WebRTC with zero app installs required.'
         },
         {
-          q: 'Can I make voice and video calls?',
-          a: 'Yes! Tap the phone or video icon in any chat to start a call. We support both 1-on-1 and group calls.'
-        },
-        {
-          q: 'How do I send photos and files?',
-          a: 'In any chat, tap the attachment icon (📎) to send photos, videos, documents, or contacts.'
+          q: 'Can multiple agents respond from one WhatsApp number?',
+          a: 'Yes. With the CHATR WhatsApp Team Inbox, your entire team shares a single official WhatsApp Business API number with auto-assignment and SLA tracking.'
         }
       ]
     },
     {
-      category: 'Privacy & Security',
+      category: 'Security & Privacy',
       questions: [
         {
-          q: 'Is my data encrypted?',
-          a: 'Yes! All messages, calls, and personal data are encrypted end-to-end. We use bank-level security protocols.'
+          q: 'Is my team data secure?',
+          a: 'Yes. All browser calls use encrypted WebRTC peer-to-peer protocols. Team data is stored on secure cloud architecture complying with the Information Technology Act.'
         },
         {
-          q: 'Can I control who sees my information?',
-          a: 'Absolutely. Go to Settings → Privacy to control profile visibility, last seen, read receipts, and more.'
-        }
-      ]
-    },
-    {
-      category: 'Business Tools',
-      questions: [
-        {
-          q: 'How do I set up a Business account?',
-          a: 'Go to Business Hub → Start Setup → Provide business details → Verify documents → Start using CRM, analytics, and inbox tools.'
-        },
-        {
-          q: 'Can I use CHATR for my clinic/practice?',
-          a: 'Yes! Register as a healthcare provider through Doctor Portal. You\'ll get appointment management, patient records, and teleconsultation tools.'
+          q: 'Can I claim a permanent personalized calling link?',
+          a: 'Yes! After your call or upon sign up, you can claim your personal handle like chatrchat.in/call/your-name.'
         }
       ]
     }
   ];
 
-  const quickLinks = [
-    { title: 'Account Settings', path: '/account' },
-    { title: 'Privacy Policy', path: '/privacy' },
-    { title: 'Terms of Service', path: '/terms' },
-    { title: 'Contact Support', path: '/contact' }
-  ];
+  const filteredFaqs = faqs.map(section => ({
+    ...section,
+    questions: section.questions.filter(q =>
+      !searchQuery ||
+      q.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.a.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(section => section.questions.length > 0);
 
   return (
-    <>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
       <SEOHead
-        title="Help Center | CHATR Support & FAQs"
-        description="Get help with CHATR Communication OS. Find answers to frequently asked questions about business messaging, team inbox, privacy, and support."
+        title="Help Center — CHATR Support & FAQs"
+        description="Find answers to common questions about CHATR Communication OS, WhatsApp Team Inbox, browser calling, and team workspaces."
+        canonicalUrl="https://www.chatrchat.in/help"
       />
-      <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
-        {/* Header */}
-        <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
-          <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="rounded-full hover:bg-slate-100 text-slate-700"
+
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14 space-y-10">
+        {/* Hero Section */}
+        <div className="bg-white rounded-3xl border border-[#DDE3DF] shadow-sm p-8 sm:p-12 text-center space-y-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#111817]">How can we help you?</h1>
+          <p className="text-[#53605C] text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+            Search our knowledge base or explore common topics below.
+          </p>
+
+          <div className="max-w-md mx-auto relative pt-2">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#83918C]" />
+            <input
+              placeholder="Search help topics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#FAFBF9] border border-[#DDE3DF] focus:border-[#164E3F] focus:outline-none rounded-full pl-11 pr-4 py-3 text-sm text-[#111817]"
+            />
+          </div>
+        </div>
+
+        {/* Categories Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {categories.map((cat, index) => (
+            <div key={index} className="bg-white rounded-2xl border border-[#DDE3DF] p-5 text-center shadow-sm hover:border-[#164E3F]/40 transition-colors">
+              <cat.icon className="h-6 w-6 mx-auto mb-2 text-[#164E3F]" />
+              <p className="text-xs font-semibold text-[#111817]">{cat.title}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* FAQs */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-[#111817]">Frequently Asked Questions</h2>
+          {filteredFaqs.map((section, sIdx) => (
+            <div key={sIdx} className="bg-white rounded-2xl border border-[#DDE3DF] p-6 sm:p-8 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[#164E3F]">{section.category}</h3>
+              <div className="space-y-3">
+                {section.questions.map((faq, fIdx) => {
+                  const key = `${sIdx}-${fIdx}`;
+                  const isOpen = openFaq === key;
+                  return (
+                    <div key={fIdx} className="border border-[#DDE3DF] rounded-xl overflow-hidden bg-[#FAFBF9]">
+                      <button
+                        onClick={() => setOpenFaq(isOpen ? null : key)}
+                        className="w-full p-4 text-left flex items-center justify-between gap-4 hover:bg-white transition-colors cursor-pointer"
+                      >
+                        <span className="font-semibold text-sm text-[#111817]">{faq.q}</span>
+                        <ChevronDown className={`w-4 h-4 text-[#83918C] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {isOpen && (
+                        <div className="p-4 pt-0 text-xs sm:text-sm text-[#53605C] leading-relaxed border-t border-[#DDE3DF] bg-white">
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Contact CTA */}
+        <div className="bg-white rounded-3xl border border-[#DDE3DF] p-8 text-center space-y-3 shadow-sm">
+          <h3 className="text-xl font-bold text-[#111817]">Still have questions?</h3>
+          <p className="text-sm text-[#53605C]">
+            Our support desk is available to assist you with workspace setup or integrations.
+          </p>
+          <div className="pt-2">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#164E3F] hover:bg-[#123F33] text-white text-xs font-semibold shadow-sm transition-all"
             >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-lg font-bold text-slate-900">Help Center</h1>
+              <span>Contact Support Desk</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
+      </main>
 
-        <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-          {/* Search */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search for help..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-slate-50 border-slate-200 rounded-xl h-11 text-sm text-slate-900"
-              />
-            </div>
-          </div>
+      <Footer />
 
-          {/* Categories */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {categories.map((cat, index) => (
-              <div key={index} className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center hover:shadow-md transition-all cursor-pointer">
-                <cat.icon className={`h-7 w-7 mx-auto mb-2 ${cat.color}`} />
-                <p className="text-xs font-semibold text-slate-800">{cat.title}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* FAQs */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-slate-900">Frequently Asked Questions</h2>
-            {faqs.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">
-                <h3 className="text-base font-bold mb-4 text-purple-600">{section.category}</h3>
-                <Accordion type="single" collapsible className="space-y-2">
-                  {section.questions.map((faq, faqIndex) => (
-                    <AccordionItem key={faqIndex} value={`${sectionIndex}-${faqIndex}`} className="border-b border-slate-100">
-                      <AccordionTrigger className="text-left font-semibold text-sm text-slate-800 hover:no-underline hover:text-purple-600">
-                        {faq.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-slate-500 text-xs leading-relaxed pt-1">
-                        {faq.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            ))}
-          </div>
-
-          {/* Quick Links */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
-            <h3 className="text-base font-bold text-slate-900">Quick Links</h3>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {quickLinks.map((link, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  onClick={() => navigate(link.path)}
-                  className="justify-start border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50"
-                >
-                  {link.title}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact Support CTA */}
-          <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/5 to-cyan-500/10 border border-purple-200/60 rounded-3xl p-8 text-center space-y-3">
-            <h3 className="text-xl font-bold text-slate-900">Still need help?</h3>
-            <p className="text-sm text-slate-600">
-              Our support team is here to assist you 24/7
-            </p>
-            <Button onClick={() => navigate('/contact')} className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-6">
-              Contact Support
-            </Button>
-          </div>
-        </div>
-      </div>
-    </>
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
+    </div>
   );
 }

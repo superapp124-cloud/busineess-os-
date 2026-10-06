@@ -128,33 +128,33 @@ export const InteractiveInboxSimulator: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl backdrop-blur">
+    <div className="bg-white border border-[#DDE3DF] rounded-2xl overflow-hidden shadow-sm">
       {/* Simulator Header */}
-      <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between flex-wrap gap-3">
+      <div className="bg-[#FAFBF9] px-6 py-4 border-b border-[#DDE3DF] flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-bold text-white text-sm">Interactive Shared Team Inbox Simulator</span>
-          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            Live Demo • No Sign-up Required
+          <div className="w-2.5 h-2.5 rounded-full bg-[#164E3F] animate-pulse" />
+          <span className="font-bold text-[#111817] text-sm">Interactive Shared Team Inbox Simulator</span>
+          <span className="text-[11px] font-mono text-[#164E3F] bg-[#EAEFEA] px-2.5 py-0.5 rounded border border-[#D5E0D5]">
+            Live Interactive Demo
           </span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <Clock className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Simulated SLA: <strong className="text-white">{selectedScenario.slaTime}</strong></span>
+        <div className="flex items-center gap-2 text-xs text-[#53605C]">
+          <Clock className="w-3.5 h-3.5 text-[#164E3F]" />
+          <span>Simulated SLA: <strong className="text-[#111817]">{selectedScenario.slaTime}</strong></span>
         </div>
       </div>
 
       {/* Scenario Presets Selector */}
-      <div className="bg-slate-900/60 p-4 border-b border-slate-800 flex items-center gap-2 overflow-x-auto text-xs">
-        <span className="text-slate-400 font-medium shrink-0">Try Scenario:</span>
+      <div className="bg-[#F8F8F5] p-3.5 border-b border-[#DDE3DF] flex items-center gap-2 overflow-x-auto text-xs">
+        <span className="text-[#53605C] font-medium shrink-0">Try Scenario:</span>
         {PRESET_SCENARIOS.map(s => (
           <button
             key={s.id}
             onClick={() => handleSelectScenario(s)}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg font-medium transition-all shrink-0 cursor-pointer ${
               selectedScenario.id === s.id
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                ? 'bg-[#164E3F] text-white shadow-sm'
+                : 'bg-white text-[#53605C] border border-[#DDE3DF] hover:bg-[#FAFBF9]'
             }`}
           >
             {s.label}
@@ -163,42 +163,42 @@ export const InteractiveInboxSimulator: React.FC = () => {
       </div>
 
       {/* Chat Thread Workspace */}
-      <div className="p-6 space-y-4 min-h-[280px] max-h-[360px] overflow-y-auto bg-slate-950/50">
+      <div className="p-6 space-y-4 min-h-[280px] max-h-[360px] overflow-y-auto bg-[#FAFBF9]">
         {messages.map(msg => (
           <div
             key={msg.id}
             className={`flex flex-col ${msg.sender === 'customer' ? 'items-start' : 'items-end'}`}
           >
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mb-1">
+            <div className="flex items-center gap-1.5 text-[11px] text-[#53605C] mb-1">
               {msg.sender === 'customer' ? (
                 <>
-                  <User className="w-3 h-3 text-slate-400" />
+                  <User className="w-3 h-3 text-[#53605C]" />
                   <span>{msg.senderName}</span>
                 </>
               ) : (
                 <>
-                  <Bot className="w-3.5 h-3.5 text-indigo-400" />
-                  <span className="text-indigo-300 font-semibold">{msg.senderName}</span>
+                  <Bot className="w-3.5 h-3.5 text-[#164E3F]" />
+                  <span className="text-[#164E3F] font-semibold">{msg.senderName}</span>
                 </>
               )}
             </div>
 
             <div
-              className={`max-w-[85%] rounded-2xl p-4 text-xs md:text-sm leading-relaxed ${
+              className={`max-w-[85%] rounded-2xl p-4 text-xs md:text-sm leading-relaxed shadow-sm ${
                 msg.sender === 'customer'
-                  ? 'bg-slate-800 text-slate-100 rounded-tl-sm border border-slate-700'
-                  : 'bg-indigo-600/20 text-indigo-100 rounded-tr-sm border border-indigo-500/30'
+                  ? 'bg-white text-[#111817] rounded-tl-sm border border-[#DDE3DF]'
+                  : 'bg-[#EAEFEA] text-[#111817] rounded-tr-sm border border-[#D5E0D5]'
               }`}
             >
               <p>{msg.text}</p>
 
               {msg.intentTag && (
-                <div className="mt-3 pt-3 border-t border-indigo-500/20 flex items-center justify-between flex-wrap gap-2 text-[11px]">
-                  <span className="flex items-center gap-1 text-emerald-400 font-mono">
+                <div className="mt-3 pt-3 border-t border-[#D5E0D5] flex items-center justify-between flex-wrap gap-2 text-[11px]">
+                  <span className="flex items-center gap-1 text-[#164E3F] font-mono font-semibold">
                     <Sparkles className="w-3 h-3" /> Intent: {msg.intentTag}
                   </span>
-                  <span className="flex items-center gap-1 text-slate-300">
-                    <ArrowRight className="w-3 h-3 text-indigo-400" /> Routed to: <strong className="text-white">{msg.routedTo}</strong>
+                  <span className="flex items-center gap-1 text-[#53605C]">
+                    <ArrowRight className="w-3 h-3 text-[#164E3F]" /> Routed to: <strong className="text-[#111817]">{msg.routedTo}</strong>
                   </span>
                 </div>
               )}
@@ -207,26 +207,26 @@ export const InteractiveInboxSimulator: React.FC = () => {
         ))}
 
         {isProcessing && (
-          <div className="flex items-center gap-2 text-xs text-indigo-400 py-2">
-            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
+          <div className="flex items-center gap-2 text-xs text-[#164E3F] py-2">
+            <div className="w-2 h-2 rounded-full bg-[#164E3F] animate-ping" />
             <span>CHATR SI triaging message intent and assigning team owner...</span>
           </div>
         )}
       </div>
 
       {/* Interactive Input Form */}
-      <form onSubmit={handleSendCustom} className="p-4 bg-slate-950 border-t border-slate-800 flex items-center gap-3">
+      <form onSubmit={handleSendCustom} className="p-4 bg-white border-t border-[#DDE3DF] flex items-center gap-3">
         <input
           type="text"
           value={customInput}
           onChange={e => setCustomInput(e.target.value)}
-          placeholder="Type your own customer test message (e.g. 'Can I book a consultation for Monday?')..."
-          className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+          placeholder="Type your own test message (e.g. 'Can I book a consultation for Monday?')..."
+          className="flex-1 bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl px-4 py-2.5 text-xs md:text-sm text-[#111817] placeholder-[#83918C] focus:outline-none focus:border-[#164E3F] transition-colors"
         />
         <button
           type="submit"
           disabled={!customInput.trim() || isProcessing}
-          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-xs md:text-sm font-semibold flex items-center gap-1.5 transition-colors shrink-0"
+          className="px-4 py-2.5 bg-[#164E3F] hover:bg-[#123F33] disabled:opacity-40 text-white rounded-xl text-xs md:text-sm font-semibold flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer shadow-sm"
         >
           <span>Send</span>
           <Send className="w-3.5 h-3.5" />
@@ -234,14 +234,14 @@ export const InteractiveInboxSimulator: React.FC = () => {
       </form>
 
       {/* Simulator Footer Note */}
-      <div className="px-6 py-3 bg-slate-900/40 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-2">
-        <span className="flex items-center gap-1 text-slate-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+      <div className="px-6 py-3 bg-[#FAFBF9] border-t border-[#DDE3DF] flex items-center justify-between text-[11px] text-[#53605C] flex-wrap gap-2">
+        <span className="flex items-center gap-1">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#164E3F]" />
           Official Meta WhatsApp Business API Cloud Architecture
         </span>
-        <a href="/auth" className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1">
-          Deploy this workflow for your team <ArrowRight className="w-3 h-3" />
-        </a>
+        <span className="text-[#164E3F] font-semibold flex items-center gap-1">
+          Automated Round-Robin Lead Routing Active
+        </span>
       </div>
     </div>
   );

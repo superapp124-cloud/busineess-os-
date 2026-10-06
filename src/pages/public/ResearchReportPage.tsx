@@ -1,57 +1,88 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, BarChart3, ShieldCheck, Quote, Copy, Check, Lock, Layers, Zap, Download, AlertTriangle, Info, GitBranch, Calendar } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { 
+  ArrowLeft, BarChart3, ShieldCheck, Quote, Copy, Check, Lock, 
+  Layers, Zap, Download, AlertTriangle, Info, GitBranch, Calendar, ArrowRight 
+} from 'lucide-react';
 import { RESEARCH_REPORTS } from '../../data/researchReportsData';
 import { AUTHORS } from '../../data/authorsData';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { SEOHead } from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 
 export const ResearchReportPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const report = RESEARCH_REPORTS.find(r => r.path === location.pathname);
   const [copiedFormat, setCopiedFormat] = useState<string | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!report) return;
-    document.title = `${report.title} — CHATR & TalentXcel Research`;
+    window.scrollTo(0, 0);
 
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', report.description);
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
 
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', `https://www.chatrchat.in${report.path}`);
-
-    const scholarlySchema = {
-      '@context': 'https://schema.org',
-      '@type': 'ScholarlyArticle',
-      headline: report.title,
-      description: report.description,
-      datePublished: report.publishDate,
-      identifier: report.researchId,
-      author: {
-        '@type': 'Person',
-        name: 'Sanobar Jahan',
-        jobTitle: 'Founder, TalentXcel & CHATR | HR & Education Strategist',
-        url: 'https://www.chatrchat.in/authors/sanobar-jahan'
-      },
-      publisher: {
-        '@type': 'Organization',
-        name: 'CHATR Communication OS & TalentXcel Research',
-        url: 'https://www.chatrchat.in'
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
       }
-    };
+    });
 
-    const s = document.createElement('script');
-    s.id = 'research-report-schema';
-    s.type = 'application/ld+json';
-    s.textContent = JSON.stringify(scholarlySchema);
-    if (!document.getElementById('research-report-schema')) document.head.appendChild(s);
+    if (report) {
+      document.title = `${report.title} — CHATR & TalentXcel Research`;
+
+      const scholarlySchema = {
+        '@context': 'https://schema.org',
+        '@type': 'ScholarlyArticle',
+        headline: report.title,
+        description: report.description,
+        datePublished: report.publishDate,
+        identifier: report.researchId,
+        author: {
+          '@type': 'Person',
+          name: 'Sanobar Jahan',
+          jobTitle: 'Founder, TalentXcel & CHATR | HR & Education Strategist',
+          url: 'https://www.chatrchat.in/authors/sanobar-jahan'
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'CHATR Communication OS & TalentXcel Research',
+          url: 'https://www.chatrchat.in'
+        }
+      };
+
+      const s = document.createElement('script');
+      s.id = 'research-report-schema';
+      s.type = 'application/ld+json';
+      s.textContent = JSON.stringify(scholarlySchema);
+      if (!document.getElementById('research-report-schema')) document.head.appendChild(s);
+    }
 
     return () => {
+      isMounted = false;
+      subscription.unsubscribe();
       const el = document.getElementById('research-report-schema');
       if (el) el.remove();
     };
   }, [report]);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   const copyToClipboard = (text: string, format: string) => {
     navigator.clipboard.writeText(text);
@@ -61,130 +92,154 @@ export const ResearchReportPage: React.FC = () => {
 
   if (!report) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-slate-400">Research report not found.</p>
-          <Link to="/" className="text-indigo-400 hover:underline">Back to Home</Link>
+      <div className="min-h-screen bg-[#F8F8F5] text-[#111817] flex flex-col justify-between">
+        <LandingHeader
+          onOpenAuth={() => setAuthModalOpen(true)}
+          isAuthenticated={isAuthenticated}
+          onNavigateWorkspace={handleNavigateWorkspace}
+        />
+        <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+          <p className="text-[#53605C]">Research report not found.</p>
+          <Link to="/" className="text-[#164E3F] hover:underline font-semibold text-sm">Back to Home</Link>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-sm text-slate-300 hover:text-white">
-            <ArrowLeft className="w-4 h-4" /> CHATR & TalentXcel Research Lab
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title={`${report.title} — CHATR & TalentXcel Research`}
+        description={report.description}
+        canonicalUrl={`https://www.chatrchat.in${report.path}`}
+      />
+
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14 space-y-12">
+        {/* Navigation Breadcrumbs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+          <Link to="/research/media-kit" className="inline-flex items-center gap-1.5 text-[#53605C] hover:text-[#164E3F] transition-colors font-medium">
+            <ArrowLeft className="w-4 h-4" />
+            <span>Research Lab & Media Room</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-md font-semibold">
+          <div className="flex items-center gap-2 font-mono">
+            <span className="bg-[#E8F0EB] text-[#164E3F] border border-[#164E3F]/20 px-2.5 py-0.5 rounded-full font-semibold">
               ID: {report.researchId}
             </span>
-            <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">
+            <span className="bg-[#FAFBF9] text-[#53605C] border border-[#DDE3DF] px-2.5 py-0.5 rounded-full font-semibold">
               {report.doiStatus}
             </span>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-12 space-y-12">
-        {/* Title, Version & Metadata */}
+        {/* Title & Metadata */}
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-indigo-400 font-semibold">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[#164E3F] font-semibold">
             <span className="flex items-center gap-1"><BarChart3 className="w-3.5 h-3.5" /> Published {report.publishDate}</span>
             <span>•</span>
-            <span className="flex items-center gap-1"><GitBranch className="w-3.5 h-3.5 text-emerald-400" /> {report.version}</span>
+            <span className="flex items-center gap-1"><GitBranch className="w-3.5 h-3.5" /> Version {report.version}</span>
             <span>•</span>
-            <span className="flex items-center gap-1 text-slate-400"><Calendar className="w-3.5 h-3.5" /> {report.nextUpdateDate}</span>
+            <span className="flex items-center gap-1 text-[#83918C]"><Calendar className="w-3.5 h-3.5" /> Next Audit: {report.nextUpdateDate}</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">{report.title}</h1>
-          <p className="text-lg text-slate-300 leading-relaxed font-light">{report.subtitle}</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111817] leading-tight tracking-tight">
+            {report.title}
+          </h1>
+          <p className="text-base sm:text-lg text-[#53605C] leading-relaxed">
+            {report.subtitle}
+          </p>
         </div>
 
-        {/* Formal Scientific Methodology Standard Box */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-          <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-2">
-            <div className="flex items-center gap-2 text-sm font-bold text-indigo-400 uppercase tracking-wider">
-              <ShieldCheck className="w-5 h-5 text-indigo-400" /> Formal Research Methodology Standard
+        {/* Methodology Standards Card */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between border-b border-[#DDE3DF] pb-4 gap-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#164E3F] uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4" /> Formal Research Methodology Standard
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-                {report.confidenceIntervals}
-              </span>
-            </div>
+            <span className="text-xs font-mono text-[#164E3F] bg-[#E8F0EB] border border-[#164E3F]/20 px-3 py-1 rounded-full font-semibold">
+              {report.confidenceIntervals}
+            </span>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 text-xs">
-            <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Dataset Parameter (N)</span>
-              <p className="font-mono text-white font-bold">{report.datasetSize}</p>
-            </div>
-            <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Collection Window</span>
-              <p className="font-mono text-slate-200">{report.collectionPeriod}</p>
-            </div>
-            <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Geographic Scope</span>
-              <p className="text-slate-300 leading-relaxed">{report.geography}</p>
-            </div>
-            <div className="space-y-1.5">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Statistical Method</span>
-              <p className="text-slate-300 leading-relaxed font-mono">{report.statisticalTestUsed}</p>
-            </div>
-            <div className="space-y-1.5 md:col-span-2">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider">Inclusion & Selection Criteria</span>
-              <p className="text-slate-300 leading-relaxed">{report.inclusionCriteria}</p>
-            </div>
-          </div>
-
-          <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 flex items-start gap-3 text-xs">
-            <Lock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="grid sm:grid-cols-2 gap-5 text-xs">
             <div className="space-y-1">
-              <span className="font-bold text-white">Anonymization & Privacy Protocol:</span>
-              <p className="text-slate-400 leading-relaxed">{report.anonymizationProtocol}</p>
+              <span className="text-[#83918C] font-semibold uppercase tracking-wider text-[11px]">Dataset Parameter (N)</span>
+              <p className="font-mono text-[#111817] font-bold text-sm">{report.datasetSize}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[#83918C] font-semibold uppercase tracking-wider text-[11px]">Collection Window</span>
+              <p className="font-mono text-[#111817] text-sm">{report.collectionPeriod}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[#83918C] font-semibold uppercase tracking-wider text-[11px]">Geographic Scope</span>
+              <p className="text-[#53605C] leading-relaxed">{report.geography}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[#83918C] font-semibold uppercase tracking-wider text-[11px]">Statistical Method</span>
+              <p className="text-[#53605C] leading-relaxed font-mono">{report.statisticalTestUsed}</p>
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <span className="text-[#83918C] font-semibold uppercase tracking-wider text-[11px]">Inclusion & Selection Criteria</span>
+              <p className="text-[#53605C] leading-relaxed">{report.inclusionCriteria}</p>
+            </div>
+          </div>
+
+          <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 flex items-start gap-3 text-xs">
+            <Lock className="w-4 h-4 text-[#164E3F] shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <span className="font-bold text-[#111817]">Anonymization & Privacy Protocol:</span>
+              <p className="text-[#53605C] leading-relaxed">{report.anonymizationProtocol}</p>
             </div>
           </div>
         </section>
 
-        {/* Observational Study Design Disclaimer */}
-        <section className="bg-indigo-950/20 border border-indigo-500/20 rounded-2xl p-5 flex items-start gap-3 text-xs">
-          <Info className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+        {/* Observational Study Disclosure */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-5 flex items-start gap-3 text-xs shadow-sm">
+          <Info className="w-4 h-4 text-[#164E3F] shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-bold text-white uppercase tracking-wider">Methodological Disclosure:</span>
-            <p className="text-slate-300 leading-relaxed">{report.observationalDisclaimer}</p>
+            <span className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Methodological Disclosure:</span>
+            <p className="text-[#53605C] leading-relaxed">{report.observationalDisclaimer}</p>
           </div>
         </section>
 
         {/* Key Empirical Findings */}
         <section className="space-y-4">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-indigo-400" /> Key Empirical Findings
+          <h2 className="text-xl sm:text-2xl font-bold text-[#111817] flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[#164E3F]" />
+            <span>Key Empirical Findings</span>
           </h2>
           <div className="space-y-3">
             {report.keyFindings.map((finding, idx) => (
-              <div key={idx} className="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-5 flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-400/40 text-indigo-300 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+              <div key={idx} className="bg-white border border-[#DDE3DF] rounded-2xl p-5 sm:p-6 flex items-start gap-3.5 shadow-sm">
+                <span className="w-6 h-6 rounded-full bg-[#E8F0EB] border border-[#164E3F]/30 text-[#164E3F] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                   {idx + 1}
                 </span>
-                <p className="text-slate-200 text-sm leading-relaxed">{finding}</p>
+                <p className="text-[#111817] text-sm leading-relaxed font-medium">{finding}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Benchmark Data Table */}
+        {/* Telemetry Data Table */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-white font-bold text-xl">
-              <BarChart3 className="w-5 h-5 text-emerald-400" /> Empirical Telemetry Data Table
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-[#111817] font-bold text-lg sm:text-xl">
+              <BarChart3 className="w-5 h-5 text-[#164E3F]" />
+              <h2>Empirical Telemetry Data Table</h2>
             </div>
-            <span className="text-xs text-slate-400">Control Cohort: <span className="text-slate-200 font-semibold">{report.comparisonCohortLabel}</span></span>
+            <span className="text-xs text-[#53605C]">
+              Control Cohort: <strong className="text-[#111817]">{report.comparisonCohortLabel}</strong>
+            </span>
           </div>
 
-          <div className="overflow-x-auto border border-slate-800 rounded-2xl">
+          <div className="overflow-x-auto border border-[#DDE3DF] rounded-2xl bg-white shadow-sm">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
+              <thead className="bg-[#FAFBF9] text-[#53605C] font-semibold border-b border-[#DDE3DF]">
                 <tr>
                   <th className="p-4">Operational Metric</th>
                   <th className="p-4">CHATR / TalentXcel Telemetry</th>
@@ -192,13 +247,13 @@ export const ResearchReportPage: React.FC = () => {
                   <th className="p-4">Operational Insight</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+              <tbody className="divide-y divide-[#DDE3DF]">
                 {report.dataTable.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
-                    <td className="p-4 font-bold text-white">{row.metric}</td>
-                    <td className="p-4 font-mono font-bold text-emerald-400">{row.value}</td>
-                    <td className="p-4 font-mono text-slate-400">{row.benchmark}</td>
-                    <td className="p-4 text-slate-300 leading-relaxed">{row.insight}</td>
+                  <tr key={idx} className="hover:bg-[#FAFBF9] transition-colors">
+                    <td className="p-4 font-bold text-[#111817]">{row.metric}</td>
+                    <td className="p-4 font-mono font-bold text-[#164E3F] text-sm">{row.value}</td>
+                    <td className="p-4 font-mono text-[#53605C]">{row.benchmark}</td>
+                    <td className="p-4 text-[#53605C] leading-relaxed">{row.insight}</td>
                   </tr>
                 ))}
               </tbody>
@@ -206,166 +261,122 @@ export const ResearchReportPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Ground-Truth Annotation & Train/Test Split Card (If SI Resume Parser Report) */}
+        {/* Ground-Truth Annotation Card */}
         {report.groundTruthAnnotation && (
-          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center gap-2 font-bold text-white text-base">
-              <Layers className="w-4 h-4 text-indigo-400" /> Ground-Truth Annotation & Train / Test Validation
+          <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-[#111817] text-base">
+              <Layers className="w-4 h-4 text-[#164E3F]" />
+              <span>Ground-Truth Annotation & Train / Test Validation</span>
             </div>
-            <div className="grid md:grid-cols-3 gap-4 text-xs">
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
-                <span className="text-slate-400 font-semibold">Model Version</span>
-                <p className="font-mono text-emerald-400 font-bold">{report.modelVersion}</p>
+            <div className="grid sm:grid-cols-3 gap-4 text-xs">
+              <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 space-y-1">
+                <span className="text-[#83918C] font-semibold">Model Version</span>
+                <p className="font-mono text-[#164E3F] font-bold">{report.modelVersion}</p>
               </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
-                <span className="text-slate-400 font-semibold">Dataset Split</span>
-                <p className="font-mono text-indigo-400 font-bold">{report.trainTestSplit}</p>
+              <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 space-y-1">
+                <span className="text-[#83918C] font-semibold">Dataset Split</span>
+                <p className="font-mono text-[#111817] font-bold">{report.trainTestSplit}</p>
               </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1">
-                <span className="text-slate-400 font-semibold">Ground Truth Provenance</span>
-                <p className="text-slate-300">{report.groundTruthAnnotation}</p>
+              <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 space-y-1">
+                <span className="text-[#83918C] font-semibold">Ground Truth Provenance</span>
+                <p className="text-[#53605C]">{report.groundTruthAnnotation}</p>
               </div>
             </div>
           </section>
         )}
 
-        {/* Optional SI Resume Parser Field Accuracy & Latency Breakdown */}
-        {report.fieldAccuracyMatrix && (
-          <section className="space-y-4">
-            <div className="flex items-center gap-2 text-white font-bold text-xl">
-              <Layers className="w-5 h-5 text-indigo-400" /> Held-Out Test Set Accuracy Matrix (Precision / Recall / F1)
-            </div>
-            <div className="overflow-x-auto border border-slate-800 rounded-2xl">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
-                  <tr>
-                    <th className="p-4">Resume Field Category</th>
-                    <th className="p-4">Precision (%)</th>
-                    <th className="p-4">Recall (%)</th>
-                    <th className="p-4">F1-Score</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
-                  {report.fieldAccuracyMatrix.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
-                      <td className="p-4 font-bold text-white">{row.field}</td>
-                      <td className="p-4 font-mono text-emerald-400 font-bold">{row.precision}</td>
-                      <td className="p-4 font-mono text-indigo-400 font-bold">{row.recall}</td>
-                      <td className="p-4 font-mono text-slate-200 font-bold">{row.f1Score}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {report.latencyPercentiles && (
-              <div className="grid md:grid-cols-3 gap-4 pt-2">
-                {report.latencyPercentiles.map((lat, idx) => (
-                  <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
-                    <span className="text-xs text-slate-400 font-semibold">{lat.percentile} Processing Latency</span>
-                    <span className="text-sm font-mono text-emerald-400 font-bold flex items-center gap-1">
-                      <Zap className="w-3.5 h-3.5" /> {lat.latency}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* Study Limitations Section (Prominently Rendered) */}
-        <section className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 space-y-4">
-          <div className="flex items-center gap-2 text-amber-400 font-bold text-base uppercase tracking-wider">
-            <AlertTriangle className="w-5 h-5 text-amber-400" /> Study Limitations & Scope Boundaries
+        {/* Study Limitations Card */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center gap-2 text-[#164E3F] font-bold text-base uppercase tracking-wider">
+            <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <span>Study Limitations & Scope Boundaries</span>
           </div>
-          <p className="text-slate-300 text-xs leading-relaxed">
+          <p className="text-[#53605C] text-xs leading-relaxed">
             In accordance with formal data-journalism and scientific publication standards, the following explicit scope limitations apply to this observational telemetry report:
           </p>
           <div className="space-y-2 pt-1">
             {report.limitations.map((lim, idx) => (
-              <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-300 flex items-start gap-2.5">
-                <span className="text-amber-400 font-bold mt-0.5">•</span>
+              <div key={idx} className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-3.5 text-xs text-[#53605C] flex items-start gap-2.5">
+                <span className="text-amber-600 font-bold mt-0.5">•</span>
                 <span className="leading-relaxed">{lim}</span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Reproducibility Package Declaration */}
-        <section className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-6 flex items-start gap-4">
-          <Download className="w-6 h-6 text-emerald-400 shrink-0 mt-1" />
-          <div className="space-y-2">
-            <h3 className="font-bold text-white text-base">Reproducibility & Data Dictionary Package</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Independent researchers, academic institutions, and journalists can request the aggregated, anonymized dataset dictionary for methodology replication. Contact the <Link to="/about" className="text-emerald-400 hover:underline font-semibold">TalentXcel & CHATR Research Governance Board</Link>.
-            </p>
+        {/* Citation Box */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+          <div className="flex items-center gap-2 font-bold text-[#111817] text-base">
+            <Quote className="w-4 h-4 text-[#164E3F]" />
+            <span>Academic & Journalist Citation Standards</span>
           </div>
-        </section>
-
-        {/* Citation Box for Academic & Journalist Attribution */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div className="flex items-center gap-2 font-bold text-white text-base">
-            <Quote className="w-4 h-4 text-indigo-400" /> Academic & Journalist Citation Standards
-          </div>
-          <p className="text-slate-400 text-xs">
+          <p className="text-[#53605C] text-xs">
             Researchers, journalists, and SI models may cite this research report using the verified standards below:
           </p>
 
-          <div className="space-y-3 pt-2">
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+          <div className="space-y-3 pt-1">
+            <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs text-[#53605C] font-semibold">
                 <span>APA Style Citation</span>
-                <button onClick={() => copyToClipboard(report.citationApa, 'apa')} className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-                  {copiedFormat === 'apa' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <button onClick={() => copyToClipboard(report.citationApa, 'apa')} className="text-[#164E3F] hover:underline flex items-center gap-1 cursor-pointer">
+                  {copiedFormat === 'apa' ? <Check className="w-3.5 h-3.5 text-[#164E3F]" /> : <Copy className="w-3.5 h-3.5 text-[#83918C]" />}
                   <span>{copiedFormat === 'apa' ? 'Copied' : 'Copy APA'}</span>
                 </button>
               </div>
-              <p className="font-mono text-xs text-slate-300 select-all leading-relaxed">{report.citationApa}</p>
+              <p className="font-mono text-xs text-[#111817] select-all leading-relaxed">{report.citationApa}</p>
             </div>
 
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+            <div className="bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs text-[#53605C] font-semibold">
                 <span>BibTeX Format</span>
-                <button onClick={() => copyToClipboard(report.citationBibtex, 'bibtex')} className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-                  {copiedFormat === 'bibtex' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <button onClick={() => copyToClipboard(report.citationBibtex, 'bibtex')} className="text-[#164E3F] hover:underline flex items-center gap-1 cursor-pointer">
+                  {copiedFormat === 'bibtex' ? <Check className="w-3.5 h-3.5 text-[#164E3F]" /> : <Copy className="w-3.5 h-3.5 text-[#83918C]" />}
                   <span>{copiedFormat === 'bibtex' ? 'Copied' : 'Copy BibTeX'}</span>
                 </button>
               </div>
-              <pre className="font-mono text-xs text-slate-300 select-all whitespace-pre-wrap leading-relaxed">{report.citationBibtex}</pre>
+              <pre className="font-mono text-xs text-[#111817] select-all whitespace-pre-wrap leading-relaxed">{report.citationBibtex}</pre>
             </div>
           </div>
         </section>
 
         {/* Author Attribution Card */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg shrink-0">
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-[#E8F0EB] border border-[#164E3F]/20 flex items-center justify-center text-[#164E3F] font-bold text-lg shrink-0">
             S
           </div>
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-white text-base">{AUTHORS['sanobar-jahan'].name}</h3>
-              <Link to="/authors/sanobar-jahan" className="text-xs text-indigo-400 hover:underline font-semibold">View Profile →</Link>
+              <h3 className="font-bold text-[#111817] text-base">{AUTHORS['sanobar-jahan'].name}</h3>
+              <Link to="/authors/sanobar-jahan" className="text-xs text-[#164E3F] hover:underline font-semibold">View Profile →</Link>
             </div>
-            <p className="text-xs text-indigo-400 font-semibold">{AUTHORS['sanobar-jahan'].role}</p>
-            <p className="text-xs text-slate-400 leading-relaxed">{AUTHORS['sanobar-jahan'].bio}</p>
+            <p className="text-xs text-[#164E3F] font-semibold">{AUTHORS['sanobar-jahan'].role}</p>
+            <p className="text-xs text-[#53605C] leading-relaxed">{AUTHORS['sanobar-jahan'].bio}</p>
           </div>
         </section>
 
         {/* Contextual Product CTA */}
-        <section className="my-8 p-6 bg-slate-900 border border-indigo-500/30 rounded-2xl space-y-3">
-          <h3 className="text-white font-bold text-lg">Apply research-backed automated candidate screening</h3>
-          <p className="text-slate-300 text-sm">Implement structured WhatsApp pre-screening sequences to reduce time-to-shortlist from days to hours.</p>
-          <Link to="/workflow/automated-candidate-screening-workflow" className="inline-flex items-center gap-2 text-indigo-400 font-semibold hover:text-indigo-300 text-sm">
-            Explore Automated Screening Workflow <ArrowRight className="w-4 h-4" />
-          </Link>
-        </section>
-
-        {/* CHATR SI Platform Link */}
-        <section className="my-4 p-5 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-xs text-slate-300 space-y-2">
-          <p className="font-semibold text-white text-sm">The SI layer behind this research</p>
-          <p>The screening and communication patterns in this benchmark are powered by the <Link to="/chatr/ai" className="text-indigo-400 font-semibold hover:underline">CHATR SI Platform</Link> — including SI Message Triage, Candidate Screening, and Automated Summarization capabilities.</p>
+        <section className="p-6 sm:p-8 bg-white border border-[#DDE3DF] rounded-2xl space-y-3 shadow-sm">
+          <h3 className="text-[#111817] font-bold text-lg">Apply research-backed automated candidate screening</h3>
+          <p className="text-[#53605C] text-sm">Implement structured WhatsApp pre-screening sequences to reduce time-to-shortlist from days to hours.</p>
+          <div className="pt-2">
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#164E3F] hover:bg-[#123F33] text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <span>Explore CHATR Workspace</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </section>
       </main>
+
+      <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

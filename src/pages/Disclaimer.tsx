@@ -1,94 +1,121 @@
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { SEOHead } from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Disclaimer() {
- const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-12">
-      {/* Header */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="rounded-full hover:bg-slate-100 text-slate-700"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-bold text-slate-900">Disclaimer</h1>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title="Disclaimer — CHATR Communication OS"
+        description="Legal disclaimer regarding the use of CHATR Communication OS, content verification, and third-party integrations."
+        canonicalUrl="https://www.chatrchat.in/disclaimer"
+      />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_35px_rgba(0,0,0,0.03)] p-6 sm:p-10 space-y-6 text-sm text-slate-600">
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14 space-y-8">
+        <div className="bg-white rounded-3xl border border-[#DDE3DF] shadow-sm p-6 sm:p-10 space-y-6 text-sm text-[#53605C]">
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-900">Disclaimer</h1>
-            <p className="text-xs text-slate-400 mt-1">Last Updated: January 2025</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111817]">Disclaimer</h1>
+            <p className="text-xs text-[#83918C] mt-1">Last Updated: January 2026</p>
           </div>
 
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">1. General Information</h2>
-            <p className="leading-relaxed">
-              The information provided by Chatr (operated by TalentXcel Services Pvt. Ltd.) is for general informational and communication purposes only. All content is provided "as is" without warranties of any kind.
-            </p>
-          </section>
+          <div className="space-y-6">
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">1. General Information</h2>
+              <p className="leading-relaxed">
+                The information provided by Chatr (operated by TalentXcel Services Pvt. Ltd.) is for general communication and workflow automation purposes. All features are provided "as is" without warranty of any kind.
+              </p>
+            </section>
 
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">2. Health and Wellness Features</h2>
-            <p className="leading-relaxed">
-              Chatr offers wellness tracking, symptom checking, and health-related features. These are NOT substitutes for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare professionals for medical concerns. Never disregard professional medical advice based on information from Chatr.
-            </p>
-          </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">2. SI-Powered Capabilities</h2>
+              <p className="leading-relaxed">
+                Chatr utilizes SI for message triage, conversational summaries, and candidate pre-screening assistance. SI-generated outputs are meant to assist human decision-makers and should be reviewed by qualified team personnel before critical operational actions.
+              </p>
+            </section>
 
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">3. SI-Powered Features</h2>
-            <p className="leading-relaxed">
-              Chatr uses SI for smart replies, chat summaries, and content suggestions. SI-generated content may not always be accurate or appropriate. Users should verify important information independently.
-            </p>
-          </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">3. Third-Party Integrations & Links</h2>
+              <p className="leading-relaxed">
+                Chatr may interface with external APIs (including WhatsApp Business API / Meta Cloud API, CRM webhooks, and payment processors). We are not responsible for downtime, policy changes, or terms enforced by external third-party infrastructure.
+              </p>
+            </section>
 
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">4. User-Generated Content</h2>
-            <p className="leading-relaxed">
-              Chatr users can share messages, photos, videos, and other content. We do not endorse, verify, or take responsibility for user-generated content. Views expressed by users do not represent our official position.
-            </p>
-          </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">4. User Responsibility</h2>
+              <p className="leading-relaxed">
+                Users are solely responsible for ensuring that their messaging broadcasts, customer communications, and candidate evaluations comply with local employment, telecommunication, and anti-spam legislation.
+              </p>
+            </section>
 
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">5. Third-Party Services and Links</h2>
-            <p className="leading-relaxed">
-              Chatr may integrate with or link to third-party services, websites, or apps. We are not responsible for the content, privacy practices, or availability of external services. Use them at your own discretion.
-            </p>
-          </section>
-
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">6. Financial Transactions</h2>
-            <p className="leading-relaxed">
-              Features like Chatr Coins, payments, and business transactions are facilitated through third-party payment providers. We are not responsible for payment failures, delays, or disputes. Users should verify transaction details before confirming.
-            </p>
-          </section>
-
-          <section className="space-y-2">
-            <h2 className="text-base font-bold text-slate-900">7. Limitation of Liability</h2>
-            <p className="leading-relaxed">
-              To the maximum extent permitted by law, TalentXcel Services Pvt. Ltd. shall not be liable for any damages arising from use of Chatr, including but not limited to direct, indirect, incidental, or consequential damages.
-            </p>
-          </section>
-
-          <section className="space-y-2 pt-4 border-t border-slate-100">
-            <h2 className="text-base font-bold text-slate-900">8. Contact Information</h2>
-            <p className="leading-relaxed">
-              For questions about this disclaimer:<br />
-              <strong>TalentXcel Services Pvt. Ltd.</strong><br />
-              Email: legal@chatr.app<br />
-              Address: Noida, Uttar Pradesh, India
-            </p>
-          </section>
+            <section className="space-y-2 pt-4 border-t border-[#DDE3DF]">
+              <h2 className="text-base font-bold text-[#111817]">5. Contact Information</h2>
+              <p className="leading-relaxed">
+                For questions regarding this disclaimer, please contact:<br />
+                <strong>TalentXcel Services Pvt. Ltd.</strong><br />
+                Email: legal@chatr.chat<br />
+                Address: Noida, Uttar Pradesh, India
+              </p>
+              <p className="text-xs text-[#83918C] pt-3">
+                © 2026 TalentXcel Services Pvt Ltd. All rights reserved.
+              </p>
+            </section>
+          </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

@@ -1,20 +1,34 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { UserCheck, ArrowRight, ShieldCheck, Tag, Building2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserCheck, ArrowRight, ShieldCheck, Tag, Building2, ExternalLink } from 'lucide-react';
 import { AUTHORS } from '@/data/authorsData';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { SEOHead } from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 
 export const AuthorsHubPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   useEffect(() => {
-    const pageTitle = 'Authors & Technical Contributors — CHATR Communication OS';
-    document.title = pageTitle;
-    
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.setAttribute('name', 'description'); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute('content', 'Meet the verifiable authors and engineering contributors behind CHATR Communication OS and TalentXcel research.');
-    
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    canonical.setAttribute('href', 'https://www.chatrchat.in/authors');
+    window.scrollTo(0, 0);
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
 
     const schema = document.createElement('script');
     schema.id = 'authors-hub-schema';
@@ -22,49 +36,68 @@ export const AuthorsHubPage: React.FC = () => {
     schema.textContent = JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'ItemPage',
-      name: pageTitle,
+      name: 'Authors & Technical Contributors — CHATR Communication OS',
       url: 'https://www.chatrchat.in/authors',
     });
     if (!document.getElementById('authors-hub-schema')) document.head.appendChild(schema);
-    return () => { const s = document.getElementById('authors-hub-schema'); if (s) s.remove(); };
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+      const s = document.getElementById('authors-hub-schema');
+      if (s) s.remove();
+    };
   }, []);
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <span className="text-indigo-400">CHATR</span>
-            <span className="text-slate-400 font-normal text-sm">/ Authors</span>
-          </Link>
-          <Link to="/editorial-policy" id="authors-header-policy" className="text-xs text-slate-400 hover:text-white transition-colors">
-            Editorial Policy
-          </Link>
-        </div>
-      </header>
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
 
-      <main className="max-w-4xl mx-auto px-4 py-16 space-y-12">
-        <section className="space-y-4 text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
-            <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
+
+  return (
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title="Authors & Technical Contributors — CHATR Communication OS"
+        description="Meet the verifiable authors and engineering contributors behind CHATR Communication OS and TalentXcel research."
+        canonicalUrl="https://www.chatrchat.in/authors"
+      />
+
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 md:py-16 space-y-12">
+        {/* Eyebrow & Hero Section */}
+        <section className="text-center max-w-2xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] text-xs font-semibold">
+            <UserCheck className="w-3.5 h-3.5" />
             <span>VERIFIABLE E-E-A-T ENTITIES</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white">Authors & Technical Contributors</h1>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111817] tracking-tight">
+            Authors & Technical Contributors
+          </h1>
+          <p className="text-[#53605C] text-sm md:text-base leading-relaxed">
             Every technical article, recruitment benchmark, and product launch note is authored and reviewed by identified specialists in business messaging, candidate screening, and SI operations.
           </p>
         </section>
 
+        {/* Authors Directory Grid */}
         <section className="space-y-6">
           {Object.values(AUTHORS).map((author) => (
             <Link
               key={author.slug}
               to={`/authors/${author.slug}`}
-              className="block bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-4 hover:border-indigo-500/60 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group cursor-pointer"
+              className="block bg-white border border-[#DDE3DF] hover:border-[#164E3F]/40 rounded-2xl p-6 md:p-8 space-y-5 transition-all hover:shadow-md group cursor-pointer"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-xl shrink-0 group-hover:border-indigo-400 transition-colors overflow-hidden">
+                  <div className="w-16 h-16 rounded-2xl bg-[#E8F0EB] border border-[#164E3F]/20 flex items-center justify-center text-[#164E3F] font-bold text-xl shrink-0 group-hover:border-[#164E3F]/40 transition-colors overflow-hidden">
                     {author.avatarUrl ? (
                       <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover object-top" />
                     ) : (
@@ -72,24 +105,28 @@ export const AuthorsHubPage: React.FC = () => {
                     )}
                   </div>
                   <div>
-                    <h2 className="font-bold text-white text-lg group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+                    <h2 className="font-bold text-[#111817] text-lg sm:text-xl group-hover:text-[#164E3F] transition-colors flex items-center gap-2">
                       <span>{author.name}</span>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-[#83918C] group-hover:text-[#164E3F] group-hover:translate-x-1 transition-all" />
                     </h2>
-                    <p className="text-xs text-indigo-400 font-semibold">{author.role} • {author.organization}</p>
+                    <p className="text-xs sm:text-sm text-[#164E3F] font-semibold mt-0.5">
+                      {author.role} • {author.organization}
+                    </p>
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-2 text-xs bg-slate-800 group-hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors shrink-0">
+                <span className="inline-flex items-center gap-2 text-xs bg-[#164E3F] text-white font-semibold px-4 py-2 rounded-full transition-all group-hover:bg-[#123F33] shrink-0 self-start md:self-auto shadow-sm">
                   View Profile & Articles <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
-              <p className="text-slate-300 text-sm leading-relaxed">{author.bio}</p>
+              <p className="text-[#53605C] text-sm leading-relaxed">
+                {author.bio}
+              </p>
 
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+              <div className="flex flex-wrap gap-2 pt-3 border-t border-[#DDE3DF]">
                 {author.expertise.map((exp, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 text-[11px] bg-slate-950 text-slate-300 border border-slate-800 px-2.5 py-1 rounded-md">
-                    <Tag className="w-3 h-3 text-indigo-400" />
+                  <span key={i} className="inline-flex items-center gap-1.5 text-xs bg-[#FAFBF9] text-[#53605C] border border-[#DDE3DF] px-3 py-1 rounded-full font-medium">
+                    <Tag className="w-3 h-3 text-[#164E3F]" />
                     {exp}
                   </span>
                 ))}
@@ -98,18 +135,37 @@ export const AuthorsHubPage: React.FC = () => {
           ))}
         </section>
 
-        {/* Editorial Standards Footer Card */}
-        <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <div className="space-y-1">
-            <h3 className="font-bold text-white text-base">Editorial Transparency & Fact Checking</h3>
-            <p className="text-xs text-slate-400">Read CHATR Communication OS research verification standards and author accreditation guidelines.</p>
-            <p className="text-xs text-slate-500 mt-1">Research from this team powers <Link to="/chatr/ai" className="text-indigo-400 hover:underline font-semibold">CHATR SI</Link> and the underlying benchmarks driving our product decisions.</p>
+        {/* Editorial Standards Transparency Card */}
+        <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+          <div className="space-y-1.5 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#164E3F]">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Editorial Standards & Verification</span>
+            </div>
+            <h3 className="font-bold text-[#111817] text-base sm:text-lg">Editorial Transparency & Fact Checking</h3>
+            <p className="text-xs sm:text-sm text-[#53605C] leading-relaxed">
+              Read CHATR Communication OS research verification standards and author accreditation guidelines.
+            </p>
+            <p className="text-xs text-[#83918C] pt-1">
+              Research from this team powers CHATR SI and the underlying benchmarks driving our product decisions.
+            </p>
           </div>
-          <Link to="/editorial-policy" className="text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 font-bold px-5 py-2.5 rounded-xl transition-colors shrink-0">
+          <Link
+            to="/editorial-policy"
+            className="text-xs font-semibold bg-white hover:bg-[#FAFBF9] text-[#164E3F] border border-[#164E3F]/30 px-5 py-2.5 rounded-full transition-colors shrink-0 shadow-sm"
+          >
             Read Editorial Policy →
           </Link>
         </section>
       </main>
+
+      <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

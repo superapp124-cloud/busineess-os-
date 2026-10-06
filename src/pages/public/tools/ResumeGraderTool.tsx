@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   FileText, Upload, Sparkles, CheckCircle2, AlertTriangle, ArrowRight, 
   RotateCcw, ShieldCheck, Zap, Award, ChevronRight, Download, Check
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { Footer } from '@/components/Footer';
 import { trackAcquisitionEvent, initializeAttribution } from '../../../services/acquisitionTelemetry';
 
 interface AnalysisResult {
@@ -18,6 +22,9 @@ interface AnalysisResult {
 }
 
 export const ResumeGraderTool: React.FC = () => {
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [resumeText, setResumeText] = useState('');
@@ -26,7 +33,35 @@ export const ResumeGraderTool: React.FC = () => {
   useEffect(() => {
     initializeAttribution();
     trackAcquisitionEvent({ event: 'tool_view', tool: 'resume-grader' });
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -120,52 +155,41 @@ export const ResumeGraderTool: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
       <SEOHead
         title="Free Resume Grader & Review — Instant ATS Feedback | CHATR"
         description="Check your resume score against ATS screening algorithms for free. Get instant feedback on impact metrics, action verbs, and keywords to land more interviews."
         canonicalUrl="https://www.chatrchat.in/tools/resume-grader"
       />
-      {/* Header Navigation */}
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-base">
-            <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-md text-xs font-black tracking-wider">CHATR</span>
-            <span className="text-slate-400 font-medium text-xs">/ Free ATS Resume Grader</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/auth"
-              onClick={() => handleCtaClick('nav_signup')}
-              className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors"
-            >
-              Sign In / Register
-            </Link>
-          </div>
-        </div>
-      </header>
+
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
 
       {/* Main Container */}
-      <main className="max-w-4xl mx-auto px-4 py-10 space-y-10">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 flex-1">
         {/* Hero Section */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>100% Free • Powered by TalentXcel SI Parser v3.4</span>
+        <div className="text-center space-y-4 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+            <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+            <span>100% FREE • POWERED BY TALENTXCEL AI PARSER</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Instant ATS Resume Grader & SI Rewriter
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#111817] leading-tight">
+            Instant ATS Resume Grader &amp; <span className="text-[#164E3F]">AI Rewriter</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-[#53605C] leading-relaxed">
             Drop your resume to get your ATS compatibility score, identify recruiter red flags, and get 3 instant high-impact bullet point rewrites.
           </p>
         </div>
 
         {/* Upload / Input Area (When no result yet) */}
         {!result && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
             {/* File Dropzone */}
-            <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 text-center transition-colors relative cursor-pointer group bg-slate-950/40">
+            <div className="border-2 border-dashed border-[#DDE3DF] hover:border-[#164E3F] rounded-2xl p-8 text-center transition-colors relative cursor-pointer group bg-[#F8F8F5]">
               <input
                 type="file"
                 accept=".pdf,.doc,.docx"
@@ -174,20 +198,20 @@ export const ResumeGraderTool: React.FC = () => {
                 disabled={isAnalyzing}
               />
               <div className="space-y-3 pointer-events-none">
-                <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-400 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-[#E8F0EB] border border-[#164E3F]/20 flex items-center justify-center mx-auto text-[#164E3F] group-hover:scale-105 transition-transform">
                   <Upload className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">Click or drag & drop your resume (PDF or DOCX)</p>
-                  <p className="text-xs text-slate-400 mt-1">Instant 1.2-second parsing • No credit card required</p>
+                  <p className="text-sm font-bold text-[#111817]">Click or drag &amp; drop your resume (PDF or DOCX)</p>
+                  <p className="text-xs text-[#53605C] mt-1">Instant 1.2-second parsing • No credit card required</p>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="h-px bg-slate-800 flex-1" />
-              <span className="text-xs font-bold text-slate-500 uppercase">Or Paste Text</span>
-              <div className="h-px bg-slate-800 flex-1" />
+              <div className="h-px bg-[#DDE3DF] flex-1" />
+              <span className="text-xs font-bold text-[#53605C] uppercase tracking-wider">Or Paste Text</span>
+              <div className="h-px bg-[#DDE3DF] flex-1" />
             </div>
 
             {/* Paste Text Fallback */}
@@ -197,22 +221,22 @@ export const ResumeGraderTool: React.FC = () => {
                 onChange={e => setResumeText(e.target.value)}
                 placeholder="Paste your resume work experience or bullet points here..."
                 rows={4}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3 text-xs text-[#111817] placeholder:text-[#53605C]/60 focus:outline-none focus:border-[#164E3F] transition-colors"
                 disabled={isAnalyzing}
               />
               <button
                 onClick={handlePasteAnalyze}
                 disabled={!resumeText.trim() || isAnalyzing}
-                className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+                className="w-full py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] disabled:opacity-40 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
               >
                 {isAnalyzing ? (
                   <>
                     <Sparkles className="w-4 h-4 animate-spin" />
-                    <span>Analyzing Resume Taxonomy & ATS Fit...</span>
+                    <span>Analyzing Resume Taxonomy &amp; ATS Fit...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <Sparkles className="w-4 h-4 text-emerald-200" />
                     <span>Analyze Resume for Free</span>
                   </>
                 )}
@@ -225,19 +249,19 @@ export const ResumeGraderTool: React.FC = () => {
         {result && (
           <div className="space-y-8 animate-in fade-in duration-300">
             {/* Top Score Banner */}
-            <div className="bg-gradient-to-b from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-indigo-400 font-mono">FILE: {fileName}</span>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white">ATS Resume Analysis Complete</h2>
-                  <p className="text-xs text-slate-400">Scanned against 5,000+ tech & corporate job descriptions</p>
+                  <span className="text-xs font-bold text-[#164E3F] font-mono">FILE: {fileName}</span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#111817]">ATS Resume Analysis Complete</h2>
+                  <p className="text-xs text-[#53605C]">Scanned against 5,000+ tech &amp; corporate job descriptions</p>
                 </div>
-                <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-xl p-4 shrink-0">
+                <div className="flex items-center gap-3 bg-[#F8F8F5] border border-[#DDE3DF] rounded-2xl p-4 shrink-0">
                   <div className="text-right">
-                    <p className="text-[10px] uppercase font-bold text-slate-400">Overall Score</p>
-                    <p className="text-xs text-amber-400 font-bold">Needs Polish</p>
+                    <p className="text-[10px] uppercase font-bold text-[#53605C]">Overall Score</p>
+                    <p className="text-xs text-amber-600 font-bold">Needs Polish</p>
                   </div>
-                  <div className="w-14 h-14 rounded-full bg-amber-500/10 border-2 border-amber-500 flex items-center justify-center font-black text-xl text-amber-400">
+                  <div className="w-14 h-14 rounded-full bg-[#E8F0EB] border-2 border-[#164E3F] flex items-center justify-center font-black text-xl text-[#164E3F]">
                     {result.overallScore}
                   </div>
                 </div>
@@ -245,92 +269,95 @@ export const ResumeGraderTool: React.FC = () => {
 
               {/* Sub-Score Metrics */}
               <div className="grid grid-cols-3 gap-3 pt-2">
-                <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-center space-y-1">
-                  <p className="text-[11px] text-slate-400 font-medium">ATS Format</p>
-                  <p className="text-lg font-bold text-white">{result.atsCompatibility}%</p>
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3 text-center space-y-1">
+                  <p className="text-[11px] text-[#53605C] font-medium">ATS Format</p>
+                  <p className="text-lg font-bold text-[#111817]">{result.atsCompatibility}%</p>
                 </div>
-                <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-center space-y-1">
-                  <p className="text-[11px] text-slate-400 font-medium">Action Verbs</p>
-                  <p className="text-lg font-bold text-amber-400">{result.actionVerbScore}%</p>
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3 text-center space-y-1">
+                  <p className="text-[11px] text-[#53605C] font-medium">Action Verbs</p>
+                  <p className="text-lg font-bold text-amber-600">{result.actionVerbScore}%</p>
                 </div>
-                <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-center space-y-1">
-                  <p className="text-[11px] text-slate-400 font-medium">Metrics & Impact</p>
-                  <p className="text-lg font-bold text-rose-400">{result.impactMetricScore}%</p>
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3 text-center space-y-1">
+                  <p className="text-[11px] text-[#53605C] font-medium">Metrics &amp; Impact</p>
+                  <p className="text-lg font-bold text-rose-600">{result.impactMetricScore}%</p>
                 </div>
               </div>
             </div>
 
             {/* Top 3 Identified Problems */}
-            <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2 text-white font-bold text-base">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 space-y-4 shadow-sm">
+              <div className="flex items-center gap-2 text-[#111817] font-bold text-base">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
                 <h3>Top 3 Issues Lowering Your Interview Callback Rate</h3>
               </div>
               <div className="space-y-3">
                 {result.identifiedProblems.map((prob, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-1 text-xs">
+                  <div key={idx} className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-4 space-y-1 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-200">{idx + 1}. {prob.title}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 uppercase">
+                      <span className="font-bold text-[#111817]">{idx + 1}. {prob.title}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200 uppercase">
                         {prob.severity} impact
                       </span>
                     </div>
-                    <p className="text-slate-400 leading-relaxed">{prob.desc}</p>
+                    <p className="text-[#53605C] leading-relaxed">{prob.desc}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* SI Suggested Bullet Point Rewrites */}
-            <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2 text-white font-bold text-base">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
-                <h3>SI-Optimized Bullet Point Rewrites</h3>
+            <section className="bg-white border border-[#DDE3DF] rounded-2xl p-6 space-y-4 shadow-sm">
+              <div className="flex items-center gap-2 text-[#111817] font-bold text-base">
+                <Sparkles className="w-4 h-4 text-[#164E3F]" />
+                <h3>AI-Optimized Bullet Point Rewrites</h3>
               </div>
               <div className="space-y-4">
                 {result.suggestedBulletRewrites.map((rw, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-2 text-xs">
+                  <div key={idx} className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-4 space-y-2 text-xs">
                     <div className="space-y-1">
-                      <p className="text-[10px] uppercase font-bold text-slate-500">Original (Before)</p>
-                      <p className="text-slate-400 bg-slate-900/60 p-2.5 rounded-lg font-mono line-through opacity-80">{rw.before}</p>
+                      <p className="text-[10px] uppercase font-bold text-[#53605C]">Original (Before)</p>
+                      <p className="text-[#53605C] bg-white border border-[#DDE3DF] p-2.5 rounded-lg font-mono line-through opacity-80">{rw.before}</p>
                     </div>
                     <div className="space-y-1 pt-1">
-                      <p className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1">
-                        <Check className="w-3 h-3" /> SI Improved (After)
+                      <p className="text-[10px] uppercase font-bold text-[#164E3F] flex items-center gap-1">
+                        <Check className="w-3 h-3" /> AI Improved (After)
                       </p>
-                      <p className="text-emerald-300 bg-emerald-950/20 border border-emerald-500/20 p-2.5 rounded-lg font-medium leading-relaxed">
+                      <p className="text-[#164E3F] bg-[#E8F0EB] border border-[#164E3F]/30 p-2.5 rounded-lg font-medium leading-relaxed">
                         {rw.after}
                       </p>
                     </div>
-                    <p className="text-[11px] text-indigo-300 italic pt-1">Why this works: {rw.reasoning}</p>
+                    <p className="text-[11px] text-[#53605C] italic pt-1">Why this works: {rw.reasoning}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* High-Converting Value-First Signup CTA */}
-            <div className="bg-gradient-to-r from-indigo-900/50 via-purple-900/40 to-slate-900 border border-indigo-500/40 rounded-2xl p-6 sm:p-8 space-y-4 text-center">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold">
-                <Award className="w-3.5 h-3.5 text-amber-400" />
-                <span>Next Step: Complete Your Free Optimization</span>
+            <div className="bg-white border border-[#DDE3DF] rounded-3xl p-6 sm:p-10 space-y-4 text-center shadow-sm">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+                <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+                <span>NEXT STEP: COMPLETE YOUR FREE OPTIMIZATION</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-                Download Your Full SI-Rewritten ATS Resume Free
+              <h3 className="text-xl sm:text-2xl font-bold text-[#111817]">
+                Download Your Full AI-Rewritten ATS Resume Free
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#53605C] max-w-lg mx-auto leading-relaxed">
                 Create a free career profile on CHATR to export your tailored PDF resume and get instantly discovered by hiring recruiters with automated WhatsApp matching.
               </p>
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link
-                  to="/auth"
-                  onClick={() => handleCtaClick('result_signup_complete')}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-lg shadow-indigo-500/20"
+                <button
+                  onClick={() => {
+                    handleCtaClick('result_signup_complete');
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white font-semibold text-xs transition-all shadow-md cursor-pointer"
                 >
-                  Create Free Profile & Download Resume <ArrowRight className="w-4 h-4" />
-                </Link>
+                  <span>Create Free Profile &amp; Download Resume</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
                 <button
                   onClick={() => setResult(null)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-3.5 rounded-full bg-white hover:bg-[#F8F8F5] border border-[#DDE3DF] text-[#111817] font-semibold text-xs transition-colors shadow-sm cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Test Another Resume
                 </button>
@@ -339,6 +366,16 @@ export const ResumeGraderTool: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Canonical Footer */}
+      <Footer />
+
+      {/* Auth Modal Overlay */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

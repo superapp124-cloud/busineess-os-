@@ -119,6 +119,13 @@ export const SEOHead = ({
  
  {/* Canonical URL */}
  <link rel="canonical" href={canonical} />
+
+ {/* Favicon & Web App Icons */}
+ <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+ <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+ <link rel="icon" href="/favicon.ico" sizes="any" />
+ <link rel="apple-touch-icon" href="/favicon.png" />
+ <link rel="shortcut icon" href="/favicon.ico" />
  
  {/* Alternate Languages (for future i18n) */}
  <link rel="alternate" hrefLang="en" href={canonical} />

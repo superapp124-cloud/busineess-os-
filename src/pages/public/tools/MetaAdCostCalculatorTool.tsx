@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Calculator, TrendingUp, TrendingDown, DollarSign, Target, 
   ArrowRight, Sparkles, Zap, CheckCircle2, Copy, Check, 
@@ -7,7 +7,11 @@ import {
   MessageSquare, ShoppingCart, Percent, Eye, MousePointer,
   BarChart3, ShieldCheck
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { Footer } from '@/components/Footer';
 import { trackAcquisitionEvent, initializeAttribution } from '@/services/acquisitionTelemetry';
 
 type Currency = 'INR' | 'USD' | 'AED' | 'GBP' | 'EUR';
@@ -146,6 +150,10 @@ const CURRENCY_CONFIG: Record<Currency, { symbol: string; label: string; rateMul
 };
 
 export const MetaAdCostCalculatorTool: React.FC = () => {
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [currency, setCurrency] = useState<Currency>('INR');
   const [objective, setObjective] = useState<Objective>('leads');
   const [industry, setIndustry] = useState<IndustryKey>('ecommerce');
@@ -164,7 +172,35 @@ export const MetaAdCostCalculatorTool: React.FC = () => {
   useEffect(() => {
     initializeAttribution();
     trackAcquisitionEvent({ event: 'tool_view', tool: 'meta-ad-cost-calculator' });
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   // Sync inputs when industry or currency changes
   const applyIndustryDefaults = (indKey: IndustryKey, curr: Currency) => {
@@ -373,7 +409,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
       <SEOHead
         title="Free Meta Ad Cost Calculator (Facebook & Instagram) — Estimate CPC, CPM & ROAS | CHATR"
         description="Free Meta ad cost calculator. Calculate Facebook & Instagram ad budget, CPC, CPM, expected CPL, and ROAS. Model WhatsApp lead conversion advantages instantly."
@@ -382,53 +418,40 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
         schemaData={schemaData}
       />
 
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-base">
-            <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-md text-xs font-black tracking-wider">CHATR</span>
-            <span className="text-slate-400 font-medium text-xs">/ Free Meta Ad Cost & ROAS Calculator</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/auth"
-              onClick={() => trackAcquisitionEvent({ event: 'cta_clicked', tool: 'meta-ad-cost-calculator', metadata: { cta: 'nav_signup' } })}
-              className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors flex items-center gap-1.5 shadow-sm"
-            >
-              <span>Get Started Free</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-10 space-y-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 flex-1">
         {/* Hero Title */}
-        <div className="text-center space-y-3 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>Updated 2026 Meta Algorithm Benchmarks • 100% Free Tool</span>
+        <div className="text-center space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+            <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+            <span>UPDATED 2026 META BENCHMARKS • 100% FREE TOOL</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
-            Meta Ad Cost & ROAS Calculator
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#111817] leading-tight">
+            Meta Ad Cost &amp; <span className="text-[#164E3F]">ROAS Calculator</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Accurately model your Facebook & Instagram advertising budget. Estimate CPC, CPM, CPL, projected revenue, and compare traditional web forms vs Click-to-WhatsApp ROI.
+          <p className="text-sm sm:text-base text-[#53605C] leading-relaxed max-w-2xl mx-auto">
+            Accurately model your Facebook &amp; Instagram advertising budget. Estimate CPC, CPM, CPL, projected revenue, and compare traditional web forms vs Click-to-WhatsApp ROI.
           </p>
 
           {/* Quick Config Bar: Currency & Campaign Objective */}
-          <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             {/* Currency Selector */}
-            <div className="inline-flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+            <div className="inline-flex bg-white border border-[#DDE3DF] rounded-full p-1 gap-1 shadow-sm">
               {(['INR', 'USD', 'AED', 'GBP', 'EUR'] as Currency[]).map((curr) => (
                 <button
                   key={curr}
                   onClick={() => handleCurrencyChange(curr)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     currency === curr
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      ? 'bg-[#164E3F] text-white shadow-sm'
+                      : 'text-[#53605C] hover:text-[#111817] hover:bg-[#F8F8F5]'
                   }`}
                 >
                   {CURRENCY_CONFIG[curr].label}
@@ -437,16 +460,16 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
             </div>
 
             {/* Campaign Objective Selector */}
-            <div className="inline-flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+            <div className="inline-flex bg-white border border-[#DDE3DF] rounded-full p-1 gap-1 shadow-sm">
               <button
                 onClick={() => {
                   setObjective('leads');
                   trackAcquisitionEvent({ event: 'tool_started', tool: 'meta-ad-cost-calculator', metadata: { objective: 'leads' } });
                 }}
-                className={`px-3.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                   objective === 'leads'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-[#164E3F] text-white shadow-sm'
+                    : 'text-[#53605C] hover:text-[#111817] hover:bg-[#F8F8F5]'
                 }`}
               >
                 <MessageSquare className="w-3.5 h-3.5" />
@@ -457,10 +480,10 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                   setObjective('ecommerce');
                   trackAcquisitionEvent({ event: 'tool_started', tool: 'meta-ad-cost-calculator', metadata: { objective: 'ecommerce' } });
                 }}
-                className={`px-3.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                   objective === 'ecommerce'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-[#164E3F] text-white shadow-sm'
+                    : 'text-[#53605C] hover:text-[#111817] hover:bg-[#F8F8F5]'
                 }`}
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
@@ -471,13 +494,13 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
         </div>
 
         {/* Industry Benchmarks Preset Selector */}
-        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-indigo-400" />
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3.5">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#111817] flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-[#164E3F]" />
               <span>Select Your Industry for 2026 Calibrated Benchmarks</span>
             </span>
-            <span className="text-[11px] text-slate-500 hidden sm:inline">Auto-populates CPC, CTR, and Conversion Rates</span>
+            <span className="text-[11px] text-[#53605C] hidden sm:inline">Auto-populates CPC, CTR, and Conversion Rates</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
@@ -488,14 +511,14 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                 <button
                   key={key}
                   onClick={() => handleIndustryChange(key)}
-                  className={`text-left p-2.5 rounded-xl border text-xs font-medium transition-all ${
+                  className={`text-left p-2.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-indigo-600/15 border-indigo-500 text-white ring-1 ring-indigo-500'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-[#E8F0EB] border-[#164E3F] text-[#164E3F] ring-1 ring-[#164E3F]'
+                      : 'bg-[#F8F8F5] border-[#DDE3DF] text-[#53605C] hover:bg-white hover:text-[#111817]'
                   }`}
                 >
                   <div className="font-semibold truncate">{item.name}</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">
+                  <div className="text-[10px] text-[#53605C] mt-0.5">
                     CTR: ~{item.defaultCtr}% • Conv: ~{item.defaultConvRate}%
                   </div>
                 </button>
@@ -507,15 +530,15 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
         {/* Calculator Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Interactive Input Controls */}
-          <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-7 space-y-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Calculator className="w-4 h-4 text-indigo-400" />
+          <div className="lg:col-span-5 bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-7 space-y-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-[#DDE3DF] pb-4">
+              <h2 className="text-base font-bold text-[#111817] flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-[#164E3F]" />
                 Campaign Parameters
               </h2>
               <button
                 onClick={() => applyIndustryDefaults(industry, currency)}
-                className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-semibold"
+                className="text-[11px] text-[#164E3F] hover:text-[#2E6B59] flex items-center gap-1 font-semibold cursor-pointer"
                 title="Reset to industry standard benchmarks"
               >
                 <RefreshCw className="w-3 h-3" />
@@ -527,11 +550,11 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               {/* Monthly Ad Budget */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <label className="font-semibold text-slate-300 flex items-center gap-1">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                  <label className="font-semibold text-[#53605C] flex items-center gap-1">
+                    <DollarSign className="w-3.5 h-3.5 text-[#164E3F]" />
                     Monthly Ad Budget
                   </label>
-                  <span className="font-bold text-emerald-400 font-mono text-sm">
+                  <span className="font-bold text-[#164E3F] font-mono text-sm">
                     {currSymbol}{monthlyBudget.toLocaleString()}
                   </span>
                 </div>
@@ -546,9 +569,9 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     setMonthlyBudget(val);
                     trackAcquisitionEvent({ event: 'tool_started', tool: 'meta-ad-cost-calculator', metadata: { field: 'budget', value: val } });
                   }}
-                  className="w-full accent-emerald-500 cursor-pointer"
+                  className="w-full accent-[#164E3F] cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500">
+                <div className="flex justify-between text-[10px] text-[#53605C]">
                   <span>{currSymbol}{currency === 'INR' ? '5,000' : '100'}</span>
                   <span>{currSymbol}{currency === 'INR' ? '500,000' : '10,000'}</span>
                   <span>{currSymbol}{currency === 'INR' ? '1,000,000' : '25,000'}</span>
@@ -558,11 +581,11 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               {/* Target / Expected CPC */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <label className="font-semibold text-slate-300 flex items-center gap-1">
-                    <MousePointer className="w-3.5 h-3.5 text-indigo-400" />
+                  <label className="font-semibold text-[#53605C] flex items-center gap-1">
+                    <MousePointer className="w-3.5 h-3.5 text-[#164E3F]" />
                     Estimated Cost Per Click (CPC)
                   </label>
-                  <span className="font-bold text-indigo-400 font-mono text-sm">
+                  <span className="font-bold text-[#111817] font-mono text-sm">
                     {currSymbol}{cpc}
                   </span>
                 </div>
@@ -574,7 +597,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={currency === 'INR' ? 1 : 0.05}
                     value={cpc}
                     onChange={(e) => setCpc(Number(e.target.value))}
-                    className="col-span-3 accent-indigo-500 cursor-pointer"
+                    className="col-span-3 accent-[#164E3F] cursor-pointer"
                   />
                   <input
                     type="number"
@@ -582,7 +605,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={currency === 'INR' ? 1 : 0.05}
                     value={cpc}
                     onChange={(e) => setCpc(Math.max(0.01, Number(e.target.value)))}
-                    className="col-span-1 bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs text-center font-mono text-white"
+                    className="col-span-1 bg-[#F8F8F5] border border-[#DDE3DF] rounded-lg p-1.5 text-xs text-center font-mono text-[#111817] focus:border-[#164E3F]"
                   />
                 </div>
               </div>
@@ -590,11 +613,11 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               {/* Click-Through Rate (CTR) */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <label className="font-semibold text-slate-300 flex items-center gap-1">
-                    <Eye className="w-3.5 h-3.5 text-cyan-400" />
+                  <label className="font-semibold text-[#53605C] flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5 text-[#164E3F]" />
                     Ad Click-Through Rate (CTR)
                   </label>
-                  <span className="font-bold text-cyan-400 font-mono text-sm">
+                  <span className="font-bold text-[#111817] font-mono text-sm">
                     {ctr}%
                   </span>
                 </div>
@@ -606,7 +629,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={0.1}
                     value={ctr}
                     onChange={(e) => setCtr(Number(e.target.value))}
-                    className="col-span-3 accent-cyan-500 cursor-pointer"
+                    className="col-span-3 accent-[#164E3F] cursor-pointer"
                   />
                   <input
                     type="number"
@@ -615,20 +638,20 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={0.1}
                     value={ctr}
                     onChange={(e) => setCtr(Math.max(0.1, Number(e.target.value)))}
-                    className="col-span-1 bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs text-center font-mono text-white"
+                    className="col-span-1 bg-[#F8F8F5] border border-[#DDE3DF] rounded-lg p-1.5 text-xs text-center font-mono text-[#111817] focus:border-[#164E3F]"
                   />
                 </div>
-                <p className="text-[10px] text-slate-500">Benchmark: 1.0% (Average) — 2.2%+ (High Relevance)</p>
+                <p className="text-[10px] text-[#53605C]">Benchmark: 1.0% (Average) — 2.2%+ (High Relevance)</p>
               </div>
 
               {/* Destination Conversion Rate */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <label className="font-semibold text-slate-300 flex items-center gap-1">
-                    <Target className="w-3.5 h-3.5 text-amber-400" />
+                  <label className="font-semibold text-[#53605C] flex items-center gap-1">
+                    <Target className="w-3.5 h-3.5 text-[#164E3F]" />
                     {objective === 'leads' ? 'Visitor → Lead Conversion Rate' : 'Storefront Purchase Rate'}
                   </label>
-                  <span className="font-bold text-amber-400 font-mono text-sm">
+                  <span className="font-bold text-[#111817] font-mono text-sm">
                     {conversionRate}%
                   </span>
                 </div>
@@ -640,7 +663,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={0.2}
                     value={conversionRate}
                     onChange={(e) => setConversionRate(Number(e.target.value))}
-                    className="col-span-3 accent-amber-500 cursor-pointer"
+                    className="col-span-3 accent-[#164E3F] cursor-pointer"
                   />
                   <input
                     type="number"
@@ -649,10 +672,10 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={0.1}
                     value={conversionRate}
                     onChange={(e) => setConversionRate(Math.max(0.1, Number(e.target.value)))}
-                    className="col-span-1 bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs text-center font-mono text-white"
+                    className="col-span-1 bg-[#F8F8F5] border border-[#DDE3DF] rounded-lg p-1.5 text-xs text-center font-mono text-[#111817] focus:border-[#164E3F]"
                   />
                 </div>
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[10px] text-[#53605C]">
                   {objective === 'leads'
                     ? 'Traditional web forms: 2-4% • Click-to-WhatsApp: 6-12%'
                     : 'Standard E-Commerce conversion rate: 1.8% - 3.5%'}
@@ -662,10 +685,10 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               {/* Average Deal Value / Customer LTV */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <label className="font-semibold text-slate-300">
+                  <label className="font-semibold text-[#53605C]">
                     {objective === 'leads' ? 'Average Deal Value / Client Value' : 'Average Order Value (AOV)'}
                   </label>
-                  <span className="font-bold text-emerald-400 font-mono text-sm">
+                  <span className="font-bold text-[#164E3F] font-mono text-sm">
                     {currSymbol}{dealValue.toLocaleString()}
                   </span>
                 </div>
@@ -675,7 +698,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                   step={currency === 'INR' ? 500 : 10}
                   value={dealValue}
                   onChange={(e) => setDealValue(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono"
+                  className="w-full bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3 text-xs text-[#111817] focus:outline-none focus:border-[#164E3F] font-mono"
                   placeholder="e.g. 15000"
                 />
               </div>
@@ -684,10 +707,10 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               {objective === 'leads' && (
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs">
-                    <label className="font-semibold text-slate-300">
+                    <label className="font-semibold text-[#53605C]">
                       Sales Team Lead-to-Customer Close Rate
                     </label>
-                    <span className="font-bold text-violet-400 font-mono text-sm">
+                    <span className="font-bold text-[#164E3F] font-mono text-sm">
                       {closeRate}%
                     </span>
                   </div>
@@ -698,9 +721,9 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     step={1}
                     value={closeRate}
                     onChange={(e) => setCloseRate(Number(e.target.value))}
-                    className="w-full accent-violet-500 cursor-pointer"
+                    className="w-full accent-[#164E3F] cursor-pointer"
                   />
-                  <p className="text-[10px] text-slate-500">
+                  <p className="text-[10px] text-[#53605C]">
                     Percentage of captured leads your sales reps successfully convert into paying clients.
                   </p>
                 </div>
@@ -713,100 +736,100 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
             {/* Top Primary Outcome Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {/* ROAS Card */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1">
-                <div className="text-[11px] font-bold uppercase text-slate-400 flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="bg-white border border-[#DDE3DF] rounded-2xl p-4 space-y-1 shadow-sm">
+                <div className="text-[11px] font-bold uppercase text-[#53605C] flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5 text-[#164E3F]" />
                   <span>Projected ROAS</span>
                 </div>
-                <div className={`text-2xl sm:text-3xl font-black font-mono ${calculations.roas >= 2.5 ? 'text-emerald-400' : calculations.roas >= 1.0 ? 'text-amber-400' : 'text-rose-400'}`}>
+                <div className={`text-2xl sm:text-3xl font-black font-mono ${calculations.roas >= 2.5 ? 'text-[#164E3F]' : calculations.roas >= 1.0 ? 'text-amber-600' : 'text-rose-600'}`}>
                   {calculations.roas.toFixed(2)}x
                 </div>
-                <div className="text-[10px] text-slate-500">Return on Ad Spend</div>
+                <div className="text-[10px] text-[#53605C]">Return on Ad Spend</div>
               </div>
 
               {/* Primary Volume (Leads or Orders) */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1">
-                <div className="text-[11px] font-bold uppercase text-slate-400 flex items-center gap-1">
-                  <Target className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="bg-white border border-[#DDE3DF] rounded-2xl p-4 space-y-1 shadow-sm">
+                <div className="text-[11px] font-bold uppercase text-[#53605C] flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-[#164E3F]" />
                   <span>{objective === 'leads' ? 'Total Leads' : 'Total Orders'}</span>
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-indigo-300 font-mono">
+                <div className="text-2xl sm:text-3xl font-black text-[#111817] font-mono">
                   {calculations.primaryCount.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-slate-500">Estimated volume</div>
+                <div className="text-[10px] text-[#53605C]">Estimated volume</div>
               </div>
 
               {/* Unit Cost (CPL or CPA) */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1">
-                <div className="text-[11px] font-bold uppercase text-slate-400 flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="bg-white border border-[#DDE3DF] rounded-2xl p-4 space-y-1 shadow-sm">
+                <div className="text-[11px] font-bold uppercase text-[#53605C] flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5 text-[#164E3F]" />
                   <span>{calculations.unitCostLabel.split(' ')[0]} {calculations.unitCostLabel.split(' ')[1]}</span>
                 </div>
-                <div className="text-xl sm:text-2xl font-black text-cyan-300 font-mono">
+                <div className="text-xl sm:text-2xl font-black text-[#111817] font-mono">
                   {currSymbol}{Math.round(calculations.primaryCost).toLocaleString()}
                 </div>
-                <div className="text-[10px] text-slate-500">{calculations.unitCostLabel}</div>
+                <div className="text-[10px] text-[#53605C]">{calculations.unitCostLabel}</div>
               </div>
 
               {/* Net Profit */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1">
-                <div className="text-[11px] font-bold uppercase text-slate-400 flex items-center gap-1">
-                  <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
+              <div className="bg-white border border-[#DDE3DF] rounded-2xl p-4 space-y-1 shadow-sm">
+                <div className="text-[11px] font-bold uppercase text-[#53605C] flex items-center gap-1">
+                  <BarChart3 className="w-3.5 h-3.5 text-[#164E3F]" />
                   <span>Net Return</span>
                 </div>
-                <div className={`text-xl sm:text-2xl font-black font-mono truncate ${calculations.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <div className={`text-xl sm:text-2xl font-black font-mono truncate ${calculations.netProfit >= 0 ? 'text-[#164E3F]' : 'text-rose-600'}`}>
                   {currSymbol}{Math.round(calculations.netProfit).toLocaleString()}
                 </div>
-                <div className="text-[10px] text-slate-500">After ad spend</div>
+                <div className="text-[10px] text-[#53605C]">After ad spend</div>
               </div>
             </div>
 
             {/* Granular Funnel Breakdown Box */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center justify-between">
+            <div className="bg-white border border-[#DDE3DF] rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
+              <h3 className="text-sm font-bold text-[#111817] uppercase tracking-wider flex items-center justify-between">
                 <span>Estimated Full Funnel Breakdown</span>
-                <span className="text-xs text-slate-400 font-normal">Based on {currSymbol}{monthlyBudget.toLocaleString()} spend</span>
+                <span className="text-xs text-[#53605C] font-normal">Based on {currSymbol}{monthlyBudget.toLocaleString()} spend</span>
               </h3>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Total Impressions</span>
-                  <span className="text-base font-bold text-slate-200 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Total Impressions</span>
+                  <span className="text-base font-bold text-[#111817] font-mono">
                     {calculations.estimatedImpressions.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Total Clicks (Traffic)</span>
-                  <span className="text-base font-bold text-slate-200 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Total Clicks (Traffic)</span>
+                  <span className="text-base font-bold text-[#111817] font-mono">
                     {calculations.estimatedClicks.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Effective CPM</span>
-                  <span className="text-base font-bold text-slate-200 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Effective CPM</span>
+                  <span className="text-base font-bold text-[#111817] font-mono">
                     {currSymbol}{calculations.effectiveCpm.toFixed(2)}
                   </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Total Revenue</span>
-                  <span className="text-base font-bold text-emerald-400 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Total Revenue</span>
+                  <span className="text-base font-bold text-[#164E3F] font-mono">
                     {currSymbol}{Math.round(calculations.grossRevenue).toLocaleString()}
                   </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Paying Customers / Sales</span>
-                  <span className="text-base font-bold text-slate-200 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Paying Customers / Sales</span>
+                  <span className="text-base font-bold text-[#111817] font-mono">
                     {calculations.customers.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Cost Per Customer (CPA)</span>
-                  <span className="text-base font-bold text-slate-200 font-mono">
+                <div className="bg-[#F8F8F5] border border-[#DDE3DF] rounded-xl p-3">
+                  <span className="text-[11px] text-[#53605C] block">Cost Per Customer (CPA)</span>
+                  <span className="text-base font-bold text-[#111817] font-mono">
                     {currSymbol}{Math.round(calculations.cpa).toLocaleString()}
                   </span>
                 </div>
@@ -814,54 +837,54 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
             </div>
 
             {/* THE CHATR GAMECHANGER: WhatsApp Instant AI Funnel Advantage */}
-            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-indigo-950/40 border border-emerald-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
+            <div className="bg-[#E8F0EB]/60 border border-[#164E3F]/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
-                    <Sparkles className="w-3 h-3 text-emerald-400" />
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#164E3F] text-white text-[10px] font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3 h-3" />
                     <span>The CHATR Multiplier Effect</span>
                   </div>
-                  <h4 className="text-base sm:text-lg font-bold text-white">
+                  <h4 className="text-base sm:text-lg font-bold text-[#111817]">
                     Traditional Web Form vs Click-to-WhatsApp Flow
                   </h4>
                 </div>
                 <div className="text-right">
-                  <span className="text-emerald-400 font-extrabold text-sm sm:text-base font-mono">
+                  <span className="text-[#164E3F] font-extrabold text-sm sm:text-base font-mono">
                     +{currSymbol}{Math.round(calculations.chatrExtraRevenue).toLocaleString()}
                   </span>
-                  <span className="text-[10px] text-slate-400 block">Est. Revenue Lift</span>
+                  <span className="text-[10px] text-[#53605C] block">Est. Revenue Lift</span>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#53605C] leading-relaxed">
                 Traditional mobile web forms lose up to <strong>70% of inbound Meta traffic</strong> to landing page latency and form hesitation. Running Meta <strong>Click-to-WhatsApp Ads</strong> connected to CHATR’s automated sub-60-second qualification engine recaptures those high-intent prospects.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 {/* Traditional Form Card */}
-                <div className="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 space-y-2">
-                  <div className="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                <div className="bg-white border border-[#DDE3DF] rounded-xl p-3.5 space-y-2 shadow-sm">
+                  <div className="text-xs font-semibold text-[#53605C] flex items-center justify-between">
                     <span>Traditional Web Page</span>
-                    <span className="text-[10px] text-rose-400 font-bold">Standard</span>
+                    <span className="text-[10px] text-rose-600 font-bold">Standard</span>
                   </div>
-                  <div className="text-lg font-bold text-white font-mono">
+                  <div className="text-lg font-bold text-[#111817] font-mono">
                     {calculations.primaryCount.toLocaleString()} {objective === 'leads' ? 'leads' : 'orders'}
                   </div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[11px] text-[#53605C]">
                     CPL: {currSymbol}{Math.round(calculations.primaryCost).toLocaleString()} • Response SLA: ~4 Hours
                   </div>
                 </div>
 
                 {/* CHATR WhatsApp Card */}
-                <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-3.5 space-y-2">
-                  <div className="text-xs font-semibold text-emerald-300 flex items-center justify-between">
+                <div className="bg-white border border-[#164E3F]/40 rounded-xl p-3.5 space-y-2 shadow-sm">
+                  <div className="text-xs font-semibold text-[#164E3F] flex items-center justify-between">
                     <span>CHATR WhatsApp Funnel</span>
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-bold">2.2x Yield</span>
+                    <span className="text-[10px] bg-[#E8F0EB] text-[#164E3F] px-1.5 py-0.5 rounded font-bold">2.2x Yield</span>
                   </div>
-                  <div className="text-lg font-bold text-emerald-300 font-mono">
+                  <div className="text-lg font-bold text-[#164E3F] font-mono">
                     {calculations.chatrLeads.toLocaleString()} {objective === 'leads' ? 'leads' : 'orders'}
                   </div>
-                  <div className="text-[11px] text-emerald-400/90">
+                  <div className="text-[11px] text-[#164E3F]/90">
                     CPL: {currSymbol}{Math.round(calculations.chatrCpl).toLocaleString()} • Response SLA: &lt;60 Seconds
                   </div>
                 </div>
@@ -871,49 +894,51 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                 <button
                   onClick={handleCopySummary}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2 transition-colors border border-slate-700"
+                  className="w-full sm:w-auto px-5 py-3 rounded-full bg-white hover:bg-[#F8F8F5] text-[#111817] text-xs font-semibold flex items-center justify-center gap-2 transition-colors border border-[#DDE3DF] shadow-sm cursor-pointer"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-[#164E3F]" /> : <Copy className="w-4 h-4" />}
                   <span>{copied ? 'Summary Copied to Clipboard!' : 'Copy Calculation Summary'}</span>
                 </button>
 
-                <Link
-                  to="/auth"
-                  onClick={() => trackAcquisitionEvent({ 
-                    event: 'cta_clicked', 
-                    tool: 'meta-ad-cost-calculator', 
-                    metadata: { cta: 'connect_meta_whatsapp', roas: calculations.roas } 
-                  })}
-                  className="w-full sm:flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20"
+                <button
+                  onClick={() => {
+                    trackAcquisitionEvent({ 
+                      event: 'cta_clicked', 
+                      tool: 'meta-ad-cost-calculator', 
+                      metadata: { cta: 'connect_meta_whatsapp', roas: calculations.roas } 
+                    });
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full sm:flex-1 py-3 px-6 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                 >
                   <span>Connect WhatsApp Ads to CHATR (Free)</span>
                   <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Industry Benchmarks Reference Table */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-xl">
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-5 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-indigo-400" />
+              <h3 className="text-lg font-bold text-[#111817] flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#164E3F]" />
                 2026 Meta Ads Industry Benchmarks (Facebook & Instagram)
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#53605C]">
                 Empirical advertising benchmarks compiled across active B2B, E-Commerce, and Service campaigns.
               </p>
             </div>
-            <div className="text-xs font-mono text-slate-500">
-              Currency: <strong className="text-slate-300">{currency}</strong>
+            <div className="text-xs font-mono text-[#53605C]">
+              Currency: <strong className="text-[#111817]">{currency}</strong>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-950/80 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
+            <table className="w-full text-left text-xs text-[#53605C]">
+              <thead className="bg-[#F8F8F5] text-[11px] uppercase tracking-wider text-[#111817] border-b border-[#DDE3DF]">
                 <tr>
                   <th className="py-3 px-3">Industry Vertical</th>
                   <th className="py-3 px-3">Avg CPC</th>
@@ -923,7 +948,7 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                   <th className="py-3 px-3">Typical Target ROAS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-mono text-[11px]">
+              <tbody className="divide-y divide-[#DDE3DF] font-mono text-[11px]">
                 {(Object.keys(INDUSTRY_BENCHMARKS) as IndustryKey[]).filter(k => k !== 'custom').map((k) => {
                   const b = INDUSTRY_BENCHMARKS[k];
                   const isCurrent = industry === k;
@@ -933,16 +958,16 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
                     : (Number(cpcVal) / (b.defaultConvRate / 100)).toFixed(1);
 
                   return (
-                    <tr key={k} className={`hover:bg-slate-800/40 transition-colors ${isCurrent ? 'bg-indigo-950/20 font-bold text-white' : ''}`}>
+                    <tr key={k} className={`hover:bg-[#F8F8F5] transition-colors ${isCurrent ? 'bg-[#E8F0EB]/70 font-bold text-[#164E3F]' : 'text-[#111817]'}`}>
                       <td className="py-3 px-3 font-sans flex items-center gap-2">
-                        {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>}
+                        {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-[#164E3F]"></span>}
                         {b.name}
                       </td>
                       <td className="py-3 px-3">{currSymbol}{cpcVal}</td>
-                      <td className="py-3 px-3 text-cyan-400">{b.defaultCtr}%</td>
-                      <td className="py-3 px-3 text-amber-400">{b.defaultConvRate}%</td>
-                      <td className="py-3 px-3 text-emerald-400">{currSymbol}{cplVal}</td>
-                      <td className="py-3 px-3 text-indigo-300">{k === 'ecommerce' ? '3.0x - 4.5x' : '4.0x - 8.0x'}</td>
+                      <td className="py-3 px-3 text-[#164E3F] font-semibold">{b.defaultCtr}%</td>
+                      <td className="py-3 px-3 text-[#111817]">{b.defaultConvRate}%</td>
+                      <td className="py-3 px-3 text-[#164E3F] font-semibold">{currSymbol}{cplVal}</td>
+                      <td className="py-3 px-3 text-[#53605C]">{k === 'ecommerce' ? '3.0x - 4.5x' : '4.0x - 8.0x'}</td>
                     </tr>
                   );
                 })}
@@ -953,45 +978,45 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
 
         {/* 5 Growth Strategies to Lower Meta Ad Cost */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+          <div className="bg-white border border-[#DDE3DF] rounded-2xl p-5 space-y-2.5 shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] flex items-center justify-center font-bold text-xs">
               01
             </div>
-            <h4 className="text-sm font-bold text-white">Cut Mobile Landing Page Latency</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-sm font-bold text-[#111817]">Cut Mobile Landing Page Latency</h4>
+            <p className="text-xs text-[#53605C] leading-relaxed">
               Every 1-second delay in mobile website loading reduces conversion rates by 7%. Direct WhatsApp ads eliminate mobile browser drop-off completely.
             </p>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+          <div className="bg-white border border-[#DDE3DF] rounded-2xl p-5 space-y-2.5 shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] flex items-center justify-center font-bold text-xs">
               02
             </div>
-            <h4 className="text-sm font-bold text-white">Automate Sub-60-Second Lead Triage</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-sm font-bold text-[#111817]">Automate Sub-60-Second Lead Triage</h4>
+            <p className="text-xs text-[#53605C] leading-relaxed">
               Leads contacted within 5 minutes are 21x more likely to enter the sales pipeline than those contacted after 30 minutes. Use CHATR to route and qualify instantly.
             </p>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs">
+          <div className="bg-white border border-[#DDE3DF] rounded-2xl p-5 space-y-2.5 shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-[#E8F0EB] border border-[#164E3F]/20 text-[#164E3F] flex items-center justify-center font-bold text-xs">
               03
             </div>
-            <h4 className="text-sm font-bold text-white">Optimize Ad Hook Rate (&gt;30%)</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-sm font-bold text-[#111817]">Optimize Ad Hook Rate (&gt;30%)</h4>
+            <p className="text-xs text-[#53605C] leading-relaxed">
               Higher 3-second video hook rates increase Meta relevance scores, which directly drops your CPM by up to 35% in competitive auctions.
             </p>
           </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-indigo-400" />
+            <h3 className="text-lg font-bold text-[#111817] flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-[#164E3F]" />
               Frequently Asked Questions About Meta Ad Costs
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#53605C]">
               Clear answers to help you budget and maximize return on Facebook & Instagram advertising.
             </p>
           </div>
@@ -1002,21 +1027,21 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
               return (
                 <div
                   key={idx}
-                  className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/60 transition-colors"
+                  className="border border-[#DDE3DF] rounded-xl overflow-hidden bg-[#F8F8F5] transition-colors"
                 >
                   <button
                     onClick={() => setExpandedFaq(isExpanded ? null : idx)}
-                    className="w-full text-left p-4 flex items-center justify-between gap-4 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+                    className="w-full text-left p-4 flex items-center justify-between gap-4 text-xs sm:text-sm font-semibold text-[#111817] hover:text-[#164E3F] cursor-pointer"
                   >
                     <span>{faq.q}</span>
                     {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-indigo-400 shrink-0" />
+                      <ChevronUp className="w-4 h-4 text-[#164E3F] shrink-0" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-slate-500 shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-[#53605C] shrink-0" />
                     )}
                   </button>
                   {isExpanded && (
-                    <div className="p-4 pt-0 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 bg-slate-900/30">
+                    <div className="p-4 pt-2 text-xs text-[#53605C] leading-relaxed border-t border-[#DDE3DF] bg-white">
                       {faq.a}
                     </div>
                   )}
@@ -1027,31 +1052,47 @@ Calculated on: https://www.chatrchat.in/tools/meta-ad-cost-calculator`;
         </div>
 
         {/* Bottom Call to Action Banner */}
-        <div className="bg-gradient-to-r from-indigo-900/60 via-slate-900 to-emerald-900/60 border border-indigo-500/30 rounded-2xl p-6 sm:p-10 text-center space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+        <div className="bg-white border border-[#DDE3DF] rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-sm">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+            <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+            <span>GROWTH ACCELERATION</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-bold text-[#111817]">
             Stop Burning Meta Ad Spend on Lost Leads
           </h3>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Connect your Facebook & Instagram Click-to-WhatsApp ads to CHATR. Auto-triage leads, assign conversations round-robin to your sales team, and close deals in under 60 seconds.
+          <p className="text-xs sm:text-sm text-[#53605C] max-w-xl mx-auto leading-relaxed">
+            Connect your Facebook &amp; Instagram Click-to-WhatsApp ads to CHATR. Auto-triage leads, assign conversations round-robin to your sales team, and close deals in under 60 seconds.
           </p>
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/auth"
-              onClick={() => trackAcquisitionEvent({ event: 'cta_clicked', tool: 'meta-ad-cost-calculator', metadata: { cta: 'footer_signup' } })}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/30"
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+            <button
+              onClick={() => {
+                trackAcquisitionEvent({ event: 'cta_clicked', tool: 'meta-ad-cost-calculator', metadata: { cta: 'footer_signup' } });
+                setAuthModalOpen(true);
+              }}
+              className="px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white font-semibold text-sm flex items-center gap-2 transition-all shadow-md cursor-pointer"
             >
               <span>Start Free Trial — No Credit Card</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
             <Link
               to="/tools/whatsapp-link-generator"
-              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors border border-slate-700"
+              className="px-6 py-3.5 rounded-full bg-white hover:bg-[#F8F8F5] text-[#111817] font-semibold text-sm transition-colors border border-[#DDE3DF] shadow-sm"
             >
               Try Free WhatsApp Link Generator →
             </Link>
           </div>
         </div>
       </main>
+
+      {/* Canonical Footer */}
+      <Footer />
+
+      {/* Auth Modal Overlay */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

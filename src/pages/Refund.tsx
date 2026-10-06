@@ -1,134 +1,126 @@
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { SEOHead } from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Refund() {
- const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
- return (
- <div className="min-h-screen bg-background">
- <div className="max-w-4xl mx-auto px-4 py-8">
- <Button
- variant="ghost"
- size="sm"
- onClick={() => navigate(-1)}
- className="mb-6"
- >
- <ArrowLeft className="w-4 h-4 mr-2" />
- Back
- </Button>
+  useEffect(() => {
+    window.scrollTo(0, 0);
 
- <h1 className="text-display mb-6">Refund and Cancellation Policy</h1>
- <p className="text-secondary text-muted-foreground mb-8">Last Updated: January 2025</p>
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
 
- <div className="space-y-6 text-secondary">
- <section>
- <h2 className="text-workspace mb-3">1. Free Services</h2>
- <p className="text-muted-foreground leading-relaxed">
- Most of Chatr's core features (messaging, calling, health tracking) are free. No refunds are applicable for free services.
- </p>
- </section>
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
 
- <section>
- <h2 className="text-workspace mb-3">2. Premium Services and In-App Purchases</h2>
- <p className="text-muted-foreground leading-relaxed">
- Chatr may offer premium features, subscriptions, or in-app purchases (e.g., Chatr Coins, premium themes, business features). These are governed by the following refund policy.
- </p>
- </section>
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
- <section>
- <h2 className="text-workspace mb-3">3. Eligibility for Refunds</h2>
- <p className="text-muted-foreground leading-relaxed mb-2">
- Refunds may be issued in the following cases:
- </p>
- <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
- <li>Duplicate charges or unauthorized transactions</li>
- <li>Technical errors preventing access to purchased features</li>
- <li>Service not delivered as described</li>
- <li>Accidental purchases reported within 48 hours</li>
- </ul>
- </section>
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
 
- <section>
- <h2 className="text-workspace mb-3">4. Non-Refundable Items</h2>
- <p className="text-muted-foreground leading-relaxed mb-2">
- The following are non-refundable:
- </p>
- <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
- <li>Chatr Coins spent on virtual gifts or services</li>
- <li>Subscriptions after 48 hours of purchase</li>
- <li>Services already consumed or used</li>
- <li>Promotional or discounted purchases</li>
- </ul>
- </section>
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
- <section>
- <h2 className="text-workspace mb-3">5. Subscription Cancellation</h2>
- <p className="text-muted-foreground leading-relaxed">
- You can cancel your subscription at any time from your account settings. Cancellation will take effect at the end of the current billing period. No partial refunds are provided for unused time in the current period.
- </p>
- </section>
+  return (
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title="Refund and Cancellation Policy — CHATR Communication OS"
+        description="Learn about the refund and cancellation policies applicable to CHATR commercial plans and subscriptions."
+        canonicalUrl="https://www.chatrchat.in/refund"
+      />
 
- <section>
- <h2 className="text-workspace mb-3">6. How to Request a Refund</h2>
- <p className="text-muted-foreground leading-relaxed mb-2">
- To request a refund:
- </p>
- <ol className="list-decimal list-inside text-muted-foreground space-y-1 ml-4">
- <li>Contact our support team at refunds@chatr.app</li>
- <li>Provide transaction details (date, amount, order ID)</li>
- <li>Explain the reason for your refund request</li>
- <li>Include any supporting evidence (screenshots, receipts)</li>
- </ol>
- </section>
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
 
- <section>
- <h2 className="text-workspace mb-3">7. Refund Processing Time</h2>
- <p className="text-muted-foreground leading-relaxed">
- Approved refunds will be processed within 7-10 business days. The refund will be credited to your original payment method. Bank processing times may vary.
- </p>
- </section>
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14 space-y-8">
+        <div className="bg-white rounded-3xl border border-[#DDE3DF] shadow-sm p-6 sm:p-10 space-y-6 text-sm text-[#53605C]">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111817]">Refund and Cancellation Policy</h1>
+            <p className="text-xs text-[#83918C] mt-1">Last Updated: January 2026</p>
+          </div>
 
- <section>
- <h2 className="text-workspace mb-3">8. Payment Gateway Policies</h2>
- <p className="text-muted-foreground leading-relaxed">
- For purchases made through Google Play Store or Apple App Store, refund requests must be submitted through the respective platform. Please refer to their refund policies.
- </p>
- </section>
+          <div className="space-y-6">
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">1. Free Services & Trials</h2>
+              <p className="leading-relaxed">
+                Core browser calling and trial workspace tiers are completely free of charge. No payment or refund is applicable for free tiers.
+              </p>
+            </section>
 
- <section>
- <h2 className="text-workspace mb-3">9. Chargebacks and Disputes</h2>
- <p className="text-muted-foreground leading-relaxed">
- Initiating a chargeback without contacting us may result in account suspension. Please contact our support team first to resolve any billing disputes.
- </p>
- </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">2. Commercial Plans & Subscriptions</h2>
+              <p className="leading-relaxed">
+                Paid plans (such as WhatsApp Team Inbox, Dedicated Phone Lines, and Enterprise Workspaces) are billed on a recurring monthly or annual basis as specified during order checkout.
+              </p>
+            </section>
 
- <section>
- <h2 className="text-workspace mb-3">10. Service Modifications</h2>
- <p className="text-muted-foreground leading-relaxed">
- We reserve the right to modify or discontinue services. If a paid service is discontinued, we will provide notice and may offer refunds or alternative services.
- </p>
- </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">3. Refund Eligibility</h2>
+              <p className="leading-relaxed">
+                Refunds may be considered under the following conditions:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4 text-[#53605C]">
+                <li>Duplicate or accidental billing transactions reported within 7 business days</li>
+                <li>Inability to provision the promised service due to unresolvable technical fault on our platform</li>
+                <li>Cancellations requested before the start of a new billing cycle</li>
+              </ul>
+            </section>
 
- <section>
- <h2 className="text-workspace mb-3">11. Compliance with Indian Laws</h2>
- <p className="text-muted-foreground leading-relaxed">
- This policy complies with the Consumer Protection Act, 2019 and RBI guidelines for digital payments in India.
- </p>
- </section>
+            <section className="space-y-2">
+              <h2 className="text-base font-bold text-[#111817]">4. Cancellation Process</h2>
+              <p className="leading-relaxed">
+                You may cancel your recurring subscription at any time via your Workspace Settings or by emailing billing@chatr.chat. Once cancelled, your subscription will remain active until the end of the current paid billing period.
+              </p>
+            </section>
 
- <section>
- <h2 className="text-workspace mb-3">12. Contact Information</h2>
- <p className="text-muted-foreground leading-relaxed">
- For refund-related queries:<br />
- TalentXcel Services Pvt. Ltd.<br />
- Email: refunds@chatr.app<br />
- Support: support@chatr.app<br />
- Address: [Your Registered Address]
- </p>
- </section>
- </div>
- </div>
- </div>
- );
+            <section className="space-y-2 pt-4 border-t border-[#DDE3DF]">
+              <h2 className="text-base font-bold text-[#111817]">5. Contact Us</h2>
+              <p className="leading-relaxed">
+                For billing inquiries or refund requests, please contact:<br />
+                <strong>TalentXcel Services Pvt Ltd</strong><br />
+                Email: billing@chatr.chat<br />
+                Website: chatrchat.in
+              </p>
+              <p className="text-xs text-[#83918C] pt-3">
+                © 2026 TalentXcel Services Pvt Ltd. All rights reserved.
+              </p>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
+    </div>
+  );
 }

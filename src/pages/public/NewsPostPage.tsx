@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Calendar, Clock } from 'lucide-react';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { Footer } from '@/components/Footer';
 
 interface NewsArticle {
   slug: string;
@@ -66,6 +68,7 @@ const NEWS_ARTICLES: NewsArticle[] = [
 ];
 
 export const NewsPostPage: React.FC = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const article = NEWS_ARTICLES.find(a => a.slug === slug);
 
@@ -105,39 +108,59 @@ export const NewsPostPage: React.FC = () => {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8F8F5] text-[#111817] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-slate-400">Article not found.</p>
-          <Link to="/news" className="text-indigo-400 hover:underline">Back to News</Link>
+          <p className="text-[#53605C]">Article not found.</p>
+          <Link to="/news" className="text-[#164E3F] hover:underline font-semibold">Back to News</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/news" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"><ArrowLeft className="w-4 h-4" />News</Link>
-          <Link to="/auth" id="news-post-cta-header" className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-colors font-semibold">Try CHATR Free</Link>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => navigate('/auth')}
+        isAuthenticated={false}
+        onNavigateWorkspace={() => navigate('/desktop/home')}
+      />
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 flex-1">
+        <div>
+          <Link to="/news" className="inline-flex items-center gap-2 text-xs font-semibold text-[#53605C] hover:text-[#164E3F] transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to News &amp; Announcements
+          </Link>
         </div>
-      </header>
-      <main className="max-w-3xl mx-auto px-4 py-12 space-y-10">
+
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-            <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded font-semibold">{article.category}</span>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[#83918C]">
+            <span className="bg-[#EAEFEA] text-[#164E3F] border border-[#D5E0D5] px-2.5 py-0.5 rounded-full font-semibold">
+              {article.category}
+            </span>
             <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{article.publishedAt}</span>
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{article.readingMinutes} min read</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">{article.title}</h1>
-          <p className="text-slate-400 text-lg">{article.metaDescription}</p>
+          <h1 className="text-3xl sm:text-5xl font-bold leading-tight text-[#111817]">{article.title}</h1>
+          <p className="text-[#53605C] text-base sm:text-lg leading-relaxed">{article.metaDescription}</p>
         </div>
-        <div className="border-t border-slate-800 pt-8">{article.body}</div>
-        <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-          <h2 className="text-xl font-bold">Get started with CHATR Communication OS</h2>
-          <Link to="/auth" id="news-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Try CHATR Free <ArrowRight className="w-4 h-4" /></Link>
+
+        <div className="border-t border-[#DDE3DF] pt-8 text-[#111817]">
+          {article.body}
+        </div>
+
+        <div className="bg-[#EAEFEA] border border-[#D5E0D5] rounded-3xl p-8 sm:p-10 text-center space-y-4 shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#111817]">Get started with CHATR Communication OS</h2>
+          <p className="text-[#53605C] text-sm">Unified Team Inbox · Free Browser Calling · Automated Routing</p>
+          <div className="pt-2">
+            <Link to="/auth" id="news-post-cta-footer" className="inline-flex items-center gap-2 bg-[#164E3F] hover:bg-[#123F33] text-white font-semibold px-8 py-3.5 rounded-full transition-all text-sm shadow-md">
+              Try CHATR Free <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

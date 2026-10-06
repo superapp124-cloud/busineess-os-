@@ -1,6 +1,11 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { Footer } from '@/components/Footer';
 
 interface BlogPost {
   slug: string;
@@ -66,8 +71,8 @@ const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: 'ai-lead-triage-guide',
-    title: 'SI Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
-    excerpt: 'Discover how SI intent parser and automated message classification reduce lead response times from hours to seconds across WhatsApp and email.',
+    title: 'Lead Triage & Smart Routing: Automating Response Workflows for High-Volume Inboxes',
+    excerpt: 'Discover how automated intent classification and message routing reduce lead response times from hours to seconds across WhatsApp and email.',
     readingMinutes: 6,
     category: 'product',
     domain: 'chatrchat.in',
@@ -78,127 +83,185 @@ const BLOG_POSTS: BlogPost[] = [
 
 const CATEGORY_LABELS: Record<string, string> = {
   all: 'All Articles',
-  messaging: 'Messaging and Inbox',
-  recruitment: 'Recruitment and Hiring',
+  messaging: 'Messaging & Inbox',
+  recruitment: 'Recruitment & Hiring',
   growth: 'Business Growth',
-  product: 'Product and Technology',
+  product: 'Product & Architecture',
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  messaging: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
-  recruitment: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  growth: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  product: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  messaging: 'bg-[#EAEFEA] text-[#164E3F] border-[#D5E0D5]',
+  recruitment: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  growth: 'bg-amber-50 text-amber-800 border-amber-200',
+  product: 'bg-blue-50 text-blue-800 border-blue-200',
 };
 
 export const BlogHubPage: React.FC = () => {
-  const [activeCategory, setActiveCategory] = React.useState<string>('all');
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   useEffect(() => {
-    document.title = 'Blog — CHATR Communication OS | Business Messaging & Growth';
-    
-    // Meta Description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and SI communication tools for Indian SMEs and recruitment agencies.');
-    
-    // Meta Title
-    let metaTitle = document.querySelector('meta[name="title"]');
-    if (metaTitle) {
-      metaTitle.setAttribute('content', 'Blog — CHATR Communication OS | Business Messaging & Growth');
-    }
-    
-    // OG Title
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute('content', 'Blog — CHATR Communication OS | Business Messaging & Growth');
-    }
-    
-    // OG Description
-    let ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) {
-      ogDesc.setAttribute('content', 'Practical insights on business messaging, WhatsApp lead management, candidate screening, and SI communication tools for Indian SMEs.');
-    }
-    
-    // OG URL
-    let ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) {
-      ogUrl.setAttribute('content', 'https://chatrchat.in/blog');
-    }
+    window.scrollTo(0, 0);
 
-    // Canonical
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', 'https://chatrchat.in/blog');
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
 
-    const schema = document.createElement('script');
-    schema.id = 'blog-hub-schema';
-    schema.type = 'application/ld+json';
-    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Blog', name: 'CHATR Communication OS Blog', url: 'https://chatrchat.in/blog', publisher: { '@type': 'Organization', name: 'CHATR Communication OS', url: 'https://chatr.chat', sameAs: ['https://chatrchat.in', 'https://talentxcel.in'] } });
-    if (!document.getElementById('blog-hub-schema')) document.head.appendChild(schema);
-    return () => { const s = document.getElementById('blog-hub-schema'); if (s) s.remove(); };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   const filtered = activeCategory === 'all' ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === activeCategory);
 
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'CHATR Communication OS Blog',
+    url: 'https://chatrchat.in/blog',
+    publisher: {
+      '@type': 'Organization',
+      name: 'CHATR Communication OS',
+      url: 'https://chatr.chat',
+      sameAs: ['https://chatrchat.in', 'https://talentxcel.in']
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white font-bold text-lg">
-            <span className="text-indigo-400">CHATR</span>
-            <span className="text-slate-400 font-normal text-sm">/ Blog</span>
-          </Link>
-          <Link to="/auth" id="blog-header-cta" className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-colors font-semibold">Try CHATR Free</Link>
-        </div>
-      </header>
-      <main className="max-w-5xl mx-auto px-4 py-16 space-y-12">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-mono px-4 py-2 rounded-full">
-            <BookOpen className="w-3.5 h-3.5" /><span>PRACTICAL INSIGHTS</span>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      <SEOHead
+        title="Blog — CHATR Communication OS | Business Messaging & Growth"
+        description="Practical insights on business messaging, WhatsApp lead management, candidate screening, and communication tools for modern teams."
+        canonicalUrl="https://chatrchat.in/blog"
+        schemaData={schemaData}
+      />
+
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12 flex-1">
+        <div className="text-center space-y-4 max-w-3xl mx-auto pt-2">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+            <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+            <span>PRACTICAL OPERATIONAL INSIGHTS</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">Business Messaging,<br /><span className="text-indigo-400">Recruitment and Growth</span></h1>
-          <p className="text-slate-400 max-w-xl mx-auto text-lg leading-relaxed">Operational experience on managing leads, candidates, and customer conversations -- written for Indian business owners, recruiters, and founders.</p>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111817] leading-[1.1]">
+            Business Messaging, <br /><span className="text-[#164E3F]">Customer Calls &amp; Growth</span>
+          </h1>
+          <p className="text-base sm:text-lg text-[#53605C] max-w-xl mx-auto leading-relaxed">
+            Operational frameworks on managing leads, customer conversations, and team speed — written for business owners, recruiters, and founders.
+          </p>
         </div>
+
+        {/* Category Filter Pills */}
         <div className="flex flex-wrap gap-2 justify-center">
           {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-            <button key={key} id={"blog-filter-" + key} onClick={() => setActiveCategory(key)} className={"px-4 py-1.5 rounded-full text-xs font-semibold border transition-all " + (activeCategory === key ? 'bg-indigo-600 text-white border-indigo-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-slate-500')}>{label}</button>
+            <button
+              key={key}
+              id={"blog-filter-" + key}
+              onClick={() => setActiveCategory(key)}
+              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                activeCategory === key
+                  ? 'bg-[#164E3F] text-white shadow-sm'
+                  : 'bg-white text-[#53605C] border border-[#DDE3DF] hover:bg-[#FAFBF9]'
+              }`}
+            >
+              {label}
+            </button>
           ))}
         </div>
+
+        {/* Blog Post Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           {filtered.map((post) => (
-            <Link key={post.slug} to={"/blog/" + post.slug} id={"blog-card-" + post.slug} className="group bg-slate-900 border border-slate-800 hover:border-indigo-500/40 rounded-2xl p-6 space-y-4 transition-all hover:shadow-lg hover:shadow-indigo-900/20">
-              <div className="flex items-center justify-between">
-                <span className={"px-2.5 py-0.5 text-[11px] font-semibold rounded border " + CATEGORY_COLORS[post.category]}><Tag className="inline w-2.5 h-2.5 mr-1" />{CATEGORY_LABELS[post.category]}</span>
-                <span className="flex items-center gap-1 text-[11px] text-slate-500"><Clock className="w-3 h-3" />{post.readingMinutes} min</span>
+            <Link
+              key={post.slug}
+              to={"/blog/" + post.slug}
+              id={"blog-card-" + post.slug}
+              className="group bg-white border border-[#DDE3DF] hover:border-[#164E3F]/40 rounded-2xl p-6 sm:p-8 space-y-4 transition-all shadow-sm hover:shadow-md flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className={"px-2.5 py-1 text-[11px] font-semibold rounded-full border " + CATEGORY_COLORS[post.category]}>
+                    <Tag className="inline w-2.5 h-2.5 mr-1" />{CATEGORY_LABELS[post.category]}
+                  </span>
+                  <span className="flex items-center gap-1 text-[11px] text-[#83918C]">
+                    <Clock className="w-3 h-3" />{post.readingMinutes} min read
+                  </span>
+                </div>
+                <h2 className="font-bold text-lg sm:text-xl text-[#111817] group-hover:text-[#164E3F] transition-colors leading-snug">
+                  {post.title}
+                </h2>
+                <p className="text-[#53605C] text-sm leading-relaxed line-clamp-3">
+                  {post.excerpt}
+                </p>
               </div>
-              <h2 className="font-bold text-lg leading-snug group-hover:text-indigo-300 transition-colors">{post.title}</h2>
-              <p className="text-slate-400 text-sm leading-relaxed line-clamp-3">{post.excerpt}</p>
-              <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-800">
-                <span className="text-slate-400 font-semibold">{post.author}</span>
-                <span className="flex items-center gap-1 text-indigo-400 group-hover:translate-x-1 transition-transform">Read Article <ArrowRight className="w-3.5 h-3.5" /></span>
+
+              <div className="flex items-center justify-between text-xs pt-4 border-t border-[#DDE3DF]">
+                <span className="text-[#83918C] font-semibold">{post.author}</span>
+                <span className="flex items-center gap-1 text-[#164E3F] font-bold group-hover:translate-x-1 transition-transform">
+                  Read Article <ArrowRight className="w-3.5 h-3.5" />
+                </span>
               </div>
             </Link>
           ))}
         </div>
-        <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold">Ready to run your business on one system?</h2>
-          <p className="text-slate-400">Universal Inbox · WhatsApp Integration · Candidate Screening · SI Agents</p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/auth" id="blog-footer-cta" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
-            <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">Explore CHATR SI →</Link>
-            <Link to="/pricing" className="text-sm text-slate-400 hover:text-slate-200 font-semibold hover:underline">See plans →</Link>
+
+        {/* Bottom CTA Card */}
+        <div className="bg-[#EAEFEA] border border-[#D5E0D5] rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-sm">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111817]">Ready to run your business on one system?</h2>
+          <p className="text-[#53605C] text-sm">Shared WhatsApp Inbox · Free Browser Calling · Automated Routing · Team CRM</p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              onClick={() => {
+                if (isAuthenticated) navigate('/desktop/home');
+                else setAuthModalOpen(true);
+              }}
+              className="inline-flex items-center gap-2 bg-[#164E3F] hover:bg-[#123F33] text-white font-semibold px-8 py-3.5 rounded-full transition-all text-sm shadow-md cursor-pointer"
+            >
+              Get Started Free <ArrowRight className="w-4 h-4" />
+            </button>
+            <Link to="/pricing" className="bg-white hover:bg-[#FAFBF9] border border-[#DDE3DF] text-[#111817] font-semibold px-6 py-3.5 rounded-full text-sm shadow-sm transition-colors">
+              See Plans &amp; Pricing →
+            </Link>
           </div>
         </div>
       </main>
+
+      <Footer />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

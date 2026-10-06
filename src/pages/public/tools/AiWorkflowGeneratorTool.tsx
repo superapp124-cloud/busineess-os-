@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Workflow, Cpu, ArrowRight, Play, CheckCircle2, 
   Sparkles, Layers, ShieldCheck, RefreshCw, FileText, Check 
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/SEOHead';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { AuthModal } from '@/components/landing/AuthModal';
+import { Footer } from '@/components/Footer';
+import { trackAcquisitionEvent, initializeAttribution } from '../../../services/acquisitionTelemetry';
 
 interface WorkflowNode {
   id: string;
@@ -16,13 +21,47 @@ interface WorkflowNode {
 }
 
 export const AiWorkflowGeneratorTool: React.FC = () => {
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [intentInput, setIntentInput] = useState('Screen candidate resume, score eligibility, and schedule interview on WhatsApp');
   const [isCompiling, setIsCompiling] = useState(false);
   const [activePreset, setActivePreset] = useState('recruitment');
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    initializeAttribution();
+    trackAcquisitionEvent({ event: 'tool_view', tool: 'intent-to-workflow-generator' });
+
+    let isMounted = true;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted && session?.user) setIsAuthenticated(true);
+    }).catch(() => {});
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setIsAuthenticated(true);
+        setAuthModalOpen(false);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleNavigateWorkspace = useCallback(() => {
+    navigate('/desktop/home');
+  }, [navigate]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setAuthModalOpen(false);
+    navigate('/desktop/home', { replace: true });
+  }, [navigate]);
 
   const presets = [
     {
@@ -44,7 +83,7 @@ export const AiWorkflowGeneratorTool: React.FC = () => {
 
   const [nodes, setNodes] = useState<WorkflowNode[]>([
     { id: '1', stage: 'Stage 1: Intent Parse', title: 'NLP Entity & Constraint Extraction', provider: 'Intent Engine', latencyMs: 28, status: 'completed' },
-    { id: '2', stage: 'Stage 2: Capability Discovery', title: 'TalentXcel Resume Parser & WhatsApp API', provider: 'Connector Hub', latencyMs: 44, status: 'completed' },
+    { id: '2', stage: 'Stage 2: Capability Discovery', title: 'Resume Parser & WhatsApp API', provider: 'Connector Hub', latencyMs: 44, status: 'completed' },
     { id: '3', stage: 'Stage 3: Pre-Screening Execution', title: 'Interactive Button Qualification Card', provider: 'Execution Runtime', latencyMs: 62, status: 'completed' },
     { id: '4', stage: 'Stage 4: Verification & Handoff', title: 'ATS Stage Update & Calendar Booking', provider: 'Verification Engine', latencyMs: 35, status: 'completed' }
   ]);
@@ -52,6 +91,11 @@ export const AiWorkflowGeneratorTool: React.FC = () => {
   const handleCompile = (e: React.FormEvent) => {
     e.preventDefault();
     setIsCompiling(true);
+    trackAcquisitionEvent({
+      event: 'tool_started',
+      tool: 'intent-to-workflow-generator',
+      metadata: { intentInput, activePreset }
+    });
     setTimeout(() => {
       setIsCompiling(false);
     }, 450);
@@ -60,6 +104,19 @@ export const AiWorkflowGeneratorTool: React.FC = () => {
   const handleSelectPreset = (preset: typeof presets[0]) => {
     setActivePreset(preset.id);
     setIntentInput(preset.prompt);
+  };
+
+  const handleActionClick = () => {
+    trackAcquisitionEvent({
+      event: 'cta_clicked',
+      tool: 'intent-to-workflow-generator',
+      metadata: { cta: 'open_workflow_studio' }
+    });
+    if (isAuthenticated) {
+      navigate('/desktop/home');
+    } else {
+      setAuthModalOpen(true);
+    }
   };
 
   const schemaData = {
@@ -73,126 +130,139 @@ export const AiWorkflowGeneratorTool: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
       <SEOHead
         title="Free Intent-to-Workflow Generator — Interactive DAG Builder | CHATR"
         description="Type any operational business goal. Watch CHATR compile an execution Directed Acyclic Graph (DAG) with parallel capability discovery and transaction verification."
+        canonicalUrl="https://www.chatrchat.in/tools/intent-to-workflow-generator"
         keywords="intent to workflow generator, ai workflow builder, intent to action demo, autonomous workflow compiler"
         schemaData={schemaData}
       />
-      <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500 selection:text-white">
-        <header className="border-b border-slate-800/80 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-xl">
-          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 font-extrabold text-lg tracking-tight">
-              <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">CHATR</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">INTENT OS</span>
-            </Link>
-            <Link to="/auth" className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold transition-all">
-              Launch Workspace
-            </Link>
+
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onNavigateWorkspace={handleNavigateWorkspace}
+      />
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 flex-1">
+        <div className="space-y-4 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[#53605C]">
+            <span className="w-6 h-[1.5px] bg-[#164E3F]" />
+            <span>INTENT COMPILER DEMO • 100% FREE TOOL</span>
           </div>
-        </header>
+          <h1 className="text-3xl sm:text-5xl font-bold text-[#111817] tracking-tight leading-tight">
+            Intent-to-Workflow <span className="text-[#164E3F]">DAG Generator</span>
+          </h1>
+          <p className="text-[#53605C] text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            Express any operational goal in natural language. Inspect how the CHATR Intent Operating System compiles and orchestrates deterministic workflow DAGs.
+          </p>
+        </div>
 
-        <main className="max-w-4xl mx-auto px-4 py-12 space-y-12">
-          <div className="space-y-3 text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>INTENT COMPILER DEMO</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              Intent-to-Workflow Generator
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-              Express any operational goal in natural language. Inspect how the CHATR Intent Operating System compiles and orchestrates deterministic workflow DAGs.
-            </p>
-          </div>
-
-          {/* Generator Input */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl">
-            <div className="space-y-3">
-              <span className="text-xs font-semibold text-slate-300">Quick Enterprise Presets</span>
-              <div className="flex flex-wrap gap-2">
-                {presets.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleSelectPreset(p)}
-                    className={`text-xs px-3.5 py-1.5 rounded-xl border font-medium transition-all ${activePreset === p.id ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'}`}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <form onSubmit={handleCompile} className="space-y-3">
-              <label className="text-xs font-semibold text-slate-300">Natural Language Intent</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={intentInput}
-                  onChange={(e) => setIntentInput(e.target.value)}
-                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
+        {/* Generator Input */}
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="space-y-3">
+            <span className="text-xs font-semibold text-[#53605C]">Quick Enterprise Presets</span>
+            <div className="flex flex-wrap gap-2">
+              {presets.map((p) => (
                 <button
-                  type="submit"
-                  disabled={isCompiling}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-indigo-600/20"
+                  key={p.id}
+                  type="button"
+                  onClick={() => handleSelectPreset(p)}
+                  className={`text-xs px-3.5 py-2 rounded-xl font-medium transition-all ${
+                    activePreset === p.id 
+                      ? 'bg-[#164E3F] text-white shadow-sm' 
+                      : 'bg-[#F0F3F1] text-[#53605C] hover:bg-[#E5EAE7]'
+                  }`}
                 >
-                  {isCompiling ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-                  <span>{isCompiling ? 'Compiling...' : 'Compile DAG'}</span>
+                  {p.label}
                 </button>
-              </div>
-            </form>
+              ))}
+            </div>
+          </div>
 
-            {/* Visual DAG Execution Graph */}
-            <div className="space-y-4 pt-4 border-t border-slate-800">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-mono font-bold uppercase tracking-wider text-slate-400">Generated Execution Graph (DAG)</span>
-                <span className="font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  Total Latency: 169ms • Validated
-                </span>
-              </div>
+          <form onSubmit={handleCompile} className="space-y-3">
+            <label className="text-xs font-semibold text-[#53605C]">Natural Language Intent</label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={intentInput}
+                onChange={(e) => setIntentInput(e.target.value)}
+                className="flex-1 bg-[#FAFBF9] border border-[#DDE3DF] rounded-xl px-4 py-3 text-sm text-[#111817] focus:outline-none focus:border-[#164E3F]"
+                placeholder="Describe what you want to automate..."
+              />
+              <button
+                type="submit"
+                disabled={isCompiling}
+                className="bg-[#164E3F] hover:bg-[#123F33] text-white px-6 py-3.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shrink-0 shadow-md cursor-pointer"
+              >
+                {isCompiling ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                <span>{isCompiling ? 'Compiling...' : 'Compile DAG'}</span>
+              </button>
+            </div>
+          </form>
 
-              <div className="space-y-3">
-                {nodes.map((node, index) => (
-                  <div key={node.id} className="relative">
-                    <div className="bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl p-4 flex items-center justify-between gap-4 transition-all">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-mono text-xs font-bold">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-mono text-slate-400 block">{node.stage}</span>
-                          <span className="text-sm font-semibold text-white">{node.title}</span>
-                        </div>
+          {/* Visual DAG Execution Graph */}
+          <div className="space-y-4 pt-4 border-t border-[#DDE3DF]">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-mono font-bold uppercase tracking-wider text-[#53605C]">Generated Execution Graph (DAG)</span>
+              <span className="font-mono text-[#164E3F] bg-[#EAEFEA] px-2.5 py-1 rounded border border-[#D5E0D5]">
+                Total Latency: 169ms • Validated
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {nodes.map((node, index) => (
+                <div key={node.id} className="relative">
+                  <div className="bg-[#FAFBF9] border border-[#DDE3DF] hover:border-[#164E3F]/40 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-[#EAEFEA] border border-[#D5E0D5] flex items-center justify-center text-[#164E3F] font-mono text-xs font-bold shrink-0">
+                        {index + 1}
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-xs px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 font-mono">
-                          {node.provider}
-                        </span>
-                        <span className="text-xs font-mono text-emerald-400">+{node.latencyMs}ms</span>
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <div>
+                        <span className="text-[11px] font-mono text-[#53605C] block">{node.stage}</span>
+                        <span className="text-sm font-semibold text-[#111817]">{node.title}</span>
                       </div>
                     </div>
-                    {index < nodes.length - 1 && (
-                      <div className="w-0.5 h-3 bg-slate-800 mx-auto my-0.5" />
-                    )}
+                    <div className="flex items-center gap-3 shrink-0 ml-10 sm:ml-0">
+                      <span className="text-xs px-2.5 py-1 rounded bg-white text-[#53605C] border border-[#DDE3DF] font-mono">
+                        {node.provider}
+                      </span>
+                      <span className="text-xs font-mono text-[#164E3F] font-semibold">+{node.latencyMs}ms</span>
+                      <CheckCircle2 className="w-4 h-4 text-[#164E3F]" />
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-2 flex items-center justify-between text-xs text-slate-400">
-              <span>Ready to run in production?</span>
-              <Link to="/auth" className="text-indigo-400 hover:text-indigo-300 font-semibold inline-flex items-center gap-1">
-                Open CHATR Workflow Studio <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+                  {index < nodes.length - 1 && (
+                    <div className="w-0.5 h-3 bg-[#DDE3DF] mx-auto my-0.5" />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-        </main>
-      </div>
-    </>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between text-xs text-[#53605C] gap-3">
+            <span>Ready to run in production with live connectors?</span>
+            <button 
+              onClick={handleActionClick} 
+              className="text-[#164E3F] hover:text-[#123F33] font-bold inline-flex items-center gap-1 cursor-pointer"
+            >
+              Open CHATR Workflow Studio <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+    </div>
   );
 };
 

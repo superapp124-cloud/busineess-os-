@@ -269,99 +269,113 @@ export const BlogPostPage: React.FC = () => {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8F8F5] text-[#111817] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-slate-400">Article not found.</p>
-          <Link to="/blog" className="text-indigo-400 hover:underline">Back to Blog</Link>
+          <p className="text-[#53605C]">Article not found.</p>
+          <Link to="/blog" className="text-[#164E3F] hover:underline font-semibold">Back to Blog</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
-      <header className="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/blog" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"><ArrowLeft className="w-4 h-4" />Blog</Link>
-          <Link to="/auth" id="blog-post-cta-header" className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-colors font-semibold">Try CHATR Free</Link>
+    <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans antialiased selection:bg-[#E8F0EB] selection:text-[#164E3F] flex flex-col justify-between">
+      {/* ── Canonical Navigation Header ── */}
+      <LandingHeader
+        onOpenAuth={() => navigate('/auth')}
+        isAuthenticated={false}
+        onNavigateWorkspace={() => navigate('/desktop/home')}
+      />
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 flex-1">
+        {/* Navigation Breadcrumb */}
+        <div>
+          <Link to="/blog" className="inline-flex items-center gap-2 text-xs font-semibold text-[#53605C] hover:text-[#164E3F] transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Blog Articles
+          </Link>
         </div>
-      </header>
-      <main className="max-w-3xl mx-auto px-4 py-12 space-y-10">
+
         {/* Header & Meta */}
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-            <span className="flex items-center gap-1"><Tag className="w-3 h-3 text-indigo-400" />{article.category}</span>
-            <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-indigo-400" />Published {article.publishedAt}</span>
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-indigo-400" />{article.readingMinutes} min read</span>
-            <Link to="/authors/chatr-product-team" className="text-indigo-400 hover:underline font-semibold">{article.author}</Link>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[#83918C]">
+            <span className="flex items-center gap-1 font-semibold text-[#164E3F] bg-[#EAEFEA] px-2.5 py-1 rounded-full border border-[#D5E0D5]">
+              <Tag className="w-3 h-3" />{article.category}
+            </span>
+            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />Published {article.publishedAt}</span>
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{article.readingMinutes} min read</span>
+            <Link to="/authors/chatr-product-team" className="text-[#164E3F] hover:underline font-semibold">{article.author}</Link>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-white">{article.title}</h1>
+          <h1 className="text-3xl sm:text-5xl font-bold leading-tight text-[#111817]">{article.title}</h1>
           
-          {/* SI / GEO Direct Answer Block */}
-          <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-5 space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Executive Summary & Key Takeaway</span>
-            <p className="text-slate-200 text-sm leading-relaxed">{article.metaDescription}</p>
+          {/* Executive Summary Block */}
+          <div className="bg-[#EAEFEA] border border-[#D5E0D5] rounded-xl p-5 sm:p-6 space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#164E3F] font-mono">Executive Summary &amp; Key Takeaway</span>
+            <p className="text-[#111817] text-sm sm:text-base leading-relaxed">{article.metaDescription}</p>
           </div>
         </div>
 
         {/* Article Body */}
-        <div className="border-t border-slate-800 pt-8">{article.body}</div>
+        <div className="border-t border-[#DDE3DF] pt-8 text-[#111817]">
+          {article.body}
+        </div>
 
         {/* First-Party Source & Evidence Attribution Box */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-2 text-xs text-slate-400">
-          <div className="flex items-center gap-2 font-bold text-white text-sm">
-            <span>Methodology & Data Evidence Trail</span>
+        <div className="bg-white border border-[#DDE3DF] rounded-xl p-5 space-y-2 text-xs text-[#53605C] shadow-sm">
+          <div className="flex items-center gap-2 font-bold text-[#111817] text-sm">
+            <span>Methodology &amp; Data Evidence Trail</span>
           </div>
           <p>
-            <strong className="text-slate-300">Source:</strong> CHATR Platform Telemetry & Candidate Response Dynamics (July–August 2026).
+            <strong className="text-[#111817]">Source:</strong> CHATR Platform Telemetry &amp; Customer Response Dynamics (Updated 2026).
           </p>
           <p>
-            <strong className="text-slate-300">Editorial Standard:</strong> Reviewed under our <Link to="/editorial-policy" className="text-indigo-400 underline">Editorial Policy</Link>. Fact-checked against visible operational workflows.
+            <strong className="text-[#111817]">Editorial Standard:</strong> Reviewed under our <Link to="/editorial-policy" className="text-[#164E3F] font-semibold underline">Editorial Policy</Link>. Fact-checked against visible operational workflows.
           </p>
         </div>
 
         {/* Author Attribution Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg shrink-0">
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-[#EAEFEA] border border-[#D5E0D5] flex items-center justify-center text-[#164E3F] font-bold text-lg shrink-0">
             C
           </div>
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-white text-base">{article.author}</h3>
-              <Link to="/authors/chatr-product-team" className="text-xs text-indigo-400 hover:underline font-semibold">View Profile →</Link>
+              <h3 className="font-bold text-[#111817] text-base">{article.author}</h3>
+              <Link to="/authors/chatr-product-team" className="text-xs text-[#164E3F] hover:underline font-semibold">View Profile →</Link>
             </div>
-            <p className="text-xs text-indigo-400 font-semibold">CHATR Engineering & Research Group</p>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Specialized research unit developing unified business communication infrastructure and SI candidate screening systems.
+            <p className="text-xs text-[#164E3F] font-semibold">CHATR Engineering &amp; Research Group</p>
+            <p className="text-xs text-[#53605C] leading-relaxed">
+              Specialized research unit developing unified business communication infrastructure and customer messaging workflows.
             </p>
           </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h2 className="font-bold text-lg text-white">Frequently Asked Questions</h2>
+        <div className="bg-white border border-[#DDE3DF] rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+          <h2 className="font-bold text-lg text-[#111817]">Frequently Asked Questions</h2>
           {article.faqs.map((faq, i) => (
-            <div key={i} className="border-t border-slate-800 pt-4 space-y-2">
-              <p className="font-semibold text-white text-sm">{faq.q}</p>
-              <p className="text-slate-400 text-xs leading-relaxed">{faq.a}</p>
+            <div key={i} className="border-t border-[#DDE3DF] pt-4 space-y-2">
+              <p className="font-semibold text-[#111817] text-sm">{faq.q}</p>
+              <p className="text-[#53605C] text-xs leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>
 
         {/* CTA Footer */}
-        <div className="bg-gradient-to-r from-indigo-900/40 via-indigo-800/20 to-indigo-900/40 border border-indigo-500/30 rounded-2xl p-8 text-center space-y-4">
-          <h2 className="text-xl font-bold text-white">Try CHATR Communication OS Today</h2>
-          <p className="text-slate-400 text-sm">Universal Team Inbox • WhatsApp Integration • Candidate Screening • SI Agents</p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
+        <div className="bg-[#EAEFEA] border border-[#D5E0D5] rounded-3xl p-8 sm:p-10 text-center space-y-4 shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#111817]">Try CHATR Communication OS Today</h2>
+          <p className="text-[#53605C] text-sm">Universal Team Inbox • WhatsApp Integration • Browser HD Calling • Smart Automation</p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <Link to="/auth" id="blog-post-cta-footer" className="inline-flex items-center gap-2 bg-[#164E3F] hover:bg-[#123F33] text-white font-semibold px-8 py-3.5 rounded-full transition-all text-sm shadow-md">
               Get Started Free <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/chatr/ai" className="text-sm text-indigo-300 hover:text-indigo-200 font-semibold hover:underline">
-              Explore SI capabilities →
+            <Link to="/pricing" className="bg-white hover:bg-[#FAFBF9] border border-[#DDE3DF] text-[#111817] font-semibold px-6 py-3.5 rounded-full text-sm shadow-sm transition-colors">
+              See Pricing Plans →
             </Link>
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
