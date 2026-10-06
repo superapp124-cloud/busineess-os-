@@ -915,7 +915,13 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
 
   {/* CHATR Product OS Clean Top-Level Routes */}
   <Route path="/executive" element={<LazyRoute component={ExecutiveHomeLanding} />} />
-  <Route path="/growth" element={<LazyRoute component={GrowthControlRoomPage} />} />
+  <Route path="/growth" element={
+    <Suspense fallback={<PageLoader message="Verifying Super Admin Authorization (9717845477)..." />}>
+      <SuperAdminRoute>
+        <GrowthControlRoomPage />
+      </SuperAdminRoute>
+    </Suspense>
+  } />
   <Route path="/knowledge" element={<LazyRoute component={ExecutiveAICopilotDashboard} />} />
   <Route path="/revenue" element={<LazyRoute component={RevenueOSDashboard} />} />
   <Route path="/customer-success" element={<LazyRoute component={CustomerSuccessOSDashboard} />} />
@@ -1265,7 +1271,13 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
  <Route path="/reward-shop" element={<LazyRoute component={LazyPages.RewardShop} />} />
  <Route path="/stealth-mode" element={<ProtectedLazyRoute component={LazyPages.StealthMode} />} />
  {/* public /growth route mapped to GrowthControlRoomPage above */}
- <Route path="/chatr-growth" element={<LazyRoute component={GrowthControlRoomPage} />} />
+  <Route path="/chatr-growth" element={
+    <Suspense fallback={<PageLoader message="Verifying Super Admin Authorization (9717845477)..." />}>
+      <SuperAdminRoute>
+        <GrowthControlRoomPage />
+      </SuperAdminRoute>
+    </Suspense>
+  } />
  <Route path="/chatr-wallet" element={<LazyRoute component={LazyPages.ChatrWallet} />} />
  <Route path="/chatr-plus-subscribe" element={<LazyRoute component={LazyPages.ChatrPlusSubscribe} />} />
  <Route path="/ambassador-program" element={<LazyRoute component={LazyPages.AmbassadorProgram} />} />

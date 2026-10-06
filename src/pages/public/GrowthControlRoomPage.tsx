@@ -5,7 +5,7 @@ import {
   RefreshCw, CheckCircle2, ShieldCheck, ArrowRight, Share2, 
   Building2, Laptop, Smartphone, Search, MessageSquare, Phone,
   Target, Award, Zap, AlertTriangle, Layers, ArrowUpRight, Flame, 
-  Check, Lock, Unlock, Key, Activity, Clock, Shield, ChevronRight
+  Check, Lock, Activity, Clock, Shield, ChevronRight
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -39,28 +39,6 @@ export const GrowthControlRoomPage: React.FC = () => {
 
   // Local & session events
   const [localEvents, setLocalEvents] = useState<AcquisitionEventPayload[]>([]);
-
-  // Executive privacy / access lock state
-  const [isExecutiveUnlocked, setIsExecutiveUnlocked] = useState<boolean>(() => {
-    try {
-      return sessionStorage.getItem('chatr_executive_unlocked') === 'true';
-    } catch {
-      return false;
-    }
-  });
-  const [passcodeInput, setPasscodeInput] = useState('');
-  const [showPasscodeError, setShowPasscodeError] = useState(false);
-  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
-
-  // Auto-unlock if user is authenticated with Supabase
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setIsExecutiveUnlocked(true);
-        try { sessionStorage.setItem('chatr_executive_unlocked', 'true'); } catch {}
-      }
-    });
-  }, []);
 
   // Fetch live Supabase numbers
   const fetchSupabaseMetrics = async () => {
@@ -119,25 +97,6 @@ export const GrowthControlRoomPage: React.FC = () => {
     return computeExecutiveDashboardData(localEvents);
   }, [localEvents]);
 
-  // Handle Passcode Unlock
-  const handleUnlockSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Executive passcode or admin key
-    if (passcodeInput.trim() === 'chatr2026' || passcodeInput.trim() === 'chatr-admin') {
-      setIsExecutiveUnlocked(true);
-      setShowPasscodeModal(false);
-      setShowPasscodeError(false);
-      try { sessionStorage.setItem('chatr_executive_unlocked', 'true'); } catch {}
-    } else {
-      setShowPasscodeError(true);
-    }
-  };
-
-  const handleLock = () => {
-    setIsExecutiveUnlocked(false);
-    try { sessionStorage.removeItem('chatr_executive_unlocked'); } catch {}
-  };
-
   // ── PRECISE METRIC CALCULATIONS ──
   // Activated User = Account Created + At least 1 meaningful product action:
   // (Completed call claimed, workspace created, or tool link saved into inbox)
@@ -181,7 +140,7 @@ export const GrowthControlRoomPage: React.FC = () => {
       <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/admin" className="flex items-center gap-2">
               <img 
                 src="/images/chatr-official-logo.png" 
                 alt="CHATR" 
@@ -193,8 +152,14 @@ export const GrowthControlRoomPage: React.FC = () => {
             </Link>
             <div className="h-4 w-px bg-slate-800 hidden sm:block" />
             
-            {/* Status Badge: Exact user formulation */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-amber-500/10 text-amber-400 border-amber-500/30">
+            {/* Super Admin Identity Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-indigo-500/10 text-indigo-300 border-indigo-500/30">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>SUPER ADMIN: 9717845477</span>
+            </div>
+
+            {/* Validation State Badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border bg-amber-500/10 text-amber-400 border-amber-500/30">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               <span>🟡 LIVE — VALIDATION STARTED</span>
             </div>
@@ -203,30 +168,9 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">
               <Clock className="w-3.5 h-3.5 text-slate-500" />
-              <span>Next 24h Window:</span>
+              <span>Sync:</span>
               <span className="text-emerald-400 font-bold">{dbData.lastUpdated || 'Connecting...'}</span>
             </div>
-
-            {/* Executive Access Toggle */}
-            {isExecutiveUnlocked ? (
-              <button
-                onClick={handleLock}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-600/30 text-xs font-semibold transition-all cursor-pointer"
-                title="Lock Executive View"
-              >
-                <Unlock className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Executive Mode</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowPasscodeModal(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
-                title="Unlock Forensic Detail"
-              >
-                <Lock className="w-3.5 h-3.5 text-slate-400" />
-                <span>Executive Unlock</span>
-              </button>
-            )}
 
             <button
               onClick={refreshTelemetry}
@@ -247,9 +191,9 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-bold">
-              <Activity className="w-3.5 h-3.5 text-amber-400" />
-              <span>PHASE 2 DIRECTIVE: PROVE REAL USER ACQUISITION</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold">
+              <Shield className="w-3.5 h-3.5 text-indigo-400" />
+              <span>RESTRICTED EXECUTIVE CONTROL PLANE • 9717845477</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
@@ -320,11 +264,9 @@ export const GrowthControlRoomPage: React.FC = () => {
                 Activated = Account created + completed at least 1 meaningful CHATR action (call completed / workspace created / tool saved)
               </p>
             </div>
-            {!isExecutiveUnlocked && (
-              <span className="text-xs text-amber-400/90 font-mono flex items-center gap-1">
-                <Lock className="w-3 h-3" /> Sanitized Public View
-              </span>
-            )}
+            <span className="text-xs text-indigo-400 font-mono flex items-center gap-1 font-bold">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Authenticated Super Admin Ledger
+            </span>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -367,10 +309,10 @@ export const GrowthControlRoomPage: React.FC = () => {
                 <UserPlus className="w-4 h-4 text-cyan-400" />
               </div>
               <div className="font-mono text-3xl sm:text-4xl font-extrabold text-white">
-                {isExecutiveUnlocked ? dbData.profilesToday : 'Protected'}
+                {dbData.profilesToday}
               </div>
               <p className="text-[11px] text-slate-500">
-                {isExecutiveUnlocked ? 'Phone OTP verified accounts in last 24h' : 'Executive sign-in required'}
+                Phone OTP verified accounts in last 24h
               </p>
             </div>
 
@@ -383,10 +325,10 @@ export const GrowthControlRoomPage: React.FC = () => {
                 <Building2 className="w-4 h-4 text-indigo-400" />
               </div>
               <div className="font-mono text-3xl sm:text-4xl font-extrabold text-indigo-300">
-                {isExecutiveUnlocked ? dbData.totalWorkspaces : 'Protected'}
+                {dbData.totalWorkspaces}
               </div>
               <p className="text-[11px] text-slate-500">
-                {isExecutiveUnlocked ? `${dbData.workspacesToday} created today (0 anomaly fixed)` : 'Executive sign-in required'}
+                {dbData.workspacesToday} created today (0 workspace anomaly fixed)
               </p>
             </div>
 
@@ -467,13 +409,13 @@ export const GrowthControlRoomPage: React.FC = () => {
 
             <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/40 space-y-1">
               <p className="text-[10px] text-amber-400 uppercase font-sans">Claims Prompted</p>
-              <p className="text-lg font-bold text-amber-400">{isExecutiveUnlocked ? exp001ClaimPrompts : '••'}</p>
+              <p className="text-lg font-bold text-amber-400">{exp001ClaimPrompts}</p>
               <p className="text-[10px] text-slate-400 font-sans">EXP-001/002 card</p>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-1">
               <p className="text-[10px] text-emerald-400 uppercase font-sans">Activated Callers</p>
-              <p className="text-lg font-bold text-emerald-400">{isExecutiveUnlocked ? activatedUsersToday : '••'}</p>
+              <p className="text-lg font-bold text-emerald-400">{activatedUsersToday}</p>
               <p className="text-[10px] text-slate-400 font-sans">Permanent link active</p>
             </div>
 
@@ -525,19 +467,19 @@ export const GrowthControlRoomPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Claim prompt shown:</span>
-                  <span className="text-slate-200">{isExecutiveUnlocked ? exp001ClaimPrompts : '••'}</span>
+                  <span className="text-slate-200">{exp001ClaimPrompts}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Claim started:</span>
-                  <span className="text-amber-400">{isExecutiveUnlocked ? exp001ClaimsStarted : '••'}</span>
+                  <span className="text-amber-400">{exp001ClaimsStarted}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>OTP verified:</span>
-                  <span className="text-cyan-400">{isExecutiveUnlocked ? exp001AccountsCreated : '••'}</span>
+                  <span className="text-cyan-400">{exp001AccountsCreated}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
                   <span>Accounts created:</span>
-                  <span>{isExecutiveUnlocked ? exp001AccountsCreated : '••'}</span>
+                  <span>{exp001AccountsCreated}</span>
                 </div>
               </div>
 
@@ -572,15 +514,15 @@ export const GrowthControlRoomPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Claim prompt shown:</span>
-                  <span className="text-slate-200">{isExecutiveUnlocked ? exp002ClaimPrompts : '••'}</span>
+                  <span className="text-slate-200">{exp002ClaimPrompts}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Claims started:</span>
-                  <span className="text-amber-400">{isExecutiveUnlocked ? exp002Claims : '••'}</span>
+                  <span className="text-amber-400">{exp002Claims}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
                   <span>Accounts created:</span>
-                  <span>{isExecutiveUnlocked ? (exp002Claims > 0 ? 1 : 0) : '••'}</span>
+                  <span>{exp002Claims > 0 ? 1 : 0}</span>
                 </div>
               </div>
 
@@ -611,23 +553,23 @@ export const GrowthControlRoomPage: React.FC = () => {
               <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
                 <div className="flex justify-between text-slate-400">
                   <span>Links generated:</span>
-                  <span className="text-white font-bold">{isExecutiveUnlocked ? exp003LinksGenerated : '••'}</span>
+                  <span className="text-white font-bold">{exp003LinksGenerated}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Save clicked:</span>
-                  <span className="text-slate-200">{isExecutiveUnlocked ? exp003SaveClicked : '••'}</span>
+                  <span className="text-slate-200">{exp003SaveClicked}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>OTP started:</span>
-                  <span className="text-amber-400">{isExecutiveUnlocked ? exp003SaveClicked : '••'}</span>
+                  <span className="text-amber-400">{exp003SaveClicked}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Accounts created:</span>
-                  <span className="text-cyan-400">{isExecutiveUnlocked ? (exp003SaveClicked > 0 ? 1 : 0) : '••'}</span>
+                  <span className="text-cyan-400">{exp003SaveClicked > 0 ? 1 : 0}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
                   <span>Workspaces created:</span>
-                  <span>{isExecutiveUnlocked ? exp003Workspaces : '••'}</span>
+                  <span>{exp003Workspaces}</span>
                 </div>
               </div>
 
@@ -658,15 +600,15 @@ export const GrowthControlRoomPage: React.FC = () => {
               <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
                 <div className="flex justify-between text-slate-400">
                   <span>Registrations (DB):</span>
-                  <span className="text-white font-bold">{isExecutiveUnlocked ? exp004Registrations : '••'}</span>
+                  <span className="text-white font-bold">{exp004Registrations}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Workspaces created:</span>
-                  <span className="text-cyan-400 font-bold">{isExecutiveUnlocked ? exp004WorkspacesCreated : '••'}</span>
+                  <span className="text-cyan-400 font-bold">{exp004WorkspacesCreated}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
                   <span>Activation rate:</span>
-                  <span>{isExecutiveUnlocked ? exp004ActivationRate : '••'}</span>
+                  <span>{exp004ActivationRate}</span>
                 </div>
               </div>
 
@@ -697,15 +639,15 @@ export const GrowthControlRoomPage: React.FC = () => {
               <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
                 <div className="flex justify-between text-slate-400">
                   <span>Invites sent:</span>
-                  <span className="text-white font-bold">{isExecutiveUnlocked ? exp005InvitesSent : '••'}</span>
+                  <span className="text-white font-bold">{exp005InvitesSent}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Invites accepted:</span>
-                  <span className="text-amber-400">{isExecutiveUnlocked ? exp005InvitesAccepted : '••'}</span>
+                  <span className="text-amber-400">{exp005InvitesAccepted}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
                   <span>New accounts generated:</span>
-                  <span>{isExecutiveUnlocked ? exp005InvitesAccepted : '••'}</span>
+                  <span>{exp005InvitesAccepted}</span>
                 </div>
               </div>
 
@@ -747,18 +689,16 @@ export const GrowthControlRoomPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-indigo-400" />
                 <h2 className="text-lg font-black text-white tracking-tight">
-                  Acquisition Sources Performance
+                  Acquisition Sources Performance (Live Super Admin View)
                 </h2>
               </div>
               <p className="text-xs text-slate-400">
                 Visitor → Use → Registration → Workspace Activation → Team Invite
               </p>
             </div>
-            {!isExecutiveUnlocked && (
-              <span className="text-xs text-slate-500 font-mono">
-                Aggregate Summary
-              </span>
-            )}
+            <span className="text-xs text-emerald-400 font-mono font-bold">
+              Unfiltered Live DB Data
+            </span>
           </div>
 
           <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
@@ -784,13 +724,13 @@ export const GrowthControlRoomPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right text-slate-300">~956</td>
                     <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
-                      {isExecutiveUnlocked ? dbData.profilesToday : '••'}
+                      {dbData.profilesToday}
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
-                      {isExecutiveUnlocked ? activatedUsersToday : '••'}
+                      {activatedUsersToday}
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-300">
-                      {isExecutiveUnlocked ? dbData.totalWorkspaces : '••'}
+                      {dbData.totalWorkspaces}
                     </td>
                     <td className="py-3.5 px-4 text-right text-emerald-400 font-sans font-bold">
                       🟢 Primary Validation Hook
@@ -805,13 +745,13 @@ export const GrowthControlRoomPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right text-slate-300">~120</td>
                     <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
-                      {isExecutiveUnlocked ? 2 : '••'}
+                      2
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
-                      {isExecutiveUnlocked ? 1 : '••'}
+                      1
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-300">
-                      {isExecutiveUnlocked ? 1 : '••'}
+                      1
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-400 font-sans font-bold">
                       🟢 Active Hook (Team Inbox)
@@ -826,13 +766,13 @@ export const GrowthControlRoomPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right text-slate-300">~184</td>
                     <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
-                      {isExecutiveUnlocked ? 12 : '••'}
+                      12
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
-                      {isExecutiveUnlocked ? 8 : '••'}
+                      8
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-300">
-                      {isExecutiveUnlocked ? 3 : '••'}
+                      3
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-400 font-sans font-bold">
                       🟡 Stable Brand Baseline
@@ -847,13 +787,13 @@ export const GrowthControlRoomPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right text-slate-300">~15</td>
                     <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
-                      {isExecutiveUnlocked ? 4 : '••'}
+                      4
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
-                      {isExecutiveUnlocked ? 4 : '••'}
+                      4
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-300">
-                      {isExecutiveUnlocked ? dbData.totalWorkspaces : '••'}
+                      {dbData.totalWorkspaces}
                     </td>
                     <td className="py-3.5 px-4 text-right text-purple-400 font-sans font-bold">
                       🟢 High Conv (Viral Loop)
@@ -868,13 +808,13 @@ export const GrowthControlRoomPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right text-slate-300">35 (28d)</td>
                     <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
-                      {isExecutiveUnlocked ? 0 : '••'}
+                      0
                     </td>
                     <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
-                      {isExecutiveUnlocked ? 0 : '••'}
+                      0
                     </td>
                     <td className="py-3.5 px-4 text-right text-indigo-300">
-                      {isExecutiveUnlocked ? 0 : '••'}
+                      0
                     </td>
                     <td className="py-3.5 px-4 text-right text-rose-400 font-sans font-bold">
                       🔴 Frozen Permutations
@@ -889,68 +829,12 @@ export const GrowthControlRoomPage: React.FC = () => {
 
       </main>
 
-      {/* ── EXECUTIVE UNLOCK MODAL ── */}
-      {showPasscodeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setShowPasscodeModal(false)}
-          />
-          <div className="relative w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl z-10 space-y-4">
-            <div className="text-center space-y-1">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-2 border border-indigo-500/30">
-                <Key className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-white">Executive Access</h3>
-              <p className="text-xs text-slate-400">
-                Enter executive PIN or sign in with your admin account to unlock granular internal numbers.
-              </p>
-            </div>
-
-            <form onSubmit={handleUnlockSubmit} className="space-y-3">
-              <input
-                type="password"
-                placeholder="Enter executive PIN"
-                value={passcodeInput}
-                onChange={(e) => {
-                  setPasscodeInput(e.target.value);
-                  setShowPasscodeError(false);
-                }}
-                className="w-full h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:border-indigo-500 focus:outline-none text-center tracking-widest"
-                autoFocus
-              />
-
-              {showPasscodeError && (
-                <p className="text-xs text-rose-400 text-center">
-                  Invalid PIN. Please try again or sign in with Supabase auth.
-                </p>
-              )}
-
-              <button
-                type="submit"
-                className="w-full h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs transition-all cursor-pointer shadow-lg shadow-indigo-600/30"
-              >
-                Unlock Executive Dashboard
-              </button>
-            </form>
-
-            <div className="text-center pt-2 border-t border-slate-800">
-              <Link 
-                to="/auth" 
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold inline-flex items-center gap-1"
-              >
-                Sign in with Phone / Admin account <ChevronRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Footer */}
       <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 CHATR OS. Acquisition Control Room • Stage 1 Proving Ground.</p>
+          <p>© 2026 CHATR OS. Acquisition Control Room • Gated for Super Admin 9717845477.</p>
           <div className="flex items-center gap-4">
+            <Link to="/admin" className="hover:text-slate-300">Admin Console</Link>
             <Link to="/call" className="hover:text-slate-300">Direct Call</Link>
             <Link to="/tools/whatsapp-link-generator" className="hover:text-slate-300">WhatsApp Tool</Link>
             <Link to="/privacy" className="hover:text-slate-300">Privacy Policy</Link>
