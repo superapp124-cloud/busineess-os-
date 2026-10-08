@@ -74,9 +74,12 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
       )
       .subscribe();
 
-    // Fetch existing/pending signals and start fallback polling
+    // Fetch existing/pending signals once on connect
     this.pollSignals();
-    this.startSignalPolling();
+    // Only start fallback polling if explicitly subscribed to an active call
+    if (this.config.subscribeByCallId) {
+      this.startSignalPolling();
+    }
   }
 
   private dispatchSignal(row: any) {
@@ -134,10 +137,35 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
   }
 
   private startSignalPolling() {
+    // Only poll if we are scoped to an active call, never when idle
+    if (!this.config.subscribeByCallId) return;
     if (this.signalPollingInterval) clearInterval(this.signalPollingInterval);
+
+    let pollAttempts = 0;
     this.signalPollingInterval = setInterval(() => {
+      pollAttempts++;
+      // Stop fallback polling after 15 attempts (45 seconds - negotiation concluded)
+      if (pollAttempts > 15) {
+        if (this.signalPollingInterval) {
+          clearInterval(this.signalPollingInterval);
+          this.signalPollingInterval = null;
+        }
+        return;
+      }
       this.pollSignals();
-    }, 1000); // 1-second fallback poll interval for fast negotiation
+    }, 3000); // 3-second fallback interval during active call negotiation
+  }
+
+  public startActiveCallPolling(callId: string) {
+    this.config.subscribeByCallId = callId;
+    this.startSignalPolling();
+  }
+
+  public stopActiveCallPolling() {
+    if (this.signalPollingInterval) {
+      clearInterval(this.signalPollingInterval);
+      this.signalPollingInterval = null;
+    }
   }
 
   private handleCallChange(row: any) {
@@ -189,8 +217,8 @@ export class SupabaseSignalingAdapter implements SignalingProvider {
 
       if (error) {
         console.error(`[SharedSignalingAdapter] ❌ Failed to send ${signalType}:`, error.message);
-      } else {
-        console.log(`[SharedSignalingAdapter] ✅ Sent ${signalType} to ${targetUserId}`);
+      } else if (import.meta.env.DEV) {
+        console.debug(`[SharedSignalingAdapter] ✅ Sent ${signalType} to ${targetUserId}`);
       }
     } catch (err) {
       console.error(`[SharedSignalingAdapter] ❌ Exception sending ${signalType}:`, err);

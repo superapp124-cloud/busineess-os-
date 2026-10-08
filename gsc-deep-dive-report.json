@@ -1,0 +1,4263 @@
+{
+  "summary": {
+    "clicks": 35,
+    "impressions": 11837,
+    "ctr": 0.0029568302779420462,
+    "position": 7.329897778153248
+  },
+  "topCountries": [
+    {
+      "keys": [
+        "ind"
+      ],
+      "clicks": 30,
+      "impressions": 9062,
+      "ctr": 0.003310527477378062,
+      "position": 5.3525711763407635
+    },
+    {
+      "keys": [
+        "can"
+      ],
+      "clicks": 1,
+      "impressions": 45,
+      "ctr": 0.022222222222222223,
+      "position": 14.133333333333333
+    },
+    {
+      "keys": [
+        "irq"
+      ],
+      "clicks": 1,
+      "impressions": 7,
+      "ctr": 0.14285714285714285,
+      "position": 9.142857142857142
+    },
+    {
+      "keys": [
+        "pol"
+      ],
+      "clicks": 1,
+      "impressions": 19,
+      "ctr": 0.05263157894736842,
+      "position": 11.263157894736842
+    },
+    {
+      "keys": [
+        "usa"
+      ],
+      "clicks": 1,
+      "impressions": 542,
+      "ctr": 0.0018450184501845018,
+      "position": 17.904059040590408
+    },
+    {
+      "keys": [
+        "vnm"
+      ],
+      "clicks": 1,
+      "impressions": 118,
+      "ctr": 0.00847457627118644,
+      "position": 10.966101694915254
+    },
+    {
+      "keys": [
+        "afg"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 58
+    },
+    {
+      "keys": [
+        "ago"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 3
+    },
+    {
+      "keys": [
+        "are"
+      ],
+      "clicks": 0,
+      "impressions": 35,
+      "ctr": 0,
+      "position": 12.6
+    },
+    {
+      "keys": [
+        "arg"
+      ],
+      "clicks": 0,
+      "impressions": 50,
+      "ctr": 0,
+      "position": 17.78
+    },
+    {
+      "keys": [
+        "arm"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 13.5
+    },
+    {
+      "keys": [
+        "aus"
+      ],
+      "clicks": 0,
+      "impressions": 21,
+      "ctr": 0,
+      "position": 15.380952380952381
+    },
+    {
+      "keys": [
+        "aut"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 14.222222222222221
+    },
+    {
+      "keys": [
+        "bel"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 10.666666666666666
+    },
+    {
+      "keys": [
+        "bgd"
+      ],
+      "clicks": 0,
+      "impressions": 18,
+      "ctr": 0,
+      "position": 6.777777777777778
+    },
+    {
+      "keys": [
+        "bih"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 10
+    },
+    {
+      "keys": [
+        "bol"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "bra"
+      ],
+      "clicks": 0,
+      "impressions": 186,
+      "ctr": 0,
+      "position": 13.736559139784946
+    },
+    {
+      "keys": [
+        "brn"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 15
+    },
+    {
+      "keys": [
+        "che"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 6.6
+    },
+    {
+      "keys": [
+        "chl"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 12.5
+    },
+    {
+      "keys": [
+        "chn"
+      ],
+      "clicks": 0,
+      "impressions": 617,
+      "ctr": 0,
+      "position": 12.382495948136143
+    },
+    {
+      "keys": [
+        "civ"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "col"
+      ],
+      "clicks": 0,
+      "impressions": 45,
+      "ctr": 0,
+      "position": 19.244444444444444
+    },
+    {
+      "keys": [
+        "cze"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "deu"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 11.068965517241379
+    },
+    {
+      "keys": [
+        "dnk"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 10.75
+    },
+    {
+      "keys": [
+        "dom"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 5.5
+    },
+    {
+      "keys": [
+        "dza"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 13.75
+    },
+    {
+      "keys": [
+        "egy"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 9.333333333333334
+    },
+    {
+      "keys": [
+        "esp"
+      ],
+      "clicks": 0,
+      "impressions": 165,
+      "ctr": 0,
+      "position": 10.357575757575757
+    },
+    {
+      "keys": [
+        "fin"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 3.6666666666666665
+    },
+    {
+      "keys": [
+        "fra"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 16.53846153846154
+    },
+    {
+      "keys": [
+        "gbr"
+      ],
+      "clicks": 0,
+      "impressions": 35,
+      "ctr": 0,
+      "position": 27.65714285714286
+    },
+    {
+      "keys": [
+        "geo"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7.5
+    },
+    {
+      "keys": [
+        "gha"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 24
+    },
+    {
+      "keys": [
+        "gmb"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 3
+    },
+    {
+      "keys": [
+        "grc"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 15.5
+    },
+    {
+      "keys": [
+        "gtm"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6.666666666666667
+    },
+    {
+      "keys": [
+        "hkg"
+      ],
+      "clicks": 0,
+      "impressions": 24,
+      "ctr": 0,
+      "position": 7.916666666666667
+    },
+    {
+      "keys": [
+        "hnd"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "hrv"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "hun"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 8.5
+    },
+    {
+      "keys": [
+        "idn"
+      ],
+      "clicks": 0,
+      "impressions": 167,
+      "ctr": 0,
+      "position": 6.850299401197605
+    },
+    {
+      "keys": [
+        "imn"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "irl"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 25.5
+    },
+    {
+      "keys": [
+        "irn"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 8.6
+    },
+    {
+      "keys": [
+        "isr"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 57
+    },
+    {
+      "keys": [
+        "ita"
+      ],
+      "clicks": 0,
+      "impressions": 18,
+      "ctr": 0,
+      "position": 12.333333333333334
+    },
+    {
+      "keys": [
+        "jor"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 8.25
+    }
+  ],
+  "topPages": [
+    {
+      "keys": [
+        "https://www.chatrchat.in/"
+      ],
+      "clicks": 15,
+      "impressions": 8806,
+      "ctr": 0.0017033840563252327,
+      "position": 5.519872813990461
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/pricing"
+      ],
+      "clicks": 3,
+      "impressions": 821,
+      "ctr": 0.0036540803897685747,
+      "position": 4.224116930572473
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-geneva"
+      ],
+      "clicks": 1,
+      "impressions": 4,
+      "ctr": 0.25,
+      "position": 4.75
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/chatr/whatsapp-candidate-screening"
+      ],
+      "clicks": 1,
+      "impressions": 6,
+      "ctr": 0.16666666666666666,
+      "position": 21.333333333333332
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/industries/recruitment-agencies"
+      ],
+      "clicks": 1,
+      "impressions": 73,
+      "ctr": 0.0136986301369863,
+      "position": 4.698630136986301
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-erbil"
+      ],
+      "clicks": 1,
+      "impressions": 2,
+      "ctr": 0.5,
+      "position": 6.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-hisar"
+      ],
+      "clicks": 1,
+      "impressions": 23,
+      "ctr": 0.043478260869565216,
+      "position": 7.130434782608695
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/education-admissions-bilbao"
+      ],
+      "clicks": 1,
+      "impressions": 5,
+      "ctr": 0.2,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/financial-services-messaging-dharamshala"
+      ],
+      "clicks": 1,
+      "impressions": 2,
+      "ctr": 0.5,
+      "position": 3
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/financial-services-messaging-kharagpur"
+      ],
+      "clicks": 1,
+      "impressions": 2,
+      "ctr": 0.5,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/hiring-automation-ottawa"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 1
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/logistics-delivery-tracking-krakow"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/recruitment-agencies-tokushima"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 13
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/whatsapp-business-api-mehsana"
+      ],
+      "clicks": 1,
+      "impressions": 4,
+      "ctr": 0.25,
+      "position": 4.25
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/whatsapp-business-api-noida"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/locations/bhind"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/locations/denver"
+      ],
+      "clicks": 1,
+      "impressions": 3,
+      "ctr": 0.3333333333333333,
+      "position": 7
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/locations/joinville"
+      ],
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1,
+      "position": 121
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/locations/mumbai"
+      ],
+      "clicks": 1,
+      "impressions": 31,
+      "ctr": 0.03225806451612903,
+      "position": 10.774193548387096
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/ecommerce-customer-support-dire-dawa"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/ecommerce-customer-support-fortaleza"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/ecommerce-customer-support-lakhimpur-kheri"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 10
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-agartala"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6.333333333333333
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-aktobe"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 13.285714285714286
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-ca-mau"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 6.8
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-eldoret"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-mbeya"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-okara"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-prague"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-riyadh"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 10
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-venice"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 29.5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/education-admissions-wuxi"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/financial-services-messaging-my-tho"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 6.5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/financial-services-messaging-new-york"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/financial-services-messaging-sukkur"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-anantnag"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 15.2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-apia"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-constantine"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 15.333333333333334
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-jaisalmer"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 212
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-nanchang"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 19.25
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/healthcare-patient-messaging-san-rafael-ar"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 18.5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hiring-automation-kalaburagi"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 94
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hiring-automation-karur"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 4
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hiring-automation-serekunda"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 139
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hiring-automation-singapore"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 98
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hospitality-hotel-messaging-columbus"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 10.1
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/hospitality-hotel-messaging-mzuzu"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 6.75
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/logistics-delivery-tracking-guangzhou"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/logistics-delivery-tracking-moga"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/logistics-delivery-tracking-nottingham"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 92
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/real-estate-lead-management-kullu"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 174
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/real-estate-lead-management-milan"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 91
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/real-estate-lead-management-monteria"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 214
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/real-estate-lead-management-pondicherry"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 30.5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-bhopal"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-fallujah"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-hamilton-bm"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-kallakurichi"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 10.5
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-milwaukee"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 16
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-pasuruan"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 129
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-sawai-madhopur"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 130
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-surendranagar"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 88
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/recruitment-agencies-valsad"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/whatsapp-business-api-austin"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/whatsapp-business-api-harare-hz"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/location/whatsapp-business-api-srinagar"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/locations/barisal"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://chatrchat.in/locations/valsad"
+      ],
+      "clicks": 0,
+      "impressions": 19,
+      "ctr": 0,
+      "position": 9.842105263157896
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/blog"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 8.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/blog/what-is-a-communication-os"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/business-automation"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 8.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/business-os"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/chatr/ai-message-triage-routing"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/chatr/ai-phone-agent-calling"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/chatr/whatsapp-broadcast-campaigns"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 9.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/editorial-policy"
+      ],
+      "clicks": 0,
+      "impressions": 27,
+      "ctr": 0,
+      "position": 5.037037037037037
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-ajman"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-anakapalli"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 6.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-baghdad"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 4
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-batumi"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-boston"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-bristol"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-budapest"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-catamarca"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 4
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-chittorgarh"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-cucuta"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-dire-dawa"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-east-london-sa"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-erfurt"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 219
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-fortaleza"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 229
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-gaya"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 3.75
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-gdansk"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-guna-mp"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-gurdaspur"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 12
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-hail"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 27.666666666666668
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-ibague"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 70.5
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-kalyani"
+      ],
+      "clicks": 0,
+      "impressions": 37,
+      "ctr": 0,
+      "position": 9.486486486486486
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-kannauj"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://www.chatrchat.in/location/ecommerce-customer-support-lakhimpur-kheri"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    }
+  ],
+  "topOpportunities": [
+    {
+      "query": "chatr",
+      "impressions": 8710,
+      "clicks": 9,
+      "ctr": "0.1%",
+      "position": "5.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "B. CTR OPPORTUNITY",
+      "intent": "Branded Discovery",
+      "score": 100,
+      "action": "Revamp Title tag and Meta Description to differentiate from Chatr Mobile Canada and highlight Team Inbox/WebRTC.",
+      "priority": "P0"
+    },
+    {
+      "query": "business development manager nantong whatsapp",
+      "impressions": 87,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "1.6",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-nantong",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 82,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager tianjin whatsapp",
+      "impressions": 44,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.7",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-tianjin",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 80,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance manager chongqing whatsapp",
+      "impressions": 15,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.7",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 78,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp hotel",
+      "impressions": 15,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.5",
+      "url": "https://chatrchat.in/location/hospitality-hotel-messaging-mzuzu",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 78,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager fuzhou whatsapp",
+      "impressions": 89,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-fuzhou",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 77,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "cahtr",
+      "impressions": 74,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.2",
+      "url": "https://www.chatrchat.in/",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 77,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp",
+      "impressions": 72,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.2",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 77,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "cross border ecommerce tianjin whatsapp",
+      "impressions": 13,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.3",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-tianjin",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 77,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nanjing whatsapp",
+      "impressions": 67,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "9.7",
+      "url": "https://www.chatrchat.in/location/hiring-automation-nanjing",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 76,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "chatrr",
+      "impressions": 47,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.8",
+      "url": "https://www.chatrchat.in/",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 76,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "chat r",
+      "impressions": 44,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.4",
+      "url": "https://www.chatrchat.in/",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 75,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance manager foshan whatsapp",
+      "impressions": 36,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.8",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-foshan",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 75,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager wuhan whatsapp",
+      "impressions": 35,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.9",
+      "url": "https://www.chatrchat.in/location/hiring-automation-wuhan",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 75,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp order tracking",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-port-louis",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 75,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance manager hangzhou whatsapp",
+      "impressions": 31,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-hangzhou",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 74,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "chater",
+      "impressions": 22,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "9.2",
+      "url": "https://www.chatrchat.in/",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 74,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "chatr'",
+      "impressions": 22,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.6",
+      "url": "https://www.chatrchat.in/",
+      "type": "A. QUICK WIN",
+      "intent": "Active Evaluator",
+      "score": 74,
+      "action": "Optimize existing canonical page content and add Above-The-Fold interactive demo.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager changzhou whatsapp * * * * *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "7.7",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-changzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager fuzhou whatsapp * * *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.3",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-fuzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nantong whatsapp * * * *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.0",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-nantong",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp * *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.7",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp * * * * *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.3",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director chongqing whatsapp",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.3",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 74,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp",
+      "impressions": 21,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 73,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nantong whatsapp *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.0",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-nantong",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 73,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager wuhan whatsapp * * *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/location/hiring-automation-wuhan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 73,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp * * *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.5",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 73,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp paris",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-paris",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 73,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager suzhou whatsapp",
+      "impressions": 87,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "14.7",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-suzhou",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 72,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager changzhou whatsapp * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-changzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nantong whatsapp * * * * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.0",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-nantong",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager wuhan whatsapp * * * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/location/hiring-automation-wuhan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "cross border ecommerce tianjin whatsapp +86",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-tianjin",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "factory manager fuzhou whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.0",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-fuzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "markham whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-markham",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp * * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp gumi",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-gumi",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 72,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "factory manager chongqing whatsapp",
+      "impressions": 9,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "20.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 71,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nanjing whatsapp *",
+      "impressions": 8,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "13.5",
+      "url": "https://www.chatrchat.in/location/hiring-automation-nanjing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 71,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager dalian whatsapp",
+      "impressions": 37,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "19.2",
+      "url": "https://www.chatrchat.in/location/hiring-automation-dalian",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 70,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp * * *",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "18.3",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 70,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhuhai whatsapp",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "14.2",
+      "url": "https://www.chatrchat.in/location/education-admissions-zhuhai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 70,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp",
+      "impressions": 29,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "19.7",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 69,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager changzhou whatsapp",
+      "impressions": 28,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.2",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-changzhou",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 69,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager chongqing whatsapp",
+      "impressions": 28,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "13.4",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 69,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager chengdu whatsapp",
+      "impressions": 26,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "16.7",
+      "url": "https://www.chatrchat.in/location/logistics-delivery-tracking-chengdu",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 69,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nanjing whatsapp * * *",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hiring-automation-nanjing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 69,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp * * * *",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.3",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 69,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp * * * *",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "12.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 69,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager foshan china whatsapp * * * *",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "19.5",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 69,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "xhatr",
+      "impressions": 115,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.4",
+      "url": "https://www.chatrchat.in/",
+      "type": "B. CTR OPPORTUNITY",
+      "intent": "Broad Demand",
+      "score": 68,
+      "action": "Revamp Title tag and Meta Description to differentiate from Chatr Mobile Canada and highlight Team Inbox/WebRTC.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager foshan whatsapp",
+      "impressions": 56,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "25.5",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director suzhou whatsapp",
+      "impressions": 41,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "35.5",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-suzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "krishnagiri hub",
+      "impressions": 19,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.4",
+      "url": "https://www.chatrchat.in/locations/krishnagiri",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 68,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager nanjing whatsapp * * * *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hiring-automation-nanjing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager zhengzhou whatsapp *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-zhengzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp * * * * *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp +86 *",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "16.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 68,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager hangzhou whatsapp",
+      "impressions": 38,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "26.2",
+      "url": "https://www.chatrchat.in/location/education-admissions-hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager jinan whatsapp",
+      "impressions": 32,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "30.2",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "factory manager hangzhou whatsapp",
+      "impressions": 28,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "44.5",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "trading manager hangzhou whatsapp",
+      "impressions": 12,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "18.8",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "C. STRIKING DISTANCE",
+      "intent": "Problem Solving / Searcher Intent",
+      "score": 67,
+      "action": "Improve content depth, internal links from footer/nav, and structured FAQ schema to reach Top 5.",
+      "priority": "P1"
+    },
+    {
+      "query": "guna whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-guna-mp",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "recruitment agencies in alexandria",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "12.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-alexandria",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp +86 * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "16.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp +86 * * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "17.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager foshan china whatsapp *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "19.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp for recruitment industry",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "18.0",
+      "url": "https://www.chatrchat.in/locations/paramaribo",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp iloilo",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.0",
+      "url": "https://www.chatrchat.in/location/hiring-automation-iloilo",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 67,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager jinan china whatsapp",
+      "impressions": 22,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "26.0",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 66,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director xiamen whatsapp",
+      "impressions": 18,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "47.5",
+      "url": "https://www.chatrchat.in/locations/xiamen",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 65,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager hangzhou whatsapp",
+      "impressions": 17,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "25.5",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 65,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager jinan whatsapp * * *",
+      "impressions": 12,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "20.9",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 64,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager jinan china whatsapp *",
+      "impressions": 12,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "28.0",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 64,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "trade agent jinan china whatsapp",
+      "impressions": 12,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "31.5",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 64,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director foshan whatsapp",
+      "impressions": 11,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "21.5",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 64,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp * * * * *",
+      "impressions": 10,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "21.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 64,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager jinan whatsapp * * * *",
+      "impressions": 8,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "23.5",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director hangzhou whatsapp",
+      "impressions": 8,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "20.3",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp * * * *",
+      "impressions": 8,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "22.3",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager jinan whatsapp * * * * *",
+      "impressions": 7,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "24.6",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "overseas sales manager chongqing whatsapp",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "27.5",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager jinan china whatsapp * *",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "42.0",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 63,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "business development manager jinan whatsapp *",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "29.2",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager jinan china whatsapp * * *",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "48.6",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp *",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "20.6",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager wenzhou china whatsapp * *",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "21.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager foshan china whatsapp",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "32.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager hangzhou china whatsapp",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "48.0",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sourcing manager chongqing whatsapp",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "44.3",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "trade agent wenzhou china whatsapp",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "44.8",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-wenzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp business api in mumbai",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "36.5",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-mumbai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 62,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "international sales manager chongqing whatsapp",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "37.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 61,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager hangzhou whatsapp *",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "35.0",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 61,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "buyer nantong whatsapp",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "20.5",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-nantong",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 60,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "general manager chongqing whatsapp",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "28.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 60,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "general manager chongqing whatsapp +86",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "22.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 60,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "cross border ecommerce tianjin china whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "21.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-tianjin",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "general manager suzhou whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "34.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-suzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "recruitment agencies bradford",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "30.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-bradford",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager chongqing whatsapp +86 * * * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "22.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-chongqing",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager foshan china whatsapp * *",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "22.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-foshan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp business recruitment",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "26.0",
+      "url": "https://www.chatrchat.in/locations/gaborone",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp enterprise solution in madurai",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "27.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-madurai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 59,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "finance director jinan whatsapp",
+      "impressions": 20,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "50.6",
+      "url": "https://www.chatrchat.in/locations/jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 58,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "chatra pricing",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "63.0",
+      "url": "https://www.chatrchat.in/pricing",
+      "type": "F. COMPETITOR OPPORTUNITY",
+      "intent": "Commercial Switcher",
+      "score": 57,
+      "action": "Deploy source-verifiable comparison matrix & pricing migration savings table.",
+      "priority": "P0"
+    },
+    {
+      "query": "sourcing manager hangzhou china whatsapp",
+      "impressions": 9,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "83.2",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 56,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp api provider in mumbai",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "50.6",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-mumbai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 55,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "sales manager jinan china whatsapp * * * *",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "56.0",
+      "url": "https://www.chatrchat.in/location/education-admissions-jinan",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 54,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "how to stop losing travel leads on whatsapp",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "61.7",
+      "url": "https://www.chatrchat.in/problem/how-to-stop-losing-whatsapp-leads",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 54,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "chatrchat",
+      "impressions": 20,
+      "clicks": 7,
+      "ctr": "35.0%",
+      "position": "1.6",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 53,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatrs",
+      "impressions": 16,
+      "clicks": 1,
+      "ctr": "6.3%",
+      "position": "4.6",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 53,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr]",
+      "impressions": 15,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 53,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "factory manager hangzhou china whatsapp",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "94.0",
+      "url": "https://www.chatrchat.in/locations/hangzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 53,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "lead management kingston",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "68.0",
+      "url": "https://www.chatrchat.in/location/real-estate-lead-management-kingston",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 53,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "chatsr",
+      "impressions": 11,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.1",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 52,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chhtr",
+      "impressions": 11,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.1",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 52,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "www.chatr",
+      "impressions": 11,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 52,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cghatr",
+      "impressions": 10,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 52,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "general manager suzhou china whatsapp",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "83.0",
+      "url": "https://www.chatrchat.in/location/hospitality-hotel-messaging-suzhou",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 52,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp api in kerala",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "81.0",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-kochi",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 52,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp api integration in madurai",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "60.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-madurai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 52,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp api provider mumbai",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "78.0",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-mumbai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 52,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "whatsapp business api provider in mumbai",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "73.0",
+      "url": "https://www.chatrchat.in/location/whatsapp-business-api-mumbai",
+      "type": "D. COMMERCIAL GAP",
+      "intent": "Commercial Lead",
+      "score": 52,
+      "action": "Ensure canonical page maps directly to /whatsapp-team-inbox or vertical hub.",
+      "priority": "P1"
+    },
+    {
+      "query": "cjatr",
+      "impressions": 9,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.1",
+      "url": "https://www.chatrchat.in/pricing",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 51,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "vhatr",
+      "impressions": 9,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.4",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 51,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chhatr",
+      "impressions": 7,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 51,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chyatr",
+      "impressions": 7,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 51,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cjhatr",
+      "impressions": 7,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 51,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chactr",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr.",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chtre",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "jhatr",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.7",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "oran hub",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "7.3",
+      "url": "https://www.chatrchat.in/locations/oran",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr ate",
+      "impressions": 5,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.4",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 50,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cchatr",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.8",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr+",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatrh",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.8",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatrn",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.5",
+      "url": "https://www.chatrchat.in/pricing",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chnatr",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.3",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chsatr",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "hcatr",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cgatr",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "7.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chaqtr",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.7",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chqtr",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.7",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "puchong api",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.7",
+      "url": "https://www.chatrchat.in/locations/puchong",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 49,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cayatr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cha tr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cha5r",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chaetr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chaotr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatalr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatnr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr website",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr\\",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatrj",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chbatr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cvhatr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "ghetr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "hchatr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "staff agent",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.5",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-imphal",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 48,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "c h a t r",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "c hatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cahatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cbatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chat5r",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "9.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatchatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr careers",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "7.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr health",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "9.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-mississauga",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr location",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/location/education-admissions-pathanamthitta",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr markham",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/location/ecommerce-customer-support-markham",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr store",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatre",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatru atr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatır",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chsthr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/pricing",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chstrr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chthr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "commerce hub ratlam",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "10.0",
+      "url": "https://www.chatrchat.in/locations/ratlam",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "cxhatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "6.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "dehradun parsing",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/locations/dehradun",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "fallujah business directory",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "8.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-fallujah",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "krishnagiri hub (krishnagiri hub)",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "9.0",
+      "url": "https://www.chatrchat.in/locations/krishnagiri",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "new chatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "plateau solutions",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "7.0",
+      "url": "https://www.chatrchat.in/locations/plateau",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "schatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "3.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "si",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "2.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-san-pedro-sula",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "surendranagar parsing",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://chatrchat.in/location/recruitment-agencies-surendranagar",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "temping agencies in luton",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "5.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-luton",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "xhat r",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "4.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 47,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr ai",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "11.2",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 45,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chjatr",
+      "impressions": 6,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "13.8",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 45,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr kingston",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "17.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-kingston",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 42,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "enterprise staffing agency",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "16.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-sao-bernardo",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 42,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "jamui it hub",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "12.0",
+      "url": "https://www.chatrchat.in/locations/jamui",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 42,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "or chatr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "13.0",
+      "url": "https://www.chatrchat.in/blog",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 42,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "plateau healthcare",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "12.0",
+      "url": "https://www.chatrchat.in/location/healthcare-patient-messaging-plateau",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 42,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatar",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "42.8",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 37,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr exploit",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "49.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 37,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "staffing companies vancouver",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "28.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-vancouver",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 36,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr dox",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "39.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 35,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "staffing agency vancouver",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "30.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-vancouver",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 35,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "$chtr",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "35.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 34,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "bfsi call center in belize",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "45.0",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-belize-city-bz",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 34,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "bfsi call center outsourcing belize",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "44.0",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-belize-city-bz",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 34,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr company",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "28.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 34,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "multilingual bfsi call center in belize",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "49.0",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-belize-city-bz",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 34,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "location management milan",
+      "impressions": 4,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "92.0",
+      "url": "https://chatrchat.in/location/real-estate-lead-management-milan",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 29,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chat rate",
+      "impressions": 3,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "57.7",
+      "url": "https://www.chatrchat.in/pricing",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 29,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "catr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "61.5",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 28,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatr ddos",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "64.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 28,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chattr",
+      "impressions": 2,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "80.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 28,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "automated reporting nottingham",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "92.0",
+      "url": "https://chatrchat.in/location/logistics-delivery-tracking-nottingham",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "bfsi outsourcing services in belize",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "57.0",
+      "url": "https://www.chatrchat.in/location/financial-services-messaging-belize-city-bz",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatir",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "54.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chatir food srl",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "77.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "chattr app",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "62.0",
+      "url": "https://www.chatrchat.in/",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "conversational search agency",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "92.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-johannesburg-south",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "multi account management",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "94.0",
+      "url": "https://www.chatrchat.in/problem/manage-multiple-whatsapp-business-accounts",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    },
+    {
+      "query": "seville staffing",
+      "impressions": 1,
+      "clicks": 0,
+      "ctr": "0.0%",
+      "position": "82.0",
+      "url": "https://www.chatrchat.in/location/recruitment-agencies-seville",
+      "type": "G. INFORMATIONAL",
+      "intent": "Research / Long-Tail",
+      "score": 27,
+      "action": "Monitor performance; ensure clean internal link path to primary product solutions.",
+      "priority": "P2"
+    }
+  ]
+}

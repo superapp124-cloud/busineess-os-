@@ -26,14 +26,14 @@ interface DatabaseCounters {
 }
 
 const PORTFOLIO_COHORTS = [
-  { id: '#01', vertical: 'Hotels & Stays', entrySurface: 'Room QR & Reception Standee', useCase: '"Guests can ask for anything here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-emerald-400' },
-  { id: '#02', vertical: 'Clinics & Healthcare', entrySurface: 'Google Profile & Web Link', useCase: '"Patients can book or ask for help here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-cyan-400' },
-  { id: '#03', vertical: 'Recruitment & Staffing', entrySurface: 'Job Listing & WhatsApp Link', useCase: '"Candidates can communicate and schedule here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-indigo-400' },
-  { id: '#04', vertical: 'Real Estate Brokers', entrySurface: 'Property Listings & Signboard', useCase: '"Buyers can ask about this property here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-amber-400' },
-  { id: '#05', vertical: 'D2C Brands & Retail', entrySurface: 'Shopify Widget & Order Track', useCase: '"Customers can ask about their order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-purple-400' },
-  { id: '#06', vertical: 'Restaurants & Cafes', entrySurface: 'Table Standee & Digital Menu', useCase: '"Customers can ask, book or order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-rose-400' },
-  { id: '#07', vertical: 'Education & Coaching', entrySurface: 'Brochure QR & Course Page', useCase: '"Students and parents can ask or enroll here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-blue-400' },
-  { id: '#08', vertical: 'Agencies & Consultancies', entrySurface: 'Proposals & Email Signatures', useCase: '"Clients can request projects or track work here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-teal-400' },
+  { id: '#01', vertical: 'Hotels & Stays', entrySurface: 'Room QR & Reception Standee', useCase: '"Guests can ask for anything here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-emerald-500' },
+  { id: '#02', vertical: 'Clinics & Healthcare', entrySurface: 'Google Profile & Web Link', useCase: '"Patients can book or ask for help here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-cyan-500' },
+  { id: '#03', vertical: 'Recruitment & Staffing', entrySurface: 'Job Listing & WhatsApp Link', useCase: '"Candidates can communicate and schedule here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-indigo-500' },
+  { id: '#04', vertical: 'Real Estate Brokers', entrySurface: 'Property Listings & Signboard', useCase: '"Buyers can ask about this property here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-amber-500' },
+  { id: '#05', vertical: 'D2C Brands & Retail', entrySurface: 'Shopify Widget & Order Track', useCase: '"Customers can ask about their order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-purple-500' },
+  { id: '#06', vertical: 'Restaurants & Cafes', entrySurface: 'Table Standee & Digital Menu', useCase: '"Customers can ask, book or order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-rose-500' },
+  { id: '#07', vertical: 'Education & Coaching', entrySurface: 'Brochure QR & Course Page', useCase: '"Students and parents can ask or enroll here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-blue-500' },
+  { id: '#08', vertical: 'Agencies & Consultancies', entrySurface: 'Proposals & Email Signatures', useCase: '"Clients can request projects or track work here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-teal-500' },
 ];
 
 export const GrowthControlRoomPage: React.FC = () => {
@@ -51,7 +51,6 @@ export const GrowthControlRoomPage: React.FC = () => {
   // Local & session events
   const [localEvents, setLocalEvents] = useState<AcquisitionEventPayload[]>([]);
   const [selectedTier, setSelectedTier] = useState<'all' | 'tier1' | 'tier2' | 'tier3'>('all');
-  const userYieldRatio = dbData.totalWorkspaces > 0 ? (activatedUsersToday / dbData.totalWorkspaces) : 0;
 
   // Fetch live Supabase numbers
   const fetchSupabaseMetrics = async () => {
@@ -73,7 +72,7 @@ export const GrowthControlRoomPage: React.FC = () => {
       ]);
 
       // 2. Try fetching call / click logs
-      let callCount = 478; // Forensic baseline
+      let callCount = 478; // Baseline
       try {
         const { count: clickLogsCount } = await supabase.from('click_logs').select('*', { count: 'exact', head: true });
         if (clickLogsCount && clickLogsCount > callCount) callCount = clickLogsCount;
@@ -114,6 +113,7 @@ export const GrowthControlRoomPage: React.FC = () => {
   // Activated User = Account Created + At least 1 meaningful product action:
   // (Completed call claimed, workspace created, or tool link saved into inbox)
   const activatedUsersToday = Math.max(dbData.workspacesToday, dbData.profilesToday > 0 ? 1 : 0);
+  const userYieldRatio = dbData.totalWorkspaces > 0 ? (activatedUsersToday / dbData.totalWorkspaces) : 0;
 
   // Stepped Milestone Targets:
   // Milestone 0: 0 -> 10 / day (Proof of Life)
@@ -147,51 +147,51 @@ export const GrowthControlRoomPage: React.FC = () => {
   const exp005InvitesAccepted = 0; // Strictly counted upon authentication
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-emerald-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
       
       {/* ── TOP NAV / HEADER ── */}
-      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      <header className="border-b border-slate-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <Link to="/admin" className="flex items-center gap-2">
               <img 
                 src="/images/chatr-official-logo.png" 
                 alt="CHATR" 
                 className="h-7 w-auto object-contain" 
               />
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">
+              <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-bold">
                 GROWTH OS
               </span>
             </Link>
-            <div className="h-4 w-px bg-slate-800 hidden sm:block" />
+            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
             
             {/* Super Admin Identity Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-indigo-500/10 text-indigo-300 border-indigo-500/30">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-indigo-50 text-indigo-700 border-indigo-200 shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
               <span>SUPER ADMIN: 9717845477</span>
             </div>
 
             {/* Validation State Badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border bg-amber-500/10 text-amber-400 border-amber-500/30">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>🟡 LIVE — VALIDATION STARTED</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border bg-amber-50 text-amber-800 border-amber-200 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>LIVE — VALIDATION STARTED</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">
-              <Clock className="w-3.5 h-3.5 text-slate-500" />
+            <div className="text-xs font-mono text-slate-600 flex items-center gap-1.5 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>Sync:</span>
-              <span className="text-emerald-400 font-bold">{dbData.lastUpdated || 'Connecting...'}</span>
+              <span className="text-emerald-700 font-bold">{dbData.lastUpdated || 'Connecting...'}</span>
             </div>
 
             <button
               onClick={refreshTelemetry}
               disabled={dbData.loading}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer"
+              className="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all cursor-pointer shadow-2xs"
               title="Refresh Live Data"
             >
-              <RefreshCw className={`w-4 h-4 ${dbData.loading ? 'animate-spin text-emerald-400' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${dbData.loading ? 'animate-spin text-emerald-600' : ''}`} />
             </button>
           </div>
         </div>
@@ -200,65 +200,66 @@ export const GrowthControlRoomPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
 
         {/* ── STRATEGIC DIRECTIVE BANNER ── */}
-        <section className="bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <section className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 -mb-12 w-64 h-64 bg-indigo-100/30 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold">
-              <Shield className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="space-y-4 max-w-3xl relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold shadow-2xs">
+              <Shield className="w-3.5 h-3.5 text-indigo-600" />
               <span>RESTRICTED EXECUTIVE CONTROL PLANE • 9717845477</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               Can CHATR turn a real human interaction into another CHATR user?
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Programmatic SEO expansion is <strong>frozen</strong>. The next 24 hours measure whether existing 
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+              Programmatic SEO expansion is <strong className="text-slate-900 font-bold">frozen</strong>. The next 24 hours measure whether existing 
               zero-paid calling sessions and free web tools convert into permanent claimed links, business workspaces, 
               and organic team invitations.
             </p>
           </div>
 
           {/* Stepped Milestones Bar */}
-          <div className="mt-8 pt-8 border-t border-slate-800/80">
+          <div className="mt-8 pt-8 border-t border-slate-200 relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 Stepped Validation Progression
               </span>
-              <span className="text-xs font-mono text-emerald-400 font-bold">
+              <span className="text-xs font-mono text-emerald-800 font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
                 Active Target: Milestone 0 (0 → 10 activated users/day)
               </span>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/50 space-y-1">
+              <div className="p-3.5 rounded-xl bg-emerald-50/90 border-2 border-emerald-500 space-y-1 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-emerald-400 font-bold">Milestone 0</span>
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-sans font-bold">
+                  <span className="text-emerald-800 font-black">Milestone 0</span>
+                  <span className="text-[10px] bg-emerald-600 px-2 py-0.5 rounded-full font-sans font-bold" style={{ color: '#ffffff' }}>
                     Now Active
                   </span>
                 </div>
-                <p className="text-base font-black text-white">0 → 10 / day</p>
-                <p className="text-[11px] text-slate-400 font-sans">Proof of Life on /call & tools</p>
+                <p className="text-base font-black text-slate-900">0 → 10 / day</p>
+                <p className="text-[11px] text-slate-600 font-sans font-medium">Proof of Life on /call & tools</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1 opacity-70">
-                <span className="text-slate-400 font-bold">Milestone 1</span>
-                <p className="text-base font-black text-white">10 → 100 / day</p>
-                <p className="text-[11px] text-slate-400 font-sans">Product-Market Signal</p>
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 shadow-2xs">
+                <span className="text-slate-500 font-bold">Milestone 1</span>
+                <p className="text-base font-black text-slate-800">10 → 100 / day</p>
+                <p className="text-[11px] text-slate-500 font-sans">Product-Market Signal</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1 opacity-50">
-                <span className="text-slate-400 font-bold">Milestone 2</span>
-                <p className="text-base font-black text-white">100 → 1,000 / day</p>
-                <p className="text-[11px] text-slate-400 font-sans">Engine Working & Predictable</p>
+              <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-1 opacity-80">
+                <span className="text-slate-500 font-bold">Milestone 2</span>
+                <p className="text-base font-black text-slate-700">100 → 1,000 / day</p>
+                <p className="text-[11px] text-slate-500 font-sans">Engine Working & Predictable</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1 opacity-40">
-                <span className="text-slate-400 font-bold">Milestone 3</span>
-                <p className="text-base font-black text-white">1,000 → 5,000 / day</p>
-                <p className="text-[11px] text-slate-400 font-sans">Multi-Engine Scale Mode</p>
+              <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-1 opacity-70">
+                <span className="text-slate-500 font-bold">Milestone 3</span>
+                <p className="text-base font-black text-slate-700">1,000 → 5,000 / day</p>
+                <p className="text-[11px] text-slate-500 font-sans">Multi-Engine Scale Mode</p>
               </div>
             </div>
           </div>
@@ -269,59 +270,59 @@ export const GrowthControlRoomPage: React.FC = () => {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Target className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <Target className="w-4 h-4 text-emerald-600" />
                 The Core Metric: Activated New Users Today
               </h2>
               <p className="text-xs text-slate-500">
                 Activated = Account created + completed at least 1 meaningful CHATR action (call completed / workspace created / tool saved)
               </p>
             </div>
-            <span className="text-xs text-indigo-400 font-mono flex items-center gap-1 font-bold">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Authenticated Super Admin Ledger
+            <span className="text-xs text-indigo-700 font-mono flex items-center gap-1 font-bold bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-full shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" /> Authenticated Super Admin Ledger
             </span>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* Card 1: ACTIVATED USERS TODAY (THE TRUE NORTH STAR) */}
-            <div className="bg-gradient-to-br from-emerald-950/70 to-slate-900 border border-emerald-500/50 rounded-2xl p-5 space-y-2 shadow-xl shadow-emerald-950/30">
+            <div className="bg-gradient-to-br from-emerald-50/90 to-white border-2 border-emerald-400 rounded-2xl p-5 space-y-2 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-800">
                   Activated Users Today
                 </span>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-emerald-600 px-2 py-0.5 rounded-full font-bold" style={{ color: '#ffffff' }}>
                   North Star
                 </span>
               </div>
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-4xl sm:text-5xl font-black text-white">
+                <span className="text-4xl sm:text-5xl font-black text-slate-900">
                   {activatedUsersToday}
                 </span>
-                <span className="text-xs text-slate-400 font-sans">
+                <span className="text-xs text-slate-500 font-sans font-medium">
                   / 10 target (Milestone 0)
                 </span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden mt-2">
+              <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden mt-2">
                 <div 
-                  className="bg-emerald-400 h-full rounded-full transition-all duration-700"
+                  className="bg-emerald-500 h-full rounded-full transition-all duration-700"
                   style={{ width: `${Math.max(parseFloat(milestoneProgressPct), activatedUsersToday > 0 ? 5 : 0)}%` }}
                 />
               </div>
-              <p className="text-[11px] text-slate-300">
+              <p className="text-[11px] text-slate-600 font-medium">
                 {milestoneProgressPct}% towards Proof of Life (10/day)
               </p>
             </div>
 
             {/* Card 2: Registrations Today (Preceding Funnel Step) */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Registrations Today
                 </span>
-                <UserPlus className="w-4 h-4 text-cyan-400" />
+                <UserPlus className="w-4 h-4 text-cyan-600" />
               </div>
-              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-white">
+              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-slate-900">
                 {dbData.profilesToday}
               </div>
               <p className="text-[11px] text-slate-500">
@@ -330,14 +331,14 @@ export const GrowthControlRoomPage: React.FC = () => {
             </div>
 
             {/* Card 3: Total Workspaces Created (EXP-004) */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Workspaces Created
                 </span>
-                <Building2 className="w-4 h-4 text-indigo-400" />
+                <Building2 className="w-4 h-4 text-indigo-600" />
               </div>
-              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-indigo-300">
+              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-indigo-700">
                 {dbData.totalWorkspaces}
               </div>
               <p className="text-[11px] text-slate-500">
@@ -346,14 +347,14 @@ export const GrowthControlRoomPage: React.FC = () => {
             </div>
 
             {/* Card 4: Historical WebRTC Calls (Organic Baseline) */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Completed Call Sessions
                 </span>
-                <Phone className="w-4 h-4 text-amber-400" />
+                <Phone className="w-4 h-4 text-amber-600" />
               </div>
-              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-amber-400">
+              <div className="font-mono text-3xl sm:text-4xl font-extrabold text-amber-700">
                 {dbData.totalCallsRecorded.toLocaleString()}
               </div>
               <p className="text-[11px] text-slate-500">
@@ -369,88 +370,88 @@ export const GrowthControlRoomPage: React.FC = () => {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Flame className="w-4 h-4 text-amber-400" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <Flame className="w-4 h-4 text-amber-600" />
                 The 4 Yield Indices (Decision Engine)
               </h2>
               <p className="text-xs text-slate-500">
                 Formulas governing channel and vertical resource allocation
               </p>
             </div>
-            <span className="text-xs text-amber-400 font-mono font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+            <span className="text-xs text-amber-800 font-mono font-bold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full shadow-2xs">
               Winner Escalation Engine Active
             </span>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Yield 1: User Yield */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                   User Yield
                 </span>
-                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-mono font-bold">
                   Target: ≥25.0
                 </span>
               </div>
-              <div className="font-mono text-3xl font-extrabold text-white">
-                {userYieldRatio.toFixed(1)} <span className="text-xs text-slate-500 font-sans">users/node</span>
+              <div className="font-mono text-3xl font-extrabold text-slate-900">
+                {userYieldRatio.toFixed(1)} <span className="text-xs text-slate-500 font-sans font-normal">users/node</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 Activated users generated per active business node
               </p>
             </div>
 
             {/* Yield 2: Network Yield (K-Factor) */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                   Network Yield (K)
                 </span>
-                <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-cyan-50 text-cyan-700 border border-cyan-200 px-2 py-0.5 rounded font-mono font-bold">
                   Target: ≥0.40
                 </span>
               </div>
-              <div className="font-mono text-3xl font-extrabold text-cyan-400">
-                0.00 <span className="text-xs text-slate-500 font-sans">K-factor</span>
+              <div className="font-mono text-3xl font-extrabold text-cyan-700">
+                0.00 <span className="text-xs text-slate-500 font-sans font-normal">K-factor</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 Secondary activated users generated per existing user
               </p>
             </div>
 
             {/* Yield 3: Economic Yield */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                   Economic Yield
                 </span>
-                <span className="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded font-mono font-bold">
                   Target: ≥3.0x
                 </span>
               </div>
-              <div className="font-mono text-3xl font-extrabold text-indigo-400">
-                ∞ <span className="text-xs text-slate-500 font-sans">Zero CAC</span>
+              <div className="font-mono text-3xl font-extrabold text-indigo-700">
+                ∞ <span className="text-xs text-slate-500 font-sans font-normal">Zero CAC</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 Gross value generated / acquisition spend
               </p>
             </div>
 
             {/* Yield 4: Retention Yield */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                   Retention Yield
                 </span>
-                <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-mono font-bold">
                   Target: ≥65%
                 </span>
               </div>
-              <div className="font-mono text-3xl font-extrabold text-amber-400">
-                0.0% <span className="text-xs text-slate-500 font-sans">Day-7</span>
+              <div className="font-mono text-3xl font-extrabold text-amber-700">
+                0.0% <span className="text-xs text-slate-500 font-sans font-normal">Day-7</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 Day-7 returning active users / total activated users
               </p>
             </div>
@@ -462,53 +463,53 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-lg font-black text-white tracking-tight">
+                <Building2 className="w-4 h-4 text-emerald-600" />
+                <h2 className="text-lg font-black text-slate-900 tracking-tight">
                   The Empirical Cohort Scorecard (8 Active Verticals)
                 </h2>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Tracking 5 pilot businesses per vertical under the B2B2C distribution protocol
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-mono font-semibold">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-mono font-semibold">
                 Cohort Target: 40 Nodes (5 × 8)
               </span>
             </div>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                <thead className="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200 text-[11px]">
                   <tr>
                     <th className="py-3.5 px-4 font-bold">Node Cohort</th>
                     <th className="py-3.5 px-4 font-bold">Vertical</th>
                     <th className="py-3.5 px-4 font-bold">Entry Surface</th>
                     <th className="py-3.5 px-4 font-bold">Specific Customer Use Case</th>
                     <th className="py-3.5 px-4 font-bold text-right">Exposed</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-cyan-400">CHATR Users</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-emerald-400">Activated</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-indigo-400">Day-7</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-amber-400">User Yield</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-cyan-700">CHATR Users</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-emerald-700">Activated</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-indigo-700">Day-7</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-amber-700">User Yield</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-slate-100 font-mono">
                   {PORTFOLIO_COHORTS.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3 px-4 font-bold text-slate-300">{c.id}</td>
-                      <td className="py-3 px-4 font-sans font-semibold text-white flex items-center gap-2">
+                    <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-4 font-bold text-slate-600">{c.id}</td>
+                      <td className="py-3 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${c.color}`} />
                         {c.vertical}
                       </td>
-                      <td className="py-3 px-4 text-slate-300 font-sans">{c.entrySurface}</td>
-                      <td className="py-3 px-4 text-slate-400 font-sans italic">{c.useCase}</td>
-                      <td className="py-3 px-4 text-right text-slate-300">{c.exposed}</td>
-                      <td className="py-3 px-4 text-right text-cyan-400 font-bold">{c.users}</td>
-                      <td className="py-3 px-4 text-right text-emerald-400 font-bold">{c.activated}</td>
-                      <td className="py-3 px-4 text-right text-indigo-300">{c.day7}</td>
-                      <td className="py-3 px-4 text-right font-bold text-amber-400">
+                      <td className="py-3 px-4 text-slate-700 font-sans">{c.entrySurface}</td>
+                      <td className="py-3 px-4 text-slate-500 font-sans italic">{c.useCase}</td>
+                      <td className="py-3 px-4 text-right text-slate-700">{c.exposed}</td>
+                      <td className="py-3 px-4 text-right text-cyan-700 font-bold">{c.users}</td>
+                      <td className="py-3 px-4 text-right text-emerald-700 font-bold">{c.activated}</td>
+                      <td className="py-3 px-4 text-right text-indigo-700">{c.day7}</td>
+                      <td className="py-3 px-4 text-right font-bold text-amber-700">
                         {c.yield.toFixed(1)}
                       </td>
                     </tr>
@@ -520,89 +521,89 @@ export const GrowthControlRoomPage: React.FC = () => {
         </section>
 
         {/* ── THE TWO IMMUTABLE GROWTH RULES ── */}
-        <section className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <section className="bg-gradient-to-r from-amber-50 via-white to-slate-50 border border-amber-200 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xs">
           <div className="space-y-1.5 text-left">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <Shield className="w-4 h-4" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-amber-700" />
               The Two Immutable CHATR Growth Rules
             </span>
-            <div className="text-xs text-slate-300 space-y-1">
+            <div className="text-xs text-slate-700 space-y-1">
               <p><strong>Rule 1:</strong> No acquisition channel is &quot;core&quot; until it produces activated users.</p>
               <p><strong>Rule 2:</strong> No vertical is &quot;the wedge&quot; until real users demonstrate repeated value.</p>
             </div>
           </div>
           <div className="flex-shrink-0 text-right">
-            <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+            <span className="text-[11px] font-mono text-slate-700 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
               Doctrine: Empirical Proof Over Assumptions
             </span>
           </div>
         </section>
 
         {/* ── METRICS PRECISION SEPARATION (/call VISITORS VS CALL SESSIONS) ── */}
-        <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+        <section className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 Calling Metrics Precision Separation
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Strict distinction between page visits, call attempts, connected calls, callers, and receivers
               </p>
             </div>
-            <span className="text-xs text-emerald-400 font-mono font-bold">
+            <span className="text-xs text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
               Zero Metric Conflation
             </span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 text-center font-mono text-xs">
             
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-              <p className="text-[10px] text-slate-500 uppercase font-sans">Unique Visitors</p>
-              <p className="text-lg font-bold text-white">~956</p>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <p className="text-[10px] text-slate-500 uppercase font-sans font-semibold">Unique Visitors</p>
+              <p className="text-lg font-bold text-slate-900">~956</p>
               <p className="text-[10px] text-slate-500 font-sans">Raw page visits</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-              <p className="text-[10px] text-slate-500 uppercase font-sans">Call Attempts</p>
-              <p className="text-lg font-bold text-indigo-300">512</p>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <p className="text-[10px] text-slate-500 uppercase font-sans font-semibold">Call Attempts</p>
+              <p className="text-lg font-bold text-indigo-700">512</p>
               <p className="text-[10px] text-slate-500 font-sans">Room initiated</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-              <p className="text-[10px] text-slate-500 uppercase font-sans">Connected Calls</p>
-              <p className="text-lg font-bold text-cyan-300">489</p>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <p className="text-[10px] text-slate-500 uppercase font-sans font-semibold">Connected Calls</p>
+              <p className="text-lg font-bold text-cyan-700">489</p>
               <p className="text-[10px] text-slate-500 font-sans">WebRTC mesh up</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-1">
-              <p className="text-[10px] text-emerald-400 uppercase font-sans">Completed Calls</p>
-              <p className="text-lg font-bold text-emerald-400">478</p>
-              <p className="text-[10px] text-slate-400 font-sans">Sessions concluded</p>
+            <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-300 space-y-1">
+              <p className="text-[10px] text-emerald-800 uppercase font-sans font-bold">Completed Calls</p>
+              <p className="text-lg font-bold text-emerald-700">478</p>
+              <p className="text-[10px] text-emerald-700 font-sans">Sessions concluded</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-              <p className="text-[10px] text-slate-500 uppercase font-sans">Unique Callers</p>
-              <p className="text-lg font-bold text-white">478</p>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <p className="text-[10px] text-slate-500 uppercase font-sans font-semibold">Unique Callers</p>
+              <p className="text-lg font-bold text-slate-900">478</p>
               <p className="text-[10px] text-slate-500 font-sans">Link creators</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-              <p className="text-[10px] text-slate-500 uppercase font-sans">Unique Receivers</p>
-              <p className="text-lg font-bold text-white">~430</p>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <p className="text-[10px] text-slate-500 uppercase font-sans font-semibold">Unique Receivers</p>
+              <p className="text-lg font-bold text-slate-900">~430</p>
               <p className="text-[10px] text-slate-500 font-sans">Peers joined</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/40 space-y-1">
-              <p className="text-[10px] text-amber-400 uppercase font-sans">Claims Prompted</p>
-              <p className="text-lg font-bold text-amber-400">{exp001ClaimPrompts}</p>
-              <p className="text-[10px] text-slate-400 font-sans">EXP-001/002 card</p>
+            <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-300 space-y-1">
+              <p className="text-[10px] text-amber-800 uppercase font-sans font-bold">Claims Prompted</p>
+              <p className="text-lg font-bold text-amber-700">{exp001ClaimPrompts}</p>
+              <p className="text-[10px] text-amber-700 font-sans">EXP-001/002 card</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-1">
-              <p className="text-[10px] text-emerald-400 uppercase font-sans">Activated Callers</p>
-              <p className="text-lg font-bold text-emerald-400">{activatedUsersToday}</p>
-              <p className="text-[10px] text-slate-400 font-sans">Permanent link active</p>
+            <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-300 space-y-1">
+              <p className="text-[10px] text-emerald-800 uppercase font-sans font-bold">Activated Callers</p>
+              <p className="text-lg font-bold text-emerald-700">{activatedUsersToday}</p>
+              <p className="text-[10px] text-emerald-700 font-sans">Permanent link active</p>
             </div>
 
           </div>
@@ -614,16 +615,16 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-lg font-black text-white tracking-tight">
+                <Flame className="w-4 h-4 text-emerald-600" />
+                <h2 className="text-lg font-black text-slate-900 tracking-tight">
                   The 5 Active Experiments — Micro-Funnel Tracking
                 </h2>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Measuring every micro-step to determine which acquisition loop wins
               </p>
             </div>
-            <span className="text-xs text-slate-500 font-mono">
+            <span className="text-xs text-slate-600 font-mono bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full">
               Collecting Clean Data (Day 1)
             </span>
           </div>
@@ -631,39 +632,39 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             
             {/* EXP-001 Micro-Funnel */}
-            <div className="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-5 space-y-4 transition-all">
+            <div className="bg-white border border-slate-200 hover:border-emerald-500/60 rounded-2xl p-5 space-y-4 transition-all shadow-2xs hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                   EXP-001 • CALLER CLAIM
                 </span>
-                <Phone className="w-4 h-4 text-emerald-400" />
+                <Phone className="w-4 h-4 text-emerald-600" />
               </div>
 
               <div>
-                <h3 className="text-sm font-bold text-white">/call Caller Permanent Link Claim</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900">/call Caller Permanent Link Claim</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Post-call prompt to save permanent handle via Phone OTP without leaving page.
                 </p>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-100 font-mono text-xs">
+                <div className="flex justify-between text-slate-600">
                   <span>Completed calls:</span>
-                  <span className="text-white font-bold">{exp001CompletedCalls}</span>
+                  <span className="text-slate-900 font-bold">{exp001CompletedCalls}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Claim prompt shown:</span>
-                  <span className="text-slate-200">{exp001ClaimPrompts}</span>
+                  <span className="text-slate-700">{exp001ClaimPrompts}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Claim started:</span>
-                  <span className="text-amber-400">{exp001ClaimsStarted}</span>
+                  <span className="text-amber-700 font-bold">{exp001ClaimsStarted}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>OTP verified:</span>
-                  <span className="text-cyan-400">{exp001AccountsCreated}</span>
+                  <span className="text-cyan-700 font-bold">{exp001AccountsCreated}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
+                <div className="flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1.5">
                   <span>Accounts created:</span>
                   <span>{exp001AccountsCreated}</span>
                 </div>
@@ -671,42 +672,42 @@ export const GrowthControlRoomPage: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">Hook: Permanent Handle</span>
-                <Link to="/call" className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1">
+                <Link to="/call" className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1">
                   Test /call <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
             </div>
 
             {/* EXP-002 Micro-Funnel */}
-            <div className="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-5 space-y-4 transition-all">
+            <div className="bg-white border border-slate-200 hover:border-emerald-500/60 rounded-2xl p-5 space-y-4 transition-all shadow-2xs hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                   EXP-002 • RECEIVER CLAIM
                 </span>
-                <Phone className="w-4 h-4 text-emerald-400" />
+                <Phone className="w-4 h-4 text-emerald-600" />
               </div>
 
               <div>
-                <h3 className="text-sm font-bold text-white">/call Receiver Permanent Link Claim</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900">/call Receiver Permanent Link Claim</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Reciprocal prompt for receiver peer: "Create your free calling link so anyone can call you."
                 </p>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-100 font-mono text-xs">
+                <div className="flex justify-between text-slate-600">
                   <span>Unique receivers:</span>
-                  <span className="text-white font-bold">{exp002Receivers}</span>
+                  <span className="text-slate-900 font-bold">{exp002Receivers}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Claim prompt shown:</span>
-                  <span className="text-slate-200">{exp002ClaimPrompts}</span>
+                  <span className="text-slate-700">{exp002ClaimPrompts}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Claims started:</span>
-                  <span className="text-amber-400">{exp002Claims}</span>
+                  <span className="text-amber-700 font-bold">{exp002Claims}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
+                <div className="flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1.5">
                   <span>Accounts created:</span>
                   <span>{exp002Claims > 0 ? 1 : 0}</span>
                 </div>
@@ -714,46 +715,46 @@ export const GrowthControlRoomPage: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">Hook: 2-Sided Viral Loop</span>
-                <Link to="/call" className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1">
+                <Link to="/call" className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1">
                   View <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
             </div>
 
             {/* EXP-003 Micro-Funnel */}
-            <div className="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-5 space-y-4 transition-all">
+            <div className="bg-white border border-slate-200 hover:border-emerald-500/60 rounded-2xl p-5 space-y-4 transition-all shadow-2xs hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                   EXP-003 • TEAM INBOX
                 </span>
-                <MessageSquare className="w-4 h-4 text-emerald-400" />
+                <MessageSquare className="w-4 h-4 text-emerald-600" />
               </div>
 
               <div>
-                <h3 className="text-sm font-bold text-white">WhatsApp Link → Shared Team Inbox</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900">WhatsApp Link → Shared Team Inbox</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Generates WhatsApp link, then prompts to save link into shared team inbox.
                 </p>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-100 font-mono text-xs">
+                <div className="flex justify-between text-slate-600">
                   <span>Links generated:</span>
-                  <span className="text-white font-bold">{exp003LinksGenerated}</span>
+                  <span className="text-slate-900 font-bold">{exp003LinksGenerated}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Save clicked:</span>
-                  <span className="text-slate-200">{exp003SaveClicked}</span>
+                  <span className="text-slate-700">{exp003SaveClicked}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>OTP started:</span>
-                  <span className="text-amber-400">{exp003SaveClicked}</span>
+                  <span className="text-amber-700 font-bold">{exp003SaveClicked}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Accounts created:</span>
-                  <span className="text-cyan-400">{exp003SaveClicked > 0 ? 1 : 0}</span>
+                  <span className="text-cyan-700 font-bold">{exp003SaveClicked > 0 ? 1 : 0}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
+                <div className="flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1.5">
                   <span>Workspaces created:</span>
                   <span>{exp003Workspaces}</span>
                 </div>
@@ -761,38 +762,38 @@ export const GrowthControlRoomPage: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">Hook: Team Collaboration</span>
-                <Link to="/tools/whatsapp-link-generator" className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1">
+                <Link to="/tools/whatsapp-link-generator" className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1">
                   Test Tool <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
             </div>
 
             {/* EXP-004 Micro-Funnel */}
-            <div className="bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-5 space-y-4 transition-all">
+            <div className="bg-white border border-slate-200 hover:border-cyan-500/60 rounded-2xl p-5 space-y-4 transition-all shadow-2xs hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-50 text-cyan-700 border border-cyan-200">
                   EXP-004 • WORKSPACE ACTIVATION
                 </span>
-                <Building2 className="w-4 h-4 text-cyan-400" />
+                <Building2 className="w-4 h-4 text-cyan-600" />
               </div>
 
               <div>
-                <h3 className="text-sm font-bold text-white">Registration → Business Workspace</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900">Registration → Business Workspace</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Enforces business workspace naming and industry setup in Supabase onboarding.
                 </p>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-100 font-mono text-xs">
+                <div className="flex justify-between text-slate-600">
                   <span>Registrations (DB):</span>
-                  <span className="text-white font-bold">{exp004Registrations}</span>
+                  <span className="text-slate-900 font-bold">{exp004Registrations}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Workspaces created:</span>
-                  <span className="text-cyan-400 font-bold">{exp004WorkspacesCreated}</span>
+                  <span className="text-cyan-700 font-bold">{exp004WorkspacesCreated}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
+                <div className="flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1.5">
                   <span>Activation rate:</span>
                   <span>{exp004ActivationRate}</span>
                 </div>
@@ -800,38 +801,38 @@ export const GrowthControlRoomPage: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">Fixes 0 Workspace Anomaly</span>
-                <Link to="/inbox" className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                <Link to="/inbox" className="text-cyan-700 hover:text-cyan-800 font-bold flex items-center gap-1">
                   Check Inbox <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
             </div>
 
             {/* EXP-005 Micro-Funnel */}
-            <div className="bg-slate-900/90 border border-slate-800 hover:border-indigo-500/40 rounded-2xl p-5 space-y-4 transition-all">
+            <div className="bg-white border border-slate-200 hover:border-indigo-500/60 rounded-2xl p-5 space-y-4 transition-all shadow-2xs hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
                   EXP-005 • INVITATION LOOP
                 </span>
-                <Share2 className="w-4 h-4 text-indigo-400" />
+                <Share2 className="w-4 h-4 text-indigo-600" />
               </div>
 
               <div>
-                <h3 className="text-sm font-bold text-white">Workspace → Team Member Invitation</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900">Workspace → Team Member Invitation</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Step 3 WhatsApp dispatch & link copy. Strict: Only counts upon authentication.
                 </p>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-100 font-mono text-xs">
+                <div className="flex justify-between text-slate-600">
                   <span>Invites sent:</span>
-                  <span className="text-white font-bold">{exp005InvitesSent}</span>
+                  <span className="text-slate-900 font-bold">{exp005InvitesSent}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Invites accepted:</span>
-                  <span className="text-amber-400">{exp005InvitesAccepted}</span>
+                  <span className="text-amber-700 font-bold">{exp005InvitesAccepted}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-bold border-t border-slate-800/80 pt-1.5">
+                <div className="flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1.5">
                   <span>New accounts generated:</span>
                   <span>{exp005InvitesAccepted}</span>
                 </div>
@@ -839,21 +840,21 @@ export const GrowthControlRoomPage: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">Strict: Authenticated Joins Only</span>
-                <span className="text-indigo-400 font-semibold">Active</span>
+                <span className="text-indigo-700 font-semibold">Active</span>
               </div>
             </div>
 
             {/* Experiment Rule Card */}
-            <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+            <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
                   <Activity className="w-4 h-4" />
                   <span>THE DECISION CRITERIA</span>
                 </div>
-                <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-700 mt-2 leading-relaxed">
                   At each milestone, we identify which loop is producing the most activated users:
                 </p>
-                <div className="text-[11px] text-slate-400 mt-2 space-y-1">
+                <div className="text-[11px] text-slate-600 mt-2 space-y-1">
                   <p>• If calling produces &gt;70% → scale calling infrastructure</p>
                   <p>• If tools win → expand high-utility tools</p>
                   <p>• If invites dominate → optimize the team network flywheel</p>
@@ -873,136 +874,136 @@ export const GrowthControlRoomPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
-                <h2 className="text-lg font-black text-white tracking-tight">
+                <Layers className="w-4 h-4 text-indigo-600" />
+                <h2 className="text-lg font-black text-slate-900 tracking-tight">
                   Acquisition Sources Performance (Live Super Admin View)
                 </h2>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Visitor → Use → Registration → Workspace Activation → Team Invite
               </p>
             </div>
-            <span className="text-xs text-emerald-400 font-mono font-bold">
+            <span className="text-xs text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
               Unfiltered Live DB Data
             </span>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                <thead className="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200 text-[11px]">
                   <tr>
                     <th className="py-3.5 px-4 font-bold">Acquisition Channel</th>
                     <th className="py-3.5 px-4 font-bold text-right">Unique Visitors</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-emerald-400">Registrations</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-cyan-400">Activated Users</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-indigo-400">Workspaces</th>
-                    <th className="py-3.5 px-4 font-bold text-right text-amber-400">Conversion Loop</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-emerald-700">Registrations</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-cyan-700">Activated Users</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-indigo-700">Workspaces</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-amber-700">Conversion Loop</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-slate-100 font-mono">
                   
                   {/* Row 1: Direct WebRTC Calling */}
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-semibold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <tr className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       Free Browser Calling (/call)
                     </td>
-                    <td className="py-3.5 px-4 text-right text-slate-300">~956</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
+                    <td className="py-3.5 px-4 text-right text-slate-700">~956</td>
+                    <td className="py-3.5 px-4 text-right font-bold text-emerald-700">
                       {dbData.profilesToday}
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-bold">
                       {activatedUsersToday}
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-300">
+                    <td className="py-3.5 px-4 text-right text-indigo-700">
                       {dbData.totalWorkspaces}
                     </td>
-                    <td className="py-3.5 px-4 text-right text-emerald-400 font-sans font-bold">
+                    <td className="py-3.5 px-4 text-right text-emerald-700 font-sans font-bold">
                       🟢 Primary Validation Hook
                     </td>
                   </tr>
 
                   {/* Row 2: Free Web Tools */}
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-semibold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                  <tr className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-cyan-500" />
                       Free Web Tools (/tools/*)
                     </td>
-                    <td className="py-3.5 px-4 text-right text-slate-300">~120</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
+                    <td className="py-3.5 px-4 text-right text-slate-700">~120</td>
+                    <td className="py-3.5 px-4 text-right font-bold text-emerald-700">
                       2
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-bold">
                       1
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-300">
+                    <td className="py-3.5 px-4 text-right text-indigo-700">
                       1
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-400 font-sans font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-sans font-bold">
                       🟢 Active Hook (Team Inbox)
                     </td>
                   </tr>
 
                   {/* Row 3: Direct Visits */}
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-semibold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                  <tr className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-indigo-500" />
                       Direct / Brand Navigation
                     </td>
-                    <td className="py-3.5 px-4 text-right text-slate-300">~184</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
+                    <td className="py-3.5 px-4 text-right text-slate-700">~184</td>
+                    <td className="py-3.5 px-4 text-right font-bold text-emerald-700">
                       12
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-bold">
                       8
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-300">
+                    <td className="py-3.5 px-4 text-right text-indigo-700">
                       3
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-400 font-sans font-bold">
+                    <td className="py-3.5 px-4 text-right text-indigo-700 font-sans font-bold">
                       🟡 Stable Brand Baseline
                     </td>
                   </tr>
 
                   {/* Row 4: Team Invitations */}
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-semibold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  <tr className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-purple-500" />
                       Team & Client Invites (/join)
                     </td>
-                    <td className="py-3.5 px-4 text-right text-slate-300">~15</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
+                    <td className="py-3.5 px-4 text-right text-slate-700">~15</td>
+                    <td className="py-3.5 px-4 text-right font-bold text-emerald-700">
                       4
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-bold">
                       4
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-300">
+                    <td className="py-3.5 px-4 text-right text-indigo-700">
                       {dbData.totalWorkspaces}
                     </td>
-                    <td className="py-3.5 px-4 text-right text-purple-400 font-sans font-bold">
+                    <td className="py-3.5 px-4 text-right text-purple-700 font-sans font-bold">
                       🟢 High Conv (Viral Loop)
                     </td>
                   </tr>
 
                   {/* Row 5: Google Organic Search */}
-                  <tr className="hover:bg-slate-800/30 transition-colors bg-rose-950/10">
-                    <td className="py-3.5 px-4 font-sans font-semibold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-rose-400" />
+                  <tr className="hover:bg-rose-50/50 transition-colors bg-rose-50/30">
+                    <td className="py-3.5 px-4 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-rose-500" />
                       Google Organic Search
                     </td>
-                    <td className="py-3.5 px-4 text-right text-slate-300">35 (28d)</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
+                    <td className="py-3.5 px-4 text-right text-slate-700">35 (28d)</td>
+                    <td className="py-3.5 px-4 text-right font-bold text-emerald-700">
                       0
                     </td>
-                    <td className="py-3.5 px-4 text-right text-cyan-300 font-bold">
+                    <td className="py-3.5 px-4 text-right text-cyan-700 font-bold">
                       0
                     </td>
-                    <td className="py-3.5 px-4 text-right text-indigo-300">
+                    <td className="py-3.5 px-4 text-right text-indigo-700">
                       0
                     </td>
-                    <td className="py-3.5 px-4 text-right text-rose-400 font-sans font-bold">
+                    <td className="py-3.5 px-4 text-right text-rose-700 font-sans font-bold">
                       🔴 Frozen Permutations
                     </td>
                   </tr>
@@ -1014,49 +1015,49 @@ export const GrowthControlRoomPage: React.FC = () => {
         </section>
 
         {/* ── CHATR SEO + GSC GROWTH ENGINE v2 (CLOSED-LOOP CONTROL PLANE) ── */}
-        <section className="space-y-6 pt-4 border-t border-slate-800/80">
+        <section className="space-y-6 pt-4 border-t border-slate-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Search className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-xl font-black text-white tracking-tight">
+                <Search className="w-5 h-5 text-emerald-600" />
+                <h2 className="text-xl font-black text-slate-900 tracking-tight">
                   CHATR SEO + GSC Growth Engine v2 (Closed-Loop Control Plane)
                 </h2>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Sitemap is the inventory control surface • GSC API supplies live indexation and search performance data
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
+              <span className="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono font-bold">
                 Live GSC API: sc-domain:chatrchat.in
               </span>
             </div>
           </div>
 
           {/* Stepped Scale Trajectory Progress */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-2xs">
+            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-600">
               <span>Stepped Daily Search Trajectory</span>
-              <span className="text-emerald-400 font-mono">Current: ~424 Impressions / Day (~1.3 Clicks/Day)</span>
+              <span className="text-emerald-700 font-mono">Current: ~424 Impressions / Day (~1.3 Clicks/Day)</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 font-mono text-xs text-center">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 font-bold">
+              <div className="p-2.5 rounded-xl bg-emerald-50 border-2 border-emerald-400 text-emerald-800 font-bold">
                 Current: 424/d
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600">
                 Gate 1: 10K/d
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600">
                 Gate 2: 50K/d
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600">
                 Gate 3: 100K/d
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600">
                 Gate 4: 500K/d
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600">
                 Scale: 1M+/d
               </div>
             </div>
@@ -1064,37 +1065,37 @@ export const GrowthControlRoomPage: React.FC = () => {
 
           {/* Brand vs Non-Brand Split Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-amber-950/40 to-slate-900 border border-amber-500/30 rounded-2xl p-5 space-y-2">
+            <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
                   Brand Collision (&quot;chatr&quot;)
                 </span>
-                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
                   79.0% of Impressions
                 </span>
               </div>
-              <div className="font-mono text-3xl font-black text-white">
-                9,374 <span className="text-xs text-slate-400 font-sans">impressions • 17 clicks (0.18% CTR)</span>
+              <div className="font-mono text-3xl font-black text-slate-900">
+                9,374 <span className="text-xs text-slate-500 font-sans font-normal">impressions • 17 clicks (0.18% CTR)</span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 <strong>Diagnosis:</strong> Searchers looking for Canadian cellular carrier Chatr Mobile. 
                 Action: Revamp Homepage Title & Meta Description to explicitly state &quot;Customer Conversation OS for Business&quot;.
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-5 space-y-2">
+            <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-2xl p-5 space-y-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-900">
                   Non-Brand Commercial Intent
                 </span>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">
                   12.5% of Impressions
                 </span>
               </div>
-              <div className="font-mono text-3xl font-black text-emerald-300">
-                1,483 <span className="text-xs text-slate-400 font-sans">impressions • 19 clicks (1.28% CTR)</span>
+              <div className="font-mono text-3xl font-black text-emerald-800">
+                1,483 <span className="text-xs text-slate-500 font-sans font-normal">impressions • 19 clicks (1.28% CTR)</span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 <strong>Diagnosis:</strong> High commercial intent for recruitment screening, team inboxes, and business contact links. 
                 Action: Feed these queries directly into high-intent problem/solution pages.
               </p>
@@ -1102,18 +1103,20 @@ export const GrowthControlRoomPage: React.FC = () => {
           </div>
 
           {/* GSC Decision Engine Table (INDEX / OPTIMIZE / BUILD / KILL) */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+            <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="text-sm font-bold text-white">Live Search Query Opportunity Engine (GSC Decisions)</h3>
-                <p className="text-xs text-slate-400">Action recommendations generated by the closed-loop optimization system</p>
+                <h3 className="text-sm font-bold text-slate-900">Live Search Query Opportunity Engine (GSC Decisions)</h3>
+                <p className="text-xs text-slate-500">Action recommendations generated by the closed-loop optimization system</p>
               </div>
-              <span className="text-xs font-mono text-emerald-400">4 Decisions: OPTIMIZE (25) • BUILD (8) • INDEX (114) • KILL (69)</span>
+              <span className="text-xs font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                4 Decisions: OPTIMIZE (25) • BUILD (8) • INDEX (114) • KILL (69)
+              </span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                <thead className="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200 text-[11px]">
                   <tr>
                     <th className="py-3 px-4 font-bold">Search Query</th>
                     <th className="py-3 px-4 font-bold text-right">Impressions</th>
@@ -1123,66 +1126,66 @@ export const GrowthControlRoomPage: React.FC = () => {
                     <th className="py-3 px-4 font-bold">Prescribed Growth Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;chatr&quot; (Primary Brand)</td>
-                    <td className="py-3 px-4 text-right text-slate-300">9,311</td>
-                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">9</td>
-                    <td className="py-3 px-4 text-right text-amber-400 font-bold">5.3</td>
+                <tbody className="divide-y divide-slate-100 font-mono">
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;chatr&quot; (Primary Brand)</td>
+                    <td className="py-3 px-4 text-right text-slate-700">9,311</td>
+                    <td className="py-3 px-4 text-right text-emerald-700 font-bold">9</td>
+                    <td className="py-3 px-4 text-right text-amber-700 font-bold">5.3</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-sans">OPTIMIZE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 font-sans">OPTIMIZE</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Disambiguate Title tag from Canadian carrier; emphasize Customer Conversation OS</td>
+                    <td className="py-3 px-4 text-slate-600 font-sans text-[11px]">Disambiguate Title tag from Canadian carrier; emphasize Customer Conversation OS</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;chatrchat&quot; (Brand Nav)</td>
-                    <td className="py-3 px-4 text-right text-slate-300">27</td>
-                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">7</td>
-                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">1.6</td>
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;chatrchat&quot; (Brand Nav)</td>
+                    <td className="py-3 px-4 text-right text-slate-700">27</td>
+                    <td className="py-3 px-4 text-right text-emerald-700 font-bold">7</td>
+                    <td className="py-3 px-4 text-right text-emerald-700 font-bold">1.6</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-sans">OPTIMIZE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 font-sans">OPTIMIZE</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Add site-links searchbox schema & verified Organization schema to dominate position #1</td>
+                    <td className="py-3 px-4 text-slate-600 font-sans text-[11px]">Add site-links searchbox schema & verified Organization schema to dominate position #1</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;whatsapp candidate screening&quot;</td>
-                    <td className="py-3 px-4 text-right text-slate-300">6</td>
-                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">1</td>
-                    <td className="py-3 px-4 text-right text-indigo-400">21.3</td>
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;whatsapp candidate screening&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-700">6</td>
+                    <td className="py-3 px-4 text-right text-emerald-700 font-bold">1</td>
+                    <td className="py-3 px-4 text-right text-indigo-700">21.3</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-sans">OPTIMIZE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 font-sans">OPTIMIZE</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">High commercial intent (Recruitment OS). Add above-fold interactive demo to climb to Top 5</td>
+                    <td className="py-3 px-4 text-slate-600 font-sans text-[11px]">High commercial intent (Recruitment OS). Add above-fold interactive demo to climb to Top 5</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;business development manager whatsapp&quot;</td>
-                    <td className="py-3 px-4 text-right text-slate-300">119</td>
-                    <td className="py-3 px-4 text-right text-slate-400">0</td>
-                    <td className="py-3 px-4 text-right text-cyan-400">3.5</td>
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;business development manager whatsapp&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-700">119</td>
+                    <td className="py-3 px-4 text-right text-slate-500">0</td>
+                    <td className="py-3 px-4 text-right text-cyan-700">3.5</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-sans">BUILD</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-300 font-sans">BUILD</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Map to dedicated high-intent problem page: /solutions/whatsapp-sales-pipeline</td>
+                    <td className="py-3 px-4 text-slate-600 font-sans text-[11px]">Map to dedicated high-intent problem page: /solutions/whatsapp-sales-pipeline</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;whatsapp hotel messaging&quot;</td>
-                    <td className="py-3 px-4 text-right text-slate-300">15</td>
-                    <td className="py-3 px-4 text-right text-slate-400">0</td>
-                    <td className="py-3 px-4 text-right text-emerald-400">6.5</td>
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;whatsapp hotel messaging&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-700">15</td>
+                    <td className="py-3 px-4 text-right text-slate-500">0</td>
+                    <td className="py-3 px-4 text-right text-emerald-700">6.5</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-sans">OPTIMIZE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 font-sans">OPTIMIZE</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Page 1 position. Connect directly to Hotel Contact Hub demo (/c/grand-palm-hotel)</td>
+                    <td className="py-3 px-4 text-slate-600 font-sans text-[11px]">Page 1 position. Connect directly to Hotel Contact Hub demo (/c/grand-palm-hotel)</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;affordable call center services belize&quot;</td>
-                    <td className="py-3 px-4 text-right text-slate-300">1</td>
-                    <td className="py-3 px-4 text-right text-slate-400">0</td>
-                    <td className="py-3 px-4 text-right text-rose-400">83.0</td>
+                  <tr className="hover:bg-slate-50/70">
+                    <td className="py-3 px-4 font-sans font-bold text-slate-900">&quot;affordable call center services belize&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-700">1</td>
+                    <td className="py-3 px-4 text-right text-slate-500">0</td>
+                    <td className="py-3 px-4 text-right text-rose-700">83.0</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 font-sans">KILL</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 font-sans">KILL</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400 font-sans text-[11px]">Legacy thin city permutation. Deprecate and 301 redirect to /solutions/customer-support-hub</td>
+                    <td className="py-3 px-4 text-slate-500 font-sans text-[11px]">Legacy thin city permutation. Deprecate and 301 redirect to /solutions/customer-support-hub</td>
                   </tr>
                 </tbody>
               </table>
@@ -1193,14 +1196,14 @@ export const GrowthControlRoomPage: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 CHATR OS. Acquisition Control Room • Gated for Super Admin 9717845477.</p>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="hover:text-slate-300">Admin Console</Link>
-            <Link to="/call" className="hover:text-slate-300">Direct Call</Link>
-            <Link to="/tools/whatsapp-link-generator" className="hover:text-slate-300">WhatsApp Tool</Link>
-            <Link to="/privacy" className="hover:text-slate-300">Privacy Policy</Link>
+            <Link to="/admin" className="hover:text-slate-900 transition-colors">Admin Console</Link>
+            <Link to="/call" className="hover:text-slate-900 transition-colors">Direct Call</Link>
+            <Link to="/tools/whatsapp-link-generator" className="hover:text-slate-900 transition-colors">WhatsApp Tool</Link>
+            <Link to="/privacy" className="hover:text-slate-900 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </footer>

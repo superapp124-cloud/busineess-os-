@@ -23,12 +23,15 @@ function normalizeIceServers(input: any): any[] {
   return [];
 }
 
+const isDebug = Deno.env.get("DEBUG_LOGGING") === "true";
+const debugLog = (...args: any[]) => { if (isDebug) console.log(...args); };
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  console.log("[webrtc-signaling] Request", { method: req.method, url: req.url });
+  debugLog("[webrtc-signaling] Request", { method: req.method, url: req.url });
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -59,7 +62,7 @@ serve(async (req) => {
 
     const body = await req.json();
     const { action, ...signalData } = body;
-    console.log("[webrtc-signaling] Action", { action, userId: user.id, callId: signalData.callId || signalData.call_id });
+    debugLog("[webrtc-signaling] Action", { action, userId: user.id, callId: signalData.callId || signalData.call_id });
 
     // ════════════════════════════════════════════════════════════════
     // ACTION: send_signal (unified — web + Android use this)
@@ -83,7 +86,7 @@ serve(async (req) => {
         throw error;
       }
 
-      console.log("[webrtc-signaling] ✅ Signal stored", { type: signalType, to: toUser });
+      debugLog("[webrtc-signaling] ✅ Signal stored", { type: signalType, to: toUser });
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -109,7 +112,7 @@ serve(async (req) => {
         throw error;
       }
 
-      console.log("[webrtc-signaling] ✅ Signals fetched", { count: data?.length ?? 0 });
+      debugLog("[webrtc-signaling] ✅ Signals fetched", { count: data?.length ?? 0 });
 
       // Delete retrieved signals (consumed)
       if (data && data.length > 0) {
@@ -150,7 +153,7 @@ serve(async (req) => {
       }
 
       const offer = data && data.length > 0 ? data[0] : null;
-      console.log("[webrtc-signaling] ✅ Buffered offer", { found: !!offer });
+      debugLog("[webrtc-signaling] ✅ Buffered offer", { found: !!offer });
 
       return new Response(JSON.stringify({ offer }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -212,7 +215,7 @@ serve(async (req) => {
           if (turnRes.ok) {
             const turnServers = await turnRes.json();
             iceServers.push(...turnServers);
-            console.log("[webrtc-signaling] ✅ Dynamic TURN credentials fetched", { count: turnServers.length });
+            debugLog("[webrtc-signaling] ✅ Dynamic TURN credentials fetched", { count: turnServers.length });
           }
         } catch (e) {
           console.warn("[webrtc-signaling] ⚠️ TURN fetch failed, using fallback", e);

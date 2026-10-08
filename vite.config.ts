@@ -39,8 +39,10 @@ export default defineConfig(({ mode }) => ({
     exclude: ['capacitor-native-biometric'],
   },
   esbuild: {
-    // Strip debugger and console log statements in production builds for smaller JS size
-    drop: mode === 'production' ? ['debugger', 'console'] : [],
+    // Strip debugger and drop purely informational console methods in production builds
+    // while preserving console.error and console.warn for operational and security observability
+    drop: mode === 'production' ? ['debugger'] : [],
+    pure: mode === 'production' ? ['console.log', 'console.debug', 'console.info', 'console.trace'] : [],
     legalComments: 'none',
   },
   define: {

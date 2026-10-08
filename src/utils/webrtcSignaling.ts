@@ -166,11 +166,13 @@ export const sendSignal = sendSignalDirect;
 
 // Fetch ALL existing signals for a call (crucial for late joiners)
 export const getSignals = async (callId: string, toUserId: string) => {
-  console.log('Fetching past signals:', {
-    callId,
-    toUserId,
-    timestamp: new Date().toISOString()
-  });
+  if (import.meta.env.DEV) {
+    console.debug('Fetching past signals:', {
+      callId,
+      toUserId,
+      timestamp: new Date().toISOString()
+    });
+  }
 
   const { data, error } = await (supabase as any)
     .from('webrtc_signals')
@@ -188,14 +190,16 @@ export const getSignals = async (callId: string, toUserId: string) => {
     throw error;
   }
 
-  console.log(`[getSignals] Found ${data?.length || 0} past signals:`,
-    data?.map((s: any) => ({
-      type: s.signal_type,
-      from: s.from_user,
-      to: s.to_user,
-      created: s.created_at
-    }))
-  );
+  if (import.meta.env.DEV) {
+    console.debug(`[getSignals] Found ${data?.length || 0} past signals:`,
+      data?.map((s: any) => ({
+        type: s.signal_type,
+        from: s.from_user,
+        to: s.to_user,
+        created: s.created_at
+      }))
+    );
+  }
 
   return data || [];
 };
@@ -214,7 +218,9 @@ export const subscribeToCallSignals = async (
   currentUserId: string,
   onSignal: (signal: any) => void
 ) => {
-  console.log('Subscribing to signals for call:', callId, 'user:', currentUserId);
+  if (import.meta.env.DEV) {
+    console.debug('Subscribing to signals for call:', callId, 'user:', currentUserId);
+  }
 
   const channel = supabase
     .channel(`call-${callId}-${currentUserId}`)
@@ -228,29 +234,26 @@ export const subscribeToCallSignals = async (
       },
       (payload) => {
         if (payload.new.to_user !== currentUserId) {
-          console.log('Ignoring signal not meant for this user:', {
-            type: payload.new.signal_type,
-            from: payload.new.from_user,
-            to: payload.new.to_user,
-            currentUser: currentUserId
-          });
           return;
         }
 
-        console.log('Realtime signal received:', {
-          type: payload.new.signal_type,
-          from: payload.new.from_user,
-          to: payload.new.to_user
-        });
+        if (import.meta.env.DEV) {
+          console.debug('Realtime signal received:', {
+            type: payload.new.signal_type,
+            from: payload.new.from_user,
+            to: payload.new.to_user
+          });
+        }
         onSignal(payload.new);
       }
     )
     .subscribe((status) => {
-      console.log('Subscription status:', status);
+      if (import.meta.env.DEV && status !== 'SUBSCRIBED') {
+        console.debug('Subscription status:', status);
+      }
     });
 
   return () => {
-    console.log('Unsubscribing from call signals');
     supabase.removeChannel(channel);
   };
 };

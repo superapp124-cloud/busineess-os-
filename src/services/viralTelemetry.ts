@@ -180,22 +180,6 @@ class ViralTelemetryService {
       // Ignore network transport errors
     }
 
-    // 3. Dual write to cc_logs for backwards compatibility
-    try {
-      supabase.from('cc_logs').insert({
-        agent: 'viral_telemetry',
-        action: payload.eventType,
-        level: 'info',
-        details: { ...payload, anonymousId: anonId, client_timestamp: now }
-      }).then(({ error }) => {
-        if (error && import.meta.env.DEV) {
-          console.debug('[GrowthTelemetry] Supabase cc_logs remote sync error:', error.message);
-        }
-      }).catch(() => {});
-    } catch {
-      // Ignore network transport errors
-    }
-
     if (import.meta.env.DEV) {
       console.log('[GrowthTelemetry]', payload.eventType, payload);
     }
