@@ -1013,6 +1013,183 @@ export const GrowthControlRoomPage: React.FC = () => {
           </div>
         </section>
 
+        {/* ── CHATR SEO + GSC GROWTH ENGINE v2 (CLOSED-LOOP CONTROL PLANE) ── */}
+        <section className="space-y-6 pt-4 border-t border-slate-800/80">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <Search className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-xl font-black text-white tracking-tight">
+                  CHATR SEO + GSC Growth Engine v2 (Closed-Loop Control Plane)
+                </h2>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Sitemap is the inventory control surface • GSC API supplies live indexation and search performance data
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
+                Live GSC API: sc-domain:chatrchat.in
+              </span>
+            </div>
+          </div>
+
+          {/* Stepped Scale Trajectory Progress */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+              <span>Stepped Daily Search Trajectory</span>
+              <span className="text-emerald-400 font-mono">Current: ~424 Impressions / Day (~1.3 Clicks/Day)</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 font-mono text-xs text-center">
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 font-bold">
+                Current: 424/d
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                Gate 1: 10K/d
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                Gate 2: 50K/d
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                Gate 3: 100K/d
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                Gate 4: 500K/d
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400">
+                Scale: 1M+/d
+              </div>
+            </div>
+          </div>
+
+          {/* Brand vs Non-Brand Split Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-amber-950/40 to-slate-900 border border-amber-500/30 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                  Brand Collision (&quot;chatr&quot;)
+                </span>
+                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                  79.0% of Impressions
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-black text-white">
+                9,374 <span className="text-xs text-slate-400 font-sans">impressions • 17 clicks (0.18% CTR)</span>
+              </div>
+              <p className="text-xs text-slate-300">
+                <strong>Diagnosis:</strong> Searchers looking for Canadian cellular carrier Chatr Mobile. 
+                Action: Revamp Homepage Title & Meta Description to explicitly state &quot;Customer Conversation OS for Business&quot;.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                  Non-Brand Commercial Intent
+                </span>
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                  12.5% of Impressions
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-black text-emerald-300">
+                1,483 <span className="text-xs text-slate-400 font-sans">impressions • 19 clicks (1.28% CTR)</span>
+              </div>
+              <p className="text-xs text-slate-300">
+                <strong>Diagnosis:</strong> High commercial intent for recruitment screening, team inboxes, and business contact links. 
+                Action: Feed these queries directly into high-intent problem/solution pages.
+              </p>
+            </div>
+          </div>
+
+          {/* GSC Decision Engine Table (INDEX / OPTIMIZE / BUILD / KILL) */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white">Live Search Query Opportunity Engine (GSC Decisions)</h3>
+                <p className="text-xs text-slate-400">Action recommendations generated by the closed-loop optimization system</p>
+              </div>
+              <span className="text-xs font-mono text-emerald-400">4 Decisions: OPTIMIZE (25) • BUILD (8) • INDEX (114) • KILL (69)</span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                  <tr>
+                    <th className="py-3 px-4 font-bold">Search Query</th>
+                    <th className="py-3 px-4 font-bold text-right">Impressions</th>
+                    <th className="py-3 px-4 font-bold text-right">Clicks</th>
+                    <th className="py-3 px-4 font-bold text-right">Position</th>
+                    <th className="py-3 px-4 font-bold text-center">Decision</th>
+                    <th className="py-3 px-4 font-bold">Prescribed Growth Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 font-mono">
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;chatr&quot; (Primary Brand)</td>
+                    <td className="py-3 px-4 text-right text-slate-300">9,311</td>
+                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">9</td>
+                    <td className="py-3 px-4 text-right text-amber-400 font-bold">5.3</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-sans">OPTIMIZE</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Disambiguate Title tag from Canadian carrier; emphasize Customer Conversation OS</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;chatrchat&quot; (Brand Nav)</td>
+                    <td className="py-3 px-4 text-right text-slate-300">27</td>
+                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">7</td>
+                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">1.6</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-sans">OPTIMIZE</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Add site-links searchbox schema & verified Organization schema to dominate position #1</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;whatsapp candidate screening&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-300">6</td>
+                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">1</td>
+                    <td className="py-3 px-4 text-right text-indigo-400">21.3</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-sans">OPTIMIZE</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">High commercial intent (Recruitment OS). Add above-fold interactive demo to climb to Top 5</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;business development manager whatsapp&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-300">119</td>
+                    <td className="py-3 px-4 text-right text-slate-400">0</td>
+                    <td className="py-3 px-4 text-right text-cyan-400">3.5</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-sans">BUILD</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Map to dedicated high-intent problem page: /solutions/whatsapp-sales-pipeline</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;whatsapp hotel messaging&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-300">15</td>
+                    <td className="py-3 px-4 text-right text-slate-400">0</td>
+                    <td className="py-3 px-4 text-right text-emerald-400">6.5</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-sans">OPTIMIZE</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300 font-sans text-[11px]">Page 1 position. Connect directly to Hotel Contact Hub demo (/c/grand-palm-hotel)</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-sans font-bold text-white">&quot;affordable call center services belize&quot;</td>
+                    <td className="py-3 px-4 text-right text-slate-300">1</td>
+                    <td className="py-3 px-4 text-right text-slate-400">0</td>
+                    <td className="py-3 px-4 text-right text-rose-400">83.0</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 font-sans">KILL</span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-400 font-sans text-[11px]">Legacy thin city permutation. Deprecate and 301 redirect to /solutions/customer-support-hub</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
