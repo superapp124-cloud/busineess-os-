@@ -25,6 +25,17 @@ interface DatabaseCounters {
   lastUpdated: string;
 }
 
+const PORTFOLIO_COHORTS = [
+  { id: '#01', vertical: 'Hotels & Stays', entrySurface: 'Room QR & Reception Standee', useCase: '"Guests can ask for anything here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-emerald-400' },
+  { id: '#02', vertical: 'Clinics & Healthcare', entrySurface: 'Google Profile & Web Link', useCase: '"Patients can book or ask for help here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-cyan-400' },
+  { id: '#03', vertical: 'Recruitment & Staffing', entrySurface: 'Job Listing & WhatsApp Link', useCase: '"Candidates can communicate and schedule here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-indigo-400' },
+  { id: '#04', vertical: 'Real Estate Brokers', entrySurface: 'Property Listings & Signboard', useCase: '"Buyers can ask about this property here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-amber-400' },
+  { id: '#05', vertical: 'D2C Brands & Retail', entrySurface: 'Shopify Widget & Order Track', useCase: '"Customers can ask about their order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-purple-400' },
+  { id: '#06', vertical: 'Restaurants & Cafes', entrySurface: 'Table Standee & Digital Menu', useCase: '"Customers can ask, book or order here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-rose-400' },
+  { id: '#07', vertical: 'Education & Coaching', entrySurface: 'Brochure QR & Course Page', useCase: '"Students and parents can ask or enroll here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-blue-400' },
+  { id: '#08', vertical: 'Agencies & Consultancies', entrySurface: 'Proposals & Email Signatures', useCase: '"Clients can request projects or track work here."', exposed: 0, users: 0, activated: 0, day7: 0, yield: 0.0, color: 'bg-teal-400' },
+];
+
 export const GrowthControlRoomPage: React.FC = () => {
   // Database counts from Supabase
   const [dbData, setDbData] = useState<DatabaseCounters>({
@@ -39,6 +50,8 @@ export const GrowthControlRoomPage: React.FC = () => {
 
   // Local & session events
   const [localEvents, setLocalEvents] = useState<AcquisitionEventPayload[]>([]);
+  const [selectedTier, setSelectedTier] = useState<'all' | 'tier1' | 'tier2' | 'tier3'>('all');
+  const userYieldRatio = dbData.totalWorkspaces > 0 ? (activatedUsersToday / dbData.totalWorkspaces) : 0;
 
   // Fetch live Supabase numbers
   const fetchSupabaseMetrics = async () => {
@@ -351,6 +364,179 @@ export const GrowthControlRoomPage: React.FC = () => {
           </div>
         </section>
 
+
+        {/* ── THE 4 YIELD INDICES (CORE DECISION ENGINES) ── */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <Flame className="w-4 h-4 text-amber-400" />
+                The 4 Yield Indices (Decision Engine)
+              </h2>
+              <p className="text-xs text-slate-500">
+                Formulas governing channel and vertical resource allocation
+              </p>
+            </div>
+            <span className="text-xs text-amber-400 font-mono font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+              Winner Escalation Engine Active
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Yield 1: User Yield */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  User Yield
+                </span>
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold">
+                  Target: ≥25.0
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-extrabold text-white">
+                {userYieldRatio.toFixed(1)} <span className="text-xs text-slate-500 font-sans">users/node</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Activated users generated per active business node
+              </p>
+            </div>
+
+            {/* Yield 2: Network Yield (K-Factor) */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Network Yield (K)
+                </span>
+                <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono font-bold">
+                  Target: ≥0.40
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-extrabold text-cyan-400">
+                0.00 <span className="text-xs text-slate-500 font-sans">K-factor</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Secondary activated users generated per existing user
+              </p>
+            </div>
+
+            {/* Yield 3: Economic Yield */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Economic Yield
+                </span>
+                <span className="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-mono font-bold">
+                  Target: ≥3.0x
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-extrabold text-indigo-400">
+                ∞ <span className="text-xs text-slate-500 font-sans">Zero CAC</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Gross value generated / acquisition spend
+              </p>
+            </div>
+
+            {/* Yield 4: Retention Yield */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Retention Yield
+                </span>
+                <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">
+                  Target: ≥65%
+                </span>
+              </div>
+              <div className="font-mono text-3xl font-extrabold text-amber-400">
+                0.0% <span className="text-xs text-slate-500 font-sans">Day-7</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Day-7 returning active users / total activated users
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 40-BUSINESS PORTFOLIO COHORT SCORECARD (8 VERTICALS) ── */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-emerald-400" />
+                <h2 className="text-lg font-black text-white tracking-tight">
+                  The Empirical Cohort Scorecard (8 Active Verticals)
+                </h2>
+              </div>
+              <p className="text-xs text-slate-400">
+                Tracking 5 pilot businesses per vertical under the B2B2C distribution protocol
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-mono font-semibold">
+                Cohort Target: 40 Nodes (5 × 8)
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                  <tr>
+                    <th className="py-3.5 px-4 font-bold">Node Cohort</th>
+                    <th className="py-3.5 px-4 font-bold">Vertical</th>
+                    <th className="py-3.5 px-4 font-bold">Entry Surface</th>
+                    <th className="py-3.5 px-4 font-bold">Specific Customer Use Case</th>
+                    <th className="py-3.5 px-4 font-bold text-right">Exposed</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-cyan-400">CHATR Users</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-emerald-400">Activated</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-indigo-400">Day-7</th>
+                    <th className="py-3.5 px-4 font-bold text-right text-amber-400">User Yield</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 font-mono">
+                  {PORTFOLIO_COHORTS.map(c => (
+                    <tr key={c.id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="py-3 px-4 font-bold text-slate-300">{c.id}</td>
+                      <td className="py-3 px-4 font-sans font-semibold text-white flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${c.color}`} />
+                        {c.vertical}
+                      </td>
+                      <td className="py-3 px-4 text-slate-300 font-sans">{c.entrySurface}</td>
+                      <td className="py-3 px-4 text-slate-400 font-sans italic">{c.useCase}</td>
+                      <td className="py-3 px-4 text-right text-slate-300">{c.exposed}</td>
+                      <td className="py-3 px-4 text-right text-cyan-400 font-bold">{c.users}</td>
+                      <td className="py-3 px-4 text-right text-emerald-400 font-bold">{c.activated}</td>
+                      <td className="py-3 px-4 text-right text-indigo-300">{c.day7}</td>
+                      <td className="py-3 px-4 text-right font-bold text-amber-400">
+                        {c.yield.toFixed(1)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* ── THE TWO IMMUTABLE GROWTH RULES ── */}
+        <section className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="space-y-1.5 text-left">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+              <Shield className="w-4 h-4" />
+              The Two Immutable CHATR Growth Rules
+            </span>
+            <div className="text-xs text-slate-300 space-y-1">
+              <p><strong>Rule 1:</strong> No acquisition channel is &quot;core&quot; until it produces activated users.</p>
+              <p><strong>Rule 2:</strong> No vertical is &quot;the wedge&quot; until real users demonstrate repeated value.</p>
+            </div>
+          </div>
+          <div className="flex-shrink-0 text-right">
+            <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+              Doctrine: Empirical Proof Over Assumptions
+            </span>
+          </div>
+        </section>
 
         {/* ── METRICS PRECISION SEPARATION (/call VISITORS VS CALL SESSIONS) ── */}
         <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 space-y-4">

@@ -39,6 +39,88 @@ export const CustomerContactHubPage: React.FC = () => {
       .join(' ');
   }, [handle]);
 
+  // Read vertical override from query parameter (?v=hotel or ?vertical=clinic)
+  const verticalOverride = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('v') || params.get('vertical') || '';
+  }, []);
+
+  // Vertical-specific use case detection (The 8 Pilot Verticals)
+  const verticalMeta = useMemo(() => {
+    const h = (handle + ' ' + verticalOverride).toLowerCase();
+    if (h.includes('hotel') || h.includes('resort') || h.includes('stay') || h.includes('lodge') || h.includes('inn')) {
+      return {
+        type: 'hotel',
+        tagline: 'Guests can ask for anything here.',
+        placeholder: 'Ask about check-in, room service, amenities or requests...',
+        bookLabel: 'Book Stay / Request'
+      };
+    }
+    if (h.includes('clinic') || h.includes('dental') || h.includes('doctor') || h.includes('health') || h.includes('hospital')) {
+      return {
+        type: 'clinic',
+        tagline: 'Patients can book or ask for help here.',
+        placeholder: 'Ask about appointments, timings, reports or consultations...',
+        bookLabel: 'Book Appointment'
+      };
+    }
+    if (h.includes('recruit') || h.includes('talent') || h.includes('staffing') || h.includes('hiring') || h.includes('jobs')) {
+      return {
+        type: 'recruitment',
+        tagline: 'Candidates can communicate and schedule here.',
+        placeholder: 'Inquire about job openings, interview scheduling, or applications...',
+        bookLabel: 'Schedule Interview'
+      };
+    }
+    if (h.includes('realty') || h.includes('estate') || h.includes('property') || h.includes('housing') || h.includes('broker')) {
+      return {
+        type: 'real_estate',
+        tagline: 'Buyers can ask about this property here.',
+        placeholder: 'Inquire about pricing, floor plans, site visits or availability...',
+        bookLabel: 'Book Site Visit'
+      };
+    }
+    if (h.includes('d2c') || h.includes('store') || h.includes('shop') || h.includes('brand') || h.includes('ecommerce')) {
+      return {
+        type: 'd2c',
+        tagline: 'Customers can ask about their order here.',
+        placeholder: 'Ask about order tracking, product sizing, delivery or returns...',
+        bookLabel: 'Request Callback'
+      };
+    }
+    if (h.includes('restaurant') || h.includes('cafe') || h.includes('dine') || h.includes('food') || h.includes('bistro')) {
+      return {
+        type: 'restaurant',
+        tagline: 'Customers can ask, book or order here.',
+        placeholder: 'Ask about table availability, reservations, specials or takeout...',
+        bookLabel: 'Reserve Table'
+      };
+    }
+    if (h.includes('academy') || h.includes('school') || h.includes('coaching') || h.includes('edu') || h.includes('tutor') || h.includes('course')) {
+      return {
+        type: 'education',
+        tagline: 'Students and parents can ask or enroll here.',
+        placeholder: 'Inquire about admissions, course syllabus, batch timings or demo class...',
+        bookLabel: 'Book Demo Class'
+      };
+    }
+    if (h.includes('agency') || h.includes('consult') || h.includes('studio') || h.includes('media') || h.includes('tech')) {
+      return {
+        type: 'agency',
+        tagline: 'Clients can request projects or track deliverables here.',
+        placeholder: 'Inquire about project proposals, quotes, deliverables or status...',
+        bookLabel: 'Schedule Briefing'
+      };
+    }
+    return {
+      type: 'general',
+      tagline: 'Handle customer conversations and daily work in one place.',
+      placeholder: `Type your inquiry for ${businessName}...`,
+      bookLabel: 'Book / Schedule'
+    };
+  }, [handle, verticalOverride, businessName]);
+
   // Determine CTA Variant deterministically from handle + session
   const ctaVariant = useMemo(() => {
     const hash = handle.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -50,7 +132,7 @@ export const CustomerContactHubPage: React.FC = () => {
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'business'; text: string; time: string }>>([
     {
       sender: 'business',
-      text: `Hello! Welcome to ${businessName}. How can our team help you today?`,
+      text: `Hello! Welcome to ${businessName}. ${verticalMeta.tagline} How can our team help you today?`,
       time: 'Just now'
     }
   ]);
@@ -68,7 +150,7 @@ export const CustomerContactHubPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Track inbound hub landing event
+    // Track inbound hub landing event with vertical attribution
     trackAcquisitionEvent({
       event: 'page_view',
       landingPage: `/c/${handle}`,
@@ -76,6 +158,7 @@ export const CustomerContactHubPage: React.FC = () => {
       metadata: {
         businessHandle: handle,
         businessName,
+        verticalType: verticalMeta.type,
         ctaVariant: ctaVariant.id
       }
     });
@@ -84,9 +167,9 @@ export const CustomerContactHubPage: React.FC = () => {
       eventType: 'call_link_visit',
       category: 'acquisition',
       landingPage: `/c/${handle}`,
-      metadata: { handle, variant: ctaVariant.id }
+      metadata: { handle, vertical: verticalMeta.type, variant: ctaVariant.id }
     });
-  }, [handle, businessName, ctaVariant]);
+  }, [handle, businessName, verticalMeta, ctaVariant]);
 
   // Handle message send
   const handleSendMessage = (e: React.FormEvent) => {
@@ -106,7 +189,7 @@ export const CustomerContactHubPage: React.FC = () => {
     trackAcquisitionEvent({
       event: 'cta_clicked',
       tool: 'contact-hub-chat',
-      metadata: { handle, messageLength: newMsg.text.length }
+      metadata: { handle, vertical: verticalMeta.type, messageLength: newMsg.text.length }
     });
 
     // Auto simulated business acknowledgment
@@ -136,7 +219,7 @@ export const CustomerContactHubPage: React.FC = () => {
     trackAcquisitionEvent({
       event: 'signup_started',
       tool: 'contact-hub-phone-claim',
-      metadata: { handle, phoneHash: customerPhone.slice(-4) }
+      metadata: { handle, vertical: verticalMeta.type, phoneHash: customerPhone.slice(-4) }
     });
   };
 
@@ -145,7 +228,7 @@ export const CustomerContactHubPage: React.FC = () => {
     trackAcquisitionEvent({
       event: 'cta_clicked',
       tool: 'contact-hub-start-call',
-      metadata: { handle }
+      metadata: { handle, vertical: verticalMeta.type }
     });
     navigate(`/call/${handle}`);
   };
@@ -161,7 +244,7 @@ export const CustomerContactHubPage: React.FC = () => {
     trackAcquisitionEvent({
       event: 'cta_clicked',
       tool: 'contact-hub-booking',
-      metadata: { handle, date: bookingDate, slot: bookingSlot }
+      metadata: { handle, vertical: verticalMeta.type, date: bookingDate, slot: bookingSlot }
     });
   };
 
@@ -182,7 +265,7 @@ export const CustomerContactHubPage: React.FC = () => {
     <div className="min-h-screen bg-[#F8F8F5] text-[#111817] font-sans flex flex-col selection:bg-[#164E3F] selection:text-white">
       <SEOHead
         title={`${businessName} — Customer Contact & Service Hub | CHATR`}
-        description={`Direct customer contact hub for ${businessName}. Message the team, make a free web call, book an appointment, or track your request with zero app install required.`}
+        description={`Direct customer contact hub for ${businessName}. ${verticalMeta.tagline} Message the team, make a free web call, book an appointment, or track your request.`}
         canonicalUrl={hubUrl}
       />
 
@@ -206,7 +289,14 @@ export const CustomerContactHubPage: React.FC = () => {
                     Verified
                   </span>
                 </div>
-                <p className="text-sm text-[#4A5568] mt-1 flex items-center gap-2">
+                
+                {/* VERTICAL-SPECIFIC VALUE PROPOSITION TAGLINE */}
+                <p className="text-sm font-semibold text-[#164E3F] mt-1 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                  <span>{verticalMeta.tagline}</span>
+                </p>
+
+                <p className="text-xs text-[#4A5568] mt-0.5 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   Online • Replies typically in under 5 minutes
                 </p>
@@ -273,7 +363,7 @@ export const CustomerContactHubPage: React.FC = () => {
             >
               <Calendar className="w-5 h-5 mb-2" />
               <div>
-                <div className="font-bold text-sm text-[#111817]">Book / Visit</div>
+                <div className="font-bold text-sm text-[#111817]">{verticalMeta.bookLabel}</div>
                 <div className="text-[11px] text-[#4A5568]">Schedule slot</div>
               </div>
             </button>
@@ -303,7 +393,7 @@ export const CustomerContactHubPage: React.FC = () => {
               <div className="border-b border-[#E5E9E7] pb-4 flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-[#111817]">Live Chat with {businessName}</h2>
-                  <p className="text-xs text-[#4A5568]">No account or app download needed to send a message</p>
+                  <p className="text-xs text-[#4A5568]">{verticalMeta.tagline} No account or app download needed.</p>
                 </div>
                 <span className="text-xs font-mono text-emerald-800 bg-emerald-50 px-2 py-1 rounded-md font-semibold">
                   Secure End-to-End
@@ -337,7 +427,7 @@ export const CustomerContactHubPage: React.FC = () => {
                   type="text"
                   value={chatMessage}
                   onChange={e => setChatMessage(e.target.value)}
-                  placeholder={`Type your inquiry for ${businessName}...`}
+                  placeholder={verticalMeta.placeholder}
                   className="flex-1 rounded-xl border border-[#DDE3DF] px-4 py-3 text-sm text-[#111817] focus:outline-none focus:ring-2 focus:ring-[#164E3F] focus:border-transparent bg-[#F8F8F5]/30"
                 />
                 <button
@@ -424,8 +514,8 @@ export const CustomerContactHubPage: React.FC = () => {
           {activeTab === 'book' && (
             <div className="space-y-6">
               <div className="border-b border-[#E5E9E7] pb-4">
-                <h2 className="text-lg font-bold text-[#111817]">Book an Appointment or Callback</h2>
-                <p className="text-xs text-[#4A5568]">Select your preferred date and time slot with {businessName}</p>
+                <h2 className="text-lg font-bold text-[#111817]">{verticalMeta.bookLabel} with {businessName}</h2>
+                <p className="text-xs text-[#4A5568]">Select your preferred date and time slot</p>
               </div>
 
               <form onSubmit={handleBookingSubmit} className="space-y-4 max-w-lg">
