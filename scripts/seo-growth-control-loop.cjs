@@ -322,7 +322,7 @@ async function runDemandIntelligenceEngine() {
     const networkPotential = clusterMeta.networkPotential * 2; // 0-10 pts
     const brandPenalty = (isBrand && query === 'chatr') ? -10 : 0;
 
-    const seoGrowthScore = Math.min(
+    let seoGrowthScore = Math.min(
       Math.max(
         Math.round(demandSignal + rankingOpp + commercialFactor + relevanceFactor + clickPotential + activationPotential + networkPotential + brandPenalty),
         5
@@ -338,11 +338,17 @@ async function runDemandIntelligenceEngine() {
     if (isBrand && query === 'chatr') {
       decision = 'OPTIMIZE';
       priority = 'P0';
+      seoGrowthScore = 99; // Top site priority: represents 79% of total site search volume
       action = 'Revamp Homepage title & meta description to explicitly highlight "Customer Conversation OS for Business" to disambiguate from Canadian carrier.';
     } else if (isBrand && query === 'chatrchat') {
       decision = 'OPTIMIZE';
       priority = 'P0';
+      seoGrowthScore = 95; // Top brand navigation authority
       action = 'Deploy verified Organization schema and SiteNavigationElement schema to cement position #1 authority.';
+    } else if (position >= 1 && position <= 20 && impressions >= 30) {
+      decision = 'OPTIMIZE';
+      priority = 'P0';
+      action = `Striking distance (Pos ${position.toFixed(1)}) with strong search demand (${impressions} imp). Enrich page with interactive demo & 1-click counterparty link.`;
     } else if (position >= 1 && position <= 20 && impressions >= 15) {
       decision = 'OPTIMIZE';
       priority = 'P1';
@@ -383,8 +389,14 @@ async function runDemandIntelligenceEngine() {
     });
   });
 
-  // Sort by SEO Growth Score desc
-  actionPipeline.sort((a,b) => b.score - a.score || b.impressions - a.impressions);
+  // Sort by Priority Tier first (P0 -> P1 -> P2), then by SEO Growth Score and impressions desc
+  const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2 };
+  actionPipeline.sort((a,b) => {
+    if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    }
+    return b.score - a.score || b.impressions - a.impressions;
+  });
 
   // Divide into P0 (Top 10), P1 (Next 40), P2 (Next 50) = Exactly Top 100 Queue
   const p0Actions = actionPipeline.slice(0, 10);
@@ -476,7 +488,10 @@ async function runDemandIntelligenceEngine() {
   };
 
   const outputPath = path.resolve(__dirname, '../seo-growth-control-plane.json');
-  fs.writeFileSync(outputPath, JSON.stringify(engineOutput, null, 2), 'utf8');
+  const srcOutputPath = path.resolve(__dirname, '../src/data/seo-growth-control-plane.json');
+  const jsonContent = JSON.stringify(engineOutput, null, 2);
+  fs.writeFileSync(outputPath, jsonContent, 'utf8');
+  fs.writeFileSync(srcOutputPath, jsonContent, 'utf8');
 
   console.log(`\n=============================================================`);
   console.log(`GSC ALLOCATION ENGINE EXECUTION COMPLETE`);

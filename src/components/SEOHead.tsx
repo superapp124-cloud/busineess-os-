@@ -21,9 +21,9 @@ interface SEOHeadProps {
 const BASE_URL = 'https://www.chatrchat.in';
 
 export const SEOHead = ({
- title = 'CHATR Communication OS — Universal SI Business Messaging',
- description = 'CHATR Communication OS (chatrchat.in) is the unified SI communication platform for business messaging, WhatsApp integration, candidate screening, and team inbox workflows.',
- keywords = 'CHATR Communication OS, Universal Inbox, WhatsApp Candidate Screening, Business Messaging, ChatrChat India',
+ title = 'CHATR — Customer Conversation OS for Businesses & Teams (Chat, Call, Book, Track)',
+ description = 'CHATR is the Customer Conversation Operating System. Handle customer inquiries, free browser calling, shared team inboxes, appointment booking, and request tracking in one place.',
+ keywords = 'customer conversation OS, business messaging, free browser calling, team inbox, appointment booking, request tracking, chatrchat',
  ogImage = '/og-image.jpg',
  ogUrl,
  canonicalUrl,
@@ -41,11 +41,11 @@ export const SEOHead = ({
  const defaultSchema = {
  "@context": "https://schema.org",
  "@type": "SoftwareApplication",
- "name": "CHATR Communication OS",
+ "name": "CHATR Customer Conversation OS",
  "alternateName": "ChatrChat",
  "description": description,
  "url": fullUrl,
- "applicationCategory": "CommunicationApplication",
+ "applicationCategory": "BusinessApplication",
  "operatingSystem": "Web, Windows, macOS, Android, iOS",
  "offers": {
  "@type": "Offer",
@@ -53,11 +53,11 @@ export const SEOHead = ({
  "priceCurrency": "INR"
  },
  "featureList": [
- "SI Candidate Screening & WhatsApp Automation",
- "Business CRM & Intent Planning",
- "Enterprise Communication & Calling",
- "Access Governance & Recruiter Workspace",
- "Web Content Distribution Engine"
+ "Customer Inquiries & Shared Team Inbox",
+ "Zero-Download Direct Browser Calling",
+ "Appointment Booking & Callbacks",
+ "Request & Order Tracking Hub",
+ "Business Profile & QR Code Generation"
  ],
  "author": {
  "@type": "Organization",
@@ -66,21 +66,76 @@ export const SEOHead = ({
  }
  };
 
- // Organization schema
+ // Organization schema (explicit brand disambiguation)
  const organizationSchema = {
  "@context": "https://schema.org",
  "@type": "Organization",
- "name": "CHATR Business OS",
+ "name": "CHATR",
+ "alternateName": ["ChatrChat", "CHATR Customer Conversation OS", "CHATR Business OS"],
  "url": BASE_URL,
  "logo": `${BASE_URL}/assets/chatrplus-logo512.png`,
  "sameAs": [
- "https://linkedin.com/company/talentxcel"
+ "https://chatr.chat"
  ],
+ "description": "CHATR is the Customer Conversation Operating System helping businesses handle customer inquiries, calling, shared team inboxes, appointment booking, and request tracking.",
  "contactPoint": {
  "@type": "ContactPoint",
  "contactType": "customer service",
  "availableLanguage": ["English", "Hindi"]
  }
+ };
+
+ // WebSite schema with Sitelinks Searchbox
+ const websiteSchema = {
+ "@context": "https://schema.org",
+ "@type": "WebSite",
+ "name": "CHATR",
+ "alternateName": ["ChatrChat", "CHATR Customer Conversation OS"],
+ "url": BASE_URL,
+ "potentialAction": {
+ "@type": "SearchAction",
+ "target": {
+ "@type": "EntryPoint",
+ "urlTemplate": `${BASE_URL}/search?q={search_term_string}`
+ },
+ "query-input": "required name=search_term_string"
+ }
+ };
+
+ // SiteNavigationElement schema
+ const siteNavigationSchema = {
+ "@context": "https://schema.org",
+ "@type": "ItemList",
+ "itemListElement": [
+ {
+ "@type": "SiteNavigationElement",
+ "position": 1,
+ "name": "Free Web Calling",
+ "description": "Zero-download direct browser voice and video calling",
+ "url": `${BASE_URL}/call`
+ },
+ {
+ "@type": "SiteNavigationElement",
+ "position": 2,
+ "name": "Free Business Tools",
+ "description": "WhatsApp link generator, QR code maker, and booking links",
+ "url": `${BASE_URL}/tools`
+ },
+ {
+ "@type": "SiteNavigationElement",
+ "position": 3,
+ "name": "Industry Solutions",
+ "description": "Conversation operating systems for clinics, hotels, real estate, and D2C",
+ "url": `${BASE_URL}/solutions`
+ },
+ {
+ "@type": "SiteNavigationElement",
+ "position": 4,
+ "name": "Customer Hubs",
+ "description": "Universal multi-action contact hub for businesses",
+ "url": `${BASE_URL}/c`
+ }
+ ]
  };
 
  // Breadcrumb schema
@@ -99,6 +154,8 @@ export const SEOHead = ({
  const schemas = [
  schemaData || defaultSchema,
  organizationSchema,
+ websiteSchema,
+ siteNavigationSchema,
  ...(breadcrumbSchema ? [breadcrumbSchema] : [])
  ];
 
