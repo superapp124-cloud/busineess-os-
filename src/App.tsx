@@ -896,7 +896,7 @@ const App = ({ platform = "web" }: { platform?: Platform }) => {
   <Route path="/call" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
   <Route path="/meet/:roomId" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
   <Route path="/meet" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
-  <Route path="/c/:handle" element={<LazyRoute component={LazyPages.GuestCallPage} />} />
+  <Route path="/c/:handle" element={<LazyRoute component={LazyPages.CustomerContactHubPage} />} />
   <Route path="/desktop/download" element={<LazyRoute component={LazyPages.Download} />} />
  <Route path="/install" element={<LazyRoute component={LazyPages.Install} />} />
  <Route path="/onboarding" element={<LazyRoute component={LazyPages.Onboarding} />} />
