@@ -8,9 +8,9 @@ export const Footer = () => {
       <div className="max-w-6xl mx-auto px-4 space-y-8">
         {/* Core Product & Solution Links Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 text-xs">
-          {/* Column 1: Core Solutions */}
+          {/* Column 1: Core Solutions & Alternatives */}
           <div className="space-y-3">
-            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Solutions</h3>
+            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Solutions & Comparisons</h3>
             <ul className="space-y-2">
               <li><Link to="/whatsapp-team-inbox" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">WhatsApp Team Inbox</Link></li>
               <li><Link to="/call" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">Free Web Browser Calling</Link></li>
@@ -18,7 +18,8 @@ export const Footer = () => {
               <li><Link to="/solutions/hotel-guest-messaging" className="text-[#53605C] hover:text-[#164E3F] transition-colors">Hotel Guest Messaging</Link></li>
               <li><Link to="/wati-alternative" className="text-[#53605C] font-semibold hover:text-[#164E3F] transition-colors">WATI Alternative</Link></li>
               <li><Link to="/aisensy-alternative" className="text-[#53605C] font-semibold hover:text-[#164E3F] transition-colors">AiSensy Alternative</Link></li>
-              <li><Link to="/chatr/whatsapp-business-api" className="hover:text-[#164E3F] transition-colors">WhatsApp Business API</Link></li>
+              <li><Link to="/comparison/chatr-vs-intercom" className="hover:text-[#164E3F] transition-colors">Intercom Alternative</Link></li>
+              <li><Link to="/comparison/chatr-vs-traditional-crm" className="hover:text-[#164E3F] transition-colors">CHATR vs Traditional CRM</Link></li>
             </ul>
           </div>
 
@@ -27,52 +28,60 @@ export const Footer = () => {
             <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Free Tools</h3>
             <ul className="space-y-2">
               <li><Link to="/tools/whatsapp-link-generator" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">WhatsApp Link Generator</Link></li>
-              <li><Link to="/tools/resume-grader" className="text-[#53605C] hover:text-[#164E3F] transition-colors">AI Resume Grader & Match</Link></li>
-              <li><Link to="/tools/meta-ad-cost-calculator" className="text-[#53605C] hover:text-[#164E3F] transition-colors">Meta Ad Cost Calculator</Link></li>
-              <li><Link to="/tools/call-quality-checker" className="text-[#53605C] hover:text-[#164E3F] transition-colors">Call Quality Checker</Link></li>
-              <li><Link to="/tools/business-voip-cost-calculator" className="hover:text-[#164E3F] transition-colors">VoIP Cost Calculator</Link></li>
               <li><Link to="/tools/contact-qr-generator" className="hover:text-[#164E3F] transition-colors">Contact QR Generator</Link></li>
+              <li><Link to="/tools/business-voip-cost-calculator" className="hover:text-[#164E3F] transition-colors">VoIP Cost Calculator</Link></li>
+              <li><Link to="/tools/call-quality-checker" className="text-[#53605C] hover:text-[#164E3F] transition-colors">Call Quality Checker</Link></li>
+              <li><Link to="/tools/meta-ad-cost-calculator" className="text-[#53605C] hover:text-[#164E3F] transition-colors">Meta Ad Cost Calculator</Link></li>
+              <li><Link to="/tools/resume-grader" className="text-[#53605C] hover:text-[#164E3F] transition-colors">AI Resume Grader & Match</Link></li>
+              <li><Link to="/tools/sla-calculator" className="text-[#53605C] hover:text-[#164E3F] transition-colors">SLA Response Calculator</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Workflows & Automations */}
+          {/* Column 3: Workflows & Problem Solutions */}
           <div className="space-y-3">
-            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Workflows</h3>
+            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Workflows & Automation</h3>
             <ul className="space-y-2">
               <li><Link to="/workflow/whatsapp-lead-response-workflow" className="hover:text-[#164E3F] transition-colors">Lead Response SLA</Link></li>
               <li><Link to="/workflow/automated-candidate-screening-workflow" className="hover:text-[#164E3F] transition-colors">Candidate Screening Flow</Link></li>
+              <li><Link to="/workflow/shared-inbox-assignment-workflow" className="hover:text-[#164E3F] transition-colors">Shared Inbox Assignment</Link></li>
               <li><Link to="/problem/how-to-stop-losing-whatsapp-leads" className="hover:text-[#164E3F] transition-colors">Stop Lead Loss</Link></li>
               <li><Link to="/problem/manage-multiple-whatsapp-business-accounts" className="hover:text-[#164E3F] transition-colors">Multi-Account Scaling</Link></li>
+              <li><Link to="/problem/fix-unassigned-customer-messages" className="hover:text-[#164E3F] transition-colors">Fix Unassigned Messages</Link></li>
               <li><Link to="/ai-business-os-for-startups" className="hover:text-[#164E3F] transition-colors">Startup Business OS</Link></li>
             </ul>
           </div>
 
-          {/* Column 4: Key Locations */}
+          {/* Column 4: Vertical Industries & Metros */}
           <div className="space-y-3">
-            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px] flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-[#164E3F]" />
-              <span>Global Metros</span>
-            </h3>
+            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Industries & Metros</h3>
             <ul className="space-y-2">
+              <li><Link to="/industries/recruitment-agencies" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">Recruitment Agencies</Link></li>
+              <li><Link to="/industries/real-estate-messaging" className="hover:text-[#164E3F] transition-colors">Real Estate Brokerages</Link></li>
+              <li><Link to="/industries/healthcare-patient-messaging" className="hover:text-[#164E3F] transition-colors">Healthcare & Clinics</Link></li>
+              <li><Link to="/industries/ecommerce-customer-support" className="hover:text-[#164E3F] transition-colors">E-Commerce Support</Link></li>
+              <li><Link to="/industries/financial-services-messaging" className="hover:text-[#164E3F] transition-colors">Financial Services</Link></li>
               <li><Link to="/locations/mumbai" className="hover:text-[#164E3F] transition-colors">Mumbai Hub</Link></li>
               <li><Link to="/locations/delhi-ncr" className="hover:text-[#164E3F] transition-colors">Delhi NCR Hub</Link></li>
               <li><Link to="/locations/bangalore" className="hover:text-[#164E3F] transition-colors">Bangalore Hub</Link></li>
               <li><Link to="/locations/dubai" className="hover:text-[#164E3F] transition-colors">Dubai Hub</Link></li>
-              <li><Link to="/locations/london" className="hover:text-[#164E3F] transition-colors">London Hub</Link></li>
             </ul>
           </div>
 
-          {/* Column 5: E-E-A-T Trust & Research */}
+          {/* Column 5: Apps, Research & Entity Trust */}
           <div className="space-y-3">
-            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Trust & Data</h3>
+            <h3 className="font-bold text-[#111817] uppercase tracking-wider text-[11px]">Apps & Research</h3>
             <ul className="space-y-2">
-              <li><Link to="/download/android" className="text-[#164E3F] font-bold hover:text-[#2E6B59] transition-colors flex items-center gap-1"><span>Download for Android</span> <span className="text-[9px] bg-[#E8F0EB] text-[#164E3F] px-1 py-0.5 rounded border border-[#164E3F]/30">APK</span></Link></li>
+              <li><Link to="/download" className="text-[#164E3F] font-bold hover:text-[#2E6B59] transition-colors">Download Apps (All OS)</Link></li>
+              <li><Link to="/download/android" className="text-[#164E3F] font-medium hover:text-[#2E6B59] transition-colors flex items-center gap-1"><span>Android APK Guide</span> <span className="text-[9px] bg-[#E8F0EB] text-[#164E3F] px-1 py-0.5 rounded border border-[#164E3F]/30">APK</span></Link></li>
               <li><Link to="/pricing" className="text-[#53605C] font-semibold hover:text-[#164E3F] transition-colors">Commercial Pricing</Link></li>
-              <li><Link to="/security" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">Security & Privacy</Link></li>
+              <li><Link to="/research/state-of-business-communication-2026" className="hover:text-[#164E3F] transition-colors">Research Benchmarks 2026</Link></li>
+              <li><Link to="/research/caller-identity-trust-report-2026" className="hover:text-[#164E3F] transition-colors">Caller Identity Trust Report</Link></li>
+              <li><Link to="/blog" className="hover:text-[#164E3F] transition-colors">Knowledge Blog</Link></li>
+              <li><Link to="/news" className="hover:text-[#164E3F] transition-colors">Press & Newsroom</Link></li>
+              <li><Link to="/security" className="text-[#164E3F] font-semibold hover:text-[#2E6B59] transition-colors">Security & Compliance</Link></li>
               <li><Link to="/about" className="hover:text-[#164E3F] transition-colors">About CHATR</Link></li>
-              <li><Link to="/authors" className="hover:text-[#164E3F] transition-colors">Authors & Experts</Link></li>
               <li><Link to="/editorial-policy" className="hover:text-[#164E3F] transition-colors">Editorial Policy</Link></li>
-              <li><Link to="/company-info" className="hover:text-[#164E3F] transition-colors">Company Information</Link></li>
+              <li><Link to="/authors" className="hover:text-[#164E3F] transition-colors">Authors & Experts</Link></li>
             </ul>
           </div>
         </div>

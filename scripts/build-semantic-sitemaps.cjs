@@ -52,7 +52,7 @@ ${urlEntries.join('\n')}
 
 console.log('[SITEMAP ENGINE] Building 15 Semantic Sitemaps...');
 
-// 1. Core Platform Pages
+// 1. Core Platform Pages (Canonical entity hubs only — zero duplicates across sub-sitemaps)
 const coreUrls = [
   createUrlXml(DOMAIN + '/', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/whatsapp-team-inbox', '1.0', 'daily'),
@@ -60,14 +60,8 @@ const coreUrls = [
   createUrlXml(DOMAIN + '/solutions/ecommerce-order-tracking', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/wati-alternative', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/aisensy-alternative', '1.0', 'daily'),
-  createUrlXml(DOMAIN + '/call', '1.0', 'daily'),
-  createUrlXml(DOMAIN + '/download/android', '1.0', 'daily'),
-  createUrlXml(DOMAIN + '/download/samsung', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/download/xiaomi', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/download/oneplus', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/download/pixel', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/download/vivo', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/download', '0.9', 'weekly'),
+  createUrlXml(DOMAIN + '/download', '1.0', 'daily'),
+  createUrlXml(DOMAIN + '/download/android', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/pricing', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/security', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/about', '0.8', 'monthly'),
@@ -75,12 +69,11 @@ const coreUrls = [
   createUrlXml(DOMAIN + '/authors', '0.7', 'monthly'),
   createUrlXml(DOMAIN + '/company-info', '0.7', 'monthly'),
   createUrlXml(DOMAIN + '/privacy', '0.5', 'monthly'),
-  createUrlXml(DOMAIN + '/terms', '0.5', 'monthly'),
-  createUrlXml(DOMAIN + '/locations', '0.9', 'weekly')
+  createUrlXml(DOMAIN + '/terms', '0.5', 'monthly')
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-core.xml'), wrapUrlset(coreUrls), 'utf8');
 
-// 2. Layer A Authority Hubs (The 10 Supreme Pillars)
+// 2. Layer A Authority Hubs (The 9 Supreme Pillars — robotics-os canonical in sitemap-robotics.xml)
 const productUrls = [
   createUrlXml(DOMAIN + '/chatr', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/chatr-communication', '0.9', 'weekly'),
@@ -89,18 +82,16 @@ const productUrls = [
   createUrlXml(DOMAIN + '/chatr-ai', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-intent-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-business-os', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/chatr-robotics-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-ecosystem', '0.8', 'weekly'),
   createUrlXml(DOMAIN + '/chatr-infrastructure', '0.8', 'weekly')
 ];
 fs.writeFileSync(path.join(sitemapsDir, 'sitemap-products.xml'), wrapUrlset(productUrls), 'utf8');
 
-// 3. Dedicated Robotics OS & Embodied AI Cluster
+// 3. Dedicated Robotics OS & Embodied AI Cluster (what-is canonical in sitemap-terminology.xml)
 const roboticsUrls = [
   createUrlXml(DOMAIN + '/chatr-robotics-os', '1.0', 'daily'),
   createUrlXml(DOMAIN + '/robotics-os', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/robotics', '0.9', 'weekly'),
-  createUrlXml(DOMAIN + '/what-is-a-robotics-operating-system', '0.9', 'weekly'),
   createUrlXml(DOMAIN + '/robotics-ai', '0.8', 'weekly'),
   createUrlXml(DOMAIN + '/robotics-automation', '0.8', 'weekly'),
   createUrlXml(DOMAIN + '/robotics-agents', '0.8', 'weekly'),

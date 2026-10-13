@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import logo from '@/assets/chatr-icon-logo.png';
 import { ClaudeInstallerModal } from '@/components/desktop/ClaudeInstallerModal';
+import { SEOHead } from '@/components/SEOHead';
 
 const GITHUB_RELEASE_DOWNLOAD_URL =
   'https://github.com/superapp124-cloud/busineess-os-/releases/download/v0.9.0-rc1/chatr-desktop-setup.exe';
@@ -97,6 +98,21 @@ export default function Download() {
 
   return (
     <div className="min-h-screen bg-[#07070f] text-white font-sans flex flex-col">
+      <SEOHead
+        title="Download CHATR OS — Desktop & Mobile (Windows, Mac, Linux & Android)"
+        description="Download CHATR OS for desktop and mobile. Carrier-grade WebRTC calls, team conversation routing, and customer workflow orchestration. Direct installer downloads."
+        keywords="download chatr, chatr desktop app, chatr windows setup, chatr apk download, webrtc desktop calling"
+        canonicalUrl="https://www.chatrchat.in/download"
+        schemaData={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "CHATR OS",
+          "operatingSystem": "Windows 10/11, macOS, Linux, Android",
+          "applicationCategory": "BusinessApplication",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "downloadUrl": "https://www.chatrchat.in/download"
+        }}
+      />
 
       {/* Top bar */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-[#0d0d1a]/80 backdrop-blur-xl sticky top-0 z-50">

@@ -174,7 +174,7 @@ export const AndroidDownload: React.FC = () => {
         title="Download CHATR for Android — Official APK (Direct Download, No Play Store)"
         description="Download CHATR+ for Android (Official APK). Next-gen private messaging & WebRTC HD voice/video calling directly from our site. Fast, secure install without Google Play Store."
         keywords="download chatr android, chatr apk download, whatsapp alternative android apk, private messaging app android, webrtc calling android, download chatr for android, chatr plus apk"
-        canonical={`https://www.chatrchat.in${location.pathname}`}
+        canonicalUrl="https://www.chatrchat.in/download/android"
         schemaData={schemaData}
       />
 
