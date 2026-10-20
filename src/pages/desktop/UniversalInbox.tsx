@@ -8,7 +8,7 @@ import {
   Check, Lock, QrCode, Loader2, ShieldCheck, Server, AlertCircle, ShieldOff,
   Share2, MessageCircle, CheckSquare, Square, Tag, Sliders, Cpu, Activity,
   Command, Calendar, User, UserCheck, ExternalLink, FileText, Layers, CornerUpLeft, 
-  CornerUpRight, Database, Radio, Key, Brain, ArrowRight, Shield, Grid
+  CornerUpRight, Database, Radio, Key, Brain, ArrowRight, ArrowLeft, Shield, Grid
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -706,7 +706,7 @@ export const UniversalInbox: React.FC = () => {
     <div className="flex h-screen bg-zinc-950 text-zinc-100 font-sans overflow-hidden">
       
       {/* ── Left Sidebar (Categories & Workspaces) ─────────────────────────── */}
-      <div className="w-64 bg-zinc-900/80 border-r border-white/10 flex flex-col h-full flex-shrink-0 backdrop-blur-2xl z-20">
+      <div className="hidden xl:flex w-64 bg-zinc-900/80 border-r border-white/10 flex-col h-full flex-shrink-0 backdrop-blur-2xl z-20">
         
         {/* Workspace Context Switcher Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
@@ -797,7 +797,10 @@ export const UniversalInbox: React.FC = () => {
       </div>
 
       {/* ── Center Panel (Message List & Bulk Selection) ────────────────── */}
-      <div className="flex-1 flex flex-col h-full bg-zinc-950/60 min-w-0 z-10 border-r border-white/5">
+      <div className={cn(
+        "flex-col h-full bg-zinc-950/60 min-w-0 z-10 border-r border-white/5",
+        selectedMessage ? "hidden md:flex flex-1" : "flex flex-1"
+      )}>
         
         {/* Top Header & OS Health Status Bar */}
         <div className="h-14 border-b border-white/10 flex items-center justify-between px-5 shrink-0 bg-zinc-900/40 backdrop-blur-xl">
@@ -982,13 +985,23 @@ export const UniversalInbox: React.FC = () => {
       </div>
 
       {/* ── Right Panel (Thread Detail & SI Copilot & Interactive Composer) ── */}
-      <div className="w-[480px] bg-zinc-900/95 border-l border-white/10 flex flex-col h-full shrink-0 backdrop-blur-2xl z-10 overflow-y-auto">
+      <div className={cn(
+        "bg-zinc-900/95 border-l border-white/10 flex-col h-full shrink-0 backdrop-blur-2xl z-10 overflow-y-auto",
+        selectedMessage ? "flex w-full md:w-[420px] lg:w-[480px]" : "hidden md:flex md:w-[420px] lg:w-[480px]"
+      )}>
         {selectedMessage ? (
-          <div className="p-5 flex flex-col gap-5">
+          <div className="p-3 sm:p-5 flex flex-col gap-4 sm:gap-5">
             
             {/* Top Toolbar Action Buttons (Automate Workflow removed as requested) */}
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setSelectedMessage(null)}
+                  className="md:hidden p-2 hover:bg-white/10 rounded-xl text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold mr-1"
+                  title="Back to inbox"
+                >
+                  <ArrowLeft size={16} /> Back
+                </button>
                 <button
                   onClick={() => {
                     composerRef.current?.scrollIntoView({ behavior: 'smooth' });

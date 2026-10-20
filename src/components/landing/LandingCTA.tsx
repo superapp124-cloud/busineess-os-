@@ -40,10 +40,10 @@ export const LandingCTA: React.FC<LandingCTAProps> = ({ onOpenAuth }) => {
           </div>
 
           {/* Center/Action Button */}
-          <div>
+          <div className="w-full sm:w-auto flex justify-center">
             <button
               onClick={onOpenAuth}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-sm hover:shadow transition-all cursor-pointer"
+              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-sm hover:shadow transition-all cursor-pointer"
             >
               <span>Get Started Today</span>
               <ArrowRight className="w-4 h-4" />
@@ -86,7 +86,7 @@ export const LandingCTA: React.FC<LandingCTAProps> = ({ onOpenAuth }) => {
             <span>© {new Date().getFullYear()} TalentXcel Services Pvt Ltd</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6">
             <a 
               href="https://www.youtube.com/@chatrindia" 
               target="_blank" 

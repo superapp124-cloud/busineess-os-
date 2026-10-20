@@ -571,7 +571,7 @@ export const CustomerContactHubPage: React.FC = () => {
                 <p className="text-xs text-[#4A5568]">Look up the status of an existing ticket or inquiry</p>
               </div>
 
-              <form onSubmit={handleTrackRequest} className="flex gap-2 max-w-lg">
+              <form onSubmit={handleTrackRequest} className="flex flex-col sm:flex-row gap-2 max-w-lg">
                 <input
                   type="text"
                   value={trackingId}
@@ -581,7 +581,7 @@ export const CustomerContactHubPage: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#164E3F] hover:bg-[#123F33] text-white font-bold text-sm transition-colors"
+                  className="px-5 py-2.5 rounded-xl bg-[#164E3F] hover:bg-[#123F33] text-white font-bold text-sm transition-colors text-center"
                 >
                   Check Status
                 </button>

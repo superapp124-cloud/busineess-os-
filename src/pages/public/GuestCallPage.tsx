@@ -619,7 +619,7 @@ export const GuestCallPage: React.FC = () => {
                       type="text"
                       readOnly
                       value={fullCallUrl}
-                      className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-emerald-400 font-mono w-64 text-center"
+                      className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-emerald-400 font-mono w-full max-w-[240px] sm:w-64 text-center"
                     />
                     <button
                       onClick={copyCallLink}

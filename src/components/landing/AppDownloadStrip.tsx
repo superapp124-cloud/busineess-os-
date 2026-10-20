@@ -11,10 +11,10 @@ export const AppDownloadStrip: React.FC<{ onOpenAuth: () => void }> = ({ onOpenA
         <p className="text-sm text-[#A7D7C5] max-w-xl mx-auto">
           Web, Android, iPhone, Windows desktop — one account, all your devices.
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-2.5 sm:gap-4">
           <button
             onClick={onOpenAuth}
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white text-[#164E3F] font-semibold text-sm hover:bg-[#F0FAF8] transition-colors shadow"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white text-[#164E3F] font-semibold text-xs sm:text-sm hover:bg-[#F0FAF8] transition-colors shadow"
           >
             <Globe className="w-4 h-4" />
             Open in Browser
@@ -23,7 +23,7 @@ export const AppDownloadStrip: React.FC<{ onOpenAuth: () => void }> = ({ onOpenA
             href="https://play.google.com/store/apps/details?id=in.chatrchat.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-colors"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-xs sm:text-sm hover:bg-white/20 transition-colors"
           >
             <Smartphone className="w-4 h-4" />
             Android
@@ -32,14 +32,14 @@ export const AppDownloadStrip: React.FC<{ onOpenAuth: () => void }> = ({ onOpenA
             href="https://apps.apple.com/app/chatr/id123456789"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-colors"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-xs sm:text-sm hover:bg-white/20 transition-colors"
           >
             <Smartphone className="w-4 h-4" />
             iPhone
           </a>
           <a
             href="/download"
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-colors"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold text-xs sm:text-sm hover:bg-white/20 transition-colors"
           >
             <Monitor className="w-4 h-4" />
             Windows Desktop

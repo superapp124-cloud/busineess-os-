@@ -41,6 +41,8 @@ import {
   Bot,
   FileText,
   Landmark,
+  Menu,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -202,10 +204,16 @@ const DesktopLayoutInner = () => {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [aiPrepared, setAiPrepared] = useState<boolean>(() => localStorage.getItem('chatr_ai_prepared') === 'true');
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [location.pathname]);
+
   const { theme, setTheme } = useTheme();
   const { themeMode, accentColor, fontScale, fontFamily, applyToDOM } = useAppearanceStore();
   const { myStatus, setStatus, getStatusColor, getStatusLabel } = usePresence(user?.id);
@@ -362,9 +370,9 @@ const DesktopLayoutInner = () => {
           <div className="absolute bottom-[-10%] right-[10%] w-[30%] h-[30%] bg-indigo-600/6 rounded-full blur-[160px] pointer-events-none z-0" />
         )}
 
-        {/* ── Sidebar ────────────────────────────────────────────────────── */}
+        {/* ── Sidebar (Desktop: Collapsible, Hidden on Mobile) ────────────────────────── */}
         <aside className={cn(
-          'h-screen shrink-0 border-r flex flex-col transition-all duration-300 w-16 hover:w-60 group z-50 relative [-webkit-app-region:drag] backdrop-blur-2xl',
+          'h-screen shrink-0 border-r hidden md:flex flex-col transition-all duration-300 w-16 hover:w-60 group z-50 relative [-webkit-app-region:drag] backdrop-blur-2xl',
           sidebarClasses
         )}>
 
@@ -591,6 +599,86 @@ const DesktopLayoutInner = () => {
           </div>
         </aside>
 
+        {/* ── Mobile Sidebar Drawer (Overlay for < md) ── */}
+        {mobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 md:hidden flex">
+            <div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+            <div className={cn(
+              'relative w-72 max-w-[85vw] h-full flex flex-col z-10 border-r shadow-2xl p-4 overflow-y-auto',
+              isDark ? 'bg-zinc-950 border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+            )}>
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <img src={chatrLogo} alt="CHATR" className="w-8 h-8 rounded-lg object-contain" />
+                  <div>
+                    <div className="font-bold text-sm tracking-tight">CHATR OS</div>
+                    <div className="text-[10px] text-muted-foreground">Unified Workspace</div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <nav className="flex-1 py-4 space-y-6">
+                {visibleNavSections.map((section) => (
+                  <div key={section.label} className="space-y-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-2">
+                      {section.label}
+                    </p>
+                    {section.items.map((item) => {
+                      const isActive = isNavItemActive(item.path);
+                      return (
+                        <button
+                          key={item.path}
+                          onClick={() => {
+                            navigate(item.path);
+                            setMobileSidebarOpen(false);
+                          }}
+                          className={cn(
+                            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors',
+                            isActive 
+                              ? (isDark ? 'bg-white/15 text-white font-semibold' : 'bg-[#E8F0EB] text-[#164E3F] font-semibold')
+                              : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                          )}
+                        >
+                          <item.icon className="w-4 h-4 shrink-0" />
+                          <div className="truncate">
+                            <div className="leading-tight">{item.label}</div>
+                            <div className="text-[10px] opacity-70 leading-tight">{item.subtitle}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </nav>
+
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-7 h-7">
+                    <AvatarImage src={profile?.avatar_url} />
+                    <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs font-semibold truncate max-w-[120px]">{displayName}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg text-xs flex items-center gap-1"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Main content area ────────────────────────────────────────────── */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
 
@@ -598,14 +686,21 @@ const DesktopLayoutInner = () => {
 
           {/* Top header — refined Apple-quality bar */}
           <header className={cn(
-            'h-[46px] flex items-center justify-between px-5 z-40 [-webkit-app-region:drag] border-b shrink-0 backdrop-blur-2xl transition-colors duration-300',
+            'h-[46px] flex items-center justify-between px-3 sm:px-5 z-40 [-webkit-app-region:drag] border-b shrink-0 backdrop-blur-2xl transition-colors duration-300',
             isDark
               ? 'border-[hsl(240,8%,16%)] bg-[hsl(240,13%,7%)]/85'
               : 'border-[#DDE3DF] bg-[hsl(0,0%,100%)]/85'
           )}>
 
-            {/* Left: Global search trigger */}
-            <div className="flex items-center gap-3 [-webkit-app-region:no-drag]">
+            {/* Left: Mobile hamburger + Global search trigger */}
+            <div className="flex items-center gap-2 sm:gap-3 [-webkit-app-region:no-drag]">
+              <button
+                onClick={() => setMobileSidebarOpen(true)}
+                className="md:hidden p-1.5 rounded-lg text-foreground hover:bg-muted transition-colors mr-0.5"
+                aria-label="Open Navigation"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
               <button
                 onClick={() => setCmdOpen(true)}
                 className={cn(
@@ -682,6 +777,41 @@ const DesktopLayoutInner = () => {
           <main className="flex-1 flex flex-col overflow-y-auto min-h-0 relative">
             <Outlet />
           </main>
+
+          {/* ── Mobile Bottom Navigation Bar (< md) ── */}
+          <nav className={cn(
+            'md:hidden h-14 border-t shrink-0 flex items-center justify-around px-2 z-40 backdrop-blur-xl transition-colors',
+            isDark ? 'bg-zinc-950/95 border-white/10 text-white' : 'bg-white/95 border-zinc-200 text-zinc-900'
+          )}>
+            {[
+              { icon: MessageSquare, label: 'Chat', path: '/desktop/chat' },
+              { icon: Inbox, label: 'Inbox', path: '/desktop/inbox' },
+              { icon: Bot, label: 'Agents', path: '/desktop/ai-agents' },
+              { icon: Shield, label: 'Executive', path: '/desktop/executive' },
+            ].map(tab => {
+              const active = location.pathname.startsWith(tab.path);
+              return (
+                <button
+                  key={tab.path}
+                  onClick={() => navigate(tab.path)}
+                  className={cn(
+                    'flex flex-col items-center justify-center flex-1 py-1 gap-0.5 text-xs transition-colors',
+                    active ? (isDark ? 'text-violet-400 font-bold' : 'text-[#164E3F] font-bold') : 'text-muted-foreground'
+                  )}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  <span className="text-[10px]">{tab.label}</span>
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="flex flex-col items-center justify-center flex-1 py-1 gap-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Menu className="w-4 h-4" />
+              <span className="text-[10px]">Menu</span>
+            </button>
+          </nav>
         </div>
 
         {/* ── Global Call Overlay (Top Right Notification) ── */}

@@ -23,9 +23,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
             </div>
 
             {/* Giant Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111817] leading-[1.08]">
-              Bring your team,<br />
-              conversations & calls<br />
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111817] leading-[1.12] sm:leading-[1.08]">
+              Bring your team,{' '}
+              <br className="hidden sm:inline" />
+              conversations & calls{' '}
+              <br className="hidden sm:inline" />
               <span className="text-[#164E3F] drop-shadow-sm">into one place.</span>
             </h1>
 
@@ -35,10 +37,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
               <button
                 onClick={onOpenAuth}
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] cursor-pointer"
+                className="inline-flex justify-center items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#164E3F] hover:bg-[#2E6B59] text-white text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] cursor-pointer"
               >
                 <span>Get Started Free</span>
                 <ArrowRight className="w-4 h-4" />
@@ -46,7 +48,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenAuth, onOpenVide
 
               <button
                 onClick={onOpenVideo}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-[#F8F8F5] text-[#111817] border border-[#DDE3DF] text-sm sm:text-base font-medium shadow-sm hover:border-[#164E3F]/40 transition-all cursor-pointer"
+                className="inline-flex justify-center items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-[#F8F8F5] text-[#111817] border border-[#DDE3DF] text-sm sm:text-base font-medium shadow-sm hover:border-[#164E3F]/40 transition-all cursor-pointer"
               >
                 <div className="w-6 h-6 rounded-full bg-[#E8F0EB] flex items-center justify-center text-[#164E3F]">
                   <Play className="w-3 h-3 fill-current ml-0.5" />

@@ -32,7 +32,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50 bg-[#F8F8F5]/90 backdrop-blur-md border-b border-[#DDE3DF]/80 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
         <a href="/" className="flex flex-col group cursor-pointer select-none">

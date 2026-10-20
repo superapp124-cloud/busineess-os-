@@ -177,7 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
       />
 
       {/* Modal Surface */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl border border-[#DDE3DF] shadow-2xl p-6 sm:p-8 z-10 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto bg-white rounded-3xl border border-[#DDE3DF] shadow-2xl p-5 sm:p-8 z-10 animate-in zoom-in-95 duration-200">
         
         {/* Close Button */}
         <button

@@ -40,7 +40,7 @@ export const AudienceStrip: React.FC = () => {
     <section id="audiences" className="border-y border-[#DDE3DF] bg-white/70 py-6 sm:py-8 my-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-4 items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-4 items-center">
           
           {segments.map((seg, idx) => (
             <div 
@@ -65,7 +65,7 @@ export const AudienceStrip: React.FC = () => {
 
           {/* Right Pillar Badge: Zero Fake Numbers, Pure Credible Focus */}
           <div className="col-span-2 md:col-span-1 lg:col-span-1 lg:pl-3 flex flex-col justify-center border-t md:border-t-0 md:border-l border-[#DDE3DF]/80 pt-4 md:pt-0">
-            <div className="space-y-0.5 text-right lg:text-left">
+            <div className="space-y-0.5 text-center sm:text-right lg:text-left">
               <div className="text-[10px] font-bold tracking-[0.22em] text-[#164E3F] uppercase">
                 REAL PEOPLE
               </div>

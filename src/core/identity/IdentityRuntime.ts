@@ -1,4 +1,6 @@
 import { openTelemetryExporter } from '../telemetry/OpenTelemetryExporter';
+import { IIdentityRuntime, UserProfile, IIdentityProvider } from '../contracts/identity/IIdentityRuntime';
+import { RuntimeHealth } from '../contracts/common/Lifecycle';
 
 export type IdentityType = 'PERSON' | 'DIGITAL_WORKER' | 'TEAM' | 'DEPARTMENT' | 'VENDOR' | 'SERVICE_ACCOUNT' | 'DEVICE';
 
@@ -21,12 +23,15 @@ export interface EnterpriseIdentity {
  * Centralizes authentication, identity binding, organization hierarchy,
  * and privilege resolution across People, Teams, Digital Workers, Vendors, Devices, and Service Accounts.
  */
-export class IdentityRuntime {
+export class IdentityRuntime implements IIdentityRuntime {
   private static instance: IdentityRuntime;
   private identities = new Map<string, EnterpriseIdentity>();
+  private _currentUser: UserProfile | null = null;
+  private providers = new Map<string, IIdentityProvider>();
 
-  private constructor() {
+  public constructor(eventBus?: any) {
     this.seedCanonicalIdentities();
+    IdentityRuntime.instance = this;
   }
 
   public static getInstance(): IdentityRuntime {
@@ -110,6 +115,46 @@ export class IdentityRuntime {
 
     openTelemetryExporter.endSpan(span.spanId, 'OK');
     return hasAccess;
+  }
+
+  public get currentUser(): UserProfile | null {
+    return this._currentUser;
+  }
+
+  public async login(providerId?: string): Promise<UserProfile> {
+    const defaultUser: UserProfile = {
+      id: 'id_user_arshid',
+      email: 'arshid.wani@chatr.enterprise',
+      name: 'Arshid Hussain Wani',
+      roles: ['PlatformAdmin', 'ExecutiveApprover']
+    };
+    this._currentUser = defaultUser;
+    return defaultUser;
+  }
+
+  public async logout(): Promise<void> {
+    this._currentUser = null;
+  }
+
+  public async verify(): Promise<UserProfile | null> {
+    return this._currentUser;
+  }
+
+  public registerProvider(provider: IIdentityProvider): void {
+    this.providers.set(provider.providerId, provider);
+  }
+
+  public async initialize(): Promise<void> {}
+  public async start(): Promise<void> {}
+  public async stop(): Promise<void> {}
+  public async dispose(): Promise<void> {}
+
+  public async health(): Promise<RuntimeHealth> {
+    return { status: 'healthy', lastChecked: Date.now() };
+  }
+
+  public version(): string {
+    return '1.0.0';
   }
 }
 
