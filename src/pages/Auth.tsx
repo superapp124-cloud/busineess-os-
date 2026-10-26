@@ -52,7 +52,7 @@ const Auth = () => {
         const stateFrom = (location.state as any)?.from?.pathname ||
           (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
-        const defaultTarget = (isNative || platform === 'mobile') ? '/calls' : '/desktop/home';
+        const defaultTarget = (isNative || platform === 'mobile') ? '/home' : '/desktop/home';
         const redirectPath = stateFrom || storedRedirect || defaultTarget;
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
         logAuthEvent('Active session confirmed, entering app');
@@ -74,7 +74,7 @@ const Auth = () => {
         const stateFrom = (location.state as any)?.from?.pathname ||
           (typeof (location.state as any)?.from === 'string' ? (location.state as any)?.from : null);
         const storedRedirect = sessionStorage.getItem('auth_redirect');
-        const defaultTarget = isNative ? '/calls' : '/desktop/home';
+        const defaultTarget = isNative ? '/home' : '/desktop/home';
         const redirectPath = stateFrom || storedRedirect || defaultTarget;
         if (storedRedirect) sessionStorage.removeItem('auth_redirect');
         navigate(redirectPath, { replace: true });
@@ -145,7 +145,7 @@ const Auth = () => {
             userId={userId}
             onComplete={async () => {
               await onboarding.completeOnboarding();
-              navigate('/calls', { replace: true });
+              navigate('/home', { replace: true });
             }}
             onSkip={async () => {
               toast({

@@ -1,10 +1,10 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Bell, ChevronRight, Search, Sparkles,
+  Bell, ChevronRight, Sparkles,
   Phone, MessageSquare, CalendarDays, Compass,
   Heart, Wallet, FileText, MoreHorizontal,
-  Mic, AudioWaveform
+  Video, Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SEOHead } from '@/components/SEOHead';
@@ -24,11 +24,22 @@ const getGreeting = () => {
   return 'Good night';
 };
 
+// Quick action colours — FaceTime-style saturated, visible on dark
+const ACTIONS = [
+  { id: 'qa-call',   label: 'Call',      icon: Phone,         bg: '#1C4ED8', fg: '#FFFFFF', route: '/calls' },
+  { id: 'qa-video',  label: 'Video',     icon: Video,         bg: '#16A34A', fg: '#FFFFFF', route: '/calls' },
+  { id: 'qa-msg',    label: 'Message',   icon: MessageSquare, bg: '#7C3AED', fg: '#FFFFFF', route: '/chat' },
+  { id: 'qa-find',   label: 'Find',      icon: Compass,       bg: '#0E7490', fg: '#FFFFFF', route: '/universal-search' },
+  { id: 'qa-plan',   label: 'Plan',      icon: CalendarDays,  bg: '#B45309', fg: '#FFFFFF', route: null },
+  { id: 'qa-health', label: 'Health',    icon: Heart,         bg: '#BE123C', fg: '#FFFFFF', route: '/health' },
+  { id: 'qa-pay',    label: 'Pay',       icon: Wallet,        bg: '#92400E', fg: '#FFFFFF', route: '/chatr-wallet' },
+  { id: 'qa-more',   label: 'More',      icon: MoreHorizontal,bg: '#374151', fg: '#D1D5DB', route: null },
+] as const;
+
 const Home = memo(() => {
   const navigate = useNavigate();
   const haptics = useNativeHaptics();
   const greeting = useMemo(getGreeting, []);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isAiSheetOpen, setIsAiSheetOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
@@ -80,193 +91,204 @@ const Home = memo(() => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
     const { data: optimizedData } = await supabase.rpc('get_user_conversations_optimized', { p_user_id: user.id });
-    return optimizedData?.slice(0, 3) || [];
+    return optimizedData?.slice(0, 5) || [];
   }, { pollingInterval: 30000 });
 
   const userName = useMemo(() => {
-    if (!profile) return 'Arshid';
-    return profile.full_name?.split(' ')[0] || profile.username || 'Arshid';
+    if (!profile) return 'there';
+    return profile.full_name?.split(' ')[0] || profile.username || 'there';
   }, [profile]);
 
-  // 8 Quick Actions matching Image 2 Screen 1
-  const quickActions = [
-    {
-      id: 'qa-call',
-      label: 'Call',
-      icon: Phone,
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/15',
-      action: () => handleNavigate('/calls'),
-    },
-    {
-      id: 'qa-msg',
-      label: 'Message',
-      icon: MessageSquare,
-      color: 'text-emerald-400',
-      bg: 'bg-emerald-500/15',
-      action: () => handleNavigate('/chat'),
-    },
-    {
-      id: 'qa-plan',
-      label: 'Plan',
-      icon: CalendarDays,
-      color: 'text-violet-400',
-      bg: 'bg-violet-500/15',
-      action: () => setIsAiSheetOpen(true),
-    },
-    {
-      id: 'qa-find',
-      label: 'Find',
-      icon: Compass,
-      color: 'text-sky-400',
-      bg: 'bg-sky-500/15',
-      action: () => handleNavigate('/universal-search'),
-    },
-    {
-      id: 'qa-health',
-      label: 'Health',
-      icon: Heart,
-      color: 'text-rose-400',
-      bg: 'bg-rose-500/15',
-      action: () => handleNavigate('/health'),
-    },
-    {
-      id: 'qa-pay',
-      label: 'Pay',
-      icon: Wallet,
-      color: 'text-amber-400',
-      bg: 'bg-amber-500/15',
-      action: () => handleNavigate('/chatr-wallet'),
-    },
-    {
-      id: 'qa-sum',
-      label: 'Summarize',
-      icon: FileText,
-      color: 'text-purple-400',
-      bg: 'bg-purple-500/15',
-      action: () => setIsAiSheetOpen(true),
-    },
-    {
-      id: 'qa-more',
-      label: 'More',
-      icon: MoreHorizontal,
-      color: 'text-slate-400',
-      bg: 'bg-white/10',
-      action: () => setIsAiSheetOpen(true),
-    },
-  ];
+  const handleAction = useCallback((action: typeof ACTIONS[number]) => {
+    haptics.light();
+    if (action.route) navigate(action.route);
+    else setIsAiSheetOpen(true);
+  }, [haptics, navigate]);
 
   return (
     <div
-      className="flex flex-col min-h-screen overflow-y-auto pb-32 font-sans text-white select-none"
-      style={{
-        background: 'radial-gradient(circle at 50% 0%, #16172B 0%, #0B0E14 50%, #07090E 100%)'
-      }}
+      className="flex flex-col min-h-screen overflow-y-auto font-sans select-none"
+      style={{ background: 'linear-gradient(160deg, #0D1117 0%, #111827 50%, #0D1117 100%)' }}
     >
-      <SEOHead title="CHATR — Your Personal SI" description="A personal Super Intelligence layer that understands your context, remembers what matters, communicates naturally and helps you get things done." />
+      <SEOHead
+        title="Chatr+ — Your Personal SI"
+        description="A personal Super Intelligence layer that understands your context, remembers what matters, communicates naturally and helps you get things done."
+      />
 
-      <div className="mx-auto max-w-[540px] w-full space-y-4 px-4 pt-3.5 pb-28">
+      {/* ── Status Bar Spacer ─────────────────────────────── */}
+      <div style={{ height: 'env(safe-area-inset-top, 44px)' }} />
 
-        {/* ── Top Bar (Image 2) ────────────────────────────── */}
-        <header className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400 fill-indigo-400/20" />
-            <span className="text-[17px] font-extrabold tracking-wider text-white uppercase">
-              CHATR
+      <div className="mx-auto max-w-[540px] w-full px-4 pb-36 space-y-5">
+
+        {/* ── Header ─────────────────────────────────────── */}
+        <header className="flex items-center justify-between pt-2">
+          {/* chatr+ wordmark */}
+          <div className="flex items-center gap-1.5">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-[10px]"
+              style={{ background: 'linear-gradient(135deg,#5C22FF,#4f46e5)' }}
+            >
+              <Sparkles className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-[19px] font-black tracking-tight text-white">
+              chatr<span style={{ color: '#00D084' }}>+</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
+            {/* Search */}
+            <button
+              type="button"
+              onClick={() => handleNavigate('/universal-search')}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] text-slate-300 active:scale-90 transition-all"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+
+            {/* Notifications */}
             <button
               id="home-notifications"
               type="button"
               onClick={() => handleNavigate('/notifications')}
-              className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.06] border border-white/10 text-slate-300 hover:text-white active:scale-90 transition-all"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] text-slate-300 active:scale-90 transition-all"
             >
-              <Bell className="h-4.5 w-4.5" />
+              <Bell className="h-4 w-4" />
               {(metrics?.notificationCount || 0) > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-[#0B0E14]" />
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-[1.5px] ring-[#0D1117]" />
               )}
             </button>
 
+            {/* Avatar */}
             <button
               id="home-profile"
               type="button"
               onClick={() => handleNavigate('/profile')}
-              className="relative h-9 w-9 rounded-full ring-1 ring-white/20 active:scale-90 transition-all overflow-hidden"
+              className="relative h-9 w-9 rounded-full ring-2 ring-white/20 active:scale-90 transition-all overflow-hidden"
             >
               <Avatar className="h-full w-full">
-                <AvatarImage src={profile?.avatar_url} className="object-cover" />
+                <AvatarImage src={profile?.avatar_url ?? undefined} className="object-cover" />
                 <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-700 text-white font-bold text-[12px]">
                   {userName[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0B0E14] bg-emerald-400 shadow-sm" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0D1117] bg-emerald-400" />
             </button>
           </div>
         </header>
 
-        {/* ── Greeting (Image 2) ───────────────────────────── */}
-        <div className="pt-1 pb-1">
-          <p className="text-[14px] text-slate-400 font-normal">
-            {greeting},
-          </p>
-          <h1 className="text-[28px] font-extrabold text-white tracking-tight leading-none mt-0.5">
+        {/* ── Greeting ───────────────────────────────────── */}
+        <section className="pt-1 pb-0.5">
+          <p className="text-[13px] font-medium text-slate-400">{greeting} 👋</p>
+          <h1 className="text-[32px] font-black text-white tracking-tight leading-[1.1] mt-0.5">
             {userName}
           </h1>
-          <p className="text-[13px] text-slate-400 font-normal mt-1.5">
-            Tell me what you need, I'll handle it.
-          </p>
-        </div>
-
-        {/* ── Omnibar SI Intent Input (Image 2) ────────────── */}
-        <div className="relative z-20">
-          <div
-            onClick={() => setIsAiSheetOpen(true)}
-            className="flex items-center h-[52px] w-full rounded-[26px] bg-white/[0.05] border border-white/[0.12] px-4 backdrop-blur-xl shadow-lg shadow-black/30 cursor-pointer hover:border-white/20 transition-all"
-          >
-            <Search className="h-5 w-5 text-slate-400 shrink-0" />
-            <span className="ml-3 text-[14px] text-slate-400 font-medium flex-1 truncate">
-              {searchQuery || "Ask or tell CHATR..."}
-            </span>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                type="button"
-                className="p-1.5 text-slate-400 hover:text-white transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsAiSheetOpen(true);
-                }}
-              >
-                <Mic className="h-4.5 w-4.5" />
-              </button>
-              <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/40">
-                <Sparkles className="h-4 w-4" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── 8 Quick Actions Grid (Image 2 Screen 1) ───────── */}
-        <section className="grid grid-cols-4 gap-2.5 pt-1">
-          {quickActions.map((item) => (
-            <button
-              key={item.id}
-              id={item.id}
-              onClick={item.action}
-              className="flex flex-col items-center justify-center gap-2 py-3 px-1 rounded-[20px] bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.07] active:scale-95 transition-all shadow-sm shadow-black/20"
-            >
-              <span className={cn('flex h-10 w-10 items-center justify-center rounded-2xl', item.bg)}>
-                <item.icon className={cn('h-5 w-5', item.color)} />
-              </span>
-              <span className="text-[11px] font-semibold text-slate-200 tracking-tight">
-                {item.label}
-              </span>
-            </button>
-          ))}
+          <p className="text-[13px] text-slate-500 mt-1">What would you like to do today?</p>
         </section>
 
-        {/* ── "For you" Feed (Front Door <= 3 Cards) ────────── */}
+        {/* ── FaceTime-style Recent Contacts Row ─────────── */}
+        {recentConversations && recentConversations.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-[13px] font-bold text-slate-300 uppercase tracking-wider">Recent</h2>
+              <button
+                onClick={() => handleNavigate('/chat')}
+                className="flex items-center gap-0.5 text-[12px] font-semibold text-[#5C22FF]"
+              >
+                See all <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-1">
+              {(recentConversations as any[]).map((conv: any) => {
+                const name = conv.is_group ? conv.group_name : (conv.otheruser?.full_name || conv.otheruser?.username || 'User');
+                const initials = name?.[0]?.toUpperCase() || 'U';
+                const avatarUrl = conv.otheruser?.avatar_url;
+                const unread = conv.unreadcount || conv.unread_count || 0;
+                return (
+                  <button
+                    key={conv.id}
+                    onClick={() => handleNavigate(`/chat/${conv.id}`)}
+                    className="flex flex-col items-center gap-1.5 active:opacity-70 transition-all shrink-0"
+                  >
+                    <div className="relative">
+                      <div
+                        className="h-[62px] w-[62px] rounded-full overflow-hidden ring-2 shadow-lg"
+                        style={{ ringColor: unread > 0 ? '#5C22FF' : 'rgba(255,255,255,0.15)' }}
+                      >
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-violet-600 to-indigo-700">
+                            <span className="text-[22px] font-bold text-white">{initials}</span>
+                          </div>
+                        )}
+                      </div>
+                      {/* Online dot */}
+                      <span className="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full bg-emerald-400 border-2 border-[#0D1117]" />
+                      {/* Unread badge */}
+                      {unread > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#5C22FF] px-1 text-[9px] font-black text-white ring-1 ring-[#0D1117]">
+                          {unread > 9 ? '9+' : unread}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-200 max-w-[62px] truncate text-center leading-none">
+                      {name.split(' ')[0]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ── FaceTime-style Quick Actions Grid ──────────── */}
+        <section>
+          <h2 className="text-[13px] font-bold text-slate-300 uppercase tracking-wider mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-4 gap-3">
+            {ACTIONS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  id={item.id}
+                  onClick={() => handleAction(item)}
+                  className="flex flex-col items-center justify-center gap-2 py-3.5 rounded-[22px] active:scale-95 transition-all shadow-lg"
+                  style={{ backgroundColor: item.bg + '22', border: `1px solid ${item.bg}55` }}
+                >
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-[16px] shadow-md"
+                    style={{ backgroundColor: item.bg }}
+                  >
+                    <Icon
+                      className="h-[22px] w-[22px]"
+                      style={{ color: item.fg }}
+                      strokeWidth={2}
+                    />
+                  </span>
+                  <span className="text-[11px] font-bold text-white tracking-tight">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── AI / Omnibar ───────────────────────────────── */}
+        <button
+          onClick={() => setIsAiSheetOpen(true)}
+          className="w-full flex items-center h-[52px] rounded-[26px] border border-white/[0.12] bg-white/[0.04] px-4 backdrop-blur-xl shadow-lg shadow-black/30 hover:border-white/20 active:scale-[0.98] transition-all"
+        >
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-white" />
+          </div>
+          <span className="ml-3 text-[14px] text-slate-400 font-medium flex-1 text-left truncate">
+            Ask or tell Chatr+…
+          </span>
+          <span className="shrink-0 text-[10px] font-black text-slate-500 bg-white/[0.06] border border-white/10 px-2 py-0.5 rounded-full">
+            AI
+          </span>
+        </button>
+
+        {/* ── "For You" Intelligent Feed ─────────────────── */}
         <section>
           <IntelligentHomeFeed
             onNavigate={handleNavigate}
@@ -278,65 +300,15 @@ const Home = memo(() => {
           />
         </section>
 
-        {/* ── Recent Conversations (Dark Styled) ─────────────── */}
-        {recentConversations && recentConversations.length > 0 && (
-          <section className="rounded-[24px] bg-white/[0.04] border border-white/[0.08] p-4 backdrop-blur-xl shadow-lg shadow-black/20">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-emerald-400" />
-                <h3 className="text-[14px] font-bold text-white">Recent Chats</h3>
-              </div>
-              <button
-                id="home-view-all-chats"
-                onClick={() => handleNavigate('/chat')}
-                className="flex items-center gap-0.5 text-[12px] font-semibold text-indigo-400 hover:text-indigo-300"
-              >
-                View all <ChevronRight className="h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            <div className="divide-y divide-white/[0.04]">
-              {recentConversations.map((conv: any) => (
-                <button
-                  key={conv.id}
-                  id={`chat-${conv.id}`}
-                  onClick={() => handleNavigate(`/chat/${conv.id}`)}
-                  className="flex w-full items-center gap-3 py-3 text-left hover:bg-white/[0.02] active:opacity-70 transition-all rounded-xl px-1"
-                >
-                  <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 overflow-hidden ring-1 ring-white/10">
-                    {conv.otheruser?.avatar_url ? (
-                      <img src={conv.otheruser.avatar_url} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="text-[14px] font-bold text-slate-300">
-                        {conv.otheruser?.username?.[0]?.toUpperCase() || 'U'}
-                      </span>
-                    )}
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0B0E14] bg-emerald-400" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13.5px] font-bold text-white">
-                      {conv.is_group ? conv.group_name : conv.otheruser?.username}
-                    </p>
-                    <p className="mt-0.5 truncate text-[11.5px] font-normal text-slate-400">
-                      {conv.lastmessage || 'Tap to chat'}
-                    </p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-600 shrink-0" />
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
       </div>
 
-      {/* ── Unified SI Actions Sheet ("What can I do for you?") ─ */}
+      {/* ── Unified SI Actions Sheet ───────────────────── */}
       <UnifiedAIActionsSheet
         isOpen={isAiSheetOpen}
         onClose={() => setIsAiSheetOpen(false)}
       />
 
-      {/* ── Privacy Explanation Modal ("How was this processed?") ─ */}
+      {/* ── Privacy Explanation Modal ──────────────────── */}
       <PrivacyExplanationModal
         isOpen={isPrivacyModalOpen}
         onClose={() => setIsPrivacyModalOpen(false)}
