@@ -29,8 +29,6 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <!-- AUDIO & VIDEO -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -62,7 +60,6 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <!-- HARDWARE FEATURES -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -100,7 +97,7 @@
             android:exported="true" />
 
         <!-- ============================================================ -->
-        <!-- CHATR SI DIALER â€” Supabase endpoint for native overlay lookup -->
+        <!-- CHATR SI DIALER Ã¢â‚¬â€ Supabase endpoint for native overlay lookup -->
         <!-- Replace values with your actual Supabase project details      -->
         <!-- ============================================================ -->
         <meta-data android:name="supabase_url"
@@ -410,7 +407,7 @@
         </service>
         <!-- ============================================================ -->
         <!-- CHATR GSM INCALL SERVICE (Tier 2)                           -->
-        <!-- Background listener for GSM call events â€” NOT a dialer UI  -->
+        <!-- Background listener for GSM call events Ã¢â‚¬â€ NOT a dialer UI  -->
         <!-- android:value="false" means we don't replace the system UI -->
         <!-- ============================================================ -->
         <service
