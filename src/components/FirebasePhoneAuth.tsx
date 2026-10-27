@@ -284,17 +284,6 @@ export const FirebasePhoneAuth: React.FC<FirebasePhoneAuthProps> = ({
                 )}
               </Button>
 
-              <button
-                type="button"
-                onClick={async () => {
-                  setPhoneNumber('9717100000');
-                  await verifyOTP('123456', '+919717100000');
-                }}
-                className="w-full mt-2 py-2.5 px-3 rounded-xl bg-slate-800/80 border border-cyan-500/30 text-cyan-300 hover:bg-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
-              >
-                <Zap className="w-3.5 h-3.5 text-cyan-400" />
-                Quick Demo Sign In
-              </button>
 
               {/* Trust badges — light variant matching Image Two */}
               {isLight && (
