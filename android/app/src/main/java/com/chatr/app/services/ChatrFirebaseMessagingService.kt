@@ -2,6 +2,7 @@ package com.chatr.app.services
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -15,6 +16,11 @@ import com.chatr.app.auth.NativeAuthManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 
 /**
  * Handles data-first FCM delivery for calls, messages, and urgent alerts.
@@ -23,6 +29,8 @@ class ChatrFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
         private const val TAG = "ChatrFCM"
+        private const val SUPABASE_URL = "https://nuuuqazaoaozgblmvkzn.supabase.co"
+        private const val SUPABASE_ANON = "sb_publishable_HRiuUoHejwLnOdITsW36Ew_ZSZ513Tw"
         const val KEY_TEXT_REPLY = "key_text_reply"
 
         private val processedIds =
@@ -44,15 +52,45 @@ class ChatrFirebaseMessagingService : FirebaseMessagingService() {
             processedIds[id] = now
             return false
         }
+
+        fun syncDeviceTokenToSupabase(context: Context, userId: String, token: String) {
+            if (userId.isBlank() || token.isBlank()) return
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val client = OkHttpClient()
+                    val jsonBody = JSONObject().apply {
+                        put("token", token)
+                        put("userId", userId)
+                        put("platform", "android")
+                    }.toString()
+                    val mediaType = "application/json; charset=utf-8".toMediaType()
+                    val requestBody = jsonBody.toRequestBody(mediaType)
+                    val request = Request.Builder()
+                        .url("$SUPABASE_URL/functions/v1/register-device-token")
+                        .addHeader("apikey", SUPABASE_ANON)
+                        .addHeader("Authorization", "Bearer $SUPABASE_ANON")
+                        .addHeader("Content-Type", "application/json")
+                        .post(requestBody)
+                        .build()
+                    val response = client.newCall(request).execute()
+                    Log.i(TAG, "Native syncDeviceTokenToSupabase completed: code=${response.code}")
+                    response.close()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Native syncDeviceTokenToSupabase failed: ${e.message}")
+                }
+            }
+        }
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.i(TAG, "New FCM token received")
-        getSharedPreferences("chatr_prefs", MODE_PRIVATE)
-            .edit()
-            .putString("pending_fcm_token", token)
-            .apply()
+        Log.i(TAG, "New FCM token received: ${token.take(16)}...")
+        val prefs = getSharedPreferences("chatr_prefs", MODE_PRIVATE)
+        prefs.edit().putString("pending_fcm_token", token).apply()
+        val userId = prefs.getString("user_id", null)
+        if (!userId.isNullOrBlank()) {
+            syncDeviceTokenToSupabase(this, userId, token)
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

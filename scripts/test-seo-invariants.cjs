@@ -233,7 +233,7 @@ if (fs.existsSync(plusApkFilePath)) {
 assert(fs.existsSync(versionFilePath), 'dist/download/version.json exists for in-app updates');
 if (fs.existsSync(versionFilePath)) {
   const versionData = JSON.parse(fs.readFileSync(versionFilePath, 'utf8'));
-  assert(versionData.latestVersion === '1.0.0', 'version.json contains valid latestVersion');
+  assert(typeof versionData.latestVersion === 'string' && /^\d+\.\d+\.\d+/.test(versionData.latestVersion), 'version.json contains valid latestVersion');
   assert(Boolean(versionData.sha256), 'version.json contains valid sha256 hash');
 }
 

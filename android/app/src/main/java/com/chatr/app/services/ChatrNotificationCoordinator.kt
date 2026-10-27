@@ -187,14 +187,7 @@ object ChatrNotificationCoordinator {
             immutablePendingIntentFlags(),
         )
 
-        if (telecomRegistered) {
-            Log.i(TAG, "Telecom registered for $callId; it will launch the UI via ChatrConnectionService")
-            // Telecom will trigger ChatrConnection.onShowIncomingCallUi()
-            // which handles the activity launch.
-            return
-        }
-
-        Log.i(TAG, "Telecom registration failed or unsupported; falling back to custom notification UI")
+        Log.i(TAG, "Posting incoming call notification and launching UI for $callId (telecomRegistered=$telecomRegistered)")
         showCallNotification(
             context = appContext,
             callId = callId,

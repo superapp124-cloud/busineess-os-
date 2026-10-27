@@ -378,18 +378,6 @@ export const FirebasePhoneAuth: React.FC<FirebasePhoneAuthProps> = ({
                     </Button>
                   )}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtp('123456');
-                    handleOTPComplete('123456');
-                  }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                >
-                  <Zap className="w-3.5 h-3.5 text-cyan-400" />
-                  Auto-fill Test Code (123456)
-                </button>
               </div>
 
               <Button

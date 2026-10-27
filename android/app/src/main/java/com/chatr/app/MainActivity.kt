@@ -815,8 +815,26 @@ class MainActivity : BridgeActivity() {
 
         @JavascriptInterface
         fun setUserId(userId: String?) {
-            prefs.edit().putString(KEY_USER_ID, userId.orEmpty()).apply()
+            val safeUserId = userId.orEmpty()
+            prefs.edit().putString(KEY_USER_ID, safeUserId).apply()
             NativeCallSyncWorker.enqueue(this@MainActivity, "auth_user_updated")
+            if (safeUserId.isNotBlank()) {
+                val pendingToken = prefs.getString("pending_fcm_token", null)
+                if (!pendingToken.isNullOrBlank()) {
+                    com.chatr.app.services.ChatrFirebaseMessagingService.syncDeviceTokenToSupabase(this@MainActivity, safeUserId, pendingToken)
+                } else {
+                    try {
+                        com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                            if (task.isSuccessful && !task.result.isNullOrBlank()) {
+                                prefs.edit().putString("pending_fcm_token", task.result).apply()
+                                com.chatr.app.services.ChatrFirebaseMessagingService.syncDeviceTokenToSupabase(this@MainActivity, safeUserId, task.result)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.w("MainActivity", "Failed to get FCM token for auth sync: ${e.message}")
+                    }
+                }
+            }
         }
 
         @JavascriptInterface

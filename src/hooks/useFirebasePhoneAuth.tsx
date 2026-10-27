@@ -222,7 +222,7 @@ export const useFirebasePhoneAuth = (): UseFirebasePhoneAuthReturn => {
         setStep('otp');
         setCountdown(30);
         setLoading(false);
-        setError('Verification code ready. Enter code or tap Auto-fill Test Code (123456).');
+        setError(null);
         return true;
       }
       
