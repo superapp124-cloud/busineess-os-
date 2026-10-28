@@ -57,24 +57,89 @@ class ChatrFirebaseMessagingService : FirebaseMessagingService() {
             if (userId.isBlank() || token.isBlank()) return
             CoroutineScope(Dispatchers.IO).launch {
                 try {
+                    val prefs = context.getSharedPreferences("chatr_prefs", Context.MODE_PRIVATE)
+                    val authToken = prefs.getString("auth_token", null)
                     val client = OkHttpClient()
+                    val mediaType = "application/json; charset=utf-8".toMediaType()
+
+                    // 1. Direct PostgREST upsert into public.device_tokens if user is authenticated
+                    if (!authToken.isNullOrBlank()) {
+                        try {
+                            val dbPayload = JSONObject().apply {
+                                put("user_id", userId)
+                                put("device_token", token)
+                                put("platform", "android")
+                                put("last_used_at", java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US).apply {
+                                    timeZone = java.util.TimeZone.getTimeZone("UTC")
+                                }.format(java.util.Date()))
+                            }.toString().toRequestBody(mediaType)
+
+                            val dbReq = Request.Builder()
+                                .url("$SUPABASE_URL/rest/v1/device_tokens?on_conflict=user_id,device_token")
+                                .addHeader("apikey", SUPABASE_ANON)
+                                .addHeader("Authorization", "Bearer $authToken")
+                                .addHeader("Content-Type", "application/json")
+                                .addHeader("Prefer", "resolution=merge-duplicates")
+                                .post(dbPayload)
+                                .build()
+
+                            val dbRes = client.newCall(dbReq).execute()
+                            Log.i(TAG, "Direct device_tokens PostgREST upsert: code=${dbRes.code}")
+                            dbRes.close()
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Direct device_tokens PostgREST upsert failed: ${e.message}")
+                        }
+                    }
+
+                    // 2. Also invoke register-device-token Edge Function with auth token if available, fallback to anon
                     val jsonBody = JSONObject().apply {
                         put("token", token)
                         put("userId", userId)
                         put("platform", "android")
-                    }.toString()
-                    val mediaType = "application/json; charset=utf-8".toMediaType()
-                    val requestBody = jsonBody.toRequestBody(mediaType)
-                    val request = Request.Builder()
+                    }.toString().toRequestBody(mediaType)
+
+                    val authHeaderVal = if (!authToken.isNullOrBlank()) "Bearer $authToken" else "Bearer $SUPABASE_ANON"
+
+                    val reqBuilder = Request.Builder()
                         .url("$SUPABASE_URL/functions/v1/register-device-token")
                         .addHeader("apikey", SUPABASE_ANON)
-                        .addHeader("Authorization", "Bearer $SUPABASE_ANON")
+                        .addHeader("Authorization", authHeaderVal)
                         .addHeader("Content-Type", "application/json")
-                        .post(requestBody)
-                        .build()
-                    val response = client.newCall(request).execute()
-                    Log.i(TAG, "Native syncDeviceTokenToSupabase completed: code=${response.code}")
+                        .post(jsonBody)
+
+                    val response = client.newCall(reqBuilder.build()).execute()
+                    Log.i(TAG, "Native syncDeviceTokenToSupabase edge function: code=${response.code}")
                     response.close()
+
+                    // 3. Mirror to profiles.privacy_settings so peer callers can find token immediately
+                    if (!authToken.isNullOrBlank()) {
+                        try {
+                            val privacyJson = JSONObject().apply {
+                                val ps = JSONObject().apply {
+                                    put("fcm_token", token)
+                                    put("device_tokens", org.json.JSONArray().put(token))
+                                    put("last_token_update", java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US).apply {
+                                        timeZone = java.util.TimeZone.getTimeZone("UTC")
+                                    }.format(java.util.Date()))
+                                }
+                                put("privacy_settings", ps)
+                            }.toString().toRequestBody(mediaType)
+
+                            val patchReq = Request.Builder()
+                                .url("$SUPABASE_URL/rest/v1/profiles?id=eq.$userId")
+                                .addHeader("apikey", SUPABASE_ANON)
+                                .addHeader("Authorization", "Bearer $authToken")
+                                .addHeader("Content-Type", "application/json")
+                                .patch(privacyJson)
+                                .build()
+
+                            val patchRes = client.newCall(patchReq).execute()
+                            Log.i(TAG, "Direct profiles.privacy_settings token mirror: code=${patchRes.code}")
+                            patchRes.close()
+                        } catch (pe: Exception) {
+                            Log.w(TAG, "profiles token mirror failed: ${pe.message}")
+                        }
+                    }
                 } catch (e: Exception) {
                     Log.w(TAG, "Native syncDeviceTokenToSupabase failed: ${e.message}")
                 }

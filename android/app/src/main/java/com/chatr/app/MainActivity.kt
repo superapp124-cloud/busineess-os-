@@ -804,8 +804,14 @@ class MainActivity : BridgeActivity() {
 
         @JavascriptInterface
         fun setAuthToken(token: String?) {
-            prefs.edit().putString(KEY_AUTH_TOKEN, token.orEmpty()).apply()
+            val safeToken = token.orEmpty()
+            prefs.edit().putString(KEY_AUTH_TOKEN, safeToken).apply()
             NativeCallSyncWorker.enqueue(this@MainActivity, "auth_token_updated")
+            val userId = prefs.getString(KEY_USER_ID, null)
+            val pendingFcm = prefs.getString("pending_fcm_token", null)
+            if (!userId.isNullOrBlank() && !pendingFcm.isNullOrBlank()) {
+                com.chatr.app.services.ChatrFirebaseMessagingService.syncDeviceTokenToSupabase(this@MainActivity, userId, pendingFcm)
+            }
         }
 
         @JavascriptInterface
