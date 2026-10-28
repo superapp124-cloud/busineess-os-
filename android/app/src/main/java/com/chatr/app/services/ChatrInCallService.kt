@@ -252,9 +252,26 @@ class ChatrInCallService : InCallService() {
         fun getCallAudioState(): CallAudioState? = serviceInstance?.callAudioState
     }
 
+    private fun isVoipSelfManaged(call: Call?): Boolean {
+        if (call == null) return false
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val details = call.details ?: return false
+            if (details.hasProperty(Call.Details.PROPERTY_SELF_MANAGED)) {
+                return true
+            }
+            val accountHandle = details.accountHandle
+            if (accountHandle != null && accountHandle.componentName.className.contains("ChatrConnectionService")) {
+                return true
+            }
+        }
+        return false
+    }
+
     private val callCallback = object : Call.Callback() {
         override fun onStateChanged(call: Call, state: Int) {
             super.onStateChanged(call, state)
+            if (isVoipSelfManaged(call)) return
+
             val number = extractNumber(call)
             val stateName = stateLabel(state)
             Log.i(TAG, "Call state changed: number=$number state=$stateName ($state)")
@@ -280,6 +297,7 @@ class ChatrInCallService : InCallService() {
 
         override fun onDetailsChanged(call: Call, details: Call.Details) {
             super.onDetailsChanged(call, details)
+            if (isVoipSelfManaged(call)) return
             val number = extractNumber(call)
             Log.d(TAG, "Call details changed: number=$number")
         }
@@ -304,6 +322,11 @@ class ChatrInCallService : InCallService() {
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
         val callId = getCallId(call)
+        if (isVoipSelfManaged(call)) {
+            Log.i(TAG, "Ignoring self-managed VoIP call in ChatrInCallService (handled by ChatrConnectionService): id=$callId")
+            return
+        }
+
         activeCallInstance = call
         activeCallsMap[callId] = call
         call.registerCallback(callCallback)
