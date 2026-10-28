@@ -1166,6 +1166,24 @@ class MainActivity : BridgeActivity() {
         checkAndRequestPermissions()
         logFullScreenIntentStatus()
         initializeVoIPServices()
+
+        // Re-sync FCM device token on every launch for existing logged-in accounts
+        try {
+            val prefs = getSharedPreferences(AUTH_PREFS, MODE_PRIVATE)
+            val userId = prefs.getString(KEY_USER_ID, null)
+            if (!userId.isNullOrBlank()) {
+                com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful && !task.result.isNullOrBlank()) {
+                        val token = task.result
+                        prefs.edit().putString("pending_fcm_token", token).apply()
+                        Log.i(TAG, "Re-syncing launch FCM token for user $userId")
+                        com.chatr.app.services.ChatrFirebaseMessagingService.syncDeviceTokenToSupabase(this@MainActivity, userId, token)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to refresh FCM token in runPostLaunchNativeWork: ${e.message}")
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
