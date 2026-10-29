@@ -152,18 +152,8 @@ object ChatrNotificationCoordinator {
                 Log.e(TAG, "Failed to route to TelecomManager, falling back to custom notification", e)
             }
         }
-        // Always try to prewarm the WebView to make call connection under 2 seconds.
-        // On Android 10+ (Q+), background starts are restricted but may succeed if the app
-        // has draw overlay permissions, is a managed telecom account, or is granted a temporary window.
-        triggerPrewarm(
-            context = appContext,
-            callId = callId,
-            callerId = callerId,
-            callerName = sanitizedCallerName,
-            callerPhone = resolvedCallerNumber,
-            callType = sanitizedCallType,
-            conversationId = conversationId,
-        )
+        // VoIPPrewarmService is already running in foreground to gather ICE without launching an Activity.
+        // We do NOT launch MainActivity here because doing so steals focus from ShieldIncomingCallActivity.
 
         val callIntent = Intent(appContext, ShieldIncomingCallActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
