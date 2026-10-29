@@ -187,8 +187,39 @@ class ChatrConnectionService : ConnectionService() {
         }
 
         addConnection(callId, connection)
+        launchIncomingCallUi(callId, callerId, callerName, callerAvatar, callerNumber, callType, conversationId)
 
         return connection
+    }
+
+    private fun launchIncomingCallUi(
+        callId: String,
+        callerId: String,
+        callerName: String,
+        callerAvatar: String?,
+        callerPhone: String,
+        callType: String,
+        conversationId: String,
+    ) {
+        try {
+            val intent = Intent(this, com.chatr.app.webrtc.ShieldIncomingCallActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("call_id", callId)
+                putExtra("caller_id", callerId)
+                putExtra("caller_name", callerName)
+                putExtra("caller_avatar", callerAvatar)
+                putExtra("caller_phone", callerPhone)
+                putExtra("caller_number", callerPhone)
+                putExtra("call_type", callType)
+                putExtra("conversation_id", conversationId)
+            }
+            startActivity(intent)
+            Log.i(TAG, "Launched ShieldIncomingCallActivity from ConnectionService for callId=$callId")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to launch incoming call UI from ConnectionService", e)
+        }
     }
 
     override fun onCreateIncomingConnectionFailed(

@@ -476,10 +476,18 @@ object ChatrNotificationCoordinator {
             .setIcon(NotificationBranding.personIcon(context))
             .build()
 
-        val channelId = if (ringtoneSound != "default" && ringtoneSound.isNotBlank()) {
+        val preferredChannelId = if (ringtoneSound != "default" && ringtoneSound.isNotBlank()) {
             "${ChatrApplication.CHANNEL_CALLS_HIGH}_$ringtoneSound"
         } else {
             ChatrApplication.CHANNEL_CALLS_HIGH
+        }
+        val channelId = if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            notificationManager.getNotificationChannel(preferredChannelId) == null
+        ) {
+            ChatrApplication.CHANNEL_CALLS_HIGH
+        } else {
+            preferredChannelId
         }
 
         val notification = NotificationCompat.Builder(context, channelId)
@@ -646,21 +654,20 @@ object ChatrNotificationCoordinator {
         fullScreenPendingIntent: PendingIntent,
         callIntent: Intent,
     ) {
+        // Try direct activity launch FIRST - if SYSTEM_ALERT_WINDOW is granted or app process is active, this immediately pops up full screen
         try {
-            fullScreenPendingIntent.send()
-            Log.i(TAG, "Requested ShieldIncomingCallActivity via fullscreen PendingIntent")
+            context.startActivity(callIntent)
+            Log.i(TAG, "Launched ShieldIncomingCallActivity directly from background")
             return
-        } catch (error: PendingIntent.CanceledException) {
-            Log.w(TAG, "Fullscreen PendingIntent was cancelled, trying direct launch", error)
         } catch (error: Exception) {
-            Log.w(TAG, "Fullscreen PendingIntent launch failed, trying direct launch", error)
+            Log.w(TAG, "Direct activity launch failed, trying fullscreen PendingIntent", error)
         }
 
         try {
-            context.startActivity(callIntent)
-            Log.i(TAG, "Launched ShieldIncomingCallActivity directly")
+            fullScreenPendingIntent.send()
+            Log.i(TAG, "Requested ShieldIncomingCallActivity via fullscreen PendingIntent")
         } catch (error: Exception) {
-            Log.e(TAG, "Failed to launch ShieldIncomingCallActivity directly", error)
+            Log.e(TAG, "Fullscreen PendingIntent launch failed", error)
         }
     }
 
