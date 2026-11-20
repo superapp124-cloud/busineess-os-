@@ -455,7 +455,7 @@ export const GuestCallPage: React.FC = () => {
   };
 
   const shareViaWhatsApp = () => {
-    const text = encodeURIComponent(`Join my free call on CHATR: ${fullCallUrl}`);
+    const text = encodeURIComponent(`📞 Free HD Call with me on CHATR (No app or download required): ${fullCallUrl}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
