@@ -3,6 +3,15 @@ const path = require('path');
 
 const DOMAIN = 'https://www.chatrchat.in';
 
+const {
+  STATIC_CSS,
+  renderHomeHtml,
+  renderPricingPageHtml,
+  buildPricingSchemas
+} = require('./seo-static-pages.cjs');
+
+const withCss = (html) => html.replace('</head>', `<style>${STATIC_CSS}</style>\n</head>`);
+
 const PUBLIC_SEO_PAGES = [
   {
     path: '/chatr/ai',
@@ -26,14 +35,8 @@ const PUBLIC_SEO_PAGES = [
     description: 'Simple, transparent pricing for CHATR Business OS and AI Workspace. Explore free trial, SME Starter plans from ₹999/mo, Growth OS, and Desktop Pro options.',
     keywords: 'CHATR Pricing, CHATR Plans, Business OS Pricing, WhatsApp API Pricing',
     canonical: DOMAIN + '/pricing',
-    schemas: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'OfferCatalog',
-        name: 'CHATR Commercial Plans & Pricing',
-        url: DOMAIN + '/pricing'
-      }
-    ]
+    type: 'pricing',
+    schemas: buildPricingSchemas()
   },
   {
     path: '/chatr/whatsapp-business-api',
@@ -1778,6 +1781,8 @@ function prerender() {
     } else if (page.type === 'tool') {
       const toolBody = renderToolPageHtml(page.pageData);
       customHtml = injectRootHtml(customHtml, toolBody);
+    } else if (page.type === 'pricing') {
+      customHtml = injectRootHtml(withCss(customHtml), renderPricingPageHtml());
     }
 
     const targetDir = path.join(distDir, page.path.replace(/^\//, ''));
@@ -1786,6 +1791,11 @@ function prerender() {
     fs.writeFileSync(targetFilePath, customHtml, 'utf8');
     count++;
   }
+
+  // 1b. Render Homepage Static Hero into dist/index.html
+  const homeCustomHtml = injectRootHtml(withCss(baseHtml), renderHomeHtml());
+  fs.writeFileSync(indexHtmlPath, homeCustomHtml, 'utf8');
+  console.log(`[PRERENDER] Rendered static homepage hero into dist/index.html.`);
 
   console.log(`[PRERENDER] Rendered ${count} core pages.`);
 
